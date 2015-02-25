@@ -62,6 +62,12 @@ create table llx_payment_loan
   fk_user_modif		integer
 )ENGINE=innodb;
 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+
+-- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
+
+
 -- Remove menu entries of removed or renamed modules
 DELETE FROM llx_menu where module = 'printipp';
 
@@ -161,10 +167,9 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN sellby date DEFAULT NULL;
 
 
 
-
 CREATE TABLE llx_expensereport (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  ref       		varchar(50) NOT NULL,
+  ref        		varchar(50) NOT NULL,
   entity 			integer DEFAULT 1 NOT NULL,		-- multi company id
   ref_number_int 	integer DEFAULT NULL,
   ref_ext 			integer,
@@ -175,29 +180,32 @@ CREATE TABLE llx_expensereport (
   total_ttc 		double(24,8) DEFAULT 0,
   date_debut 		date NOT NULL,
   date_fin 			date NOT NULL,
-  date_paiement 	datetime,
-  date_valide 		datetime,
   date_create 		datetime NOT NULL,
+  date_valid 		datetime,
+  date_approve		datetime,
+  date_refuse 		datetime,
+  date_cancel 		datetime,
+  date_paiement 	datetime,
   tms 		 		timestamp,
   fk_user_author 	integer NOT NULL,
   fk_user_modif 	integer DEFAULT NULL,
+  fk_user_valid 	integer DEFAULT NULL,
   fk_user_validator integer DEFAULT NULL,
+  fk_user_approve   integer DEFAULT NULL,
+  fk_user_refuse 	integer DEFAULT NULL,
+  fk_user_cancel 	integer DEFAULT NULL,
+  fk_user_paid 		integer DEFAULT NULL,
   fk_c_expensereport_statuts integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
-  note 				text,
+  note_public		text,
   note_private 		text,
-  fk_user_valid 	integer DEFAULT NULL,
-  fk_user_paid 		integer DEFAULT NULL,
   detail_refuse 	varchar(255) DEFAULT NULL,
-  date_cancel 		datetime,
-  date_refuse 		datetime,
   detail_cancel 	varchar(255) DEFAULT NULL,
-  fk_user_cancel 	integer DEFAULT NULL,
-  fk_user_refuse 	integer DEFAULT NULL,
-  integration_compta integer DEFAULT NULL,
+  integration_compta integer DEFAULT NULL,		-- not used
   fk_bank_account 	integer DEFAULT NULL,
   model_pdf 		varchar(50) DEFAULT NULL
 ) ENGINE=innodb;
+
 
 CREATE TABLE llx_expensereport_det
 (
@@ -230,5 +238,3 @@ CREATE TABLE llx_expensereport_det
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
-
->>>>>>> Upstream/develop

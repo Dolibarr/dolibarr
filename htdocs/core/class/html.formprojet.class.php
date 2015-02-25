@@ -87,7 +87,7 @@ class FormProjets
 		if ($resql)
 		{
 			$minmax='';
-			
+
 			// Use select2 selector
 			$nodatarole='';
 			if (! empty($conf->use_javascript_ajax))
@@ -219,6 +219,11 @@ class FormProjets
 				$sql = "SELECT id as rowid, label as ref";
 				$projectkey="fk_project";
 				break;
+			case "expensereport_det":
+				return '';
+				/*$sql = "SELECT rowid, '' as ref";	// table is llx_expensereport_det
+				$projectkey="fk_projet";
+				break;*/
 			default:
 				$sql = "SELECT rowid, ref";
 				break;
@@ -226,10 +231,8 @@ class FormProjets
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($socid)) {
-			$sql.= " AND fk_soc=".$socid;
-		}
-		$sql.= ' AND entity='.getEntity('project');
+		if (!empty($socid)) $sql.= " AND fk_soc=".$socid;
+		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
@@ -260,9 +263,12 @@ class FormProjets
 			}*/
 			$this->db->free($resql);
 
-			return $sellist ;
-		}else {
+			return $sellist;
+		}
+		else
+		{
 			$this->error=$this->db->lasterror();
+			$this->errors[]=$this->db->lasterror();
 			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
 			return -1;
 		}

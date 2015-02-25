@@ -131,7 +131,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
-		$this->export_sql_end[$r] .=' AND e.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND e.entity IN ('.getEntity('stock',1).')';
 
 
 		// Imports

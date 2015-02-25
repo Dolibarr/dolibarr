@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefou
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 if (! empty($conf->projet->enabled))	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('orders');
@@ -106,6 +107,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$qty = "qty_".$reg[1]."_".$reg[2];
 			$ent = "entrepot_".$reg[1]."_".$reg[2];
 			$pu = "pu_".$reg[1]."_".$reg[2];
+			$fk_commandefourndet = "fk_commandefourndet_".$reg[1]."_".$reg[2];
 			$lot = "lot_number_".$reg[1]."_".$reg[2];
 			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1]."_".$reg[2].'month'], $_POST['dluo_'.$reg[1]."_".$reg[2].'day'], $_POST['dluo_'.$reg[1]."_".$reg[2].'year']);
 			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1]."_".$reg[2].'month'], $_POST['dlc_'.$reg[1]."_".$reg[2].'day'], $_POST['dlc_'.$reg[1]."_".$reg[2].'year']);
@@ -129,7 +131,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 				}
 				else
 				{
-					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot));
+					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'));
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -173,6 +175,11 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
  * View
  */
 
+$form =	new Form($db);
+$warehouse_static = new Entrepot($db);
+$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+
 $help_url='EN:CommandeFournisseur';
 if (!empty($conf->productbatch->enabled))
 {
@@ -182,9 +189,6 @@ else
 {
 	llxHeader('',$langs->trans("OrderCard"),$help_url);
 }
-
-$form =	new Form($db);
-$warehouse_static = new Entrepot($db);
 
 $now=dol_now();
 
@@ -282,7 +286,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="dispatch">';
 			print '<table class="noborder" width="100%">';
 
-			// Set $products_dispatched with qty dispatech for each product id
+			// Set $products_dispatched with qty dispatched for each product id
 			$products_dispatched = array();
 			$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
@@ -421,6 +425,7 @@ if ($id > 0 || ! empty($ref))
 
 								print '<tr '.$bc[$var].' name="dluo'.$suffix.'">';
 								print '<td>';
+								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 								print '</td>';
@@ -441,8 +446,8 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">';
 							if (empty($conf->productbatch->enabled) || $objp->tobatch!=1)
 							{
-								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
+								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 							}
 							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'">';
@@ -578,8 +583,10 @@ if ($id > 0 || ! empty($ref))
 					// Status
 					if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
 					{
-						print '<td>';
-						print $objp->status;
+						print '<td align="right">';
+						$supplierorderdispatch->status = (empty($objp->status)?0:$objp->status);
+						//print $supplierorderdispatch->status;
+						print $supplierorderdispatch->getLibStatut(5);
 						print '</td>';
 					}
 

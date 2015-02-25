@@ -2211,7 +2211,7 @@ class User extends CommonObject
 
 
 	/**
-	 * Return and array with all instanciated children users of current user
+	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
 	 */
@@ -2365,7 +2365,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 * 	Return list of all childs users in herarchy.
+	 * 	Return list of all child users id in herarchy (all sublevels).
 	 *
 	 *	@return		array		      		  	Array of user id lower than user. This overwrite this->users.
 	 */

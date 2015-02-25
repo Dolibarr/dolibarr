@@ -160,7 +160,7 @@ abstract class ModeleNumRefCommandes
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
  *  @return     int         				0 if KO, 1 if OK
- * @deprecated Use the new function generateDocument of Commande class
+ *  @deprecated Use the new function generateDocument of Commande class
  */
 function commande_pdf_create(DoliDB $db, Commande $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {

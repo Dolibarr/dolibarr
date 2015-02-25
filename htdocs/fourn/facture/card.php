@@ -1073,7 +1073,7 @@ elseif ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
 
 	if($ret < 0) $error++;
 

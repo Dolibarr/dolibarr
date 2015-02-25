@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
  */
 
 /**
@@ -25,16 +24,17 @@
 
 $res=0;
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/expensereport.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
-dol_include_once('/expensereport/core/modules/expensereport/modules_expensereport.php');
-dol_include_once("/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load("trips");
 
@@ -68,7 +68,16 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->entity) && $conf->en
 	$rootfordata.='/'.$conf->entity;
 }
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
-$conf->expensereport->dir_output = $rootfordata.'/expensereport';
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 
 
@@ -78,7 +87,7 @@ $conf->expensereport->dir_output = $rootfordata.'/expensereport';
 
 if ($cancel) $action='';
 
-if ($action == 'confirm_delete' && $_GET["confirm"] == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
 {
 	$object = new ExpenseReport($db);
 	$result=$object->delete($id);
@@ -103,9 +112,10 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	$object->fk_c_expensereport_statuts = 1;
 	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
 	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-	$object->note						= GETPOST('note');
+	$object->note_public				= GETPOST('note_public');
+	$object->note_private				= GETPOST('note_private');
 
-	if ($object->periode_existe($user,dol_print_date($object->date_debut, 'dayrfc'),dol_print_date($object->date_fin, 'dayrfc')))
+	if ($object->periode_existe($user,$object->date_debut,$object->date_fin))
 	{
 		$error++;
 		setEventMessage($langs->trans("ErrorDoubleDeclaration"),'errors');
@@ -147,7 +157,8 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	}
 
 	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-	$object->note = GETPOST('note');
+	$object->note_public = GETPOST('note_public');
+	$object->note_private = GETPOST('note_private');
 
 	$result = $object->update($user);
 	if ($result > 0)
@@ -166,67 +177,95 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	$result = $object->setValidate($user);
+
 	if ($result > 0)
 	{
-		// Send mail
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
-			// Send mail
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
 
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_validator);
-			$emailTo = $destinataire->email;
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
 
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
+	if ($result > 0 && $object->fk_user_validator > 0)
+	{
+		$langs->load("mails");
 
-			// SUBJECT
-			$subject = "' ERP - Note de frais à valider";
+		// TO
+		$destinataire = new User($db);
+		$destinataire->fetch($object->fk_user_validator);
+		$emailTo = $destinataire->email;
 
-			// CONTENT
-			$message = "Bonjour {$destinataire->firstname},\n\n";
-			$message.= "Veuillez trouver en pièce jointe une nouvelle note de frais à valider.\n";
-			$message.= "- Déclarant : {$expediteur->firstname} {$expediteur->lastname}\n";
-			$message.= "- Période : du {$object->date_debut} au {$object->date_fin}\n";
-			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-			$message.= "Bien cordialement,\n' SI";
+		// FROM
+		$expediteur = new User($db);
+		$expediteur->fetch($object->fk_user_author);
+		$emailFrom = $expediteur->email;
 
-			// Génération du pdf avant attachement
-			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+		// SUBJECT
+		$subject = $langs->trans("ExpenseReportWaitingForApproval");
 
-			if($resultPDF):
-			// ATTACHMENT
-			$filename=array(); $filedir=array(); $mimetype=array();
-			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-			array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
-			array_push($mimetype,"application/pdf");
+		// CONTENT
+		$link = $urlwithroot.'/expenserecord/card.php?id='.$object->id;
+		$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
 
-			// PREPARE SEND
-			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+		// Rebuild pdf
+		/*
+		$object->setDocModel($user,"");
+		$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
 
-			if(!$mailfile->error):
+		if($resultPDF):
+		// ATTACHMENT
+		$filename=array(); $filedir=array(); $mimetype=array();
+		array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+		array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
+		array_push($mimetype,"application/pdf");
+		*/
 
+		// PREPARE SEND
+		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+
+		if ($mailfile)
+		{
 			// SEND
 			$result=$mailfile->sendfile();
-			if ($result):
-			Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
-			exit;
-			endif;
-
-			else:
-
-			$mesg="Impossible d'envoyer l'email.";
-
-			endif;
-			// END - Send mail
-			else:
-			dol_print_error($db,$resultPDF);
-			exit;
-			endif;
+			if ($result)
+			{
+				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+				setEventMessage($mesg);
+				header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+				exit;
+			}
+			else
+			{
+				$langs->load("other");
+				if ($mailfile->error)
+				{
+					$mesg='';
+					$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+					$mesg.='<br>'.$mailfile->error;
+					setEventMessage($mesg,'errors');
+				}
+				else
+				{
+					setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
+				}
+			}
+		}
+		else
+		{
+			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+			$action='';
 		}
 	}
 	else
@@ -240,6 +279,27 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	$result = $object->set_save_from_refuse($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		// Send mail
@@ -271,7 +331,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 
 			// Génération du pdf avant attachement
 			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
 			if($resultPDF):
 			// ATTACHMENT
@@ -311,12 +371,33 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 }
 
 // Approve
-if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->to_validate)
+if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->approve)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 
 	$result = $object->setApproved($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -348,7 +429,7 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 
 			// Génération du pdf avant attachement
 			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
 			if($resultPDF):
 				// ATTACHMENT
@@ -394,12 +475,33 @@ if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $
 	}
 }
 
-if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->to_validate)
+if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->approve)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-	
-	$result = $object->set_refuse($user,GETPOST('detail_refuse'));
+
+	$result = $object->setDeny($user,GETPOST('detail_refuse'));
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -456,34 +558,54 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 }
 
 //var_dump($user->id == $object->fk_user_validator);exit;
-if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['detail_cancel']) && $id > 0 && $user->rights->expensereport->creer)
+if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_cancel') && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
-	
+
 	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
 	{
-		$result = $object->set_cancel($user,$_POST['detail_cancel']);
-	
+		$result = $object->set_cancel($user,GETPOST('detail_cancel'));
+
+		if ($result > 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
 		if ($result > 0)
 		{
 			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 			{
 				// Send mail
-	
+
 				// TO
 				$destinataire = new User($db);
 				$destinataire->fetch($object->fk_user_author);
 				$emailTo = $destinataire->email;
-	
+
 				// FROM
 				$expediteur = new User($db);
 				$expediteur->fetch($object->fk_user_cancel);
 				$emailFrom = $expediteur->email;
-	
+
 				// SUBJECT
 				$subject = "' ERP - Note de frais annulée";
-	
+
 				// CONTENT
 				$message = "Bonjour {$destinataire->firstname},\n\n";
 				$message.= "Votre note de frais \"{$object->ref}\" vient d'être annulée.\n";
@@ -491,10 +613,10 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['d
 				$message.= "- Motif d'annulation : {$_POST['detail_cancel']}\n";
 				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
 				$message.= "Bien cordialement,\n' SI";
-	
+
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-	
+
 				if(!$mailfile->error)
 				{
 					// SEND
@@ -523,12 +645,33 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && !empty($_POST['d
 	}
 }
 
-if ($action == "confirm_paid" && $_GET['confirm']=="yes" && $id > 0 && $user->rights->expensereport->to_paid)
+if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->to_paid)
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id,$user);
+	$object->fetch($id);
 
 	$result = $object->setPaid($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -557,7 +700,7 @@ if ($action == "confirm_paid" && $_GET['confirm']=="yes" && $id > 0 && $user->ri
 
 			// Génération du pdf avant attachement
 			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
 			// PREPARE SEND
 			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -626,6 +769,27 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 	{
 		$result = $object->setStatut(0);
+
+		if ($result > 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
 		if ($result > 0)
 		{
 			header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
@@ -665,7 +829,7 @@ if ($action == "addline")
 	$vatrate=GETPOST('vatrate');
 	$object_ligne->fk_c_tva = $vatrate;
 	$object_ligne->vatrate = $vatrate;
-	
+
 	$object_ligne->fk_projet = $fk_projet;
 
 	if (! GETPOST('fk_c_type_fees') > 0)
@@ -734,7 +898,7 @@ if ($action == "addline")
 	$action='';
 }
 
-if ($action == 'confirm_delete_line' && $_POST["confirm"] == "yes")
+if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -747,6 +911,26 @@ if ($action == 'confirm_delete_line' && $_POST["confirm"] == "yes")
 	$result=$object->deleteline($_GET["rowid"]);
 	if ($result >= 0)
 	{
+		if ($result > 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
 		$object->update_totaux_del($object_ligne->total_ht,$object_ligne->total_tva);
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
 		exit;
@@ -789,6 +973,26 @@ if ($action == "updateligne" )
 		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $c_tva, $comments, $qty, $value_unit, $date, $object_id);
 		if ($result >= 0)
 		{
+			if ($result > 0)
+			{
+				// Define output language
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$model=$object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}
+			}
+
 			$object->recalculer($object_id);
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object_id);
 			exit;
@@ -800,20 +1004,6 @@ if ($action == "updateligne" )
 	}
 }
 
-if ($action == "recalc" && $id > 0)
-{
-	$object = new ExpenseReport($db);
-	$object->fetch($id);
-	if($object->recalculer($id) > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
 
 /*
  * Generer ou regenerer le document PDF
@@ -834,7 +1024,7 @@ if ($action == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=expensereport_pdf_create($db, $depl->id, '', $depl->modelpdf, $outputlangs);
+	$result=expensereport_pdf_create($db, $depl, '', $depl->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -945,21 +1135,36 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+	
+	// Public note
 	print '<tr>';
-	print '<td>'.$langs->trans("Note").'</td>';
-	print '<td>';
-	print '<textarea name="note" class="flat" rows="'.ROWS_3.'" cols="100">'.GETPOST('note').'</textarea>';
-	print '</td>';
-	print '</tr>';
+	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td valign="top" colspan="2">';
+
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td></tr>';
+
+	// Private note
+	if (empty($user->societe_id)) {
+		print '<tr>';
+		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td valign="top" colspan="2">';
+
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		print $doleditor->Create(1);
+		print '</td></tr>';
+	}
+	
 	print '<tbody>';
 	print '</table>';
 
 	dol_fiche_end();
 
-	print '<center>';
+	print '<div align="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
-	print ' &nbsp; &nbsp; <input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+	print '</div>';
 
 	print '</form>';
 }
@@ -1008,8 +1213,6 @@ else
 				{
 					print '<input type="hidden" name="action" value="update">';
 				}
-
-
 
 				print '<table class="border" style="width:100%;">';
 
@@ -1083,19 +1286,34 @@ else
 					print '</td></tr>';
 
 				}
+				
+				// Public note
 				print '<tr>';
-				print '<td>'.$langs->trans("Note").'</td>';
-				print '<td>';
-				print '<textarea name="note" class="flat" rows="'.ROWS_2.'" cols="70">'.$object->note.'</textarea>';
-				print '</td>';
-				print '</tr>';
+				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+				print '<td valign="top" colspan="2">';
+
+				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+				print $doleditor->Create(1);
+				print '</td></tr>';
+				
+				// Private note
+				if (empty($user->societe_id)) {
+					print '<tr>';
+					print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+					print '<td valign="top" colspan="2">';
+
+					$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+					print $doleditor->Create(1);
+					print '</td></tr>';
+				}
+				
 				print '</table>';
 
 				dol_fiche_end();
 
 				print '<div class="center">';
-				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button"> &nbsp; &nbsp; ';
-				print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
 				print '</div>';
 
 				print '</form>';
@@ -1120,7 +1338,7 @@ else
 				endif;
 
 				if ($action == 'validate'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_validate","","",1);
+				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
@@ -1129,22 +1347,24 @@ else
 				if ($ret == 'html') print '<br>';
 				endif;
 
-				if ($action == 'cancel'):
-				$array_input = array(array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ConfirmCancelTrip"),"","confirm_cancel",$array_input,"",0);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'cancel')
+				{
+					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
+					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
+					if ($ret == 'html') print '<br>';
+				}
 
 				if ($action == 'brouillonner'):
 				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
-				if ($action == 'refuse'):
-				$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
-				if ($ret == 'html') print '<br>';
-				endif;
+				if ($action == 'refuse')		// Deny
+				{
+					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					if ($ret == 'html') print '<br>';
+				}
 
 				if ($action == 'delete_line')
 				{
@@ -1180,8 +1400,12 @@ else
 				print '<td>'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
 				print '<tr>';
-				print '<td>'.$langs->trans("Note").'</td>';
-				print '<td>'.$object->note.'</td>';
+				print '<td>'.$langs->trans("NotePublic").'</td>';
+				print '<td>'.$object->note_public.'</td>';
+				print '</tr>';
+				print '<tr>';
+				print '<td>'.$langs->trans("NotePrivate").'</td>';
+				print '<td>'.$object->note_private.'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
@@ -1211,7 +1435,7 @@ else
 
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.$object->date_create.'</td></tr>';
+				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
 				print '</tr>';
 				if($object->fk_c_expensereport_statuts==6)
 				{
@@ -1227,8 +1451,8 @@ else
 					print '<td>'.$object->date_paiement.'</td></tr>';
 					print '</tr>';
 				}
-				
-				if($object->fk_c_expensereport_statuts<3)
+
+				if($object->fk_c_expensereport_statuts<3)	// informed
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';
@@ -1259,24 +1483,24 @@ else
 					print '</tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_CANCEL").'</td>';
-					print '<td>'.$object->date_cancel.'</td></tr>';
+					print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td></tr>';
 					print '</tr>';
 				}
 				else
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("VALIDOR").'</td>';
+					print '<td>'.$langs->trans("Approbator").'</td>';
 					print '<td>';
-					if ($object->fk_user_valid > 0)
+					if ($object->fk_user_approve > 0)
 					{
-						$userfee=new User($db);
-						$userfee->fetch($object->fk_user_valid);
-						print $userfee->getNomUrl(1);
+						$userapp=new User($db);
+						$userapp->fetch($object->fk_user_approve);
+						print $userapp->getNomUrl(1);
 					}
 					print '</td></tr>';
 					print '<tr>';
-					print '<td>'.$langs->trans("DATE_VALIDE").'</td>';
-					print '<td>'.$object->date_valide.'</td></tr>';
+					print '<td>'.$langs->trans("DateApprove").'</td>';
+					print '<td>'.dol_print_date($object->date_approve,'dayhour').'</td></tr>';
 					print '</tr>';
 				}
 
@@ -1291,7 +1515,7 @@ else
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
-					print '<td>'.$object->date_refuse;
+					print '<td>'.dol_print_date($object->date_refuse,'dayhour');
 					if ($object->detail_refuse) print ' - '.$object->detail_refuse;
 					print '</td>';
 					print '</tr>';
@@ -1398,7 +1622,7 @@ else
 								}
 								print '</tr>';
 							}
-							
+
 							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
 							{
 									//modif ligne!!!!!
@@ -1631,7 +1855,7 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	/* Si l'état est "En attente d'approbation"
-	 *	ET user à droit de "to_validate"
+	 *	ET user à droit de "approve"
 	*	ET fk_user_validator == user courant
 	*	Afficher : "Valider" / "Refuser" / "Supprimer"
 	*/
@@ -1644,7 +1868,7 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
-	if ($user->rights->expensereport->to_validate && $object->fk_c_expensereport_statuts == 2)
+	if ($user->rights->expensereport->approve && $object->fk_c_expensereport_statuts == 2)
 	{
 		//if($object->fk_user_validator==$user->id)
 		//{
@@ -1681,7 +1905,7 @@ if ($action != 'create' && $action != 'edit')
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
 		}
-		
+
 		if($user->rights->expensereport->supprimer)
 		{
 			// Supprimer
@@ -1690,11 +1914,11 @@ if ($action != 'create' && $action != 'edit')
 	}
 
 	/* Si l'état est "Payée"
-	 *	ET user à droit "to_validate"
+	 *	ET user à droit "approve"
 	*	ET user à droit "to_paid"
 	*	Afficher : "Annuler"
 	*/
-	if ($user->rights->expensereport->to_validate && $user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==6)
+	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==6)
 	{
 		// Annuler
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';

@@ -125,7 +125,8 @@ if ($id)
     $project->fetch_thirdparty();
 }
 
-$tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0);    // We want to see all task of project i am allowed to see, not only mine. Later only mine will be editable later.
+$onlyopened=1;	// or -1
+$tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
 //var_dump($tasksarray);
@@ -138,11 +139,11 @@ llxHeader("",$title,"");
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
+if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicTakDesc").'<br><br>';
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br><br>';
 }
 
 

@@ -457,8 +457,11 @@ else
     			if (empty($conf->global->PRODUIT_MULTIPRICES))
     			{
     			    print '<td align="right">';
-        			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-        			else print price($objp->price).' '.$langs->trans("HT");
+    			    if ($objp->tosell)
+    			    {
+        				if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+        				else print price($objp->price).' '.$langs->trans("HT");
+    			    }
         			print '</td>';
     			}
 
@@ -466,7 +469,7 @@ else
     			if ($user->rights->fournisseur->lire)
     			{
         			print  '<td align="right">';
-        			if ($objp->minsellprice != '')
+    			    if ($objp->tobuy && $objp->minsellprice != '')
         			{
     					//print price($objp->minsellprice).' '.$langs->trans("HT");
     					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
