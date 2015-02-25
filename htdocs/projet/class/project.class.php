@@ -1521,6 +1521,9 @@ class Project extends CommonObject
 	{
 		global $conf;
 
+		// Fucking Dolibarr with its partial objects. Get screwed!
+		$this->fetch( $this->id );
+
 		if (!$this->date_end) {
 			return false;
 		}
@@ -1561,7 +1564,7 @@ class Project extends CommonObject
 
 		$this->nbtodo=$this->nbtodolate=0;
 
-		$sql = "SELECT p.fk_statut, p.datee";
+		$sql = "SELECT p.rowid, p.fk_statut, p.datee";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		$sql.= " AND p.fk_statut = 1";
@@ -1572,6 +1575,8 @@ class Project extends CommonObject
 			$num=$this->db->num_rows($resql);
 			while ($obj=$this->db->fetch_object($resql))
 			{
+				$this->id = $obj->rowid;
+
 				$this->nbtodo++;
 
 				$this->date_end = $obj->datee;

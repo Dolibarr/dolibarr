@@ -155,7 +155,7 @@ if ($view_status !== "") {
 if ($mode == 'late') {
 	$horq = dol_now() - $conf->projet->warning_delay;
 
-	$sql .= " AND p.fk_statut >= 1 AND p.datee < '".$db->idate($horq)."'";
+	$sql .= " AND p.fk_statut = 1 AND p.datee < '".$db->idate($horq)."'";
 }
 
 if ($smonth > 0)
