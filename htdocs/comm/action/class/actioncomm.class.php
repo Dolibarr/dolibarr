@@ -184,12 +184,12 @@ class ActionComm extends CommonObject
         $now=dol_now();
 
         // Check parameters
-        if (empty($this->userownerid)) 
+        if (empty($this->userownerid))
         {
         	$this->errors[]='ErrorPropertyUserowneridNotDefined';
         	return -1;
         }
-        
+
         // Clean parameters
         $this->label=dol_trunc(trim($this->label),128);
         $this->location=dol_trunc(trim($this->location),128);
@@ -214,7 +214,7 @@ class ActionComm extends CommonObject
         $userdoneid=$this->userdoneid;
 
         // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
-        if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned)) 
+        if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned))
         	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
 
         if (! $this->type_id || ! $this->type_code)
@@ -306,9 +306,9 @@ class ActionComm extends CommonObject
 			        {
 			        	$val=array('id'=>$val);
 			        }
-					
+
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory'])?'0':$val['mandatory']).", ".(empty($val['transparency'])?'0':$val['transparency']).", ".(empty($val['answer_status'])?'0':$val['answer_status']).")";
 
 					$resql = $this->db->query($sql);
 					if (! $resql)
@@ -672,7 +672,7 @@ class ActionComm extends CommonObject
 				foreach($this->userassigned as $key => $val)
 				{
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['manadatory']?$val['manadatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['manadatory'])?'0':$val['manadatory']).", ".(empty($val['transparency'])?'0':$val['transparency']).", ".(empty($val['answer_status'])?'0':$val['answer_status']).")";
 
 					$resql = $this->db->query($sql);
 					if (! $resql)

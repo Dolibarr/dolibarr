@@ -355,6 +355,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 
 	    	// Fill array 'array_options' with data from add form
 	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			if ($ret < 0) $error++;
 
 	        $result = $object->create($user);
 	        if ($result > 0)
@@ -702,19 +703,20 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 	// Fill array 'array_options' with data from update form
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-	if ($ret < 0)
-		$error ++;
+	if ($ret < 0) $error++;
 
-	if (! $error) {
+	if (! $error)
+	{
+		$result = $object->insertExtraFields();
+		if ($result < 0)
+		{
+			$error++;
+		}
+	}
+	else if ($reshook < 0) $error++;
 
-			$result = $object->insertExtraFields();
-			if ($result < 0) {
-				$error ++;
-			}
-		} else if ($reshook < 0)
-			$error ++;
-
-	if ($error) {
+	if ($error)
+	{
 		$action = 'edit_extras';
 		setEventMessage($object->error,'errors');
 	}

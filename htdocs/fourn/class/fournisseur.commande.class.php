@@ -887,7 +887,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
-		//$sql.= ", date_livraison";
+		$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -899,12 +899,12 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " VALUES (";
         $sql.= "''";
         $sql.= ", '".$this->ref_supplier."'";
-        $sql.= ", '".$this->note_private."'";
-        $sql.= ", '".$this->note_public."'";
+        $sql.= ", '".$this->db->escape($this->note_private)."'";
+        $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
-		//$sql.= ", '".$this->db->idate($now)."'";
+		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", " . $this->source;
@@ -1024,7 +1024,9 @@ class CommandeFournisseur extends CommonOrder
 
         $error=0;
 
-        $this->db->begin();
+		$this->context['createfromclone'] = 'createfromclone';
+
+		$this->db->begin();
 
         // Load source object
         $objFrom = dol_clone($this);
@@ -1060,7 +1062,9 @@ class CommandeFournisseur extends CommonOrder
 			// End call triggers
         }
 
-        // End
+		unset($this->context['createfromclone']);
+
+		// End
         if (! $error)
         {
             $this->db->commit();

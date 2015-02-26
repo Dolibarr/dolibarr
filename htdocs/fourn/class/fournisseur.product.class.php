@@ -447,11 +447,17 @@ class ProductFournisseur extends Product
      *
      *  @param	int		$prodid	    Product id
      *  @param	int		$qty		Minimum quantity
-     *  @return int					<0 if KO, >0 if OK
+     *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
     function find_min_price_product_fournisseur($prodid, $qty=0)
     {
         global $conf;
+
+        if (empty($prodid))
+        {
+        	dol_syslog("Warning function find_min_price_product_fournisseur were called with prodid empty. May be a bug.", LOG_WARNING);
+        	return 0;
+        }
 
         $this->product_fourn_price_id = '';
         $this->product_fourn_id       = '';
@@ -500,7 +506,7 @@ class ProductFournisseur extends Product
             return 1;
         }
         else
-        {
+		{
             $this->error=$this->db->error();
             return -1;
         }
