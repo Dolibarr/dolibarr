@@ -982,10 +982,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print "</tr>\n";
 	
 	// Accountancy code
-	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-	print '<td>';
-	print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
-	print '</td></tr>';
+	if ($conf->salaries->enabled)
+	{
+		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td>';
+		print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
+		print '</td></tr>';
+	}
 
 	// User color
 	if (! empty($conf->agenda->enabled))
@@ -1325,9 +1328,12 @@ else
 		    print "</tr>\n";
 
 			// Accountancy code
-            print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td colspan="2">'.$object->accountancy_code.'</td>';
-
+			if ($conf->salaries->enabled)
+			{
+				print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td colspan="2">'.$object->accountancy_code.'</td>';
+			}
+				
 			// Color user
 			if (! empty($conf->agenda->enabled))
             {
@@ -2023,20 +2029,23 @@ else
 		    print "</tr>\n";
 
 		    // Accountancy code
-            print "<tr>";
-	        print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-	        print '<td>';
-	        if ($caneditfield)
-	        {
-	            print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
-	        }
-	        else
-	        {
-	            print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-	            print $object->accountancy_code;
-	        }
-	        print '</td>';
-	        print "</tr>";
+			if ($conf->salaries->enabled)
+			{
+				print "<tr>";
+				print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>';
+				if ($caneditfield)
+				{
+					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print $object->accountancy_code;
+				}
+				print '</td>';
+				print "</tr>";
+			}	
 
 			// User color
 			if (! empty($conf->agenda->enabled))
