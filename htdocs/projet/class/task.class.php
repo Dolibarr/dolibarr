@@ -1092,6 +1092,8 @@ class Task extends CommonObject
 		$clone_task=new Task($this->db);
 		$origin_task=new Task($this->db);
 
+		$clone_task->context['createfromclone']='createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -1158,8 +1160,6 @@ class Task extends CommonObject
 		// End
 		if (! $error)
 		{
-			$this->db->commit();
-
 			$clone_task_id=$clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 
@@ -1279,20 +1279,19 @@ class Task extends CommonObject
 			{
 				//TODO clone time of affectation
 			}
+		}
 
-			if (! $error)
-			{
-				return $clone_task_id;
-			}
-			else
-			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
-				return -1;
-			}
+		unset($clone_task->context['createfromclone']);
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return $clone_task_id;
 		}
 		else
 		{
 			$this->db->rollback();
+			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}

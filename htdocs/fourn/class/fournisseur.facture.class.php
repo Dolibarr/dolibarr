@@ -1716,7 +1716,9 @@ class FactureFournisseur extends CommonInvoice
 
         $object=new FactureFournisseur($this->db);
 
-        $this->db->begin();
+		$object->context['createfromclone'] = 'createfromclone';
+
+		$this->db->begin();
 
         // Load source object
         $object->fetch($fromid);
@@ -1761,6 +1763,8 @@ class FactureFournisseur extends CommonInvoice
 
 
         }
+
+        unset($object->context['createfromclone']);
 
         // End
         if (! $error)
