@@ -89,6 +89,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+		if ($ret < 0) $error++;
 
 		if ($adht->libelle)
 		{
@@ -126,6 +127,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+		if ($ret < 0) $error++;
 
 		$adht->update($user);
 

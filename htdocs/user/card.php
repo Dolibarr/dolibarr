@@ -211,6 +211,7 @@ if ($action == 'add' && $canadduser)
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
         // If multicompany is off, admin users must all be on entity 0.
         $entity=GETPOST('entity','int');
@@ -358,6 +359,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             // Fill array 'array_options' with data from add form
         	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
             if (! empty($conf->multicompany->enabled))
             {
@@ -382,20 +384,22 @@ if ($action == 'update' && ! $_POST["cancel"])
             if (GETPOST('deletephoto')) $object->photo='';
             if (! empty($_FILES['photo']['name'])) $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
-            $ret=$object->update($user);
-
-            if ($ret < 0)
+            if (! $error)
             {
-            	$error++;
-                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-                {
-                    $langs->load("errors");
-	                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
-                }
-                else
-              {
-	              setEventMessage($object->error, 'errors');
-                }
+	            $ret=$object->update($user);
+	            if ($ret < 0)
+	            {
+	            	$error++;
+	                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	                {
+	                    $langs->load("errors");
+		                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
+	                }
+	                else
+	              {
+		              setEventMessage($object->error, 'errors');
+	                }
+	            }
             }
 
             if (! $error && isset($_POST['contactid']))

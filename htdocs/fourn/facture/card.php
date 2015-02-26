@@ -308,7 +308,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-		if ($ret < 0) $error ++;
+		if ($ret < 0) $error++;
 
         $tmpproject = GETPOST('projectid', 'int');
 
@@ -1071,8 +1071,7 @@ elseif ($action == 'update_extras')
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
-
-	if($ret < 0) $error++;
+	if ($ret < 0) $error++;
 
 	if (!$error)
 	{

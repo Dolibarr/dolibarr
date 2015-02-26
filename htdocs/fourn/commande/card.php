@@ -783,7 +783,7 @@ if ($action == 'update_extras')
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
 	if ($ret < 0) $error++;
 
-	if (!$error)
+	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
@@ -842,19 +842,26 @@ if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 		$object->date_livraison = $datelivraison;
 
 		// Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+       	if (! $error)
+       	{
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
+       	}
 
-        $id = $object->create($user);
-		if ($id < 0)
-		{
-			$error++;
-		}
+       	if (! $error)
+       	{
+			$id = $object->create($user);
+        	if ($id < 0)
+        	{
+        		$error++;
+	        	setEventMessage($langs->trans($object->error), 'errors');
+        	}
+        }
 
         if ($error)
         {
             $langs->load("errors");
             $db->rollback();
-	        setEventMessage($langs->trans($object->error), 'errors');
             $action='create';
             $_GET['socid']=$_POST['socid'];
         }
