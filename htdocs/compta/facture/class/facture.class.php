@@ -607,6 +607,8 @@ class Facture extends CommonInvoice
 
 		$error=0;
 
+		$this->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// get extrafields so they will be clone
@@ -692,6 +694,8 @@ class Facture extends CommonInvoice
             if ($result < 0) $error++;
             // End call triggers
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)

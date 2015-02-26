@@ -878,6 +878,8 @@ class Commande extends CommonOrder
 
         $error=0;
 
+        $this->context['createfromclone'] = 'createfromclone';
+
         $this->db->begin();
 
 		// get extrafields so they will be clone
@@ -941,6 +943,8 @@ class Commande extends CommonOrder
             if ($result < 0) $error++;
             // End call triggers
         }
+
+        unset($this->context['createfromclone']);
 
         // End
         if (! $error)

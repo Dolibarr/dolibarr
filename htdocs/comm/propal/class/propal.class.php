@@ -393,6 +393,8 @@ class Propal extends CommonObject
             // Insert line
             $this->line=new PropaleLigne($this->db);
 
+            $this->line->context = $this->context;
+
             $this->line->fk_propal=$this->id;
             $this->line->label=$label;
             $this->line->desc=$desc;
@@ -953,6 +955,8 @@ class Propal extends CommonObject
     {
         global $user,$langs,$conf,$hookmanager;
 
+        $this->context['createfromclone']='createfromclone';
+
         $error=0;
         $now=dol_now();
 
@@ -1045,6 +1049,8 @@ class Propal extends CommonObject
             if ($result < 0) { $error++; }
             // End call triggers
         }
+
+        unset($this->context['createfromclone']);
 
         // End
         if (! $error)
