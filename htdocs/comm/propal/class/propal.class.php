@@ -239,27 +239,30 @@ class Propal extends CommonObject
                 return -5;
             }
 
-            $propalligne=new PropaleLigne($this->db);
-            $propalligne->fk_propal=$this->id;
-            $propalligne->fk_remise_except=$remise->id;
-            $propalligne->desc=$remise->description;   	// Description ligne
-            $propalligne->tva_tx=$remise->tva_tx;
-            $propalligne->subprice=-$remise->amount_ht;
-            $propalligne->fk_product=0;					// Id produit predefini
-            $propalligne->qty=1;
-            $propalligne->remise=0;
-            $propalligne->remise_percent=0;
-            $propalligne->rang=-1;
-            $propalligne->info_bits=2;
+            $line=new PropaleLigne($this->db);
+
+            $this->line->context = $this->context;
+
+            $line->fk_propal=$this->id;
+            $line->fk_remise_except=$remise->id;
+            $line->desc=$remise->description;   	// Description ligne
+            $line->tva_tx=$remise->tva_tx;
+            $line->subprice=-$remise->amount_ht;
+            $line->fk_product=0;					// Id produit predefini
+            $line->qty=1;
+            $line->remise=0;
+            $line->remise_percent=0;
+            $line->rang=-1;
+            $line->info_bits=2;
 
             // TODO deprecated
-            $propalligne->price=-$remise->amount_ht;
+            $line->price=-$remise->amount_ht;
 
-            $propalligne->total_ht  = -$remise->amount_ht;
-            $propalligne->total_tva = -$remise->amount_tva;
-            $propalligne->total_ttc = -$remise->amount_ttc;
+            $line->total_ht  = -$remise->amount_ht;
+            $line->total_tva = -$remise->amount_tva;
+            $line->total_ttc = -$remise->amount_ttc;
 
-            $result=$propalligne->insert();
+            $result=$line->insert();
             if ($result > 0)
             {
                 $result=$this->update_price(1);
@@ -276,7 +279,7 @@ class Propal extends CommonObject
             }
             else
             {
-                $this->error=$propalligne->error;
+                $this->error=$line->error;
                 $this->db->rollback();
                 return -2;
             }
@@ -546,6 +549,8 @@ class Propal extends CommonObject
 
             // Update line
             $this->line=new PropaleLigne($this->db);
+
+            $this->line->context = $this->context;
 
             // Stock previous line records
             $staticline=new PropaleLigne($this->db);

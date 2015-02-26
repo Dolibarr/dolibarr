@@ -1205,6 +1205,8 @@ class Commande extends CommonOrder
             // Insert line
             $this->line=new OrderLine($this->db);
 
+            $this->line->context = $this->context;
+
             $this->line->fk_commande=$this->id;
             $this->line->label=$label;
             $this->line->desc=$desc;
@@ -1318,6 +1320,8 @@ class Commande extends CommonOrder
             $price = $prod->price;
 
             $line=new OrderLine($this->db);
+
+            $line->context = $this->context;
 
             $line->fk_product=$idproduct;
             $line->desc=$prod->description;
@@ -2400,6 +2404,8 @@ class Commande extends CommonOrder
 
             // Update line
             $this->line=new OrderLine($this->db);
+
+            $this->line->context = $this->context;
 
             // Stock previous line records
             $staticline=new OrderLine($this->db);
