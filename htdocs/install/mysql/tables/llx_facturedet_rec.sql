@@ -3,6 +3,7 @@
 -- Copyright (C) 2009-2014  Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -46,5 +47,6 @@ create table llx_facturedet_rec
   info_bits			integer DEFAULT 0,				-- TVA NPR ou non
   special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
   rang				integer DEFAULT 0,				-- ordre d'affichage
-  fk_contract_line  integer NULL					-- id of contract line when predefined invoice comes from contract lines 
+  fk_contract_line  integer NULL,					-- id of contract line when predefined invoice comes from contract lines
+  fk_unit         integer    DEFAULT NULL
 )ENGINE=innodb;

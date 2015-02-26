@@ -140,6 +140,15 @@ $coldisplay=-1; // We remove first td
 	<?php } ?>
 	</td>
 
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left">';
+		$form->select_units($line->fk_unit, "units");
+		print '</td>';
+	}
+	?>
+
 	<td align="right" nowrap><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '" ';

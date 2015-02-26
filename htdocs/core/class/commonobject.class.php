@@ -8,6 +8,7 @@
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2592,6 +2593,11 @@ abstract class CommonObject
 		// Qty
 		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
 
+		if($conf->global->PRODUCT_USE_UNITS)
+		{
+			print '<td align="left" width="50">'.$langs->trans('Unit').'</td>';
+		}
+
 		// Reduction short
 		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
 
@@ -2794,7 +2800,7 @@ abstract class CommonObject
      */
     function printOriginLinesList()
     {
-        global $langs, $hookmanager;
+        global $langs, $hookmanager, $conf;
 
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans('Ref').'</td>';
@@ -2802,6 +2808,10 @@ abstract class CommonObject
         print '<td align="right">'.$langs->trans('VAT').'</td>';
         print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
         print '<td align="right">'.$langs->trans('Qty').'</td>';
+	    if($conf->global->PRODUCT_USE_UNITS)
+	    {
+		    print '<td align="left">'.$langs->trans('Unit').'</td>';
+	    }
         print '<td align="right">'.$langs->trans('ReductionShort').'</td></tr>';
 
         $num = count($this->lines);
@@ -2842,7 +2852,7 @@ abstract class CommonObject
      */
     function printOriginLine($line,$var)
     {
-        global $conf,$langs,$bc;
+        global $conf,$langs,$bc, $conf;
 
         //var_dump($line);
 		if (!empty($line->date_start))
@@ -2929,6 +2939,7 @@ abstract class CommonObject
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
         $this->tpl['price'] = price($line->subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
+	    if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->get_unit_label('long');
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
         // Output template part (modules that overwrite templates must declare this into descriptor)

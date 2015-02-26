@@ -5,6 +5,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
@@ -168,6 +169,12 @@ class Product extends CommonObject
 	var $note;
 
     var $fk_price_expression;
+
+	/**
+	 * Unit
+	 * @var int
+	 */
+	public $fk_unit;
 
 	/**
 	 *  Constructor
@@ -360,6 +367,7 @@ class Product extends CommonObject
 					$sql.= ", canvas";
 					$sql.= ", finished";
 					$sql.= ", tobatch";
+					$sql.= ", fk_unit";
 					$sql.= ") VALUES (";
 					$sql.= "'".$this->db->idate($now)."'";
 					$sql.= ", ".$conf->entity;
@@ -380,6 +388,7 @@ class Product extends CommonObject
 					$sql.= ", '".$this->canvas."'";
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
+					$sql.= ", ".$this->fk_unit;
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -669,6 +678,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
+	        $sql.= ", fk_unit= " . $this->fk_unit;
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."update", LOG_DEBUG);
@@ -1467,7 +1477,7 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
+		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit";
 		$sql.= " ,ref_ext, fk_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
@@ -1546,6 +1556,7 @@ class Product extends CommonObject
 
 				$this->ref_ext					= $obj->ref_ext;
 				$this->fk_price_expression		= $obj->fk_price_expression;
+				$this->fk_unit					= $obj->fk_unit;
 
 				$this->db->free($resql);
 
@@ -3726,6 +3737,48 @@ class Product extends CommonObject
 
         $this->barcode=-1;	// Create barcode automatically
     }
+
+	/**
+	 *	Returns the text label from units dictionnary
+	 *
+	 * 	@param	string $type Label type (long or short)
+	 *	@return	string|int <0 if ko, label if ok
+	 */
+	function get_unit_label($type='long')
+	{
+		global $langs;
+
+		if (!$this->fk_unit) {
+			return '';
+		}
+
+		$langs->load('products');
+
+		$this->db->begin();
+
+		$label_type = 'label';
+
+		if ($type == 'short')
+		{
+			$label_type = 'short_label';
+		}
+
+		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$resql = $this->db->query($sql);
+		if($resql && $this->db->num_rows($resql) > 0)
+		{
+			$res = $this->db->fetch_array($resql);
+			$label = $res[$label_type];
+			$this->db->free($resql);
+			return $label;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::get_unit_label Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
     /**
      * Return if object has a sell-by date or eat-by date
