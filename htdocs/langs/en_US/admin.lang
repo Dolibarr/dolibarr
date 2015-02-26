@@ -1371,6 +1371,7 @@ UseSearchToSelectProduct=Use a search form to choose a product (rather than a dr
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Default barcode type to use for products
 SetDefaultBarcodeTypeThirdParties=Default barcode type to use for third parties
+UseUnits=Support units
 ProductCodeChecker= Module for product code generation and checking (product or service)
 ProductOtherConf= Product / Service configuration
 ##### Syslog #####

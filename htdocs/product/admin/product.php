@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-**
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -171,6 +172,12 @@ else if ($action == 'set')
 	$ecotaxe = GETPOST("activate_useecotaxe");
 	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
 }*/
+
+else if ($action == 'useUnits')
+{
+    $useUnits = GETPOST('activate_units', 'alpha');
+    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $useUnits, 'chaine', 0, '', $conf->entity);
+}
 
 if($action)
 {
@@ -418,6 +425,21 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+// Use units
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="useUnits">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UseUnits").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

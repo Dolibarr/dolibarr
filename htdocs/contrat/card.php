@@ -490,6 +490,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
            	$desc=$prod->description;
            	$desc=dol_concatdesc($desc,$product_desc);
+	        $fk_unit = $prod->fk_unit;
         }
         else
 		{
@@ -498,6 +499,11 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
             $desc=$product_desc;
+			$fk_unit= GETPOST('units', 'int');
+
+			if ($fk_unit <= 0) {
+				$fk_unit = null;
+			}
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
@@ -537,7 +543,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $info_bits,
       			$fk_fournprice,
       			$pa_ht,
-            	$array_option
+            	$array_option,
+	            $fk_unit
             );
         }
 
@@ -618,6 +625,8 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
 	  	else
 	  	  $pa_ht = null;
 
+	    $fk_unit = GETPOST('unit', 'int');
+
         $objectline->description=GETPOST('product_desc');
         $objectline->price_ht=GETPOST('elprice');
         $objectline->subprice=GETPOST('elprice');
@@ -633,6 +642,12 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->fk_user_cloture=$user->id;
         $objectline->fk_fournprice=$fk_fournprice;
         $objectline->pa_ht=$pa_ht;
+
+	    if ($fk_unit > 0) {
+		    $objectline->fk_unit = $_POST['unit'];
+	    } else {
+		    $objectline->fk_unit = null;
+	    }
 
         // Extrafields
         $extrafieldsline = new ExtraFields($db);
@@ -1286,6 +1301,7 @@ else
             $sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
+	        $sql.= " cd.fk_unit,";
             $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -1301,6 +1317,7 @@ else
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
+	            if($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
 				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
                 print '<td width="30">&nbsp;</td>';
@@ -1343,6 +1360,8 @@ else
                     print '<td align="right">'.price($objp->subprice)."</td>\n";
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
+	                //Unit
+	                if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->get_unit_label()).'</td>';
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
@@ -1390,8 +1409,16 @@ else
                     // Dates de en service prevues et effectives
                     if ($objp->subprice >= 0)
                     {
+	                    $colspan = 6;
+
+	                    if ($conf->margin->enabled && $conf->global->PRODUCT_USE_UNITS) {
+		                    $colspan = 8;
+	                    } elseif ($conf->margin->enabled || $conf->global->PRODUCT_USE_UNITS) {
+		                    $colspan = 7;
+	                    }
+
                         print '<tr '.$bc[$var].'>';
-                        print '<td colspan="'.($conf->margin->enabled?7:6).'">';
+                        print '<td colspan="'.$colspan.'">';
 
                         // Date planned
                         print $langs->trans("DateStartPlanned").': ';
@@ -1459,6 +1486,12 @@ else
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+	              if($conf->global->PRODUCT_USE_UNITS)
+	              {
+		              print '<td align="left">';
+		              $form->select_units($objp->fk_unit, "unit");
+		              print '</td>';
+	              }
                     print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 					if (! empty($usemargins))
 					{
@@ -1472,6 +1505,7 @@ else
 
                     $colspan=5;
                     if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
+	              if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
                     print "<tr ".$bc[$var].">";
