@@ -662,7 +662,7 @@ class CommandeFournisseur extends CommonOrder
             	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
 	            {
 					$result=$this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
-					if ($result < 0)
+					if ($result < 0 && $result != -2)	// -2 means already exists
 					{
 						$error++;
 					}
