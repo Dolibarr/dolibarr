@@ -197,3 +197,15 @@ CREATE TABLE llx_expensereport_det
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
 
 
+
+create table llx_commande_fournisseurdet_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_commande_fournisseurdet_extrafields ADD INDEX idx_commande_fournisseurdet_extrafields (fk_object);
+
+
