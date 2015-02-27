@@ -2,6 +2,7 @@
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * Version V1.1 Initial version of Philippe Berthet
  * Version V2   Change to be compatible with 3.4 and enhanced to be more generic
@@ -115,6 +116,10 @@ print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 print '</td></tr>';
+
+// Commercial name
+print '<tr id="commercial_name"><td valign="top"><label for="commercial_name_input">'.$langs->trans('CommercialName').'</label></td>';
+print '<td colspan="3"><input type="text" name="commercial_name" id="commercial_name_input" value="'.dol_escape_htmltag($object->commercial_name).'" size="32"></td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {

@@ -195,5 +195,6 @@ CREATE TABLE llx_expensereport_det
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
-
+-- Commercial name
+ALTER TABLE llx_societe ADD COLUMN commercial_name varchar(128) NULL;
 

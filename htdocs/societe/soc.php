@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,9 @@ if (empty($reshook))
         else
         {
             $object->name              = GETPOST('name', 'alpha')?GETPOST('name', 'alpha'):GETPOST('nom', 'alpha');
+	        $object->commercial_name   = GETPOST('commercial_name');
         }
+
         $object->address               = GETPOST('address', 'alpha');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
@@ -764,6 +767,7 @@ else
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
                         	$("#typent_id").val(0);
+							$("#commercial_name").show();
                         	$("#effectif_id").val(0);
                         	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
                         	document.formsoc.private.value=0;
@@ -771,6 +775,7 @@ else
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
                         	$("#typent_id").val(id_te_private);
+							$("#commercial_name").hide();
                         	$("#effectif_id").val(id_ef15);
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
@@ -901,6 +906,10 @@ else
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
+
+        // Commercial name
+        print '<tr id="commercial_name"><td valign="top"><label for="commercial_name_input">'.$langs->trans('CommercialName').'</label></td>';
+	    print '<td colspan="3"><input type="text" name="commercial_name" id="commercial_name_input" value="'.$object->commercial_name.'" size="32"></td></tr>';
 
         // Address
         print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
@@ -1290,6 +1299,10 @@ else
             print '<tr><td><label for="name"><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></label></td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="nom" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
+	        // Commercial name
+	        print '<tr id="commercial_name"><td valign="top"><label for="commercial_name_input">'.$langs->trans('CommercialName').'</label></td>';
+	        print '<td colspan="3"><input type="text" name="commercial_name" id="commercial_name_input" value="'.dol_escape_htmltag($object->commercial_name).'" size="32"></td></tr>';
+
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
@@ -1647,21 +1660,17 @@ else
 
         print '<table class="border" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-        print '<td colspan="2">';
-        print $fuser->id;
-        print '</td>';
-        print '</tr>';
-        */
-
         // Name
         print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
         print '<td colspan="3">';
         print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         print '</td>';
         print '</tr>';
+
+	    // Commercial name
+	    print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
+	    print $object->commercial_name;
+	    print "</td></tr>";
 
         // Logo+barcode
         $rowspan=6;

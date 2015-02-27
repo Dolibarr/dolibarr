@@ -85,20 +85,22 @@ if ($mode == 'search')
 
         // For natural search
         $scrit = explode(' ', $socname);
+
+		$fields = array(
+			's.nom',
+			's.code_client',
+			's.email',
+			's.url',
+			's.siren',
+			's.commercial_name'
+		);
+
+		if (!empty($conf->barcode->enabled)) {
+			$fields[] = 's.barcode';
+		}
+
         foreach ($scrit as $crit) {
-            $sql.= " AND (";
-            $sql.= " s.nom LIKE '%".$db->escape($crit)."%'";
-            $sql.= " OR s.code_client LIKE '%".$db->escape($crit)."%'";
-            $sql.= " OR s.email LIKE '%".$db->escape($crit)."%'";
-            $sql.= " OR s.url LIKE '%".$db->escape($crit)."%'";
-            $sql.= " OR s.siren LIKE '%".$db->escape($crit)."%'";
-
-            if (!empty($conf->barcode->enabled))
-            {
-                    $sql.= "OR s.barcode LIKE '".$db->escape($crit)."'";
-            }
-
-            $sql.= ")";
+	        $sql.= natural_search($fields, $crit);
         }
 
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
