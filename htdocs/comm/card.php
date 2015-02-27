@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,6 +219,11 @@ if ($id > 0)
 	$object->next_prev_filter="te.client in (1,2,3)";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
+
+	// Commercial name
+	print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
+	print $object->commercial_name;
+	print "</td></tr>";
 
 	// Prospect/Customer
 	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';

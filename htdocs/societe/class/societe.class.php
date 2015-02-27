@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,13 @@ class Societe extends CommonObject
 
     var $firstname;
     var $lastname;
+
+	/**
+	 * Commercial name
+	 * @var string
+	 */
+	public $commercial_name;
+
     var $particulier;
     var $civility_id;
     var $address;
@@ -424,8 +431,8 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
-            $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, commercial_name, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
+            $sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->commercial_name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
@@ -637,6 +644,7 @@ class Societe extends CommonObject
         $this->id			= $id;
         $this->name			= $this->name?trim($this->name):trim($this->nom);
         $this->nom			= $this->name;	// For backward compatibility
+	    $this->commercial_name = trim($this->commercial_name);
         $this->ref_ext		= trim($this->ref_ext);
         $this->address		= $this->address?trim($this->address):trim($this->address);
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
@@ -744,6 +752,7 @@ class Societe extends CommonObject
 
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
             $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
+            $sql .= ",commercial_name = '" . $this->db->escape($this->commercial_name) ."'";
             $sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
             $sql .= ",address = '" . $this->db->escape($this->address) ."'";
 
@@ -962,7 +971,7 @@ class Societe extends CommonObject
 
         if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom as name, s.commercial_name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_modification';
@@ -1021,6 +1030,7 @@ class Societe extends CommonObject
                 $this->ref          = $obj->rowid;
                 $this->name 		= $obj->name;
                 $this->nom          = $obj->name;		// deprecated
+	            $this->commercial_name = $obj->commercial_name;
                 $this->ref_ext      = $obj->ref_ext;
                 $this->ref_int      = $obj->ref_int;
 
@@ -1720,6 +1730,10 @@ class Societe extends CommonObject
 			}
 			$name =$code.' '.$name;
 		}
+
+	    if (!empty($this->commercial_name)) {
+		    $name .= ' ('.$this->commercial_name.')';
+	    }
 
         $result=''; $label='';
         $lien=''; $lienfin='';
