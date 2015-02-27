@@ -452,7 +452,7 @@ class DoliDBSqlite extends DoliDB
         }
         catch(Exception $e)
         {
-            $this->error=$e->getMessage();
+            $this->error=$this->db->lastErrorMsg();
         }
 
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
@@ -645,7 +645,7 @@ class DoliDBSqlite extends DoliDB
                 return $errorcode_map[$this->db->errorCode()];
             }*/
             $errno=$this->db->lastErrorCode();
-			if ($errno=='HY000')
+			if ($errno=='HY000' || $errno == 0)
 			{
                 if (preg_match('/table.*already exists/i',$this->error))     return 'DB_ERROR_TABLE_ALREADY_EXISTS';
                 elseif (preg_match('/index.*already exists/i',$this->error)) return 'DB_ERROR_KEY_NAME_ALREADY_EXISTS';
@@ -655,6 +655,9 @@ class DoliDBSqlite extends DoliDB
 			{
                 if (preg_match('/column.* not unique/i',$this->error))       return 'DB_ERROR_RECORD_ALREADY_EXISTS';
                 elseif (preg_match('/PRIMARY KEY must be unique/i',$this->error)) return 'DB_ERROR_RECORD_ALREADY_EXISTS';
+			}
+			if ($errno > 1) {
+				// TODO Voir la liste des messages d'erreur
 			}
 
             return ($errno?'DB_ERROR_'.$errno:'0');
