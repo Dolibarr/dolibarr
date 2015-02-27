@@ -1326,7 +1326,8 @@ class BonPrelevement extends CommonObject
 			$dateTime_ECMA = dol_print_date($date_actu, '%Y-%m-%dT%H:%M:%S');
 			$fileDebiteurSection = '';
 			$fileEmetteurSection = '';
-			$i = $j = 0;
+			$i = 0; 
+			$j = 0;
 			$this->total = 0;
 
 			/*
