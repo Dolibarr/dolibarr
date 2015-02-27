@@ -786,9 +786,10 @@ if (empty($reshook))
 	}
 
 	/*
-	 *  Mise a jour d'une ligne dans la commande
-	*/
-	else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('save') == $langs->trans('Save')) {
+	 *  Update a line
+	 */
+	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save') == $langs->trans('Save'))
+	{
 		// Clean parameters
 		$date_start='';
 		$date_end='';
@@ -891,7 +892,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -2101,7 +2102,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
+		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id . '">
 		';

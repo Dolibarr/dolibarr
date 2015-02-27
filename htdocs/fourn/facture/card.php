@@ -57,6 +57,8 @@ $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
+$cancel     = GETPOST('cancel','alpha');
+$lineid     = GETPOST('lineid', 'int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -89,6 +91,8 @@ $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the inclu
 /*
  * Actions
  */
+
+if ($cancel) $action='';
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -503,12 +507,11 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 }
 
 // Edit line
-elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'updateline' && $user->rights->fournisseur->facture->creer)
 {
-	// TODO Missing transaction
-    if (GETPOST('etat') == '1' && ! GETPOST('cancel')) // si on valide la modification
-    {
-        $object->fetch($id);
+	$db->begin();
+
+		$object->fetch($id);
         $object->fetch_thirdparty();
 
         if ($_POST['puht'])
@@ -547,12 +550,13 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
         if ($result >= 0)
         {
             unset($_POST['label']);
+            $db->commit();
         }
         else
         {
+        	$db->rollback();
             setEventMessage($object->error,'errors');
         }
-    }
 }
 
 elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
@@ -1954,11 +1958,10 @@ else
         $cols = 4;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-        print '</table>';
+        print '</table><br>';
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
-        	print '<br>';
         	$blocname = 'contacts';
         	$title = $langs->trans('ContactsAddresses');
         	include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
@@ -1976,23 +1979,31 @@ else
         /*
          * Lines
          */
+		//$result = $object->getLinesArray();
 
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?etat=1&id='.$object->id.(($action != 'edit_line')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
 		<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
-		<input type="hidden" name="action" value="'.(($action != 'edit_line')?'addline':'update_line').'">
+		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="'.$object->id.'">
-        <input type="hidden" name="facid" value="'.$object->id.'">
         <input type="hidden" name="socid" value="'.$societe->id.'">
-
 		';
 
+		if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
+			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+		}
 
-        print '<br>';
-        print '<table id="tablelines" class="noborder noshadow" width="100%">';
-        $var=1;
-        $num=count($object->lines);
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+
+		// Show object lines
+		if (! empty($object->lines))
+			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+
+		$num=count($object->lines);
+
+		/*
+		$var=1;
         for ($i = 0; $i < $num; $i++)
         {
             if ($i == 0)
@@ -2029,7 +2040,7 @@ else
             $var=!$var;
 
             // Edit line
-            if ($object->statut == 0 && $action == 'edit_line' && $_GET['etat'] == '0' && $_GET['lineid'] == $object->lines[$i]->rowid)
+            if ($object->statut == 0 && $action == 'editline' && $_GET['lineid'] == $object->lines[$i]->rowid)
             {
                 print '<tr '.$bc[$var].'>';
 
@@ -2156,7 +2167,7 @@ else
 				}
 
                 print '<td align="center" width="16">';
-                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
+                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
                 else print '&nbsp;';
                 print '</td>';
 
@@ -2172,9 +2183,9 @@ else
             }
 
         }
-
+*/
 		// Form to add new line
-        if ($object->statut == 0 && $action != 'edit_line')
+        if ($object->statut == 0 && $action != 'editline')
         {
        		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 			$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
@@ -2194,6 +2205,7 @@ else
         }
 
         print '</table>';
+
 
         print '</form>';
 

@@ -199,7 +199,8 @@ $coldisplay=-1; // We remove first td
 
 	<?php
 	//Line extrafield
-	if (!empty($extrafieldsline)) {
+	if (!empty($extrafieldsline))
+	{
 		print $line->showOptionals($extrafieldsline,'edit',array('style'=>$bc[$var],'colspan'=>$coldisplay));
 	}
 	?>

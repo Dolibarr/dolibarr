@@ -208,6 +208,8 @@ class DoliDBPgsql extends DoliDB
     			$line=preg_replace('/tinytext/i','text',$line);
     			$line=preg_replace('/mediumtext/i','text',$line);
 
+    			$line=preg_replace('/text\([0-9]+\)/i','text',$line);
+
     			// change not null datetime field to null valid ones
     			// (to support remapping of "zero time" to null
     			$line=preg_replace('/datetime not null/i','datetime',$line);

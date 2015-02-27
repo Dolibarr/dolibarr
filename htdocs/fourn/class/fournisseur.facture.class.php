@@ -1814,3 +1814,15 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 }
+
+
+
+/**
+ *  Class to manage line invoices
+ */
+class FactureFournisseurLigne extends CommonInvoiceLine
+{
+
+
+}
+

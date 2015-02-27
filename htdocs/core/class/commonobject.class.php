@@ -2137,7 +2137,7 @@ abstract class CommonObject
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
         if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
@@ -2572,7 +2572,12 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $usermargins, $langs, $user;
+
+		# Define usemargins
+		$usemargins=0;
+		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
+
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2599,7 +2604,7 @@ abstract class CommonObject
 			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
 		}
 
-		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		if ($usermargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';

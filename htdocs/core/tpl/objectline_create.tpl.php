@@ -263,7 +263,8 @@ else {
 	</td>
 	<?php
 	// Lines for extrafield
-	if (!empty($extrafieldsline)) {
+	if (!empty($extrafieldsline))
+	{
 		if ($this->table_element_line=='commandedet') {
 			$newline = new OrderLine($this->db);
 		}
@@ -275,6 +276,12 @@ else {
 		}
 		elseif ($this->table_element_line=='contratdet') {
 			$newline = new ContratLigne($this->db);
+		}
+		elseif ($this->table_element_line=='commande_fournisseurdet') {
+			$newline = new CommandeFournisseurLigne($this->db);
+		}
+		elseif ($this->table_element_line=='facture_fourn_det') {
+			$newline = new FactureFournisseurLigne($this->db);
 		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
