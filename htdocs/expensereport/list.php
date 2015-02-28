@@ -64,7 +64,7 @@ $html = new Form($db);
 $formother = new FormOther($db);
 $expensereporttmp=new ExpenseReport($db);
 
-llxHeader('', $langs->trans("ListOfExpenseReports"));
+llxHeader('', $langs->trans("ListOfTrips"));
 
 $max_year = 5;
 $min_year = 5;
