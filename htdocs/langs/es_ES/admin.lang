@@ -1568,4 +1568,4 @@ SalariesSetup=Configuración del módulo salarios
 SortOrder=Ordenación
 Format=Formatear 
 TypePaymentDesc=0:Pago cliente,1:Pago proveedor,2:Tanto pago de cliente como de proveedor
-IncludePath=Include path (defined into variable %s)
+IncludePath=Include path (definida en la variable %s)
