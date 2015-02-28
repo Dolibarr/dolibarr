@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -302,7 +303,7 @@ if ($resql)
 	print "</form>";
 
 	print '<div class="tabsAction">';
-	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">Ajouter une note de frais</a>';
+	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">'.$langs->trans("NewTrip").'</a>';
 	print '</div>';
 
 	$db->free($resql);
