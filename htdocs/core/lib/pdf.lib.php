@@ -290,8 +290,8 @@ function pdf_getHeightForLogo($logo, $url = false)
 /**
  * Returns the name of the thirdparty
  *
- * @param Societe|Contact $thirdparty
- * @param Translate $outputlangs
+ * @param Societe|Contact $thirdparty Contact or thirdparty
+ * @param Translate $outputlangs Output language
  * @return string
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
