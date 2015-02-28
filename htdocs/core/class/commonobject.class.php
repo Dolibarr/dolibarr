@@ -2568,9 +2568,10 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
+	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
 	{
 		global $conf, $hookmanager, $inputalsopricewithtax, $usermargins, $langs, $user;
 
@@ -2659,7 +2660,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline,$permtoedit);
 			}
 
 			$i++;
@@ -2680,9 +2681,10 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
+	 *  @param	int			$permtoedit			Permission to edit
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
@@ -3502,7 +3504,8 @@ abstract class CommonObject
 
     /**
      *	Add/Update all extra fields values for the current object.
-     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */

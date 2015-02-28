@@ -25,6 +25,8 @@
  * $langs
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
+ * $element     (used to test $user->rights->$element->creer)
+ * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
@@ -167,7 +169,7 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
-	<?php if ($this->statut == 0  && $user->rights->$element->creer) { ?>
+	<?php if ($this->statut == 0  && ($user->rights->$element->creer || $permtoedit)) { ?>
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>

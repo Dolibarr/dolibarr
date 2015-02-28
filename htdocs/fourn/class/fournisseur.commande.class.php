@@ -214,13 +214,13 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " l.qty,";
             $sql.= " l.tva_tx, l.remise_percent, l.subprice,";
             $sql.= " l.localtax1_tx, l. localtax2_tx, l.total_localtax1, l.total_localtax2,";
-            $sql.= " l.total_ht, l.total_tva, l.total_ttc,";
+            $sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
             $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
             $sql.= " l.date_start, l.date_end";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
             $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
             $sql.= " WHERE l.fk_commande = ".$this->id;
-            $sql.= " ORDER BY l.rowid";
+            $sql.= " ORDER BY l.rang, l.rowid";
             //print $sql;
 
             dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
@@ -266,6 +266,11 @@ class CommandeFournisseur extends CommonOrder
 
                     $line->date_start          = $this->db->jdate($objp->date_start);
                     $line->date_end            = $this->db->jdate($objp->date_end);
+
+                    $this->special_line        = $objp->special_line;
+                    $this->fk_parent_line      = $objp->fk_parent_line;
+
+                    $this->rang                = $objp->rang;
 
                     $this->lines[$i]      = $line;
 
@@ -1117,9 +1122,10 @@ class CommandeFournisseur extends CommonOrder
      *  @param		bool	$notrigger				Disable triggers
      *  @param		int		$date_start				Date start of service
      *  @param		int		$date_end				Date end of service
+	 *  @param		array	$array_option			extrafields array
      *	@return     int             				<=0 if KO, >0 if OK
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_option=0)
     {
         global $langs,$mysoc;
 
@@ -1759,23 +1765,24 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Update line
      *
-     *	@param     	int		$rowid           	Id de la ligne de facture
-     *	@param     	string	$desc            	Description de la ligne
-     *	@param     	double	$pu              	Prix unitaire
-     *	@param     	double	$qty             	Quantity
-     *	@param     	double	$remise_percent  	Pourcentage de remise de la ligne
-     *	@param     	double	$txtva          	Taux TVA
-     *  @param     	double	$txlocaltax1	    Localtax1 tax
-     *  @param     	double	$txlocaltax2   		Localtax2 tax
-     *  @param     	double	$price_base_type 	Type of price base
-     *	@param		int		$info_bits			Miscellaneous informations
-     *	@param		int		$type				Type of line (0=product, 1=service)
-     *  @param		int		$notrigger			Disable triggers
-     *  @param      timestamp   $date_start     Date start of service
-     *  @param      timestamp   $date_end       Date end of service
-     *	@return    	int             			< 0 if error, > 0 if ok
+     *	@param     	int			$rowid           	Id de la ligne de facture
+     *	@param     	string		$desc            	Description de la ligne
+     *	@param     	double		$pu              	Prix unitaire
+     *	@param     	double		$qty             	Quantity
+     *	@param     	double		$remise_percent  	Pourcentage de remise de la ligne
+     *	@param     	double		$txtva          	Taux TVA
+     *  @param     	double		$txlocaltax1	    Localtax1 tax
+     *  @param     	double		$txlocaltax2   		Localtax2 tax
+     *  @param     	double		$price_base_type 	Type of price base
+     *	@param		int			$info_bits			Miscellaneous informations
+     *	@param		int			$type				Type of line (0=product, 1=service)
+     *  @param		int			$notrigger			Disable triggers
+     *  @param      timestamp   $date_start     	Date start of service
+     *  @param      timestamp   $date_end       	Date end of service
+	 *  @param		array		$array_option		extrafields array
+     *	@return    	int         	    			< 0 if error, > 0 if ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='')
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_option=0)
     {
     	global $mysoc;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
@@ -2167,6 +2174,14 @@ class CommandeFournisseur extends CommonOrder
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
+    var $db;
+    var $error;
+
+	public $element='commande_fournisseurdet';
+	public $table_element='commande_fournisseurdet';
+
+    var $oldline;
+
     // From llx_commandedet
     var $qty;
     var $tva_tx;

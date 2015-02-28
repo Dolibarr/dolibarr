@@ -646,7 +646,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-		if ($ret < 0) $error ++;
+		if ($ret < 0) $error++;
 
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
@@ -1788,8 +1788,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)

@@ -93,6 +93,8 @@ if ($id > 0 || ! empty($ref)) {
 $hookmanager->initHooks(array('ordercard','globalcard'));
 
 $permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionedit = $user->rights->commande->creer; // Used by the include of actions_lineupdown.inc.php
+
 
 /*
  * Actions
@@ -104,7 +106,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+	if ($cancel) $action='';
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer)
@@ -281,8 +287,7 @@ if (empty($reshook))
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0)
-					$error ++;
+				if ($ret < 0) $error++;
 
 				if (! $error)
 				{
@@ -375,10 +380,10 @@ if (empty($reshook))
 			} else {
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0)
-					$error ++;
+				if ($ret < 0) $error++;
 
-				if (! $error) {
+				if (! $error)
+				{
 					$object_id = $object->create($user);
 
 					// If some invoice's lines already known
@@ -1046,56 +1051,7 @@ if (empty($reshook))
 		}
 	}
 
-	/*
-	 * Ordonnancement des lignes
-	*/
-
-	else if ($action == 'up' && $user->rights->commande->creer) {
-		$object->line_up(GETPOST('rowid'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-		if (! empty($newlang)) {
-			$outputlangs = new Translate("", $conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		}
-
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
-		exit();
-	}
-
-	else if ($action == 'down' && $user->rights->commande->creer) {
-		$object->line_down(GETPOST('rowid'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-		if (! empty($newlang)) {
-			$outputlangs = new Translate("", $conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		}
-
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
-		exit();
-	}
-
-	else if ($action == 'builddoc') // In get or post
+	if ($action == 'builddoc') // In get or post
 	{
 		/*
 		 * Generate order document
@@ -1126,8 +1082,10 @@ if (empty($reshook))
 	}
 
 	// Remove file in doc form
-	else if ($action == 'remove_file') {
-		if ($object->id > 0) {
+	if ($action == 'remove_file')
+	{
+		if ($object->id > 0)
+		{
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 			$langs->load("other");
@@ -1142,14 +1100,15 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'update_extras') {
+	if ($action == 'update_extras')
+	{
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
-		if (! $error) {
+		if (! $error)
+		{
 			// Actions on extra fields (by external module or standard code)
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('orderdao'));

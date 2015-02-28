@@ -219,3 +219,11 @@ create table llx_facture_fourn_det_extrafields
 
 ALTER TABLE llx_facture_fourn_det_extrafields ADD INDEX idx_facture_fourn_det_extrafields (fk_object);
 
+ALTER TABLE llx_facture_fourn_det ADD COLUMN special_code	 integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN rang integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL after fk_facture_fourn;
+
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
+
