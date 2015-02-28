@@ -1294,7 +1294,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures , $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures, $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}
