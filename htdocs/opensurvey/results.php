@@ -451,9 +451,9 @@ $adresseadmin=$object->mail_admin;
 print $langs->trans("Title") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(htmlentities($object->titre)).'">';
 }
-else print dol_htmlentities($object->titre);
+else print htmlentities($object->titre);
 print '</td></tr>';
 
 // Expire date
@@ -468,7 +468,7 @@ print $langs->trans("Author") .'</td><td colspan="2">';
 if ($object->fk_user_creat) {
 	print $userstatic->getLoginUrl(1);
 } else {
-	print dol_htmlentities($object->nom_admin);
+	print htmlentities($object->nom_admin);
 }
 print '</td></tr>';
 
@@ -721,7 +721,7 @@ if ($object->format=="D")
 		for ($i = 0; isset($toutsujet[$i]); $i++) {
 			$heures=explode('@', $toutsujet[$i]);
 			if (isset($heures[1])) {
-				print '<td class="heure">'.dol_htmlentities($heures[1]).'</td>'."\n";
+				print '<td class="heure">'.htmlentities($heures[1]).'</td>'."\n";
 			} else {
 				print '<td class="heure"></td>'."\n";
 			}
@@ -744,7 +744,7 @@ else
 	for ($i = 0; isset($toutsujet[$i]); $i++)
 	{
 		$tmp=explode('@',$toutsujet[$i]);
-		print '<td class="sujet">'.dol_htmlentities($tmp[0]).'</td>'."\n";
+		print '<td class="sujet">'.htmlentities($tmp[0]).'</td>'."\n";
 	}
 
 	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('',dol_buildpath('/opensurvey/img/add-16.png',1),'',1).'</a></td>'."\n";
@@ -780,7 +780,7 @@ while ($compteur < $num)
 	}
 
 	// Name
-	print '</td><td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
+	print '</td><td class="nom">'.htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (! $testligneamodifier)
@@ -1047,7 +1047,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		else
 		{
 			$tmps=explode('@',$toutsujet[$i]);
-			$meilleursujet .= dol_htmlentities($tmps[0]);
+			$meilleursujet .= htmlentities($tmps[0]);
 		}
 
 		$compteursujet++;

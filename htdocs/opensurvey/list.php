@@ -153,7 +153,7 @@ while ($i < min($num,$limit))
 	print '<tr '.$bc[$var].'>';
 	print '<td>';
 	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
-	print '</td><td>'.dol_htmlentities($obj->titre).'</td><td>';
+	print '</td><td>'.htmlentities($obj->titre).'</td><td>';
 	$type=($obj->format=='A')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
@@ -169,7 +169,7 @@ while ($i < min($num,$limit))
 
 		print $userstatic->getLoginUrl(1);
 	} else {
-		print dol_htmlentities($obj->nom_admin);
+		print htmlentities($obj->nom_admin);
 	}
 
 	print '</td>';

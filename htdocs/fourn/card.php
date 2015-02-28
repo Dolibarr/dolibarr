@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +132,11 @@ if ($object->id > 0)
 	$object->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
+
+	// Commercial name
+	print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
+	print $object->commercial_name;
+	print "</td></tr>";
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {

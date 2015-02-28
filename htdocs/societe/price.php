@@ -4,6 +4,7 @@
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +136,11 @@ print '<table class="border" width="100%">';
 print '<tr><td width="25%">' . $langs->trans("ThirdPartyName") . '</td><td colspan="3">';
 print $form->showrefnav($soc, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
 print '</td></tr>';
+
+// Commercial name
+print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
+print $soc->commercial_name;
+print "</td></tr>";
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
