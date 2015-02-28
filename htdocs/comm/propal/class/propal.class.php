@@ -314,12 +314,12 @@ class Propal extends CommonObject
      *      @param		string		$label				???
      *		@param      int			$date_start       	Start date of the line
      *		@param      int			$date_end         	End date of the line
-     *      @param		array		$array_option		extrafields array
+     *      @param		array		$array_options		extrafields array
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0)
     {
     	global $mysoc;
 
@@ -440,8 +440,8 @@ class Propal extends CommonObject
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-            if (is_array($array_option) && count($array_option)>0) {
-            	$this->line->array_options=$array_option;
+            if (is_array($array_options) && count($array_options)>0) {
+            	$this->line->array_options=$array_options;
             }
 
             $result=$this->line->insert();
@@ -496,10 +496,10 @@ class Propal extends CommonObject
      *  @param		int			$type				0/1=Product/service
      *	@param      int			$date_start       	Start date of the line
      *	@param      int			$date_end         	End date of the line
-	 *  @param		array		$array_option		extrafields array
+	 *  @param		array		$array_options		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0)
     {
         global $mysoc;
 
@@ -601,8 +601,8 @@ class Propal extends CommonObject
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-            if (is_array($array_option) && count($array_option)>0) {
-            	$this->line->array_options=$array_option;
+            if (is_array($array_options) && count($array_options)>0) {
+            	$this->line->array_options=$array_options;
             }
 
             $result=$this->line->update();

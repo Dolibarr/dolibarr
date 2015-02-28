@@ -1115,12 +1115,12 @@ class FactureFournisseur extends CommonInvoice
      *	@param		int		$type				Type of line (0=product, 1=service)
      *  @param      int		$rang            	Position of line
      *  @param		int		$notrigger			Disable triggers
-	 *  @param		array	$array_option		extrafields array
+	 *  @param		array	$array_options		extrafields array
      *	@return    	int             			>0 if OK, <0 if KO
      *
      *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      */
-    function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_option=0)
+    function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0)
     {
         dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1157,7 +1157,7 @@ class FactureFournisseur extends CommonInvoice
         {
             $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent, true);
+            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent, true, '', '', $array_options);
             if ($result > 0)
             {
                 $this->rowid = $idligne;
@@ -1211,10 +1211,10 @@ class FactureFournisseur extends CommonInvoice
      * @param		int			$notrigger			Disable triggers
      * @param      	timestamp	$date_start     	Date start of service
      * @param      	timestamp   $date_end       	Date end of service
-	 * @param		array		$array_option		extrafields array
+	 * @param		array		$array_options		extrafields array
      * @return    	int           					<0 if KO, >0 if OK
      */
-    function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_option=0)
+    function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0)
     {
     	global $mysoc;
         dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent", LOG_DEBUG);
@@ -1295,7 +1295,19 @@ class FactureFournisseur extends CommonInvoice
         {
             $this->rowid = $id;
 
-            if (! $notrigger)
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$linetmp = new FactureFournisseurLigne($this->db);
+				$linetmp->id=$this->rowid;
+				$linetmp->array_options = $array_options;
+				$result=$linetmp->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+            if (! $error && ! $notrigger)
             {
                 global $conf, $langs, $user;
                 // Call trigger
@@ -1328,7 +1340,7 @@ class FactureFournisseur extends CommonInvoice
      *
      * 	@param  int		$rowid      	Id of line to delete
      *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-     * 	@return	void
+     * 	@return	int						<0 if KO, >0 if OK
      */
     function deleteline($rowid, $notrigger=0)
     {
@@ -1366,7 +1378,7 @@ class FactureFournisseur extends CommonInvoice
     	if (! $error)
     	{
 	        // Mise a jour prix facture
-    		$this->update_price();
+    		$result=$this->update_price();
     	}
 
     	if (! $error)

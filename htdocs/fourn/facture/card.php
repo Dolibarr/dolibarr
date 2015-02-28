@@ -187,13 +187,29 @@ if (empty($reshook))
 	    }
 	}
 
-	elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
+	// Remove a product line
+	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
-		$object->fetch($id);
-		$ret = $object->deleteline(GETPOST('lineid'));
-		if ($ret > 0)
+		$result = $object->deleteline($lineid);
+		if ($result > 0)
 		{
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
+				$newlang = GETPOST('lang_id');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+				$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$ret = $object->fetch($object->id); // Reload to get new records
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
 		else
@@ -555,7 +571,7 @@ if (empty($reshook))
 			// Extrafields Lines
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 			// Unset extrafield POST Data
 			if (is_array($extralabelsline)) {
 				foreach ($extralabelsline as $key => $value) {
@@ -613,7 +629,7 @@ if (empty($reshook))
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
 	    $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	    $array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+	    $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 	    // Unset extrafield
 	    if (is_array($extralabelsline)) {
 	    	// Get extra fields
@@ -1589,12 +1605,6 @@ else
 
         dol_fiche_head($head, 'card', $titre, 0, 'bill');
 
-        // Confirmation de la suppression d'une ligne produit
-        if ($action == 'confirm_delete_line')
-        {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
-        }
-
         // Clone confirmation
         if ($action == 'clone')
         {
@@ -1678,7 +1688,13 @@ else
 
         }
 
-		if (!$formconfirm) {
+       	// Confirmation to delete line
+		if ($action == 'ask_deleteline')
+		{
+			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		}
+
+        if (!$formconfirm) {
 			$parameters=array('lineid'=>$lineid);
 			$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		}
@@ -2026,6 +2042,9 @@ else
 
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
+       	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
+		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
+
 		// Show object lines
 		if (! empty($object->lines))
 			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->facture->creer);
@@ -2215,22 +2234,17 @@ else
         }
 */
 		// Form to add new line
-        if ($object->statut == 0 && $action != 'editline')
-        {
-       		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-			$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
-			if ($object->statut == 0 && $user->rights->fournisseur->facture->creer)
+        if ($object->statut == 0 && $user->rights->fournisseur->facture->creer)
+		{
+			if ($action != 'editline')
 			{
-				if ($action != 'editline')
-				{
-					$var = true;
+				$var = true;
 
-					// Add free products/services
-					$object->formAddObjectLine(1, $societe, $mysoc);
+				// Add free products/services
+				$object->formAddObjectLine(1, $societe, $mysoc);
 
-					$parameters = array();
-					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				}
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			}
         }
 

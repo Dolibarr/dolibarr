@@ -229,7 +229,7 @@ if (empty($reshook))
 	    // Extrafields
 	    $extrafieldsline = new ExtraFields($db);
 	    $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	    $array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+	    $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 	    // Unset extrafield
 	    if (is_array($extralabelsline)) {
 	    	// Get extra fields
@@ -442,7 +442,7 @@ if (empty($reshook))
 		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 		// Unset extrafield POST Data
 		if (is_array($extralabelsline)) {
 			foreach ($extralabelsline as $key => $value) {
@@ -507,37 +507,37 @@ if (empty($reshook))
 	    }
 	}
 
-	if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
+	// Remove a product line
+	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 	{
+		$result = $object->deleteline($lineid);
+		if ($result > 0)
+		{
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
+				$newlang = GETPOST('lang_id');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+				$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$ret = $object->fetch($object->id); // Reload to get new records
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 
-	    $result = $object->deleteline(GETPOST('lineid'));
-	    if ($result	>= 0)
-	    {
-	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-	        {
-	            $outputlangs = $langs;
-	            $newlang = '';
-	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
-	            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-	            if (! empty($newlang)) {
-	                $outputlangs = new Translate("", $conf);
-	                $outputlangs->setDefaultLang($newlang);
-	            }
-	            $ret=$object->fetch($object->id);    // Reload to get new records
-		        $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	        }
-	    }
-	    else
-	    {
-	        $error++;
-	        setEventMessage($object->error, 'errors');
-	    }
-
-	    if (! $error)
-	    {
-	        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-	        exit;
-	    }
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+			$action='';
+		}
 	}
 
 	if ($action == 'confirm_valid' && $confirm == 'yes' &&
@@ -1352,12 +1352,14 @@ elseif (! empty($object->id))
 	dol_fiche_head($head, 'card', $title, 0, 'order');
 
 
+	$formconfirm='';
+
 	/*
 	 * Confirmation de la suppression de la commande
 	 */
 	if ($action	== 'delete')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
 
 	}
 
@@ -1369,7 +1371,7 @@ elseif (! empty($object->id))
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1)
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
 
 	}
 
@@ -1400,7 +1402,7 @@ elseif (! empty($object->id))
 				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
 			}
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
 		}
 	}
 
@@ -1433,7 +1435,7 @@ elseif (! empty($object->id))
 			);
 		}
 
-		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
 
 	}
 
@@ -1442,7 +1444,7 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'refuse')
 	{
-		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
 
 	}
 
@@ -1451,7 +1453,7 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'cancel')
 	{
-		print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
 
 	}
 
@@ -1461,18 +1463,23 @@ elseif (! empty($object->id))
 	if ($action	== 'commande')
 	{
 		$date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
 
 	}
 
-	/*
-	 * Confirmation de la suppression d'une ligne produit
-	 */
-	if ($action == 'delete_product_line')
+	// Confirmation to delete line
+	if ($action == 'ask_deleteline')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
-
+		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
+
+	if (!$formconfirm) {
+		$parameters=array('lineid'=>$lineid);
+		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	}
+
+	// Print form confirm
+	print $formconfirm;
 
 	/*
 	 *	Commande
@@ -1718,6 +1725,10 @@ elseif (! empty($object->id))
 
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
+	// Add free products/services form
+	global $forceall, $senderissupplier, $dateSelector;
+	$forceall=1; $senderissupplier=1; $dateSelector=0;
+
 	// Show object lines
 	$inputalsopricewithtax=1;
 	if (! empty($object->lines))
@@ -1904,19 +1915,18 @@ elseif (! empty($object->id))
 	}
 */
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action != 'editline')
+	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer)
 	{
-		// Add free products/services form
-		global $forceall, $senderissupplier, $dateSelector;
-		$forceall=1; $senderissupplier=1; $dateSelector=0;
+		if ($action != 'editline')
+		{
+			$var = true;
 
-		$var = true;
+			// Add free products/services
+			$object->formAddObjectLine(1, $societe, $mysoc);
 
-		// Add free products/services
-		$object->formAddObjectLine(1, $societe, $mysoc);
-
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		}
 	}
 	print '</table>';
 

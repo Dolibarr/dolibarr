@@ -1122,10 +1122,10 @@ class CommandeFournisseur extends CommonOrder
      *  @param		bool	$notrigger				Disable triggers
      *  @param		int		$date_start				Date start of service
      *  @param		int		$date_end				Date end of service
-	 *  @param		array	$array_option			extrafields array
+	 *  @param		array	$array_options			extrafields array
      *	@return     int             				<=0 if KO, >0 if OK
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0)
     {
         global $langs,$mysoc;
 
@@ -1260,7 +1260,19 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande_fournisseurdet');
 
-                if (! $notrigger)
+               	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$linetmp = new CommandeFournisseurLigne($this->db);
+					$linetmp->id=$this->rowid;
+					$linetmp->array_options = $array_options;
+					$result=$linetmp->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+
+                if (! $error && ! $notrigger)
                 {
                     global $conf, $langs, $user;
 					// Call trigger
@@ -1399,51 +1411,53 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	int		$idline		Id of line to delete
      *	@param	int		$notrigger	1=Disable call to triggers
-     *	@return						>=0 if OK, <0 if KO
+     *	@return						<0 if KO, >0 if OK
      */
     function deleteline($idline, $notrigger=0)
     {
         global $user,$langs,$conf;
-        if ($this->statut == 0)
+
+        if ($this->statut != 0)
         {
-        	$this->db->begin();
+        	return -1;
+        }
 
-			if (! $notrigger)
+        $this->db->begin();
+
+		if (! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
+
+		if (! $error)
+		{
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
+	        $resql=$this->db->query($sql);
+
+	        dol_syslog(get_class($this)."::deleteline sql=".$sql);
+			if (! $resql)
 			{
-				// Call trigger
-				$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
-				if ($result < 0) $error++;
-				// End call triggers
+               	$this->error=$this->db->lasterror();
+               	$error++;
 			}
+		}
 
-			if (! $error)
-			{
-	            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
-	            $resql=$this->db->query($sql);
+		if (! $error)
+        {
+            $result=$this->update_price();
+        }
 
-				dol_syslog(get_class($this)."::deleteline sql=".$sql);
-				if (! $resql)
-				{
-                	$this->error=$this->db->lasterror();
-                	$error++;
-				}
-			}
-
-			if (! $error)
-            {
-                $result=$this->update_price();
-
-                $this->db->commit();
-                return 0;
-            }
-            else
-			{
-				$this->db->rollback();
-                return -1;
-            }
+        if (! $error)
+        {
+            $this->db->commit();
+            return 1;
         }
         else
-		{
+       {
+			$this->db->rollback();
             return -1;
         }
     }
@@ -1779,10 +1793,10 @@ class CommandeFournisseur extends CommonOrder
      *  @param		int			$notrigger			Disable triggers
      *  @param      timestamp   $date_start     	Date start of service
      *  @param      timestamp   $date_end       	Date end of service
-	 *  @param		array		$array_option		extrafields array
+	 *  @param		array		$array_options		extrafields array
      *	@return    	int         	    			< 0 if error, > 0 if ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_option=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_options=0)
     {
     	global $mysoc;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");

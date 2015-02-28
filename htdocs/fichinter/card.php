@@ -206,9 +206,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 			// Extrafields
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+			$array_options = $extrafields->getOptionalsFromPost($extralabels);
 
-	        $object->array_options = $array_option;
+	        $object->array_options = $array_options;
 
 			$id = $object->create($user);
 
@@ -288,7 +288,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							// Extrafields
 							$extrafieldsline = new ExtraFields($db);
 							$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-							$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+							$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 
 
 		                    $result = $object->addline(
@@ -297,7 +297,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 		                        $desc,
 					            $date_intervention,
                  				$duration,
-                 				$array_option
+                 				$array_options
 		                    );
 
 							if ($result < 0)
@@ -327,9 +327,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    	// Extrafields
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+			$array_options = $extrafields->getOptionalsFromPost($extralabels);
 
-	        $object->array_options = $array_option;
+	        $object->array_options = $array_options;
 
 			$result = $object->create($user);
 	        if ($result > 0)
@@ -470,7 +470,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 
         $result=$object->addline(
 			$user,
@@ -478,7 +478,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
             $desc,
             $date_intervention,
             $duration,
-            $array_option
+            $array_options
         );
 
 		// Define output language
@@ -568,8 +568,8 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
 	// Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-	$objectline->array_options = $array_option;
+	$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$objectline->array_options = $array_options;
 
 	$result = $objectline->update($user);
     if ($result < 0)
