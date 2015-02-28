@@ -19,6 +19,12 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+
+-- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
+
+
 -- Remove menu entries of removed or renamed modules
 DELETE FROM llx_menu where module = 'printipp';
 
@@ -148,7 +154,7 @@ CREATE TABLE llx_expensereport (
   fk_user_paid 		integer DEFAULT NULL,
   fk_c_expensereport_statuts integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
-  note 				text,
+  note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
   detail_cancel 	varchar(255) DEFAULT NULL,
@@ -189,4 +195,17 @@ CREATE TABLE llx_expensereport_det
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
+
+
+
+create table llx_commande_fournisseurdet_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_commande_fournisseurdet_extrafields ADD INDEX idx_commande_fournisseurdet_extrafields (fk_object);
+
 

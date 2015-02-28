@@ -262,7 +262,7 @@ class ProductFournisseur extends Product
 		            $sql.= " ".$availability.",";
 		            $sql.= " ".$newnpr.",";
 		            $sql.= $conf->entity.",";
-		            $sql.= $this->delivery_time_days;
+		            $sql.= $delivery_time_days;
 		            $sql.=")";
 
 		            dol_syslog(get_class($this)."::update_buyprice", LOG_DEBUG);

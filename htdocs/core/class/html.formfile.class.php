@@ -440,11 +440,11 @@ class FormFile
             }
             else if ($modulepart != 'agenda')
             {
-                // For normalized standard modules
-                $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+            	// For normalized standard modules
+            	$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
                 {
-                    $res=include_once $file;
+                	$res=include_once $file;
                 }
                 // For normalized external modules
                 else
@@ -458,7 +458,7 @@ class FormFile
                     $modellist=call_user_func($class.'::liste_modeles',$this->db);
                 }
                 else
-                {
+              {
                     dol_print_error($this->db,'Bad value for modulepart');
                     return -1;
                 }

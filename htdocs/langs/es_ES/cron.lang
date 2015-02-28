@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL para ejecutar tareas Cron
 OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
 KeyForCronAccess=Clave para la URL para ejecutar tareas Cron
 FileToLaunchCronJobs=Comando para ejecutar tareas Cron
-CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
+CronExplainHowToRunUnix=En entornos Unix se debe utilizar la siguiente entrada crontab para ejecutar el comando cada 5 minutos
+CronExplainHowToRunWin=En entornos Microsoft (tm) Windows, puede utilizar las herramienta  tareas programadas para ejecutar el comando cada 5 minutos
 # Menu
 CronJobs=Tareas programadas
 CronListActive=Listado de tareas activas/programadas

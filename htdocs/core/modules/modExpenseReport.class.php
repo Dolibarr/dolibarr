@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
  */
 
 /**
@@ -50,8 +49,6 @@ class modExpenseReport extends DolibarrModules
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 770;
-		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'deplacement';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -83,21 +80,29 @@ class modExpenseReport extends DolibarrModules
 		//$this->style_sheet = '/mymodule/mymodule.css.php';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array();
+		$this->config_page_url = array('expensereport.php');
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-//		$this->conflictwith = array("modDeplacement");
+		$this->conflictwith = array("modDeplacement");
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("companies","trips","deplacement@deplacement");
+		$this->need_dolibarr_version = array(3,7);	// Minimum version of Dolibarr required by module
+		$this->langfiles = array("companies","trips");
 
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+		$r=0;
+
+		$this->const[$r][0] = "EXPENSEREPORT_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "standard";
+		$this->const[$r][3] = 'Name of manager to build PDF expense reports documents';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
@@ -195,19 +200,21 @@ class modExpenseReport extends DolibarrModules
 		$r=0;
 
 		$r++;
-		$this->export_code[$r]='trips_'.$r;
+		$this->export_code[$r]='expensereport_'.$r;
 		$this->export_label[$r]='ListTripsAndExpenses';
+		$this->export_icon[$r]='trip';
 		$this->export_permission[$r]=array(array("expensereport","export"));
-        $this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.note'=>'NotePrivate','d.note_public'=>'NotePublic','s.nom'=>'ThirdParty','u.lastname'=>'Lastname','u.firstname'=>'Firstname','d.dated'=>"Date");
-        $this->export_entities_array[$r]=array('d.rowid'=>"Trip",'d.type'=>"Trip",'d.km'=>"Trip",'d.note'=>'Trip','d.note_public'=>'Trip','s.nom'=>'company','u.lastname'=>'user','u.firstname'=>'user','d.dated'=>"Date");
-        $this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.km'=>"km",'d.note'=>'note','d.note_public'=>'note_public','s.nom'=>'companyname','u.lastname'=>'name','u.firstname'=>'firstname','d.dated'=>'date');
+        $this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.ref'=>'Ref','d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.date_create'=>'DateCreation','d.date_approve'=>'DateApprove','d.total_ht'=>"TotalHT",'d.total_tva'=>'TotalVAT','d.total_ttc'=>'TotalTTC','d.note_private'=>'NotePrivate','d.note_public'=>'NotePublic','u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'ed.rowid'=>'LineId','tf.code'=>'Type','ed.date'=>'Date','ed.fk_c_tva'=>'VATRate','ed.total_ht'=>'TotalHT','ed.total_tva'=>'TotalVAT','ed.total_ttc'=>'TotalTTC','ed.comments'=>'Comment','p.rowid'=>'ProjectId','p.ref'=>'Ref');
+        $this->export_entities_array[$r]=array('u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ed.rowid'=>'expensereport_line','ed.date'=>'expensereport_line','ed.fk_c_tva'=>'expensereport_line','ed.total_ht'=>'expensereport_line','ed.total_tva'=>'expensereport_line','ed.total_ttc'=>'expensereport_line','ed.comments'=>'expensereport_line','tf.code'=>'expensereport_line','p.project_ref'=>'expensereport_line','p.rowid'=>'project','p.ref'=>'project');
+        $this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.note_private'=>'note_private','d.note_public'=>'note_public','u.lastname'=>'name','u.firstname'=>'firstname','u.login'=>'login');
+		$this->export_dependencies_array[$r]=array('expensereport_line'=>'ed.rowid','type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .=', '.MAIN_DB_PREFIX.'expensereport as d';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity = '.$conf->entity;
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expensereport as d, '.MAIN_DB_PREFIX.'user as u,';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expensereport_det as ed LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as tf ON ed.fk_c_type_fees = tf.id';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
+		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport',1).')';
 
 
 
@@ -216,10 +223,10 @@ class modExpenseReport extends DolibarrModules
 		$r=0;
 
 		// Example to declare a Left Menu entry: fk_mainmenu=home,fk_leftmenu=modulesadmintools
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'TripsAndExpenses',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport',
 									'url'=>'/expensereport/index.php',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -230,10 +237,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'New',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detailnew',
 									'url'=>'/expensereport/card.php?action=create',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -244,10 +251,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'List',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detaillist',
 									'url'=>'/expensereport/list.php',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -258,10 +265,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport_detaillist',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport_detaillist',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'ListToApprove',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detaillist_approve',
 									'url'=>'/expensereport/list.php?search_state=2',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -272,10 +279,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'Statistics',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detail',
 									'url'=>'/expensereport/stats/index.php',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -288,10 +295,10 @@ class modExpenseReport extends DolibarrModules
 
 
 		// Disabled, not yet stable
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'ExportTripCSV',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detail',
 									'url'=>'/expensereport/export_csv.php',
 									'langs'=>'expensereport',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -302,10 +309,10 @@ class modExpenseReport extends DolibarrModules
 									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=expensereport',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 									'type'=>'left',			// This is a Left menu entry
 									'titre'=>'Synchro_Compta',
-									'mainmenu'=>'accountancy',
+									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detail',
 									'url'=>'/expensereport/synchro_compta.php',
 									'langs'=>'expensereport',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -329,13 +336,12 @@ class modExpenseReport extends DolibarrModules
 	{
 		global $conf;
 
+		// Remove permissions and default values
 		$this->remove($options);
 
-		$result=$this->_load_tables('/deplacement/sql/');
-
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'teclib' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('teclib','deplacement',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','deplacement',".$conf->entity.")"
 		);
 
 		return $this->_init($sql,$options);
@@ -355,6 +361,4 @@ class modExpenseReport extends DolibarrModules
 
 		return $this->_remove($sql,$options);
 	}
-
 }
-

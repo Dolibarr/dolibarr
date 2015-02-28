@@ -22,7 +22,7 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](COPYRIGHT) 
 
 ### Download
 
-Official releases are available on the [website](http://www.dolibarr.org/downloads).
+Releases can be downloaded from [official website](http://www.dolibarr.org/).
 
 ### Simple setup
 

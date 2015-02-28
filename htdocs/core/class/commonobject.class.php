@@ -49,6 +49,7 @@ abstract class CommonObject
     public $errors;
 
     public $canvas;                // Contains canvas name if it is
+	public $context=array();		// Use to pass context information
 
     public $name;
     public $lastname;

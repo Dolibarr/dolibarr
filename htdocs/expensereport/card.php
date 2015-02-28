@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
  */
 
 /**
@@ -25,16 +24,17 @@
 
 $res=0;
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/expensereport.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
-dol_include_once('/expensereport/core/modules/expensereport/modules_expensereport.php');
-dol_include_once("/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load("trips");
 
@@ -68,12 +68,16 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->entity) && $conf->en
 	$rootfordata.='/'.$conf->entity;
 }
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
-$conf->expensereport->dir_output = $rootfordata.'/expensereport';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 
 
@@ -83,7 +87,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 if ($cancel) $action='';
 
-if ($action == 'confirm_delete' && $_GET["confirm"] == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
 {
 	$object = new ExpenseReport($db);
 	$result=$object->delete($id);
@@ -108,7 +112,8 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	$object->fk_c_expensereport_statuts = 1;
 	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
 	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-	$object->note						= GETPOST('note');
+	$object->note_public				= GETPOST('note_public');
+	$object->note_private				= GETPOST('note_private');
 
 	if ($object->periode_existe($user,$object->date_debut,$object->date_fin))
 	{
@@ -152,7 +157,8 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	}
 
 	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-	$object->note = GETPOST('note');
+	$object->note_public = GETPOST('note_public');
+	$object->note_private = GETPOST('note_private');
 
 	$result = $object->update($user);
 	if ($result > 0)
@@ -171,6 +177,27 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	$result = $object->setValidate($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0 && $object->fk_user_validator > 0)
 	{
 		$langs->load("mails");
@@ -252,6 +279,27 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	$result = $object->set_save_from_refuse($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		// Send mail
@@ -283,7 +331,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 
 			// Génération du pdf avant attachement
 			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
 			if($resultPDF):
 			// ATTACHMENT
@@ -329,6 +377,27 @@ if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $u
 	$object->fetch($id);
 
 	$result = $object->setApproved($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -360,7 +429,7 @@ if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $u
 
 			// Génération du pdf avant attachement
 			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
 			if($resultPDF):
 				// ATTACHMENT
@@ -412,6 +481,27 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 	$object->fetch($id);
 
 	$result = $object->setDeny($user,GETPOST('detail_refuse'));
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -479,6 +569,26 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_
 
 		if ($result > 0)
 		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
+		if ($result > 0)
+		{
 			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 			{
 				// Send mail
@@ -541,6 +651,27 @@ if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->
 	$object->fetch($id);
 
 	$result = $object->setPaid($user);
+
+	if ($result > 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
 	if ($result > 0)
 	{
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
@@ -569,7 +700,7 @@ if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->
 
 			// Génération du pdf avant attachement
 			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
 			// PREPARE SEND
 			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -638,6 +769,27 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 	{
 		$result = $object->setStatut(0);
+
+		if ($result > 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
 		if ($result > 0)
 		{
 			header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
@@ -746,7 +898,7 @@ if ($action == "addline")
 	$action='';
 }
 
-if ($action == 'confirm_delete_line' && $_POST["confirm"] == "yes")
+if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -759,6 +911,26 @@ if ($action == 'confirm_delete_line' && $_POST["confirm"] == "yes")
 	$result=$object->deleteline($_GET["rowid"]);
 	if ($result >= 0)
 	{
+		if ($result > 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
 		$object->update_totaux_del($object_ligne->total_ht,$object_ligne->total_tva);
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
 		exit;
@@ -801,6 +973,26 @@ if ($action == "updateligne" )
 		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $c_tva, $comments, $qty, $value_unit, $date, $object_id);
 		if ($result >= 0)
 		{
+			if ($result > 0)
+			{
+				// Define output language
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$model=$object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}
+			}
+
 			$object->recalculer($object_id);
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object_id);
 			exit;
@@ -812,20 +1004,6 @@ if ($action == "updateligne" )
 	}
 }
 
-if ($action == "recalc" && $id > 0)
-{
-	$object = new ExpenseReport($db);
-	$object->fetch($id);
-	if($object->recalculer($id) > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
 
 /*
  * Generer ou regenerer le document PDF
@@ -846,7 +1024,7 @@ if ($action == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	$result=expensereport_pdf_create($db, $depl->id, '', $depl->modelpdf, $outputlangs);
+	$result=expensereport_pdf_create($db, $depl, '', $depl->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -957,21 +1135,36 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+	
+	// Public note
 	print '<tr>';
-	print '<td>'.$langs->trans("Note").'</td>';
-	print '<td>';
-	print '<textarea name="note" class="flat" rows="'.ROWS_3.'" cols="100">'.GETPOST('note').'</textarea>';
-	print '</td>';
-	print '</tr>';
+	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td valign="top" colspan="2">';
+
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td></tr>';
+
+	// Private note
+	if (empty($user->societe_id)) {
+		print '<tr>';
+		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td valign="top" colspan="2">';
+
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		print $doleditor->Create(1);
+		print '</td></tr>';
+	}
+	
 	print '<tbody>';
 	print '</table>';
 
 	dol_fiche_end();
 
-	print '<center>';
+	print '<div align="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
-	print ' &nbsp; &nbsp; <input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
-	print '</center>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+	print '</div>';
 
 	print '</form>';
 }
@@ -1020,8 +1213,6 @@ else
 				{
 					print '<input type="hidden" name="action" value="update">';
 				}
-
-
 
 				print '<table class="border" style="width:100%;">';
 
@@ -1095,19 +1286,34 @@ else
 					print '</td></tr>';
 
 				}
+				
+				// Public note
 				print '<tr>';
-				print '<td>'.$langs->trans("Note").'</td>';
-				print '<td>';
-				print '<textarea name="note" class="flat" rows="'.ROWS_2.'" cols="70">'.$object->note.'</textarea>';
-				print '</td>';
-				print '</tr>';
+				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+				print '<td valign="top" colspan="2">';
+
+				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+				print $doleditor->Create(1);
+				print '</td></tr>';
+				
+				// Private note
+				if (empty($user->societe_id)) {
+					print '<tr>';
+					print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+					print '<td valign="top" colspan="2">';
+
+					$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+					print $doleditor->Create(1);
+					print '</td></tr>';
+				}
+				
 				print '</table>';
 
 				dol_fiche_end();
 
 				print '<div class="center">';
-				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button"> &nbsp; &nbsp; ';
-				print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+				print '<input type="submit" value="'.$langs->trans("Modify").'" name="bouton" class="button">';
+				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
 				print '</div>';
 
 				print '</form>';
@@ -1194,8 +1400,12 @@ else
 				print '<td>'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
 				print '<tr>';
-				print '<td>'.$langs->trans("Note").'</td>';
-				print '<td>'.$object->note.'</td>';
+				print '<td>'.$langs->trans("NotePublic").'</td>';
+				print '<td>'.$object->note_public.'</td>';
+				print '</tr>';
+				print '<tr>';
+				print '<td>'.$langs->trans("NotePrivate").'</td>';
+				print '<td>'.$object->note_private.'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
