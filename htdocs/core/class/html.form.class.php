@@ -4097,7 +4097,7 @@ class Form
      *	Function to show a form to select a duration on a page
      *
      *	@param	string	$prefix   		Prefix for input fields
-     *	@param  int		$iSecond  		Default preselected duration (number of seconds)
+     *	@param  int		$iSecond  		Default preselected duration (number of seconds or '')
      * 	@param	int		$disabled		Disable the combo box
      * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
      *  @param	string	$minunderhours	If 1, show minutes selection under the hours
@@ -4112,7 +4112,7 @@ class Form
 
     	$hourSelected=0; $minSelected=0;
 
-        if ($iSecond)
+        if ($iSecond != '')
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 

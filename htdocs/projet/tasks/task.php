@@ -441,17 +441,23 @@ if ($id > 0 || ! empty($ref))
 
 			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
-			print convertSecondToTime($object->planned_workload,'allhourmin');
+			if ($object->planned_workload != '')
+			{
+				print convertSecondToTime($object->planned_workload,'allhourmin');
+			}
 			print '</td></tr>';
 
 			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-			print $object->progress.' %';
+			if ($object->progress != '')
+			{
+				print $object->progress.' %';
+			}
 			print '</td></tr>';
 
 			// Progress calculated
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			if ($object->planned_workload)
+			if ($object->planned_workload != '')
 			{
 				$tmparray=$object->getSummaryOfTimeSpent();
 				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';

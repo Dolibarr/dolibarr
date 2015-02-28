@@ -352,11 +352,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'dayhour');
 				print '</td>';
 
+				$plannedworkloadoutputformat='allhourmin';
+				$timespentoutputformat='allhourmin';
+				if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+				if (! empty($conf->global->PROJECT_TIMES_PENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+
 				// Planned Workload (in working hours)
 				print '<td align="right">';
-				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+				$fullhour=convertSecondToTime($lines[$i]->planned_workload,$plannedworkloadoutputformat);
 				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
-				if ($lines[$i]->planned_workload)
+				if ($lines[$i]->planned_workload != '')
 				{
 					print $fullhour;
 					// TODO Add delay taking account of working hours per day and working day per week
@@ -367,14 +372,17 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Progress declared
 				print '<td align="right">';
-				print $lines[$i]->progress.' %';
+				if ($lines[$i]->progress != '')
+				{
+					print $lines[$i]->progress.' %';
+				}
 				print '</td>';
 
 				// Time spent
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
-				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'allhourmin');
+				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,$timespentoutputformat);
 				else print '--:--';
 				if ($showlineingray) print '</i>';
 				else print '</a>';
