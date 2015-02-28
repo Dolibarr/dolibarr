@@ -78,17 +78,16 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $project = new Project($db);
-if ($id > 0 || ! empty($ref))
+if ($projectid > 0 || ! empty($ref))
 {
-    $project->fetch($id,$ref);
-    $project->fetch_thirdparty();
-    $projectid=$project->id;
-}
-else
-{
-	$project->fetch($projectid);
-    $project->fetch_thirdparty();
-    $projectid=$project->id;
+    $ret = $project->fetch($projectid, $ref);
+    if ($ret > 0) {
+        $project->fetch_thirdparty();
+        $projectid=$project->id;
+    } else {
+        setEventMessage($project->error, 'errors');
+        $action='';
+    }
 }
 
 // Security check
