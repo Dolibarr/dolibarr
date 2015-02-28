@@ -96,7 +96,6 @@ $contact_fields = array(
 	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
 	'country' => array('name'=>'country','type'=>'xsd:string'),
 	'socid' => array('name'=>'socid','type'=>'xsd:string'),
-	'status' => array('name'=>'status','type'=>'xsd:string'),
 	'phone_pro' => array('name'=>'phone_pro','type'=>'xsd:string'),
 	'fax' => array('name'=>'fax','type'=>'xsd:string'),
 	'phone_perso' => array('name'=>'phone_perso','type'=>'xsd:string'),
@@ -286,7 +285,6 @@ function getContact($authentication,$id,$ref_ext)
 	            	'country_code' => $contact->country_code,
 	            	'country' => $contact->country,
 	            	'socid' => $contact->socid,
-	            	'status' => $contact->status,
 	            	'phone_pro' => $contact->phone_pro,
 	            	'fax' => $contact->fax,
 	            	'phone_perso' => $contact->phone_perso,
@@ -398,7 +396,6 @@ function createContact($authentication,$contact)
 		$newobject->country_code=$contact['country_code'];
 		$newobject->country=$contact['country'];
 		$newobject->socid=$contact['socid'];
-		$newobject->status=$contact['status'];
 		$newobject->phone_pro=$contact['phone_pro'];
 		$newobject->fax=$contact['fax'];
 		$newobject->phone_perso=$contact['phone_perso'];
