@@ -38,9 +38,14 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $object = new Project($db);
 if ($id > 0 || ! empty($ref))
 {
-    $object->fetch($id,$ref);
-    $object->fetch_thirdparty();
-    $id=$object->id;
+    $ret = $object->fetch($id,$ref);
+    if ($ret > 0) {
+        $object->fetch_thirdparty();
+        $id=$object->id;
+    } else {
+        setEventMessage($object->error, 'errors');
+        $action='';
+    }
 }
 
 // Security check
