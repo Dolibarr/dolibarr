@@ -122,10 +122,10 @@ if (empty($usemargins)) $usemargins=0;
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ht)?price($line->pu_ht):price($line->subprice)); ?></td>
 
 	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?>&nbsp;</td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?>
@@ -139,7 +139,11 @@ if (empty($usemargins)) $usemargins=0;
 	</td>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td align="right"><?php $coldisplay++; ?><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
+	<td align="right"><?php
+		$coldisplay++;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		echo dol_print_reduction($line->remise_percent,$langs);
+	?></td>
 	<?php } else { ?>
 	<td><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
@@ -149,7 +153,7 @@ if (empty($usemargins)) $usemargins=0;
 		print '<td align="right" nowrap="nowrap">' . $line->situation_percent . '%</td>';
 	}
 
-  	if ($usermargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+  	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>

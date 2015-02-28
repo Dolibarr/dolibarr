@@ -2573,39 +2573,38 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $usermargins, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
 
 		# Define usemargins
 		$usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
-
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
+		print '<td>'.$langs->trans('Description').'</td>';
 
 		// VAT
-		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 
 		// Price HT
-		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
+		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
-		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 
 		// Reduction short
-		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
+			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
 		}
 
-		if ($usermargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';

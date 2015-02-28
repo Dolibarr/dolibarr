@@ -1323,9 +1323,16 @@ class FactureFournisseur extends CommonInvoice
             // Update total price into invoice record
             $result=$this->update_price('','auto');
 
-            $this->db->commit();
-
-            return $result;
+			if (! $error)
+			{
+	            $this->db->commit();
+            	return $result;
+			}
+			else
+			{
+	            $this->db->rollback();
+            	return -1;
+			}
         }
         else
         {
@@ -1846,6 +1853,9 @@ class FactureFournisseurLigne extends CommonInvoice
 {
     var $db;
     var $error;
+
+    var $pu_ht;
+    var $pu_ttc;
 
 	public $element='facture_fourn_det';
 	public $table_element='facture_fourn_det';

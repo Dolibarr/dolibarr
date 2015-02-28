@@ -438,7 +438,10 @@ if (empty($reshook))
 	                            0,
 	                            $lines[$i]->info_bits,
 	                            'HT',
-	                            $product_type
+	                            $product_type,
+	                        	$lines[$i]->rang,
+	                        	1,
+	                        	$lines[$i]->array_options
 	                        );
 
 	                        if ($result < 0)
@@ -492,7 +495,7 @@ if (empty($reshook))
 	                        $product=new Product($db);
 	                        $product->fetch($_POST['idprod'.$i]);
 
-	                        $ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
+	                        $ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base, $_POST['rang'.$i], 1);
 	                        if ($ret < 0) $error++;
 	                    }
 	                }
@@ -535,16 +538,20 @@ if (empty($reshook))
 			$object->fetch($id);
 	        $object->fetch_thirdparty();
 
-	        if ($_POST['puht'])
-	        {
-	            $pu=$_POST['puht'];
-	            $price_base_type='HT';
-	        }
-	        if ($_POST['puttc'])
-	        {
-	            $pu=$_POST['puttc'];
-	            $price_base_type='TTC';
-	        }
+	        $tva_tx = GETPOST('tva_tx');
+
+			if (GETPOST('price_ht') != '')
+	    	{
+	    		$up = price2num(GETPOST('price_ht'));
+	    		$price_base_type = 'HT';
+	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end);
+	    	}
+	    	else
+	    	{
+	    		$up = price2num(GETPOST('price_ttc'));
+	    		$price_base_type = 'TTC';
+	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
+	    	}
 
 	        if (GETPOST('idprod'))
 	        {
@@ -579,7 +586,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options);
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);

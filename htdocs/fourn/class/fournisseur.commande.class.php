@@ -1873,8 +1873,19 @@ class CommandeFournisseur extends CommonOrder
             if ($result > 0)
             {
                 $this->rowid = $rowid;
+       			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$tmpline = new CommandeFournisseurLigne($this->db);
+					$tmpline->id=$this->rowid;
+					$tmpline->array_options = $array_options;
+					$result=$tmpline->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
 
-                if (! $notrigger)
+                if (! $error && ! $notrigger)
                 {
                     global $conf, $langs, $user;
 					// Call trigger
@@ -1888,14 +1899,25 @@ class CommandeFournisseur extends CommonOrder
                 }
 
                 // Mise a jour info denormalisees au niveau facture
-                $this->update_price('','auto');
+                if (! $error)
+                {
+                	$this->update_price('','auto');
+                }
 
-                $this->db->commit();
-                return $result;
+                if (! $error)
+                {
+                	$this->db->commit();
+                	return $result;
+                }
+                else
+              {
+                	$this->db->rollback();
+                	return -1;
+                }
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
                 $this->db->rollback();
                 return -1;
             }
@@ -2163,17 +2185,22 @@ class CommandeFournisseur extends CommonOrder
      */
 	function getMaxDeliveryTimeDay($langs)
 	{
-		if (empty($this->lines)) return $langs->trans('Undefined');
+		if (empty($this->lines)) return '';
+
+		$obj = new ProductFournisseur($this->db);
 
 		$nb = 0;
-		foreach ($this->lines as $line) {
-			$obj = new ProductFournisseur($this->db);
-			$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
-			if ($idp) {
-				$obj->fetch($idp);
-				if ($obj->delivery_time_days > $nb) $nb = $obj->delivery_time_days;
+		foreach ($this->lines as $line)
+		{
+			if ($line->fk_product > 0)
+			{
+				$idp = $obj->find_min_price_product_fournisseur($line->fk_product, $line->qty);
+				if ($idp)
+				{
+					$obj->fetch($idp);
+					if ($obj->delivery_time_days > $nb) $nb = $obj->delivery_time_days;
+				}
 			}
-
 		}
 
 		if ($nb === 0) return $langs->trans('Undefined');

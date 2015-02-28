@@ -347,16 +347,16 @@ if (empty($reshook))
 	    	$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
 	    	$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
 
-	    	if (!empty($_POST['price_ht']))
+	    	if (GETPOST('price_ht')!=='')
 	    	{
 	    		$price_base_type = 'HT';
-	    		$ht = price2num($_POST['price_ht']);
+	    		$ht = price2num(GETPOST('price_ht'));
 	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end, $array_options);
 	    	}
 	    	else
 	    	{
-	    		$ttc = price2num($_POST['price_ttc']);
-	    		$ht = $ttc / (1 + ($tauxtva / 100));
+	    		$ttc = price2num(GETPOST('price_ttc'));
+	    		$ht = $ttc / (1 + ($tva_tx / 100));
 	    		$price_base_type = 'HT';
 	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options);
 	    	}
@@ -426,18 +426,34 @@ if (empty($reshook))
 	 */
 	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 	{
-	    if ($_POST["elrowid"])
+		$tva_tx = GETPOST('tva_tx');
+
+		if (GETPOST('price_ht') != '')
+    	{
+    		$price_base_type = 'HT';
+    		$ht = price2num(GETPOST('price_ht'));
+    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end);
+    	}
+    	else
+    	{
+    		$ttc = price2num(GETPOST('price_ttc'));
+    		$ht = $ttc / (1 + ($tva_tx / 100));
+    		$price_base_type = 'HT';
+    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
+    	}
+
+   		if ($lineid)
 	    {
 	        $line = new CommandeFournisseurLigne($db);
-	        $res = $line->fetch($_POST["elrowid"]);
+	        $res = $line->fetch($lineid);
 	        if (!$res) dol_print_error($db);
 	    }
 
 	    $date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
 	    $date_end=dol_mktime(GETPOST('date_end'.$date_pf.'hour'), GETPOST('date_end'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
 
-	    $localtax1_tx=get_localtax($_POST['tva_tx'],1,$mysoc,$object->thirdparty);
-	    $localtax2_tx=get_localtax($_POST['tva_tx'],2,$mysoc,$object->thirdparty);
+	    $localtax1_tx=get_localtax($tva_tx,1,$mysoc,$object->thirdparty);
+	    $localtax2_tx=get_localtax($tva_tx,2,$mysoc,$object->thirdparty);
 
 		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
@@ -451,21 +467,21 @@ if (empty($reshook))
 		}
 
 	    $result	= $object->updateline(
-	        $_POST['elrowid'],
-	        $_POST['eldesc'],
-	        $_POST['pu'],
+	        $lineid,
+	        $_POST['product_desc'],
+	        $ht,
 	        $_POST['qty'],
 	        $_POST['remise_percent'],
-	        $_POST['tva_tx'],
+	        $tva_tx,
 	        $localtax1_tx,
 	        $localtax2_tx,
-	        'HT',
+	        $price_base_type,
 	        0,
 	        isset($_POST["type"])?$_POST["type"]:$line->product_type,
 	        false,
 	        $date_start,
 	        $date_end,
-	    	$array_option
+	    	$array_options
 	    );
 	    unset($_POST['qty']);
 	    unset($_POST['type']);
@@ -1730,7 +1746,7 @@ elseif (! empty($object->id))
 	$forceall=1; $senderissupplier=1; $dateSelector=0;
 
 	// Show object lines
-	$inputalsopricewithtax=1;
+	$inputalsopricewithtax=0;
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->commande->creer);
 
