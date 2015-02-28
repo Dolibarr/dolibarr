@@ -192,7 +192,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	    $this->assertEquals('ios',$tmp['browseros']);
 	    $this->assertEquals('tablet',$tmp['layout']);
 	    $this->assertEquals('iphone',$tmp['phone']);
-	    $this->assertTrue($tmp['phone']);
     }
 
 
