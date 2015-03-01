@@ -891,13 +891,13 @@ class BonPrelevement extends CommonObject
             if (!$error)
             {
 				$ref = substr($year,-2).$month;
-				
+
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";
 				$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql.= " WHERE ref LIKE '%".$ref."%'";
 				$sql.= " AND entity = ".$conf->entity;
 				$sql.= " ORDER BY ref DESC LIMIT 1";
-				
+
 				dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
@@ -914,7 +914,7 @@ class BonPrelevement extends CommonObject
 				$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1),2,"0",STR_PAD_LEFT);
 
 				$filebonprev = $ref;
-                
+
                 // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
                 $sql.= " ref, entity, datec";
@@ -1326,7 +1326,7 @@ class BonPrelevement extends CommonObject
 			$dateTime_ECMA = dol_print_date($date_actu, '%Y-%m-%dT%H:%M:%S');
 			$fileDebiteurSection = '';
 			$fileEmetteurSection = '';
-			$i = 0; 
+			$i = 0;
 			$j = 0;
 			$this->total = 0;
 
@@ -1337,7 +1337,7 @@ class BonPrelevement extends CommonObject
 			$sql = "SELECT f.facnumber as fac FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."prelevement_facture as pf, ".MAIN_DB_PREFIX."societe as soc, ".MAIN_DB_PREFIX."c_pays as p, ".MAIN_DB_PREFIX."societe_rib as rib WHERE pl.fk_prelevement_bons = ".$this->id." AND pl.rowid = pf.fk_prelevement_lignes AND pf.fk_facture = f.rowid AND soc.fk_pays = p.rowid AND soc.rowid = f.fk_soc AND rib.fk_soc = f.fk_soc AND rib.default_rib = 1";
 			$resql=$this->db->query($sql);
 			if ($resql)
-			{      
+			{
 				$num = $this->db->num_rows($resql);
 				while ($j < $num)
 				{
@@ -1372,7 +1372,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures , $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures, $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}
