@@ -208,7 +208,7 @@ register_shutdown_function('dol_shutdown');
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-    $tmp=getBrowserInfo();
+    $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
     $conf->browser->name=$tmp['browsername'];
     $conf->browser->os=$tmp['browseros'];
     $conf->browser->version=$tmp['browserversion'];

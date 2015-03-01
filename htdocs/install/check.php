@@ -63,7 +63,7 @@ print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
 $useragent=$_SERVER['HTTP_USER_AGENT'];
 if (! empty($useragent))
 {
-    $tmp=getBrowserInfo();
+    $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
     $browserversion=$tmp['browserversion'];
     $browsername=$tmp['browsername'];
     if ($browsername == 'ie' && $browserversion < 7) print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
