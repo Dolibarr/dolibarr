@@ -71,26 +71,6 @@ print_fiche_titre($langs->trans("HRMArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (! empty($conf->holiday->enabled))
-{
-	$user_id = $user->id;
-
-	$nbaquis=$holiday->getCPforUser($user_id);
-	$nbdeduced=$holiday->getConfCP('nbHolidayDeducted');
-	$nb_holiday = $nbaquis / $nbdeduced;
-
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Holidays").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print '<td colspan="3">';
-    print $langs->trans('SoldeCPUser',round($nb_holiday,2)).($nbdeduced != 1 ? ' ('.$nbaquis.' / '.$nbdeduced.')' : '');
-    print '</td>';
-    print '</tr>';
-    print '</table><br>';
-}
-
-
 /*
  * Search expenses
  */
@@ -123,6 +103,26 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
     print '</tr>';
     print "</table></form><br>";
 }
+
+
+if (! empty($conf->holiday->enabled))
+{
+	$user_id = $user->id;
+
+	$nbaquis=$holiday->getCPforUser($user_id);
+	$nbdeduced=$holiday->getConfCP('nbHolidayDeducted');
+	$nb_holiday = $nbaquis / $nbdeduced;
+
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Holidays").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print '<td colspan="3">';
+    print $langs->trans('SoldeCPUser',round($nb_holiday,2)).($nbdeduced != 1 ? ' ('.$nbaquis.' / '.$nbdeduced.')' : '');
+    print '</td>';
+    print '</tr>';
+    print '</table><br>';
+}
+
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
