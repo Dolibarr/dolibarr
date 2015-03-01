@@ -46,7 +46,6 @@ class Project extends CommonObject
     var $id;
     var $ref;
     var $description;
-    var $statut;
     var $title;
     var $date_start;
     var $date_end;

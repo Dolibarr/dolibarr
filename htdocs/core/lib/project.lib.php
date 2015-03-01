@@ -661,8 +661,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	$project_year_filter=0;
 
 	$title=$langs->trans("Project");
-	if ($statut == 0) $title=$langs->trans("ProjectDraft");
-	if ($statut == 1) $title=$langs->trans("Project").' ('.$langs->trans("Validated").')';
+	if ($statut != '' && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts[$statut]).')';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
