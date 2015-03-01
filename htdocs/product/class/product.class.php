@@ -3024,7 +3024,9 @@ class Product extends CommonObject
 				}
 			}
 			$this->db->free($result);
-			$this->load_virtual_stock();
+
+			$this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
+
 			return 1;
 		}
 		else
@@ -3048,18 +3050,21 @@ class Product extends CommonObject
         $stock_sending_client=0;
         $stock_reception_fournisseur=0;
 
-        if (! empty($conf->commande->enabled)) {
+        if (! empty($conf->commande->enabled))
+        {
             $result=$this->load_stats_commande(0,'1,2');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
-        if (! empty($conf->expedition->enabled)) {
+        if (! empty($conf->expedition->enabled))
+        {
             $result=$this->load_stats_sending(0,'1,2');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
-        if (! empty($conf->fournisseur->enabled)) {
-            $result=$this->load_stats_commande_fournisseur(0,'3,4');
+        if (! empty($conf->fournisseur->enabled))
+        {
+            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
