@@ -25,6 +25,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -50,6 +51,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 $userstatic=new User($db);
+$tasktmp=new Task($db);
 
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:(empty($user->rights->projet->all->lire)?0:2)),1);
 //var_dump($projectsListId);
@@ -224,7 +226,9 @@ if ( $resql )
 		print '<td>';
 		if (! empty($obj->taskid))
 		{
-			print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a>';
+			$tasktmp->id = $obj->taskid;
+			$tasktmp->ref = $obj->label;
+			print $tasktmp->getNomUrl(1);
 		}
 		else print $langs->trans("NoTasks");
 		print '</td>';
@@ -256,13 +260,13 @@ if ( $resql )
 	}
 
 	if ($num > $max)
-	{	
-		print '<tr><td colspan="6">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';		
+	{
+		print '<tr><td colspan="6">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';
 	}
-	
+
 	print "</table>";
 
-	
+
 	$db->free($resql);
 }
 else
