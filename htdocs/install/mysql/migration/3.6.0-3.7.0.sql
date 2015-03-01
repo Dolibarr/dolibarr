@@ -1095,6 +1095,9 @@ ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
 
+ALTER TABLE llx_projet_task CHANGE COLUMN duration_effective real DEFAULT 0 NULL;
+ALTER TABLE llx_projet_task CHANGE COLUMN planned_workload real DEFAULT 0 NULL;
+  
 
 -- add extrafield on ficheinter lines
 CREATE TABLE llx_fichinterdet_extrafields
