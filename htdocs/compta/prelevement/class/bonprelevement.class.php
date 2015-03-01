@@ -1265,7 +1265,7 @@ class BonPrelevement extends CommonObject
 			$sql = "SELECT f.facnumber as fac FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."prelevement_facture as pf, ".MAIN_DB_PREFIX."societe as soc, ".MAIN_DB_PREFIX."c_country as p, ".MAIN_DB_PREFIX."societe_rib as rib WHERE pl.fk_prelevement_bons = ".$this->id." AND pl.rowid = pf.fk_prelevement_lignes AND pf.fk_facture = f.rowid AND soc.fk_pays = p.rowid AND soc.rowid = f.fk_soc AND rib.fk_soc = f.fk_soc AND rib.default_rib = 1";
 			$resql=$this->db->query($sql);
 			if ($resql)
-			{      
+			{
 				$num = $this->db->num_rows($resql);
 				while ($j < $num)
 				{
