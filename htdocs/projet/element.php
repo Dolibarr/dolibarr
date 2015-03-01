@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -106,6 +107,7 @@ llxHeader("",$langs->trans("Referers"),$help_url);
 
 $form = new Form($db);
 $formproject=new FormProjets($db);
+$formfile = new FormFile($db);
 
 $userstatic=new User($db);
 
@@ -412,7 +414,27 @@ foreach ($listofreferent as $key => $value)
 				{
 					print $expensereport->getNomUrl(1);
 				}
-				else print $element->getNomUrl(1);
+				else {
+					print $element->getNomUrl(1);
+
+					$element_doc = $element->element;
+					$filename=dol_sanitizeFileName($element->ref);
+					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
+					
+					if($element_doc === 'order_supplier') {
+						$element_doc='commande_fournisseur';
+						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
+					}
+					else if($element_doc === 'invoice_supplier') {
+						$element_doc='facture_fournisseur';
+						$filename = get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2).dol_sanitizeFileName($element->ref);						
+					}
+					
+					print $formfile->getDocumentsLink($element_doc, $filename, $filedir);
+					
+				} 
+				
 				print "</td>\n";
 
 				// Date
