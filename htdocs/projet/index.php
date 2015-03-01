@@ -228,7 +228,7 @@ if ( $resql )
 		{
 			$tasktmp->id = $obj->taskid;
 			$tasktmp->ref = $obj->label;
-			print $tasktmp->getNomUrl(1);
+			print $tasktmp->getNomUrl(1, 'withproject');
 		}
 		else print $langs->trans("NoTasks");
 		print '</td>';
