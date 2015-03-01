@@ -751,7 +751,7 @@ class Task extends CommonObject
     /**
      *  Add time spent
      *
-     *  @param	User	$user           user id
+     *  @param	User	$user           User object
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return	void
      */
@@ -760,6 +760,13 @@ class Task extends CommonObject
         global $conf,$langs;
 
         $ret = 0;
+
+        // Check parameters
+        if (! is_object($user))
+        {
+        	dol_print_error('',"Method addTimeSpent was called with wrong parameter user");
+        	return -1;
+        }
 
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);

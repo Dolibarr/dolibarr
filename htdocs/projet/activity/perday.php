@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  *
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/projet/activity/list.php
+ *	\file       htdocs/projet/activity/pertime.php
  *	\ingroup    projet
- *	\brief      List activities of tasks
+ *	\brief      List activities of tasks (per time entry)
  */
 
 require ("../../main.inc.php");
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load('projects');
 
@@ -56,50 +57,8 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 {
     $task = new Task($db);
 
-    $timespent_duration=array();
 
-    foreach($_POST as $key => $time)
-    {
-        if (intval($time) > 0)
-        {
-            // Hours or minutes
-            if (preg_match("/([0-9]+)(hour|min)/",$key,$matches))
-            {
-                $id = $matches[1];
-				if ($id > 0)
-				{
-	                // We store HOURS in seconds
-	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
 
-	                // We store MINUTES in seconds
-	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
-				}
-            }
-        }
-    }
-
-    if (count($timespent_duration) > 0)
-    {
-    	foreach($timespent_duration as $key => $val)
-    	{
-	        $task->fetch($key);
-		    $task->progress = GETPOST($key . 'progress', 'int');
-	        $task->timespent_duration = $val;
-	        $task->timespent_fk_user = $user->id;
-	        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$key}month"],$_POST["{$key}day"],$_POST["{$key}year"]);
-	        $task->addTimeSpent($user);
-    	}
-
-    	setEventMessage($langs->trans("RecordSaved"));
-
-        // Redirect to avoid submit twice on back
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid.($mode?'&mode='.$mode:''));
-        exit;
-    }
-    else
-    {
-	    setEventMessage($langs->trans("ErrorTimeSpentIsEmpty"), 'errors');
-    }
 }
 
 
@@ -109,6 +68,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
  */
 
 $form=new Form($db);
+$formother=new FormOther($db);
 $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
@@ -138,6 +98,15 @@ llxHeader("",$title,"");
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
+
+print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="addtime">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+$head=project_timesheet_prepare_head($mode);
+dol_fiche_head($head, 'inputperday', '', 0, 'task');
+
 // Show description of content
 if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
 else
@@ -145,17 +114,7 @@ else
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
 	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br><br>';
 }
-
-
-// Filter on user
-/*	dol_fiche_head('');
-	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
-	print '<td>';
-	if ($mine) print $user->getLoginUrl(1);
-	print '</td>';
-	print '</tr></table>';
-	dol_fiche_end();
-*/
+print "\n";
 
 // Filter on user
 /*	dol_fiche_head('');
@@ -167,22 +126,25 @@ else
 	dol_fiche_end();
 */
 
-print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="addtime">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
+// Filter on user
+/*	dol_fiche_head('');
+	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
+	print '<td>';
+	if ($mine) print $user->getLoginUrl(1);
+	print '</td>';
+	print '</tr></table>';
+	dol_fiche_end();
+*/
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
-print '<td align="center">'.$langs->trans("DateStart").'</td>';
-print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-print '<td colspan="2" align="right">'.$langs->trans("NewTimeSpent").'</td>';
+print '<td colspan="2" align="right">'.$langs->trans("xxx").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
@@ -190,13 +152,17 @@ $restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJEC
 
 if (count($tasksarray) > 0)
 {
-	projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+	$j=0;
+	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 }
 else
 {
 	print '<tr><td colspan="10">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
+
+dol_fiche_end();
+
 print '</form>';
 
 
