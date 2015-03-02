@@ -43,7 +43,7 @@ $search_company=GETPOST('search_company');
 $search_user=GETPOST('search_user');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
-$search_status=GETPOST('search_status','int');
+$search_status=(GETPOST('search_status','int')!=''?GETPOST('search_status','int'):GETPOST('statut','int'));
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');

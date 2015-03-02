@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/BankAccounrTest.php
+ *      \file       test/phpunit/BonPrelevementTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
+require_once dirname(__FILE__).'/../../htdocs/compta/prelevement/class/bonprelevement.class.php';
 
 if (empty($user->id))
 {
@@ -47,7 +47,7 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BankAccountTest extends PHPUnit_Framework_TestCase
+class BonPrelevementTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -116,11 +116,11 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testBankAccountCreate
+     * testBonPrevelementCreate
      *
      * @return	int
      */
-    public function testBankAccountCreate()
+    public function testBonPrelevementCreate()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -128,27 +128,40 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date_solde=dol_now();
-    	$result=$localobject->create($user);
+		// TODO
+		// Create invoice
+
+
+		// Create payment with mode withdraw
+
+
+		// Ask withdraw request
+
+
+		// Create withdraw record and generate SEPA file
+		$localobject=new BonPrelevement($this->savdb);
+    	//$localobject->date_solde=dol_now();
+    	$result=$localobject->Create(0,0,'simu');
 
     	print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertEquals($result, 0);
+
+    	// Test SEPA file
+
 
     	return $result;
     }
 
     /**
-     * testBankAccountFetch
+     * testBonPrelevementDelete
      *
      * @param	int		$id		Id of contract
      * @return	int
      *
-     * @depends	testBankAccountCreate
+     * @depends	testBonPrelevementOther
      * The depends says test is run only if previous is ok
      */
-    public function testBankAccountFetch($id)
+/*    public function testBonPrelevementDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -156,62 +169,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Account($this->savdb);
-    	$result=$localobject->fetch($id);
-
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-
-    	return $localobject;
-    }
-
-   /**
-     * testBankAccountOther
-     *
-     * @param	Object	$localobject	Object contract
-     * @return	int
-     *
-     * @depends testBankAccountFetch
-     * The depends says test is run only if previous is ok
-     */
-    public function testBankAccountOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
-
-        $localobject->info($localobject->id);
-        //print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        //$this->assertNotEquals($localobject->date_creation, '');
-
-        return $localobject->id;
-    }
-
-    /**
-     * testBankAccountDelete
-     *
-     * @param	int		$id		Id of contract
-     * @return	int
-     *
-     * @depends	testBankAccountOther
-     * The depends says test is run only if previous is ok
-     */
-    public function testBankAccountDelete($id)
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Account($this->savdb);
+		$localobject=new BonPrelevement($this->savdb);
     	$result=$localobject->fetch($id);
 		$result=$localobject->delete($id);
 
@@ -219,5 +177,6 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
+*/
 
 }

@@ -1560,3 +1560,5 @@ SortOrder=Sort order
 Format=Format
 TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type 
 IncludePath=Include path (defined into variable %s)
+NoModueToManageStockDecrease=No module able to manage automatic stock decrease has been activated. Stock decrease will be done on manual input only.
+NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.

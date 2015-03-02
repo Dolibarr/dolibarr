@@ -57,7 +57,7 @@ class Mailing extends CommonObject
 
 	var $date_creat;
 	var $date_valid;
-	
+
 	var $extraparams=array();
 
 	public $statut_dest=array();
@@ -78,12 +78,12 @@ class Mailing extends CommonObject
 		$this->statuts[1] = 'MailingStatusValidated';
 		$this->statuts[2] = 'MailingStatusSentPartialy';
 		$this->statuts[3] = 'MailingStatusSentCompletely';
-		
+
 		$this->statut_dest[-1] = 'MailingStatusError';
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusNotContact';
-				
+
 	}
 
 	/**
@@ -186,7 +186,7 @@ class Mailing extends CommonObject
 	function fetch($rowid)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
 		$sql.= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql.= ", m.statut, m.nbemail";
@@ -211,14 +211,14 @@ class Mailing extends CommonObject
 				$this->statut			= $obj->statut;
 				$this->nbemail			= $obj->nbemail;
 				$this->titre			= $obj->titre;
-				
-				$this->sujet			= $obj->sujet;				
+
+				$this->sujet			= $obj->sujet;
 				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
 					$this->body				= dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401);
 				}else {
 					$this->body				= $obj->body;
 				}
-				
+
 				$this->bgcolor			= $obj->bgcolor;
 				$this->bgimage			= $obj->bgimage;
 
@@ -232,7 +232,7 @@ class Mailing extends CommonObject
 				$this->date_creat		= $this->db->jdate($obj->date_creat);
 				$this->date_valid		= $this->db->jdate($obj->date_valid);
 				$this->date_envoi		= $this->db->jdate($obj->date_envoi);
-				
+
 				$this->extraparams		= (array) json_decode($obj->extraparams, true);
 
 				return 1;
@@ -266,6 +266,8 @@ class Mailing extends CommonObject
 		$error=0;
 
 		$object=new Mailing($this->db);
+
+		$object->context['createfromclone']='createfromclone';
 
 		$this->db->begin();
 
@@ -313,13 +315,13 @@ class Mailing extends CommonObject
 		{
 			//Clone target
 			if (!empty($option2)) {
-				
+
 				require_once DOL_DOCUMENT_ROOT .'/core/modules/mailings/modules_mailings.php';
-				
+
 				$mailing_target = new MailingTargets($this->db);
-				
+
 				$target_array=array();
-				
+
 				$sql = "SELECT fk_contact, ";
 				$sql.=" lastname,   ";
 				$sql.=" firstname,";
@@ -330,7 +332,7 @@ class Mailing extends CommonObject
 				$sql.=" source_type ";
 				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
 				$sql.= " WHERE fk_mailing = ".$fromid;
-				
+
 				dol_syslog(get_class($this)."::createFromClone", LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
@@ -338,17 +340,17 @@ class Mailing extends CommonObject
 					if ($this->db->num_rows($result))
 					{
 						while ($obj = $this->db->fetch_object($result)) {
-						
+
 							$target_array[]=array('fk_contact'=>$obj->fk_contact,
 							'lastname'=>$obj->lastname,
 							'firstname'=>$obj->firstname,
-							'email'=>$obj->email, 
+							'email'=>$obj->email,
 							'other'=>$obj->other,
 							'source_url'=>$obj->source_url,
 							'source_id'=>$obj->source_id,
 							'source_type'=>$obj->source_type);
 						}
-						
+
 					}
 				}
 				else
@@ -356,11 +358,13 @@ class Mailing extends CommonObject
 					$this->error=$this->db->lasterror();
 					return -1;
 				}
-				
+
 				$mailing_target->add_to_target($object->id, $target_array);
 			}
 
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -514,7 +518,7 @@ class Mailing extends CommonObject
 		}
 	}
 
-	
+
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -526,7 +530,7 @@ class Mailing extends CommonObject
 	{
 		global $langs;
 		$langs->load('mails');
-	
+
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statut_dest[$statut]);
@@ -563,10 +567,10 @@ class Mailing extends CommonObject
 			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
 			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
 		}
-		
-		
-		
-		
+
+
+
+
 	}
 
 }

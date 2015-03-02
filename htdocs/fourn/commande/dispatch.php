@@ -347,38 +347,51 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">'.$objp->qty.'</td>';
 							print '<td align="right">'.$products_dispatched[$objp->rowid].'</td>';
 
-							if ( !(empty($conf->productbatch->enabled)) && $objp->tobatch==1) {
-								print '<td colspan="2" align="center">'.img_picto_common($langs->trans('AddDispatchBatchLine'),'treemenu/plustop2.gif','onClick="AddLineBatch('.$i.')"').'</td>';
+							if (! empty($conf->productbatch->enabled) && $objp->tobatch==1)
+							{
+								print '<td align="right">'.img_picto($langs->trans('AddDispatchBatchLine'),'split.png','onClick="addLineBatch('.$i.')"').'</td>';	// Dispatch column
+								print '<td></td>';																													// Warehouse column
 								print '</tr>';
-								print '<tr '.$bc[$var].' name="dluo'.$suffix.'"><td width="5%">';
-								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
-								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
-								print '</td><td>';
-								$form->select_date('','dlc'.$suffix,'','',1,"");
-								print '</td><td>';
-								$form->select_date('','dluo'.$suffix,'','',1,"");
-								print '</td><td>';
-								print '<input type="text" name="lot_number'.$suffix.'" size="40" value="">';
-								print '</td>';
-								print '<td colspan="2">&nbsp</td>';
-							} else {
-								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+
+								print '<tr '.$bc[$var].' name="dluo'.$suffix.'">';
+								print '<td>';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
+								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
+								print '</td>';
+
+								print '<td>';
+								$form->select_date('','dlc'.$suffix,'','',1,"");
+								print '</td>';
+								print '<td>';
+								$form->select_date('','dluo'.$suffix,'','',1,"");
+								print '</td>';
+								print '<td>';
+								print '<input type="text" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" size="40" value="">';
+								print '</td>';
+								print '<td colspan="2">&nbsp</td>';		// Qty ordered + qty already dispatached
 							}
 
 							// Dispatch
-							print '<td align="right"><input name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'"></td>';
+							print '<td align="right">';
+							if (empty($conf->productbatch->enabled) || $objp->tobatch!=1)
+							{
+								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
+								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
+								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
+							}
+							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'">';
+							print '</td>';
 
 							// Warehouse
 							print '<td align="right">';
 							if (count($listwarehouses)>1)
 							{
-								print $form->selectarray("entrepot".$suffix, $listwarehouses, '', 1, 0, 0, '', 0, 0, $disabled);
+								print $form->selectarray("entrepot".$suffix, $listwarehouses, GETPOST("entrepot".$suffix), 1, 0, 0, '', 0, 0, $disabled);
 							}
 							elseif  (count($listwarehouses)==1)
 							{
-								print $form->selectarray("entrepot".$suffix, $listwarehouses, '', 0, 0, 0, '', 0, 0, $disabled);
+								print $form->selectarray("entrepot".$suffix, $listwarehouses, GETPOST("entrepot".$suffix), 0, 0, 0, '', 0, 0, $disabled);
 							}
 							else
 							{

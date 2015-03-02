@@ -75,9 +75,9 @@ class Productcustomerprice extends CommonObject
 
 		global $conf, $langs;
 		$error = 0;
-		
+
 		// Clean parameters
-		
+
 		if (isset($this->entity))
 			$this->entity = trim($this->entity);
 		if (isset($this->fk_product))
@@ -106,16 +106,16 @@ class Productcustomerprice extends CommonObject
 			$this->fk_user = trim($this->fk_user);
 		if (isset($this->import_key))
 			$this->import_key = trim($this->import_key);
-			
+
 			// Check parameters
 			// Put here code to add control on parameters values
-		
+
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
 				$this->price_ttc = price2num($this->price, 'MU');
 				$this->price = price2num($this->price) / (1 + ($this->tva_tx / 100));
 				$this->price = price2num($this->price, 'MU');
-				
+
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min_ttc = price2num($this->price_min, 'MU');
 					$this->price_min = price2num($this->price_min) / (1 + ($this->tva_tx / 100));
@@ -128,7 +128,7 @@ class Productcustomerprice extends CommonObject
 				$this->price = price2num($this->price, 'MU');
 				$this->price_ttc = ($this->recuperableonly != 1) ? price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
 				$this->price_ttc = price2num($this->price_ttc, 'MU');
-				
+
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min = price2num($this->price_min, 'MU');
 					$this->price_min_ttc = price2num($this->price_min) * (1 + ($this->tva_tx / 100));
@@ -140,10 +140,10 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 		}
-		
+
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_customer_price(";
-		
+
 		$sql .= "entity,";
 		$sql .= "datec,";
 		$sql .= "fk_product,";
@@ -159,9 +159,9 @@ class Productcustomerprice extends CommonObject
 		$sql .= "localtax2_tx,";
 		$sql .= "fk_user,";
 		$sql .= "import_key";
-		
+
 		$sql .= ") VALUES (";
-		
+
 		$sql .= " " . $conf->entity . ",";
 		$sql .= " '" . $this->db->idate(dol_now()) . "',";
 		$sql .= " " . (! isset($this->fk_product) ? 'NULL' : "'" . $this->fk_product . "'") . ",";
@@ -177,25 +177,25 @@ class Productcustomerprice extends CommonObject
 		$sql .= " " . (! isset($this->localtax2_tx) ? 'NULL' : "'" . $this->localtax2_tx . "'") . ",";
 		$sql .= " " . $user->id . ",";
 		$sql .= " " . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . "";
-		
+
 		$sql .= ")";
-		
+
 		$this->db->begin();
-		
+
 		dol_syslog(get_class($this) . "::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
 			$this->errors [] = "Error " . $this->db->lasterror();
 		}
-		
+
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_customer_price");
-			
+
 			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
-				
+
 				// // Call triggers
 				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				// $interface=new Interfaces($this->db);
@@ -204,14 +204,14 @@ class Productcustomerprice extends CommonObject
 				// // End call triggers
 			}
 		}
-		
+
 		if (! $error) {
 			$result = $this->setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate);
 			if ($result < 0) {
 				$error ++;
 			}
 		}
-		
+
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
@@ -237,7 +237,7 @@ class Productcustomerprice extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-		
+
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
@@ -254,18 +254,18 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key";
-		
+
 		$sql .= " FROM " . MAIN_DB_PREFIX . "product_customer_price as t";
 		$sql .= " WHERE t.rowid = " . $id;
-		
+
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
-				
+
 				$this->id = $obj->rowid;
-				
+
 				$this->entity = $obj->entity;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
@@ -284,7 +284,7 @@ class Productcustomerprice extends CommonObject
 				$this->import_key = $obj->import_key;
 			}
 			$this->db->free($resql);
-			
+
 			return 1;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
@@ -307,7 +307,7 @@ class Productcustomerprice extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-		
+
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
@@ -332,7 +332,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product', 1) . ")";
-		
+
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ( $filter as $key => $value ) {
@@ -346,27 +346,27 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 		}
-		
+
 		if (! empty($sortfield)) {
 			$sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
 		}
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		
+
 		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			
+
 			$this->lines = array ();
 			$num = $this->db->num_rows($resql);
-			
+
 			while ( $obj = $this->db->fetch_object($resql) ) {
-				
+
 				$line = new PriceByCustomerLine();
-				
+
 				$line->id = $obj->rowid;
-				
+
 				$line->entity = $obj->entity;
 				$line->datec = $this->db->jdate($obj->datec);
 				$line->tms = $this->db->jdate($obj->tms);
@@ -385,11 +385,11 @@ class Productcustomerprice extends CommonObject
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
 				$line->prodref = $obj->prodref;
-				
+
 				$this->lines [] = $line;
 			}
 			$this->db->free($resql);
-			
+
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
@@ -412,7 +412,7 @@ class Productcustomerprice extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-		
+
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.fk_product,";
@@ -436,7 +436,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product', 1) . ")";
-		
+
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ( $filter as $key => $value ) {
@@ -450,27 +450,27 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 		}
-		
+
 		if (! empty($sortfield)) {
 			$sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
 		}
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		
+
 		dol_syslog(get_class($this) . "::fetch_all_log", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			
+
 			$this->lines = array ();
 			$num = $this->db->num_rows($resql);
-			
+
 			while ( $obj = $this->db->fetch_object($resql) ) {
-				
+
 				$line = new PriceByCustomerLine();
-				
+
 				$line->id = $obj->rowid;
-				
+
 				$line->entity = $obj->entity;
 				$line->datec = $this->db->jdate($obj->datec);
 				$line->tms = $this->db->jdate($obj->tms);
@@ -489,11 +489,11 @@ class Productcustomerprice extends CommonObject
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
 				$line->prodref = $obj->prodref;
-				
+
 				$this->lines [] = $line;
 			}
 			$this->db->free($resql);
-			
+
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
@@ -513,9 +513,9 @@ class Productcustomerprice extends CommonObject
 
 		global $conf, $langs;
 		$error = 0;
-		
+
 		// Clean parameters
-		
+
 		if (isset($this->entity))
 			$this->entity = trim($this->entity);
 		if (isset($this->fk_product))
@@ -544,16 +544,16 @@ class Productcustomerprice extends CommonObject
 			$this->fk_user = trim($this->fk_user);
 		if (isset($this->import_key))
 			$this->import_key = trim($this->import_key);
-			
+
 			// Check parameters
 			// Put here code to add a control on parameters values
-		
+
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
 				$this->price_ttc = price2num($this->price, 'MU');
 				$this->price = price2num($this->price) / (1 + ($this->tva_tx / 100));
 				$this->price = price2num($this->price, 'MU');
-				
+
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min_ttc = price2num($this->price_min, 'MU');
 					$this->price_min = price2num($this->price_min) / (1 + ($this->tva_tx / 100));
@@ -566,7 +566,7 @@ class Productcustomerprice extends CommonObject
 				$this->price = price2num($this->price, 'MU');
 				$this->price_ttc = ($this->recuperableonly != 1) ? price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
 				$this->price_ttc = price2num($this->price_ttc, 'MU');
-				
+
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min = price2num($this->price_min, 'MU');
 					$this->price_min_ttc = price2num($this->price_min) * (1 + ($this->tva_tx / 100));
@@ -578,11 +578,11 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 		}
-		
+
 		// Do a copy of current record into log table
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_customer_price_log(";
-		
+
 		$sql .= "entity,";
 		$sql .= "datec,";
 		$sql .= "fk_product,";
@@ -598,10 +598,10 @@ class Productcustomerprice extends CommonObject
 		$sql .= "localtax2_tx,";
 		$sql .= "fk_user,";
 		$sql .= "import_key";
-		
+
 		$sql .= ") 		";
 		$sql .= "SELECT";
-		
+
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.fk_product,";
@@ -617,10 +617,10 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key";
-		
+
 		$sql .= " FROM " . MAIN_DB_PREFIX . "product_customer_price as t";
 		$sql .= " WHERE t.rowid = " . $this->id;
-		
+
 		$this->db->begin();
 		dol_syslog(get_class($this) . "::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -628,10 +628,10 @@ class Productcustomerprice extends CommonObject
 			$error ++;
 			$this->errors [] = "Error " . $this->db->lasterror();
 		}
-		
+
 		// Update request
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "product_customer_price SET";
-		
+
 		$sql .= " entity=" . $conf->entity . ",";
 		$sql .= " datec='" . $this->db->idate(dol_now()) . "',";
 		$sql .= " tms=" . (dol_strlen($this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : 'null') . ",";
@@ -648,21 +648,21 @@ class Productcustomerprice extends CommonObject
 		$sql .= " localtax2_tx=" . (isset($this->localtax2_tx) ? $this->localtax2_tx : "null") . ",";
 		$sql .= " fk_user=" . $user->id . ",";
 		$sql .= " import_key=" . (isset($this->import_key) ? "'" . $this->db->escape($this->import_key) . "'" : "null") . "";
-		
+
 		$sql .= " WHERE rowid=" . $this->id;
-		
+
 		dol_syslog(get_class($this) . "::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
 			$this->errors [] = "Error " . $this->db->lasterror();
 		}
-		
+
 		if (! $error) {
 			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
-				
+
 				// // Call triggers
 				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				// $interface=new Interfaces($this->db);
@@ -671,14 +671,14 @@ class Productcustomerprice extends CommonObject
 				// // End call triggers
 			}
 		}
-		
+
 		if (! $error) {
 			$result = $this->setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate);
 			if ($result < 0) {
 				$error ++;
 			}
 		}
-		
+
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
@@ -703,50 +703,50 @@ class Productcustomerprice extends CommonObject
 	function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate) {
 
 		$error = 0;
-		
+
 		// Find all susidiaries
 		$sql = "SELECT s.rowid";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
 		$sql .= " WHERE s.parent = " . $this->fk_soc;
 		$sql .= " AND s.entity IN (" . getEntity('societe', 1) . ")";
-		
+
 		dol_syslog(get_class($this) . "::setPriceOnAffiliateThirdparty", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		
+
 		if ($resql) {
-			
+
 			$this->lines = array ();
 			$num = $this->db->num_rows($resql);
-			
+
 			while ( ($obj = $this->db->fetch_object($resql)) && (empty($error)) ) {
-				
+
 				// find if there is an existing line for the product and the subsidiaries
 				$prodsocprice = new Productcustomerprice($this->db);
-				
+
 				$filter = array (
-					't.fk_product' => $this->fk_product,'t.fk_soc' => $obj->rowid 
+					't.fk_product' => $this->fk_product,'t.fk_soc' => $obj->rowid
 				);
-				
+
 				$result = $prodsocprice->fetch_all('', '', 0, 0, $filter);
 				if ($result < 0) {
 					$error ++;
 					$this->error = $prodsocprice->error;
 				} else {
-					
+
 					// There is one line
 					if (count($prodsocprice->lines) > 0) {
 						// If force update => Update
 						if (! empty($forceupdateaffiliate)) {
-							
+
 							$prodsocpriceupd = new Productcustomerprice($this->db);
 							$prodsocpriceupd->fetch($prodsocprice->lines [0]->id);
-							
+
 							$prodsocpriceupd->price = $this->price;
 							$prodsocpriceupd->price_min = $this->price_min;
 							$prodsocpriceupd->price_base_type = $this->price_base_type;
 							$prodsocpriceupd->tva_tx = $this->tva_tx;
 							$prodsocpriceupd->recuperableonly = $this->recuperableonly;
-							
+
 							$resultupd = $prodsocpriceupd->update($user, 0, $forceupdateaffiliate);
 							if ($result < 0) {
 								$error ++;
@@ -763,7 +763,7 @@ class Productcustomerprice extends CommonObject
 						$prodsocpricenew->price_base_type = $this->price_base_type;
 						$prodsocpricenew->tva_tx = $this->tva_tx;
 						$prodsocpricenew->recuperableonly = $this->recuperableonly;
-						
+
 						$resultupd = $prodsocpricenew->create($user, 0, $forceupdateaffiliate);
 						if ($result < 0) {
 							$error ++;
@@ -773,7 +773,7 @@ class Productcustomerprice extends CommonObject
 				}
 			}
 			$this->db->free($resql);
-			
+
 			if (empty($error)) {
 				return 1;
 			} else {
@@ -796,14 +796,14 @@ class Productcustomerprice extends CommonObject
 
 		global $conf, $langs;
 		$error = 0;
-		
+
 		$this->db->begin();
-		
+
 		if (! $error) {
 			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
-				
+
 				// // Call triggers
 				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				// $interface=new Interfaces($this->db);
@@ -812,11 +812,11 @@ class Productcustomerprice extends CommonObject
 				// // End call triggers
 			}
 		}
-		
+
 		if (! $error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_customer_price";
 			$sql .= " WHERE rowid=" . $this->id;
-			
+
 			dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) {
@@ -824,7 +824,7 @@ class Productcustomerprice extends CommonObject
 				$this->errors [] = "Error " . $this->db->lasterror();
 			}
 		}
-		
+
 		// Commit or rollback
 		if ($error) {
 			foreach ( $this->errors as $errmsg ) {
@@ -848,33 +848,37 @@ class Productcustomerprice extends CommonObject
 	function createFromClone($fromid) {
 
 		global $user, $langs;
-		
+
 		$error = 0;
-		
+
 		$object = new Productcustomerprice($this->db);
-		
+
+		$object->context['createfromclone']='createfromclone';
+
 		$this->db->begin();
-		
+
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
-		
+
 		// Clear fields
 		// ...
-		
+
 		// Create clone
 		$result = $object->create($user);
-		
+
 		// Other options
 		if ($result < 0) {
 			$this->error = $object->error;
 			$error ++;
 		}
-		
+
 		if (! $error) {
 		}
-		
+
+		unset($object->context['createfromclone']);
+
 		// End
 		if (! $error) {
 			$this->db->commit();
@@ -894,7 +898,7 @@ class Productcustomerprice extends CommonObject
 	function initAsSpecimen() {
 
 		$this->id = 0;
-		
+
 		$this->entity = '';
 		$this->datec = '';
 		$this->tms = '';

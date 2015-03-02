@@ -4,7 +4,7 @@ Sending=Sevkiyat
 Sendings=Sevkiyatlar
 Shipment=Sevkiyat
 Shipments=Sevkiyatlar
-ShowSending=Show Sending
+ShowSending=Gönderimi göster
 Receivings=Kabuller
 SendingsArea=Sevkiyat alanı
 ListOfSendings=Sevkiyat listesi
@@ -64,10 +64,10 @@ ShipmentLine=Sevkiyat kalemi
 CarrierList=Taşımacı listesi
 SendingRunning=Sipariş edilmiş müşteri sparişindeki ürün
 SuppliersReceiptRunning=Sipariş edilmiş tedarikçi sparişindeki ürün
-ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+ProductQtyInCustomersOrdersRunning=Açık müşteri siparişlerindeki ürün miktarı
+ProductQtyInSuppliersOrdersRunning=Açık tedarikçi siparişlerindeki ürün miktarı
+ProductQtyInShipmentAlreadySent=Açık müşteri siparişlerindeki halihazırda gönderilmiş ürün miktarı
+ProductQtyInSuppliersShipmentAlreadyRecevied=Açık tedarikçi siparişlerindeki halihazırda teslim alınmış ürün miktarı
 
 # Sending methods
 SendingMethodCATCH=Müşteri tarafından

@@ -607,6 +607,8 @@ class Facture extends CommonInvoice
 
 		$error=0;
 
+		$this->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// get extrafields so they will be clone
@@ -692,6 +694,8 @@ class Facture extends CommonInvoice
             if ($result < 0) $error++;
             // End call triggers
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -2043,6 +2047,9 @@ class Facture extends CommonInvoice
 
 			// Insert line
 			$this->line=new FactureLigne($this->db);
+
+			$this->line->context = $this->context;
+
 			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
@@ -2181,7 +2188,9 @@ class Facture extends CommonInvoice
 			// Update line into database
 			$this->line=new FactureLigne($this->db);
 
-			// Stock previous line records
+            $this->line->context = $this->context;
+
+            // Stock previous line records
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
@@ -2293,6 +2302,8 @@ class Facture extends CommonInvoice
 		}
 
 		$line=new FactureLigne($this->db);
+
+        $line->context = $this->context;
 
 		// For triggers
 		$line->fetch($rowid);

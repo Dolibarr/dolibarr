@@ -9,13 +9,13 @@ Menuaccount=Buchhaltung Konten
 Menuthirdpartyaccount=Partnerkonten
 MenuTools=Werkzeuge
 
-ConfigAccountingExpert=Configuration of the module accounting expert
+ConfigAccountingExpert=Konfiguration des Experten Buchhaltungsmodul 
 Journaux=Journale
 JournalFinancial=Finanz-Journale
 Exports=Exports
-Export=Export
+Export=Exportieren
 Modelcsv=Exportmodell
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+OptionsDeactivatedForThisExportModel=Für dieses Exportierungsmodell, sind die Einstellungen deaktiviert
 Selectmodelcsv=Wählen Sie ein Exportmodell
 Modelcsv_normal=Klassischer Export
 Modelcsv_CEGID=Export zu CEGID Expert
@@ -27,12 +27,12 @@ Selectchartofaccounts=Kontenplan wählen
 Validate=Freigeben
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungs Konto
-Ventilation=Breakdown
+Ventilation=Abbauen
 ToDispatch=Zu versenden
 Dispatched=Versandt
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=Kundenabbau
+SuppliersVentilation=Lieferantenabbau
 TradeMargin=Handelsspanne
 Reports=Berichte
 ByCustomerInvoice=Nach Kundenrechnungen
@@ -41,81 +41,81 @@ NewAccount=Neues Buchhaltungskonto
 Update=Aktualisieren
 List=Liste
 Create=Erstelle
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
+UpdateAccount=Änderung eines Bilanz-Kontos
+UpdateMvts=Änderung einer Bewegung
+WriteBookKeeping=Konten ins Hauptbuch übernehmen
 Bookkeeping=Hauptbuch
 AccountBalanceByMonth=Kontostand pro Monat
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilation=Rechnungswesenabbau
+AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
+AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
 Line=Zeile
 
 CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+InvoiceLines=Rechnungszeile bereinigen
+InvoiceLinesDone=Bereinigte Rechnungszeilen
+IntoAccount=Im Buchhaltungs-Konto
 
 Ventilate=erörtern
-VentilationAuto=Automatic breakdown
+VentilationAuto=Automatischer Abbau
 
 Processing=Bearbeitung
 EndProcessing=Das Ende der Verarbeitung
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Beliebige Zeile zu bereinigen
 SelectedLines=Gewählte Zeilen
 Lineofinvoice=Rechnungszeile
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+VentilatedinAccount=Erfolgreich im Rechnungskonto bereinigt
+NotVentilatedinAccount=Nicht im Rechnungskonto bereinigt
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Spaltentrennzeichen in Exportdatei
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Anzahl der Elemente, die Aufgliederung nach Seite angezeigt werden (empfohlenes Maximum: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Beginnen Sie die Sortierung der Abbau Seiten "Muss sortiert werden" durch die aktuellen Elemente
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Beginnen Sie die Sortierung der Abbau Seiten "Abbau" durch die aktuellen Elemente
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
+AccountLength=Länge der in Dolibarr gezeigten Rechnungskonten
 AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+ACCOUNTING_LENGTH_GACCOUNT=Länge der Finanzbuchführung
+ACCOUNTING_LENGTH_AACCOUNT=Länge der Partner
 
 ACCOUNTING_SELL_JOURNAL=Verkaufsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal
 ACCOUNTING_BANK_JOURNAL=Bankauszug
 ACCOUNTING_CASH_JOURNAL=Kassenbeleg
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Verschiedenes Journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SOCIAL_JOURNAL=Sozial-Journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto der Transaktion
+ACCOUNTING_ACCOUNT_SUSPENSE=Konto der Warte
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Produkte (wenn nicht im Produktblatt definiert)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Produkte (wenn nicht im Produktblatt definiert)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Dienstleistungen (wenn nicht im Produktblatt definiert)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Dienstleistungen (wenn nicht im Produktblatt definiert)
 
 Doctype=Dokumententyp
 Docdate=Datum
 Docref=Referenz
 Numerocompte=Konto
-Code_tiers=Thirdparty
-Labelcompte=Label account
+Code_tiers=Partner
+Labelcompte=Label-Account
 Debit=Soll
 Credit=Haben
 Amount=Betrag
 Sens=Sens
 Codejournal=Journal
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
 
 SellsJournal=Verkaufsjournal
 PurchasesJournal=Einkaufsjournal
 DescSellsJournal=Verkaufsjournal
 DescPurchasesJournal=Einkaufsjournal
 BankJournal=Bankauszug
-DescBankJournal=Bank journal including all the types of payments other than cash
+DescBankJournal=Bankjournal enthält alle Arten von anderen Zahlungsmitteln als Barzahlungen
 CashJournal=Kassenbeleg
-DescCashJournal=Cash journal including the type of payment cash
+DescCashJournal=Barjournal enthält die Zahlungsart: bar
 
 CashPayment=Barzahlung
 
@@ -125,36 +125,36 @@ CustomerInvoicePayment=Rechnungszahlung (Kunde)
 ThirdPartyAccount=Partner Konto
 
 NewAccountingMvt=Neue Änderung
-NumMvts=Number of movement
-ListeMvts=List of the movement
+NumMvts=Anzahl der Änderungen
+ListeMvts=Liste der Bewegungen
 ErrorDebitCredit=Soll und Haben können nicht gleichzeitig eingegeben werden
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Liste der Partner Konten
+DescThirdPartyReport=Konsultieren Sie hier die Liste der Drittkunden und die Anbieter und ihre Buchhaltungskonten
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Liste der Abrechnungskonten
 
 Pcgversion=Version des Plans
 Pcgtype=Kontenklasse
 Pcgsubtype=Unterkontenklasse
-Accountparent=Root of the account
+Accountparent=Wurzeln des Kontos
 Active=Auszug
 
 NewFiscalYear=Neues fiskalisches Jahr
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
+DescVentilCustomer=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung Ihrer Rechnungs-Kunden
+TotalVente=Totaler Umsatz
 TotalMarge=Gesamt-Spanne
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilDoneCustomer=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
+DescVentilTodoCustomer=Bereinigen Sie die Zeilen der Kundenrechnung mit einem Rechnungskonto
+ChangeAccount=Ändern sie das Abrechnungskonto für markierte Zeilen durch das Konto:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung, Ihrer Rechnungen der Lieferanten
+DescVentilTodoSupplier=Bereinigen Sie die Zeilen der Rechnung für Lieferanten, mit einem Abrechnungskonto
+DescVentilDoneSupplier=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
 
 ValidateHistory=Automatisch geltend machen
 
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchaltungskonto nicht löschen, da es benutzt wird.
 
-FicheVentilation=Breakdown card
+FicheVentilation=Abbau-Karte
