@@ -43,11 +43,11 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
+<tr <?php echo 'id="row-'.$line->rowid.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->id; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->rowid; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -167,7 +167,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#'.$line->id; ?>">
+		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->rowid.'#'.$line->rowid; ?>">
 		<?php echo img_edit(); ?>
 		</a>
 		<?php } ?>
@@ -176,7 +176,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<td align="center"><?php $coldisplay++; ?>
 		<?php
 		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
-			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
+			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->rowid . '">';
 			print img_delete();
 			print '</a>';
 		}
@@ -186,12 +186,12 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
 	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
-		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->rowid; ?>">
 		<?php echo img_up(); ?>
 		</a>
 		<?php } ?>
 		<?php if ($i < $num-1) { ?>
-		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->rowid; ?>">
 		<?php echo img_down(); ?>
 		</a>
 		<?php } ?>

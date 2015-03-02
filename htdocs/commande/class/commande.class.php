@@ -3131,6 +3131,7 @@ class Commande extends CommonOrder
 
 				$this->lines[$i]					= new OrderLine($this->db);
                 $this->lines[$i]->id				= $obj->rowid;
+                $this->lines[$i]->rowid				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
                 $this->lines[$i]->description 		= $obj->description;
                 $this->lines[$i]->fk_product		= $obj->fk_product;
