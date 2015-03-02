@@ -57,7 +57,7 @@ if ($id > 0 || ! empty($ref))
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
     } else {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, 'errors');
         $action='';
     }
 }
