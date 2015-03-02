@@ -49,13 +49,17 @@ $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
+    $ret = $object->fetch($id,$ref);
+    if ($ret > 0) {
 	$id=$object->id;
 	$ref=$object->ref;
-
 	// fetch optionals attributes and labels
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
+    } else {
+        setEventMessages($object->error, 'errors');
+        $action='';
+    }
 }
 
 // Security check
