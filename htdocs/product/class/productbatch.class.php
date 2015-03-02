@@ -324,7 +324,9 @@ class Productbatch extends CommonObject
 
 		$object=new Productbatch($this->db);
 
-		$this->db->begin();
+		$object->context['createfromclone']='createfromclone';
+
+ 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
@@ -349,6 +351,8 @@ class Productbatch extends CommonObject
 
 
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

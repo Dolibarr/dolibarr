@@ -639,6 +639,8 @@ class Facture extends CommonInvoice
 
 		$error=0;
 
+		$this->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// get extrafields so they will be clone
@@ -724,6 +726,8 @@ class Facture extends CommonInvoice
             if ($result < 0) $error++;
             // End call triggers
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -2030,12 +2034,12 @@ class Facture extends CommonInvoice
 	 * 		@param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
 	 * 		@param		int			$pa_ht				Buying price of line (to calculate margin) or ''
 	 * 		@param		string		$label				Label of the line (deprecated, do not use)
-	 *		@param		array		$array_option		extrafields array
+	 *		@param		array		$array_options		extrafields array
 	 *      @param      int         $situation_percent  Situation advance percentage
 	 *      @param      int         $fk_prev_id         Previous situation line id reference
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0, $situation_percent=100, $fk_prev_id='')
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_options=0, $situation_percent=100, $fk_prev_id='')
 	{
 		global $mysoc, $conf, $langs;
 
@@ -2120,6 +2124,9 @@ class Facture extends CommonInvoice
 
 			// Insert line
 			$this->line=new FactureLigne($this->db);
+
+			$this->line->context = $this->context;
+
 			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
@@ -2155,8 +2162,8 @@ class Facture extends CommonInvoice
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$this->line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
 			}
 
 			$result=$this->line->insert();
@@ -2210,11 +2217,11 @@ class Facture extends CommonInvoice
 	 * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
 	 * 	@param		string		$label				Label of the line (deprecated, do not use)
 	 * 	@param		int			$special_code		Special code (also used by externals modules!)
-     *  @param		array		$array_option		extrafields array
+     *  @param		array		$array_options		extrafields array
 	 * @param       int         $situation_percent  Situation advance percentage
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0, $situation_percent=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=0)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2263,7 +2270,9 @@ class Facture extends CommonInvoice
 			// Update line into database
 			$this->line=new FactureLigne($this->db);
 
-			// Stock previous line records
+            $this->line->context = $this->context;
+
+            // Stock previous line records
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
@@ -2313,8 +2322,8 @@ class Facture extends CommonInvoice
 			}
 			$this->line->pa_ht = $pa_ht;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$this->line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
 			}
 
 			$result=$this->line->update();
@@ -2402,6 +2411,8 @@ class Facture extends CommonInvoice
 		}
 
 		$line=new FactureLigne($this->db);
+
+        $line->context = $this->context;
 
 		// For triggers
 		$line->fetch($rowid);

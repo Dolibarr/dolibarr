@@ -877,6 +877,8 @@ class Commande extends CommonOrder
 
         $error=0;
 
+        $this->context['createfromclone'] = 'createfromclone';
+
         $this->db->begin();
 
 		// get extrafields so they will be clone
@@ -940,6 +942,8 @@ class Commande extends CommonOrder
             if ($result < 0) $error++;
             // End call triggers
         }
+
+        unset($this->context['createfromclone']);
 
         // End
         if (! $error)
@@ -1088,8 +1092,8 @@ class Commande extends CommonOrder
      *	@param      int				$fk_remise_except	Id remise
      *	@param      string			$price_base_type	HT or TTC
      *	@param      float			$pu_ttc    		    Prix unitaire TTC
-     *	@param      int		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     *	@param      int		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int				$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int				$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1097,7 +1101,7 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
-	 *  @param		array			$array_option		extrafields array
+	 *  @param		array			$array_options		extrafields array
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1107,7 +1111,7 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0)
     {
     	global $mysoc, $conf, $langs;
 
@@ -1200,6 +1204,8 @@ class Commande extends CommonOrder
             // Insert line
             $this->line=new OrderLine($this->db);
 
+            $this->line->context = $this->context;
+
             $this->line->fk_commande=$this->id;
             $this->line->label=$label;
             $this->line->desc=$desc;
@@ -1244,8 +1250,8 @@ class Commande extends CommonOrder
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$this->line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
 			}
 
             $result=$this->line->insert();
@@ -1313,6 +1319,8 @@ class Commande extends CommonOrder
             $price = $prod->price;
 
             $line=new OrderLine($this->db);
+
+            $line->context = $this->context;
 
             $line->fk_product=$idproduct;
             $line->desc=$prod->description;
@@ -2338,10 +2346,10 @@ class Commande extends CommonOrder
      *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
      *  @param		int				$special_code		Special code (also used by externals modules!)
-	 *  @param		array			$array_option		extrafields array
+	 *  @param		array			$array_options		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0)
     {
         global $conf, $mysoc;
 
@@ -2396,6 +2404,8 @@ class Commande extends CommonOrder
             // Update line
             $this->line=new OrderLine($this->db);
 
+            $this->line->context = $this->context;
+
             // Stock previous line records
             $staticline=new OrderLine($this->db);
             $staticline->fetch($rowid);
@@ -2448,8 +2458,8 @@ class Commande extends CommonOrder
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$this->line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
 			}
 
             $result=$this->line->update();
@@ -3506,7 +3516,7 @@ class OrderLine extends CommonOrderLine
 				}
 			}
 
-            if (! $notrigger)
+            if (! $error && ! $notrigger)
             {
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_INSERT',$user);

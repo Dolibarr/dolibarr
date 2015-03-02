@@ -49,6 +49,7 @@ abstract class CommonObject
     public $errors;
 
     public $canvas;                // Contains canvas name if it is
+	public $context=array();		// Use to pass context information
 
     public $name;
     public $lastname;
@@ -2136,7 +2137,7 @@ abstract class CommonObject
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
         if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
@@ -2567,38 +2568,43 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
+	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
+
+		# Define usemargins
+		$usemargins=0;
+		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
+		print '<td>'.$langs->trans('Description').'</td>';
 
 		// VAT
-		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 
 		// Price HT
-		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
+		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
-		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 
 		// Reduction short
-		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
+			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
 		}
 
-		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
@@ -2653,7 +2659,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline,$permtoedit);
 			}
 
 			$i++;
@@ -2674,9 +2680,10 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
+	 *  @param	int			$permtoedit			Permission to edit
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
@@ -3496,7 +3503,8 @@ abstract class CommonObject
 
     /**
      *	Add/Update all extra fields values for the current object.
-     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */

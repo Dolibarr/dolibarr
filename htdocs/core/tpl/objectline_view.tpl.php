@@ -25,20 +25,21 @@
  * $langs
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
+ * $element     (used to test $user->rights->$element->creer)
+ * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  *
  * $type, $text, $description, $line
  */
 
-$usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
-
-global $forceall, $senderissupplier, $inputalsopricewithtax;
+global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+if (empty($usemargins)) $usemargins=0;
 
 ?>
 <?php $coldisplay=0; ?>
@@ -83,7 +84,8 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	}
 	else
 	{
-		if ($line->fk_product > 0) {
+		if ($line->fk_product > 0)
+		{
 
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 
@@ -96,7 +98,9 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 				print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 			}
 
-		} else {
+		}
+		else
+		{
 
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
@@ -118,10 +122,10 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ht)?price($line->pu_ht):price($line->subprice)); ?></td>
 
 	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?>&nbsp;</td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?>
@@ -135,7 +139,11 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	</td>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td align="right"><?php $coldisplay++; ?><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
+	<td align="right"><?php
+		$coldisplay++;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		echo dol_print_reduction($line->remise_percent,$langs);
+	?></td>
 	<?php } else { ?>
 	<td><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
@@ -145,17 +153,19 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 		print '<td align="right" nowrap="nowrap">' . $line->situation_percent . '%</td>';
 	}
 
-  if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
-	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
-  ?>
+  	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+  	{
+		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+  		?>
   	<td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
-  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {?>
+  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
   	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
-  	<?php
-  }
-  if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
+  	<?php }
+    if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
   	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
-  <?php } } ?>
+    <?php }
+  	}
+  	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
@@ -163,7 +173,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
-	<?php if ($this->statut == 0  && $user->rights->$element->creer) { ?>
+	<?php if ($this->statut == 0  && ($user->rights->$element->creer || $permtoedit)) { ?>
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>

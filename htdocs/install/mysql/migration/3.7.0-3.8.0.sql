@@ -238,3 +238,34 @@ CREATE TABLE llx_expensereport_det
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
+
+
+
+create table llx_commande_fournisseurdet_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_commande_fournisseurdet_extrafields ADD INDEX idx_commande_fournisseurdet_extrafields (fk_object);
+
+
+create table llx_facture_fourn_det_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_facture_fourn_det_extrafields ADD INDEX idx_facture_fourn_det_extrafields (fk_object);
+
+ALTER TABLE llx_facture_fourn_det ADD COLUMN special_code	 integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN rang integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL after fk_facture_fourn;
+
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;

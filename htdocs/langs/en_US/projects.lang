@@ -135,3 +135,5 @@ SearchAProject=Search a project
 ProjectMustBeValidatedFirst=Project must be validated first
 ProjectDraft=Draft projects
 FirstAddRessourceToAllocateTime=Associate a ressource to allocate time
+InputPerTime=Input per time
+InputPerDay=Input per day 

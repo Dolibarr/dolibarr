@@ -44,7 +44,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("InfoBrowser"),'','setup');
 
-$tmp=getBrowserInfo();
+$tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 
 // Browser
 $var=true;

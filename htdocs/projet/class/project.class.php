@@ -46,7 +46,6 @@ class Project extends CommonObject
     var $id;
     var $ref;
     var $description;
-    var $statut;
     var $title;
     var $date_start;
     var $date_end;
@@ -1039,6 +1038,8 @@ class Project extends CommonObject
 
 		$clone_project=new Project($this->db);
 
+		$clone_project->context['createfromclone']='createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -1092,8 +1093,6 @@ class Project extends CommonObject
 
 		if (! $error)
 		{
-			$this->db->commit();
-
 			//Get the new project id
 			$clone_project_id=$clone_project->id;
 
@@ -1247,23 +1246,19 @@ class Project extends CommonObject
 				    }
 			    }
 			}
+		}
 
+		unset($clone_project->context['createfromclone']);
 
-
-			if (! $error)
-			{
-				return $clone_project_id;
-			}
-			else
-			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
-				return -1;
-			}
-
+		if (! $error)
+		{
+			$this->db->commit();
+			return $clone_project_id;
 		}
 		else
 		{
 			$this->db->rollback();
+			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}
