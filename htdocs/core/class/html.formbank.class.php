@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ class FormBank
 
         $type_available=array(0,1,2);
 
-        print '<select class="flat" name="'.$htmlname.'">';
+        print '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
         $num = count($type_available);
         $i = 0;
         if ($num)

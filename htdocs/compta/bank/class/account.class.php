@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copytight (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
+ * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 /**
  *	\file       htdocs/compta/bank/class/account.class.php
- *	\ingroup    banque
+ *	\ingroup    bank
  *	\brief      File of class to manage bank accounts
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
@@ -389,7 +390,17 @@ class Account extends CommonObject
         $sql.= ", entity";
         $sql.= ", account_number";
 		$sql.= ", accountancy_journal";
-        $sql.= ", currency_code";
+		$sql.= ", bank";
+        $sql.= ", code_banque";
+        $sql.= ", code_guichet";
+        $sql.= ", number";
+        $sql.= ", cle_rib";
+        $sql.= ", bic";
+        $sql.= ", iban_prefix";
+        $sql.= ", domiciliation";
+        $sql.= ", proprio";
+        $sql.= ", owner_address";
+		$sql.= ", currency_code";
         $sql.= ", rappro";
         $sql.= ", min_allowed";
         $sql.= ", min_desired";
@@ -403,6 +414,16 @@ class Account extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->account_number)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_journal)."'";
+		$sql.= ", '".$this->db->escape($this->bank)."'";
+        $sql.= ", '".$this->code_banque."'";
+        $sql.= ", '".$this->code_guichet."'";
+        $sql.= ", '".$this->number."'";
+        $sql.= ", '".$this->cle_rib."'";
+        $sql.= ", '".$this->bic."'";
+        $sql.= ", '".$this->iban."'";
+        $sql.= ", '".$this->db->escape($this->domiciliation)."'";
+        $sql.= ", '".$this->db->escape($this->proprio)."'";
+        $sql.= ", '".$this->db->escape($this->owner_address)."'";
         $sql.= ", '".$this->currency_code."'";
         $sql.= ", ".$this->rappro;
         $sql.= ", ".price2num($this->min_allowed);
@@ -523,6 +544,17 @@ class Account extends CommonObject
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
         $sql.= ",account_number = '".$this->account_number."'";
 		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
+		
+		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
+        $sql.= ",code_banque='".$this->code_banque."'";
+        $sql.= ",code_guichet='".$this->code_guichet."'";
+        $sql.= ",number='".$this->number."'";
+        $sql.= ",cle_rib='".$this->cle_rib."'";
+        $sql.= ",bic='".$this->bic."'";
+        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+        $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
+        $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
         $sql.= ",currency_code = '".$this->currency_code."'";
 
