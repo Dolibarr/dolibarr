@@ -3586,16 +3586,12 @@ class Facture extends CommonInvoice
  */
 class FactureLigne extends CommonInvoiceLine
 {
-	var $db;
-	var $error;
-
     public $element='facturedet';
     public $table_element='facturedet';
 
 	var $oldline;
 
 	//! From llx_facturedet
-	var $rowid;
 	//! Id facture
 	var $fk_facture;
 	//! Id parent line
@@ -3603,17 +3599,9 @@ class FactureLigne extends CommonInvoiceLine
 	var $label;				// deprecated
 	//! Description ligne
 	var $desc;
-	var $fk_product;		// Id of predefined product
-	var $product_type = 0;	// Type 0 = product, 1 = Service
 
-	var $qty;				// Quantity (example 2)
-	var $tva_tx;			// Taux tva produit/service (example 19.6)
-	var $localtax1_tx;		// Local tax 1
-	var $localtax2_tx;		// Local tax 2
 	var $localtax1_type;	// Local tax 1 type
 	var $localtax2_type;	// Local tax 2 type
-	var $subprice;      	// P.U. HT (example 100)
-	var $remise_percent;	// % de la remise ligne (example 20%)
 	var $fk_remise_except;	// Link to line into llx_remise_except
 	var $rang = 0;
 
@@ -3622,10 +3610,6 @@ class FactureLigne extends CommonInvoiceLine
 	var $marge_tx;
 	var $marque_tx;
 
-	var $info_bits = 0;		// Liste d'options cumulables:
-	// Bit 0:	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-
 	var $special_code;	// Liste d'options non cumulabels:
 	// 1: frais de port
 	// 2: ecotaxe
@@ -3633,15 +3617,6 @@ class FactureLigne extends CommonInvoiceLine
 
 	var $origin;
 	var $origin_id;
-
-	//! Total HT  de la ligne toute quantite et incluant la remise ligne
-	var $total_ht;
-	//! Total TVA  de la ligne toute quantite et incluant la remise ligne
-	var $total_tva;
-	var $total_localtax1; //Total Local tax 1 de la ligne
-	var $total_localtax2; //Total Local tax 2 de la ligne
-	//! Total TTC de la ligne toute quantite et incluant la remise ligne
-	var $total_ttc;
 
 	var $fk_code_ventilation = 0;
 
@@ -3670,16 +3645,6 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var int Previous situation line id reference
 	 */
 	public $fk_prev_id;
-
-	/**
-	 *  Constructor
-	 *
-	 *  @param	DoliDB		$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
 
 	/**
 	 *	Load invoice line from database
