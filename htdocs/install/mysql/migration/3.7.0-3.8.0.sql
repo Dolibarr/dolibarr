@@ -1,4 +1,4 @@
-NULL-
+--
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 3.8.0 or higher.
@@ -219,7 +219,6 @@ create table llx_c_units(
 )ENGINE=innodb;
 ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
 
-INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('NA','aucune','', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('P','piece','p', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('SET','set','se', 1);
 INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('S','second','s', 1);
