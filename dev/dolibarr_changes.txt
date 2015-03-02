@@ -23,6 +23,21 @@ Replace call to serialize_val with no bugged value
 
 
 
+FPDI:
+-----
+Replace:
+	$this->_readXref($this->_xref, $this->_findXref());
+with:
+    try {
+	        $this->_readXref($this->_xref, $this->_findXref());
+    }
+    catch(Exception $e)
+    {
+        	print $e->getMessage();
+        	exit;
+    }
+
+
 TCPDF:
 ------
 * Removed all fonts except 
