@@ -53,7 +53,7 @@ if ($id > 0 || ! empty($ref))
         $object->fetch_thirdparty();
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
     } else {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, 'errors');
         $action='';
     }
 }
