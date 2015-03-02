@@ -43,7 +43,7 @@ if ($id > 0 || ! empty($ref))
         $object->fetch_thirdparty();
         $id=$object->id;
     } else {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, 'errors');
         $action='';
     }
 }
