@@ -62,6 +62,19 @@ In htdocs/includes/tcpdf/tcpdf.php
 * Renamed getmypid into dol_getmypid().
 
 
+TCPDI:
+------
+Add fpdf_tpl.php 1.2
+Add tcpdi.php
+Add tcpdi_parser.php and replace:
+require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
+with:
+require_once(dirname(__FILE__).'/../tcpdf/include/tcpdf_filters.php');
+
+
+
+
+
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
