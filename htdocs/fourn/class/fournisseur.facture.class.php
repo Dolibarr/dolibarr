@@ -89,36 +89,14 @@ class FactureFournisseur extends CommonInvoice
     var $mode_reglement_id;
     var $mode_reglement_code;
 
-    var $lines;
+	/**
+	 * Invoice lines
+	 * @var SupplierInvoiceLine[]
+	 */
+    public $lines = array();
     var $fournisseur;	// deprecated
-	var $thirdparty;	// To store thirdparty
 
     var $extraparams=array();
-
-    /**
-     * Standard invoice
-     */
-    const TYPE_STANDARD = 0;
-
-    /**
-     * Replacement invoice
-     */
-    const TYPE_REPLACEMENT = 1;
-
-    /**
-     * Credit note invoice
-     */
-    const TYPE_CREDIT_NOTE = 2;
-
-    /**
-     * Deposit invoice
-     */
-    const TYPE_DEPOSIT = 3;
-
-    /**
-     * Proforma invoice
-     */
-    const TYPE_PROFORMA = 4;
 
     /**
 	 *	Constructor
@@ -140,7 +118,6 @@ class FactureFournisseur extends CommonInvoice
         $this->propalid = 0;
 
         $this->products = array();
-        $this->lines = array();
     }
 
     /**
