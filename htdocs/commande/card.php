@@ -96,6 +96,7 @@ $permissionnote = $user->rights->commande->creer; // Used by the include of acti
 $permissionedit = $user->rights->commande->creer; // Used by the include of actions_lineupdown.inc.php
 
 
+
 /*
  * Actions
  */
@@ -1053,16 +1054,16 @@ if (empty($reshook))
 
 	if ($action == 'builddoc') // In get or post
 	{
-		/*
-		 * Generate order document
-		 * define into /core/modules/commande/modules_commande.php
-		 */
-
 		// Save last template used to generate document
 		if (GETPOST('model'))
 			$object->setDocModel($user, GETPOST('model', 'alpha'));
+		    if (GETPOST('fk_bank')) { // this field may come from an external module
+            $object->fk_bank = GETPOST('fk_bank');
+        } else {
+            $object->fk_bank = $object->fk_account;
+        }
 
-			// Define output language
+		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
