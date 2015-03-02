@@ -48,9 +48,14 @@ $result=restrictedArea($user,'projet',$id,'');
 $object = new Project($db);
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	$object->fetch_thirdparty();
+    $ret = $object->fetch($id,$ref);
+    if ($ret > 0) {
+        $object->fetch_thirdparty();
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    } else {
+        setEventMessages($object->error, 'errors');
+        $action='';
+    }
 }
 
 // Get parameters
