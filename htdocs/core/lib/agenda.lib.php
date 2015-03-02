@@ -130,7 +130,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td align="center" valign="middle" class="nowrap">';
 		print '<script type="text/javascript">' . "\n";
 		print 'jQuery(document).ready(function () {' . "\n";
-		print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
 		print 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
 		print 'jQuery(".family_birthday").toggle();' . "\n";
 		print '});' . "\n";
@@ -162,7 +161,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 					$htmlname = dol_string_nospecial($val['name']);
 
 					print '<tr><td>';
-					print '<input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'];
+					print '<input type="checkbox" id="check_' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'];
 					print '</td></tr>';
 				}
 			}
