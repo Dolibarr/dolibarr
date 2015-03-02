@@ -49,17 +49,8 @@ $hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
-if ($id > 0 || ! empty($ref))
-{
-    $ret = $object->fetch($id,$ref);
-    if ($ret > 0) {
-        $object->fetch_thirdparty();
-        $id=$object->id;
-    } else {
-        setEventMessage($object->error, 'errors');
-        $action='';
-    }
-}
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Security check
 $socid=GETPOST('socid');
