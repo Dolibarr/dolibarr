@@ -1022,7 +1022,6 @@ class FichinterLigne extends CommonObjectLine
 	var $error;
 
 	// From llx_fichinterdet
-	var $rowid;
 	var $fk_fichinter;
 	var $desc;          	// Description ligne
 	var $datei;           // Date intervention
