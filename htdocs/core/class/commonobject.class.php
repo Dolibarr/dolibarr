@@ -2575,7 +2575,7 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
 
-		# Define usemargins
+		// Define usemargins
 		$usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
 
