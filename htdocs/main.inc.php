@@ -988,9 +988,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $appli='Dolibarr';
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
-        if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.htmlentities($title).'</title>';
-        if ($title) print '<title>'.htmlentities($appli.' - '.$title).'</title>';
-        else print "<title>".htmlentities($appli)."</title>";
+        if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
+        if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
+        else print "<title>".dol_htmlentities($appli)."</title>";
         print "\n";
 
         $ext='';

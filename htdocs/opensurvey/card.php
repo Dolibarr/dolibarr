@@ -212,16 +212,16 @@ $adresseadmin=$object->mail_admin;
 print $langs->trans("Title") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(htmlentities($object->titre)).'">';
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
 }
-else print htmlentities($object->titre);
+else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
 // Description
 print '<tr><td valign="top">'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	$doleditor=new DolEditor('nouveauxcommentaires', htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
+	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
 	$doleditor->Create(0,'');
 }
 else
@@ -229,7 +229,7 @@ else
 	if (empty($conf->fckeditor->enabled)) print dol_htmlentitiesbr($object->commentaires);
 	else
 	{
-		$doleditor=new DolEditor('nouveauxcommentaires', htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120,1);
+		$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120,1);
 		$doleditor->Create(0,'');
 	}
 }
@@ -295,7 +295,7 @@ print $langs->trans("Author") .'</td><td colspan="2">';
 if ($object->fk_user_creat) {
 	print $userstatic->getLoginUrl(1);
 } else {
-	print htmlentities($object->nom_admin);
+	print dol_htmlentities($object->nom_admin);
 }
 print '</td></tr>';
 
@@ -359,7 +359,7 @@ if ($comments) {
 			print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
 		}
 
-		print htmlentities($comment->usercomment).': '.dol_nl2br(htmlentities($comment->comment))." <br>";
+		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
 }
 else
