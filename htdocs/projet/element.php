@@ -52,7 +52,7 @@ if (! empty($conf->ficheinter->enabled))	 $langs->load("interventions");
 if (! empty($conf->deplacement->enabled))	 $langs->load("trips");
 if (! empty($conf->expensereport->enabled)) $langs->load("trips");
 
-$projectid=GETPOST('id','int');
+$id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $datesrfc=GETPOST('datesrfc');
@@ -69,7 +69,7 @@ if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf-
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
 	$dates=dol_get_first_day($tmp['year'],1);
 }
-if ($projectid == '' && $ref == '')
+if ($id == '' && $projectid == '' && $ref == '')
 {
 	dol_print_error('','Bad parameter');
 	exit;
@@ -78,18 +78,22 @@ if ($projectid == '' && $ref == '')
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$projectid=$id;	// For backward compatibility
+
 $project = new Project($db);
 if ($id > 0 || ! empty($ref))
 {
-    $project->fetch($id,$ref);
-    $project->fetch_thirdparty();
-    $projectid=$project->id;
-}
-else
-{
-	$project->fetch($projectid);
-    $project->fetch_thirdparty();
-    $projectid=$project->id;
+    $ret=$project->fetch($id,$ref);
+    if ($ret > 0)
+    {
+		$projectid=$project->id;
+		$project->fetch_thirdparty();
+	}
+	else
+	{
+		setEventMessages($project->error, $project->errors, 'errors');
+		$action='';
+	}
 }
 
 // Security check
@@ -420,7 +424,7 @@ foreach ($listofreferent as $key => $value)
 					$element_doc = $element->element;
 					$filename=dol_sanitizeFileName($element->ref);
 					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
-					
+
 					if($element_doc === 'order_supplier') {
 						$element_doc='commande_fournisseur';
 						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
@@ -428,13 +432,13 @@ foreach ($listofreferent as $key => $value)
 					else if($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
 						$filename = get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2).dol_sanitizeFileName($element->ref);						
+						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
 					}
-					
+
 					print $formfile->getDocumentsLink($element_doc, $filename, $filedir);
-					
-				} 
-				
+
+				}
+
 				print "</td>\n";
 
 				// Date
