@@ -85,7 +85,7 @@ if ($projectid > 0 || ! empty($ref))
         $project->fetch_thirdparty();
         $projectid=$project->id;
     } else {
-        setEventMessage($project->error, 'errors');
+        setEventMessages($project->error, 'errors');
         $action='';
     }
 }
