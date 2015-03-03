@@ -1183,15 +1183,37 @@ class DoliDBSqlite extends DoliDB
     function getServerParametersValues($filter='')
     {
         $result=array();
+		static $pragmas;
+		if (! isset($pragmas)) {
+			$pragmas = array(
+				'application_id', 'auto_vacuum', 'automatic_index', 'busy_timeout', 'cache_size',
+				'cache_spill', 'case_sensitive_like', 'checkpoint_fullsync', 'collation_list',
+				'compile_options', 'data_version',	/*'database_list',*/
+				'defer_foreign_keys', 'encoding', 'foreign_key_check', 'freelist_count',
+				'full_column_names', 'fullsync', 'ingore_check_constraints', 'integrity_check',
+				'journal_mode', 'journal_size_limit', 'legacy_file_format', 'locking_mode',
+				'max_page_count', 'page_count', 'page_size', 'parser_trace',
+				'query_only', 'quick_check', 'read_uncommitted', 'recursive_triggers',
+				'reverse_unordered_selects', 'schema_version', 'user_version',
+				'secure_delete', 'short_column_names', 'shrink_memory', 'soft_heap_limit',
+				'synchronous', 'temp_store', /*'temp_store_directory',*/ 'threads',
+				'vdbe_addoptrace', 'vdbe_debug', 'vdbe_listing', 'vdbe_trace',
+				'wal_autocheckpoint',
+				// TODO poursuivre la liste cf. http://www.sqlite.org/pragma.html
+			);
+		}
 
-        $sql='SHOW VARIABLES';
-        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
-        $resql=$this->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
-        }
-
+		// TODO prendre en compte le filtre
+		foreach($pragmas as $var) {
+			$sql = "PRAGMA $var";
+			$resql=$this->query($sql);
+			if ($resql)
+			{
+				$obj = $this->fetch_row($resql);
+				//dol_syslog(get_class($this)."::select_db getServerParametersValues $var=". print_r($obj, true), LOG_DEBUG);
+				$result[$var] = $obj[0];
+			}
+		}
         return $result;
     }
 
@@ -1204,7 +1226,7 @@ class DoliDBSqlite extends DoliDB
     function getServerStatusValues($filter='')
     {
         $result=array();
-
+		/*
         $sql='SHOW STATUS';
         if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
@@ -1212,6 +1234,7 @@ class DoliDBSqlite extends DoliDB
         {
             while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
+		 */
 
         return $result;
     }
@@ -1333,7 +1356,7 @@ class DoliDBSqlite extends DoliDB
 				} else {
 					$calc_year = 0;
 					switch ($char) {
-						case 'j':	// day of the year 001 - OK
+						case 'j':	// day of the year 001
 							$char = sprintf("%03d", $yday+1);
 							break;
 						case 'U': // mode 0: semaine 0 = premiere semaine complète qui commence un dimanche
@@ -1342,10 +1365,10 @@ class DoliDBSqlite extends DoliDB
 						case 'u': // mode 1: semaine 0 = première semaine de 4 jours. Début le dimanche
 							$char = sprintf("%02d", self::calc_week($year, $month, $day, 1, $calc_year));
 							break;
-						case 'V': // mode 2: semaine 1 = premiere semaine complète qui commence un dimanche - KO
+						case 'V': // mode 2: semaine 1 = premiere semaine complète qui commence un dimanche
 							$char = sprintf("%02d", self::calc_week($year, $month, $day, 6, $calc_year));
 							break;
-						case 'v':  // mode 3: semaine 1 = premiere semaine de 4 jours. Début le lundi - OK
+						case 'v':  // mode 3: semaine 1 = premiere semaine de 4 jours. Début le lundi
 							$char = sprintf("%02d", self::calc_week($year, $month, $day, 3, $calc_year));
 							break;
 						case 'X':
