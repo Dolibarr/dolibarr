@@ -259,9 +259,9 @@ if (empty($reshook))
 	                		$action = (($action=='add'||$action=='create')?'create':'edit');
 						}
 					}
-	
+
 					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	
+
 					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 					{
 						$langs->load("errors");
@@ -2129,6 +2129,11 @@ else
 			$formmail->fromid   = $user->id;
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
+			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID))
+			{
+				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
+			}
 			$formmail->withfrom=1;
 			$formmail->withtopic=1;
 			$liste=array();
