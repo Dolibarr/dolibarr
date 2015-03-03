@@ -1185,6 +1185,9 @@ class DoliDBSqlite extends DoliDB
         $result=array();
 		static $pragmas;
 		if (! isset($pragmas)) {
+			// Définition de la liste des pragmas utilisés qui ne retournent qu'une seule valeur
+			// indépendante de la base de données.
+			// cf. http://www.sqlite.org/pragma.html
 			$pragmas = array(
 				'application_id', 'auto_vacuum', 'automatic_index', 'busy_timeout', 'cache_size',
 				'cache_spill', 'case_sensitive_like', 'checkpoint_fullsync', 'collation_list',
@@ -1199,7 +1202,6 @@ class DoliDBSqlite extends DoliDB
 				'synchronous', 'temp_store', /*'temp_store_directory',*/ 'threads',
 				'vdbe_addoptrace', 'vdbe_debug', 'vdbe_listing', 'vdbe_trace',
 				'wal_autocheckpoint',
-				// TODO poursuivre la liste cf. http://www.sqlite.org/pragma.html
 			);
 		}
 
