@@ -40,6 +40,11 @@ class DoliDBSqlite extends DoliDB
 	//! Resultset of last query
 	private $_results;
 
+	const WEEK_MONDAY_FIRST=1;
+	const WEEK_YEAR = 2;
+	const WEEK_FIRST_WEEKDAY=4;
+
+
     /**
 	 *	Constructor.
 	 *	This create an opened connexion to a database server and eventually to a database
@@ -98,6 +103,11 @@ class DoliDBSqlite extends DoliDB
 
 			$this->addCustomFunction('IF');
 			$this->addCustomFunction('MONTH');
+			$this->addCustomFunction('CURTIME');
+			$this->addCustomFunction('CURDATE');
+			$this->addCustomFunction('WEEK', 1);
+			$this->addCustomFunction('WEEK', 2);
+			$this->addCustomFunction('WEEKDAY');
 			$this->addCustomFunction('date_format');
             //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
@@ -1212,12 +1222,14 @@ class DoliDBSqlite extends DoliDB
 	 * statique et publique. Le nombre de parametres est determine automatiquement.
 	 * @param string $name Le nom de la fonction a definir dans Sqlite
 	 */
-	private function addCustomFunction($name) {
+	private function addCustomFunction($name, $arg_count = -1) {
 		if ($this->db) {
 			$localname = __CLASS__ . '::' . 'db_' . $name;
 			$reflectClass = new ReflectionClass(__CLASS__);
 			$reflectFunction = $reflectClass->getMethod('db_' . $name);
-			$arg_count = $reflectFunction->getNumberOfParameters();
+			if ($arg_count < 0) {
+				$arg_count = $reflectFunction->getNumberOfParameters();
+			}
 			if (!$this->db->createFunction($name, $localname , $arg_count)) {
 				$this->error = "unable to create custom function '$name'";
 			}
@@ -1231,6 +1243,32 @@ class DoliDBSqlite extends DoliDB
 	 */
 	public static function db_MONTH($date) {
 		return date('n', strtotime($date));
+	}
+
+	/**
+	 *  calcule du numéro de semaine
+	 *
+	 *  @param string date
+	 *  @param int mode
+	 */
+	public static function db_WEEK($date, $mode = 0) {
+		$arr = date_parse($date);
+		$calc_year = 0;
+		return self::calc_week($arr['year'], $arr['month'], $arr['day'], self::week_mode($mode), $calc_year);
+	}
+
+	public static function db_CURDATE() {
+		return date('Y-m-d');
+	}
+
+	public static function db_CURTIME() {
+		return date('H:i:s');
+	}
+
+	public static function db_WEEKDAY($date) {
+		$arr = date_parse($date);
+		return self::calc_weekday(self::calc_daynr($arr['year'], $arr['month'], $arr['day']), 0);
+
 	}
 
 	/**
@@ -1256,24 +1294,17 @@ class DoliDBSqlite extends DoliDB
 				'h' => 'h',
 				'I' => 'h',
 				'i' => 'i',
-				'j' => 'z',
 				'k' => 'H',
 				'l' => 'g',
 				'M' => 'F',
 				'm' => 'm',
 				'p' => 'A',
-				'r' => 'h:i:sA',
+				'r' => 'h:i:s A',
 				'S' => 's',
 				's' => 's',
 				'T' => 'H:i:s',
-				'U' => '',	//?
-				'u' => '',	//?
-				'V' => '',	//?
-				'v' => '',	//?
 				'W' => 'l',
 				'w' => 'w',
-				'X' => '',	//?
-				'x' => '',	//?
 				'Y' => 'Y',
 				'y' => 'y',
 			);
@@ -1282,6 +1313,11 @@ class DoliDBSqlite extends DoliDB
 		$fmt = '';
 		$lg = strlen($format);
 		$state = 0;
+		$timestamp = strtotime($date);
+		$yday = date('z', $timestamp);
+		$month = (integer)date("n", $timestamp);
+		$year = (integer)date("Y", $timestamp);
+		$day = (integer)date("d", $timestamp);
 		for($idx = 0; $idx < $lg; ++$idx) {
 			$char = $format[$idx];
 			if ($state == 0) {
@@ -1295,6 +1331,32 @@ class DoliDBSqlite extends DoliDB
 				if (array_key_exists($char, $mysql_replacement)) {
 					$fmt .= $mysql_replacement[$char];
 				} else {
+					$calc_year = 0;
+					switch ($char) {
+						case 'j':	// day of the year 001 - OK
+							$char = sprintf("%03d", $yday+1);
+							break;
+						case 'U': // mode 0: semaine 0 = premiere semaine complète qui commence un dimanche
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 4, $calc_year));
+							break;
+						case 'u': // mode 1: semaine 0 = première semaine de 4 jours. Début le dimanche
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 1, $calc_year));
+							break;
+						case 'V': // mode 2: semaine 1 = premiere semaine complète qui commence un dimanche - KO
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 6, $calc_year));
+							break;
+						case 'v':  // mode 3: semaine 1 = premiere semaine de 4 jours. Début le lundi - OK
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 3, $calc_year));
+							break;
+						case 'X':
+							self::calc_week($year, $month, $day, 6, $calc_year);
+							$char = sprintf("%04d", $calc_year);
+							break;
+						case 'x':
+							self::calc_week($year, $month, $day, 3, $calc_year);
+							$char = sprintf("%04d", $calc_year);
+							break;
+					}
 					$fmt .= $char;
 				}
 				$state = 0;
@@ -1313,5 +1375,79 @@ class DoliDBSqlite extends DoliDB
 	public static function db_IF($test, $true_part, $false_part) {
 		return ( $test ) ? $true_part : $false_part;
 	}
+
+	// Adapté de mytime.c des sources de mariadb
+	// fonction calc_daynr
+	private static function calc_daynr($year, $month, $day) {
+		$y = $year;
+		if ($y == 0 && $month == 0) return 0;
+		$num = (365* $y + 31 * ($month - 1) + $day);
+		if ($month <= 2) {
+			$y--; }
+		else {
+			$num -= floor(($month * 4 + 23) / 10);
+		}
+		$temp = floor(($y / 100 + 1) * 3 / 4);
+		return $num + floor($y / 4) - $temp;
+	}
+
+	private static function calc_weekday($daynr, $sunday_first_day_of_week) {
+	  $ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
+	  return $ret;
+	}
+
+	private static function calc_days_in_year($year)
+	{
+	  return (($year & 3) == 0 && ($year%100 || ($year%400 == 0 && $year)) ? 366 : 365);
+	}
+
+	private static function week_mode($mode) {
+		$week_format= ($mode & 7);
+		if (!($week_format & self::WEEK_MONDAY_FIRST)) {
+			$week_format^= self::WEEK_FIRST_WEEKDAY;
+		}
+		return $week_format;
+	}
+
+
+	private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year) {
+		$daynr=self::calc_daynr($year,$month,$day);
+		$first_daynr=self::calc_daynr($year,1,1);
+		$monday_first= ($week_behaviour & self::WEEK_MONDAY_FIRST) ? 1 : 0;
+		$week_year= ($week_behaviour & self::WEEK_YEAR) ? 1 : 0;
+		$first_weekday= ($week_behaviour & self::WEEK_FIRST_WEEKDAY) ? 1 : 0;
+
+		$weekday=self::calc_weekday($first_daynr, !$monday_first);
+		$calc_year=$year;
+
+		if ($month == 1 && $day <= 7-$weekday)
+		{
+			if (!$week_year && (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)))
+				return 0;
+			$week_year= 1;
+			$calc_year--;
+			$first_daynr-= ($days=self::calc_days_in_year($calc_year));
+			$weekday= ($weekday + 53*7- $days) % 7;
+	  }
+
+	  if (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)) {
+		$days= $daynr - ($first_daynr+ (7-$weekday));
+	  }
+	  else {
+		$days= $daynr - ($first_daynr - $weekday);
+	  }
+
+	  if ($week_year && $days >= 52*7)
+	  {
+		$weekday= ($weekday + self::calc_days_in_year($calc_year)) % 7;
+		if ((!$first_weekday && $weekday < 4) || ($first_weekday && $weekday == 0))
+		{
+		  $calc_year++;
+		  return 1;
+		}
+	  }
+	  return floor($days/7+1);
+	}
+
 }
 
