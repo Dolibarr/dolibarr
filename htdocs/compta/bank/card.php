@@ -251,11 +251,9 @@ if ($action == 'create')
                         document.formsoc.action.value="create";
                         document.formsoc.submit();
                     });
-               })';
-        print '</script>'."\n";
-
-        print "\n".'<script type="text/javascript" language="javascript">';
-        print 'jQuery(document).ready(function () {
+               })'."\n";
+        
+		print 'jQuery(document).ready(function () {
                     jQuery("#selectaccount_country_id").change(function() {
                         document.formsoc.action.value="create";
                         document.formsoc.submit();
@@ -780,6 +778,13 @@ else
         {
             print "\n".'<script type="text/javascript" language="javascript">';
             print 'jQuery(document).ready(function () {
+                        jQuery("#selecttype").change(function() {
+                            document.formsoc.action.value="edit";
+                            document.formsoc.submit();
+                        });
+                   })'."\n";
+				   			
+			print 'jQuery(document).ready(function () {
                         jQuery("#selectaccount_country_id").change(function() {
                             document.formsoc.action.value="edit";
                             document.formsoc.submit();
@@ -890,7 +895,7 @@ else
 		print '</table>';
 		print '<br>';
 
-		if ($account->type == 0 || $account->type == 1)
+		if ($_POST["type"] == 0 || $_POST["type"] == 1)
 		{
 			print '<table class="border" width="100%">';
 			
