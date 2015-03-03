@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,12 +157,14 @@ if ($action == 'edit') {
  * View
  */
 
-if ($object->fk_user_creat) {
+$form=new Form($db);
+
+if ($object->fk_user_creat)
+{
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user_creat);
 }
 
-$form=new Form($db);
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
@@ -186,8 +188,8 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = opensurvey_prepare_head($object);
 
-print dol_get_fiche_head($head,'general',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
 
+dol_fiche_head($head,'general',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
 
 print '<table class="border" width="100%">';
 
@@ -313,11 +315,12 @@ print $urllink;
 
 print '</table>';
 
-if ($action == 'edit') print '<br><div class="center"><input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+dol_fiche_end();
+
+if ($action == 'edit') print '<div class="center"><input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>'."\n";
 
-dol_fiche_end();
 
 
 /*

@@ -338,8 +338,9 @@ print $langs->trans("OpenSurveyStep2")."\n";
 print '</div>'."\n";
 
 //debut du tableau qui affiche le calendrier
-print '<div class="center"><div class="corps">'."\n";
-print '<table align=center>'."\n";
+print '<div class="corps">'."\n";
+print '<div class="center">'."\n";
+print '<table align="center">'."\n";	// The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr><td><input type="image" name="anneeavant" value="<<" src="../img/rewind.png"></td><td><input type="image" name="moisavant" value="<" src="../img/previous.png"></td>';
 print '<td width="150px" align="center"> '.$motmois.' '.$_SESSION["annee"].'<br>';
 print '<input type="image" name="retourmois" alt="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" title="'.dol_escape_htmltag($langs->trans("BackToCurrentMonth")).'" value="" src="'.img_picto('', 'refresh','',0,1).'">';
@@ -347,7 +348,10 @@ print '</td><td><input type="image" name="moisapres" value=">" src="../img/next.
 print '<td><input type="image" name="anneeapres" value=">>" src="../img/fforward.png"></td><td></td><td></td><td></td><td></td><td></td><td>';
 print '</td></tr>'."\n";
 print '</table>'."\n";
-print '<table>'."\n";
+print '</div>'."\n";
+
+print '<div class="center">'."\n";
+print '<table align="center">'."\n";	// The div class=center has no effect on table, so we must keep the align=center for table
 print '<tr>'."\n";
 
 //affichage des jours de la semaine en haut du tableau
@@ -499,8 +503,11 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 {
 	//affichage des jours
 	print '<br>'."\n";
+	print '<div align="left">';
 	print '<strong>'. $langs->trans("SelectedDays") .':</strong>'."<br>\n";
 	print $langs->trans("SelectDayDesc")."<br>\n";
+	print '</div><br>';
+
 	print '<table>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";

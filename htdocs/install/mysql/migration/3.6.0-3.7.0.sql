@@ -1095,6 +1095,9 @@ ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
 
+ALTER TABLE llx_projet_task CHANGE COLUMN duration_effective real DEFAULT 0 NULL;
+ALTER TABLE llx_projet_task CHANGE COLUMN planned_workload real DEFAULT 0 NULL;
+  
 
 -- add extrafield on ficheinter lines
 CREATE TABLE llx_fichinterdet_extrafields
@@ -1161,4 +1164,4 @@ ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_b
 UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
-ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INT(11) NOT NULL DEFAULT '0' AFTER fk_product;
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;

@@ -187,19 +187,19 @@ function supplierorder_admin_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
-	
-	
+
+
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 

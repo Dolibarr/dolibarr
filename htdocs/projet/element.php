@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -44,13 +45,14 @@ if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
 $langs->load("projects");
 $langs->load("companies");
 $langs->load("suppliers");
-if (! empty($conf->facture->enabled))  	$langs->load("bills");
-if (! empty($conf->commande->enabled)) 	$langs->load("orders");
-if (! empty($conf->propal->enabled))   	$langs->load("propal");
-if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
-if (! empty($conf->deplacement->enabled))	$langs->load("trips");
+if (! empty($conf->facture->enabled))  	 $langs->load("bills");
+if (! empty($conf->commande->enabled)) 	 $langs->load("orders");
+if (! empty($conf->propal->enabled))   	 $langs->load("propal");
+if (! empty($conf->ficheinter->enabled))	 $langs->load("interventions");
+if (! empty($conf->deplacement->enabled))	 $langs->load("trips");
+if (! empty($conf->expensereport->enabled)) $langs->load("trips");
 
-$projectid=GETPOST('id','int');
+$id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $datesrfc=GETPOST('datesrfc');
@@ -59,7 +61,7 @@ $dates=dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('
 $datee=dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
 if (empty($dates) && ! empty($datesrfc)) $dates=dol_stringtotime($datesrfc);
 if (empty($datee) && ! empty($dateerfc)) $datee=dol_stringtotime($dateerfc);
-if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']))
+if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR))
 {
 	$new=dol_now();
 	$tmp=dol_getdate($new);
@@ -67,7 +69,7 @@ if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']))
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
 	$dates=dol_get_first_day($tmp['year'],1);
 }
-if ($projectid == '' && $ref == '')
+if ($id == '' && $projectid == '' && $ref == '')
 {
 	dol_print_error('','Bad parameter');
 	exit;
@@ -76,18 +78,22 @@ if ($projectid == '' && $ref == '')
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$projectid=$id;	// For backward compatibility
+
 $project = new Project($db);
 if ($id > 0 || ! empty($ref))
 {
-    $project->fetch($id,$ref);
-    $project->fetch_thirdparty();
-    $projectid=$project->id;
-}
-else
-{
-	$project->fetch($projectid);
-    $project->fetch_thirdparty();
-    $projectid=$project->id;
+    $ret=$project->fetch($id,$ref);
+    if ($ret > 0)
+    {
+		$projectid=$project->id;
+		$project->fetch_thirdparty();
+	}
+	else
+	{
+		setEventMessages($project->error, $project->errors, 'errors');
+		$action='';
+	}
 }
 
 // Security check
@@ -105,6 +111,7 @@ llxHeader("",$langs->trans("Referers"),$help_url);
 
 $form = new Form($db);
 $formproject=new FormProjets($db);
+$formfile = new FormFile($db);
 
 $userstatic=new User($db);
 
@@ -237,10 +244,10 @@ $listofreferent=array(
 	'name'=>"ExpenseReports",
 	'title'=>"ListExpenseReportsAssociatedProject",
 	'class'=>'ExpenseReportLine',
-	'table'=>'expensereport',
+	'table'=>'expensereport_det',
 	'datefieldname'=>'date',
 	'margin'=>'minus',
-	'disableamount'=>1,
+	'disableamount'=>0,
 	'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire),
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -311,10 +318,12 @@ foreach ($listofreferent as $key => $value)
 		print_titre($langs->trans($title));
 
 		$selectList=$formproject->select_element($tablename,$project->thirdparty->id);
-
-		if (!$selectList || ($selectList<0)) {
-			setEventMessage($formproject->error,'errors');
-		} else {
+		if (! $selectList || ($selectList<0))
+		{
+			setEventMessages($formproject->error,$formproject->errors,'errors');
+		}
+		else
+		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 			print '<input type="hidden" name="action" value="addelement">';
@@ -329,9 +338,14 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		print '<td width="100" colspan="2">'.$langs->trans("Ref").'</td>';
+		print '<td style="width: 24px"></td>';
+		print '<td style="width: 200px">'.$langs->trans("Ref").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
-		print '<td>'.$langs->trans("ThirdParty").'</td>';
+		// Thirdparty or user
+		print '<td>';
+		if ($tablename == 'expensereport_det') print $langs->trans("User");
+		else print $langs->trans("ThirdParty");
+		print '</td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
 		else print '<td width="120"></td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountTTC").'</td>';
@@ -360,7 +374,17 @@ foreach ($listofreferent as $key => $value)
 			for ($i = 0; $i < $num; $i++)
 			{
 				$element->fetch($elementarray[$i]);
-				$element->fetch_thirdparty();
+
+				if ($tablename != 'expensereport_det')
+				{
+					$element->fetch_thirdparty();
+				}
+				else
+				{
+					$expensereport=new ExpenseReport($db);
+					$expensereport->fetch($element->fk_expensereport);
+				}
+
 				//print $classname;
 
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
@@ -384,12 +408,37 @@ foreach ($listofreferent as $key => $value)
 
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td width="1%">';
+				print '<td style="width: 24px">';
 				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
 				print "</td>\n";
 				// Ref
 				print '<td align="left">';
-				print $element->getNomUrl(1);
+
+				if ($tablename == 'expensereport_det')
+				{
+					print $expensereport->getNomUrl(1);
+				}
+				else {
+					print $element->getNomUrl(1);
+
+					$element_doc = $element->element;
+					$filename=dol_sanitizeFileName($element->ref);
+					$filedir=$conf->{$element_doc}->dir_output . '/' . dol_sanitizeFileName($element->ref);
+
+					if($element_doc === 'order_supplier') {
+						$element_doc='commande_fournisseur';
+						$filedir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($element->ref);
+					}
+					else if($element_doc === 'invoice_supplier') {
+						$element_doc='facture_fournisseur';
+						$filename = get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
+					}
+
+					print $formfile->getDocumentsLink($element_doc, $filename, $filedir);
+
+				}
+
 				print "</td>\n";
 
 				// Date
@@ -403,9 +452,15 @@ foreach ($listofreferent as $key => $value)
 				}
 				print '<td align="center">'.dol_print_date($date,'day').'</td>';
 
-				// Third party
+				// Third party or user
                 print '<td align="left">';
                 if (is_object($element->thirdparty)) print $element->thirdparty->getNomUrl(1,'',48);
+                else if ($tablename == 'expensereport_det')
+                {
+                	$tmpuser=new User($db);
+                	$tmpuser->fetch($expensereport->fk_user_author);
+                	print $tmpuser->getNomUrl(1,'',48);
+                }
 				print '</td>';
 
                 // Amount without tax
@@ -431,7 +486,10 @@ foreach ($listofreferent as $key => $value)
 				else print '<td></td>';
 
 				// Status
-				print '<td align="right">'.$element->getLibStatut(5).'</td>';
+				print '<td align="right">';
+				if ($tablename == 'expensereport_det') print $expensereport->getLibStatut(5);
+				else print $element->getLibStatut(5);
+				print '</td>';
 
 				print '</tr>';
 
@@ -520,13 +578,15 @@ foreach ($listofreferent as $key => $value)
 	}
 }
 
-// Profit for all project
+
+// Show profit summary for whole project
+
 $langs->load("suppliers");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("proposals");
 $langs->load("margins");
-print_fiche_titre($langs->trans("Profit"),'','');
+print_fiche_titre($langs->trans("Profit"),'');
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
@@ -543,7 +603,7 @@ foreach ($listofreferent as $key => $value)
 	$tablename=$value['table'];
 	$qualified=$value['test'];
 	$margin = $value['margin'];
-	if (isset($margin))
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
 	{
 		$element = new $classname($db);
 
@@ -557,13 +617,10 @@ foreach ($listofreferent as $key => $value)
 			for ($i = 0; $i < $num; $i++)
 			{
 				$element->fetch($elementarray[$i]);
-				$element->fetch_thirdparty();
-				//print $classname;
-				if ($qualified)
-				{
-					$total_ht = $total_ht + $element->total_ht;
-					$total_ttc = $total_ttc + $element->total_ttc;
-				}
+				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
+
+				$total_ht = $total_ht + $element->total_ht;
+				$total_ttc = $total_ttc + $element->total_ttc;
 			}
 
 			print '<tr >';

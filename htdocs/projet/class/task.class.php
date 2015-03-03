@@ -751,7 +751,7 @@ class Task extends CommonObject
     /**
      *  Add time spent
      *
-     *  @param	User	$user           user id
+     *  @param	User	$user           User object
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return	void
      */
@@ -760,6 +760,13 @@ class Task extends CommonObject
         global $conf,$langs;
 
         $ret = 0;
+
+        // Check parameters
+        if (! is_object($user))
+        {
+        	dol_print_error('',"Method addTimeSpent was called with wrong parameter user");
+        	return -1;
+        }
 
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
@@ -1092,6 +1099,8 @@ class Task extends CommonObject
 		$clone_task=new Task($this->db);
 		$origin_task=new Task($this->db);
 
+		$clone_task->context['createfromclone']='createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -1158,8 +1167,6 @@ class Task extends CommonObject
 		// End
 		if (! $error)
 		{
-			$this->db->commit();
-
 			$clone_task_id=$clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 
@@ -1279,20 +1286,19 @@ class Task extends CommonObject
 			{
 				//TODO clone time of affectation
 			}
+		}
 
-			if (! $error)
-			{
-				return $clone_task_id;
-			}
-			else
-			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
-				return -1;
-			}
+		unset($clone_task->context['createfromclone']);
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return $clone_task_id;
 		}
 		else
 		{
 			$this->db->rollback();
+			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}

@@ -69,7 +69,7 @@ DateActionDoneEnd= Gerçek bitiş tarihi
 DateActionStart= Başlama tarihi
 DateActionEnd= Bitiş tarihi
 AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
-AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>kullanıcı girişi=%s</b> sınırlayacak kullanıcı <b>%s</b>.
+AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>oturum açma=%s</b> sınırlayacak kullanıcı <b>%s</b>.
 AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinliklerle sınırlamak için<b>logint=%s</b>.
 AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.

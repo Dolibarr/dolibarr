@@ -210,19 +210,17 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				else
 				{
 					$langs->load("other");
-					$mesg='<div class="error">';
 					if ($mailfile->error)
 					{
+						$mesg='';
 						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
 						$mesg.='<br>'.$mailfile->error;
+						setEventMessage($mesg,'errors');
 					}
 					else
 					{
-						$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
 					}
-					$mesg.='</div>';
-
-					setEventMessage($mesg,'warnings');
 					$action = 'presend';
 				}
 			}

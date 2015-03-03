@@ -266,9 +266,10 @@ $configfileparameters=array(
 		'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
 		'separator3' => '',
 		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
-		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 		'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
+		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 		'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
+		'?dolibarr_lib_TCPDI_PATH' => 'dolibarr_lib_TCPDI_PATH',
 		'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
 		'?dolibarr_lib_PHPEXCEL_PATH' => 'dolibarr_lib_PHPEXCEL_PATH',
 		'?dolibarr_lib_GEOIP_PATH' => 'dolibarr_lib_GEOIP_PATH',
@@ -332,7 +333,7 @@ foreach($configfileparameters as $key => $value)
 				{
 					if ($i > 0) print ', ';
 					print $value2;
-					if (! is_readable($value2)) 
+					if (! is_readable($value2))
 					{
 						$langs->load("errors");
 						print ' '.img_warning($langs->trans("ErrorCantReadDir",$value2));

@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel5
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version	1.7.8, 2012-10-12
+ * @version	1.8.0, 2014-03-02
  */
 
 
@@ -31,17 +31,10 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel5
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
-class PHPExcel_Writer_Excel5 implements PHPExcel_Writer_IWriter
+class PHPExcel_Writer_Excel5 extends PHPExcel_Writer_Abstract implements PHPExcel_Writer_IWriter
 {
-	/**
-	 * Pre-calculate formulas
-	 *
-	 * @var boolean
-	 */
-	private $_preCalculateFormulas	= true;
-
 	/**
 	 * PHPExcel object
 	 *
@@ -120,15 +113,15 @@ class PHPExcel_Writer_Excel5 implements PHPExcel_Writer_IWriter
 	 * Save PHPExcel to file
 	 *
 	 * @param	string		$pFilename
-	 * @throws	Exception
+	 * @throws	PHPExcel_Writer_Exception
 	 */
 	public function save($pFilename = null) {
 
 		// garbage collect
 		$this->_phpExcel->garbageCollect();
 
-		$saveDebugLog = PHPExcel_Calculation::getInstance()->writeDebugLog;
-		PHPExcel_Calculation::getInstance()->writeDebugLog = false;
+		$saveDebugLog = PHPExcel_Calculation::getInstance($this->_phpExcel)->getDebugLog()->getWriteDebugLog();
+		PHPExcel_Calculation::getInstance($this->_phpExcel)->getDebugLog()->setWriteDebugLog(FALSE);
 		$saveDateReturnType = PHPExcel_Calculation_Functions::getReturnDateType();
 		PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
 
@@ -196,7 +189,7 @@ class PHPExcel_Writer_Excel5 implements PHPExcel_Writer_IWriter
 		}
 
 		// add binary data for global workbook stream
-		$OLE->append( $this->_writerWorkbook->writeWorkbook($worksheetSizes) );
+		$OLE->append($this->_writerWorkbook->writeWorkbook($worksheetSizes));
 
 		// add binary data for sheet streams
 		for ($i = 0; $i < $countSheets; ++$i) {
@@ -233,7 +226,7 @@ class PHPExcel_Writer_Excel5 implements PHPExcel_Writer_IWriter
 		$res = $root->save($pFilename);
 
 		PHPExcel_Calculation_Functions::setReturnDateType($saveDateReturnType);
-		PHPExcel_Calculation::getInstance()->writeDebugLog = $saveDebugLog;
+		PHPExcel_Calculation::getInstance($this->_phpExcel)->getDebugLog()->setWriteDebugLog($saveDebugLog);
 	}
 
 	/**
@@ -241,29 +234,11 @@ class PHPExcel_Writer_Excel5 implements PHPExcel_Writer_IWriter
 	 *
 	 * @deprecated
 	 * @param	string	$pValue		Temporary storage directory
-	 * @throws	Exception	Exception when directory does not exist
+	 * @throws	PHPExcel_Writer_Exception	when directory does not exist
 	 * @return PHPExcel_Writer_Excel5
 	 */
 	public function setTempDir($pValue = '') {
 		return $this;
-	}
-
-	/**
-	 * Get Pre-Calculate Formulas
-	 *
-	 * @return boolean
-	 */
-	public function getPreCalculateFormulas() {
-		return $this->_preCalculateFormulas;
-	}
-
-	/**
-	 * Set Pre-Calculate Formulas
-	 *
-	 * @param boolean $pValue	Pre-Calculate Formulas?
-	 */
-	public function setPreCalculateFormulas($pValue = true) {
-		$this->_preCalculateFormulas = $pValue;
 	}
 
 	/**
@@ -621,7 +596,6 @@ class PHPExcel_Writer_Excel5 implements PHPExcel_Writer_IWriter
 		// GKPIDDSI_CATEGORY : Category
 		if($this->_phpExcel->getProperties()->getCategory()){
 			$dataProp = $this->_phpExcel->getProperties()->getCategory();
-			$dataProp = 'Test result file';
 			$dataSection[] = array('summary'=> array('pack' => 'V', 'data' => 0x02),
 								   'offset' => array('pack' => 'V'),
 								   'type' 	=> array('pack' => 'V', 'data' => 0x1E),

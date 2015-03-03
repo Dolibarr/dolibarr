@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
+ExpenseReport=Expense report
+ExpenseReports=Expense reports
 Trip=Expense report
 Trips=Expense reports
 TripsAndExpenses=Expenses reports
@@ -14,94 +16,91 @@ FeesKilometersOrAmout=Amount or kilometers
 DeleteTrip=Delete expense report
 ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
 ListTripsAndExpenses=List of expense reports
+ListToApprove=Waiting for approval
 ExpensesArea=Expense reports area
 SearchATripAndExpense=Search an expense report
 ClassifyRefunded=Classify 'Refunded'
-
+ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation. 
 TripSociete=Information company
 TripSalarie=Informations user
 TripNDF=Informations expense report
-
 DeleteLine=Delete a ligne of the expense report
 ConfirmDeleteLine=Are you sure you want to delete this line ?
-
+PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+ExpenseReportLine=Expense report line
 TF_OTHER=Other
+TF_TRANSPORTATION=Transportation
 TF_LUNCH=Lunch
 TF_METRO=Metro
 TF_TRAIN=Train
 TF_BUS=Bus
+TF_CAR=Car
 TF_PEAGE=Toll
 TF_ESSENCE=Fuel
 TF_HOTEL=Hostel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=ERREUR : Vous avez déclaré au moins une note de frais dans le même intervalle.
-ListTripsAndExpenses=Liste des notes de frais
-AucuneNDF=Il n'y a aucune note de frais déclarée correspondante à votre recherche!
-AucuneLigne=Il n'y a aucune ligne de déclarée dans cette note de frais!
-AddLine=Ajouter une ligne
-AddLineMini=Ajouter
-TotalHT=Montant HT
-TotalTTC=Montant TTC
-TotalTVA=Total TVA
+ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
+ListTripsAndExpenses=List of expense reports
+AucuneNDF=No expense reports found for this criteria
+AucuneLigne=There is no expense report declared yet
+AddLine=Add a line
+AddLineMini=Add
 
-Date_DEBUT=Date de début période
-Date_FIN=Date de fin période
-ModePaiement=Mode de paiement
+Date_DEBUT=Period date start
+Date_FIN=Period date end
+ModePaiement=Payment mode
 Note=Note
-Project=Projet
+Project=Project
 
-VALIDATOR=Utilisateur informé pour validation
-VALIDOR=Validée par
-AUTHOR=Enregistrée par
-AUTHORPAIEMENT=Payée par
-REFUSEUR=Refusée par
-CANCEL_USER=Annulée par
+VALIDATOR=User to inform for approbation
+VALIDOR=Approved by
+AUTHOR=Recorded by
+AUTHORPAIEMENT=Paied by
+REFUSEUR=Denied by
+CANCEL_USER=Canceled by
 
-MOTIF_REFUS=Motif de refus
-MOTIF_CANCEL=Motif d'annulation
+MOTIF_REFUS=Reason
+MOTIF_CANCEL=Reason
 
-DATE_REFUS=Date du refus
-DATE_CANCEL=Date annulation
-DATE_VALIDE=Date de validation
-DATE_PAIEMENT=Date de paiement
-DATE_SAVE=Date d'enregistrement
+DATE_REFUS=Deny date
+DATE_SAVE=Validation date
+DATE_VALIDE=Validation date
+DateApprove=Approving date
+DATE_CANCEL=Cancelation date
+DATE_PAIEMENT=Payment date
 
-REFUSE=Refuse
+Deny=Deny
 TO_PAID=Pay
 BROUILLONNER=Reopen
 SendToValid=Sent to approve
 ModifyInfoGen=Edit
+ValidateAndSubmit=Validate and submit for approval
 
-NOT_VALIDATOR=Vous n'êtes pas la personne habilitée à valider cette note de frais!
-NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais, impossible de réaliser l'opération voulue!
-NOT_VALIDOR=Vous n'êtes pas le valideur de cette note de frais, vous ne pouvez donc pas réaliser cette opération!
-NotUserRightToView=Vous n'avez pas le droit d'afficher cette note de frais.
+NOT_VALIDATOR=You are not allowed to approve this expense report
+NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 
-RefuseTrip=Refuser une note de frais
-ConfirmRefuseTrip=Êtes vous sûr de vouloir refuser cette note de frais ?
+RefuseTrip=Deny an expense report
+ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
 
-ValideTrip=Valider une note de frais
-ConfirmValideTrip=Êtes vous sûr de vouloir valider cette note de frais ?
+ValideTrip=Approve expense report
+ConfirmValideTrip=Are you sure you want to approve this expense report ?
 
-PaidTrip=Payer une note de frais
-ConfirmPaidTrip=Êtes vous sûr de vouloir payer cette note de frais ?
+PaidTrip=Pay an expense report
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
-CancelTrip=Annuler une note de frais
-ConfirmCancelTrip=Êtes vous sûr de vouloir annuler cette note de frais ?
+CancelTrip=Cancel an expense report
+ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
-BrouillonnerTrip=Remettre une note de frais en brouillon
-ConfirmBrouillonnerTrip=Êtes vous sûr de vouloir remettre cette note de frais en brouillon ?
+BrouillonnerTrip=Move back expense report to status "Draft"n
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
-SaveTrip=Enregistrement de votre note de frais
-ConfirmSaveTrip=Êtes vous sûr de vouloir enregistrer cette note de frais? (elle sera transmise par mail pour validation)
+SaveTrip=Validate expense report
+ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
-INFOS_DATES=Infos Workflow
-INFOS_NDF=Infos générales note de frais
-
-StatsTrip=Statistiques
 Synchro_Compta=NDF <-> Compte
 
 TripSynch=Synchronisation : Notes de frais <-> Compte courant

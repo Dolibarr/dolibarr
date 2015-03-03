@@ -318,7 +318,8 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
     include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
     $board=new ActionComm($db);
-	$dashboardlines[] = $board->load_board($user);
+
+    $dashboardlines[] = $board->load_board($user);
 }
 
 // Number of customer orders a deal

@@ -393,7 +393,7 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
-		$this->export_sql_end[$r] .=' Where ac.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE ac.entity IN ('.getEntity('agenda',1).')';
 		$this->export_sql_end[$r] .=' ORDER BY ac.datep';
 
 	}

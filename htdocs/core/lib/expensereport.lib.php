@@ -59,3 +59,46 @@ function expensereport_prepare_head($object)
 
 	return $head;
 }
+
+
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function expensereport_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport.php";
+	$head[$h][1] = $langs->trans("ExpenseReports");
+	$head[$h][2] = 'expensereport';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin');
+
+	/*$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+    $head[$h][2] = 'attributesdet';
+    $h++;
+	*/
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin','remove');
+
+	return $head;
+}

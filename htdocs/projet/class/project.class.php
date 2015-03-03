@@ -46,7 +46,6 @@ class Project extends CommonObject
     var $id;
     var $ref;
     var $description;
-    var $statut;
     var $title;
     var $date_start;
     var $date_end;
@@ -58,7 +57,7 @@ class Project extends CommonObject
     var $budget_amount;
 
     var $statuts_short;
-    var $statuts;
+    var $statuts;			// 0=draft, 1=opened, 2=closed
 
     var $oldcopy;
 
@@ -126,7 +125,7 @@ class Project extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
-        $sql.= ", " . $this->budget_amount;
+        $sql.= ", " . ($this->budget_amount != ''?price2num($this->budget_amount):'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -152,7 +151,7 @@ class Project extends CommonObject
             $error++;
         }
 
-        //Update extrafield
+        // Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
@@ -421,7 +420,7 @@ class Project extends CommonObject
 		}
     	if ($type == 'expensereport')
 		{
-            $sql = "SELECT e.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
 		}
 		if ($dates > 0)
 		{
@@ -493,6 +492,23 @@ class Project extends CommonObject
                 $this->db->rollback();
                 return 0;
             }
+        }
+
+        // Set fk_projet into elements to null
+        $listoftables=array(
+        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet','facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet',
+        		'expensereport_det'=>'fk_projet','contrat'=>'fk_projet','fichinter'=>'fk_projet'
+        		);
+        foreach($listoftables as $key => $value)
+        {
+   	        $sql = "UPDATE " . MAIN_DB_PREFIX . $key . " SET ".$value." = NULL where ".$value." = ". $this->id;
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        	break;
+	        }
         }
 
         // Delete tasks
@@ -1022,6 +1038,8 @@ class Project extends CommonObject
 
 		$clone_project=new Project($this->db);
 
+		$clone_project->context['createfromclone']='createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -1075,8 +1093,6 @@ class Project extends CommonObject
 
 		if (! $error)
 		{
-			$this->db->commit();
-
 			//Get the new project id
 			$clone_project_id=$clone_project->id;
 
@@ -1230,23 +1246,19 @@ class Project extends CommonObject
 				    }
 			    }
 			}
+		}
 
+		unset($clone_project->context['createfromclone']);
 
-
-			if (! $error)
-			{
-				return $clone_project_id;
-			}
-			else
-			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
-				return -1;
-			}
-
+		if (! $error)
+		{
+			$this->db->commit();
+			return $clone_project_id;
 		}
 		else
 		{
 			$this->db->rollback();
+			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -211,27 +211,31 @@ if ($action == 'add' && $canadduser)
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
-        // If multicompany is off, admin users must all be on entity 0.
+        // Set entity of new user
+        $entity=GETPOST('entity','int');
         if (! empty($conf->multicompany->enabled))
         {
-        	$entity=GETPOST('entity','int');
         	if (! empty($_POST["superadmin"]))
         	{
         		$object->entity = 0;
         	}
         	else if ($conf->multicompany->transverse_mode)
         	{
-        		$object->entity = 1; // all users in master entity
+        		$object->entity = 1; // all users are forced into master entity
         	}
         	else
         	{
-        		$object->entity = (empty($entity) ? 0 : $entity);
+        		$object->entity = ($entity == '' ? 1 : $entity);
         	}
         }
         else
-        {
-        	$object->entity = (empty($entity) ? 0 : $entity);
+		{
+        	$object->entity = ($entity == '' ? 1 : $entity);
+        	/*if ($user->admin && $user->entity == 0 && GETPOST("admin",'alpha'))
+        	{
+        	}*/
         }
 
         $db->begin();
@@ -358,6 +362,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             // Fill array 'array_options' with data from add form
         	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
             if (! empty($conf->multicompany->enabled))
             {
@@ -382,20 +387,22 @@ if ($action == 'update' && ! $_POST["cancel"])
             if (GETPOST('deletephoto')) $object->photo='';
             if (! empty($_FILES['photo']['name'])) $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
-            $ret=$object->update($user);
-
-            if ($ret < 0)
+            if (! $error)
             {
-            	$error++;
-                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-                {
-                    $langs->load("errors");
-	                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
-                }
-                else
-              {
-	              setEventMessage($object->error, 'errors');
-                }
+	            $ret=$object->update($user);
+	            if ($ret < 0)
+	            {
+	            	$error++;
+	                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	                {
+	                    $langs->load("errors");
+		                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
+	                }
+	                else
+	              {
+		              setEventMessage($object->error, 'errors');
+	                }
+	            }
             }
 
             if (! $error && isset($_POST['contactid']))

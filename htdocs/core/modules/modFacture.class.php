@@ -228,7 +228,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'facturedet as fd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
 		$r++;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -284,7 +284,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
 		$r++;
 	}
 

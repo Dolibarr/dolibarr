@@ -60,7 +60,7 @@ SupplierOrderSentByEMail=Lieferantenbestellung %s per E-Mail versendet
 SupplierInvoiceSentByEMail=Lieferantenrechnung %s per E-Mail versendet
 ShippingSentByEMail=Lieferung %s per Email versendet
 ShippingValidated= Sendung %s freigegeben
-InterventionSentByEMail=Intervention %s sent by EMail
+InterventionSentByEMail=Intervention %s gesendet via E-Mail
 NewCompanyToDolibarr= Partner erstellt
 DateActionPlannedStart= Geplantes Startdatum
 DateActionPlannedEnd= Geplantes Enddatum
@@ -69,7 +69,7 @@ DateActionDoneEnd= Effektives Ende
 DateActionStart= Startdatum
 DateActionEnd= Enddatum
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
+AgendaUrlOptions2=<b>Login =%s</b> für die Ausgabe an Aktionen erstellt, die von oder an den Benutzer <b>%s</b> zugeordnet beschränken.
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> erstellte Maßnahmen.
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> betroffene Maßnahmen.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> begrenzt die die Ausgabe auf Maßnahmen im Zusammenhang mit Projekt <b>PROJECT_ID</b>.

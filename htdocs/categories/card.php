@@ -127,6 +127,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	if ($parent != "-1") $object->fk_parent = $parent;
 
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	if ($ret < 0) $error++;
 
 	if (! $object->label)
 	{

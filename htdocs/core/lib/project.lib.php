@@ -166,6 +166,38 @@ function task_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
+ * @param	string	$mode		Mode
+ * @return  array				Array of tabs to show
+ */
+function project_timesheet_prepare_head($mode)
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT."/projet/activity/perday.php".($mode?'?mode='.$mode:'');
+	$head[$h][1] = $langs->trans("InputPerDay");
+	$head[$h][2] = 'inputperday';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/projet/activity/pertime.php".($mode?'?mode='.$mode:'');
+	$head[$h][1] = $langs->trans("InputPerTime");
+	$head[$h][2] = 'inputpertime';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'project_timesheet');
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'project_timesheet','remove');
+
+	return $head;
+}
+
+
+/**
+ * Prepare array with list of tabs
+ *
  * @return  array				Array of tabs to show
  */
 function project_admin_prepare_head()
@@ -352,11 +384,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'dayhour');
 				print '</td>';
 
+				$plannedworkloadoutputformat='allhourmin';
+				$timespentoutputformat='allhourmin';
+				if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+				if (! empty($conf->global->PROJECT_TIMES_PENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+
 				// Planned Workload (in working hours)
 				print '<td align="right">';
-				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+				$fullhour=convertSecondToTime($lines[$i]->planned_workload,$plannedworkloadoutputformat);
 				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
-				if ($lines[$i]->planned_workload)
+				if ($lines[$i]->planned_workload != '')
 				{
 					print $fullhour;
 					// TODO Add delay taking account of working hours per day and working day per week
@@ -367,14 +404,17 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Progress declared
 				print '<td align="right">';
-				print $lines[$i]->progress.' %';
+				if ($lines[$i]->progress != '')
+				{
+					print $lines[$i]->progress.' %';
+				}
 				print '</td>';
 
 				// Time spent
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
-				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'allhourmin');
+				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,$timespentoutputformat);
 				else print '--:--';
 				if ($showlineingray) print '</i>';
 				else print '</a>';
@@ -440,7 +480,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 
 /**
- * Output a task line
+ * Output a task line into a pertime intput mode
  *
  * @param	string	   	$inc					?
  * @param   string		$parent					?
@@ -452,7 +492,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
  */
-function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
+function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
@@ -504,24 +544,14 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 				// Label task
 				print "<td>";
-				for ($k = 0 ; $k < $level ; $k++)
-				{
-					print "&nbsp;&nbsp;&nbsp;";
-				}
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=$lines[$i]->label;
 				print $taskstatic->getNomUrl(0);
+				print "<br>";
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end);
 				print "</td>\n";
-
-				// Date start
-				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_start,'dayhour');
-				print '</td>';
-
-				// Date end
-				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_end,'dayhour');
-				print '</td>';
 
 				// Planned Workload
 				print '<td align="right">';
@@ -581,7 +611,158 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) projectLinesb($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+			if ($lines[$i]->id) projectLinesPerTime($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+			$level--;
+		}
+		else
+		{
+			//$level--;
+		}
+	}
+
+	return $inc;
+}
+
+
+
+/**
+ * Output a task line into a perday intput mode
+ *
+ * @param	string	   	$inc					?
+ * @param   string		$parent					?
+ * @param   Task[]		$lines					?
+ * @param   int			$level					?
+ * @param   string		$projectsrole			?
+ * @param   string		$tasksrole				?
+ * @param	string		$mine					Show only task lines I am assigned to
+ * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
+ * @return  $inc
+ */
+function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
+{
+	global $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic;
+
+	if (! is_object($formother))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+		$formother = new FormOther($db);
+	}
+
+	$lastprojectid=0;
+
+	$var=true;
+
+	$numlines=count($lines);
+	for ($i = 0 ; $i < $numlines ; $i++)
+	{
+		if ($parent == 0) $level = 0;
+
+		if ($lines[$i]->fk_parent == $parent)
+		{
+			// Break on a new project
+			if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
+			{
+				$var = !$var;
+				$lastprojectid=$lines[$i]->fk_project;
+			}
+
+			// If we want all or we have a role on task, we show it
+			if (empty($mine) || ! empty($tasksrole[$lines[$i]->id]))
+			{
+				print "<tr ".$bc[$var].">\n";
+
+				// Project
+				print "<td>";
+				$projectstatic->id=$lines[$i]->fk_project;
+				$projectstatic->ref=$lines[$i]->projectref;
+				$projectstatic->public=$lines[$i]->public;
+				$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
+				print $projectstatic->getNomUrl(1);
+				print "</td>";
+
+				// Ref
+				print '<td>';
+				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
+				print $taskstatic->getNomUrl(1);
+				print '</td>';
+
+				// Label task
+				print "<td>";
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->ref=$lines[$i]->label;
+				print $taskstatic->getNomUrl(0);
+				print "<br>";
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+				print "</td>\n";
+
+				// Planned Workload
+				print '<td align="right">';
+				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+				else print '--:--';
+				print '</td>';
+
+				// Progress declared %
+				print '<td align="right">';
+				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
+				print '</td>';
+
+				// Time spent
+				print '<td align="right">';
+				if ($lines[$i]->duration)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+					print convertSecondToTime($lines[$i]->duration,'allhourmin');
+					print '</a>';
+				}
+				else print '--:--';
+				print "</td>\n";
+
+				$disabledproject=1;$disabledtask=1;
+				//print "x".$lines[$i]->fk_project;
+				//var_dump($lines[$i]);
+				//var_dump($projectsrole[$lines[$i]->fk_project]);
+				// If at least one role for project
+				if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer)
+				{
+					$disabledproject=0;
+					$disabledtask=0;
+				}
+				// If $restricteditformytask is on and I have no role on task, i disable edit
+				if ($restricteditformytask && empty($tasksrole[$lines[$i]->id]))
+				{
+					$disabledtask=1;
+				}
+
+				// Fields to add new time
+				print '<td align="right">';
+				print $langs->trans("FeatureNotYetAvailable");
+				/*
+				print '<td class="nowrap" align="right">';
+				$s='';
+				$s.=$form->select_date('',$lines[$i]->id,0,0,2,"addtime",1,0,1,$disabledtask);
+				$s.='&nbsp;&nbsp;&nbsp;';
+				$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text',0,1);
+				$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
+				print $s;
+				print '</td>';
+
+				print '<td align="right">';
+				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
+				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
+				print '</td>';
+				*/
+
+				print '</td>';
+				print "</tr>\n";
+			}
+
+			$inc++;
+			$level++;
+			if ($lines[$i]->id) projectLinesPerDay($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 			$level--;
 		}
 		else
@@ -653,8 +834,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	$project_year_filter=0;
 
 	$title=$langs->trans("Project");
-	if ($statut == 0) $title=$langs->trans("ProjectDraft");
-	if ($statut == 1) $title=$langs->trans("Project").' ('.$langs->trans("Validated").')';
+	if ($statut != '' && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts[$statut]).')';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';

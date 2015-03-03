@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : tcpdf_barcodes_1d.php
-// Version     : 1.0.026
+// Version     : 1.0.027
 // Begin       : 2008-06-09
-// Last Update : 2014-05-20
+// Last Update : 2014-10-20
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -37,14 +37,14 @@
  * PHP class to creates array representations for common 1D barcodes to be used with TCPDF.
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.026
+ * @version 1.0.027
  */
 
 /**
  * @class TCPDFBarcode
  * PHP class to creates array representations for common 1D barcodes to be used with TCPDF (http://www.tcpdf.org).<br>
  * @package com.tecnick.tcpdf
- * @version 1.0.026
+ * @version 1.0.027
  * @author Nicola Asuni
  */
 class TCPDFBarcode {
@@ -67,7 +67,7 @@ class TCPDFBarcode {
 	 * <li>$arrcode['bcode'][$k]['h'] bar height in units.</li>
 	 * <li>$arrcode['bcode'][$k]['p'] bar top position (0 = top, 1 = middle)</li></ul>
 	 * @param $code (string) code to print
- 	 * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+ 	 * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extension</li><li>EAN5 : 5-Digits UPC-Based Extension</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
  	 * @public
 	 */
 	public function __construct($code, $type) {
@@ -242,7 +242,7 @@ class TCPDFBarcode {
 	/**
 	 * Set the barcode.
 	 * @param $code (string) code to print
- 	 * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+ 	 * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extension</li><li>EAN5 : 5-Digits UPC-Based Extension</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>IMBPRE: Pre-processed Intelligent Mail Barcode - Onecode - USPS-B-3200, using only F,A,D,T letters</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
  	 * @return array barcode array
  	 * @public
 	 */
@@ -300,11 +300,11 @@ class TCPDFBarcode {
 				$arrcode = $this->barcode_c128($code, 'C');
 				break;
 			}
-			case 'EAN2': { // 2-Digits UPC-Based Extention
+			case 'EAN2': { // 2-Digits UPC-Based Extension
 				$arrcode = $this->barcode_eanext($code, 2);
 				break;
 			}
-			case 'EAN5': { // 5-Digits UPC-Based Extention
+			case 'EAN5': { // 5-Digits UPC-Based Extension
 				$arrcode = $this->barcode_eanext($code, 5);
 				break;
 			}
@@ -350,6 +350,10 @@ class TCPDFBarcode {
 			}
 			case 'IMB': { // IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200
 				$arrcode = $this->barcode_imb($code);
+				break;
+			}
+			case 'IMBPRE': { // IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200- pre-processed
+				$arrcode = $this->barcode_imb_pre($code);
 				break;
 			}
 			case 'CODABAR': { // CODABAR
@@ -1075,7 +1079,7 @@ class TCPDFBarcode {
 		$fnc_b = array(241 => 102, 242 => 97, 243 => 96, 244 => 100);
 		// array of symbols
 		$code_data = array();
-		// lenght of the code
+		// length of the code
 		$len = strlen($code);
 		switch(strtoupper($type)) {
 			case 'A': { // MODE A
@@ -1505,7 +1509,7 @@ class TCPDFBarcode {
 	}
 
 	/**
-	 * UPC-Based Extentions
+	 * UPC-Based Extensions
 	 * 2-Digit Ext.: Used to indicate magazines and newspaper issue numbers
 	 * 5-Digit Ext.: Used to mark suggested retail price of books
 	 * @param $code (string) code to represent.
@@ -1589,7 +1593,7 @@ class TCPDFBarcode {
 	 * @protected
 	 */
 	protected function barcode_postnet($code, $planet=false) {
-		// bar lenght
+		// bar length
 		if ($planet) {
 			$barlen = Array(
 				0 => Array(1,1,2,2,2),
@@ -2038,7 +2042,6 @@ class TCPDFBarcode {
 		return $bararray;
 	}
 
-
 	/**
 	 * IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200
 	 * (requires PHP bcmath extension)
@@ -2156,6 +2159,57 @@ class TCPDFBarcode {
 				// tracker (T)
 				$p = 1;
 				$h = 1;
+			}
+			$bararray['bcode'][$k++] = array('t' => 1, 'w' => 1, 'h' => $h, 'p' => $p);
+			$bararray['bcode'][$k++] = array('t' => 0, 'w' => 1, 'h' => 2, 'p' => 0);
+			$bararray['maxw'] += 2;
+		}
+		unset($bararray['bcode'][($k - 1)]);
+		--$bararray['maxw'];
+		return $bararray;
+	}
+
+	/**
+	 * IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200
+	 * 
+	 * @param $code (string) pre-formatted IMB barcode (65 chars "FADT")
+	 * @return array barcode representation.
+	 * @protected
+	 */
+	protected function barcode_imb_pre($code) {
+		if (!preg_match('/^[fadtFADT]{65}$/', $code) == 1) {
+			return false;
+		}
+		$characters = str_split(strtolower($code), 1);
+		// build bars
+		$k = 0;
+		$bararray = array('code' => $code, 'maxw' => 0, 'maxh' => 3, 'bcode' => array());
+		for ($i = 0; $i < 65; ++$i) {
+			switch($characters[$i]) {
+				case 'f': {
+					// full bar
+					$p = 0;
+					$h = 3;
+					break;
+				}
+				case 'a': {
+					// ascender
+					$p = 0;
+					$h = 2;
+					break;
+				}
+				case 'd': {
+					// descender
+					$p = 1;
+					$h = 2;
+					break;
+				}
+				case 't': {
+					// tracker (short)
+					$p = 1;
+					$h = 1;
+					break;
+				}
 			}
 			$bararray['bcode'][$k++] = array('t' => 1, 'w' => 1, 'h' => $h, 'p' => $p);
 			$bararray['bcode'][$k++] = array('t' => 0, 'w' => 1, 'h' => 2, 'p' => 0);

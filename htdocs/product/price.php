@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Ion agorria				<ion@agorria.com> 
+ * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,11 +64,7 @@ $error=0;
  * Actions
  */
 
-if ($action == 'update_price' && GETPOST("cancel"))
-{
-
-	$action='';
-}
+if (GETPOST("cancel")) $action='';
 
 if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit->creer || $user->rights->service->creer))
 {
@@ -120,7 +116,7 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 	}
 
 	if ($newprice < $newprice_min && ! empty($object->fk_price_expression)) {
-		$newprice = $newprice_min; //Set price same as min, the user will not see the 
+		$newprice = $newprice_min; //Set price same as min, the user will not see the
 	}
 
 	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0) {
@@ -640,13 +636,15 @@ print "</table>\n";
 
 print "</div>\n";
 
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Barre d'action                                                             */
 /*                                                                            */
 /* ************************************************************************** */
 
-if (! $action || $action == 'delete') {
+if (! $action || $action == 'delete')
+{
 	print "\n" . '<div class="tabsAction">' . "\n";
 
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
@@ -659,10 +657,12 @@ if (! $action || $action == 'delete') {
 /*
  * Edition du prix
  */
-if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
+{
 	print_fiche_titre($langs->trans("NewPrice"), '', '');
 
-	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (empty($conf->global->PRODUIT_MULTIPRICES))
+	{
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
@@ -682,7 +682,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print $form->select_PriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
- 		
+
  		//Only show price mode and expression selector if module is enabled
 		if (! empty($conf->dynamicprices->enabled)) {
 			// Price mode selector
@@ -755,8 +755,11 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '</div>';
 
 		print '<br></form>';
-	} else {
-		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
+	}
+	else
+	{
+		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
+		{
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
@@ -823,10 +826,12 @@ $sql .= " ORDER BY p.date_price DESC, p.price_level ASC";
 // $sql .= $db->plimit();
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
 	$num = $db->num_rows($result);
 
-	if (! $num) {
+	if (! $num)
+	{
 		$db->free($result);
 
 		// Il doit au moins y avoir la ligne de prix initial.
@@ -837,8 +842,11 @@ if ($result) {
 		$num = $db->num_rows($result);
 	}
 
-	if ($num > 0) {
+	if ($num > 0)
+	{
 		print '<br>';
+
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_fiche_titre($langs->trans("DefaultPrice"),'','');
 
 		print '<table class="noborder" width="100%">';
 
@@ -868,7 +876,8 @@ if ($result) {
 
 		$var = True;
 		$i = 0;
-		while ($i < $num) {
+		while ($i < $num)
+		{
 			$objp = $db->fetch_object($result);
 			$var = ! $var;
 			print "<tr $bc[$var]>";
@@ -936,7 +945,9 @@ if ($result) {
 	dol_print_error($db);
 }
 
-if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+
+if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+{
 
 	$prodcustprice = new Productcustomerprice($db);
 
@@ -962,8 +973,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$filter ['soc.nom'] = $search_soc;
 	}
 
-	if ($action == 'add_customer_price') {
-
+	if ($action == 'add_customer_price')
+	{
 		// Create mode
 		$maxpricesupplier = $object->min_recommended_price();
 
@@ -1040,8 +1051,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</div>';
 
 		print '<br></form>';
-	} elseif ($action == 'edit_customer_price') {
-
+	}
+	elseif ($action == 'edit_customer_price')
+	{
 		// Edit mode
 		$maxpricesupplier = $object->min_recommended_price();
 
@@ -1125,7 +1137,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '</div>';
 
 		print '<br></form>';
-	} elseif ($action == 'showlog_customer_price') {
+	}
+	elseif ($action == 'showlog_customer_price')
+	{
 
 		$filter = array('t.fk_product' => $object->id,'t.fk_soc' => GETPOST('socid', 'int'));
 
@@ -1198,8 +1212,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n" . '<div class="tabsAction">' . "\n";
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Ok") . '</a></div>';
 		print "\n</div><br>\n";
-	} else {
-
+	}
+	else
+	{
 		// View mode
 
 		// Count total nb of records
@@ -1215,42 +1230,42 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
 
-		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		print '<input type="hidden" name="id" value="' . $object->id . '">';
+
+		print '<table class="noborder" width="100%">';
+
+		print '<tr class="liste_titre">';
+		print '<td>' . $langs->trans("ThirdParty") . '</td>';
+		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
+		print '<td align="right">' . $langs->trans("VAT") . '</td>';
+		print '<td align="right">' . $langs->trans("HT") . '</td>';
+		print '<td align="right">' . $langs->trans("TTC") . '</td>';
+		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+
+		print '<tr class="liste_titre">';
+		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+		print '<td colspan="8">&nbsp;</td>';
+		// Print the search button
+		print '<td class="liste_titre" align="right">';
+		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+		print '</td>';
+		print '</tr>';
 
 		if (count($prodcustprice->lines) > 0) {
-
-			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
-			print '<input type="hidden" name="id" value="' . $object->id . '">';
-
-			print '<table class="noborder" width="100%">';
-
-			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans("ThirdParty") . '</td>';
-			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
-			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-			print '<td align="right">' . $langs->trans("VAT") . '</td>';
-			print '<td align="right">' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
-
-			print '<tr class="liste_titre">';
-			print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-			print '<td colspan="8">&nbsp;</td>';
-			// Print the search button
-			print '<td class="liste_titre" align="right">';
-			print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-			print '</td>';
-			print '</tr>';
 
 			$var = True;
 
 			foreach ($prodcustprice->lines as $line) {
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
@@ -1290,12 +1305,15 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				print "</tr>\n";
 			}
-			print "</table>";
-
-			print "</form>";
 		} else {
-			print $langs->trans('None');
+			$colspan=9;
+			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
+			print '<td colspan="'.$colspan.'">'.$langs->trans('None').'</td>';
 		}
+
+		print "</table>";
+
+		print "</form>";
 
 		/* ************************************************************************** */
 		/*                                                                            */

@@ -23,10 +23,11 @@
  *       \ingroup    agenda
  *       \brief      File of class to parse ical calendars
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/xcal.lib.php';
 
 
 /**
- *		Class to parse ICal calendars
+ *		Class to read/parse ICal calendars
  */
 class ICal
 {
@@ -107,6 +108,7 @@ class ICal
         if (!stristr($this->file_text[0],'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
         $insidealarm=0;
+        $tmpkey='';$tmpvalue='';
         foreach ($this->file_text as $text)
         {
             $text = trim($text); // trim one line
@@ -137,7 +139,7 @@ class ICal
                     case "BEGIN:DAYLIGHT":
                     case "BEGIN:VTIMEZONE":
                     case "BEGIN:STANDARD":
-                        $type = $value; // save tu array under value key
+                        $type = $value; // save array under value key
                         break;
 
                     case "END:VTODO": // end special text - goto VCALENDAR key
@@ -159,8 +161,31 @@ class ICal
                         $insidealarm=0;
                         break;
 
-                    default: // no special string
-                        if (! $insidealarm) $this->add_to_array($type, $key, $value); // add to array
+                    default: // no special string (SUMMARY, DESCRIPTION, ...)
+						if ($tmpvalue)
+						{
+							$tmpvalue .= $text;
+							if (! preg_match('/=$/',$text))	// No more lines
+							{
+								$key=$tmpkey;
+								$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i','',$tmpvalue));
+								$tmpkey='';
+								$tmpvalue='';
+							}
+						}
+                    	elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i',$value))
+                    	{
+                    		if (preg_match('/=$/',$value))
+                    		{
+                    			$tmpkey=$key;
+                    			$tmpvalue=$tmpvalue.preg_replace('/=$/',"",$value);	// We must wait to have next line to have complete message
+                    		}
+                    		else
+                    		{
+                    			$value=quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i','',$tmpvalue.$value));
+                    		}
+                    	}                    	//$value=quotedPrintDecode($tmpvalue.$value);
+                    	if (! $insidealarm && ! $tmpkey) $this->add_to_array($type, $key, $value); // add to array
                         break;
                 }
             }
