@@ -2024,6 +2024,9 @@ if ($action == 'create')
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
+	//Used in objectline_*.tpl.php to allow the user to rearrange lines
+	$allowlinereorder = true;
+
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	if (! empty($object->lines))
