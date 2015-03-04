@@ -189,7 +189,7 @@ class ProjectTest extends PHPUnit_Framework_TestCase
     }
 
 	/**
-     * testProjectOther
+     * testProjectClose
      *
      * @param	Project	$localobject	Project
      * @return	int
@@ -205,6 +205,10 @@ class ProjectTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
+        $result=$localobject->setClose($user);
+
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
         return $localobject->id;
     }
 
@@ -214,7 +218,7 @@ class ProjectTest extends PHPUnit_Framework_TestCase
      * @param	int		$id		Id of project
      * @return	void
      *
-     * @depends	testProjectOther
+     * @depends	testProjectClose
      * The depends says test is run only if previous is ok
      */
     public function testProjectDelete($id)

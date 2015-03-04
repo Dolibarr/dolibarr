@@ -32,6 +32,8 @@ create table llx_projet
   fk_user_creat    integer NOT NULL,			-- createur du projet
   public           integer,						-- project is public or not
   fk_statut        smallint DEFAULT 0 NOT NULL,
+  date_close       datetime DEFAULT NULL,    
+  fk_user_close    integer DEFAULT NULL,
   note_private     text,
   note_public      text,
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks

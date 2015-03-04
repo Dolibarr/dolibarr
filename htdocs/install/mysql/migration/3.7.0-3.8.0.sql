@@ -227,3 +227,8 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
 
+ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;    
+ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
+
+
+  
