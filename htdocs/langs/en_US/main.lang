@@ -296,6 +296,7 @@ UnitPriceHT=Unit price (net)
 UnitPriceTTC=Unit price
 PriceU=U.P.
 PriceUHT=U.P. (net)
+AskPriceSupplierUHT=P.U. HT Requested
 PriceUTTC=U.P.
 Amount=Amount
 AmountInvoice=Invoice amount
