@@ -468,7 +468,7 @@ class Account extends CommonObject
                     $this->error=$this->db->lasterror();
                     return -3;
                 }
-                
+
                 // Actions on extra fields (by external module or standard code)
                 $hookmanager->initHooks(array('bankdao'));
                 $parameters=array('id'=>$this->id);
@@ -513,8 +513,6 @@ class Account extends CommonObject
         global $langs,$conf, $hookmanager;
 
         // Clean parameters
-        if (! $this->min_allowed) $this->min_allowed=0;
-        if (! $this->min_desired) $this->min_desired=0;
         $this->state_id = ($this->state_id?$this->state_id:$this->state_id);
         $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
 
@@ -544,7 +542,7 @@ class Account extends CommonObject
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
         $sql.= ",account_number = '".$this->account_number."'";
 		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
-		
+
 		$sql.= ",bank  = '".$this->db->escape($this->bank)."'";
         $sql.= ",code_banque='".$this->code_banque."'";
         $sql.= ",code_guichet='".$this->code_guichet."'";
@@ -558,8 +556,8 @@ class Account extends CommonObject
 
         $sql.= ",currency_code = '".$this->currency_code."'";
 
-        $sql.= ",min_allowed = '".price2num($this->min_allowed)."'";
-        $sql.= ",min_desired = '".price2num($this->min_desired)."'";
+        $sql.= ",min_allowed = ".($this->min_allowed != '' ? price2num($this->min_allowed) : "null");
+        $sql.= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
         $sql.= ",comment     = '".$this->db->escape($this->comment)."'";
 
         $sql.= ",state_id = ".($this->state_id>0?"'".$this->state_id."'":"null");
@@ -572,7 +570,7 @@ class Account extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-        	
+
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('bankdao'));
         	$parameters=array('id'=>$this->id);
@@ -589,8 +587,8 @@ class Account extends CommonObject
         		}
         	}
         	else if ($reshook < 0) return -1;
-        	
-        	
+
+
             return 1;
         }
         else
@@ -736,15 +734,15 @@ class Account extends CommonObject
                 $this->min_allowed    = $obj->min_allowed;
                 $this->min_desired    = $obj->min_desired;
                 $this->comment        = $obj->comment;
-                
+
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 $this->fetch_optionals($this->id,$extralabels);
-                
-                
+
+
                 return 1;
             }
             else
@@ -776,7 +774,7 @@ class Account extends CommonObject
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
-        	
+
         	// Remove extrafields
         	if ((empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         	{
@@ -787,7 +785,7 @@ class Account extends CommonObject
         			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         		}
         	}
-        	
+
             return 1;
         }
         else {
@@ -1076,7 +1074,7 @@ class Account extends CommonObject
      *
      * @return		int        0=No bank code need + Account number is enough
      *                         1=Need 2 fields for bank code: Bank, Desk (France, Spain, ...) + Account number and key
-     *                         2=Neek 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
+     *                         2=Need 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
      */
     function useDetailedBBAN()
     {
