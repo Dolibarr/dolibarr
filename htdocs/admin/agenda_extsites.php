@@ -41,7 +41,7 @@ $actiontest=GETPOST('test','alpha');
 $actionsave=GETPOST('save','alpha');
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
-$MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
+$MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 
 // List of aviable colors
 $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5');

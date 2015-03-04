@@ -3851,8 +3851,8 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
- * 	all entities but &,<,> are converted. This permits to encode special chars to entities with no double
- *  encoding for already encoded HTML strings.
+ * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,> are converted.
+ *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
  *              - writeHTMLCell -> param must be encoded into HTML.
@@ -3869,7 +3869,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
 {
 	$newstring=$stringtoencode;
-	if (dol_textishtml($stringtoencode))
+	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
 	{
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		if ($removelasteolbr) $newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br> (remove only last one)
