@@ -104,6 +104,9 @@ class Commande extends CommonOrder
 
     var $user_author_id;
 
+	/**
+	 * @var OrderLine[]
+	 */
     var $lines = array();
 
 
@@ -3218,53 +3221,50 @@ class Commande extends CommonOrder
  */
 class OrderLine extends CommonOrderLine
 {
-    var $db;
-    var $error;
-
 	public $element='commandedet';
 	public $table_element='commandedet';
 
     var $oldline;
 
     // From llx_commandedet
-    var $rowid;
     var $fk_parent_line;
     var $fk_facture;
     var $label;
-    var $desc;          	// Description ligne
-    var $fk_product;		// Id produit predefini
-    var $product_type = 0;	// Type 0 = product, 1 = Service
 
-    var $qty;				// Quantity (example 2)
-    var $tva_tx;			// VAT Rate for product/service (example 19.6)
-    var $localtax1_tx; 		// Local tax 1
-    var $localtax2_tx; 		// Local tax 2
-    var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-    var $subprice;      	// U.P. HT (example 100)
-    var $remise_percent;	// % for line discount (example 20%)
     var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;
+
+	/**
+	 * Buy price without taxes
+	 * @var float
+	 */
 	var $pa_ht;
+
     var $marge_tx;
     var $marque_tx;
-    var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-						    // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
-    var $special_code = 0;
-    var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-    var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
-    var $total_localtax1;   // Total local tax 1 for the line
-    var $total_localtax2;   // Total local tax 2 for the line
-    var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    // Ne plus utiliser
+	/**
+	 * @deprecated
+	 */
     var $remise;
+
+	/**
+	 * @deprecated
+	 */
     var $price;
 
     // From llx_product
-    var $ref;				// deprecated
-    var $libelle;			// deprecated
+	/**
+	 * @deprecated Use product_ref
+	 */
+    var $ref;
+
+	/**
+	 * @deprecated Use product_label
+	 */
+    var $libelle;
+
     var $product_ref;
     var $product_label; 	// Label produit
     var $product_desc;  	// Description produit
