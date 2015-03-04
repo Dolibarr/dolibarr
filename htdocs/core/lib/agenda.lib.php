@@ -130,7 +130,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td align="center" valign="middle" class="nowrap">';
 		print '<script type="text/javascript">' . "\n";
 		print 'jQuery(document).ready(function () {' . "\n";
-		print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
 		print 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
 		print 'jQuery(".family_birthday").toggle();' . "\n";
 		print '});' . "\n";
@@ -141,28 +140,23 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 			if (count($showextcals) > 0)
 			{
 				print '<tr><td>';
-				//jQuery Learning "How do I select an element by an ID that has characters used in CSS notation?"
-				//http://learn.jquery.com/using-jquery-core/faq/how-do-i-select-an-element-by-an-id-that-has-characters-used-in-css-notation/
 				print '<script type="text/javascript">
-					function jq( myid ) {
-						return myid.replace( /(:|\.|\[|\]|,|@)/g, "\\\\$1" );
-					}
 					jQuery(document).ready(function () {
 
 						jQuery("form.listactionsfilter input[name^=\"check_\"]").click(function() {
 							var name = $(this).attr("name");
 
-							jQuery(".family_" + jq(name.replace("check_", ""))).toggle();
+							jQuery(".family_" + name.replace("check_", "")).toggle();
 						});
 				    });
 				</script>';
 				print '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda") . '</td></tr>';
 				foreach ($showextcals as $val)
 				{
-					$htmlname = dol_string_nospecial($val['name']);
+					$htmlname = md5($val['name']);
 
 					print '<tr><td>';
-					print '<input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'];
+					print '<input type="checkbox" id="check_' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'];
 					print '</td></tr>';
 				}
 			}
