@@ -63,6 +63,7 @@ $confirm		= GETPOST('confirm','alpha');
 $comclientid 	= GETPOST('comid','int');
 $socid			= GETPOST('socid','int');
 $projectid		= GETPOST('projectid','int');
+$lineid         = GETPOST('lineid', 'int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -404,10 +405,10 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
  */
 if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 {
-    if ($_POST["elrowid"])
+    if ($lineid)
     {
         $line = new CommandeFournisseurLigne($db);
-        $res = $line->fetch($_POST["elrowid"]);
+        $res = $line->fetch($lineid);
         if (!$res) dol_print_error($db);
     }
 
@@ -418,9 +419,9 @@ if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	!
     $localtax2_tx=get_localtax($_POST['tva_tx'],2,$mysoc,$object->thirdparty);
 
     $result	= $object->updateline(
-        $_POST['elrowid'],
-        $_POST['eldesc'],
-        $_POST['pu'],
+	    $lineid,
+        $_POST['product_desc'],
+        $_POST['price_ht'],
         $_POST['qty'],
         $_POST['remise_percent'],
         $_POST['tva_tx'],
@@ -433,13 +434,14 @@ if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	!
         $date_start,
         $date_end
     );
+
     unset($_POST['qty']);
     unset($_POST['type']);
     unset($_POST['idprodfournprice']);
     unset($_POST['remmise_percent']);
     unset($_POST['dp_desc']);
     unset($_POST['np_desc']);
-    unset($_POST['pu']);
+    unset($_POST['price_ht']);
     unset($_POST['tva_tx']);
     unset($_POST['date_start']);
     unset($_POST['date_end']);
@@ -476,7 +478,7 @@ if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	!
 if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 {
 
-    $result = $object->deleteline(GETPOST('lineid'));
+    $result = $object->deleteline($lineid);
     if ($result	>= 0)
     {
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1186,7 +1188,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 	// Efface un contact
 	else if ($action == 'deletecontact' && $object->id > 0)
 	{
-		$result = $object->delete_contact($_GET["lineid"]);
+		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0)
 		{
@@ -1460,10 +1462,9 @@ elseif (! empty($object->id))
 	/*
 	 * Confirmation de la suppression d'une ligne produit
 	 */
-	if ($action == 'delete_product_line')
+	if ($action == 'ask_deleteline')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
-
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline','',0,2);
 	}
 
 	/*
@@ -1695,9 +1696,9 @@ elseif (! empty($object->id))
 	 */
 
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?etat=1&id='.$object->id.(($action != 'edit_line')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?etat=1&id='.$object->id.(($action != 'edit_line')?'#add':'#line_'.$lineid).'" method="POST">
 	<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
-	<input type="hidden" name="action" value="'.(($action != 'edit_line')?'addline':'update_line').'">
+	<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'update_line').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="'.$object->id.'">
     <input type="hidden" name="facid" value="'.$object->id.'">
@@ -1707,187 +1708,12 @@ elseif (! empty($object->id))
 
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-	$num = count($object->lines);
-	$i = 0;	$total = 0;
-
-	if ($num)
-	{
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Label').'</td>';
-		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
-		print '<td width="48" colspan="3">&nbsp;</td>';
-		print "</tr>\n";
-	}
-	$var=true;
-	while ($i <	$num)
-	{
-		$line =	$object->lines[$i];
-		$var=!$var;
-
-		// Show product and description
-		$type=(! empty($line->product_type)?$line->product_type:(! empty($line->fk_product_type)?$line->fk_product_type:0));
-		// Try to enhance type detection using date_start and date_end for free lines where type
-		// was not saved.
-		$date_start='';
-		$date_end='';
-		if (! empty($line->date_start))
-		{
-			$date_start=$line->date_start;
-			$type=1;
-		}
-		if (! empty($line->date_end))
-		{
-			$date_end=$line->date_end;
-			$type=1;
-		}
-
-		// Edit line
-		if ($action != 'edit_line' || $_GET['rowid'] != $line->id)
-		{
-			print '<tr id="row-'.$line->id.'" '.$bc[$var].'>';
-
-			// Show product and description
-			print '<td>';
-			if ($line->fk_product > 0)
-			{
-				print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
-
-				$product_static=new ProductFournisseur($db);
-				$product_static->fetch($line->fk_product);
-				$text=$product_static->getNomUrl(1,'supplier');
-				$text.= ' - '.$product_static->libelle;
-				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print $form->textwithtooltip($text,$description,3,'','',$i);
-
-				// Show range
-				print_date_range($date_start,$date_end);
-
-				// Add description in form
-				if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($line->description && $line->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($line->description):'';
-			}
-
-			// Description - Editor wysiwyg
-			if (! $line->fk_product)
-			{
-				if ($type==1) $text = img_object($langs->trans('Service'),'service');
-				else $text = img_object($langs->trans('Product'),'product');
-				print $text.' '.nl2br($line->description);
-
-				// Show range
-				print_date_range($date_start,$date_end);
-			}
-
-			print '</td>';
-
-			print '<td align="right" class="nowrap">'.vatrate($line->tva_tx).'%</td>';
-
-			print '<td align="right" class="nowrap">'.price($line->subprice)."</td>\n";
-
-			print '<td align="right" class="nowrap">'.$line->qty.'</td>';
-
-			if ($line->remise_percent >	0)
-			{
-				print '<td align="right" class="nowrap">'.dol_print_reduction($line->remise_percent,$langs)."</td>\n";
-			}
-			else
-			{
-				print '<td>&nbsp;</td>';
-			}
-
-			print '<td align="right" class="nowrap">'.price($line->total_ht).'</td>';
-
-			if (is_object($hookmanager))
-			{
-				$parameters=array('line'=>$line,'num'=>$num,'i'=>$i);
-				$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
-			}
-
-			if ($object->statut == 0	&& $user->rights->fournisseur->commande->creer)
-			{
-				print '<td align="center" width="16"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;rowid='.$line->id.'#'.$line->id.'">';
-				print img_edit();
-				print '</a></td>';
-
-				$actiondelete='delete_product_line';
-				print '<td align="center" width="16"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$actiondelete.'&amp;lineid='.$line->id.'">';
-				print img_delete();
-				print '</a></td>';
-			}
-			else
-			{
-				print '<td>&nbsp;</td><td>&nbsp;</td>';
-			}
-			print "</tr>";
-		}
-
-		// Edit line
-		if ($action	== 'edit_line' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $line->id))
-		{
-			print "\n";
-			print '<tr '.$bc[$var].'>';
-			print '<td>';
-
-			print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
-
-			print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
-			if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $line->fk_product > 0)
-			{
-				$product_static=new ProductFournisseur($db);
-				$product_static->fetch($line->fk_product);
-				$text=$product_static->getNomUrl(1,'supplier');
-				$text.= ' - '.$product_static->libelle;
-				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print $form->textwithtooltip($text,$description,3,'','',$i);
-
-				// Show range
-				print_date_range($date_start,$date_end);
-				print '<br>';
-			}
-			else
-			{
-                $forceall=1;	// For suppliers, we always show all types
-                print $form->select_type_of_lines($line->product_type,'type',1,0,$forceall);
-                if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-                || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
-			}
-
-			if (is_object($hookmanager))
-			{
-				$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
-				$reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
-			}
-
-			$nbrows=ROWS_2;
-			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-			$doleditor=new DolEditor('eldesc',$line->description,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-			$doleditor->Create();
-
-            print '<br>';
-            print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-            print $form->select_date($date_start,'date_start'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'');
-            print ' '.$langs->trans('to').' ';
-            print $form->select_date($date_end,'date_end'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'');
-
-			print '</td>';
-			print '<td>';
-			print $form->load_tva('tva_tx',$line->tva_tx,$object->thirdparty,$mysoc);
-			print '</td>';
-			print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
-			print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
-			print '<td align="right" class="nowrap"><input size="1" type="text" name="remise_percent" value="'.$line->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
-			print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-			print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-			print '</tr>' .	"\n";
-		}
-		$i++;
+	if ($object->lines) {
+		$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 	}
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action != 'edit_line')
+	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action != 'editline')
 	{
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector;
@@ -2235,7 +2061,7 @@ elseif (! empty($object->id))
 		// modified by hook
 		if (empty($reshook))
 		{
-			if ($user->societe_id == 0 && $action != 'edit_line' && $action != 'delete')
+			if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
 			{
 				print '<div	 class="tabsAction">';
 

@@ -1995,8 +1995,6 @@ else
 
 	    //Used in objectline_*.tpl.php to allow supplier invoices enter price with taxes
 	    $inputalsopricewithtax = true;
-	    //Used in objectline_*.tpl.php to allow the user to rearrange lines
-	    $allowlinereorder = true;
 
 	    if ($object->lines) {
 		    $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
