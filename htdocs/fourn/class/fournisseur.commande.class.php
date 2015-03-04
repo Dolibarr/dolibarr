@@ -2240,14 +2240,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $pu_ht;
 
-	/**
-	 * Unit price without taxes
-	 * @var float
-	 * @deprecated Use pu_ht
-	 */
-	public $subprice;
-
-
 	var $date_start;
     var $date_end;
 

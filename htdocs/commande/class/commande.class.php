@@ -3270,26 +3270,6 @@ class OrderLine extends CommonOrderLine
 	 */
 	var $remise;
 
-	/**
-	 * @deprecated
-	 */
-	var $price;
-
-    // From llx_product
-	/**
-	 * @deprecated Use product_ref
-	 */
-	var $ref;
-
-	/**
-	 * @deprecated Use product_label
-	 */
-	var $libelle;
-
-	var $product_ref;
-    var $product_label; 	// Label produit
-    var $product_desc;  	// Description produit
-
     // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
     // Start and end date of the line
     var $date_start;
