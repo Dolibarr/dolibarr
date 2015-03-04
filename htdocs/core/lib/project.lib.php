@@ -550,7 +550,7 @@ function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$
 				print $taskstatic->getNomUrl(0);
 				print "<br>";
 				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
 				// Planned Workload
@@ -665,6 +665,9 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 			{
 				$var = !$var;
 				$lastprojectid=$lines[$i]->fk_project;
+
+				$projectstatic->id = $lines[$i]->fk_project;
+				$projectstatic->loadTimeSpent($datestart, $lines[$i]->id, $fuser->id);
 			}
 
 			// If we want all or we have a role on task, we show it
@@ -673,7 +676,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				print "<tr ".$bc[$var].">\n";
 
 				// Project
-				print "<td>";
+				print '<td class="nowrap">';
 				$projectstatic->id=$lines[$i]->fk_project;
 				$projectstatic->ref=$lines[$i]->projectref;
 				$projectstatic->public=$lines[$i]->public;
@@ -682,7 +685,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				print "</td>";
 
 				// Ref
-				print '<td>';
+				print '<td class="nowrap">';
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
 				print $taskstatic->getNomUrl(1);
@@ -696,7 +699,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				print $taskstatic->getNomUrl(0);
 				print "<br>";
 				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
 				// Planned Workload
@@ -711,6 +714,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				print '</td>';
 
 				// Time spent
+				/*
 				print '<td align="right">';
 				if ($lines[$i]->duration)
 				{
@@ -720,6 +724,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				}
 				else print '--:--';
 				print "</td>\n";
+				*/
 
 				$disabledproject=1;$disabledtask=1;
 				//print "x".$lines[$i]->fk_project;
@@ -737,27 +742,22 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 					$disabledtask=1;
 				}
 
-				// Fields to add new time
-				print '<td align="right">';
-				print $langs->trans("FeatureNotYetAvailable");
-				/*
-				print '<td class="nowrap" align="right">';
-				$s='';
-				$s.=$form->select_date('',$lines[$i]->id,0,0,2,"addtime",1,0,1,$disabledtask);
-				$s.='&nbsp;&nbsp;&nbsp;';
-				$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text',0,1);
-				$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
-				print $s;
-				print '</td>';
+				//var_dump($projectstatic->weekWorkLoad);
 
-				print '<td align="right">';
-				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
-				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
-				print '</td>';
-				*/
-
-				print '</td>';
-				print "</tr>\n";
+				// Fields to show current time
+				$tableCell=''; $modeinput='hours';
+				for ($idw = 0; $idw < 7; $idw++)
+		        {
+		        	$dayWorkLoad = 0;
+                    $tableCell ='<td align="center">';
+                    $tableCell.='<input type="text" class="center" size="2" disabled="disabled" value="'.convertSecondToTime($dayWorkLoad,'allhourmin').'">+';
+		        	$tableCell.='<input type="text" class="center" size="2" id="task['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+		        	$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
+                    $tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\');updateTotal('.$idw.',\''.$modeinput.'\')" />';
+                    $tableCell.='</td>';
+                    print $tableCell;
+		        }
+		        print "</tr>\n";
 			}
 
 			$inc++;

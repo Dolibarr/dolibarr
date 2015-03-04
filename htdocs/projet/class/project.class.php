@@ -1432,5 +1432,52 @@ class Project extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
+
+	/**
+	 * load time spent into this->weekWorkLoad for all day of a week and task id
+	 *
+	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Task id
+	 * @param 	int		$userid			Time consumed per a particular user
+	 * @return 	int						<0 if OK, >0 if KO
+	 */
+	public function loadTimeSpent($datestart,$taskid,$userid=0)
+    {
+        $error=0;
+
+        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
+        $sql.= " WHERE ptt.fk_task='".$taskid."'";
+        $sql.= " AND ptt.fk_user='".$userid."'";
+        $sql .= "AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+        $sql .= "AND (ptt.task_date < '".$this->db->idate($datestart + 7 * 24 * 3600)."' ";
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+
+                $num = $this->db->num_rows($resql);
+                $i = 0;
+                // Loop on each record found, so each couple (project id, task id)
+                 while ($i < $num)
+                {
+                        $obj=$this->db->fetch_object($resql);
+                        $day=$this->db->jdate($obj->task_date);
+                        //$day=(intval(date('w',strtotime($obj->task_date)))+1)%6;
+                        // if several tasktime in one day then only the last is used
+                        $this->weekWorkLoad[$day] +=  $obj->task_duration;
+                        $this->taskTimeId[$day]= ($obj->rowid)?($obj->rowid):0;
+                        $i++;
+                }
+                $this->db->free($resql);
+                return 1;
+         }
+        else
+        {
+                $this->error="Error ".$this->db->lasterror();
+                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+                return -1;
+        }
+    }
+
 }
 

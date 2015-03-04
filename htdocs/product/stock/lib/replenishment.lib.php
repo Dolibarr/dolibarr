@@ -37,7 +37,7 @@ function dolDispatchToDo($order_id)
     $dispatched = array();
     $ordered = array();
 
-    # Count nb of quantity dispatched per product
+    // Count nb of quantity dispatched per product
     $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
     $sql.= ' WHERE fk_commande = ' . $order_id;
     $sql.= ' GROUP BY fk_product';
@@ -49,7 +49,7 @@ function dolDispatchToDo($order_id)
             $dispatched[$obj->fk_product] = $obj;
     }
 
-    # Count nb of quantity to dispatch per product
+    // Count nb of quantity to dispatch per product
     $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet';
     $sql.= ' WHERE fk_commande = ' . $order_id;
     $sql.= ' AND fk_product > 0';

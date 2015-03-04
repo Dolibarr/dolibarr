@@ -48,6 +48,8 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
+$now=dol_now();
+
 
 /*
  * Actions
@@ -94,7 +96,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$pr
 //var_dump($taskrole);
 
 
-llxHeader("",$title,"");
+llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
@@ -143,8 +145,17 @@ print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
-print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-print '<td colspan="2" align="right">'.$langs->trans("xxx").'</td>';
+//print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+
+$tmp=dol_getdate($now);
+$startdayarray=dol_get_first_day_week($tmp['mday'], $tmp['mon'], $tmp['year']);
+$startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
+
+for($i=0;$i<7;$i++)
+{
+	print '<td width="7%" align="center">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'day').'</td>';
+}
+
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
@@ -154,6 +165,17 @@ if (count($tasksarray) > 0)
 {
 	$j=0;
 	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+
+	print '<tr class="liste_total">
+                <td class="liste_total" colspan="5" align="right">'.$langs->trans("Total").'</td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[3]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[4]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[5]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[6]">&nbsp;</div></td>
+    </tr>';
 }
 else
 {
@@ -161,7 +183,14 @@ else
 }
 print "</table>";
 
+print '<input type="hidden" name="timestamp" value="1425423513"/>'."\n";
+print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
+
 dol_fiche_end();
+
+print '<div class="center">';
+print '<input type="button" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '</div>';
 
 print '</form>';
 

@@ -43,7 +43,7 @@ $langs->load("stocks");
 $langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-
+$backtopage=GETPOST('backtopage');
 $action=GETPOST("action");
 $cancel=GETPOST('cancel');
 
@@ -160,8 +160,16 @@ if ($action == "correct_stock" && ! $cancel)
 
 			if ($result > 0)
 			{
-	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
-				exit;
+				if ($backtopage)
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+	            	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
+					exit;
+				}
 			}
 			else
 			{
@@ -292,8 +300,17 @@ if ($action == "transfert_stock" && ! $cancel)
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
 				$db->commit();
-				header("Location: product.php?id=".$product->id);
-				exit;
+
+				if ($backtopage)
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+					header("Location: product.php?id=".$product->id);
+					exit;
+				}
 			}
 			else
 			{
@@ -594,6 +611,7 @@ if ($id > 0 || $ref)
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<table class="border" width="100%">';
 
 		// Warehouse
@@ -681,6 +699,7 @@ if ($id > 0 || $ref)
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if ($pdluoid)
 		{
 		    print '<input type="hidden" name="pdluoid" value="'.$pdluoid.'">';
