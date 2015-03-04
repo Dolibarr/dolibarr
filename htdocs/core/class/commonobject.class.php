@@ -2671,7 +2671,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string		$action				GET/POST action
-	 *	@param	array	    $line		       	Selected object line to output
+	 *	@param CommonObjectLine $line		       	Selected object line to output
 	 *	@param  string	    $var               	Is it a an odd line (true)
 	 *	@param  int		    $num               	Number of line (0)
 	 *	@param  int		    $i					I
@@ -2686,7 +2686,9 @@ abstract class CommonObject
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form,$bc,$bcdd, $object_rights;
+
+		$object_rights = $this->getRights();
 
 		$element=$this->element;
 
@@ -2699,7 +2701,7 @@ abstract class CommonObject
 		if (! empty($line->date_end)) $type=1; // deprecated
 
 		// Ligne en mode visu
-		if ($action != 'editline' || $selected != $line->id)
+		if ($action != 'editline' || $selected != $line->rowid)
 		{
 			// Product
 			if ($line->fk_product > 0)
@@ -2762,7 +2764,7 @@ abstract class CommonObject
 		}
 
 		// Ligne en mode update
-		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
+		if ($this->statut == 0 && $action == 'editline' && $selected == $line->rowid)
 		{
 			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
@@ -3726,5 +3728,17 @@ abstract class CommonObject
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->{$this->element};
+	}
+
 
 }

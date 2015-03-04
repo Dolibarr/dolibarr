@@ -237,12 +237,7 @@ if ($action == 'deltask')
 // Set default model
 else if ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->PROJECT_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity);
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
