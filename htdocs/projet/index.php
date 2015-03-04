@@ -175,7 +175,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 	if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	$sql.= " AND p.fk_statut=1";
 	$sql.= " GROUP BY p.ref, p.title, p.rowid, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";
-	$sql.= " ORDER BY t.rowid, t.dateo, t.datee";
+	$sql.= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
 	$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
 
 	$var=true;
