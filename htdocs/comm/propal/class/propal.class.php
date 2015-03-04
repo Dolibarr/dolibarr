@@ -1220,6 +1220,11 @@ class Propal extends CommonObject
                 $result = $this->db->query($sql);
                 if ($result)
                 {
+                	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+                	$extrafieldsline=new ExtraFields($this->db);
+                	$line = new PropaleLigne($this->db);
+                	$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
+                	
                     $num = $this->db->num_rows($result);
                     $i = 0;
 
@@ -1229,7 +1234,8 @@ class Propal extends CommonObject
 
                         $line                   = new PropaleLigne($this->db);
 
-                        $line->rowid			= $objp->rowid;
+                        $line->rowid			= $objp->rowid; //Deprecated
+                        $line->id				= $objp->rowid;
                         $line->fk_propal		= $objp->fk_propal;
                         $line->fk_parent_line	= $objp->fk_parent_line;
                         $line->product_type     = $objp->product_type;
@@ -1270,6 +1276,8 @@ class Propal extends CommonObject
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
 
+                        $line->fetch_optionals($line->id,$extralabelsline);
+                        
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
                         //print "xx $i ".$this->lines[$i]->fk_product;
@@ -1283,12 +1291,6 @@ class Propal extends CommonObject
                     return -1;
                 }
 
-                // Retreive all extrafield for propal
-                // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
 
                 return 1;
             }

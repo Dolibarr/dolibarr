@@ -640,6 +640,11 @@ class Contrat extends CommonObject
 
 		$now=dol_now();
 
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline=new ExtraFields($this->db);
+		$line = new ContratLigne($this->db);
+		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
+
 		$this->lines=array();
 
 		// Selectionne les lignes contrats liees a un produit
@@ -718,6 +723,10 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
+				// Retreive all extrafield for propal
+				// fetch optionals attributes and labels
+				$line->fetch_optionals($line->id,$extralabelsline);
+				
 				$this->lines[]			= $line;
 
 				//dol_syslog("1 ".$line->desc);
@@ -813,6 +822,13 @@ class Contrat extends CommonObject
 				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
 
+				
+				// Retreive all extrafield for propal
+				// fetch optionals attributes and labels
+				
+				$line->fetch_optionals($line->id,$extralabelsline);
+			
+				
 				$this->lines[]        = $line;
 
 				$total_ttc+=$objp->total_ttc;
