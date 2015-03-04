@@ -1841,7 +1841,7 @@ class FactureFournisseur extends CommonInvoice
  */
 class SupplierInvoiceLine extends CommonInvoice
 {
-	public $element='fournisseur->facture';
+	public $element='facture_fourn_det';
 	public $table_element='facture_fourn_det';
 
 	var $oldline;
