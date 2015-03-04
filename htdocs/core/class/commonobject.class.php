@@ -2571,7 +2571,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user, $allowlinereorder;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2618,7 +2618,9 @@ abstract class CommonObject
 
 		print '<td width="10"></td>';
 
-		print '<td width="10"></td>';
+		if ($allowlinereorder) {
+			print '<td width="10"></td>';
+		}
 
 		print "</tr>\n";
 

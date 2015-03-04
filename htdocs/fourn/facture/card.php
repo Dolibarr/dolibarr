@@ -1558,9 +1558,9 @@ else
         dol_fiche_head($head, 'card', $titre, 0, 'bill');
 
         // Confirmation de la suppression d'une ligne produit
-        if ($action == 'confirm_delete_line')
+        if ($action == 'ask_deleteline')
         {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
         }
 
         // Clone confirmation
@@ -1993,9 +1993,12 @@ else
 
 	    $var = !$var;
 
+	    //Supplier invoices can enter price with taxes
 	    $inputalsopricewithtax = true;
 
-	    $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+	    if ($object->lines) {
+		    $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+	    }
 
 		// Form to add new line
         if ($object->statut == 0 && $action != 'editline')

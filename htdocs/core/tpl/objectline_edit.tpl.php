@@ -39,6 +39,10 @@ if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
+// Does the object allow to rearrange lines?
+if (!isset($allowlinereorder)) {
+	$allowlinereorder = false;
+}
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
@@ -192,7 +196,7 @@ $coldisplay=-1; // We remove first td
 		} ?>
 
 
-	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) {
+	<?php if ($allowlinereorder && $num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) {
 		$colspan++;
 	} ?>
 

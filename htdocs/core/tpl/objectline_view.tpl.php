@@ -40,6 +40,11 @@ if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
+// Does the object allow to rearrange lines?
+if (!isset($allowlinereorder)) {
+	$allowlinereorder = false;
+}
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -183,21 +188,23 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 		?>
 	</td>
 
-	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
-	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
-		<?php if ($i > 0) { ?>
-		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->rowid; ?>">
-		<?php echo img_up(); ?>
-		</a>
+	<?php if ($allowlinereorder) { ?>
+		<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) { ?>
+		<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
+			<?php if ($i > 0) { ?>
+			<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->rowid; ?>">
+			<?php echo img_up(); ?>
+			</a>
+			<?php } ?>
+			<?php if ($i < $num-1) { ?>
+			<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->rowid; ?>">
+			<?php echo img_down(); ?>
+			</a>
+			<?php } ?>
+		</td>
+		<?php } else { ?>
+	    <td align="center"<?php echo (empty($conf->browser->phone)?' class="tdlineupdown"':''); ?>><?php $coldisplay++; ?></td>
 		<?php } ?>
-		<?php if ($i < $num-1) { ?>
-		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->rowid; ?>">
-		<?php echo img_down(); ?>
-		</a>
-		<?php } ?>
-	</td>
-    <?php } else { ?>
-    <td align="center"<?php echo (empty($conf->browser->phone)?' class="tdlineupdown"':''); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
