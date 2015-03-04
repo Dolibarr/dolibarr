@@ -1596,12 +1596,12 @@ class Commande extends CommonOrder
 
                 $line = new OrderLine($this->db);
 
-                $line->rowid            = $objp->rowid;				// \deprecated
+                $line->rowid            = $objp->rowid;
                 $line->id               = $objp->rowid;
                 $line->fk_commande      = $objp->fk_commande;
-                $line->commande_id      = $objp->fk_commande;			// \deprecated
+                $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
-                $line->desc             = $objp->description;  		// Description ligne
+                $line->desc             = $objp->description;
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
@@ -1627,11 +1627,11 @@ class Commande extends CommonOrder
                 $line->special_code		= $objp->special_code;
                 $line->fk_parent_line	= $objp->fk_parent_line;
 
-                $line->ref				= $objp->product_ref;		// TODO deprecated
+                $line->ref				= $objp->product_ref;
                 $line->product_ref		= $objp->product_ref;
-                $line->libelle			= $objp->product_label;		// TODO deprecated
+                $line->libelle			= $objp->product_label;
                 $line->product_label	= $objp->product_label;
-                $line->product_desc     = $objp->product_desc; 		// Description produit
+                $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
@@ -3226,6 +3226,19 @@ class OrderLine extends CommonOrderLine
 
     var $oldline;
 
+	/**
+	 * Id of parent order
+	 * @var int
+	 */
+	public $fk_commande;
+
+	/**
+	 * Id of parent order
+	 * @var int
+	 * @deprecated Use fk_commande
+	 */
+	public $commande_id;
+
     // From llx_commandedet
     var $fk_parent_line;
     var $fk_facture;
@@ -3248,26 +3261,6 @@ class OrderLine extends CommonOrderLine
 	 * @deprecated
 	 */
     var $remise;
-
-	/**
-	 * @deprecated
-	 */
-    var $price;
-
-    // From llx_product
-	/**
-	 * @deprecated Use product_ref
-	 */
-    var $ref;
-
-	/**
-	 * @deprecated Use product_label
-	 */
-    var $libelle;
-
-    var $product_ref;
-    var $product_label; 	// Label produit
-    var $product_desc;  	// Description produit
 
     // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
     // Start and end date of the line

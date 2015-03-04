@@ -242,14 +242,14 @@ class CommandeFournisseur extends CommonOrder
 
                     $line->id                  = $objp->rowid;
                     $line->rowid               = $objp->rowid;
-                    $line->desc                = $objp->description;  // Description ligne
-                    $line->description         = $objp->description;  // Description ligne
+                    $line->desc                = $objp->description;
+                    $line->description         = $objp->description;
                     $line->qty                 = $objp->qty;
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->subprice            = $objp->subprice;	  // deprecated
-                    $line->pu_ht	           = $objp->subprice;	  // Unit price HT
+                    $line->subprice            = $objp->subprice;
+                    $line->pu_ht	           = $objp->subprice;
                     $line->remise_percent      = $objp->remise_percent;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
@@ -258,16 +258,16 @@ class CommandeFournisseur extends CommonOrder
                     $line->total_ttc           = $objp->total_ttc;
                     $line->product_type        = $objp->product_type;
 
-                    $line->fk_product          = $objp->fk_product;    // Id du produit
+                    $line->fk_product          = $objp->fk_product;
 
-                    $line->libelle             = $objp->product_label; // TODO deprecated
-                    $line->product_label       = $objp->product_label; // Label produit
-                    $line->product_desc        = $objp->product_desc;  // Description produit
+                    $line->libelle             = $objp->product_label;
+                    $line->product_label       = $objp->product_label;
+                    $line->product_desc        = $objp->product_desc;
 
-                    $line->ref                 = $objp->product_ref;     // TODO deprecated
-                    $line->product_ref         = $objp->product_ref;     // Internal reference
-                    $line->ref_fourn           = $objp->ref_supplier;    // TODO deprecated
-                    $line->ref_supplier        = $objp->ref_supplier;    // Reference supplier
+                    $line->ref                 = $objp->product_ref;
+                    $line->product_ref         = $objp->product_ref;
+                    $line->ref_fourn           = $objp->ref_supplier;
+                    $line->ref_supplier        = $objp->ref_supplier;
 
                     $line->date_start          = $this->db->jdate($objp->date_start);
                     $line->date_end            = $this->db->jdate($objp->date_end);
@@ -2179,15 +2179,37 @@ class CommandeFournisseur extends CommonOrder
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
+	/**
+	 * Unit price without taxes
+	 * @var float
+	 */
+	public $pu_ht;
+
+	/**
+	 * Unit price without taxes
+	 * @var float
+	 * @deprecated Use pu_ht
+	 */
+	public $subprice;
+
+
     var $date_start;
     var $date_end;
 
-    // From llx_product
-    var $libelle;       // Label produit
-    var $product_desc;  // Description produit
-
     // From llx_product_fournisseur_price
-    var $ref_fourn;     // Ref supplier
+
+	/**
+	 * Supplier ref
+	 * @var string
+	 * @deprecated Use ref_supplier
+	 */
+	public $ref_fourn;
+
+	/**
+	 * Supplier reference
+	 * @var string
+	 */
+	public $ref_supplier;
 
 
     /**
