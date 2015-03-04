@@ -38,6 +38,7 @@ $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
+$cancel=GETPOST('cancel','alpha');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -51,13 +52,10 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 if ($id > 0 || ! empty($ref))
 {
-    $ret = $object->fetch($id,$ref);
+    $ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
     if ($ret > 0) {
         $object->fetch_thirdparty();
         $id=$object->id;
-    } else {
-        setEventMessage($object->error, 'errors');
-        $action='';
     }
 }
 
@@ -83,9 +81,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	// Cancel
-	if (GETPOST("cancel") && ! empty($backtopage))
+	if ($cancel)
 	{
 		if (GETPOST("comefromclone")==1)
 		{
@@ -101,26 +98,15 @@ if (empty($reshook))
 			    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
 		    }
 		}
-	    header("Location: ".$backtopage);
-	    exit;
+		if ($backtopage)
+		{
+	    	header("Location: ".$backtopage);
+	    	exit;
+		}
+		
+		$action = '';
 	}
-
-	//if cancel and come from clone then delete the cloned project
-	if (GETPOST("cancel") && (GETPOST("comefromclone")==1))
-	{
-	    $result=$object->delete($user);
-	    if ($result > 0)
-	    {
-	        header("Location: index.php");
-	        exit;
-	    }
-	    else
-	    {
-	        dol_syslog($object->error,LOG_DEBUG);
-		    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
-	    }
-	}
-
+	
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 	    $error=0;
@@ -134,7 +120,7 @@ if (empty($reshook))
 		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	        $error++;
 	    }
-
+	    
 	    if (! $error)
 	    {
 	        $error=0;
@@ -156,7 +142,7 @@ if (empty($reshook))
 			if ($ret < 0) $error++;
 
 	        $result = $object->create($user);
-	        if ($result > 0)
+	        if (! $error && $result > 0)
 	        {
 	            // Add myself as project leader
 	            $result = $object->add_contact($user->id, 'PROJECTLEADER', 'internal');
