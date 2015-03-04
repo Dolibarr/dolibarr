@@ -121,4 +121,4 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 
 </form>
 
-<!-- END PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- END PHP TEMPLATE admin_extrafields_edit.tpl.php -->

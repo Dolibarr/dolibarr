@@ -43,7 +43,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
@@ -109,20 +109,18 @@ $coldisplay=-1; // We remove first td
 	}
 
 	$coldisplay++;
-	print '<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="' . price($line->subprice,0,'',0) . '" ';
-	if ($this->situation_counter > 1) {
-		print 'readonly="readonly" ';
-	}
+	print '<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
+	if ($this->situation_counter > 1) print ' readonly="readonly"';
 	print '></td>';
 
-	if ($inputalsopricewithtax) {
+	if ($inputalsopricewithtax)
+	{
 		$coldisplay++;
-		print '<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="' . price($pu_ttc,0,'',0) . '"';
-		if ($this->situation_counter > 1) {
-			print 'readonly="readonly" ';
-		}
+		print '<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
+		if ($this->situation_counter > 1) print ' readonly="readonly"';
 		print '></td>';
-	} ?>
+	}
+	?>
 
 	<td align="right"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
@@ -130,11 +128,9 @@ $coldisplay=-1; // We remove first td
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input size="3" type="text" class="flat" name="qty" id="qty" value="' . $line->qty . '" ';
-		if ($this->situation_counter > 1) {
-			print 'readonly="readonly" ';
-		}
-		print '/>';
+		print '<input size="3" type="text" class="flat" name="qty" id="qty" value="' . $line->qty . '"';
+		if ($this->situation_counter > 1) print ' readonly="readonly"';
+		print '>';
 	} else { ?>
 		&nbsp;
 	<?php } ?>
@@ -142,11 +138,9 @@ $coldisplay=-1; // We remove first td
 
 	<td align="right" nowrap><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '" ';
-		if ($this->situation_counter > 1) {
-			print 'readonly="readonly" ';
-		}
-		print '/>%';
+		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
+		if ($this->situation_counter > 1) print ' readonly="readonly"';
+		print '>%';
 	} else { ?>
 		&nbsp;
 	<?php } ?>
@@ -189,7 +183,8 @@ $coldisplay=-1; // We remove first td
 					$coldisplay++;
 				  }
 			  }
-		} ?>
+	}
+	?>
 
 	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
 	<td align="center" colspan="<?php echo $colspan; ?>" valign="middle"><?php $coldisplay+=4; ?>
@@ -199,7 +194,8 @@ $coldisplay=-1; // We remove first td
 
 	<?php
 	//Line extrafield
-	if (!empty($extrafieldsline)) {
+	if (!empty($extrafieldsline))
+	{
 		print $line->showOptionals($extrafieldsline,'edit',array('style'=>$bc[$var],'colspan'=>$coldisplay));
 	}
 	?>

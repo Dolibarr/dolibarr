@@ -108,7 +108,7 @@ print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-print '<td align="center">'.$langs->trans("PlannedWorkload");
+print '<td align="right">'.$langs->trans("PlannedWorkload");
 // TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 //print '<br>('.$langs->trans("DelayWorkHour").')';
 print '</td>';

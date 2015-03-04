@@ -48,7 +48,6 @@ $langs->load("projects");
 $now = dol_now();
 
 $projectstatic=new Project($db);
-//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all projects I have permission on because I want my tasks and some of my task may be on a public projet that is not my project
 
 $title=$langs->trans("Activities");
@@ -69,7 +68,7 @@ else
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-print_projecttasks_array($db,$socid,$projectsListId,$mine);
+print_projecttasks_array($db,$socid,$projectsListId,$mine,1);
 
 
 /* Affichage de la liste des projets d'aujourd'hui */

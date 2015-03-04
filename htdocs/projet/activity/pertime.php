@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  *
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/projet/activity/list.php
+ *	\file       htdocs/projet/activity/perday.php
  *	\ingroup    projet
- *	\brief      List activities of tasks
+ *	\brief      List activities of tasks (per day entry)
  */
 
 require ("../../main.inc.php");
@@ -138,6 +138,15 @@ llxHeader("",$title,"");
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
+
+print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="addtime">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+$head=project_timesheet_prepare_head($mode);
+dol_fiche_head($head, 'inputpertime', '', 0, 'task');
+
 // Show description of content
 if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
 else
@@ -167,18 +176,11 @@ else
 	dol_fiche_end();
 */
 
-print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="addtime">';
-print '<input type="hidden" name="mode" value="'.$mode.'">';
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
-print '<td align="center">'.$langs->trans("DateStart").'</td>';
-print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
@@ -190,13 +192,17 @@ $restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJEC
 
 if (count($tasksarray) > 0)
 {
-	projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+	$j=0;
+	projectLinesPerTime($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 }
 else
 {
 	print '<tr><td colspan="10">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
+
+dol_fiche_end();
+
 print '</form>';
 
 

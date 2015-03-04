@@ -646,7 +646,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-		if ($ret < 0) $error ++;
+		if ($ret < 0) $error++;
 
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
@@ -1061,10 +1061,10 @@ if (empty($reshook))
 										// Extrafields
 										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
 											$lines[$i]->fetch_optionals($lines[$i]->rowid);
-											$array_option = $lines[$i]->array_options;
+											$array_options = $lines[$i]->array_options;
 										}
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id);
+										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id);
 
 										if ($result > 0) {
 											$lineid = $result;
@@ -1196,7 +1196,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1374,7 +1374,7 @@ if (empty($reshook))
 				setEventMessage($mesg, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option, $_POST['progress']);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, '', $price_base_type, $pu_ttc, $type, - 1, $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $_POST['progress']);
 
 				if ($result > 0)
 				{
@@ -1469,7 +1469,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1528,7 +1528,7 @@ if (empty($reshook))
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option, GETPOST('progress'));
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'), $date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_options, GETPOST('progress'));
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1788,8 +1788,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
@@ -3858,13 +3857,13 @@ if ($action == 'create')
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
-		$formmail->substit ['__FACREF__'] = $object->ref;
-		$formmail->substit ['__SIGNATURE__'] = $user->signature;
-		$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit ['__PERSONALIZED__'] = '';
-		$formmail->substit ['__CONTACTCIVNAME__'] = '';
+		$formmail->substit['__FACREF__'] = $object->ref;
+		$formmail->substit['__SIGNATURE__'] = $user->signature;
+		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->substit['__CONTACTCIVNAME__'] = '';
 
 		// Find the good contact adress
 		$custcontact = '';
@@ -3873,7 +3872,7 @@ if ($action == 'create')
 
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ($contactarr as $contact) {
-				if ($contact ['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
+				if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
 
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
@@ -3884,15 +3883,15 @@ if ($action == 'create')
 			}
 
 			if (! empty($custcontact)) {
-				$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
 		}
 
 		// Tableau des parametres complementaires du post
-		$formmail->param ['action'] = $action;
-		$formmail->param ['models'] = $modelmail;
-		$formmail->param ['facid'] = $object->id;
-		$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+		$formmail->param['action'] = $action;
+		$formmail->param['models'] = $modelmail;
+		$formmail->param['facid'] = $object->id;
+		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 		// Init list of files
 		if (GETPOST("mode") == 'init') {

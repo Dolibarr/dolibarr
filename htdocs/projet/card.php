@@ -51,9 +51,14 @@ $object = new Project($db);
 $extrafields = new ExtraFields($db);
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	$object->fetch_thirdparty();
-	$id=$object->id;
+    $ret = $object->fetch($id,$ref);
+    if ($ret > 0) {
+        $object->fetch_thirdparty();
+        $id=$object->id;
+    } else {
+        setEventMessage($object->error, 'errors');
+        $action='';
+    }
 }
 
 // Security check
@@ -148,6 +153,7 @@ if (empty($reshook))
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
 	        $result = $object->create($user);
 	        if ($result > 0)
@@ -224,10 +230,7 @@ if (empty($reshook))
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-			if ($ret < 0)
-			{
-				$error++;
-			}
+			if ($ret < 0) $error++;
 	    }
 
 	    if (! $error)

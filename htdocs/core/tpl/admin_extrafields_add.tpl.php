@@ -112,4 +112,4 @@
 
 </form>
 
-<!-- END PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- END PHP TEMPLATE admin_extrafields_add.tpl.php -->

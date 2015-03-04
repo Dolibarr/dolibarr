@@ -93,6 +93,9 @@ if ($id > 0 || ! empty($ref)) {
 $hookmanager->initHooks(array('ordercard','globalcard'));
 
 $permissionnote = $user->rights->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionedit = $user->rights->commande->creer; // Used by the include of actions_lineupdown.inc.php
+
+
 
 /*
  * Actions
@@ -104,7 +107,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+	if ($cancel) $action='';
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer)
@@ -281,8 +288,7 @@ if (empty($reshook))
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0)
-					$error ++;
+				if ($ret < 0) $error++;
 
 				if (! $error)
 				{
@@ -338,10 +344,10 @@ if (empty($reshook))
 								                                                                                                      // trigger used
 								{
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
-									$array_option = $lines[$i]->array_options;
+									$array_options = $lines[$i]->array_options;
 								}
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options);
 
 								if ($result < 0) {
 									$error ++;
@@ -375,10 +381,10 @@ if (empty($reshook))
 			} else {
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0)
-					$error ++;
+				if ($ret < 0) $error++;
 
-				if (! $error) {
+				if (! $error)
+				{
 					$object_id = $object->create($user);
 
 					// If some invoice's lines already known
@@ -556,7 +562,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -729,7 +735,7 @@ if (empty($reshook))
 				setEventMessage($mesg, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options);
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
@@ -786,9 +792,10 @@ if (empty($reshook))
 	}
 
 	/*
-	 *  Mise a jour d'une ligne dans la commande
-	*/
-	else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('save') == $langs->trans('Save')) {
+	 *  Update a line
+	 */
+	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save') == $langs->trans('Save'))
+	{
 		// Clean parameters
 		$date_start='';
 		$date_end='';
@@ -815,7 +822,7 @@ if (empty($reshook))
 		// Extrafields Lines
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 		// Unset extrafield POST Data
 		if (is_array($extralabelsline)) {
 			foreach ($extralabelsline as $key => $value) {
@@ -853,7 +860,7 @@ if (empty($reshook))
 		}
 
 		if (! $error) {
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_option);
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_options);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -891,7 +898,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1045,67 +1052,18 @@ if (empty($reshook))
 		}
 	}
 
-	/*
-	 * Ordonnancement des lignes
-	*/
-
-	else if ($action == 'up' && $user->rights->commande->creer) {
-		$object->line_up(GETPOST('rowid'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-		if (! empty($newlang)) {
-			$outputlangs = new Translate("", $conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		}
-
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
-		exit();
-	}
-
-	else if ($action == 'down' && $user->rights->commande->creer) {
-		$object->line_down(GETPOST('rowid'));
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-		if (! empty($newlang)) {
-			$outputlangs = new Translate("", $conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		}
-
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '#' . GETPOST('rowid'));
-		exit();
-	}
-
-	else if ($action == 'builddoc') // In get or post
+	if ($action == 'builddoc') // In get or post
 	{
-		/*
-		 * Generate order document
-		 * define into /core/modules/commande/modules_commande.php
-		 */
-
 		// Save last template used to generate document
 		if (GETPOST('model'))
 			$object->setDocModel($user, GETPOST('model', 'alpha'));
+		    if (GETPOST('fk_bank')) { // this field may come from an external module
+            $object->fk_bank = GETPOST('fk_bank');
+        } else {
+            $object->fk_bank = $object->fk_account;
+        }
 
-			// Define output language
+		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
@@ -1125,8 +1083,10 @@ if (empty($reshook))
 	}
 
 	// Remove file in doc form
-	else if ($action == 'remove_file') {
-		if ($object->id > 0) {
+	if ($action == 'remove_file')
+	{
+		if ($object->id > 0)
+		{
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 			$langs->load("other");
@@ -1141,14 +1101,15 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'update_extras') {
+	if ($action == 'update_extras')
+	{
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
-		if (! $error) {
+		if (! $error)
+		{
 			// Actions on extra fields (by external module or standard code)
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('orderdao'));
@@ -1727,9 +1688,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
 		}
 
-		/*
-		 * Confirmation de la suppression d'une ligne produit
-		 */
+		// Confirmation to delete line
 		if ($action == 'ask_deleteline')
 		{
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
@@ -2101,7 +2060,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
+		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id . '">
 		';

@@ -193,7 +193,7 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
+		if ($ret < 0) $error++;
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -259,9 +259,9 @@ if (empty($reshook))
 	                		$action = (($action=='add'||$action=='create')?'create':'edit');
 						}
 					}
-	
+
 					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	
+
 					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 					{
 						$langs->load("errors");
@@ -2129,6 +2129,11 @@ else
 			$formmail->fromid   = $user->id;
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
+			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID))
+			{
+				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
+			}
 			$formmail->withfrom=1;
 			$formmail->withtopic=1;
 			$liste=array();

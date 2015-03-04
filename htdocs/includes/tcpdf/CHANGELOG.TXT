@@ -1,6 +1,68 @@
+6.2.6 (2015-01-28)
+	- Bug #1008 "UTC offset sing breaks PDF/A-1b compliance" was fixed.
+
+6.2.5 (2015-01-24)
+	- Bug #1019 "$this in static context" was fixed.
+	- Bug #1015 "Infinite loop in getIndirectObject method of parser" was fixed.
+
+6.2.4 (2015-01-08)
+	- fix warning related to empty K_PATH_URL.
+	- fix error when a $table_colwidths key is not set.
+
+6.2.3 (2014-12-18)
+	- New comment.
+	- Moved the K_PATH_IMAGES definition in tcpdf_autoconfig.
+
+6.2.2 (2014-12-18)
+	- Fixed mispelled words.
+	- Fixed version number.
+
+6.2.1 (2014-12-18)
+	- The constant K_TCPDF_THROW_EXCEPTION_ERROR is now set to false in the default configuration file.
+	- An issue with the _destroy() method was fixed.
+
+6.2.0 (2014-12-10)
+	- Bug #1005 "Security Report, LFI posting internal files externally abusing default parameter" was fixed.
+	- Static methods serializeTCPDFtagParameters() and unserializeTCPDFtagParameters() were moved as non static to the main TCPDF class (see changes in example n. 49).
+	- Deprecated methods were removed, please use the equivalents defined in other classes (i.e. TCPDF_STATIC and TCPDF_FONTS).
+	- The constant K_TCPDF_CALLS_IN_HTML is now set by default to FALSE.
+	- DLE, DLX and DLP page format was added.
+	- Page format are now defined as a public property in TCPDF_STATIC.
+
+6.1.1 (2014-12-09)
+	- Fixed bug with the register_shutdown_function().
+
+6.1.0 (2014-12-07)
+	- The method TCPDF_STATIC::getRandomSeed() was improved.
+	- The disk caching feature was removed.
+	- Bug #1003 "Backslashes become duplicated in table, using WriteHTML" was fixed.
+	- Bug #1002 "SVG radialGradient within non-square Rect" was fixed.
+
+6.0.099 (2014-11-15)
+	- Added basic support for nested SVG images (adapted PR from SamMousa).
+	- A bug related to setGDImageTransparency() was fixed (thanks to Maarten Boerema).
+
+6.0.098 (2014-11-08)
+	- Bug item #996 "getCharBBox($char) returns incorrect results for TTF glyphs without outlines" was fixed.
+	- Bug item #991 "Text problem with SVG" was fixed (only the font style part).
+
+6.0.097 (2014-10-20)
+	- Bug item #988 "hyphenateText - charmin parameter not work" was fixed.
+	- New 1D barcode method to print pre-formatted IMB - Intelligent Mail Barcode - Onecode - USPS-B-3200.
+
+6.0.096 (2014-10-06)
+	- Bug item #982 "Display style is not inherited in SVG" was fixed.
+	- Bug item #984 "Double quote url in CSS" was fixed.
+
+6.0.095 (2014-10-02)
+	- Bug item #979 "New Timezone option overwriting current timezone" was fixed.
+
+6.0.094 (2014-09-30)
+	- Bug item #978 "Variable Undefined: $cborder" was fixed.
+
 6.0.093 (2014-09-02)
 	- Security fix: some serialize/unserialize methods were replaced with json_encode/json_decode to avoid a potential object injection with user supplied content. Thanks to ownCloud Inc. for reporting this issue.
-	- K_TIMEZONE constant was added to the default configuration to supress date-time warnings.
+	- K_TIMEZONE constant was added to the default configuration to suppress date-time warnings.
 
 6.0.092 (2014-09-01)
 	- Bug item #956 "Monospaced fonts are not alignd at the baseline" was fixed.
@@ -355,7 +417,7 @@
 	- Image method was improved.
 
 5.9.208 (2013-03-15)
-	- objclone fuction was patched to support old imagick extensions.
+	- objclone function was patched to support old imagick extensions.
 	- tcpdf_parser was improved to support Cross-Reference Streams and large streams.
 
 5.9.207 (2013-03-04)
@@ -432,7 +494,7 @@
 	- barcodes.php file was resynced.
 	- Methods SetAbsX, SetAbsY, SetAbsXY where added to set the absolute pointer coordinates.
 	- Method getCharBBox were added to get single character bounding box.
-	- Signature of addTTFfont method was changed ($addcbbox paramter was added).
+	- Signature of addTTFfont method was changed ($addcbbox parameter was added).
 
 5.9.185 (2012-09-12)
 	- Method _putfontwidths() was fixed.
@@ -834,7 +896,7 @@
 
 5.9.080 (2011-05-17)
 	- A problem related to file path calculation for images was fixed.
-	- A problem related to unsupressed getimagesize() error was fixed.
+	- A problem related to unsuppressed getimagesize() error was fixed.
 
 5.9.079 (2011-05-16)
 	- Footer() method was changed to use C128 barcode as default (instead of the previous C128B).
@@ -1188,7 +1250,7 @@
 	- Alignment problem on write2DBarcode was fixed.
 
 5.8.015 (2010-08-24)
-	- A problem arised with the latest bugfix was fixed.
+	- A problem arose with the latest bugfix was fixed.
 
 5.8.014 (2010-08-23)
 	- Method _getxobjectdict() was added for better compatibility with external extensions.
@@ -1650,7 +1712,7 @@
 	- Bug item #2938412 "Table related problems - thead, nobr, table width" was fixed.
 
 4.8.026 (2010-01-19)
-	- The misspelled word "lenght" was replaced with "length" in some variables and comments.
+	- The misspelled word "length" was replaced with "length" in some variables and comments.
 
 4.8.025 (2010-01-18)
 	- addExtGState() method was improved to reuse existing ExtGState objects.
@@ -1732,7 +1794,7 @@
 4.8.006 (2009-09-23)
 	- Bug item #2864522 "No images if DOCUMENT_ROOT=='/'" was fixed.
 	- Support for text-indent CSS attribute was added.
-	- Method rollbackTransaction() was changed to support self-reassigment of previous object (check source code documentation).
+	- Method rollbackTransaction() was changed to support self-reassignment of previous object (check source code documentation).
 	- Support for the HTML "nobr" attribute was added to avoid splitting a table or a table row on two pages (i.e.: <tr nobr="true">...</tr>).
 
 4.8.005 (2009-09-17)
@@ -1903,7 +1965,7 @@
 	- WARNING: THIS VERSION CHANGES THE BEHAVIOUR OF $x and $y parameters for several TCPDF methods:
 		zero coordinates for $x and $y are now valid coordinates;
 		set $x and $y as empty strings to get the current value.
-	- Some error caused by 'empty' funtion were fixed.
+	- Some error caused by 'empty' function were fixed.
 	- Default color for convertHTMLColorToDec() method was changed to white and the return value for invalid color is false.
 	- HTML on footer bug was fixed.
 	- The following examples were fixed: 5,7,10,17,19,20,21,33,42,43.
@@ -1922,8 +1984,8 @@
 		C128A : CODE 128 A
 		C128B : CODE 128 B
 		C128C : CODE 128 C
-		EAN2 : 2-Digits UPC-Based Extention
-		EAN5 : 5-Digits UPC-Based Extention
+		EAN2 : 2-Digits UPC-Based Extension
+		EAN5 : 5-Digits UPC-Based Extension
 		EAN8 : EAN 8
 		EAN13 : EAN 13
 		UPCA : UPC-A
