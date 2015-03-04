@@ -25,19 +25,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * \file 		htdocs/comm/propal.php
- * \ingroup 	propale
- * \brief 		Page of commercial proposals card and list
- */
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formpropal.class.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaskpricesupplier.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/askpricesupplier/class/askpricesupplier.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/modules/propale/modules_propale.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/askpricesupplier/modules_askpricesupplier.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/askpricesupplier.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -46,7 +41,7 @@ if (! empty($conf->projet->enabled)) {
 }
 
 $langs->load('companies');
-$langs->load('propal');
+$langs->load('askpricesupplier');
 $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
@@ -78,9 +73,9 @@ $NBLINES = 4;
 
 // Security check
 if (! empty($user->societe_id)) $socid = $user->societe_id;
-$result = restrictedArea($user, 'propal', $id);
+$result = restrictedArea($user, 'askpricesupplier', $id);
 
-$object = new Propal($db);
+$object = new AskPriceSupplier($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -96,9 +91,9 @@ if ($id > 0 || ! empty($ref)) {
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('propalcard','globalcard'));
+$hookmanager->initHooks(array('askpricesuppliercard','globalcard'));
 
-$permissionnote = $user->rights->propale->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->askpricesupplier->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -135,12 +130,12 @@ if (empty($reshook))
 		}
 	}
 
-	// Delete proposal
-	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propal->supprimer)
+	// Delete askprice
+	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->askpricesupplier->supprimer)
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php');
+			header('Location: ' . DOL_URL_ROOT . '/comm/askpricesupplier/list.php');
 			exit();
 		} else {
 			$langs->load("errors");
@@ -149,7 +144,7 @@ if (empty($reshook))
 	}
 
 	// Remove line
-	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->propal->creer)
+	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->askpricesupplier->creer)
 	{
 		$result = $object->deleteline($lineid);
 		// reorder lines
@@ -174,8 +169,8 @@ if (empty($reshook))
 
 	// Validation
 	else if ($action == 'confirm_validate' && $confirm == 'yes' &&
-        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
 	)
 	{
 		$result = $object->valid($user);
@@ -207,60 +202,20 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'setdate' && $user->rights->propal->creer)
-	{
-		$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-
-		if (empty($datep)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
-		}
-
-		if (! $error) {
-			$result = $object->set_date($user, $datep);
-			if ($result < 0)
-				dol_print_error($db, $object->error);
-		}
-	}
-	else if ($action == 'setecheance' && $user->rights->propal->creer)
-	{
-		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
-		if ($result < 0)
-			dol_print_error($db, $object->error);
-	}
-	else if ($action == 'setdate_livraison' && $user->rights->propal->creer)
+	else if ($action == 'setdate_livraison' && $user->rights->askpricesupplier->creer)
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
 
-	// Positionne ref client
-	else if ($action == 'set_ref_client' && $user->rights->propal->creer)
-	{
-		$object->set_ref_client($user, $_POST['ref_client']);
-	}
-
-	// Create proposal
-	else if ($action == 'add' && $user->rights->propal->creer)
+	// Create askprice
+	else if ($action == 'add' && $user->rights->askpricesupplier->creer)
 	{
 		$object->socid = $socid;
 		$object->fetch_thirdparty();
 
-		$datep = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
-		$duration = GETPOST('duree_validite');
-
-		if (empty($datep)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
-			$action = 'create';
-			$error ++;
-		}
-		if (empty($duration)) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ValidityDuration")), 'errors');
-			$action = 'create';
-			$error ++;
-		}
 
 		if ($socid < 1) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
@@ -272,25 +227,19 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			// Si on a selectionne une propal a copier, on realise la copie
-			if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
+			// Si on a selectionne une demande a copier, on realise la copie
+			if (GETPOST('createmode') == 'copy' && GETPOST('copie_askpricesupplier'))
 			{
-				if ($object->fetch(GETPOST('copie_propal')) > 0) {
+				if ($object->fetch(GETPOST('copie_askpricesupplier')) > 0) {
 					$object->ref = GETPOST('ref');
-					$object->datep = $datep;
 					$object->date_livraison = $date_delivery;
-					$object->availability_id = GETPOST('availability_id');
-					$object->demand_reason_id = GETPOST('demand_reason_id');
-					$object->fk_delivery_address = GETPOST('fk_address');
 	                $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-					$object->duree_validite = $duration;
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
-	                $object->fk_account = GETPOST('fk_account', 'int');
+					$object->fk_account = GETPOST('fk_account', 'int');
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
 					$object->socid = GETPOST('socid');
-					$object->contactid = GETPOST('contactid');
 					$object->fk_project = GETPOST('projectid');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
@@ -299,22 +248,16 @@ if (empty($reshook))
 
 					$id = $object->create_from($user);
 				} else {
-					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_propal')), 'errors');
+					setEventMessage($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_askpricesupplier')), 'errors');
 				}
 			} else {
 				$object->ref = GETPOST('ref');
-				$object->ref_client = GETPOST('ref_client');
-				$object->datep = $datep;
 				$object->date_livraison = $date_delivery;
-				$object->availability_id = GETPOST('availability_id');
 				$object->demand_reason_id = GETPOST('demand_reason_id');
-				$object->fk_delivery_address = GETPOST('fk_address');
 	            $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
-				$object->duree_validite = GETPOST('duree_validite');
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
-	            $object->fk_account = GETPOST('fk_account', 'int');
-				$object->contactid = GETPOST('contactid');
+				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->fk_project = GETPOST('projectid');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
@@ -345,30 +288,8 @@ if (empty($reshook))
 			{
 				if ($origin && $originid)
 				{
-					// Parse element/subelement (ex: project_task)
-					$element = $subelement = $origin;
-					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-						$element = $regs [1];
-						$subelement = $regs [2];
-					}
-
-					// For compatibility
-					if ($element == 'order') {
-						$element = $subelement = 'commande';
-					}
-					if ($element == 'propal') {
-						$element = 'comm/propal';
-						$subelement = 'propal';
-					}
-					if ($element == 'contract') {
-						$element = $subelement = 'contrat';
-					}
-					if ($element == 'inter') {
-						$element = $subelement = 'ficheinter';
-					}
-					if ($element == 'shipping') {
-						$element = $subelement = 'expedition';
-					}
+					$element = 'comm/askpricesupplier';
+					$subelement = 'askpricesupplier';
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -406,54 +327,36 @@ if (empty($reshook))
 									$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
-										// Positive line
-										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+									// Positive line
+									$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
-										// Date start
-										$date_start = false;
-										if ($lines[$i]->date_debut_prevue)
-											$date_start = $lines[$i]->date_debut_prevue;
-										if ($lines[$i]->date_debut_reel)
-											$date_start = $lines[$i]->date_debut_reel;
-										if ($lines[$i]->date_start)
-											$date_start = $lines[$i]->date_start;
+									// Reset fk_parent_line for no child products and special product
+									if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+										$fk_parent_line = 0;
+									}
 
-											// Date end
-										$date_end = false;
-										if ($lines[$i]->date_fin_prevue)
-											$date_end = $lines[$i]->date_fin_prevue;
-										if ($lines[$i]->date_fin_reel)
-											$date_end = $lines[$i]->date_fin_reel;
-										if ($lines[$i]->date_end)
-											$date_end = $lines[$i]->date_end;
+									// Extrafields
+									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$array_option = $lines[$i]->array_options;
+									}
 
-											// Reset fk_parent_line for no child products and special product
-										if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-											$fk_parent_line = 0;
-										}
+									$tva_tx=get_default_tva($mysoc, $object->thirdparty);
 
-										// Extrafields
-										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals($lines[$i]->rowid);
-											$array_options = $lines[$i]->array_options;
-										}
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
 
-										$tva_tx=get_default_tva($mysoc, $object->thirdparty);
+									if ($result > 0) {
+										$lineid = $result;
+									} else {
+										$lineid = 0;
+										$error ++;
+										break;
+									}
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options);
-
-										if ($result > 0) {
-											$lineid = $result;
-										} else {
-											$lineid = 0;
-											$error ++;
-											break;
-										}
-
-										// Defined the new fk_parent_line
-										if ($result > 0 && $lines[$i]->product_type == 9) {
-											$fk_parent_line = $result;
-										}
+									// Defined the new fk_parent_line
+									if ($result > 0 && $lines[$i]->product_type == 9) {
+										$fk_parent_line = $result;
+									}
 								}
 
 								// Hooks
@@ -478,17 +381,6 @@ if (empty($reshook))
 
 				if ($id > 0)
 				{
-					// Insertion contact par defaut si defini
-					if (GETPOST('contactid') > 0)
-					{
-						$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
-						if ($result < 0)
-						{
-							$error++;
-							setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
-						}
-					}
-					
 					if (! $error)
 					{
 						$db->commit();
@@ -530,13 +422,8 @@ if (empty($reshook))
 		}
 	}
 
-	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
-		$object->cloture($user, 4, '');
-	}
-
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
 			$object->reopen($user, 1);
@@ -544,33 +431,7 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
-		if (! GETPOST('statut')) {
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
-			$action = 'statut';
-		} else {
-			// prevent browser refresh from closing proposal several times
-			if ($object->statut == 1) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
-			}
-		}
-	}
-
-	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
-		$object->cloture($user, 4, '');
-	}
-
-	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
-		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
-			$object->reopen($user, 1);
-		}
-	}
-
-	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->askpricesupplier->cloturer && ! GETPOST('cancel')) {
 		if (! GETPOST('statut')) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
 			$action = 'statut';
@@ -590,16 +451,16 @@ if (empty($reshook))
 	 */
 
 	// Actions to send emails
-	$actiontypecode='AC_PROP';
-	$trigger_name='PROPAL_SENTBYMAIL';
+	$actiontypecode='AC_ASKPRICE';
+	$trigger_name='ASKPRICESUPPLIER_SENTBYMAIL';
 	$paramname='id';
-	$mode='emailfromproposal';
+	$mode='emailfromaskpricesupplier';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
 
 	// Go back to draft
-	if ($action == 'modif' && $user->rights->propal->creer)
+	if ($action == 'modif' && $user->rights->askpricesupplier->creer)
 	{
 		$object->set_draft($user);
 
@@ -617,7 +478,7 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == "setabsolutediscount" && $user->rights->propal->creer) {
+	else if ($action == "setabsolutediscount" && $user->rights->askpricesupplier->creer) {
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -629,12 +490,13 @@ if (empty($reshook))
 	}
 
 	// Add line
-	else if ($action == 'addline' && $user->rights->propal->creer) {
+	else if ($action == 'addline' && $user->rights->askpricesupplier->creer) {
 
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
+
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
 			$idprod=0;
@@ -652,7 +514,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -696,8 +558,13 @@ if (empty($reshook))
 				// If prices fields are update
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
-					$pu_ht = $prod->price;
-					$pu_ttc = $prod->price_ttc;
+
+					//On garde le prix indiqué dans l'input pour la demande de prix fournisseur
+					//$pu_ht = $prod->price;
+					$pu_ht = price2num($price_ht, 'MU');
+					//$pu_ttc = $prod->price_ttc;
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
+
 					$price_min = $prod->price_min;
 					$price_base_type = $prod->price_base_type;
 
@@ -796,9 +663,6 @@ if (empty($reshook))
 			$fournprice = (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
 			$buyingprice = (GETPOST('buying_price' . $predef) ? GETPOST('buying_price' . $predef) : '');
 
-			$date_start = dol_mktime(0, 0, 0, GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-			$date_end = dol_mktime(0, 0, 0, GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
-
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
@@ -812,7 +676,8 @@ if (empty($reshook))
 				setEventMessage($mesg, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options);
+				$ref_fourn = GETPOST('fourn_ref');
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_option, $ref_fourn);
 
 				if ($result > 0) {
 					$db->commit();
@@ -847,18 +712,6 @@ if (empty($reshook))
 					unset($_POST['dp_desc']);
 					unset($_POST['idprod']);
 
-			    	unset($_POST['date_starthour']);
-			    	unset($_POST['date_startmin']);
-			    	unset($_POST['date_startsec']);
-			    	unset($_POST['date_startday']);
-			    	unset($_POST['date_startmonth']);
-			    	unset($_POST['date_startyear']);
-			    	unset($_POST['date_endhour']);
-			    	unset($_POST['date_endmin']);
-			    	unset($_POST['date_endsec']);
-			    	unset($_POST['date_endday']);
-			    	unset($_POST['date_endmonth']);
-			    	unset($_POST['date_endyear']);
 				} else {
 					$db->rollback();
 
@@ -868,8 +721,8 @@ if (empty($reshook))
 		}
 	}
 
-	// Mise a jour d'une ligne dans la propale
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('save') == $langs->trans("Save")) {
+	// Mise a jour d'une ligne dans la demande de prix
+	else if ($action == 'updateligne' && $user->rights->askpricesupplier->creer && GETPOST('save') == $langs->trans("Save")) {
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx')))
@@ -883,19 +736,16 @@ if (empty($reshook))
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
-		$pu_ht = GETPOST('price_ht');
+		$pu_ht = GETPOST('price_ht') ? GETPOST('price_ht') : 0;
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = (GETPOST('buying_price') ? GETPOST('buying_price') : '');
 
-		$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-		$date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -939,8 +789,8 @@ if (empty($reshook))
 
 		if (! $error) {
 			$db->begin();
-
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options);
+			$ref_fourn = GETPOST('fourn_ref');
+			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $array_option, $ref_fourn);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -977,21 +827,16 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->askpricesupplier->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
 	// Generation doc (depuis lien ou depuis cartouche doc)
-	else if ($action == 'builddoc' && $user->rights->propal->creer) {
+	else if ($action == 'builddoc' && $user->rights->askpricesupplier->creer) {
 		if (GETPOST('model')) {
 			$object->setDocModel($user, GETPOST('model'));
 		}
-	    if (GETPOST('fk_bank')) { // this field may come from an external module
-            $object->fk_bank = GETPOST('fk_bank');
-        } else {
-            $object->fk_bank = $object->fk_account;
-        }
 
 		// Define output language
 		$outputlangs = $langs;
@@ -1013,12 +858,12 @@ if (empty($reshook))
 	}
 
 	// Remove file in doc form
-	else if ($action == 'remove_file' && $user->rights->propal->creer) {
+	else if ($action == 'remove_file' && $user->rights->askpricesupplier->creer) {
 		if ($object->id > 0) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->propal->dir_output;
+			$upload_dir = $conf->askpricesupplier->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
@@ -1029,53 +874,38 @@ if (empty($reshook))
 	}
 
 	// Set project
-	else if ($action == 'classin' && $user->rights->propal->creer) {
+	else if ($action == 'classin' && $user->rights->askpricesupplier->creer) {
 		$object->setProject($_POST['projectid']);
 	}
 
 	// Delai de livraison
-	else if ($action == 'setavailability' && $user->rights->propal->creer) {
+	else if ($action == 'setavailability' && $user->rights->askpricesupplier->creer) {
 		$result = $object->availability($_POST['availability_id']);
 	}
 
-	// Origine de la propale
-	else if ($action == 'setdemandreason' && $user->rights->propal->creer) {
-		$result = $object->demand_reason($_POST['demand_reason_id']);
-	}
-
 	// Conditions de reglement
-	else if ($action == 'setconditions' && $user->rights->propal->creer) {
+	else if ($action == 'setconditions' && $user->rights->askpricesupplier->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
 
-	else if ($action == 'setremisepercent' && $user->rights->propal->creer) {
+	else if ($action == 'setremisepercent' && $user->rights->askpricesupplier->creer) {
 		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
 	}
 
-	else if ($action == 'setremiseabsolue' && $user->rights->propal->creer) {
+	else if ($action == 'setremiseabsolue' && $user->rights->askpricesupplier->creer) {
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
 	// Mode de reglement
-	else if ($action == 'setmode' && $user->rights->propal->creer) {
+	else if ($action == 'setmode' && $user->rights->askpricesupplier->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	}
-
-	// bank account
-	else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
-	    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
-	}
-
-	// shipping method
-	else if ($action == 'setshippingmethod' && $user->rights->propal->creer) {
-	    $result=$object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 	}
 
 	/*
 	 * Ordonnancement des lignes
 	*/
 
-	else if ($action == 'up' && $user->rights->propal->creer) {
+	else if ($action == 'up' && $user->rights->askpricesupplier->creer) {
 		$object->line_up(GETPOST('rowid'));
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1094,7 +924,7 @@ if (empty($reshook))
 		exit();
 	}
 
-	else if ($action == 'down' && $user->rights->propal->creer) {
+	else if ($action == 'down' && $user->rights->askpricesupplier->creer) {
 		$object->line_down(GETPOST('rowid'));
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1115,13 +945,12 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0) $error++;
+		if ($ret < 0)
+			$error ++;
 
-		if (! $error)
-		{
+		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('propaldao'));
+			$hookmanager->initHooks(array('askpricesupplierdao'));
 			$parameters = array('id' => $object->id);
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been
 			                                                                                           // modified by
@@ -1138,51 +967,6 @@ if (empty($reshook))
 		if ($error)
 			$action = 'edit_extras';
 	}
-
-	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
-	{
-		if ($action == 'addcontact')
-		{
-			if ($object->id > 0) {
-				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-				$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-			}
-
-			if ($result >= 0) {
-				header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
-				exit();
-			} else {
-				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-					$langs->load("errors");
-					setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
-				} else {
-					setEventMessage($object->error, 'errors');
-				}
-			}
-		}
-
-		// Bascule du statut d'un contact
-		else if ($action == 'swapstatut') {
-			if ($object->fetch($id) > 0) {
-				$result = $object->swapContactStatus(GETPOST('ligne'));
-			} else {
-				dol_print_error($db);
-			}
-		}
-
-		// Efface un contact
-		else if ($action == 'deletecontact') {
-			$object->fetch($id);
-			$result = $object->delete_contact($lineid);
-
-			if ($result >= 0) {
-				header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
-				exit();
-			} else {
-				dol_print_error($db);
-			}
-		}
-	}
 }
 
 
@@ -1190,20 +974,20 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+llxHeader('', $langs->trans('CommRequests'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$formpropal = new FormPropal($db);
+$formaskpricesupplier = new FormAskPriceSupplier($db);
 $companystatic = new Societe($db);
 
 $now = dol_now();
 
-// Add new proposal
+// Add new askprice
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("NewProp"));
+	print_fiche_titre($langs->trans("NewAskPrice"));
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1212,61 +996,35 @@ if ($action == 'create')
 	// Load objectsrc
 	if (! empty($origin) && ! empty($originid))
 	{
-		// Parse element/subelement (ex: project_task)
-		$element = $subelement = $origin;
-		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+		$element = 'comm/askpricesupplier';
+		$subelement = 'askpricesupplier';
+
+		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+
+		$classname = ucfirst($subelement);
+		$objectsrc = new $classname($db);
+		$objectsrc->fetch($originid);
+		if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+		{
+			$objectsrc->fetch_lines();
 		}
+		$objectsrc->fetch_thirdparty();
 
-		if ($element == 'project') {
-			$projectid = $originid;
-		} else {
-			// For compatibility
-			if ($element == 'order' || $element == 'commande') {
-				$element = $subelement = 'commande';
-			}
-			if ($element == 'propal') {
-				$element = 'comm/propal';
-				$subelement = 'propal';
-			}
-			if ($element == 'contract') {
-				$element = $subelement = 'contrat';
-			}
-			if ($element == 'shipping') {
-				$element = $subelement = 'expedition';
-			}
+		$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+		$soc = $objectsrc->thirdparty;
 
-			dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+		$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+		$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+		$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+		$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 
-			$classname = ucfirst($subelement);
-			$objectsrc = new $classname($db);
-			$objectsrc->fetch($originid);
-			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
-			{
-				$objectsrc->fetch_lines();
-			}
-			$objectsrc->fetch_thirdparty();
+		// Replicate extrafields
+		$objectsrc->fetch_optionals($originid);
+		$object->array_options = $objectsrc->array_options;
 
-			$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
-			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
-			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
-
-			$soc = $objectsrc->thirdparty;
-
-			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
-			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
-
-			// Replicate extrafields
-			$objectsrc->fetch_optionals($originid);
-			$object->array_options = $objectsrc->array_options;
-		}
 	}
 
-	$object = new Propal($db);
+	$object = new AskPriceSupplier($db);
 
 	print '<form name="addprop" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1283,14 +1041,9 @@ if ($action == 'create')
 	// Reference
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
 
-	// Ref customer
-	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
-	print '<input type="text" name="ref_client" value=""></td>';
-	print '</tr>';
-
 	// Third party
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
+	print '<td class="fieldrequired">' . $langs->trans('Supplier') . '</td>';
 	if ($socid > 0) {
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -1298,48 +1051,14 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 2 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', 's.fournisseur = 1', 1);
 		print '</td>';
 	}
 	print '</tr>' . "\n";
 
-	// Contacts (ask contact only if thirdparty already defined). TODO do this also into order and invoice.
-	if ($socid > 0)
-	{
-		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td colspan="2">';
-		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
-		print '</td></tr>';
-	}
-
-	if ($socid > 0)
-	{
-		// Ligne info remises tiers
-		print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="2">';
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
-		$absolute_discount = $soc->getAvailableDiscounts();
-		print '. ';
-		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $conf->currency));
-		else
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print '.';
-		print '</td></tr>';
-	}
-
-	// Date
-	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
-	$form->select_date('', '', '', '', '', "addprop", 1, 1);
-	print '</td></tr>';
-
-	// Validaty duration
-	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td colspan="2"><input name="duree_validite" size="5" value="' . $conf->global->PROPALE_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
-
 	// Terms of payment
-	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
-	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id');
+	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
+	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 	// Mode of payment
@@ -1353,16 +1072,6 @@ if ($action == 'create')
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
     }
-
-	// What trigger creation
-	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
-	$form->selectInputReason('', 'demand_reason_id', "SRC_PROP", 1);
-	print '</td></tr>';
-
-	// Delivery delay
-	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
-	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
-	print '</td></tr>';
 
     // Shipping Method
     if (! empty($conf->expedition->enabled)) {
@@ -1379,23 +1088,24 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		$form->select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addprop");
+		$form->select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
 	} else {
-		$form->select_date(-1, 'liv_', '', '', '', "addprop", 1, 1);
+		$form->select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
+
 
 	// Model
 	print '<tr>';
 	print '<td>' . $langs->trans("DefaultModel") . '</td>';
 	print '<td colspan="2">';
-	$liste = ModelePDFPropales::liste_modeles($db);
-	print $form->selectarray('model', $liste, ($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : $conf->global->PROPALE_ADDON_PDF));
+	$liste = ModelePDFAskPriceSupplier::liste_modeles($db);
+	print $form->selectarray('model', $liste, ($conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_DEFAULT ? $conf->global->ASKPRICESUPPLIER_ADDON_PDF_ODT_DEFAULT : $conf->global->ASKPRICESUPPLIER_ADDON_PDF));
 	print "</td></tr>";
 
 	// Project
-	if (! empty($conf->projet->enabled) && $socid > 0)
-	{
+	if (! empty($conf->projet->enabled) && $socid > 0) {
+
 		$formproject = new FormProjets($db);
 
 		$projectid = 0;
@@ -1403,9 +1113,9 @@ if ($action == 'create')
 			$projectid = ($originid ? $originid : 0);
 
 		print '<tr>';
-		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
+		print '<td valign="top">' . $langs->trans("Project") . '</td><td colspan="2">';
 
-		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+		$numprojet = $formproject->select_projects($soc->id, $projectid);
 		if ($numprojet == 0) {
 			$langs->load("projects");
 			print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create">' . $langs->trans("AddProject") . '</a>';
@@ -1413,6 +1123,7 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+
 
 	// Other attributes
 	$parameters = array('colspan' => ' colspan="3"');
@@ -1443,17 +1154,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
-		$newclassname = $classname;
-		if ($newclassname == 'Propal')
-			$newclassname = 'CommercialProposal';
-		elseif ($newclassname == 'Commande')
-			$newclassname = 'Order';
-		elseif ($newclassname == 'Expedition')
-			$newclassname = 'Sending';
-		elseif ($newclassname == 'Fichinter')
-			$newclassname = 'Intervention';
-
-		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('CommRequest') . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
@@ -1475,21 +1176,21 @@ if ($action == 'create')
 	 * Combobox pour la fonction de copie
  	 */
 
-	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
+	if (empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
 
-	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<br><table>';
-	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
+	if (! empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<br><table>';
+	if (! empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE))
 	{
 		// For backward compatibility
 		print '<tr>';
 		print '<td><input type="radio" name="createmode" value="copy"></td>';
-		print '<td>' . $langs->trans("CopyPropalFrom") . ' </td>';
+		print '<td>' . $langs->trans("CopyAskFrom") . ' </td>';
 		print '<td>';
-		$liste_propal = array();
-		$liste_propal [0] = '';
+		$liste_ask = array();
+		$liste_ask [0] = '';
 
 		$sql = "SELECT p.rowid as id, p.ref, s.nom";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "propal p";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "askpricesupplier p";
 		$sql .= ", " . MAIN_DB_PREFIX . "societe s";
 		$sql .= " WHERE s.rowid = p.fk_soc";
 		$sql .= " AND p.entity = " . $conf->entity;
@@ -1502,11 +1203,11 @@ if ($action == 'create')
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
-				$propalRefAndSocName = $row [1] . " - " . $row [2];
-				$liste_propal [$row [0]] = $propalRefAndSocName;
+				$askPriceSupplierRefAndSocName = $row [1] . " - " . $row [2];
+				$liste_ask [$row [0]] = $askPriceSupplierRefAndSocName;
 				$i ++;
 			}
-			print $form->selectarray("copie_propal", $liste_propal, 0);
+			print $form->selectarray("copie_askpricesupplier", $liste_ask, 0);
 		} else {
 			dol_print_error($db);
 		}
@@ -1516,7 +1217,7 @@ if ($action == 'create')
 			print '<tr><td colspan="3">&nbsp;</td></tr>';
 
 		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="checked"></td>';
-		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyPropal") . '</td></tr>';
+		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyAsk") . '</td></tr>';
 	}
 
 	if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
@@ -1547,11 +1248,10 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 	}
-	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table>';
+	if (! empty($conf->global->ASKPRICESUPPLIER_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table>';
 
 	dol_fiche_end();
 
-	$langs->load("bills");
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="' . $langs->trans("CreateDraft") . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -1583,8 +1283,8 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
-	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
+	$head = askpricesupplier_prepare_head($object);
+	dol_fiche_head($head, 'comm', $langs->trans('CommRequest'), 0, 'askpricesupplier');
 
 	$formconfirm = '';
 
@@ -1596,19 +1296,19 @@ if ($action == 'create')
 							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' =>
 							// 1),
-							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', 's.fournisseur=1')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneAsk'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Confirm delete
 	else if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAsk'), $langs->trans('ConfirmDeleteAsk', $object->ref), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirm reopen
 	else if ($action == 'reopen') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenAsk', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirmation delete product/service line
@@ -1616,7 +1316,7 @@ if ($action == 'create')
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
-	// Confirm validate proposal
+	// Confirm validate askprice
 	else if ($action == 'validate') {
 		$error = 0;
 
@@ -1632,16 +1332,16 @@ if ($action == 'create')
 			$numref = $object->ref;
 		}
 
-		$text = $langs->trans('ConfirmValidateProp', $numref);
+		$text = $langs->trans('ConfirmValidateAsk', $numref);
 		if (! empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid);
+			$text .= $notify->confirmMessage('ASKPRICESUPPLIER_VALIDATE', $object->socid);
 		}
 
 		if (! $error)
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 	}
 
 	if (! $formconfirm) {
@@ -1656,120 +1356,15 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/askpricesupplier/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	// Ref
 	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
-	// Ref customer
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	print $langs->trans('RefCustomer') . '</td>';
-	if ($action != 'refclient' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-	print '</td>';
-	print '</tr></table>';
-	print '</td><td colspan="5">';
-	if ($user->rights->propal->creer && $action == 'refclient') {
-		print '<form action="propal.php?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="set_ref_client">';
-		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-		print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		print $object->ref_client;
-	}
-	print '</td>';
-	print '</tr>';
-
 	// Company
-	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
-	print '</tr>';
-
-	// Lin for thirdparty discounts
-	print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="5">';
-	if ($soc->remise_percent)
-		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-	else
-		print $langs->trans("CompanyHasNoRelativeDiscount");
-	print '. ';
-	$absolute_discount = $soc->getAvailableDiscounts('', 'fk_facture_source IS NULL');
-	$absolute_creditnote = $soc->getAvailableDiscounts('', 'fk_facture_source IS NOT NULL');
-	$absolute_discount = price2num($absolute_discount, 'MT');
-	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
-	if ($absolute_discount) {
-		if ($object->statut > 0) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
-		} else {
-			// Remise dispo de type non avoir
-			$filter = 'fk_facture_source IS NULL';
-			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filter);
-		}
-	}
-	if ($absolute_creditnote) {
-		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
-	}
-	if (! $absolute_discount && ! $absolute_creditnote)
-		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
-	print '</td></tr>';
-
-	// Date of proposal
-	print '<tr>';
-	print '<td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
-	print '</td>';
-	if ($action != 'editdate' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if (! empty($object->brouillon) && $action == 'editdate') {
-		print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="setdate">';
-		$form->select_date($object->date, 're', '', '', 0, "editdate");
-		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		if ($object->date) {
-			print dol_print_date($object->date, 'daytext');
-		} else {
-			print '&nbsp;';
-		}
-	}
-	print '</td>';
-
-	// Date end proposal
-	print '<tr>';
-	print '<td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('DateEndPropal');
-	print '</td>';
-	if ($action != 'editecheance' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if (! empty($object->brouillon) && $action == 'editecheance') {
-		print '<form name="editecheance" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="setecheance">';
-		$form->select_date($object->fin_validite, 'ech', '', '', '', "editecheance");
-		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		if (! empty($object->fin_validite)) {
-			print dol_print_date($object->fin_validite, 'daytext');
-			if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay))
-				print img_warning($langs->trans("Late"));
-		} else {
-			print '&nbsp;';
-		}
-	}
-	print '</td>';
+	print '<tr><td>' . $langs->trans('Supplier') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
 	print '</tr>';
 
 	// Payment term
@@ -1782,9 +1377,9 @@ if ($action == 'create')
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editconditions') {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
 	} else {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'none', 1);
 	}
 	print '</td>';
 	print '</tr>';
@@ -1812,62 +1407,6 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
 
-	// Delivery delay
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('AvailabilityPeriod');
-	if (! empty($conf->commande->enabled))
-		print ' (' . $langs->trans('AfterOrder') . ')';
-	print '</td>';
-	if ($action != 'editavailability' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($action == 'editavailability') {
-		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'availability_id', 1);
-	} else {
-		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'none', 1);
-	}
-
-	print '</td>';
-	print '</tr>';
-
-    // Shipping Method
-    if (! empty($conf->expedition->enabled)) {
-        print '<tr><td>';
-        print '<table width="100%" class="nobordernopadding"><tr><td>';
-        print $langs->trans('SendingMethod');
-        print '</td>';
-        if ($action != 'editshippingmethod' && $user->rights->propal->creer)
-            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-        if ($action == 'editshippingmethod') {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
-        } else {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
-        }
-        print '</td>';
-        print '</tr>';
-    }
-
-	// Origin of demand
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Source');
-	print '</td>';
-	if ($action != 'editdemandreason' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($action == 'editdemandreason') {
-		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
-	} else {
-		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
-	}
-	print '</td>';
-	print '</tr>';
-
 	// Payment mode
 	print '<tr>';
 	print '<td width="25%">';
@@ -1886,22 +1425,20 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled))
-	{
+	if (! empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Project') . '</td>';
-		if ($user->rights->propal->creer)
-		{
+		if ($user->rights->askpricesupplier->creer) {
 			if ($action != 'classify')
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($action == 'classify') {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
+				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid');
 			} else {
-				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
+				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none');
 			}
 			print '</td></tr>';
 		} else {
@@ -1910,7 +1447,7 @@ if ($action == 'create')
 				print '<td colspan="3">';
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				print '<a href="../projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
 				print $proj->ref;
 				print '</a>';
 				print '</td>';
@@ -1920,6 +1457,7 @@ if ($action == 'create')
 		}
 		print '</tr>';
 	}
+
 
 	if ($soc->outstanding_limit)
 	{
@@ -1940,7 +1478,7 @@ if ($action == 'create')
 	    print '<table width="100%" class="nobordernopadding"><tr><td>';
 	    print $langs->trans('BankAccount');
 	    print '</td>';
-	    if ($action != 'editbankaccount' && $user->rights->propal->creer)
+	    if ($action != 'editbankaccount' && $user->rights->askpricesupplier->creer)
 	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 	    print '</tr></table>';
 	    print '</td><td colspan="3">';
@@ -2035,7 +1573,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->propal->creer)
+	if ($object->statut == 0 && $user->rights->askpricesupplier->creer)
 	{
 		if ($action != 'editline')
 		{
@@ -2061,14 +1599,15 @@ if ($action == 'create')
 		 * Form to close proposal (signed or not)
 		 */
 		$form_close = '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
+		$form_close .= '<p class="notice">'.$langs->trans('AskPriceSupplierRefFournNotice').'</p>';
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
 		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td align="left">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
-		$form_close .= '<option value="2">' . $object->labelstatut [2] . '</option>';
-		$form_close .= '<option value="3">' . $object->labelstatut [3] . '</option>';
+		$form_close .= '<option value="2">' . $langs->trans('AskpricesupplierStatusSigned') . '</option>';
+		$form_close .= '<option value="3">' . $langs->trans('AskpricesupplierStatusNotSigned') . '</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
 		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td align="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
@@ -2099,32 +1638,28 @@ if ($action == 'create')
 			{
 				// Validate
 				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
-			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
-       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->creer))
+       				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->askpricesupplier->validate)))
 				) {
 					if (count($object->lines) > 0)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
 					// else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 				}
-				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
-				{
-					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
-				}
+
 				// Edit
-				if ($object->statut == 1 && $user->rights->propal->creer) {
+				if ($object->statut == 1 && $user->rights->askpricesupplier->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 				}
 
 				// ReOpen
-				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->propal->cloturer) {
+				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->askpricesupplier->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=reopen' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen') . '"';
 					print '>' . $langs->trans('ReOpen') . '</a></div>';
 				}
 
 				// Send
 				if ($object->statut == 1 || $object->statut == 2) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send) {
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->askpricesupplier->send) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
@@ -2133,46 +1668,23 @@ if ($action == 'create')
 				// Create an order
 				if (! empty($conf->commande->enabled) && $object->statut == 2) {
 					if ($user->rights->commande->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
-					}
-				}
-
-				// Create contract
-				if ($conf->contrat->enabled && $object->statut == 2) {
-					$langs->load("contracts");
-
-					if ($user->rights->contrat->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a></div>';
-					}
-				}
-
-				// Create an invoice and classify billed
-				if ($object->statut == 2) {
-					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
-					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
-					}
-
-					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
-					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || ! empty($conf->global->WORKFLOW_PROPAL_CAN_CLASSIFIED_BILLED_WITHOUT_INVOICES))
-					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}
 				}
 
 				// Close
-				if ($object->statut == 1 && $user->rights->propal->cloturer) {
+				if ($object->statut == 1 && $user->rights->askpricesupplier->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=statut' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
 					print '>' . $langs->trans('Close') . '</a></div>';
 				}
 
 				// Clone
-				if ($user->rights->propal->creer) {
+				if ($user->rights->askpricesupplier->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
 				}
 
 				// Delete
-				if ($user->rights->propal->supprimer) {
+				if ($user->rights->askpricesupplier->supprimer) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete"';
 					print '>' . $langs->trans('Delete') . '</a></div>';
 				}
@@ -2186,21 +1698,19 @@ if ($action == 'create')
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		// print '<table width="100%"><tr><td width="50%" valign="top">';
-		// print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->askpricesupplier->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->propal->creer;
-		$delallowed = $user->rights->propal->supprimer;
+		$genallowed = $user->rights->askpricesupplier->creer;
+		$delallowed = $user->rights->askpricesupplier->supprimer;
 
 		$var = true;
 
-		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+		$somethingshown = $formfile->show_documents('askpricesupplier', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		/*
 		 * Linked object block
@@ -2208,14 +1718,12 @@ if ($action == 'create')
 		$somethingshown = $object->showLinkedObjectBlock();
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-		// print '</td><td valign="top" width="50%">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'propal', $socid);
+		$somethingshown = $formactions->showactions($object, 'askpricesupplier', $socid);
 
-		// print '</td></tr></table>';
 		print '</div></div></div>';
 	}
 
@@ -2228,7 +1736,7 @@ if ($action == 'create')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
+		$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/'));
 		$file = $fileparams ['fullname'];
 
 		// Define output language
@@ -2253,12 +1761,12 @@ if ($action == 'create')
 				dol_print_error($db, $result);
 				exit();
 			}
-			$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
+			$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/'));
 			$file = $fileparams ['fullname'];
 		}
 
 		print '<br>';
-		print_titre($langs->trans('SendPropalByMail'));
+		print_titre($langs->trans('SendAskByMail'));
 
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -2275,47 +1783,25 @@ if ($action == 'create')
 		$formmail->withto = GETPOST("sendto") ? GETPOST("sendto") : $liste;
 		$formmail->withtocc = $liste;
 		$formmail->withtoccc = (! empty($conf->global->MAIN_EMAIL_USECCC) ? $conf->global->MAIN_EMAIL_USECCC : false);
-		if (empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendPropalRef', '__PROPREF__');
-		} else if (! empty($object->ref_client)) {
-			$formmail->withtopic = $outputlangs->trans('SendPropalRef', '__PROPREF__ (__REFCLIENT__)');
-		}
+
+		$formmail->withtopic = $outputlangs->trans('SendAskRef', '__ASKREF__');
+
 		$formmail->withfile = 2;
 		$formmail->withbody = 1;
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withcancel = 1;
 
 		// Tableau des substitutions
-		$formmail->substit['__PROPREF__'] = $object->ref;
+		$formmail->substit['__ASKREF__'] = $object->ref;
 		$formmail->substit['__SIGNATURE__'] = $user->signature;
-		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
 		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
 		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit['__PERSONALIZED__'] = '';
 		$formmail->substit['__CONTACTCIVNAME__'] = '';
-
-		// Find the good contact adress
-		$custcontact = '';
-		$contactarr = array();
-		$contactarr = $object->liste_contact(- 1, 'external');
-
-		if (is_array($contactarr) && count($contactarr) > 0) {
-			foreach ($contactarr as $contact) {
-				if ($contact ['libelle'] == $langs->trans('TypeContact_propal_external_CUSTOMER')) {	// TODO Use code and not label
-					$contactstatic = new Contact($db);
-					$contactstatic->fetch($contact ['id']);
-					$custcontact = $contactstatic->getFullName($langs, 1);
-				}
-			}
-
-			if (! empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
-			}
-		}
+		$formmail->substit['__PERSONALIZED__'] = '';
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
-		$formmail->param['models'] = 'propal_send';
+		$formmail->param['models'] = 'askpricesupplier_send';
 		$formmail->param['id'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 		// Init list of files

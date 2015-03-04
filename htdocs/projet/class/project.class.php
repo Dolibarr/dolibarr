@@ -49,8 +49,10 @@ class Project extends CommonObject
     var $title;
     var $date_start;
     var $date_end;
+    var $date_close;
     var $socid;
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
+	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
     var $note_private;
     var $note_public;
@@ -212,6 +214,8 @@ class Project extends CommonObject
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
             $sql.= ", dateo=" . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
             $sql.= ", datee=" . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
+            $sql.= ", date_close=" . ($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
+            $sql.= ", fk_user_close=" . ($this->fk_user_close > 0 ? $this->fk_user_close : "null");
             $sql.= ", budget_amount = " . ($this->budget_amount > 0 ? $this->budget_amount : "null");
             $sql.= " WHERE rowid = " . $this->id;
 
@@ -299,7 +303,7 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, budget_amount,";
-        $sql.= " tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_close, fk_statut, note_private, note_public, model_pdf";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -330,10 +334,12 @@ class Project extends CommonObject
                 $this->datem = $this->db->jdate($obj->tms);  // TODO deprecated
                 $this->date_start = $this->db->jdate($obj->dateo);
                 $this->date_end = $this->db->jdate($obj->datee);
+                $this->date_close = $this->db->jdate($obj->date_close);
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->socid = $obj->fk_soc;
                 $this->user_author_id = $obj->fk_user_creat;
+                $this->user_close_id = $obj->fk_user_close;
                 $this->public = $obj->public;
                 $this->statut = $obj->fk_statut;
                 $this->budget_amount	= $obj->budget_amount;
@@ -682,12 +688,14 @@ class Project extends CommonObject
     /**
      * 		Close a project
      *
-     * 		@param		User	$user		User that validate
+     * 		@param		User	$user		User that close project
      * 		@return		int					<0 if KO, >0 if OK
      */
     function setClose($user)
     {
         global $langs, $conf;
+
+        $now = dol_now();
 
 		$error=0;
 
@@ -696,7 +704,7 @@ class Project extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet";
-            $sql.= " SET fk_statut = 2";
+            $sql.= " SET fk_statut = 2, fk_user_close = ".$user->id.", date_close = '".$this->db->idate($now)."'";
             $sql.= " WHERE rowid = " . $this->id;
             $sql.= " AND entity = " . $conf->entity;
             $sql.= " AND fk_statut = 1";
