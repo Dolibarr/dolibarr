@@ -558,6 +558,98 @@ class Form
         return $out;
     }
 
+	/**
+     *  Return select list of incoterms
+     *
+     *  @param	string	$selected       		Id or Code of preselected incoterm
+     *  @param	string	$location_incoterms     Value of input location
+     *  @param	string	$page       			Defined the form action
+     *  @param  string	$htmlname       		Name of html select object
+     *  @param  string	$htmloption     		Options html on select object
+     * 	@param	int		$forcecombo				Force to use combo box
+     *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @return string           				HTML string with select and input
+     */
+    function select_incoterms($selected='', $location_incoterms='', $page='',$htmlname='incoterm_id',$htmloption='', $forcecombo=0, $events=array())
+    {
+        global $conf,$langs;
+
+        $langs->load("dict");
+
+        $out='';
+        $incotermArray=array();
+
+        $sql = "SELECT rowid, code";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_incoterms";
+        $sql.= " WHERE active = 1";
+        $sql.= " ORDER BY code ASC";
+	
+        dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+        	if (!$forcecombo)
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname, $events);
+			}
+			
+			if (!empty($page))
+			{
+				$out .= '<form method="post" action="'.$page.'">';
+	            $out .= '<input type="hidden" name="action" value="set_incoterms">';
+	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			}
+			
+            $out.= '<select id="'.$htmlname.'" class="flat selectincoterm" name="'.$htmlname.'" '.$htmloption.'>';
+			$out.= '<option value=""></option>';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num)
+            {
+                $foundselected=false;
+
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $incotermArray[$i]['rowid'] = $obj->rowid;
+                    $incotermArray[$i]['code'] = $obj->code;
+                    $i++;
+                }
+
+                foreach ($incotermArray as $row)
+                {
+                    if ($selected && ($selected == $row['rowid'] || $selected == $row['code']))
+                    {
+                        $out.= '<option value="'.$row['rowid'].'" selected="selected">';
+                    }
+                    else
+					{
+                        $out.= '<option value="'.$row['rowid'].'">';
+                    }
+					
+                    if ($row['code']) $out.= $row['code'];
+					
+					$out.= '</option>';
+                }
+            }
+            $out.= '</select>';
+			
+			$out .= '<input id="location_incoterms" name="location_incoterms" size="14" value="'.$location_incoterms.'">';
+			
+			if (!empty($page)) 
+			{
+	            $out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></form>';
+			}
+        }
+        else
+		{
+            dol_print_error($this->db);
+        }
+
+        return $out;
+    }
+
     /**
      *	Return list of types of lines (product or service)
      * 	Example: 0=product, 1=service, 9=other (for external module)
