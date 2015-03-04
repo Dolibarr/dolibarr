@@ -121,7 +121,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
 	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right" class="nowrap"><?php $coldisplay++; ?>&nbsp;</td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pu_ttc); ?></td>
 	<?php } ?>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?>
@@ -163,7 +163,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
-	<?php if ($this->statut == 0  && $user->rights->$element->creer) { ?>
+	<?php if ($this->statut == 0  && $object_rights->creer) { ?>
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>

@@ -57,6 +57,7 @@ $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
+$lineid = GETPOST('lineid', 'int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -508,42 +509,43 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 	// TODO Missing transaction
     if (GETPOST('etat') == '1' && ! GETPOST('cancel')) // si on valide la modification
     {
+	    $description = trim(GETPOST('product_desc'));
         $object->fetch($id);
         $object->fetch_thirdparty();
 
-        if ($_POST['puht'])
+        if ($_POST['price_ht'])
         {
-            $pu=$_POST['puht'];
+            $pu=$_POST['price_ht'];
             $price_base_type='HT';
         }
-        if ($_POST['puttc'])
+        if ($_POST['price_ttc'])
         {
-            $pu=$_POST['puttc'];
+            $pu=$_POST['price_ttc'];
             $price_base_type='TTC';
         }
 
-        if (GETPOST('idprod'))
+        if (GETPOST('product_id'))
         {
             $prod = new Product($db);
-            $prod->fetch($_POST['idprod']);
+            $prod->fetch($_POST['product_id']);
             $label = $prod->description;
-            if (trim($_POST['desc']) != trim($label)) $label=$_POST['desc'];
+            if ($description != trim($label)) $label=$description;
 
             $type = $prod->type;
         }
         else
         {
 
-            $label = $_POST['desc'];
+            $label = $description;
             $type = $_POST["type"]?$_POST["type"]:0;
 
         }
 
-        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+        $localtax1_tx= get_localtax($_POST['tva_tx'], 1, $mysoc,$object->thirdparty);
+        $localtax2_tx= get_localtax($_POST['tva_tx'], 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
-        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tva_tx'), $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('product_id'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -1977,219 +1979,43 @@ else
          * Lines
          */
 
-
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?etat=1&id='.$object->id.(($action != 'edit_line')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+	    print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?etat=1&id='.$object->id.(($action != 'edit_line')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
 		<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
-		<input type="hidden" name="action" value="'.(($action != 'edit_line')?'addline':'update_line').'">
+		<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'update_line').'">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="'.$object->id.'">
         <input type="hidden" name="facid" value="'.$object->id.'">
         <input type="hidden" name="socid" value="'.$societe->id.'">
-
 		';
 
+	    print '<br>';
+	    print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-        print '<br>';
-        print '<table id="tablelines" class="noborder noshadow" width="100%">';
-        $var=1;
-        $num=count($object->lines);
-        for ($i = 0; $i < $num; $i++)
-        {
-            if ($i == 0)
-            {
-                print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-                print '<td align="right">'.$langs->trans('VAT').'</td>';
-                print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-                print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-                print '<td align="right">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-                print '<td align="right">'.$langs->trans('TotalHTShort').'</td>';
-                print '<td align="right">'.$langs->trans('TotalTTCShort').'</td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '</tr>';
-            }
+	    $var = !$var;
 
-            // Show product and description
-            $type=(! empty($object->lines[$i]->product_type)?$object->lines[$i]->product_type:(! empty($object->lines[$i]->fk_product_type)?$object->lines[$i]->fk_product_type:0));
-            // Try to enhance type detection using date_start and date_end for free lines where type was not saved.
-            $date_start='';
-            $date_end='';
-            if (! empty($object->lines[$i]->date_start))
-            {
-            	$date_start=$object->lines[$i]->date_start;
-            	$type=1;
-            }
-            if (! empty($object->lines[$i]->date_end))
-            {
-            	$date_end=$object->lines[$i]->date_end;
-            	$type=1;
-            }
+	    $inputalsopricewithtax = true;
 
-            $var=!$var;
-
-            // Edit line
-            if ($object->statut == 0 && $action == 'edit_line' && $_GET['etat'] == '0' && $_GET['lineid'] == $object->lines[$i]->rowid)
-            {
-                print '<tr '.$bc[$var].'>';
-
-                // Show product and description
-                print '<td>';
-
-                print '<input type="hidden" name="lineid" value="'.$object->lines[$i]->rowid.'">';
-
-                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product > 0)
-                {
-                    print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
-                    $product_static=new ProductFournisseur($db);
-                    $product_static->fetch($object->lines[$i]->fk_product);
-                    $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$product_static->libelle;
-                    print $text;
-                    print '<br>';
-                }
-                else
-				{
-                    $forceall=1;	// For suppliers, we always show all types
-                    print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1,0,$forceall);
-                    if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-                    || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
-                }
-
-                if (is_object($hookmanager))
-                {
-                    $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
-                    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
-                }
-
-                $nbrows=ROWS_2;
-                if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                $doleditor=new DolEditor('desc',$object->lines[$i]->description,'',128,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-                $doleditor->Create();
-                print '</td>';
-
-                // VAT
-                print '<td align="right">';
-                print $form->load_tva('tauxtva',$object->lines[$i]->tva_tx,$societe,$mysoc);
-                print '</td>';
-
-                // Unit price
-                print '<td align="right" class="nowrap"><input size="4" name="puht" type="text" value="'.price($object->lines[$i]->pu_ht).'"></td>';
-
-                print '<td align="right" class="nowrap"><input size="4" name="puttc" type="text" value=""></td>';
-
-                print '<td align="right"><input size="1" name="qty" type="text" value="'.$object->lines[$i]->qty.'"></td>';
-
-                print '<td align="right" class="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
-
-                print '<td align="right" class="nowrap">&nbsp;</td>';
-
-                print '<td align="right" class="nowrap">&nbsp;</td>';
-
-                print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-                print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-
-                print '</tr>';
-            }
-            else // Affichage simple de la ligne
-            {
-                print '<tr id="row-'.$object->lines[$i]->rowid.'" '.$bc[$var].'>';
-
-                // Show product and description
-                print '<td>';
-                if ($object->lines[$i]->fk_product)
-                {
-                    print '<a name="'.$object->lines[$i]->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-                    $product_static=new ProductFournisseur($db);
-                    $product_static->fetch($object->lines[$i]->fk_product);
-                    $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$product_static->libelle;
-                    $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($object->lines[$i]->description));
-                    print $form->textwithtooltip($text,$description,3,'','',$i);
-
-                    // Show range
-                    print_date_range($date_start,$date_end);
-
-                    // Add description in form
-                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
-                }
-
-                // Description - Editor wysiwyg
-                if (! $object->lines[$i]->fk_product)
-                {
-                    if ($type==1) $text = img_object($langs->trans('Service'),'service');
-                    else $text = img_object($langs->trans('Product'),'product');
-                    print $text.' '.nl2br($object->lines[$i]->description);
-
-                    // Show range
-                    print_date_range($date_start,$date_end);
-                }
-
-                if (is_object($hookmanager))
-                {
-                	$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
-                	$reshook=$hookmanager->executeHooks('formViewProductSupplierOptions',$parameters,$object,$action);
-                }
-                print '</td>';
-
-                // VAT
-                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'</td>';
-
-                // Unit price
-                print '<td align="right" class="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
-
-                print '<td align="right" class="nowrap">'.($object->lines[$i]->pu_ttc?price($object->lines[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
-
-                print '<td align="right">'.$object->lines[$i]->qty.'</td>';
-
-                print '<td align="right">'.(($object->lines[$i]->remise_percent > 0)?$object->lines[$i]->remise_percent.'%':'').'</td>';
-
-                print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
-
-                print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
-
-				if (is_object($hookmanager))
-				{
-					$parameters=array('line'=>$object->lines[$i],'num'=>$num,'i'=>$i);
-					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
-				}
-
-                print '<td align="center" width="16">';
-                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
-                else print '&nbsp;';
-                print '</td>';
-
-                print '<td align="center" width="16">';
-                if ($object->statut == 0)
-                {
-                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
-                }
-                else print '&nbsp;';
-                print '</td>';
-
-                print '</tr>';
-            }
-
-        }
+	    $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
 		// Form to add new line
-        if ($object->statut == 0 && $action != 'edit_line')
+        if ($object->statut == 0 && $action != 'editline')
         {
        		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-			$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
+
+			$forceall=1;
+	        $senderissupplier=1;
+	        $dateSelector=0;
+	        $inputalsopricewithtax=1;
+
 			if ($object->statut == 0 && $user->rights->fournisseur->facture->creer)
 			{
-				if ($action != 'editline')
-				{
-					$var = true;
+				$var = true;
 
-					// Add free products/services
-					$object->formAddObjectLine(1, $societe, $mysoc);
+				// Add free products/services
+				$object->formAddObjectLine(1, $societe, $mysoc);
 
-					$parameters = array();
-					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				}
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			}
         }
 

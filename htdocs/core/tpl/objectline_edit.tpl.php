@@ -191,6 +191,11 @@ $coldisplay=-1; // We remove first td
 			  }
 		} ?>
 
+
+	<?php if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref)) {
+		$colspan++;
+	} ?>
+
 	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
 	<td align="center" colspan="<?php echo $colspan; ?>" valign="middle"><?php $coldisplay+=4; ?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
