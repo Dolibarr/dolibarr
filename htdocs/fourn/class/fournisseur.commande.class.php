@@ -88,6 +88,11 @@ class CommandeFournisseur extends CommonOrder
 
     var $extraparams=array();
 
+	//Ajout pour askpricesupplier
+	var $origin;
+    var $origin_id;
+    var $linked_objects=array();
+    var $lines = array();
 
     /**
      * 	Constructor
@@ -984,30 +989,27 @@ class CommandeFournisseur extends CommonOrder
 	                // Add entry into log
 	                $this->log($user, 0, $now);
 
-	                if (! $error)
+					// Add link with price request and supplier order
+					if ($this->id)
                     {
-                    	$action='create';
+                        $this->ref="(PROV".$this->id.")";
 
-	                    // Actions on extra fields (by external module or standard code)
-	                    // FIXME le hook fait double emploi avec le trigger !!
-	                    $hookmanager->initHooks(array('supplierorderdao'));
-	                    $parameters=array('socid'=>$this->id);
-	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	                    if (empty($reshook))
-	                    {
-	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-	                    	{
-	                    		$result=$this->insertExtraFields();
-	                    		if ($result < 0)
-	                    		{
-	                    			$error++;
-	                    		}
-	                    	}
-	                    }
-	                    else if ($reshook < 0) $error++;
+                        // Add object linked
+                        if (is_array($this->linked_objects) && ! empty($this->linked_objects))
+                        {
+                        	foreach($this->linked_objects as $origin => $origin_id)
+                        	{
+                        		$ret = $this->add_object_linked($origin, $origin_id);
+                        		if (! $ret)
+                        		{
+                        			dol_print_error($this->db);
+                        			$error++;
+                        		}
+                        	}
+                        }
                     }
 
-					if (! $notrigger)
+					if (! $error && ! $notrigger)
 	                {
 						// Call trigger
 						$result=$this->call_trigger('ORDER_SUPPLIER_CREATE',$user);
@@ -1024,7 +1026,7 @@ class CommandeFournisseur extends CommonOrder
 	            }
 	            else
 	            {
-	                $this->error=$this->db->error();
+	                $this->error=$this->db->lasterror();
 	                $this->db->rollback();
 	                return -2;
 	            }
@@ -1032,7 +1034,7 @@ class CommandeFournisseur extends CommonOrder
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             $this->db->rollback();
             return -1;
         }
@@ -1521,6 +1523,10 @@ class CommandeFournisseur extends CommonOrder
         	}
         }
 
+		// Delete linked object
+    	$res = $this->deleteObjectLinked();
+    	if ($res < 0) $error++;
+
         if (! $error)
         {
         	// We remove directory
@@ -1677,6 +1683,40 @@ class CommandeFournisseur extends CommonOrder
             if ($resql)
             {
                 $this->date_livraison = $date_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                return -1;
+            }
+        }
+        else
+        {
+            return -2;
+        }
+    }
+
+	/**
+     *	Set the id projet
+     *
+     *	@param      User			$user        		Objet utilisateur qui modifie
+     *	@param      int				$id_projet    	 	Date de livraison
+     *	@return     int         						<0 si ko, >0 si ok
+     */
+    function set_id_projet($user, $id_projet)
+    {
+        if ($user->rights->fournisseur->commande->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " SET fk_projet = ".($id_projet > 0 ? (int) $id_projet : 'null');
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::set_id_projet", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $this->fk_projet = $id_projet;
                 return 1;
             }
             else
