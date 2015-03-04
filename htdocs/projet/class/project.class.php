@@ -1437,6 +1437,7 @@ class Project extends CommonObject
 	 * load time spent into this->weekWorkLoad for all day of a week and task id
 	 *
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Task id
 	 * @param 	int		$userid			Time consumed per a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
