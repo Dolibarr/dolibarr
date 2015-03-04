@@ -40,10 +40,47 @@ abstract class CommonOrder extends CommonObject
 abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
+	 * Product ref
+	 * @var string
+	 * @deprecated Use product_ref
+	 */
+	public $ref;
+
+	/**
+	 * Product ref
+	 * @var string
+	 */
+	public $product_ref;
+
+	/**
+	 * Product label
+	 * @var string
+	 * @deprecated Use product_label
+	 */
+	public $libelle;
+
+	/**
+	 * Product label
+	 * @var string
+	 */
+	public $product_label;
+
+	/**
+	 * Product description
+	 * @var string
+	 */
+	public $product_desc;
+
+	/**
 	 * Quantity
 	 * @var int
 	 */
 	public $qty;
+
+	/**
+	 * @deprecated
+	 */
+	var $price;
 
 	/**
 	 * Unit price before taxes
