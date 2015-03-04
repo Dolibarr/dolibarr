@@ -197,14 +197,34 @@ class modCategorie extends DolibarrModules
 			'p.fax' => 'Fax',
 			'p.email' => 'Email',
 			'p.note_private' => 'NotePrivate',
-			'p.note_public' => 'NotePublic'
+			'p.note_public' => 'NotePublic',
+			's.client'=>"Customer",
+			's.fournisseur'=>"Supplier",
+			's.nom'=>"Name",
+			's.status'=>"Status",
+			's.address'=>"Address",
+			's.zip'=>"Zip",
+			's.town'=>"Town",
+			's.phone'=>"Phone",
+			's.fax'=>"Fax",
+			's.url'=>"Url",
+			's.email'=>"Email"
 		);
 		$this->export_TypeFields_array[$r] = array (
 			'u.label' => "Text",
 			'u.description' => "Text",
 			'p.rowid' => 'List:contact:lastname',
 			'p.lastname' => 'Text',
-			'p.firstname' => 'Text'
+			'p.firstname' => 'Text',
+			's.nom'=>"Text",
+			's.status'=>"Text",
+			's.address'=>"Text",
+			's.zip'=>"Text",
+			's.town'=>"Text",
+			's.phone'=>"Text",
+			's.fax'=>"Text",
+			's.url'=>"Text",
+			's.email'=>"Text"
 		);
 		$this->export_entities_array[$r] = array (
 			'u.rowid' => "category",
@@ -227,11 +247,21 @@ class modCategorie extends DolibarrModules
 			'p.fax' => 'contact',
 			'p.email' => 'contact',
 			'p.note_private' => 'contact',
-			'p.note_public' => 'contact'
+			'p.note_public' => 'contact',
+			's.nom'=>"company",
+			's.status'=>"company",
+			's.address'=>"company",
+			's.zip'=>"company",
+			's.town'=>"company",
+			's.phone'=>"company",
+			's.fax'=>"company",
+			's.url'=>"company",
+			's.email'=>"company"
 		); // We define here only fields that use another picto
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country as country ON p.fk_pays = country.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe as s ON s.rowid = p.fk_soc';
 		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity IN ('.getEntity('category',1).')';
 		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
 
