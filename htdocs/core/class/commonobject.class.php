@@ -2686,7 +2686,9 @@ abstract class CommonObject
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form,$bc,$bcdd, $object_rights;
+
+		$object_rights = $this->getRights();
 
 		$element=$this->element;
 
@@ -3726,5 +3728,17 @@ abstract class CommonObject
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->{$this->element};
+	}
+
 
 }
