@@ -50,6 +50,9 @@ $hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
+
+// Load object
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
 if ($id > 0 || ! empty($ref))
 {
     $ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
@@ -103,10 +106,10 @@ if (empty($reshook))
 	    	header("Location: ".$backtopage);
 	    	exit;
 		}
-		
+
 		$action = '';
 	}
-	
+
 	if ($action == 'add' && $user->rights->projet->creer)
 	{
 	    $error=0;
@@ -120,7 +123,7 @@ if (empty($reshook))
 		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	        $error++;
 	    }
-	    
+
 	    if (! $error)
 	    {
 	        $error=0;

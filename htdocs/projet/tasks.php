@@ -47,12 +47,11 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	$id=$object->id;
-	$ref=$object->ref;
-
 	// fetch optionals attributes and labels
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
