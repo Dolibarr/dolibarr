@@ -478,7 +478,7 @@ class FactureFournisseur extends CommonInvoice
                 {
                     $obj = $this->db->fetch_object($resql_rows);
 
-                    $this->lines[$i]					= new FactureFournisseurLigne($this->db);
+                    $this->lines[$i]					= new SupplierInvoiceLine($this->db);
 
                     $this->lines[$i]->id				= $obj->rowid;
                     $this->lines[$i]->rowid				= $obj->rowid;
@@ -1274,7 +1274,7 @@ class FactureFournisseur extends CommonInvoice
 
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$linetmp = new FactureFournisseurLigne($this->db);
+				$linetmp = new SupplierInvoiceLine($this->db);
 				$linetmp->id=$this->rowid;
 				$linetmp->array_options = $array_options;
 				$result=$linetmp->insertExtraFields();
@@ -1826,7 +1826,7 @@ class FactureFournisseur extends CommonInvoice
 /**
  *  Class to manage line invoices
  */
-class FactureFournisseurLigne extends CommonInvoice
+class SupplierInvoiceLine extends CommonInvoice
 {
     var $db;
     var $error;
