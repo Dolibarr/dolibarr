@@ -55,6 +55,7 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('sendings');
 $langs->load('products');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -250,7 +251,9 @@ if (empty($reshook))
 	        $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->fk_delivery_address = GETPOST('fk_address');
 			$object->contactid = GETPOST('contactid');
-
+			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
+			
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (! empty($origin) && ! empty($originid))
 			{
@@ -515,6 +518,12 @@ if (empty($reshook))
 		}
 	}
 
+	// Set incoterm
+	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+    {
+    	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+    }
+	
 	// bank account
 	else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
 	    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -1410,6 +1419,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td></tr>';
 	}
 
+	// Incoterms
+	if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
+		print '</td></tr>';
+	}
+
 	// Other attributes
 	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
@@ -1969,7 +1988,30 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</td>';
 			print '</tr>';
 		}
-
+		
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{			
+			print '<tr><td>';
+	        print '<table width="100%" class="nobordernopadding"><tr><td>';
+	        print $langs->trans('IncotermLabel');
+	        print '<td><td align="right">';
+	        if ($user->rights->commande->creer) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        else print '&nbsp;';
+	        print '</td></tr></table>';
+	        print '</td>';
+	        print '<td colspan="3">';
+			if ($action != 'editincoterm')
+			{
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			}
+			else 
+			{
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+			}
+	        print '</td></tr>';
+		}
+	
 		// Other attributes
 		$cols = 3;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';

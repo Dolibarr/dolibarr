@@ -58,6 +58,7 @@ $langs->load('askpricesupplier');
 $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id 			= GETPOST('id','int');
 $ref 			= GETPOST('ref','alpha');
@@ -138,35 +139,42 @@ if (empty($reshook))
 	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
-	    if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	// Set incoterm
+	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	{
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// conditions de reglement
 	if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// mode de reglement
 	if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// bank account
 	if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer)
 	{
-	     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+	    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// date de livraison
 	if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
 	{
 		$result=$object->set_date_livraison($user,$datelivraison);
-		if ($result < 0)
-		{
-			setEventMessage($object->error, 'errors');
-		}
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	// Set project
@@ -178,6 +186,7 @@ if (empty($reshook))
 	if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
 	{
 	    $result = $object->set_remise($user, $_POST['remise_percent']);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
@@ -867,6 +876,8 @@ if (empty($reshook))
 	        $object->note_private	= GETPOST('note_private');
 	        $object->note_public   	= GETPOST('note_public');
 			$object->date_livraison = $datelivraison;
+			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			// Fill array 'array_options' with data from add form
 	       	if (! $error)
@@ -1501,6 +1512,16 @@ if ($action=='create')
 	    print '</td></tr>';
     }
 
+	// Incoterms
+	if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
+		print '</td></tr>';
+	}
+
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$doleditor = new DolEditor('note_public', isset($note_public) ? $note_public : GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -1897,6 +1918,29 @@ elseif (! empty($object->id))
 		}
 		print '</td>';
 		print '</tr>';
+	}
+
+	// Incoterms
+	if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('IncotermLabel');
+        print '<td><td align="right">';
+        if ($user->rights->fournisseur->commande->creer) print '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+        else print '&nbsp;';
+        print '</td></tr></table>';
+        print '</td>';
+        print '<td colspan="3">';
+		if ($action != 'editincoterm')
+		{
+			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+		}
+		else
+		{
+			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+		}
+        print '</td></tr>';
 	}
 
 	// Other attributes
