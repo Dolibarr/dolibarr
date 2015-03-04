@@ -4725,6 +4725,7 @@ function picto_from_langcode($codelang)
  * 		        	               	     	'member'           to add a tab in fundation member view
  *      		                        	'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
  *      									'ecm'			   to add a tab for another ecm view
+ *                                          'stock'            to add a tab for warehouse view
  *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
  *	@return	void
  */
