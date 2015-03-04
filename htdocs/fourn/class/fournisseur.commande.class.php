@@ -88,8 +88,12 @@ class CommandeFournisseur extends CommonOrder
 
     var $extraparams=array();
 
+	/**
+	 * @var CommandeFournisseurLigne[]
+	 */
+	public $lines = array();
 
-    /**
+	/**
      * 	Constructor
      *
      *  @param      DoliDB		$db      Database handler
@@ -98,7 +102,6 @@ class CommandeFournisseur extends CommonOrder
     {
         $this->db = $db;
         $this->products = array();
-        $this->lines = array();
 
         // List of language codes for status
         $this->statuts[0] = 'StatusOrderDraft';
@@ -237,6 +240,7 @@ class CommandeFournisseur extends CommonOrder
                     $line                 = new CommandeFournisseurLigne($this->db);
 
                     $line->id                  = $objp->rowid;
+                    $line->rowid               = $objp->rowid;
                     $line->desc                = $objp->description;  // Description ligne
                     $line->description         = $objp->description;  // Description ligne
                     $line->qty                 = $objp->qty;
@@ -2206,6 +2210,18 @@ class CommandeFournisseur extends CommonOrder
 		if ($nb === 0) return $langs->trans('Undefined');
 		else return $nb.' '.$langs->trans('Days');
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->fournisseur->commande;
+	}
+
 }
 
 
@@ -2221,27 +2237,95 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $element='commande_fournisseurdet';
 	public $table_element='commande_fournisseurdet';
 
-    var $oldline;
+	/**
+	 * Quantity
+	 * @var int
+	 */
 
-    // From llx_commandedet
-    var $qty;
-    var $tva_tx;
-    var $localtax1_tx;
-    var $localtax2_tx;
-    var $localtax1_type;
-    var $localtax2_type;
-    var $subprice;
-    var $remise_percent;
-    var $desc;          	// Description ligne
-    var $fk_product;		// Id of predefined product
-    var $product_type = 0;	// Type 0 = product, 1 = Service
-    var $total_ht;
-    var $total_tva;
-    var $total_localtax1;
-    var $total_localtax2;
-    var $total_ttc;
-    var $info_bits;
-    var $special_code;
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
+	public $subprice;
+
+	/**
+	 * Type of the product. 0 for product 1 for service
+	 * @var int
+	 */
+	public $product_type = 0;
+
+	/**
+	 * Description of the line
+	 * @var string
+	 */
+	var $desc;
+
+	/**
+	 * Id of corresponding product
+	 * @var int
+	 */
+	public $fk_product;
+
+	/**
+	 * VAT %
+	 * @var float
+	 */
+	public $tva_tx;
+
+	/**
+	 * Local tax 1 %
+	 * @var float
+	 */
+	public $localtax1_tx;
+
+	/**
+	 * Local tax 2 %
+	 * @var float
+	 */
+	public $localtax2_tx;
+
+	var $localtax1_type;
+	var $localtax2_type;
+
+	/**
+	 * Total amount before taxes
+	 * @var float
+	 */
+	public $total_ht;
+
+	/**
+	 * Total VAT amount
+	 * @var float
+	 */
+	public $total_tva;
+
+	/**
+	 * Total local tax 1 amount
+	 * @var float
+	 */
+	public $total_localtax1;
+
+	/**
+	 * Total local tax 2 amount
+	 * @var float
+	 */
+	public $total_localtax2;
+
+	/**
+	 * Total amount with taxes
+	 * @var float
+	 */
+	public $total_ttc;
+
+	/**
+	 * Liste d'options cumulables:
+	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
+	public $info_bits = 0;
+
+	var $special_code;
     var $date_start;
     var $date_end;
 
