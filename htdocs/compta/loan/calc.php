@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002		David Tufts			<http://dave.imarc.net>
  * Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015		Frederic France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 require '../../main.inc.php';
 
 $langs->load("loan");
-    
+
 /* --------------------------------------------------- *
  * Set Form DEFAULT values
  * --------------------------------------------------- */
@@ -82,12 +83,17 @@ if ($form_complete) {
     $annual_interest_percent = preg_replace( "[^0-9.]", "", $annual_interest_percent);
     $year_term               = preg_replace( "[^0-9.]", "", $year_term);
     $down_percent            = preg_replace( "[^0-9.]", "", $down_percent);
-        
-    if (((float) $year_term <= 0) || ((float) $sale_price <= 0) || ((float) $annual_interest_percent <= 0)) {
-        $error = "You must enter a <b>Sale Price of Home</b>, <b>Length of Motgage</b> <i>and</i> <b>Annual Interest Rate</b>";
-    }
 
-    if (!$error) {
+	if ((float) $year_term <= 0) {
+		$errors[] = "You must enter a <b>Sale Price of Home</b>";
+	}
+	if ((float) $sale_price <= 0) {
+		$errors[] = "You must enter a <b>Length of Mortgage</b>";
+	}
+	if ((float) $annual_interest_percent <= 0) {
+		$errors[] = "You must enter an <b>Annual Interest Rate</b>";
+	}
+	if (!$errors) {
         $month_term              = $year_term * 12;
         $down_payment            = $sale_price * ($down_percent / 100);
         $annual_interest_rate    = $annual_interest_percent / 100;
@@ -104,8 +110,8 @@ if ($form_complete) {
     if (!$show_progress)           { $show_progress           = $default_show_progress;           }
 }
     
-if ($error) {
-    print("<font color=\"red\">" . $error . "</font><br><br>\n");
+if (! empty($errors)) {
+    setEventMessages('', $errors, 'errors');
     $form_complete   = false;
 }
 	
@@ -123,17 +129,16 @@ echo "<font size='-1' color='#000000'>This <b>mortgage calculator</b> can be use
 print '<form method="GET" name="information" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="form_complete" value="1">';
 print '<table cellpadding="2" cellspacing="0" border="0" width="100%">';
-print '<tr>';
-print '<td align="right"><img src="/images/clear.gif" width="225" height="1" border="0" alt=""></td>';
-print '<td align="smalltext" width="100%"><img src="/images/clear.gif" width="250" height="1" border="0" alt=""></td>';
-print '</tr>';
+//print '<tr>';
+//print '<td align="right"><img src="/images/clear.gif" width="225" height="1" border="0" alt=""></td>';
+//print '<td align="smalltext" width="100%"><img src="/images/clear.gif" width="250" height="1" border="0" alt=""></td>';
+//print '</tr>';
 print '<tr bgcolor="#cccccc">';
 print '<td align="center" colspan="2"><b>Purchase &amp; Financing Information</b></td>';
 print '</tr>';
 print '<tr bgcolor="#eeeeee">';
 print '<td align="right">Sale Price of Home:</td>';
-print '<td width="100%"><input type="text" size="10" name="sale_price" value="'.$sale_price.'"> '.$langs->trans("Currency".$conf->currency).'</td>';
-print '</tr>';
+print '<td><input type="text" size="10" name="sale_price" value="'.$sale_price.'"> '.$langs->trans("Currency".$conf->currency).'</td>';print '</tr>';
 print '<tr bgcolor="#eeeeee">';
 print '<td align="right">Percentage Down:</td>';
 print '<td><input type="text" size="5" name="down_percent" value="'.$down_percent.'">%</td>';
@@ -289,7 +294,7 @@ if ($form_complete && $show_progress) {
 	print '<td>';
 	print 'The montly payment is figured out using the following formula:<br>';
 	print 'Monthly Payment = ' . number_format($financing_price, "2", "", "") . ' * '; 
-	print number_format($monthly_interest_rate, "4", "", "") . ' / ';
+	print $langs->trans('MonthlyPayment').' = ' . number_format($financing_price, "2", "", "") . ' * ';
 	print '(1 - ((1 + ' . number_format($monthly_interest_rate, "4", "", "") . ')';
 	print '<sup>-(' . $month_term . ')</sup>)))';
 	print '<br><br>';
@@ -311,7 +316,7 @@ if ($form_complete && $show_progress) {
 	$denom = pow((1 + $monthly_interest_rate), $power);
 	$monthly_payment = $principal * ($monthly_interest_rate / (1 - $denom));
         
-	print("<br><br><a name=\"amortization\"></a>Amortization For Monthly Payment: <b>\$" . number_format($monthly_payment, "2", ".", ",") . "</b> over " . $year_term . " years<br>\n");
+	print "<br><br><a name=\"amortization\"></a>Amortization For Monthly Payment: <b>" . number_format($monthly_payment, "2", ".", ",") . "</b> over " . $year_term . " years<br>\n");
 	
 	print '<table class="noborder" width="100%">';
 	
@@ -323,8 +328,8 @@ if ($form_complete && $show_progress) {
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Position") . '</td>';
 	$legend.= '</tr>';
 	
-	echo $legend;
-                
+	print $legend;
+
 	// Loop through and get the current month's payments for 
 	// the length of the loan 
 	while ($current_month <= $month_term)
@@ -377,7 +382,7 @@ if ($form_complete && $show_progress) {
 		$principal = $remaining_balance;
 		$current_month++;
     }
-	print("</table>\n");
+	print "</table>\n";
 }
 
 llxFooter();

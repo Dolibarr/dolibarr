@@ -19,6 +19,7 @@ ErrorLoanLength=<font color=red>Loan length</font> has to be numeric and greater
 ErrorLoanInterest=<font color=red>Annual interest</font> has to be numeric and greater than zero.
 # Calc
 Totalsforyear=Totals for year
+MonthlyPayment=Monthly Payment
 # Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
