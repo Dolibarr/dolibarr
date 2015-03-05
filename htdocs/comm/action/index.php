@@ -348,7 +348,6 @@ if (! empty($conf->use_javascript_ajax))
 	$s='';
 	$s.='<script type="text/javascript">' . "\n";
 	$s.='jQuery(document).ready(function () {' . "\n";
-	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
 	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
 	$s.='jQuery(".family_birthday").toggle();' . "\n";
 	if ($action=="show_week" || $action=="show_month" || empty($action))
@@ -369,7 +368,7 @@ if (! empty($conf->use_javascript_ajax))
 					var name = $(this).attr("name");
 
 					jQuery(".family_" + name.replace("check_", "")).toggle();
-                });
+				});
 
 			});' . "\n";
 		$s.='</script>' . "\n";
