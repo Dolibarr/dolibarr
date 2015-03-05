@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $langs->load("admin");
 $langs->load("members");
 $langs->load("errors");
+$langs->load("other");
 
 // Choice of print year or current year.
 $now = dol_now();
@@ -36,8 +37,6 @@ $day=dol_print_date($now,'%d');
 $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $eraseallbarcode=GETPOST('eraseallbarcode');
-
-$mesg='';
 
 $action=GETPOST('action');
 
@@ -126,7 +125,7 @@ if ($action == 'initbarcodeproducts')
 			$sql.=$db->order("datec","ASC");
 			$sql.=$db->plimit($maxperinit);
 
-			dol_syslog("codeinit sql=".$sql, LOG_DEBUG);
+			dol_syslog("codeinit", LOG_DEBUG);
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -198,8 +197,6 @@ print '<br>';
 print $langs->trans("MassBarcodeInitDesc").'<br>';
 print '<br>';
 
-dol_htmloutput_errors($mesg);
-
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
 
@@ -214,7 +211,8 @@ if ($conf->societe->enabled)
 {
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','').'<br>'."\n";
+	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','');
+	print '<br>'."\n";
 	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
 	if ($resql)
@@ -233,7 +231,7 @@ if ($conf->societe->enabled)
 	}
 	else dol_print_error($db);
 
-	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("Thirdparties")).'<br>'."\n";
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ThirdParties")).'<br>'."\n";
 
 	print '<br><input class="button" type="submit" id="submitformbarcodethirdpartygen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled="checked" ').'value="'.$langs->trans("InitEmptyBarCode",$nbno).'"';
 	print ' title="'.dol_escape_htmltag($langs->trans("FeatureNotYetAvailable")).'" disabled="disabled"';
@@ -254,11 +252,13 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','').'<br>'."\n";
-	$sql ="SELECT count(rowid) as nb, fk_product_type";
+	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','');
+	print '<br>'."\n";
+
+	$sql ="SELECT count(rowid) as nb, fk_product_type, datec";
 	$sql.=" FROM ".MAIN_DB_PREFIX."product";
 	$sql.=" WHERE barcode IS NULL OR barcode = ''";
-	$sql.=" GROUP BY fk_product_type";
+	$sql.=" GROUP BY fk_product_type, datec";
 	$sql.=" ORDER BY datec";
 	$resql=$db->query($sql);
 	if ($resql)
@@ -291,7 +291,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		print $langs->trans("BarCodeNumberManager").": ";
 		$objproduct=new Product($db);
-		print '<b>'.$modBarCodeProduct->nom.'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
+		print '<b>'.(isset($modBarCodeProduct->name)?$modBarCodeProduct->name:$modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled=0;
 	}
 	else

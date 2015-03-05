@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Piegāde
 Deliveries=Piegādes
-DeliveryCard=Piegādes karte
+DeliveryCard=Piegādes kartiņa
 DeliveryOrder=Piegādes pasūtījums
 DeliveryOrders=Piegādes pasūtījumi
 DeliveryDate=Piegādes datums
 DeliveryDateShort=Ie. datums
-CreateDeliveryOrder=Izveidot piegādes kārtību
+CreateDeliveryOrder=Izveidot piegādes pasūtījumu
 QtyDelivered=Piegādātais daudz
 SetDeliveryDate=Uzstādīt piegādes datumu
 ValidateDeliveryReceipt=Apstiprināt piegādes saņemšanu
@@ -24,3 +24,5 @@ Deliverer=Piegādātājs:
 Sender=Nosūtītājs
 Recipient=Saņēmējs
 ErrorStockIsNotEnough=Nav pietiekami daudz krājumu
+Shippable=Shippable
+NonShippable=Not Shippable

@@ -33,6 +33,7 @@ class PaymentTerm // extends CommonObject
 	var $errors=array();				//!< To return several error codes (or messages)
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
+	var $context =array();
 
     var $id;
 
@@ -119,7 +120,7 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -185,7 +186,7 @@ class PaymentTerm // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -213,7 +214,6 @@ class PaymentTerm // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -235,7 +235,7 @@ class PaymentTerm // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
         $sql.= " WHERE t.code = 'RECEP'";
 
-    	dol_syslog(get_class($this)."::getDefaultId sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -250,7 +250,6 @@ class PaymentTerm // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::getDefaultId ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -263,7 +262,7 @@ class PaymentTerm // extends CommonObject
      *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return     int       			  	<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -301,7 +300,7 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -357,7 +356,7 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -411,6 +410,8 @@ class PaymentTerm // extends CommonObject
 
 		$object=new PaymentTerm($this->db);
 
+		$object->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -437,6 +438,8 @@ class PaymentTerm // extends CommonObject
 
 
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)

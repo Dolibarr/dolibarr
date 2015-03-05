@@ -45,7 +45,6 @@ if ($action == 'add')
 {
 	$langs->load("errors");
 
-	$mesg='';
 	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 	$label = GETPOST('label','alpha');
 	$amount= GETPOST('amount','int');
@@ -53,22 +52,22 @@ if ($action == 'add')
 	if (! $label)
 	{
 		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"))."</div>";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")), 'errors');
 	}
 	if (! $amount)
 	{
 		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
 	}
 	if (! GETPOST('account_from','int'))
 	{
 		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom"))."</div>";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom")), 'errors');
 	}
 	if (! GETPOST('account_to','int'))
 	{
 		$error=1;
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo"))."</div>";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo")), 'errors');
 	}
 	if (! $error)
 	{
@@ -111,20 +110,19 @@ if ($action == 'add')
 
 			if (! $error)
 			{
-				$mesg.="<div class=\"ok\">";
-				$mesg.=$langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
-				$mesg.="</div>";
+				$mesgs = $langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->currency));
+				setEventMessage($mesgs);
 				$db->commit();
 			}
 			else
 			{
-				$mesg.="<div class=\"error\">".$accountfrom->error.' '.$accountto->error."</div>";
+				setEventMessage($accountfrom->error.' '.$accountto->error, 'errors');
 				$db->rollback();
 			}
 		}
 		else
 		{
-			$mesg.="<div class=\"error\">".$langs->trans("ErrorFromToAccountsMustDiffers")."</div>";
+			setEventMessage($langs->trans("ErrorFromToAccountsMustDiffers"), 'errors');
 		}
 	}
 }
@@ -154,8 +152,6 @@ if($error)
 
 print_fiche_titre($langs->trans("BankTransfer"));
 
-dol_htmloutput_mesg($mesg);
-
 print $langs->trans("TransferDesc");
 print "<br><br>";
 
@@ -171,11 +167,11 @@ print '</tr>';
 
 $var=false;
 print '<tr '.$bc[$var].'><td>';
-print $form->select_comptes($account_from,'account_from',0,'',1);
+$form->select_comptes($account_from,'account_from',0,'',1);
 print "</td>";
 
 print "<td>\n";
-print $form->select_comptes($account_to,'account_to',0,'',1);
+$form->select_comptes($account_to,'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";

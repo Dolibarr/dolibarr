@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Arbetsflöde modul konfiguration
-WorkflowDesc=Denna modul är designade för att ändra beteendet hos automatiska åtgärder i programmet. Som standard är arbetsflödet öppnas (du gör något för att du vill). Du kan aktiveras automatiska åtgärder som du är intressanta i.
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Det finns ingen arbetsflöde du kan ändra för modul du har aktiverat.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Skapa en kundorder automatiskt efter en kommersiell förslag undertecknas
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kommersiell förslag undertecknas
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter ett avtal validerad
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kundorder är stängd
-# descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
-# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassificera länkad förslag källa att faktureras när kundorder är inställd på betald
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassificera länkade källa kundorder (s) för att faktureras när kundfaktura är inställd på betald
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassificera länkade källa kundorder (s) för att faktureras när kundfaktura valideras

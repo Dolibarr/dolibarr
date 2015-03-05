@@ -51,10 +51,10 @@ create table llx_actioncomm
   
   priority			smallint,
   fulldayevent		smallint NOT NULL default 0,
-  punctual			smallint NOT NULL default 1,
+  punctual			smallint NOT NULL default 1, -- deprecated. milestone is event with date start = date end
   percent			smallint NOT NULL default 0,
   location			varchar(128),
-  durationp			real,							-- duree planifiee
+  durationp			real,							-- planed duration
   durationa			real,							-- deprecated
   note				text,
   

@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Redovisning
+Globalparameters=Globala parametrar
+Chartofaccounts=Kontoplan
+Fiscalyear=Räkenskapsår
+Menuaccount=Redovisnings konton
+Menuthirdpartyaccount=Tredjeparts konton
+MenuTools=Verktyg
+
+ConfigAccountingExpert=Konfiguration av modulen redovisningsexpert
+Journaux=Journaler
+JournalFinancial=Finansiella journaler
+Exports=Export
+Export=Export
+Modelcsv=Modell av export
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Välj en modell av export
+Modelcsv_normal=Klassisk export
+Modelcsv_CEGID=Export mot CEGID Expert
+BackToChartofaccounts=Avkastning kontoplan
+Back=Avkastning
+
+Definechartofaccounts=Definiera en kontoplan
+Selectchartofaccounts=Välj en kontoplan
+Validate=Validera
+Addanaccount=Lägg till ett redovisningskonto
+AccountAccounting=Redovisningskonto
+Ventilation=Fördelning
+ToDispatch=Avsändandet
+Dispatched=Levereras
+
+CustomersVentilation=Fördelning kunder
+SuppliersVentilation=Fördelning leverantörerna
+TradeMargin=Handelsmarginal
+Reports=Rapporter
+ByCustomerInvoice=Enligt faktura kunder
+ByMonth=Enligt månad
+NewAccount=Nytt redovisningskonto
+Update=Uppdatera
+List=Lista
+Create=Skapa
+UpdateAccount=Ändring av ett redovisningskonto
+UpdateMvts=Ändring av en rörelse
+WriteBookKeeping=Record konton i huvudboken
+Bookkeeping=Huvudbok
+AccountBalanceByMonth=Saldo per månad
+
+AccountingVentilation=Uppdelning redovisning
+AccountingVentilationSupplier=Uppdelning redovisnings leverantör
+AccountingVentilationCustomer=Uppdelning redovisnings kund
+Line=Linje
+
+CAHTF=Totala köpesleverantörs HT
+InvoiceLines=Linjer av faktura som ska ventileras
+InvoiceLinesDone=Ventilerade linjer faktura
+IntoAccount=I bokföringskonto
+
+Ventilate=Ventilera
+VentilationAuto=Automatisk uppdelning
+
+Processing=Bearbetning
+EndProcessing=I slutet av behandlingen
+AnyLineVentilate=Några rader för att ventilera
+SelectedLines=Valda linjer
+Lineofinvoice=Line of faktura
+VentilatedinAccount=Ventilerade framgångsrikt i redovisningskonto
+NotVentilatedinAccount=Inte ventilerad i redovisningskonto
+
+ACCOUNTING_SEPARATORCSV=Column separator in export file
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Antal element att vara uppdelning framgår av sidan (max rekommenderad: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Börja sortering av nedbrytnings sidor "Måste uppdelning" av de senaste element
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Börja sorteringen av nedbrytnings sidor "Breakdown" av de senaste element
+
+AccountLength=Längd på redovisningen redovisning i Dolibarr
+AccountLengthDesc=Funktion som gör det möjligt att låtsas en längd av bokföringskonto genom att ersätta mellanslag med noll siffra. Den här funktionen berör endast displayen, det ändrar inte redovisningskonton registrerade i Dolibarr. För export, är nödvändigt denna funktion för att vara kompatibel med viss programvara.
+ACCOUNTING_LENGTH_GACCOUNT=Längd på de allmänna räkenskaperna
+ACCOUNTING_LENGTH_AACCOUNT=Längd av tredjepartskonton
+
+ACCOUNTING_SELL_JOURNAL=Sell ​​tidskrift
+ACCOUNTING_PURCHASE_JOURNAL=Bara tidskrift
+ACCOUNTING_BANK_JOURNAL=Bank tidskrift
+ACCOUNTING_CASH_JOURNAL=Cash journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diverse tidskrift
+ACCOUNTING_SOCIAL_JOURNAL=Social tidskrift
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Redogörelse för överföring
+ACCOUNTING_ACCOUNT_SUSPENSE=Redogörelse för vänta
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Redovisning kontot som standard för köpta produkter (om den inte anges i produktbladet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Redovisning kontot som standard för de sålda produkterna (om den inte anges i produktbladet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Redovisning konto som standard för de köpte tjänster (om den inte anges i servicebladet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Redovisning kontot som standard för sålda tjänster (om den inte anges i servicebladet)
+
+Doctype=Typ av dokument
+Docdate=Datum
+Docref=Referens
+Numerocompte=Konto
+Code_tiers=Tredjeparts
+Labelcompte=Etikett konto
+Debit=Debit
+Credit=Kredit
+Amount=Belopp
+Sens=Sens
+Codejournal=Journal
+
+DelBookKeeping=Ta bort posterna i huvudboken
+
+SellsJournal=Försäljnings journal
+PurchasesJournal=Inköp tidskrift
+DescSellsJournal=Sells tidskrift
+DescPurchasesJournal=Inköp tidskrift
+BankJournal=Bank tidskrift
+DescBankJournal=Bank journal inklusive alla typer av annat än pengar betalningar
+CashJournal=Cash journal
+DescCashJournal=Cash journal inklusive typ av betalning kontant
+
+CashPayment=Kontantbetalning
+
+SupplierInvoicePayment=Betalning av leverantörsfaktura
+CustomerInvoicePayment=Betalning av faktura kund
+
+ThirdPartyAccount=Tredjeparts konto
+
+NewAccountingMvt=Ny rörelse
+NumMvts=Antal rörelse
+ListeMvts=Lista över rörelsen
+ErrorDebitCredit=Debit och kredit kan inte ha ett värde på samma gång
+
+ReportThirdParty=Listan tredjeparts konto
+DescThirdPartyReport=Konsul här listan över de tredjeparts kunder och leverantörer och deras bokföringskonton
+
+ListAccounts=Förteckning över redovisningskonton
+
+Pcgversion=Version av planen
+Pcgtype=Klass konto
+Pcgsubtype=Under klass konto
+Accountparent=Roten till kontot
+Active=Uttalande
+
+NewFiscalYear=Nytt räkenskapsår
+
+DescVentilCustomer=Rådgör här den årliga fördelningen redovisning av era fakturor kunder
+TotalVente=Total omsättning HT
+TotalMarge=Total försäljning marginal
+DescVentilDoneCustomer=Konsul här listan med linjerna av fakturor kunder och deras bokföringskonto
+DescVentilTodoCustomer=Ventilera dina rader av kundfaktura med en redovisningskonto
+ChangeAccount=Ändra bokföringskonto för linjer som valts ut av kontot:
+Vide=-
+DescVentilSupplier=Rådgör här den årliga fördelningen redovisning av dina fakturor leverantörer
+DescVentilTodoSupplier=Ventilera dina rader av leverantörsfaktura med en redovisningskonto
+DescVentilDoneSupplier=Konsul här listan med linjerna av fakturor leverantör och deras bokföringskonto
+
+ValidateHistory=Validera Automatiskt
+
+ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
+
+FicheVentilation=Uppdelning kort

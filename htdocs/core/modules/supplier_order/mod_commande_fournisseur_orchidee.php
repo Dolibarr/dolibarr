@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
 
 
 /**
-	\class      mod_commande_fournisseur_orchidee
-	\brief      Classe du modele de numerotation de reference de commande fournisseur Orchidee
-*/
+ *	Classe du modele de numerotation de reference de commande fournisseur Orchidee
+ */
 class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
@@ -122,7 +121,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$object->date_commande);
+		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc,$object->date_commande);
 
 		return  $numFinal;
 	}

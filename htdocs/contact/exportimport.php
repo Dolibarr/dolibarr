@@ -77,11 +77,11 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     	$objsoc = new Societe($db);
     	$objsoc->fetch($contact->socid);
 
-    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    	print '<tr><td width="15%">'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
     }
     else
     {
-    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+    	print '<tr><td width="15%">'.$langs->trans("ThirdParty").'</td><td colspan="3">';
     	print $langs->trans("ContactNotLinkedToCompany");
     	print '</td></tr>';
     }

@@ -1,8 +1,0 @@
-The best that I can tell is that this code traces back to David Schmitt. It has been forked many times since then :)
-
-1. you cannot add databases to an instance that has a root password
-2. you have to specify username as USER@BLAH or it cannot be found
-3. mysql_grant does not complain if user does not exist
-4. Needs support for pre-seeding on debian
-5. the types may need to take user/password
-6. rather or not to configure /etc/.my.cnf should be configurable

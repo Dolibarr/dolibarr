@@ -530,7 +530,33 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		return $result;
+		return $localobject;
     }
 
+
+    /**
+     * testAdherentTypeDelete
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return void
+     *
+     * @depends	testAdherentDelete
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentTypeDelete($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobjectat=new AdherentType($this->savdb);
+     	$result=$localobjectat->fetch($localobject->typeid);
+     	$result=$localobjectat->delete();
+     	print __METHOD__." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+
+    	return $localobject->id;
+    }
 }

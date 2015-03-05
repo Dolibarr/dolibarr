@@ -1,7 +1,6 @@
 htdocs/conf/conf.php
 htdocs/conf/conf.php.old
 documents/
-custom/
 custom2/
 test/report/
 nbproject
@@ -18,6 +17,3 @@ doxygen_warnings.log
 Thumbs.db
 # Vagrant generated files
 .vagrant
-/index.html
-/phpmyadmin
-/xhprof

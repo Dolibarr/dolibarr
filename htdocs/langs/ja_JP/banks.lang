@@ -8,6 +8,7 @@ FinancialAccount=アカウント
 FinancialAccounts=アカウント
 BankAccount=預金
 BankAccounts=銀行口座
+ShowAccount=Show Account
 AccountRef=金融口座のref
 AccountLabel=金融口座のラベル
 CashAccount=現金勘定

@@ -101,7 +101,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
@@ -157,6 +157,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
+	$colwidth=20;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();

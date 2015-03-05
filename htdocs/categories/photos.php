@@ -66,7 +66,9 @@ if ($id > 0)
 
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    if ($object->id) $result = $object->add_photo($upload_dir, $_FILES['userfile']);
+    if ($object->id) {
+	    $object->add_photo($upload_dir, $_FILES['userfile']);
+    }
 }
 
 if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->rights->categorie->creer)
@@ -241,7 +243,7 @@ if ($object->id)
 			// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
 			if ($obj['photo_vignette'])
 			{
-				$filename='thumbs/'.$obj['photo_vignette'];
+				$filename=$obj['photo_vignette'];
 			}
 			else
 			{

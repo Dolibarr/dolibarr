@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=会计
+Globalparameters=全局参数
+Chartofaccounts=科目表
+Fiscalyear=财年
+Menuaccount=会计账目
+Menuthirdpartyaccount=第三方帐户
+MenuTools=工具
+
+ConfigAccountingExpert=配置"会计专家模块"
+Journaux=日记帐
+JournalFinancial=财经杂志
+Exports=出口
+Export=Export
+Modelcsv=出口型号
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=选择一个“导出模型”
+Modelcsv_normal=典型的导出
+Modelcsv_CEGID=出口对Cegid的专家
+BackToChartofaccounts=返回科目表
+Back=返回
+
+Definechartofaccounts=定义会计科目表
+Selectchartofaccounts=选择会计科目表
+Validate=验证
+Addanaccount=添加一个会计帐户
+AccountAccounting=会计账户
+Ventilation=Breakdown
+ToDispatch=派遣
+Dispatched=调度
+
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
+TradeMargin=贸易保证金
+Reports=报告
+ByCustomerInvoice=依据”发票“的客户
+ByMonth=按月份
+NewAccount=”新建“会计账户
+Update=更新
+List=名单
+Create=创建
+UpdateAccount=修改”会计帐户“
+UpdateMvts=对一个”活动“进行修改
+WriteBookKeeping=在”总账“中的”账户记录“
+Bookkeeping=总帐
+AccountBalanceByMonth=”账户余额“按月份
+
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
+Line=线
+
+CAHTF=总采购供应商HT
+InvoiceLines=发票行进行通风
+InvoiceLinesDone=发票通风线
+IntoAccount=在会计帐户
+
+Ventilate=通风
+VentilationAuto=Automatic breakdown
+
+Processing=处理
+EndProcessing=处理的结束
+AnyLineVentilate=任何行通风
+SelectedLines=选系
+Lineofinvoice=发票行
+VentilatedinAccount=在会计账户成功通风
+NotVentilatedinAccount=不通风的会计账户
+
+ACCOUNTING_SEPARATORCSV=Column separator in export file
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+
+AccountLength=会计长度账户显示在的Dolibarr
+AccountLengthDesc=功能允许由零的数字代替空格假装会计账户的长度。这个函数只接触了显示屏，它不修改的Dolibarr登记的会计科目。为出口，这个功能是必要的，以与特定的软件兼容。
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+
+ACCOUNTING_SELL_JOURNAL=Sell journal
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_BANK_JOURNAL=Bank journal
+ACCOUNTING_CASH_JOURNAL=Cash journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SOCIAL_JOURNAL=Social journal
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=转账账户
+ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+
+Doctype=文件类型
+Docdate=日期
+Docref=参考
+Numerocompte=帐户
+Code_tiers=第三方
+Labelcompte=标签帐户
+Debit=借记卡
+Credit=信用
+Amount=金额
+Sens=SENS
+Codejournal=日记帐
+
+DelBookKeeping=删除总帐的记录
+
+SellsJournal=出售的”日记帐“
+PurchasesJournal=购买的”日记帐“
+DescSellsJournal=出售的”日记帐“
+DescPurchasesJournal=购买的”日记帐“
+BankJournal=银行日记账
+DescBankJournal=银行日记账，包括支付现金以外的所有类型
+CashJournal=现金日记账
+DescCashJournal=现金日记账，包括支付现金的类型
+
+CashPayment=现金付款
+
+SupplierInvoicePayment=付款发票的供应商
+CustomerInvoicePayment=付款发票的客户
+
+ThirdPartyAccount=第三方账户
+
+NewAccountingMvt=创建新的活动
+NumMvts=移动号码
+ListeMvts=”活动“的列表
+ErrorDebitCredit=借记卡和信用卡在同一时间不能有一个值
+
+ReportThirdParty=列出第三方账户
+DescThirdPartyReport=在这里请教第三方客户及供应商，其会计账目清单
+
+ListAccounts=会计账目清单
+
+Pcgversion=该计划的版本
+Pcgtype=账户类
+Pcgsubtype=在类账户
+Accountparent=该帐户的根
+Active=声明
+
+NewFiscalYear=新财年
+
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+TotalVente=总成交量HT
+TotalMarge=总销售利润率
+DescVentilDoneCustomer=这里查阅发票的客户的行和其会计帐户的列表
+DescVentilTodoCustomer=与会计帐户通风客户发票行
+ChangeAccount=变化的账户选择行会计帐户：
+Vide=-
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=与会计帐户通风发票的供应商的线路
+DescVentilDoneSupplier=在这里请教发票的供应商的线条和其会计帐户列表
+
+ValidateHistory=自动验证
+
+ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计帐户，因为它是用来
+
+FicheVentilation=Breakdown card

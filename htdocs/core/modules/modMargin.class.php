@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2015   Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ class modMargin extends DolibarrModules
 		// New pages on tabs
 		$this->tabs = array(
 				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous:/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous && ($societe->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 
@@ -106,8 +107,8 @@ class modMargin extends DolibarrModules
     			'url'=>'/margin/index.php',
     			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>100,
-    			'enabled'=>'$user->rights->margins->liretous',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-    			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
+    			'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+    			'perms'=>'$user->rights->margins->liretous',	// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
     			'target'=>'',
     			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;

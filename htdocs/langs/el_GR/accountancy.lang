@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Λογιστική
+Globalparameters=Βασικοί Παράμετροι
+Chartofaccounts=Διάγραμμα των λογαριασμών
+Fiscalyear=Οικονομικά έτη
+Menuaccount=Λογαριασμοί Λογιστικής
+Menuthirdpartyaccount=Λογαριασμοί Πελ./Προμ.
+MenuTools=Εργαλεία
+
+ConfigAccountingExpert=Διαμόρφωση της μονάδας λογιστικής expert
+Journaux=Ημερολόγια
+JournalFinancial=Οικονιμικά ημερολόγια
+Exports=Εξαγωγές
+Export=Εξαγωγή
+Modelcsv=Πρότυπο εξαγωγής
+OptionsDeactivatedForThisExportModel=Γι 'αυτό το μοντέλο εξαγωγών, οι επιλογές είναι απενεργοποιημένες
+Selectmodelcsv=Επιλέξτε ένα πρότυπο από την εξαγωγή
+Modelcsv_normal=Κλασική εξαγωγή
+Modelcsv_CEGID=Εξαγωγή προς CEGID εμπειρογνωμόνων
+BackToChartofaccounts=Επιστροφή στο διάγραμμα των λογαριασμών
+Back=Επιστροφή
+
+Definechartofaccounts=Ορίστε ένα διάγραμμα των λογαριασμών
+Selectchartofaccounts=Επιλέξτε ένα διάγραμμα των λογαριασμών
+Validate=Επικύρωση
+Addanaccount=Προσθέστε ένα λογιστικό λογαριασμό
+AccountAccounting=Λογιστική λογαριασμού
+Ventilation=Ανάλυση
+ToDispatch=Για την αποστολή
+Dispatched=Αποστέλλονται
+
+CustomersVentilation=Ανάλυση πελατών
+SuppliersVentilation=Ανάλυση προμηθευτών
+TradeMargin=Εμπορικό Περιθώριο
+Reports=Αναφορές
+ByCustomerInvoice=Με τιμολόγια πελατών
+ByMonth=Μέχρι το μήνα
+NewAccount=Νέος λογιστικός λογαριασμός
+Update=Ενημέρωση
+List=Λίστα
+Create=Δημιουργία
+UpdateAccount=Τροποποίηση του λογιστικού λογαριασμού
+UpdateMvts=Τροποποίηση μιας κίνησης
+WriteBookKeeping=Εγγραφή λογαριασμών στο γενικό καθολικό
+Bookkeeping=Γενικό Καθολικό
+AccountBalanceByMonth=Το υπόλοιπο του λογαριασμού ανά μήνα
+
+AccountingVentilation=Ανάλυση των λογαριασμών
+AccountingVentilationSupplier=Ανάλυση λογιστικών προμηθευτή
+AccountingVentilationCustomer=Ανάλυση λογιστικών των πελατών
+Line=Γραμμή
+
+CAHTF=Σύνολο προμηθευτή αγορά ΗΤ
+InvoiceLines=Εγγραφές τιμολογίου για ανανέωση
+InvoiceLinesDone=Ανανεωμένες εγγραφές τιμολογίου
+IntoAccount=Στο λογιστικό λογαριασμό
+
+Ventilate=Ανανέωση
+VentilationAuto=Αυτόματη ανάλυση
+
+Processing=Επεξεργασία
+EndProcessing=Τέλος της επεξεργασίας
+AnyLineVentilate=Εγγραφές προς ανανέωση
+SelectedLines=Επιλεγμένες γραμμές
+Lineofinvoice=Γραμμή τιμολογίου
+VentilatedinAccount=Ανανεώθηκε επιτυχώς στον λογιστικό λογαριασμό
+NotVentilatedinAccount=Δεν ανανεώθηκε στον λογιστικό λογαριασμό
+
+ACCOUNTING_SEPARATORCSV=Διαχωριστικό στήλης στο αρχείο εξαγωγής
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Αριθμός αντικειμένων για ανάλυση ανά σελίδα (προτείνεται μέγιστο : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Έχει για κατανομή» από τα πιο πρόσφατα στοιχεία
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ξεκινήστε τη διαλογή της κατανομής των σελίδων "Ανάλυση" με τα πιο πρόσφατα στοιχεία
+
+AccountLength=Μήκος των λογιστικών λογαριασμών που φαίνονται στο Dolibarr
+AccountLengthDesc=Λειτουργία που επιτρέπει να υποκρίνεαι μήκος του λογιστικού λογαριασμού αντικαθιστώντας χώρους από τον αριθμό μηδέν. Η λειτουργία αυτή αγγίζει μόνο την οθόνη, δεν τροποποιούν τους λογιστικούς λογαριασμούς στο Dolibarr. Για την εξαγωγή, αυτή η λειτουργία είναι απαραίτητη για να είναι συμβατή με το συγκεκριμένο λογισμικό.
+ACCOUNTING_LENGTH_GACCOUNT=Μήκος γενικών λογαριασμών
+ACCOUNTING_LENGTH_AACCOUNT=Μήκος λογαριασμών τρίτων
+
+ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
+ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών
+ACCOUNTING_BANK_JOURNAL=Τραπεζικό ημερολόγιο
+ACCOUNTING_CASH_JOURNAL=Ημερολόγιο μετρητών
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Διάφορα ημερολόγια
+ACCOUNTING_SOCIAL_JOURNAL=Κοινωνικό ημερολόγιο
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Λογαριασμός μεταφοράς
+ACCOUNTING_ACCOUNT_SUSPENSE=Λογαριασμός σε αναμονή
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για αγορά προϊόντων (εάν δεν είναι ορισμένος στην καρτέλα προϊόντος)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για πώληση προϊόντων (εάν δεν είναι ορισμένος στην καρτέλα προϊόντος)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για αγορά υπηρεσιών (εάν δεν είναι ορισμένος στην καρτέλα υπηρεσίας)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Προεπιλεγμένος λογιστικός λογαριασμός για πώληση υπηρεσιών (εάν δεν είναι ορισμένος στην καρτέλα υπηρεσίας)
+
+Doctype=Τύπος εγγράφου
+Docdate=Ημερομηνία
+Docref=Παραπομπή
+Numerocompte=Λογαριασμός
+Code_tiers=Πελ./Προμ.
+Labelcompte=Ετικέτα λογαριασμού
+Debit=Χρέωση
+Credit=Πίστωση
+Amount=Σύνολο
+Sens=Σημασία
+Codejournal=Ημερολόγιο
+
+DelBookKeeping=Διαγράψτε τα αρχεία της γενικής λογιστικής
+
+SellsJournal=Ημερολόγιο πωλήσεων
+PurchasesJournal=Ημερολόγιο αγορών
+DescSellsJournal=Ημερολόγιο πωλήσεων
+DescPurchasesJournal=Ημερολόγιο αγορών
+BankJournal=Τραπεζικό ημερολόγιο
+DescBankJournal=Ημερολόγιο Τράπεζας, συμπεριλαμβανομένων όλων των ειδών πληρωμών εκτός από τα μετρητά
+CashJournal=Ημερολόγιο μετρητών
+DescCashJournal=Ημερολόγιο μετρητών καθώς και το είδος των ταμειακών πληρωμών
+
+CashPayment=Καταβολή Μετρητών
+
+SupplierInvoicePayment=Πληρωμή τιμολογίου προμηθευτή
+CustomerInvoicePayment=Πληρωμή τιμολογίου προμηθευτή
+
+ThirdPartyAccount=Λογαριασμός Πελ./Προμ.
+
+NewAccountingMvt=Νέα κίνηση
+NumMvts=Αριθμός κίνησης
+ListeMvts=Λίστα των κινήσεων
+ErrorDebitCredit=Χρεωστικές και Πιστωτικές δεν μπορούν να χουν την ίδια αξία ταυτόχρονα
+
+ReportThirdParty=Λίστα λογαριασμού Πελ./Προμ.
+DescThirdPartyReport=Συμβουλευτείτε εδώ τη λίστα των πελατών και των προμηθευτών και των λογιστικών τους λογαριασμούς τους
+
+ListAccounts=Λίστα των λογιστικών λογαριασμών
+
+Pcgversion=Έκδοση του σχεδίου
+Pcgtype=Τύπος λογαριασμού
+Pcgsubtype=Δευτερεύουσα κατηγορία λογαριασμού
+Accountparent=Ρίζα του λογαριασμού
+Active=Δήλωση
+
+NewFiscalYear=Νέα οικονομική χρονιά
+
+DescVentilCustomer=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των πελατών σας
+TotalVente=Σύνολο κύκλου εργασιών ΗΤ
+TotalMarge=Συνολικό περιθώριο πωλήσεων
+DescVentilDoneCustomer=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων των πελατών και τη λογιστική των λογαριασμών τους
+DescVentilTodoCustomer=Ανανεώστε τις εγγραφές ενός τιμολογίου πελάτη με έναν λογιστικό λογαριασμό
+ChangeAccount=Αλλαγή λογιστικού λογαριασμού για εγγραφές επιλεγμένες από τον λογαριασμό:
+Vide=-
+DescVentilSupplier=Συμβουλευτείτε εδώ την ετήσια κατανομή των λογαριασμών των τιμολογίων των προμηθευτών σας
+DescVentilTodoSupplier=Ανανέωσε τις εγγραφές του τιμολογίου προμηθευτή με έναν λογιστικό λογαριασμό
+DescVentilDoneSupplier=Συμβουλευτείτε εδώ τη λίστα των γραμμών των τιμολογίων του προμηθευτή και τη λογιστική του λογαριασμού τους
+
+ValidateHistory=Αυτόματη επικύρωση
+
+ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
+
+FicheVentilation=Φόρμα ανάλυσης

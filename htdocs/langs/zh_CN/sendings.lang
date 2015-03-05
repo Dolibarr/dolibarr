@@ -4,7 +4,8 @@ Sending=装船
 Sendings=出货
 Shipment=装船
 Shipments=出货
-Receivings=Receivings
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=出货面积
 ListOfSendings=名单sendings
 SendingMethod=送货方式
@@ -14,7 +15,7 @@ SearchASending=搜索装运
 StatisticsOfSendings=统计出货量
 NbOfSendings=出货数量
 NumberOfShipmentsByMonth=每月的出货数量
-SendingCard=船舶卡
+SendingCard=Shipment card
 NewSending=新装运
 CreateASending=创建一个货件
 CreateSending=创建货件
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=取消
 StatusSendingDraftShort=草案
 StatusSendingValidatedShort=验证
 StatusSendingProcessedShort=加工
-SendingSheet=发送表
+SendingSheet=Shipment sheet
 Carriers=载体
 Carrier=载波
 CarriersArea=运营商领域
@@ -54,23 +55,31 @@ StatsOnShipmentsOnlyValidated=对货物进行统计验证。使用的数据的�
 DateDeliveryPlanned=刨交货日期
 DateReceived=交货日期收到
 SendShippingByEMail=通过电子邮件发送货物
-SendShippingRef=发送货物%s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=对装运的事件
 LinkToTrackYourPackage=链接到追踪您的包裹
 ShipmentCreationIsDoneFromOrder=就目前而言，建立一个新的装运完成从订单卡。
-RelatedShippings=相关运送
+RelatedShippings=Related shipments
 ShipmentLine=航线
 CarrierList=转运列表
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=按客户捕捉
 SendingMethodTRANS=运输车
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=简单的送货单文档模型
 DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
 SumOfProductVolumes=产品总数
 SumOfProductWeights=产品总重
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

@@ -32,6 +32,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	var $version='dolibarr';
 	var $error = '';
 	var $nom = 'Magre';
+	var $code_auto=1;
 
 	/**
 	 *	Return default description of numbering model
@@ -111,7 +112,7 @@ class mod_contract_magre extends ModelNumRefContracts
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'contrat','ref','',$objsoc->code_client,$contract->date_contrat);
+		$numFinal=get_next_value($db,$mask,'contrat','ref','',$objsoc,$contract->date_contrat);
 
 		return  $numFinal;
 	}

@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Buchhaltung
+Globalparameters=Globale Parameter
+Chartofaccounts=Kontenplan
+Fiscalyear=Fiskalische Jahre
+Menuaccount=Buchhaltung Konten
+Menuthirdpartyaccount=Partnerkonten
+MenuTools=Werkzeuge
+
+ConfigAccountingExpert=Konfiguration des Experten Buchhaltungsmodul 
+Journaux=Journale
+JournalFinancial=Finanz-Journale
+Exports=Exports
+Export=Exportieren
+Modelcsv=Exportmodell
+OptionsDeactivatedForThisExportModel=Für dieses Exportierungsmodell, sind die Einstellungen deaktiviert
+Selectmodelcsv=Wählen Sie ein Exportmodell
+Modelcsv_normal=Klassischer Export
+Modelcsv_CEGID=Export zu CEGID Expert
+BackToChartofaccounts=Return chart of accounts
+Back=Rückkehr 
+
+Definechartofaccounts=Kontenplan definieren
+Selectchartofaccounts=Kontenplan wählen
+Validate=Freigeben
+Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
+AccountAccounting=Buchhaltungs Konto
+Ventilation=Abbauen
+ToDispatch=Zu versenden
+Dispatched=Versandt
+
+CustomersVentilation=Kundenabbau
+SuppliersVentilation=Lieferantenabbau
+TradeMargin=Handelsspanne
+Reports=Berichte
+ByCustomerInvoice=Nach Kundenrechnungen
+ByMonth=Nach Monat
+NewAccount=Neues Buchhaltungskonto
+Update=Aktualisieren
+List=Liste
+Create=Erstelle
+UpdateAccount=Änderung eines Bilanz-Kontos
+UpdateMvts=Änderung einer Bewegung
+WriteBookKeeping=Konten ins Hauptbuch übernehmen
+Bookkeeping=Hauptbuch
+AccountBalanceByMonth=Kontostand pro Monat
+
+AccountingVentilation=Rechnungswesenabbau
+AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
+AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
+Line=Zeile
+
+CAHTF=Total purchase supplier HT
+InvoiceLines=Rechnungszeile bereinigen
+InvoiceLinesDone=Bereinigte Rechnungszeilen
+IntoAccount=Im Buchhaltungs-Konto
+
+Ventilate=erörtern
+VentilationAuto=Automatischer Abbau
+
+Processing=Bearbeitung
+EndProcessing=Das Ende der Verarbeitung
+AnyLineVentilate=Beliebige Zeile zu bereinigen
+SelectedLines=Gewählte Zeilen
+Lineofinvoice=Rechnungszeile
+VentilatedinAccount=Erfolgreich im Rechnungskonto bereinigt
+NotVentilatedinAccount=Nicht im Rechnungskonto bereinigt
+
+ACCOUNTING_SEPARATORCSV=Spaltentrennzeichen in Exportdatei
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Anzahl der Elemente, die Aufgliederung nach Seite angezeigt werden (empfohlenes Maximum: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Beginnen Sie die Sortierung der Abbau Seiten "Muss sortiert werden" durch die aktuellen Elemente
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Beginnen Sie die Sortierung der Abbau Seiten "Abbau" durch die aktuellen Elemente
+
+AccountLength=Länge der in Dolibarr gezeigten Rechnungskonten
+AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_GACCOUNT=Länge der Finanzbuchführung
+ACCOUNTING_LENGTH_AACCOUNT=Länge der Partner
+
+ACCOUNTING_SELL_JOURNAL=Verkaufsjournal
+ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal
+ACCOUNTING_BANK_JOURNAL=Bankauszug
+ACCOUNTING_CASH_JOURNAL=Kassenbeleg
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Verschiedenes Journal
+ACCOUNTING_SOCIAL_JOURNAL=Sozial-Journal
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto der Transaktion
+ACCOUNTING_ACCOUNT_SUSPENSE=Konto der Warte
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Produkte (wenn nicht im Produktblatt definiert)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Produkte (wenn nicht im Produktblatt definiert)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Dienstleistungen (wenn nicht im Produktblatt definiert)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Dienstleistungen (wenn nicht im Produktblatt definiert)
+
+Doctype=Dokumententyp
+Docdate=Datum
+Docref=Referenz
+Numerocompte=Konto
+Code_tiers=Partner
+Labelcompte=Label-Account
+Debit=Soll
+Credit=Haben
+Amount=Betrag
+Sens=Sens
+Codejournal=Journal
+
+DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
+
+SellsJournal=Verkaufsjournal
+PurchasesJournal=Einkaufsjournal
+DescSellsJournal=Verkaufsjournal
+DescPurchasesJournal=Einkaufsjournal
+BankJournal=Bankauszug
+DescBankJournal=Bankjournal enthält alle Arten von anderen Zahlungsmitteln als Barzahlungen
+CashJournal=Kassenbeleg
+DescCashJournal=Barjournal enthält die Zahlungsart: bar
+
+CashPayment=Barzahlung
+
+SupplierInvoicePayment=Rechnungszahlung (Lieferant)
+CustomerInvoicePayment=Rechnungszahlung (Kunde)
+
+ThirdPartyAccount=Partner Konto
+
+NewAccountingMvt=Neue Änderung
+NumMvts=Anzahl der Änderungen
+ListeMvts=Liste der Bewegungen
+ErrorDebitCredit=Soll und Haben können nicht gleichzeitig eingegeben werden
+
+ReportThirdParty=Liste der Partner Konten
+DescThirdPartyReport=Konsultieren Sie hier die Liste der Drittkunden und die Anbieter und ihre Buchhaltungskonten
+
+ListAccounts=Liste der Abrechnungskonten
+
+Pcgversion=Version des Plans
+Pcgtype=Kontenklasse
+Pcgsubtype=Unterkontenklasse
+Accountparent=Wurzeln des Kontos
+Active=Auszug
+
+NewFiscalYear=Neues fiskalisches Jahr
+
+DescVentilCustomer=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung Ihrer Rechnungs-Kunden
+TotalVente=Totaler Umsatz
+TotalMarge=Gesamt-Spanne
+DescVentilDoneCustomer=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
+DescVentilTodoCustomer=Bereinigen Sie die Zeilen der Kundenrechnung mit einem Rechnungskonto
+ChangeAccount=Ändern sie das Abrechnungskonto für markierte Zeilen durch das Konto:
+Vide=-
+DescVentilSupplier=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung, Ihrer Rechnungen der Lieferanten
+DescVentilTodoSupplier=Bereinigen Sie die Zeilen der Rechnung für Lieferanten, mit einem Abrechnungskonto
+DescVentilDoneSupplier=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abbrechnungskonto
+
+ValidateHistory=Automatisch geltend machen
+
+ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchaltungskonto nicht löschen, da es benutzt wird.
+
+FicheVentilation=Abbau-Karte

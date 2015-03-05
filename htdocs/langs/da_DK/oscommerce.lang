@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OS Commerce
-OSCommerceSetup=OS Commerce modul opsætning
-OSCommerceSetupSaved=OS Commerce opsætning gemmes
-OSCommerceServer=OS Commerce Server host / ip
-OSCommerceDatabaseName=OS Commerce databasenavn
-OSCommercePrefix=OS Commerce tabeller præfiks
-OSCommerceUser=OS Commerce database login

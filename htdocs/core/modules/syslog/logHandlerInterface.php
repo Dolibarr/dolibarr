@@ -44,7 +44,7 @@ interface LogHandlerInterface
 	/**
 	 * 	Return if logger active
 	 *
-	 * 	@return	boolen		True if active
+	 * 	@return	boolean		True if active
 	 */
 	public function isActive();
 

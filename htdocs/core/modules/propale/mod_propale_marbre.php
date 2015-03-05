@@ -26,8 +26,8 @@
 require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
 
-/**	    \class      mod_propale_marbre
- *		\brief      Class to manage customer order numbering rules Marbre
+/**
+ *	Class to manage customer order numbering rules Marbre
  */
 class mod_propale_marbre extends ModeleNumRefPropales
 {
@@ -124,7 +124,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		}
 		else
 		{
-			dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
+			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -134,7 +134,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
 
-		dol_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 

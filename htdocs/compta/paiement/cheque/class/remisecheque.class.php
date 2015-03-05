@@ -41,6 +41,8 @@ class RemiseCheque extends CommonObject
 	//! Numero d'erreur Plage 1024-1279
 	var $errno;
 
+	public $statut;
+
 	/**
 	 *	Constructor
 	 *
@@ -73,7 +75,7 @@ class RemiseCheque extends CommonObject
 		if ($id)  $sql.= " AND bc.rowid = ".$id;
 		if ($ref) $sql.= " AND bc.number = '".$this->db->escape($ref)."'";
 
-		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("RemiseCheque::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -155,7 +157,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", ''";
 		$sql.= ")";
 
-		dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+		dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -172,7 +174,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " SET number='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid='".$this->id."';";
 
-				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql)
 				{
@@ -192,7 +194,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " AND b.fk_account='".$account_id."'";
 				if ($limit) $sql.= $this->db->plimit($limit);
 
-				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -225,7 +227,7 @@ class RemiseCheque extends CommonObject
 						$sql.= " SET fk_bordereau = ".$this->id;
 						$sql.= " WHERE rowid = ".$lineid;
 
-						dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+						dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 						$resql = $this->db->query($sql);
 						if (!$resql)
 						{
@@ -250,7 +252,6 @@ class RemiseCheque extends CommonObject
 			$this->errno = -1;
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("RemiseCheque::Create Error ".$this->error, LOG_ERR);
 		}
 
 	    if (! $this->errno && ! empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
@@ -275,7 +276,7 @@ class RemiseCheque extends CommonObject
 	 *	Supprime la remise en base
 	 *
 	 *	@param  User	$user 		Utilisateur qui effectue l'operation
-	 *	@return	void
+	 *	@return	int
 	 */
 	function delete($user='')
 	{
@@ -293,25 +294,23 @@ class RemiseCheque extends CommonObject
 		{
 			$num = $this->db->affected_rows($resql);
 
-			if ($num <> 1)
-	  {
-	  	$this->errno = -2;
-	  	dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
-	  }
+			if ($num <> 1) {
+				$this->errno = -2;
+				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+			}
 
-	  if ( $this->errno === 0)
-	  {
-	  	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-	  	$sql.= " SET fk_bordereau = 0";
-	  	$sql.= " WHERE fk_bordereau = '".$this->id."'";
+			if ( $this->errno === 0) {
+			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+			    $sql.= " SET fk_bordereau = 0";
+			    $sql.= " WHERE fk_bordereau = '".$this->id."'";
 
-	  	$resql = $this->db->query($sql);
-	  	if (!$resql)
-	  	{
-	  		$this->errno = -1028;
-	  		dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
-	  	}
-	  }
+			    $resql = $this->db->query($sql);
+			    if (!$resql)
+			    {
+			        $this->errno = -1028;
+				    dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+				}
+			}
 		}
 
 		if ($this->errno === 0)
@@ -351,7 +350,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND statut = 0";
 
-			dol_syslog("RemiseCheque::Validate sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::Validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ( $resql )
 			{
@@ -410,7 +409,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND number not like '(%'";
 
-		dol_syslog("Remisecheque::getNextNumber sql=".$sql);
+		dol_syslog("Remisecheque::getNextNumber", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -477,7 +476,7 @@ class RemiseCheque extends CommonObject
 	 *	Build document
 	 *
 	 *	@param	string		$model 			Model name
-	 *	@param 	Tranlsate	$outputlangs	Object langs
+	 *	@param 	Translate	$outputlangs	Object langs
 	 * 	@return int        					<0 if KO, >0 if OK
 	 */
 	function generatePdf($model, $outputlangs)
@@ -510,7 +509,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND bc.entity = ".$conf->entity;
 			$sql.= " ORDER BY b.dateo ASC, b.rowid ASC";
 
-			dol_syslog("RemiseCheque::generatePdf sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::generatePdf", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -694,7 +693,7 @@ class RemiseCheque extends CommonObject
      *      Set the creation date
      *
      *      @param	User		$user           Object user
-     *      @param  timestamp   $date           Date creation
+     *      @param  int   $date           Date creation
      *      @return int                 		<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -705,7 +704,7 @@ class RemiseCheque extends CommonObject
             $sql.= " SET date_bordereau = ".($date ? $this->db->idate($date) : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog("RemiseCheque::set_date sql=$sql",LOG_DEBUG);
+            dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -715,7 +714,6 @@ class RemiseCheque extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("RemiseCheque::set_date ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -729,7 +727,7 @@ class RemiseCheque extends CommonObject
 	 *      Set the number of bordereau
 	 *
 	 *      @param	User		$user           Object user
-	 *      @param  timestamp   $number         number of bordereau
+	 *      @param  int   $number         number of bordereau
 	 *      @return int                 		<0 if KO, >0 if OK
 	 */
 	function set_number($user, $number)
@@ -740,7 +738,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " SET number = '".$number."'" ;
 			$sql.= " WHERE rowid = ".$this->id;
 			
-			dol_syslog("RemiseCheque::set_number sql=$sql",LOG_DEBUG);
+			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -750,7 +748,6 @@ class RemiseCheque extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("RemiseCheque::set_number ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -773,7 +770,7 @@ class RemiseCheque extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin);

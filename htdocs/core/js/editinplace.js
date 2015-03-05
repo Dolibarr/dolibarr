@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+// Copyright (C) 2011-2014	Regis Houssin		<regis.houssin@capnetworks.com>
 // Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -358,12 +358,19 @@ $(document).ready(function() {
 		var res = $.parseJSON(result);
 		if (res.error) {
 			$(obj).html(obj.revert);
-			$.jnotify(res.error, "error", true);
+			var htmlname = $(obj).attr('id').substr(8);
+			var errormsg = $( '#errormsg_' + htmlname ).val();
+			if (errormsg != undefined) {
+				$.jnotify(errormsg, "error", true);
+			} else {
+				$.jnotify(res.error, "error", true);
+			}
+			
 		} else {
 			var htmlname = $(obj).attr('id').substr(8);
-			var success = $( '#success_' + htmlname ).val();
-			if (success != undefined) {
-				$.jnotify(success, "ok");
+			var successmsg = $( '#successmsg_' + htmlname ).val();
+			if (successmsg != undefined) {
+				$.jnotify(successmsg, "ok");
 			}
 			$(obj).html(res.value);
 			$(obj).hide();

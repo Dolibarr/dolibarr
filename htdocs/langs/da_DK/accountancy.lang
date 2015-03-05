@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Regnskab
+Globalparameters=Globale parametre
+Chartofaccounts=Kontoplan
+Fiscalyear=Finansår
+Menuaccount=Regnskabskonti
+Menuthirdpartyaccount=Trediepartskonti
+MenuTools=Værktøjer
+
+ConfigAccountingExpert=Konfiguration af ekspert Regnskabsmodulet
+Journaux=Journaler
+JournalFinancial=Finans journal
+Exports=Eksporter
+Export=Export
+Modelcsv=Eksportmodul
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Vælg en eksportmodel
+Modelcsv_normal=Klassisk eksport
+Modelcsv_CEGID=Eksporter med CEGID ekspert
+BackToChartofaccounts=Returner kontoplan
+Back=Returner
+
+Definechartofaccounts=Definer en kontoplan
+Selectchartofaccounts=Vælg en kontoplan
+Validate=Godkend
+Addanaccount=Tilføj en regnskabsmæssig konto
+AccountAccounting=Regnskabsmæssig konto
+Ventilation=Sammenbrud
+ToDispatch=Afsend
+Dispatched=Afsendt
+
+CustomersVentilation=Udspecificer kunder
+SuppliersVentilation=Udspecificer leverandører
+TradeMargin=Handelsforskel
+Reports=Reporter
+ByCustomerInvoice=Efter fakturakunder
+ByMonth=Efter måned
+NewAccount=By regnskabskonto
+Update=Opdater
+List=Liste
+Create=Opret
+UpdateAccount=Ændring af en regnskabsmæssig konto
+UpdateMvts=Ændring af en bevægelse
+WriteBookKeeping=Optage konti i kontoplanen
+Bookkeeping=Kontoplan
+AccountBalanceByMonth=Kontobalance efter måned
+
+AccountingVentilation=Udspecificer regnskab
+AccountingVentilationSupplier=Udspecificer regnskab leverandører
+AccountingVentilationCustomer=Udspecificer regnskab kunder
+Line=Linje
+
+CAHTF=Samlet køb leverandør
+InvoiceLines=Linjer af faktura, der skal fornyes
+InvoiceLinesDone=Fornyede linjer af faktura
+IntoAccount=I den regnskabsmæssige konto
+
+Ventilate=Forny
+VentilationAuto=Udspecificer automatisk
+
+Processing=Forarbejde
+EndProcessing=Forarbejdet
+AnyLineVentilate=Linjer, der skal fornyes
+SelectedLines=Valgte linjer
+Lineofinvoice=Fakturalinjer
+VentilatedinAccount=Fornyet med succes i den regnskabsmæssige konto
+NotVentilatedinAccount=Ikke fornyede i den regnskabsmæssige konto
+
+ACCOUNTING_SEPARATORCSV=Column separator in export file
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+
+AccountLength=Længde af regnskabssystemet konti i Dolibarr
+AccountLengthDesc=Funktion gør det muligt at foregive en længde på regnskabsmæssig konto ved at erstatte mellemrum med tallet nul. Da denne funktion kun vises på skærmen ændrer det ikke ved de bogføring registreret i Dolibarr konti. For eksport, er det nødvendigt denne funktion til at være kompatibel med bestemt software.
+ACCOUNTING_LENGTH_GACCOUNT=Længde af det almindelige regnskab
+ACCOUNTING_LENGTH_AACCOUNT=Længde af de tredjeparts-konti
+
+ACCOUNTING_SELL_JOURNAL=Salgskladde
+ACCOUNTING_PURCHASE_JOURNAL=Indkøbskladde
+ACCOUNTING_BANK_JOURNAL=Bankkladde
+ACCOUNTING_CASH_JOURNAL=Kontantkladde
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diversekladde
+ACCOUNTING_SOCIAL_JOURNAL=Socialkladde
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto overførsel
+ACCOUNTING_ACCOUNT_SUSPENSE=Ventende konto
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskab konto som standard for købte produkter (hvis ikke defineret i produktark)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Regnskab konto som standard for de solgte produkter (hvis ikke defineret i produktark)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Regnskab konto som standard for de indkøbte tjenester (hvis ikke defineret i tjeneste ark)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Regnskab konto som standard for de solgte ydelser (hvis ikke defineret i tjeneste ark)
+
+Doctype=Dokumenttype
+Docdate=Dato
+Docref=Reference
+Numerocompte=Konto
+Code_tiers=Trediepart
+Labelcompte=Kontonavn
+Debit=Debet
+Credit=Kredit
+Amount=Beløb
+Sens=Sens
+Codejournal=Journal
+
+DelBookKeeping=Slet posterne i kontoplanen
+
+SellsJournal=Salgskladde
+PurchasesJournal=Købskladde
+DescSellsJournal=Salgskladde
+DescPurchasesJournal=Købskladde
+BankJournal=Bankjournal
+DescBankJournal=Bankkladden herunder alle de typer af andre betalinger end kontanter
+CashJournal=Kontantkladde
+DescCashJournal=Kontantkladde herunder betalinger med kontanter
+
+CashPayment=Kontant betaling
+
+SupplierInvoicePayment=Betaling af leverandørfakturaer
+CustomerInvoicePayment=Betaling af kundefaktura
+
+ThirdPartyAccount=Tredjepart konto
+
+NewAccountingMvt=Ny bevægelse
+NumMvts=Antal bevægelser
+ListeMvts=Liste af bevægelser / kontokort
+ErrorDebitCredit=Debet og kredit kan ikke have en værdi på samme tid
+
+ReportThirdParty=Tredjeparts konto liste
+DescThirdPartyReport=Gå til en liste over de tredjeparts kunder og leverandører og deres regnskabssystemer konti
+
+ListAccounts=Liste over de regnskabsmæssige konti
+
+Pcgversion=Version af planen
+Pcgtype=Kontoens klasse
+Pcgsubtype=Kontoens underklasse
+Accountparent=Roden af kontoen
+Active=Erklæring
+
+NewFiscalYear=Nyt finansår
+
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+TotalVente=Samlet omsætning
+TotalMarge=Samlet salgsforskel
+DescVentilDoneCustomer=Gå til en liste over de linjer af fakturaer kunder og deres regnskabskonto
+DescVentilTodoCustomer=Forny dine linjer ag kundefaktura med en regnskabskonto
+ChangeAccount=Skift den regnskabsmæssige konto for strækninger, der er udvalgt af hensyn til:
+Vide=-
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=Forny dine linier af faktura leverandører med en regnskabskonto
+DescVentilDoneSupplier=Gå til en liste over de linjer af fakturaer leverandør og deres regnskabskonto
+
+ValidateHistory=Forny automatisk
+
+ErrorAccountancyCodeIsAlreadyUse=Fejl, kan du ikke slette denne regnskabsmæssige konto, fordi den bruges
+
+FicheVentilation=Breakdown card

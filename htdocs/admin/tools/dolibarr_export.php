@@ -65,7 +65,7 @@ if ($action == 'delete')
 $form=new Form($db);
 $formfile = new FormFile($db);
 
-$label=getStaticMember($db, 'label');
+$label=$db::LABEL;
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);
@@ -97,7 +97,7 @@ jQuery(document).ready(function() {
 		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
 		{
 			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
-		};
+		}
 	});
 
 	<?php
@@ -366,9 +366,11 @@ print $langs->trans("BackupDescY").'<br><br>';
 	id="filename_template"
 	value="<?php
 $prefix='dump';
-if ($label == 'MySQL')      $prefix='mysqldump';
-if ($label == 'PostgreSQL') $prefix='pg_dump';
-$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.sql';
+$ext='.sql';
+if ($label == 'MySQL')      { $prefix='mysqldump'; $ext='sql'; }
+//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
+if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='sql'; }
+$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
 echo $file;
 ?>" /> <br>
 <br>
@@ -376,16 +378,19 @@ echo $file;
 <?php
 
 // Define compressions array
-$compression=array(
-	'none' => array('function' => '',       'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
-	'gz'   => array('function' => 'gzopen', 'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
-);
+$compression=array();
 if ($label == 'MySQL')
 {
-//	$compression['zip']= array('function' => 'dol_compress', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));		// Not open source format. Must implement dol_compress function
+	$compression['none'] = array('function' => '',       'id' => 'radio_compression_none', 'label' => $langs->trans("None"));
+	$compression['gz'] = array('function' => 'gzopen', 'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip"));
+	//	$compression['zip']= array('function' => 'dol_compress', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));		// Not open source format. Must implement dol_compress function
     $compression['bz'] = array('function' => 'bzopen',       'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
 }
-
+else
+{
+	$compression['none'] = array('function' => '',       'id' => 'radio_compression_none', 'label' => $langs->trans("Default"));
+	$compression['gz'] = array('function' => 'gzopen', 'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip"));
+}
 
 // Show compression choices
 print '<div class="formelementrow">';

@@ -142,7 +142,7 @@ class DolEditor
      *
      *  @param	int		$noprint    1=Return HTML string instead of printing it to output
      *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
-     *  @return	void
+     *  @return	void|string
      */
     function Create($noprint=0,$morejs='')
     {
@@ -183,7 +183,8 @@ class DolEditor
             						customConfig : ckeditorConfig,
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						toolbar: \''.$this->toolbarname.'\',
+            						allowedContent :'.(empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)?'false':'true').',
+                            		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',

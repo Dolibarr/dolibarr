@@ -57,16 +57,15 @@ if( ! $user->rights->resource->read)
 
 $object = new Resource($db);
 
-$hookmanager->initHooks(array('resource_card'));
+$hookmanager->initHooks(array('resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
-
+if (empty($reshook))
+{
 	/*******************************************************************
 	* ACTIONS
-	*
-	* Put here all code to do according to value of "action" parameter
 	********************************************************************/
 
 	if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write )
@@ -76,7 +75,7 @@ if (empty($reshook)) {
 		if (empty($ref))
 		{
 			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
 		}
 
 		if (! $error)
@@ -96,7 +95,7 @@ if (empty($reshook)) {
 				}
 				else
 				{
-					setEventMessage('<div class="error">'.$object->error.'</div>');
+					setEventMessage($object->error, 'errors');
 					$action='edit';
 				}
 
@@ -139,7 +138,7 @@ if ( $object->fetch($id) > 0 )
 
 		/*---------------------------------------
 		 * Edit object
-		*/
+		 */
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -150,13 +149,13 @@ if ( $object->fetch($id) > 0 )
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("ResourceFormLabel_ref").'</td>';
 		print '<td><input size="12" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
-		
+
 		// Type
 		print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);		
+		$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
 		print '</td></tr>';
-		
+
 		// Description
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 		print '<td>';
@@ -171,7 +170,7 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
-	    // Confirmation suppression resource line
+	    // Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
 	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
@@ -195,7 +194,7 @@ if ( $object->fetch($id) > 0 )
 		print $object->type_label;
 		print '</td>';
 		print '</tr>';
-		
+
 		// Description
 		print '<tr>';
 		print '<td>' . $langs->trans("ResourceFormLabel_description") . '</td>';
@@ -216,8 +215,8 @@ if ( $object->fetch($id) > 0 )
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
-	if (empty($reshook)) 
-	{	
+	if (empty($reshook))
+	{
 		if ($action != "edit" )
 		{
 			// Edit resource
@@ -228,9 +227,9 @@ if ( $object->fetch($id) > 0 )
 				print '</div>';
 			}
 		}
-		if ($action != "delete" )
+		if ($action != "delete" && $action != "edit")
 		{
-		    // Edit resource
+		    // Delete resource
 		    if($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';

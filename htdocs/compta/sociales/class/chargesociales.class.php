@@ -34,6 +34,11 @@ class ChargeSociales extends CommonObject
     public $table='chargesociales';
     public $table_element='chargesociales';
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $table_ref_field = 'ref';
+
     var $id;
     var $ref;
     var $date_ech;
@@ -62,19 +67,21 @@ class ChargeSociales extends CommonObject
     /**
      *  Retrouve et charge une charge sociale
      *
-     *  @param	int     $id		1 si trouve, 0 sinon
-     *  @return	void
+     *  @param	int     $id		Id
+     *  @param	string  $ref	Ref
+     *  @return	int <0 KO >0 OK
      */
-    function fetch($id)
+    function fetch($id, $ref='')
     {
         $sql = "SELECT cs.rowid, cs.date_ech,";
         $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
         $sql.= " c.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
         $sql.= " WHERE cs.fk_type = c.id";
-        $sql.= " AND cs.rowid = ".$id;
+        if ($ref) $sql.= " AND cs.rowid = ".$ref;
+        else $sql.= " AND cs.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -92,13 +99,14 @@ class ChargeSociales extends CommonObject
                 $this->paye           = $obj->paye;
                 $this->periode        = $this->db->jdate($obj->periode);
 
+                $this->db->free($resql);
+
                 return 1;
             }
             else
             {
                 return 0;
             }
-            $this->db->free($resql);
         }
         else
         {
@@ -107,6 +115,24 @@ class ChargeSociales extends CommonObject
         }
     }
 
+	/**
+	 * Check if a social contribution can be created into database
+	 *
+	 * @return	boolean		True or false
+	 */
+	function check()
+	{
+		$newamount=price2num($this->amount,'MT');
+
+        // Validation parametres
+        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
+        {
+            return false;
+        }
+
+
+		return true;
+	}
 
     /**
      *      Create a social contribution into database
@@ -121,12 +147,12 @@ class ChargeSociales extends CommonObject
         // Nettoyage parametres
         $newamount=price2num($this->amount,'MT');
 
-        // Validation parametres
-        if (! $newamount > 0 || empty($this->date_ech) || empty($this->periode))
-        {
-            $this->error="ErrorBadParameter";
-            return -2;
-        }
+		if (!$this->check())
+		{
+			 $this->error="ErrorBadParameter";
+			 return -2;
+		}
+
 
         $this->db->begin();
 
@@ -137,7 +163,7 @@ class ChargeSociales extends CommonObject
         $sql.= " ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -192,7 +218,7 @@ class ChargeSociales extends CommonObject
         if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
-            dol_syslog(get_class($this)."::delete sql=".$sql);
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
@@ -204,7 +230,7 @@ class ChargeSociales extends CommonObject
         if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
-            dol_syslog(get_class($this)."::delete sql=".$sql);
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
@@ -243,7 +269,7 @@ class ChargeSociales extends CommonObject
         $sql.= " periode='".$this->db->idate($this->periode)."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update sql=".$sql);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -283,14 +309,13 @@ class ChargeSociales extends CommonObject
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
+                $this->db->free($result);
                 return $obj->amount;
             }
             else
             {
                 return 0;
             }
-
-            $this->db->free($result);
 
         }
         else
@@ -341,7 +366,7 @@ class ChargeSociales extends CommonObject
         global $langs;
         $langs->load('customers');
         $langs->load('bills');
-        
+
         if ($mode == 0)
         {
             if ($statut ==  0) return $langs->trans("Unpaid");
@@ -419,7 +444,7 @@ class ChargeSociales extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
         $sql.= ' WHERE '.$field.' = '.$this->id;
 
-        dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -449,7 +474,7 @@ class ChargeSociales extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::info sql=".$sql);
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -495,8 +520,6 @@ class ChargeSociales extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
-
         // Initialize parameters
         $this->id=0;
         $this->ref = 'SPECIMEN';

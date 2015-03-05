@@ -43,7 +43,10 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
+
 <center>
+<div class="login_vertical_align">
+
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
@@ -66,7 +69,9 @@ $(document).ready(function () {
 <tr>
 <td valign="bottom" class="loginfield nowrap"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
 <td valign="bottom" class="nowrap">
-<input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+<span class="span-icon-user">
+<input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+</span>
 </td>
 </tr>
 
@@ -88,7 +93,11 @@ if (! empty($hookmanager->resArray['options'])) {
 	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
-	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
+	<td>
+	<span class="span-icon-security">
+	<input id="securitycode" class="flat input-icon-security" type="text" size="6" maxlength="5" name="code" tabindex="4" />
+	</span>
+	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
@@ -132,7 +141,7 @@ if (! empty($hookmanager->resArray['options'])) {
 </form>
 
 
-<div class="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+<div class="center login_main_home" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
 	<font style="font-size: 12px;">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
@@ -148,16 +157,16 @@ if (! empty($hookmanager->resArray['options'])) {
 <br>
 
 <?php if ($message) { ?>
-	<div class="center" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
+	<div class="center login_main_message" style="max-width: 680px; margin-left: 10px; margin-right: 10px;">
 	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
 	</div>
 <?php } ?>
 
+
+</div>
 </center>	<!-- end of center -->
 
-<br>
 
 </body>
 </html>
-
 <!-- END PHP TEMPLATE -->

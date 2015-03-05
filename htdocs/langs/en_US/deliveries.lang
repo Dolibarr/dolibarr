@@ -24,3 +24,5 @@ Deliverer=Deliverer :
 Sender=Sender
 Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable

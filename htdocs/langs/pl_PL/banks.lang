@@ -8,6 +8,7 @@ FinancialAccount=Konto
 FinancialAccounts=Konta
 BankAccount=Konto bankowe
 BankAccounts=Konta bankowe
+ShowAccount=Show Account
 AccountRef=Rachunek finansowy ref
 AccountLabel=Etykieta rachunku finansowego
 CashAccount=Rachunek gotówkowy

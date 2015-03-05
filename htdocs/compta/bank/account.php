@@ -72,8 +72,6 @@ if ($negpage)
     if ($page > GETPOST("nbpage")) $page = GETPOST("nbpage");
 }
 
-$mesg='';
-
 $object = new Account($db);
 
 /*
@@ -83,6 +81,8 @@ $dateop=-1;
 
 if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
+	$error = 0;
+
 	if (price2num($_POST["credit"]) > 0)
 	{
 		$amount = price2num($_POST["credit"]);
@@ -98,11 +98,20 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 	$label=$_POST["label"];
 	$cat1=$_POST["cat1"];
 
-	if (! $dateop)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
-	if (! $operation) $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
-	if (! $amount)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+	if (! $dateop) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+	}
+	if (! $operation) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Type")), 'errors');
+	}
+	if (! $amount) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+	}
 
-	if (! $mesg)
+	if (! $error)
 	{
 		$object->fetch($id);
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
@@ -114,7 +123,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		}
 		else
 		{
-			$mesg=$object->error;
+			setEventMessage($object->error, 'errors');
 		}
 	}
 	else
@@ -241,7 +250,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
 
-	dol_syslog("account.php count transactions - sql=".$sql, LOG_DEBUG);
+	dol_syslog("account.php count transactions -", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result)
 	{
@@ -299,8 +308,6 @@ if ($id > 0 || ! empty($ref))
 	print '</table>';
 
 	print '<br>';
-
-	dol_htmloutput_errors($mesg);
 
 	/**
 	 * Search form
@@ -425,7 +432,7 @@ if ($id > 0 || ! empty($ref))
 	print '<td>';
 	//$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
 	$filtertype='';
-	print $form->select_types_paiements($paiementtype,'paiementtype',$filtertype,2,1,1,8);
+	$form->select_types_paiements($paiementtype,'paiementtype',$filtertype,2,1,1,8);
 	print '</td>';
 	print '<td><input type="text" class="flat" name="req_nb" value="'.$req_nb.'" size="2"></td>';
 	print '<td><input type="text" class="flat" name="req_desc" value="'.$req_desc.'" size="24"></td>';
@@ -490,7 +497,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);
 
-	dol_syslog("account.php get transactions - sql=".$sql, LOG_DEBUG);
+	dol_syslog("account.php get transactions -", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -582,7 +589,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					elseif ($links[$key]['type']=='payment_sc')
 					{
-						print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+						print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 						//print $langs->trans("SocialContributionPayment");
 						print '</a>';
@@ -673,7 +680,7 @@ if ($id > 0 || ! empty($ref))
 					if ($links[$key]['type']=='company')
 					{
 						$societestatic->id=$links[$key]['url_id'];
-						$societestatic->nom=$links[$key]['label'];
+						$societestatic->name=$links[$key]['label'];
 						print $societestatic->getNomUrl(1,'',16);
 					}
 					else if ($links[$key]['type']=='user')

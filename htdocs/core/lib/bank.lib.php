@@ -27,16 +27,16 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   Account	$object		Object related to tabs
+ * @return  array				Array of tabs to show
  */
-function bank_prepare_head($object)
+function bank_prepare_head(Account $object)
 {
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT . '/compta/bank/fiche.php?id=' . $object->id;
+    $head[$h][0] = DOL_URL_ROOT . '/compta/bank/card.php?id=' . $object->id;
     $head[$h][1] = $langs->trans("AccountCard");
     $head[$h][2] = 'bankname';
     $h++;

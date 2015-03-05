@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2014		Cedric GROSS		<c.gross@kreiz-it.fr>
+/* Copyright (C) 2006-2011	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007		Patrick Raguin      	<patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010		Juanjo Menent       	<jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +167,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 *	This class is an enhanced FPDI class that support method writeHTMLCell
 		 */
 		class FPDI_DolExtended extends FPDI
-        {
+		{
 			/**
 			 * __call
 			 *
@@ -269,7 +270,9 @@ function pdf_getPDFFontSize($outputlangs)
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	$height=22; $maxwidth=130;
+	global $conf;
+	$height=(empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT)?22:$conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
+	$maxwidth=130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp=dol_getImageSize($logo, $url);
 	if ($tmp['height'])
@@ -435,9 +438,9 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	// Add a background image on document
 	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))		// Warning, this option make TCPDF generation beeing crazy and some content disappeared behin the image
 	{
-        $pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
+		$pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_X:0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y:0), 0, $page_height);
-        $pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
+		$pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
 	}
 }
 
@@ -489,7 +492,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
  *  @param  Account		$account         		Bank account object
- *  @param  int			$onlynumber      		Output only number
+ *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and domiciliation)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
@@ -499,7 +502,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
 	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
-
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber))
@@ -511,10 +513,14 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$outputlangs->load("banks");
 
+	// Use correct name of bank id according to country
+	$bickey="BICNumber";
+	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
 
-	//$onlynumber=0; $usedetailedbban=0; // For tests
+	//$onlynumber=0; $usedetailedbban=1; // For tests
 	if ($usedetailedbban)
 	{
 		$savcurx=$curx;
@@ -589,7 +595,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		}
 
 		$curx=$savcurx;
-		$cury+=10;
+		$cury+=9;
 	}
 	else
 	{
@@ -606,12 +612,6 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
-	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
-	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
-
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 
 	if (empty($onlynumber) && ! empty($account->domiciliation))
@@ -626,22 +626,35 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
+	// Use correct name of bank id according to country
+	$ibankey="IBANNumber";
+	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if (! empty($account->iban))
 	{
+		$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+		$ibanDisplay = "";
+
+		for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++)
+		{
+			$ibanDisplay .= $ibanDisplay_temp[$i];
+			if($i%4 == 3 && $i > 0)	$ibanDisplay .= " ";
+		}
+
+		$pdf->SetFont('','B',$default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
 		$cury+=3;
 	}
 
 	if (! empty($account->bic))
 	{
+		$pdf->SetFont('','B',$default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 	}
 
 	return $pdf->getY();
 }
-
 
 /**
  *  Show footer of page for PDF generation
@@ -654,7 +667,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height (no more used)
  * 	@param	Object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version.
+ * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version. (1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
  * 	@return	int							Return height of bottom margin including footer text
  */
@@ -672,11 +685,11 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		// Make substitution
 		$substitutionarray=array(
-		'__FROM_NAME__' => $fromcompany->nom,
-		'__FROM_EMAIL__' => $fromcompany->email,
-		'__TOTAL_TTC__' => $object->total_ttc,
-		'__TOTAL_HT__' => $object->total_ht,
-		'__TOTAL_VAT__' => $object->total_vat
+			'__FROM_NAME__' => $fromcompany->name,
+			'__FROM_EMAIL__' => $fromcompany->email,
+			'__TOTAL_TTC__' => $object->total_ttc,
+			'__TOTAL_HT__' => $object->total_ht,
+			'__TOTAL_VAT__' => $object->total_vat
 		);
 		complete_substitutions_array($substitutionarray,$outputlangs,$object);
 		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
@@ -684,10 +697,10 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// First line of company infos
+	$line1=""; $line2=""; $line3=""; $line4="";
 
-	if ($showdetails)
+	if ($showdetails && 1)
 	{
-		$line1="";
 		// Company name
 		if ($fromcompany->name)
 		{
@@ -719,7 +732,6 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			$line1.=($line1?" - ":"").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
 		}
 
-		$line2="";
 		// URL
 		if ($fromcompany->url)
 		{
@@ -731,9 +743,16 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			$line2.=($line2?" - ":"").$fromcompany->email;
 		}
 	}
+	if (($showdetails && 2) || ($fromcompany->country_code == 'DE'))
+	{
+		// Managers
+		if ($fromcompany->managers)
+		{
+			$line2.=($line2?" - ":"").$fromcompany->managers;
+		}
+	}
 
 	// Line 3 of company infos
-	$line3="";
 	// Juridical status
 	if ($fromcompany->forme_juridique_code)
 	{
@@ -742,7 +761,9 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->currency);
+		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
+		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) $line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
+		else $line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$tmpamounttoshow,$outputlangs);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
@@ -760,7 +781,6 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// Line 4 of company infos
-	$line4="";
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{
@@ -1253,7 +1273,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  *
  *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
- *  @param  Tranlate	$outputlangs		Object langs for output
+ *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
  *  @return	void
  */
@@ -1586,11 +1606,22 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
 			}
 		}
+		else if ($objecttype == 'contrat')
+		{
+			$outputlangs->load('contracts');
+			$num=count($objects);
+			for ($i=0;$i<$num;$i++)
+			{
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date_contrat,'day','',$outputlangs);
+			}
+		}
 		else if ($objecttype == 'shipping')
 		{
 			$outputlangs->load('orders');
 			$outputlangs->load('sendings');
-
 			$num=count($objects);
 			for ($i=0;$i<$num;$i++)
 			{
@@ -1603,18 +1634,6 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
 				$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
-			}
-		}
-		else if ($objecttype == 'contrat')
-		{
-			$outputlangs->load('contracts');
-			$num=count($objects);
-			for ($i=0;$i<$num;$i++)
-			{
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date_contrat,'day','',$outputlangs);
 			}
 		}
 	}

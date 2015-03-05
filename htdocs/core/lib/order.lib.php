@@ -28,10 +28,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   Commande	$object		Object related to tabs
+ * @return  array				Array of tabs to show
  */
-function commande_prepare_head($object)
+function commande_prepare_head(Commande $object)
 {
 	global $langs, $conf, $user;
 	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
@@ -42,7 +42,7 @@ function commande_prepare_head($object)
 
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderCard");
 		$head[$h][2] = 'order';
 		$h++;
@@ -52,7 +52,7 @@ function commande_prepare_head($object)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipments");
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
 		$head[$h][1] = $text;
@@ -89,7 +89,7 @@ function commande_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -99,7 +99,7 @@ function commande_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -116,10 +116,9 @@ function commande_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @param	Object	$object		order
- *  @return	array   	        head array with tabs
+ *  @return	array   	    		    head array with tabs
  */
-function order_admin_prepare_head($object)
+function order_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -131,7 +130,7 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -143,7 +142,7 @@ function order_admin_prepare_head($object)
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin','remove');
 
 	return $head;
 }

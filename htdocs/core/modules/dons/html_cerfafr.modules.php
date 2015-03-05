@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +20,9 @@
  */
 
 /**
- * \file       htdocs/core/modules/dons/html_cerfafr.modules.php
- * \ingroup    don
- * \brief      Formulaire de don
+ *	\file       htdocs/core/modules/dons/html_cerfafr.modules.php
+ *	\ingroup    don
+ *	\brief      Form of donation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
@@ -44,9 +45,9 @@ class html_cerfafr extends ModeleDon
 
         $this->db = $db;
         $this->name = "cerfafr";
-        $this->description = $langs->trans('DonationsReceiptModel');
+        $this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*03';
 
-        // Dimension page pour format A4
+        // Dimension page for size A4
         $this->type = 'html';
     }
 
@@ -87,7 +88,7 @@ class html_cerfafr extends ModeleDon
 
         if (! empty($conf->don->dir_output))
         {
-			// Definition de l'objet $don (pour compatibilite ascendante)
+			// Definition of the object don (for upward compatibility)
         	if (! is_object($don))
         	{
 	            $don = new Don($this->db);
@@ -95,7 +96,7 @@ class html_cerfafr extends ModeleDon
 	            $id=$don->id;
 			}
 
-			// Definition de $dir et $file
+			// Definition of $dir and $file
 			if (! empty($don->specimen))
 			{
 				$dir = $conf->don->dir_output;
@@ -121,8 +122,8 @@ class html_cerfafr extends ModeleDon
             {
             	$formclass = new Form($this->db);
 
-            	//This is not the proper way to do it but $formclass->form_modes_reglement
-            	//prints the translation instead of returning it
+            	// This is not the proper way to do it but $formclass->form_modes_reglement
+            	// prints the translation instead of returning it
             	if ($don->modepaiementid)
             	{
             		$formclass->load_cache_types_paiements();
@@ -130,7 +131,7 @@ class html_cerfafr extends ModeleDon
             	}
             	else $paymentmode = '';
 
-		        // Defini contenu
+		        // Define contents
 		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
 		        $form = implode('', file($donmodel));
 		        $form = str_replace('__REF__',$don->id,$form);
@@ -143,32 +144,79 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__',$mysoc->address,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_ZIP__',$mysoc->zip,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_TOWN__',$mysoc->town,$form);
-		        $form = str_replace('__DONATOR_FIRSTNAME__',$don->firstname,$form);
+				$form = str_replace('__DONATOR_FIRSTNAME__',$don->firstname,$form);
             	$form = str_replace('__DONATOR_LASTNAME__',$don->lastname,$form);
 		        $form = str_replace('__DONATOR_ADDRESS__',$don->address,$form);
 		        $form = str_replace('__DONATOR_ZIP__',$don->zip,$form);
 		        $form = str_replace('__DONATOR_TOWN__',$don->town,$form);
 		        $form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode,$form);
-		        $form = str_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$form);
+		        $form = str_replace('__NOW__',dol_print_date($now,'day',false,$outputlangs),$form);
 		        $form = str_replace('__DonationRef__',$outputlangs->trans("DonationRef"),$form);
+				$form = str_replace('__DonationTitle__',$outputlangs->trans("DonationTitle"),$form);
 		        $form = str_replace('__DonationReceipt__',$outputlangs->trans("DonationReceipt"),$form);
 		        $form = str_replace('__DonationRecipient__',$outputlangs->trans("DonationRecipient"),$form);
-		        $form = str_replace('__DatePayment__',$outputlangs->trans("DatePayment"),$form);
-		        $form = str_replace('__PaymentMode__',$outputlangs->trans("PaymentMode"),$form);
+		        $form = str_replace('__DonationDatePayment__',$outputlangs->trans("DonationDatePayment"),$form);
+				$form = str_replace('__PaymentMode__',$outputlangs->trans("PaymentMode"),$form);
 		        $form = str_replace('__Name__',$outputlangs->trans("Name"),$form);
 		        $form = str_replace('__Address__',$outputlangs->trans("Address"),$form);
 		        $form = str_replace('__Zip__',$outputlangs->trans("Zip"),$form);
 		        $form = str_replace('__Town__',$outputlangs->trans("Town"),$form);
+				$form = str_replace('__Object__',$outputlangs->trans("Object"),$form);
 		        $form = str_replace('__Donor__',$outputlangs->trans("Donor"),$form);
 		        $form = str_replace('__Date__',$outputlangs->trans("Date"),$form);
 		        $form = str_replace('__Signature__',$outputlangs->trans("Signature"),$form);
-		        $form = str_replace('__ThankYou__',$outputlangs->trans("ThankYou"),$form);
+		        $form = str_replace('__Message__',$outputlangs->trans("Message"),$form);
 		        $form = str_replace('__IConfirmDonationReception__',$outputlangs->trans("IConfirmDonationReception"),$form);
-		        $frencharticle='';
-		        if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1"><b>(Article 200-5 du Code Général des Impôts)</b></font><br>+ article 238 bis';
+		        $form = str_replace('__DonationMessage__',$conf->global->DONATION_MESSAGE,$form);
+				
+				$frencharticle='';
+		        if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
 				$form = str_replace('__FrenchArticle__',$frencharticle,$form);
+				
+				$frencheligibility='';
+				if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencheligibility='Le bénéficiaire certifie sur l\'honneur que les dons et versements qu\'il reçoit ouvrent droit à la réduction d\'impôt prévue à l\'article :';
+				$form = str_replace('__FrenchEligibility__',$frencheligibility,$form);
+				
+				$art200='';
+				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
+					if ($conf->global->DONATION_ART200 >= 1) 
+					{
+						$art200='<input type="checkbox" checked="checked">200 du CGI';
+					}
+					else
+					{
+						$art200='<input type="checkbox">200 du CGI';
+					}
+				}
+				$form = str_replace('__ARTICLE200__',$art200,$form);
 
-		        // Sauve fichier sur disque
+				$art238='';
+				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
+					if ($conf->global->DONATION_ART238 >= 1) 
+					{
+						$art238='<input type="checkbox" checked="checked">238 bis du CGI';
+					}
+					else
+					{
+						$art238='<input type="checkbox">238 bis du CGI';
+					}
+				}
+				$form = str_replace('__ARTICLE238__',$art238,$form);
+				
+				$art885='';
+				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
+					if ($conf->global->DONATION_ART885 >= 1) 
+					{
+						$art885='<input type="checkbox" checked="checked">885-0 V bis du CGI';
+					}
+					else
+					{
+						$art885='<input type="checkbox">885-0 V bis du CGI';
+					}
+				}
+				$form = str_replace('__ARTICLE885__',$art885,$form);
+				
+				// Save file on disk
 		        dol_syslog("html_cerfafr::write_file $file");
 		        $handle=fopen($file,"w");
 		        fwrite($handle,$form);
@@ -190,7 +238,7 @@ class html_cerfafr extends ModeleDon
             return 0;
 		}
         $this->error=$langs->trans("ErrorUnknown");
-        return 0;   // Erreur par defaut
+        return 0;   // Error by default
     }
 }
 

@@ -155,6 +155,7 @@ MigrationFinished=マイグレーションが終了しました
 LastStepDesc=<strong>最後のステップ</strong> ：ここにあなたがソフトウェアへの接続に使用する予定のログインとパスワードを定義します。それは他のすべてを管理するアカウントであるとしてこれを紛失しないでください。
 ActivateModule=モジュール%sをアクティブにする
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=更新時間は秒単位で過ごした
 MigrationActioncommElement=アクション上でデータを更新する
 MigrationPaymentMode=支払い·モードのデータ移行
 MigrationCategorieAssociation=Migration of categories
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options

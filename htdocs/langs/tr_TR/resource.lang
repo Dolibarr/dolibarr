@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Kaynaklar
+MenuResourceAdd=Yeni kaynaklar
+MenuResourcePlanning=Kaynak planlama
+DeleteResource=Kaynak sil
+ConfirmDeleteResourceElement=Bu öğe için kaynağı silmeyi onayla
+NoResourceInDatabase=Veritabanında kaynak yok
+NoResourceLinked=Bağlantılı kaynak yok
+
+ResourcePageIndex=Kaynak listesi
+ResourceSingular=Kaynak
+ResourceCard=Kaynak kartı
+AddResource=Bir kaynak oluştur
+ResourceFormLabel_ref=Kaynak adı
+ResourceType=Kaynak türü
+ResourceFormLabel_description=Kaynak açıklaması
+
+ResourcesLinkedToElement=Öğeye bağlantılı kaynaklar
+
+ShowResourcePlanning=Kaynak planlama göster
+GotoDate=Tarihe git
+
+ResourceElementPage=Öğe kaynağı
+ResourceCreatedWithSuccess=Kaynak oluşturma başarılı
+RessourceLineSuccessfullyDeleted=Kaynak satır silinmesi başarılı
+RessourceLineSuccessfullyUpdated=Kaynak satır güncellemesi başarılı
+ResourceLinkedWithSuccess=Kaynak bağlantılama başarılı
+
+TitleResourceCard=Kaynak kartı
+ConfirmDeleteResource=Bu kaynağı silmeyi onayla
+RessourceSuccessfullyDeleted=Kaynak silme başarılı
+DictionaryResourceType=Kaynak türleri
+
+SelectResource=Kaynak seç

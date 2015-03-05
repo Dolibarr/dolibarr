@@ -1,6 +1,7 @@
 <?php
 /*
- * Copyright (C) 2013   Cédric Salvador    <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,9 @@ $result=restrictedArea($user,'produit|service');
  * View
  */
 
-$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
-$helpurl .= 'ES:M&oacute;dulo_Stocks';
+$form = new Form($db);
+
+$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
@@ -77,7 +79,7 @@ if (!$sortfield) $sortfield = 'cf.date_creation';
 
 $offset = $conf->liste_limit * $page ;
 
-$sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
+$sql = 'SELECT s.rowid as socid, s.nom as name, cf.date_creation as dc,';
 $sql.= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
@@ -90,7 +92,7 @@ $sql.= ' AND cf.entity = ' . $conf->entity;
 if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
     $sql .= ' AND cf.fk_statut < 3';
 } elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
-    $sql .= ' AND cf.fk_statut < 6';
+    $sql .= ' AND cf.fk_statut < 6';	// We want alos status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
 } else {
     $sql .= ' AND cf.fk_statut < 5';
 }
@@ -132,7 +134,7 @@ if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
     $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
 }
-if ($socid) {
+if (!empty($socid)) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
@@ -143,6 +145,8 @@ $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
+//print $sql;
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -151,20 +155,11 @@ if ($resql)
 
 	print $langs->trans("ReplenishmentOrdersDesc").'<br><br>';
 
-    print_barre_liste(
-    		'',
-    		$page,
-    		$_SERVER["PHP_SELF"],
-    		'',
-    		$sortfield,
-    		$sortorder,
-    		'',
-    		$num,
-    		0,
-    		''
-    );
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">'.
-         '<table class="noborder" width="100%">'.
+    print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
+
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+
+    print '<table class="noborder" width="100%">'.
          '<tr class="liste_titre">';
     print_liste_field_titre(
     		$langs->trans('Ref'),
@@ -226,8 +221,8 @@ if ($resql)
     		$sortfield,
     		$sortorder
     );
-    $form = new Form($db);
     print '</tr>'.
+
          '<tr class="liste_titre">'.
          '<td class="liste_titre">'.
          '<input type="text" class="flat" name="search_ref" value="' . $sref . '">'.
@@ -258,9 +253,12 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
         $var = !$var;
-        if (!dispatched($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid))))
+
+        $showline = dolDispatchToDo($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid)));
+
+        if ($showline)
         {
-            $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
+            $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
             print '<tr ' . $bc[$var] . '>'.
             // Ref
                  '<td>'.
@@ -269,11 +267,11 @@ if ($resql)
                  '</a></td>';
 
             // Company
-            $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
+            $href = DOL_URL_ROOT . '/fourn/card.php?socid=' . $obj->socid;
             print '<td>'.
                  '<a href="' . $href .'">'.
                  img_object($langs->trans('ShowCompany'), 'company'). ' '.
-                 $obj->nom . '</a></td>';
+                 $obj->name . '</a></td>';
 
             // Author
             $userstatic->id = $obj->fk_user_author;

@@ -14,6 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- This table is a list of all available possible automatic actions
+-- It is read only by admin page to select action code and save them 
+-- into llx_const with name MAIN_AGENDA_ACTIONAUTO_XXX_YYY.
 -- ===================================================================
 
 create table llx_c_action_trigger
@@ -24,5 +27,4 @@ create table llx_c_action_trigger
   description	varchar(255),
   elementtype	varchar(16) 			NOT NULL,
   rang			integer		DEFAULT 0
-  
 )ENGINE=innodb;

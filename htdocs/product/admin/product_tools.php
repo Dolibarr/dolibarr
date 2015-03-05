@@ -298,10 +298,9 @@ else
 	*/
 
 	print '</table>';
-	print '</div>';
 
 	// Boutons actions
-	print '<div class="tabsAction">';
+	print '<div class="center">';
 	print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';
 	print '</div>';
 

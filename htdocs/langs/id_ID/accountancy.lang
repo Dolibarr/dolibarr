@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Akuntansi
+Globalparameters=Parameter Global
+Chartofaccounts=Tabel Akun
+Fiscalyear=Tahun Pajak
+Menuaccount=Akun akuntansi
+Menuthirdpartyaccount=Akun Pihak Ketiga
+MenuTools=Alat
+
+ConfigAccountingExpert=Konfigurasi modul ahli akuntansi
+Journaux=Jurnal
+JournalFinancial=Jurnal Keuangan
+Exports=Ekspor
+Export=Export
+Modelcsv=Model Ekspor
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Pilih satu model Ekspor
+Modelcsv_normal=Ekspor Klasik
+Modelcsv_CEGID=Export towards CEGID Expert
+BackToChartofaccounts=Akun pembalik
+Back=Kembali
+
+Definechartofaccounts=Menetapkan bagan akun
+Selectchartofaccounts=Pilih bagan akun
+Validate=Validasi
+Addanaccount=Tambahkan sebuah akun akuntansi
+AccountAccounting=Akun akuntansi
+Ventilation=Perincian
+ToDispatch=Untuk Pengiriman
+Dispatched=Dikirim
+
+CustomersVentilation=Perincian pelanggan
+SuppliersVentilation=Perincian pemasok
+TradeMargin=Margin Perdagangan
+Reports=Laporan
+ByCustomerInvoice=Berdasarkan invoice langganan
+ByMonth=Bulanan
+NewAccount=Akun akuntansi baru
+Update=Membarui
+List=Daftar
+Create=Buat
+UpdateAccount=Modifikasi akun akuntansi
+UpdateMvts=Modification of a movement
+WriteBookKeeping=Mencatat akun di buku besar
+Bookkeeping=Buku besar
+AccountBalanceByMonth=Saldo per bulan
+
+AccountingVentilation=Perincian Akunting
+AccountingVentilationSupplier=Perincian Akunting Pemasok
+AccountingVentilationCustomer=Perincian Akunting Pelanggan
+Line=Baris
+
+CAHTF=Total purchase supplier HT
+InvoiceLines=Lines of invoice to be ventilated
+InvoiceLinesDone=Ventilated lines of invoice
+IntoAccount=In the accounting account
+
+Ventilate=Ventilate
+VentilationAuto=Perincian Otomatis
+
+Processing=Pengolahan
+EndProcessing=Akhir dari pengolahan
+AnyLineVentilate=Any lines to ventilate
+SelectedLines=Baris yg dipilih
+Lineofinvoice=Line of invoice
+VentilatedinAccount=Ventilated successfully in the accounting account
+NotVentilatedinAccount=Not ventilated in the accounting account
+
+ACCOUNTING_SEPARATORCSV=Column separator in export file
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+
+AccountLength=Length of the accounting accounts shown in Dolibarr
+AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_GACCOUNT=Panjang akun umum
+ACCOUNTING_LENGTH_AACCOUNT=Panjang akun pihak ketiga
+
+ACCOUNTING_SELL_JOURNAL=Jurnal Penjualan
+ACCOUNTING_PURCHASE_JOURNAL=Jurnal Pembelian
+ACCOUNTING_BANK_JOURNAL=Jurnal Bank
+ACCOUNTING_CASH_JOURNAL=Jurnal Kas
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Jurnal lain-lain
+ACCOUNTING_SOCIAL_JOURNAL=Jurnal Sosial
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Akun transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+
+Doctype=Tipe Dokumen
+Docdate=Tanggal
+Docref=Referensi
+Numerocompte=Akun
+Code_tiers=Pihak ketiga
+Labelcompte=Label Akun
+Debit=Debet
+Credit=Kredit
+Amount=Jumlah
+Sens=Sen
+Codejournal=Jurnal
+
+DelBookKeeping=Hapus catatan buku besar
+
+SellsJournal=Jurnal Penjualan
+PurchasesJournal=Jurnal Pembelian
+DescSellsJournal=Jurnal Penjualan
+DescPurchasesJournal=Jurnal Pembelian
+BankJournal=Jurnal Bank
+DescBankJournal=Jurnal Bank termasuk semua tipe pembayaran kecuali tunai
+CashJournal=Jurnal Tunai
+DescCashJournal=Jurnal Tunai termasuk tipe pembayaran tunai
+
+CashPayment=Pembayaran Tunai
+
+SupplierInvoicePayment=Pembayaran Nota Pemasok
+CustomerInvoicePayment=Pembayaran Nota Pelanggan
+
+ThirdPartyAccount=Akun pihak ketiga
+
+NewAccountingMvt=New movement
+NumMvts=Number of movement
+ListeMvts=List of the movement
+ErrorDebitCredit=Debet dan Kredit tidak boleh ada nilai di saat yg sama
+
+ReportThirdParty=Daftar akun pihak ketiga
+DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+
+ListAccounts=Daftar akun-akun akunting
+
+Pcgversion=Version of the plan
+Pcgtype=Class of account
+Pcgsubtype=Under class of account
+Accountparent=Root of the account
+Active=Statement
+
+NewFiscalYear=Tahun Pajak Baru
+
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+TotalVente=Total turnover HT
+TotalMarge=Total margin penjualan
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
+DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+ChangeAccount=Change the accounting account for lines selected by the account:
+Vide=-
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Validasi Otomatis
+
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+
+FicheVentilation=Breakdown card

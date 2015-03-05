@@ -1,8 +1,12 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Bokförings kod för löne utbetalningar
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Bokförings kod för finansiell kostnad
+Salary=Lön
+Salaries=Löner
+Employee=Anställd
+NewSalaryPayment=Ny löneutbetalning
+SalaryPayment=Lönebetalning
+SalariesPayments=Löneutbetalningar
+ShowSalaryPayment=Visa löneutbetalning
+THM=Genomsnitt timpris
+TJM=Genomsnittlig dagligt pris

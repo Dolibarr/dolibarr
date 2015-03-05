@@ -22,8 +22,7 @@
  */
 
 /**
- *	\class 		Import
- *	\brief 		Class to manage imports
+ *	Class to manage imports
  */
 class Import
 {
@@ -233,7 +232,7 @@ class Import
 		$sql.= ')';
 		$sql.= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->datatoimport."', '".$this->hexa."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -244,7 +243,6 @@ class Import
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -262,7 +260,7 @@ class Import
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -306,7 +304,7 @@ class Import
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -314,12 +312,12 @@ class Import
 		{
 			if (! $notrigger)
 			{
-				// Call triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('IMPORT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// End call triggers
+				/* Not used. This is not a business object. To convert it we must herit from CommonObject
+                // Call trigger
+                $result=$this->call_trigger('IMPORT_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+                 */
 			}
 		}
 

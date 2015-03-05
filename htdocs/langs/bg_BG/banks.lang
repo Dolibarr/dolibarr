@@ -8,6 +8,7 @@ FinancialAccount=Сметка
 FinancialAccounts=Сметки
 BankAccount=Банкова сметка
 BankAccounts=Банкови сметки
+ShowAccount=Show Account
 AccountRef=Финансова сметка реф.
 AccountLabel=Финансова сметка етикет
 CashAccount=Сметка в брой

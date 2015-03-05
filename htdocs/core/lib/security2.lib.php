@@ -440,7 +440,7 @@ function encodedecode_dbpassconf($level=0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		true=Create generic password (a MD5 string), false=Use the configured password generation module
+ * @param		boolean		$generic		true=Create generic password (use default crypt function), false=Use the configured password generation module
  * @return		string						New value for password
  */
 function getRandomPassword($generic=false)

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,16 +57,16 @@ class FormCompany
 	 */
 	function typent_array($mode=0, $filter='')
 	{
-		global $langs;
+		global $langs,$mysoc;
 
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
-		$sql.= " WHERE active = 1";
+		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
 		$sql.= " ORDER by id";
-		dol_syslog(get_class($this).'::typent_array sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -104,7 +105,7 @@ class FormCompany
 		$sql.= " WHERE active = 1";
 		if ($filter) $sql.=" ".$filter;
 		$sql .= " ORDER BY id ASC";
-		dol_syslog(get_class($this).'::effectif_array sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::effectif_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -221,15 +222,15 @@ class FormCompany
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as country, p.code as country_code FROM";
-		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
-		$sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
-		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND p.rowid = '".$country_codeid."'";
-		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND p.code = '".$country_codeid."'";
-		$sql .= " ORDER BY p.code, d.code_departement";
+		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code FROM";
+		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
+		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
+		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$country_codeid."'";
+		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$country_codeid."'";
+		$sql .= " ORDER BY c.code, d.code_departement";
 
-		dol_syslog(get_class($this)."::select_departement sql=".$sql);
+		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -269,7 +270,7 @@ class FormCompany
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
 						$out.= '</option>';
 					}
 					$i++;
@@ -291,7 +292,7 @@ class FormCompany
 	 *   Retourne la liste deroulante des regions actives dont le pays est actif
 	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
 	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
-	 *   Ainsi les liens avec les regions se font sur une region independemment de son nom.
+	 *   Ainsi les liens avec les regions se font sur une region independemment de son name.
 	 *
 	 *   @param		string		$selected		Preselected value
 	 *   @param		string		$htmlname		Name of HTML select field
@@ -302,11 +303,12 @@ class FormCompany
 		global $conf,$langs;
 		$langs->load("dict");
 
-		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.code as country_code, p.libelle as country FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql.= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1";
-		$sql.= " ORDER BY p.code, p.libelle ASC";
+		$sql = "SELECT r.rowid, r.code_region as code, r.nom as label, r.active, c.code as country_code, c.label as country";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
+		$sql.= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
+		$sql.= " ORDER BY c.code, c.label ASC";
 
-		dol_syslog(get_class($this)."::select_region sql=".$sql);
+		dol_syslog(get_class($this)."::select_region", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -334,11 +336,11 @@ class FormCompany
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							print '<option value="'.$obj->code.'" selected="selected">'.$obj->libelle.'</option>';
+							print '<option value="'.$obj->code.'" selected="selected">'.$obj->label.'</option>';
 						}
 						else
 						{
-							print '<option value="'.$obj->code.'">'.$obj->libelle.'</option>';
+							print '<option value="'.$obj->code.'">'.$obj->label.'</option>';
 						}
 					}
 					$i++;
@@ -366,14 +368,14 @@ class FormCompany
 
 		$out='';
 
-		$sql = "SELECT rowid, code, civilite as civility_label, active FROM ".MAIN_DB_PREFIX."c_civilite";
+		$sql = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog("Form::select_civility sql=".$sql);
+		dol_syslog("Form::select_civility", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<select class="flat" name="'.$htmlname.'">';
+			$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			$out.= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -391,7 +393,7 @@ class FormCompany
 						$out.= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civility_label!='-'?$obj->civility_label:''));
+					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label!='-'?$obj->label:''));
 					$out.= '</option>';
 					$i++;
 				}
@@ -439,20 +441,20 @@ class FormCompany
 		$out='';
 
 		// On recherche les formes juridiques actives des pays actifs
-		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, p.libelle as country, p.code as country_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE f.fk_pays=p.rowid";
-		$sql .= " AND f.active = 1 AND p.active = 1";
-		if ($country_codeid) $sql .= " AND p.code = '".$country_codeid."'";
+		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " WHERE f.fk_pays=c.rowid";
+		$sql .= " AND f.active = 1 AND c.active = 1";
+		if ($country_codeid) $sql .= " AND c.code = '".$country_codeid."'";
 		if ($filter) $sql .= " ".$filter;
-		$sql .= " ORDER BY p.code";
+		$sql .= " ORDER BY c.code";
 
-		dol_syslog(get_class($this)."::select_juridicalstatus sql=".$sql);
+		dol_syslog(get_class($this)."::select_juridicalstatus", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$out.= '<div id="particulier2" class="visible">';
-			$out.= '<select class="flat" name="forme_juridique_code">';
+			$out.= '<select class="flat" name="forme_juridique_code" id="legal_form">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 
 			$num = $this->db->num_rows($resql);
@@ -518,7 +520,7 @@ class FormCompany
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-     *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	array		$events			More js events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
 	 * 	@return int 						The selected third party ID
 	 */
@@ -527,25 +529,25 @@ class FormCompany
 		global $conf, $langs;
 
 		// On recherche les societes
-		$sql = "SELECT s.rowid, s.nom FROM";
+		$sql = "SELECT s.rowid, s.nom as name FROM";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-		if ($selected && $conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $sql.= " AND rowid = ".$selected;
+		if ($selected && $conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $sql.= " AND s.rowid = ".$selected;
 		else
 		{
 			// For ajax search we limit here. For combo list, we limit later
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT
 			&& is_array($limitto) && count($limitto))
 			{
-				$sql.= " AND rowid IN (".join(',',$limitto).")";
+				$sql.= " AND s.rowid IN (".join(',',$limitto).")";
 			}
 		}
-		$sql.= " ORDER BY nom ASC";
+		$sql.= " ORDER BY s.nom ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 			{
 				// Use Ajax search
 				$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
@@ -571,13 +573,13 @@ class FormCompany
 								var obj = '.json_encode($events).';
 				    			$.each(obj, function(key,values) {
 				    				if (values.method.length) {
-				    					getMethod'.$htmlname.'(values);
+				    					runJsCodeForEvent'.$htmlname.'(values);
 				    				}
 								});
                 			});
 
 							// Function used to execute events when search_htmlname change
-							function getMethod'.$htmlname.'(obj) {
+							function runJsCodeForEvent'.$htmlname.'(obj) {
 								var id = $("#'.$htmlname.'").val();
 								var method = obj.method;
 								var url = obj.url;
@@ -610,16 +612,19 @@ class FormCompany
                 }
 
 				print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
+
 				if ($obj->rowid == 0)
 				{
 					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="" '.$htmloption.' />';
 				}
 				else
 				{
-					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->nom.'" '.$htmloption.' />';
+					print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$obj->name.'" '.$htmloption.' />';
 				}
 				print ajax_autocompleter(($socid?$socid:-1),$htmlname,DOL_URL_ROOT.'/societe/ajaxcompanies.php','',$minLength);
+
 				print "\n";
+
 				return $socid;
 			}
 			else
@@ -646,14 +651,14 @@ class FormCompany
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="disabled"';
-							print ' selected="selected">'.dol_trunc($obj->nom,24).'</option>';
+							print ' selected="selected">'.dol_trunc($obj->name,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled="disabled"';
-							print '>'.dol_trunc($obj->nom,24).'</option>';
+							print '>'.dol_trunc($obj->name,24).'</option>';
 						}
 						$i ++;
 					}
@@ -675,22 +680,21 @@ class FormCompany
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
-     *  @param  string		$order			Sort criteria
+     *  @param  string		$sortorder		Sort criteria
      *  @param  int			$showempty      1=Add en empty line
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $order='code', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='code', $showempty=0)
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			$lesTypes = $object->liste_type_contact($source, $order, 0, 1);
+			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
 			{
 				print '<option value="'.$key.'"';
-				if ($key == $selected)
-					print ' selected';
+				if ($key == $selected) print ' selected';
 				print '>'.$value.'</option>';
 			}
 			print "</select>\n";
@@ -705,7 +709,7 @@ class FormCompany
 	 *    @param    string		$fields					Fields
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable autocomplete features
-	 *    @return	void
+	 *    @return	string
 	 */
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0)
 	{
@@ -766,9 +770,50 @@ class FormCompany
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
 
-        $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $out = '<input type="text" name="'.$htmlname.'" id="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
+    }
+
+    /**
+     * Return a HTML select with localtax values for thirdparties
+     *
+     * @param 	int 		$local			LocalTax
+     * @param 	int 		$selected		Preselected value
+     * @param 	string      $htmlname		HTML select name
+     * @return	void
+     */
+    function select_localtax($local, $selected, $htmlname)
+    {
+    	$tax=get_localtax_by_third($local);
+
+    	$num = $this->db->num_rows($tax);
+    	$i = 0;
+    	if ($num)
+    	{
+    		$valors=explode(":", $tax);
+
+    		if (count($valors) > 1)
+    		{
+    			//montar select
+    			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+    			while ($i <= (count($valors))-1)
+    			{
+    				if ($selected == $valors[$i])
+    				{
+    					print '<option value="'.$valors[$i].'" selected="selected">';
+    				}
+    				else
+    				{
+    					print '<option value="'.$valors[$i].'">';
+    				}
+    				print $valors[$i];
+    				print '</option>';
+    				$i++;
+    			}
+    			print'</select>';
+    		}
+    	}
     }
 
 }

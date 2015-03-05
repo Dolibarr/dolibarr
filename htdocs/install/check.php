@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<b>'.$langs->trans("MiscellaneousChecks")."</b>:<br>\n";
+print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -71,12 +71,12 @@ if (! empty($useragent))
 
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to use (error if lower)
+if (versioncompare(versionphparray(),array(5,2,3)) < 0)        // Minimum to use (error if lower)
 {
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.3.10');
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.2.3');
 	$checksok=0;	// 0=error, 1=warning
 }
-else if (versioncompare(versionphparray(),array(5,3,0)) < 0)    // Minimum supported (error if lower)
+else if (versioncompare(versionphparray(),array(5,3,0)) < 0)    // Minimum supported (warning if lower)
 {
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.3.0');
     $checksok=0;	// 0=error, 1=warning
@@ -152,6 +152,7 @@ if ($memmaxorig != '')
 	preg_match('/([0-9]+)([a-zA-Z]*)/i',$memmax,$reg);
 	if ($reg[2])
 	{
+		if (strtoupper($reg[2]) == 'G') $memmax=$reg[1]*1024*1024*1024;
 		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
 		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
 	}
@@ -348,7 +349,7 @@ else
 		{
             $choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-			$choice .= '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
+			$choice .= '<div class="center"><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></div>';
 			// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
 			$foundrecommandedchoice=1;	// To show only once
 		}
@@ -393,7 +394,8 @@ else
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
 								array('from'=>'3.3.0', 'to'=>'3.4.0'),
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
-								array('from'=>'3.5.0', 'to'=>'3.6.0')
+								array('from'=>'3.5.0', 'to'=>'3.6.0'),
+								array('from'=>'3.6.0', 'to'=>'3.7.0')
 		);
 
 		$count=0;
@@ -438,7 +440,7 @@ else
                 }
             }
 
-            $choice .= '<tr class="listofchoices" '.($recommended_choice ? 'style="background-color:lightyellow"' : '').'>';
+            $choice .= '<tr class="listofchoices '.($recommended_choice ? 'choiceselected' : '').'">';
             $choice .= '<td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
             $choice .= '<td class="listofchoices">';
             $choice .= $langs->trans("UpgradeDesc");
@@ -447,12 +449,12 @@ else
             {
                 $choice .= '<br>';
                 //print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-                $choice .= '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
+                $choice .= '<div class="center"><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
                 if ($count < count($migarray))	// There is other choices after
                 {
                     print $langs->trans("MigrateIsDoneStepByStep",DOL_VERSION);
                 }
-                $choice .= '</center>';
+                $choice .= '</div>';
             }
 
             $choice .= '</td>';
@@ -460,7 +462,7 @@ else
 			if ($allowupgrade)
 			{
 				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
-                $choice .= '<a class="button" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+                $choice .= '<a class="button runupgrade" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{
@@ -528,6 +530,12 @@ $("div#AShowChoices a").click(function() {
     }
 
 });
+
+/*
+$(".runupgrade").click(function() {
+	return confirm("'.dol_escape_js($langs->transnoentitiesnoconv("WarningUpgrade"), 0, 1).'");
+});
+*/
 
 </script>';
 

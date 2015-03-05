@@ -36,6 +36,13 @@ class AdherentType extends CommonObject
     public $element = 'adherent_type';
 
     var $id;
+
+    /**
+     * @var int
+     * @deprecated Use rowid
+     */
+    public $ref;
+
     var $libelle;
     var $statut;
     var $cotisation;  // Soumis a la cotisation
@@ -60,7 +67,7 @@ class AdherentType extends CommonObject
      *  Fonction qui permet de creer le status de l'adherent
      *
      *  @param      User		$user		User making creation
-     *  @return     						>0 if OK, < 0 if KO
+     *  @return     int						>0 if OK, < 0 if KO
      */
     function create($user)
     {
@@ -76,7 +83,7 @@ class AdherentType extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog("Adherent_type::create sql=".$sql);
+        dol_syslog("Adherent_type::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -119,7 +126,7 @@ class AdherentType extends CommonObject
         if ($result)
         {
         	$action='update';
-        	
+
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('membertypedao'));
         	$parameters=array('membertype'=>$this->id);
@@ -151,21 +158,23 @@ class AdherentType extends CommonObject
      *	Fonction qui permet de supprimer le status de l'adherent
      *
      *	@param      int		$rowid		Id of member type to delete
-     *  @return		int					>0 if OK, < 0 if KO
+     *  @return		int					>0 if OK, 0 if not found, < 0 if KO
      */
-    function delete($rowid)
+    function delete($rowid='')
     {
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
+    	if (empty($rowid)) $rowid=$this->id;
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = ".$rowid;
 
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ( $this->db->affected_rows($resql) )
+            if ($this->db->affected_rows($resql))
             {
                 return 1;
             }
             else
-            {
+			{
                 return 0;
             }
         }
@@ -188,7 +197,7 @@ class AdherentType extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
         $sql .= " WHERE d.rowid = ".$rowid;
 
-        dol_syslog("Adherent_type::fetch sql=".$sql);
+        dol_syslog("Adherent_type::fetch", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -211,7 +220,6 @@ class AdherentType extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("Adherent_type::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -247,13 +255,13 @@ class AdherentType extends CommonObject
                     $i++;
                 }
             }
-            return $projets;
         }
         else
         {
             print $this->db->error();
         }
 
+        return $projets;
     }
 
 
@@ -286,7 +294,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnValid
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnValid()
     {
@@ -305,7 +313,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnSubscription
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnSubscription()
     {
@@ -324,7 +332,7 @@ class AdherentType extends CommonObject
     /**
      *     getMailOnResiliate
      *
-     *     @return     Return mail model
+     *     @return string     Return mail model
      */
     function getMailOnResiliate()
     {

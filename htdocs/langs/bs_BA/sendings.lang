@@ -4,7 +4,8 @@ Sending=Pošiljka
 Sendings=Pošiljke
 Shipment=Pošiljka
 Shipments=Pošiljke
-Receivings=Primanja
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Područje za pošiljke
 ListOfSendings=Lista pošiljki
 SendingMethod=Način slanja
@@ -14,7 +15,7 @@ SearchASending=Traži pošiljku
 StatisticsOfSendings=Statistika za pošiljke
 NbOfSendings=Broj pošiljki
 NumberOfShipmentsByMonth=Broj pošiljki po mjesecu
-SendingCard=Kartica otpremanja
+SendingCard=Shipment card
 NewSending=Nova pošiljka
 CreateASending=Kreiraj pošiljku
 CreateSending=Kreiraj pošiljku
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Otkazano
 StatusSendingDraftShort=Nacrt
 StatusSendingValidatedShort=Potvrđeno
 StatusSendingProcessedShort=Obrađeno
-SendingSheet=Lista slanja
+SendingSheet=Shipment sheet
 Carriers=Prijevoznici
 Carrier=Prijevoznik
 CarriersArea=Područje za prijevoznike
@@ -50,27 +51,35 @@ Enlevement=Preuzeto od strane kupca
 DocumentModelSimple=Jednostavni model dokumenta
 DocumentModelMerou=Model dokumenta Merou A5
 WarningNoQtyLeftToSend=Upozorenje, nema proizvoda na čekanju za slanje
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Planirani datum isporuke
 DateReceived=Datum prijema isporuke
 SendShippingByEMail=Pošalji pošiljku na e-mail
-SendShippingRef=Pošalji pošiljku %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Događaji na pošiljki
 LinkToTrackYourPackage=Link za praćenje paketa
 ShipmentCreationIsDoneFromOrder=U ovom trenutku, nova pošiljka se kreira sa kartice narudžbe
-RelatedShippings=Povezana otpremanja
+RelatedShippings=Related shipments
 ShipmentLine=Tekst pošiljke
 CarrierList=Lista transportera
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
-# SendingMethodCATCH=Catch by customer
-# SendingMethodTRANS=Transporter
-# SendingMethodCOLSUI=Colissimo
-
+SendingMethodCATCH=Catch by customer
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
 # ModelDocument
-# DocumentModelSirocco=Simple document model for delivery receipts
-# DocumentModelTyphon=More complete document model for delivery receipts (logo...)
-
-# Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+DocumentModelSirocco=Simple document model for delivery receipts
+DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
 SumOfProductVolumes=Suma količina proizvoda
 SumOfProductWeights=Suma težina proizvoda
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

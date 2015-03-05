@@ -59,12 +59,12 @@ class mailing_framboise extends MailingTargets
 		global $conf, $langs;
 		$langs->load("members");
 		$langs->load("companies");
-		
+
 		$cibles = array();
 
 		// Select the members from category
 		$sql = "SELECT a.rowid as id, a.email as email, a.lastname, null as fk_contact, a.firstname,";
-		$sql.= " a.datefin, a.civilite as civility_id, a.login, a.societe,";	// Other fields
+		$sql.= " a.datefin, a.civility as civility_id, a.login, a.societe,";	// Other fields
 		if ($_POST['filter']) $sql.= " c.label";
 		else $sql.=" null as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -229,11 +229,7 @@ class mailing_framboise extends MailingTargets
 	 */
 	function url($id)
 	{
-		//$companystatic=new Societe($this->db);
-		//$companystatic->id=$id;
-		//$companystatic->nom='';
-		//return $companystatic->getNomUrl(1);	// Url too long
-		return '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$id.'">'.img_object('',"user").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('',"user").'</a>';
 	}
 
 }

@@ -80,7 +80,7 @@ class box_prospect extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom, s.rowid as socid, s.fk_stcomm, s.datec, s.tms, s.status";
+			$sql = "SELECT s.nom as name, s.rowid as socid, s.fk_stcomm, s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (2, 3)";
@@ -90,7 +90,7 @@ class box_prospect extends ModeleBoxes
 			$sql.= " ORDER BY s.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox sql=".$sql,LOG_DEBUG);
+			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -106,11 +106,11 @@ class box_prospect extends ModeleBoxes
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 			            'logo' => $this->boximg,
-			            'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-			            'text' => $objp->nom,
-			            'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+			            'text' => $objp->name,
+			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
  			           'text' => dol_print_date($datem, "day"));

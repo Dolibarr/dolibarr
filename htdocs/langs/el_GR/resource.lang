@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Πόροι
+MenuResourceAdd=Νέος πόρος
+MenuResourcePlanning=Προγραμματισμός των πόρων
+DeleteResource=Διαγραφή πόρων
+ConfirmDeleteResourceElement=Επιβεβαιώστε τη διαγραφή των πόρων για αυτό το στοιχείο
+NoResourceInDatabase=Δεν υπάρχουν πόροι στη βάση δεδομένων.
+NoResourceLinked=Ο πόρος δεν συνδέεται
+
+ResourcePageIndex=Λίστα Πόρων
+ResourceSingular=Πόρος
+ResourceCard=Κάρτα Πόρων
+AddResource=Δημιουργήστε έναν πόρο
+ResourceFormLabel_ref=Όνομα Πόρου
+ResourceType=Τύπος Πόρου
+ResourceFormLabel_description=Η περιγραφή πόρου
+
+ResourcesLinkedToElement=Πόροι που σχετίζονται με το στοιχείο
+
+ShowResourcePlanning=Εμφάνιση σχεδιασμού των πόρων
+GotoDate=Μετάβαση στην ημερομηνία
+
+ResourceElementPage=Στοιχείο πόρων
+ResourceCreatedWithSuccess=Ο Πόρος δημιουργήθηκε με επιτυχία
+RessourceLineSuccessfullyDeleted=Γραμμή πόρου διαγράφηκε με επιτυχία
+RessourceLineSuccessfullyUpdated=Γραμμή πόρου ενημερώθηκε με επιτυχία
+ResourceLinkedWithSuccess=Ο πόρος συνδέεται με επιτυχία
+
+TitleResourceCard=Κάρτα πόρων
+ConfirmDeleteResource=Επιβεβαιώστε την διαγραφή αυτού του πόρου
+RessourceSuccessfullyDeleted=Ο Πόρος διαγράφηκε με επιτυχία
+DictionaryResourceType=Το είδος των πόρων
+
+SelectResource=Επιλέξτε πόρο

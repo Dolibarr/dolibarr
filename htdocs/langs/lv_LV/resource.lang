@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Resursi
+MenuResourceAdd=Jauni resursi
+MenuResourcePlanning=Resursu plānošana
+DeleteResource=Dzēst resursu
+ConfirmDeleteResourceElement=Apstiprināt resursu dzēšanu šim elementam
+NoResourceInDatabase=Nav datubāzē resursu
+NoResourceLinked=Nav saistītu resursu
+
+ResourcePageIndex=Resursu saraksts
+ResourceSingular=Resursi
+ResourceCard=Resursu karte
+AddResource=Izveidot resursu
+ResourceFormLabel_ref=Resursu nosaukums
+ResourceType=Resursa veids
+ResourceFormLabel_description=Resursa apraksts
+
+ResourcesLinkedToElement=Resurss saistīts ar elementu
+
+ShowResourcePlanning=Rādīt resursu plānošanu
+GotoDate=Iet uz datumu
+
+ResourceElementPage=Elementa resursi
+ResourceCreatedWithSuccess=Resurss veiksmīgi izveidots
+RessourceLineSuccessfullyDeleted=Resursu līnija veiksmīgi dzēsta
+RessourceLineSuccessfullyUpdated=Resursa līnija veiksmīgi atjaunota
+ResourceLinkedWithSuccess=Resurs sasaistīts veiksmīgi
+
+TitleResourceCard=Resursu karte
+ConfirmDeleteResource=Apstiprināt šī resursa dzēšanu
+RessourceSuccessfullyDeleted=Resurss veiksmīgi dzēsts
+DictionaryResourceType=Resursa veids
+
+SelectResource=Izvēlēties resursu

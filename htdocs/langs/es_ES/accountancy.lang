@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Contabilidad
+Globalparameters=Configuración global
+Chartofaccounts=Plan contable
+Fiscalyear=Años fiscales
+Menuaccount=Cuentas contables
+Menuthirdpartyaccount=Cuentas de terceros
+MenuTools=Utilidades
+
+ConfigAccountingExpert=Configuración del módulo contable
+Journaux=Diarios
+JournalFinancial=Diarios financieros
+Exports=Exportaciones
+Export=Exportar
+Modelcsv=Modelo de exportación
+OptionsDeactivatedForThisExportModel=Las opciones están desactivadas para este modelo de exportación
+Selectmodelcsv=Seleccione un modelo de exportación
+Modelcsv_normal=Exportación clásica
+Modelcsv_CEGID=Exportar a Cegid Expert
+BackToChartofaccounts=Volver al plan contable
+Back=Volver
+
+Definechartofaccounts=Definir plan contable
+Selectchartofaccounts=Seleccione un plan contable
+Validate=Validar
+Addanaccount=Añadir una cuenta contable
+AccountAccounting=Cuenta contable
+Ventilation=Contabilizar
+ToDispatch=A realizar
+Dispatched=Realizadas
+
+CustomersVentilation=Contabilizar clientes
+SuppliersVentilation=Contabilizar proveedores
+TradeMargin=Margen de beneficio
+Reports=Informes
+ByCustomerInvoice=Por facturas a clientes
+ByMonth=Por mes
+NewAccount=Nueva cuenta contable
+Update=Actualizar
+List=Listado
+Create=Crear
+UpdateAccount=Modificar una cuenta contable
+UpdateMvts=Modificar un movimiento
+WriteBookKeeping=Registrar los asientos en el libro mayor
+Bookkeeping=Libro Mayor
+AccountBalanceByMonth=Saldo mensual
+
+AccountingVentilation=Descuadre contabilidad
+AccountingVentilationSupplier=Contablilización compras
+AccountingVentilationCustomer=Contabilización ventas
+Line=Línea
+
+CAHTF=Total (base imponible) compras a proveedor
+InvoiceLines=Líneas de factura para contabilizar
+InvoiceLinesDone=Líneas de facturas contabilizadas
+IntoAccount=En la cuenta
+
+Ventilate=Contabilizar
+VentilationAuto=Contabilización automática
+
+Processing=Tratamiento
+EndProcessing=Final del tratamiento
+AnyLineVentilate=No hay líneas para contabilizar
+SelectedLines=Líneas seleccionadas
+Lineofinvoice=Línea de la factura
+VentilatedinAccount=Contabilizada con éxito en la cuenta contable
+NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
+
+ACCOUNTING_SEPARATORCSV=Separador de columnas en el archivo de exportación
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
+
+AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
+AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
+ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
+ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
+
+ACCOUNTING_SELL_JOURNAL=Diario de ventas
+ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
+ACCOUNTING_BANK_JOURNAL=Diario bancario
+ACCOUNTING_CASH_JOURNAL=Diario de caja
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
+ACCOUNTING_SOCIAL_JOURNAL=Diario social
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
+ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servicio)
+
+Doctype=Tipo de documento
+Docdate=Fecha
+Docref=Referencia
+Numerocompte=Cuenta
+Code_tiers=Tercero
+Labelcompte=Descripción
+Debit=Debe
+Credit=Crédito
+Amount=Cantidad
+Sens=Sentido
+Codejournal=Diario
+
+DelBookKeeping=Eliminar los registros del Diario Mayor
+
+SellsJournal=Diario de ventas
+PurchasesJournal=Diario de compras
+DescSellsJournal=Diario de ventas
+DescPurchasesJournal=Diario de compras
+BankJournal=Diario bancario
+DescBankJournal=El diario bancario incluye todos los tipos pagos que no sean de efectivo
+CashJournal=Diario de caja
+DescCashJournal=El diario de caja incluye el tipo de pago efectivo
+
+CashPayment=Pago en efectivo
+
+SupplierInvoicePayment=Pago de factura de proveedor
+CustomerInvoicePayment=Cobro de factura a cliente
+
+ThirdPartyAccount=Cuenta de tercero
+
+NewAccountingMvt=Nuevo movimiento
+NumMvts=Número del movimiento
+ListeMvts=Listado del movimiento
+ErrorDebitCredit=Debe y Haber no pueden contener un valor al mismo tiempo
+
+ReportThirdParty=Listado cuentas de terceros
+DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus códigos contables
+
+ListAccounts=Listado de cuentas contables
+
+Pcgversion=Versión del plan
+Pcgtype=Tipo del plan
+Pcgsubtype=Subcuenta
+Accountparent=Padre de la cuenta
+Active=Estado
+
+NewFiscalYear=Nuevo año fiscal
+
+DescVentilCustomer=Consulte aquí la contabilización anual de sus facturas a clientes
+TotalVente=Total ventas (base imponible)
+TotalMarge=Total margen ventas
+DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y sus cuentas contables
+DescVentilTodoCustomer=Contabilice sus líneas de facturas a clientes con una cuenta contable
+ChangeAccount=Cambie la cuenta para las líneas seleccionadas a la cuenta:
+Vide=-
+DescVentilSupplier=Consulte aquí la contabilidad anual de sus facturas de proveedores
+DescVentilTodoSupplier=Contabilize sus líneas de facturas de proveedores
+DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus cuentas contables
+
+ValidateHistory=Validar automáticamente
+
+ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
+
+FicheVentilation=Ficha contable

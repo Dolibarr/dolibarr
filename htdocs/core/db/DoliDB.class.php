@@ -32,14 +32,10 @@ abstract class DoliDB implements Database
     public $db;
     //! Database type
     public $type;
-    //! Database label
-    static $label;
     //! Charset used to force charset when creating database
     public $forcecharset='utf8';
     //! Collate used to force collate when creating database
     public $forcecollate='utf8_general_ci';
-    //! Min database version
-    static $versionmin;
     //! Resultset of last query
     private $_results;
     //! 1 if connected, else 0
@@ -50,6 +46,10 @@ abstract class DoliDB implements Database
     public $database_name;
     //! Database username
     public $database_user;
+    //! Database host
+    public $database_host;
+    //! Database port
+    public $database_port;
     //! >=1 if a transaction is opened, 0 otherwise
     public $transaction_opened;
     //! Last successful query
@@ -141,8 +141,12 @@ abstract class DoliDB implements Database
 			{
 				$this->transaction_opened=0;
 				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+				return 1;
 			}
-			return $ret;
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
@@ -154,8 +158,8 @@ abstract class DoliDB implements Database
 	/**
 	 *	Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * 	@param	string	$log		Add more log to default log line
-	 * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * 	@param	string			$log		Add more log to default log line
+	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
 	function rollback($log='')
 	{
@@ -197,7 +201,7 @@ abstract class DoliDB implements Database
 	 */
 	function getVersionArray()
 	{
-		return explode('.',$this->getVersion());
+		return preg_split("/[\.,-]/",$this->getVersion());
 	}
 
 	/**
@@ -252,7 +256,7 @@ abstract class DoliDB implements Database
 	/**
 	 *	Return last error label
 	 *
-	 *	@return	    string	lasterror
+	 *	@return	    string		Last error
 	 */
 	function lasterror()
 	{
@@ -264,9 +268,9 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 3600 with TZ+1 and gmt=0
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
-	 * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
-	 *	@return	date				Date TMS
+	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	int					$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@return	timestamp|string				Date TMS
 	 */
 	function jdate($string, $gm=false)
 	{

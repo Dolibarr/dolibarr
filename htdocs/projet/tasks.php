@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
-if ($id > 0 || $ref)
+if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id,$ref);
 	$id=$object->id;
@@ -64,7 +64,7 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('projecttaskcard'));
+$hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
@@ -90,13 +90,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (empty($label))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 			$action='create';
 			$error++;
 		}
 		else if (empty($_POST['task_parent']))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask")), 'errors');
 			$action='create';
 			$error++;
 		}
@@ -131,6 +131,10 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
 			}
+			else
+			{
+			    setEventMessages($task->error,$task->errors,'errors');
+			}
 		}
 
 		if (! $error)
@@ -145,6 +149,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
+			$id = $projectid;
 		}
 	}
 	else
@@ -163,9 +168,10 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
-*/
+ */
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -178,7 +184,7 @@ llxHeader("",$langs->trans("Tasks"),$help_url);
 if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id, $ref);
-	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+	$object->fetch_thirdparty();
 	$res=$object->fetch_optionals($object->id,$extralabels_projet);
 
 
@@ -198,7 +204,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="30%">';
@@ -216,7 +222,7 @@ if ($id > 0 || ! empty($ref))
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td>';
 	print '</tr>';
@@ -254,13 +260,11 @@ if ($id > 0 || ! empty($ref))
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
+if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0))
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
 	print_fiche_titre($langs->trans("NewTask"));
-
-	dol_htmloutput_errors($mesg);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -297,7 +301,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	print $form->select_dolusers($user->id,'userid',1);
+	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
+	$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
 	print '</td></tr>';
 
 	// Date start
@@ -316,7 +321,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '</td></tr>';
 
 	// Progress
-	print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 	print $formother->select_percent($progress,'progress');
 	print '</td></tr>';
 
@@ -413,7 +418,7 @@ else
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-	print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
+	print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';

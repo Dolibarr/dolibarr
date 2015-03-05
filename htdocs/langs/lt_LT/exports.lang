@@ -125,7 +125,7 @@ BankAccountNumber=Sąskaitos numeris
 BankAccountNumberKey=Raktas
 SpecialCode=Specialusis kodas
 ExportStringFilter=%% leidžia pakeisti vieną ar daugiau simbolių tekste
-ExportDateFilter='YYYY' 'YYYYMM' 'YYYYMMDD': filtruos pagal vieną metai/mėnuo/diena<br>'YYYY+YYYY' 'YYYYMM+YYYYMM' 'YYYYMMDD+YYYYMMDD': filtruos diapazoną metų/mėnesių/dienų<br>'&gt;YYYY' '&gt;YYYYMM' '&gt;YYYYMMDD': filtruos ateinančių metų/mėnesių/dienų<br>'&lt;YYYY' '&lt;YYYYMM' '&lt;YYYYMMDD': filtruos praėjusių metų/mėnesių/dienų
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
 ExportNumericFilter='NNNNN' filtruos pagal vieną reikšmę<br>'NNNNN+NNNNN' filtruos diapazono reikšmes<br>'&gt;NNNNN' filtruos mažesnes reikšmes<br>'&gt;NNNNN' filtruos didesnes reikšmes.
 ## filters
 SelectFilterFields=Jei norite filtruoti pagal kai kokias reikšmes, įveskite reikšmes čia.

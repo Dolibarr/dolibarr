@@ -29,7 +29,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function facturefourn_prepare_head($object)
 {
@@ -37,7 +37,7 @@ function facturefourn_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'card';
 	$h++;
@@ -63,7 +63,7 @@ function facturefourn_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
     	$head[$h][1] = $langs->trans('Notes');
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
     	$head[$h][2] = 'note';
     	$h++;
     }
@@ -73,7 +73,7 @@ function facturefourn_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -92,7 +92,7 @@ function facturefourn_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function ordersupplier_prepare_head($object)
 {
@@ -100,7 +100,7 @@ function ordersupplier_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("OrderCard");
 	$head[$h][2] = 'card';
 	$h++;
@@ -135,7 +135,7 @@ function ordersupplier_prepare_head($object)
 		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("Notes");
-		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
     	$head[$h][2] = 'note';
     	$h++;
     }
@@ -145,7 +145,7 @@ function ordersupplier_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -160,10 +160,9 @@ function ordersupplier_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @param	Object	$object		order
  *  @return	array   	        head array with tabs
  */
-function supplierorder_admin_prepare_head($object)
+function supplierorder_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -180,7 +179,7 @@ function supplierorder_admin_prepare_head($object)
 	$head[$h][2] = 'invoice';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
@@ -192,7 +191,7 @@ function supplierorder_admin_prepare_head($object)
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin','remove');
 
 	return $head;
 }

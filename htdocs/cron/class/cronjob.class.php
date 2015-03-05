@@ -96,7 +96,7 @@ class Cronjob extends CommonObject
 		$error=0;
 
 		$now=dol_now();
-		
+
 		// Clean parameters
 
 		if (isset($this->label)) $this->label=trim($this->label);
@@ -224,7 +224,7 @@ class Cronjob extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -273,7 +273,6 @@ class Cronjob extends CommonObject
      */
     function fetch($id)
     {
-    	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 
@@ -309,7 +308,7 @@ class Cronjob extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -356,7 +355,6 @@ class Cronjob extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -429,7 +427,7 @@ class Cronjob extends CommonObject
     		$sql.= " WHERE ".implode(' AND ',$sqlwhere);
     	}
 
-    	dol_syslog(get_class($this)."::fetch_all sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -490,7 +488,6 @@ class Cronjob extends CommonObject
     	else
     	{
     		$this->error="Error ".$this->db->lasterror();
-    		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
     		return -1;
     	}
     }
@@ -503,7 +500,7 @@ class Cronjob extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user=null, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -609,7 +606,7 @@ class Cronjob extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -657,15 +654,14 @@ class Cronjob extends CommonObject
 	 */
 	function delete($user, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+//		if (! $error)
+//		{
+//			if (! $notrigger)
+//			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action calls a trigger.
 
@@ -675,18 +671,18 @@ class Cronjob extends CommonObject
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}
-		}
+//			}
+//		}
 
-		if (! $error)
-		{
+//		if (! $error)
+//		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
     		$sql.= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
+//		}
 
         // Commit or rollback
 		if ($error)
@@ -722,6 +718,8 @@ class Cronjob extends CommonObject
 
 		$object=new Cronjob($this->db);
 
+		$object->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -747,6 +745,8 @@ class Cronjob extends CommonObject
 
 
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -805,18 +805,16 @@ class Cronjob extends CommonObject
 	/**
 	 *	Load object information
 	 *
-	 *	@return	void
+	 *	@return	int
 	 */
 	function info()
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql.= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as f";
 		$sql.= " WHERE f.rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -836,7 +834,6 @@ class Cronjob extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -852,7 +849,6 @@ class Cronjob extends CommonObject
 	{
 		global $langs, $conf;
 
-		$error=0;
 		$now=dol_now();
 
 		$langs->load('cron');
@@ -938,7 +934,6 @@ class Cronjob extends CommonObject
 			// Create Object for the call module
 			$object = new $this->objectname($this->db);
 
-			$params_arr = array();
 			$params_arr = explode(", ",$this->params);
 			if (!is_array($params_arr))
 			{
@@ -981,7 +976,6 @@ class Cronjob extends CommonObject
 				return -1;
 			}
 			dol_syslog(get_class($this) . "::run_jobs " . $this->libname . "::" . $this->methodename."(" . $this->params . ");", LOG_DEBUG);
-			$params_arr = array();
 			$params_arr = explode(", ", $this->params);
 			if (!is_array($params_arr))
 			{
@@ -1077,8 +1071,6 @@ class Cronjob extends CommonObject
 	 */
 	function reprogram_jobs($userlogin)
 	{
-		global $langs, $conf;
-
 		dol_syslog(get_class($this)."::reprogram_jobs userlogin:$userlogin", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';

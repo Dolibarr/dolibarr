@@ -29,7 +29,7 @@
  *
  * @param   Object	$object		Object related to tabs
  * @param	User	$user		Object user
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function product_prepare_head($object, $user)
 {
@@ -39,7 +39,7 @@ function product_prepare_head($object, $user)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -56,11 +56,6 @@ function product_prepare_head($object, $user)
 		$head[$h][2] = 'suppliers';
 		$h++;
 	}
-
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("Photos");
-	$head[$h][2] = 'photos';
-	$h++;
 
 	// Show category tab
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
@@ -83,13 +78,13 @@ function product_prepare_head($object, $user)
 	// Sub products
 	if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/product/stats/card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;
@@ -116,14 +111,19 @@ function product_prepare_head($object, $user)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
-	// Attachments
+	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Photos");
+	$head[$h][2] = 'photos';
+	$h++;
+
+    // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -147,10 +147,9 @@ function product_prepare_head($object, $user)
 /**
 *  Return array head with list of tabs to view object informations.
 *
-*  @param	Object	$object		Product
 *  @return	array   	        head array with tabs
 */
-function product_admin_prepare_head($object=null)
+function product_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -166,14 +165,14 @@ function product_admin_prepare_head($object=null)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin','remove');
 
 	return $head;
 }
@@ -316,6 +315,7 @@ function measuring_units_string($unit,$measuring_style='')
 {
 	global $langs;
 
+	$measuring_units=array();
 	if ($measuring_style == 'weight')
 	{
 		$measuring_units[3] = $langs->trans("WeightUnitton");

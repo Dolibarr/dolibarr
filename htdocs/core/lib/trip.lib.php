@@ -24,17 +24,17 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   Deplacement	$object		Object related to tabs
+ * @return  array				Array of tabs to show
  */
-function trip_prepare_head($object)
+function trip_prepare_head(Deplacement $object)
 {
 	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/fiche.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/compta/deplacement/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;

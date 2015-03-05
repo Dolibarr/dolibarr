@@ -1,5 +1,0 @@
-fixtures:
-  repositories:
-    stdlib: 'git://github.com/puppetlabs/puppetlabs-stdlib.git'
-  symlinks:
-    staging: "#{source_dir}"

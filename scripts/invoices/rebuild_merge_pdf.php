@@ -56,7 +56,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 // Check parameters
@@ -71,6 +71,7 @@ $newlangid='en_EN';	// To force a new lang id
 $filter=array();
 $regenerate='';		// Ask regenerate (contains name of model to use)
 $option='';
+$fileprefix='mergedpdf';
 
 foreach ($argv as $key => $value)
 {
@@ -83,6 +84,13 @@ foreach ($argv as $key => $value)
 		$valarray=explode('=',$value);
 		$newlangid=$valarray[1];
 		print 'Use language '.$newlangid.".\n";
+	}
+	if (preg_match('/^prefix=/i',$value))
+	{
+		$found=true;
+		$valarray=explode('=',$value);
+		$fileprefix=$valarray[1];
+		print 'Use prefix for filename '.$fileprefix.".\n";
 	}
 
 	if (preg_match('/^regenerate=(.*)/i',$value,$reg))
@@ -232,7 +240,7 @@ if (in_array('bank',$filter) && in_array('nopayment',$filter))
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid, $thirdpartiesid);
+$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid, $thirdpartiesid, $fileprefix);
 
 
 
@@ -283,6 +291,7 @@ function usage()
     print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
     print "To regenerate existing PDF, use regenerate=crabe\n";
     print "To generate invoices in a language, use lang=xx_XX\n";
+    print "To set prefix of generated file name, use prefix=myfileprefix\n";
     print "\n";
 	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR regenerate=crabe\n";
 	print "Example: ".$script_file." filter=all lang=en_US\n";

@@ -24,5 +24,5 @@ RulesVATInServices=- Para los servicios, el informe incluye el ITBIS de los pago
 RulesVATInProducts=- Para los bienes materiales, incluye el ITBIS de las facturas basándose en la fecha de la factura.
 RulesVATDueServices=- Para los servicios, el informe incluye el ITBIS de las facturas debidas, pagadas o no basándose en la fecha de estas facturas.
 RulesVATDueProducts=- Para los bienes materiales, incluye el ITBIS de las facturas basándose en la fecha de la factura.
-COMPTA_VAT_ACCOUNT=Código contable por defecto para el ITBIS repercutido
-COMPTA_VAT_BUY_ACCOUNT=Código contable por defecto para el ITBIS soportado
+ACCOUNTING_VAT_ACCOUNT=Código contable por defecto para el ITBIS repercutido
+ACCOUNTING_VAT_BUY_ACCOUNT=Código contable por defecto para el ITBIS soportado

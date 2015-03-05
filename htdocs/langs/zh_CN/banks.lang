@@ -8,6 +8,7 @@ FinancialAccount=帐户
 FinancialAccounts=帐目
 BankAccount=银行帐户
 BankAccounts=银行帐户
+ShowAccount=Show Account
 AccountRef=金融帐号
 AccountLabel=金融帐户标签
 CashAccount=现金帐户

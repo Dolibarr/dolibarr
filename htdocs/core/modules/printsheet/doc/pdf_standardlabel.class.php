@@ -135,7 +135,7 @@ class pdf_standardlabel
 	 	$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
 
 	 	// We are in a new page, then we must add a page
-		if (($this->_COUNTX ==0) and ($this->_COUNTY==0) and (!$this->_First==1)) {
+		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
 			$pdf->AddPage();
 		}
 		$this->_First=0;

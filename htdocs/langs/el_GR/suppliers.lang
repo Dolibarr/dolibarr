@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Προμηθευτές
 Supplier=Προμηθευτής
-AddSupplier=Προσθήκη προμηθευτή
+AddSupplier=Δημιουργία προμηθευτή
 SupplierRemoved=Ο προμηθευτής αφαιρέθηκε
 SuppliersInvoice=Τιμολόγιο προμηθευτή
 NewSupplier=Νέος προμηθευτής
@@ -40,3 +40,7 @@ AddSupplierInvoice=Δημιουργία τιμολογίου προμηθευτ�
 ListOfSupplierProductForSupplier=Λίστα προϊόντων και τιμών του προμηθευτή <b>%s</b>
 NoneOrBatchFileNeverRan=Κανένας ή παρτίδα <b>%s</b> έχει τρέξει πρόσφατα
 SentToSuppliers=Αποστολή σε προμηθευτές
+ListOfSupplierOrders=Λίστα παραγγελιών των προμηθευτών
+MenuOrdersSupplierToBill=Παραγγελίες προμηθευτών για τιμολόγηση
+NbDaysToDelivery=Καθυστέρηση παράδοσης σε ημέρες
+DescNbDaysToDelivery=The biggest delay is display among order product list

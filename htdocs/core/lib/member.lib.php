@@ -24,17 +24,17 @@
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Object	$object         Member
+ *  @param	Adherent	$object         Member
  *  @return array           		head
  */
-function member_prepare_head($object)
+function member_prepare_head(Adherent $object)
 {
 	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/card.php?rowid='.$object->id;
 	$head[$h][1] = $langs->trans("MemberCard");
 	$head[$h][2] = 'general';
 	$h++;
@@ -88,7 +88,7 @@ function member_prepare_head($object)
     $head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
-    if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+    if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 	$h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
@@ -155,7 +155,7 @@ function member_admin_prepare_head()
 /**
  *  Return array head with list of tabs to view object stats informations
  *
- *  @param	Object	$object         Member or null
+ *  @param	Adherent	$object         Member or null
  *  @return	array           		head
  */
 function member_stats_prepare_head($object)
@@ -174,7 +174,7 @@ function member_stats_prepare_head($object)
     $head[$h][1] = $langs->trans("Country");
     $head[$h][2] = 'statscountry';
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbyregion';
     $head[$h][1] = $langs->trans("Region");
     $head[$h][2] = 'statsregion';

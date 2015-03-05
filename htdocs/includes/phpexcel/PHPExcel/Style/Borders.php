@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.6, 2011-02-27
+ * @version    1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Style_Borders implements PHPExcel_IComparable
 {
@@ -141,18 +141,25 @@ class PHPExcel_Style_Borders implements PHPExcel_IComparable
 
 	/**
      * Create a new PHPExcel_Style_Borders
+	 *
+	 * @param	boolean	$isSupervisor	Flag indicating if this is a supervisor or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
+	 * @param	boolean	$isConditional	Flag indicating if this is a conditional style or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
      */
-    public function __construct($isSupervisor = false)
+    public function __construct($isSupervisor = false, $isConditional = false)
     {
     	// Supervisor?
 		$this->_isSupervisor = $isSupervisor;
 
     	// Initialise values
-    	$this->_left				= new PHPExcel_Style_Border($isSupervisor);
-    	$this->_right				= new PHPExcel_Style_Border($isSupervisor);
-    	$this->_top					= new PHPExcel_Style_Border($isSupervisor);
-    	$this->_bottom				= new PHPExcel_Style_Border($isSupervisor);
-    	$this->_diagonal			= new PHPExcel_Style_Border($isSupervisor);
+    	$this->_left				= new PHPExcel_Style_Border($isSupervisor, $isConditional);
+    	$this->_right				= new PHPExcel_Style_Border($isSupervisor, $isConditional);
+    	$this->_top					= new PHPExcel_Style_Border($isSupervisor, $isConditional);
+    	$this->_bottom				= new PHPExcel_Style_Border($isSupervisor, $isConditional);
+    	$this->_diagonal			= new PHPExcel_Style_Border($isSupervisor, $isConditional);
 		$this->_diagonalDirection	= PHPExcel_Style_Borders::DIAGONAL_NONE;
 
 		// Specially for supervisor

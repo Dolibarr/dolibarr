@@ -23,10 +23,10 @@
 create table llx_actioncomm_resources
 (
   rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
-  fk_actioncomm		integer NOT NULL,
-  element_type		varchar(50) NOT NULL,
-  fk_element		integer NOT NULL,
+  fk_actioncomm		integer NOT NULL,			-- Id into llx_actioncomm
+  element_type		varchar(50) NOT NULL,		-- Type of resource ('user', 'resource')
+  fk_element		integer NOT NULL,			-- Id into table llx_user or llx_resource
   answer_status		varchar(50) NULL,
-  mandatory		smallint,
-  transparent		smallint
+  mandatory			smallint,
+  transparency		smallint default 1	    -- Used to say if event is 1=OPAQUE=busy or 0=TRANSPARENT
 ) ENGINE=innodb;

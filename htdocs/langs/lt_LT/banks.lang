@@ -8,6 +8,7 @@ FinancialAccount=Sąskaita
 FinancialAccounts=Sąskaitos
 BankAccount=Banko sąskaita
 BankAccounts=Banko sąskaitos
+ShowAccount=Show Account
 AccountRef=Finansinės sąskaitos nuoroda
 AccountLabel=Finansinės sąskaitos etiketė
 CashAccount=Grynųjų pinigų sąskaita

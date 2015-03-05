@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - trips
+Trip=Trip
+Trips=Trips
+TripsAndExpenses=Trips and expenses
+TripsAndExpensesStatistics=Trips and expenses statistics
+TripCard=Trip card
+AddTrip=Create trip
+ListOfTrips=List of trips
+ListOfFees=List of fees
+NewTrip=New trip
+CompanyVisited=Company/foundation visited
+Kilometers=Kilometers
+FeesKilometersOrAmout=Amount or kilometers
+DeleteTrip=Delete trip
+ConfirmDeleteTrip=Are you sure you want to delete this trip ?
+TF_OTHER=Other
+TF_LUNCH=Lunch
+TF_TRIP=Trip
+ListTripsAndExpenses=List of trips and expenses
+ExpensesArea=Trips and expenses area
+SearchATripAndExpense=Search a trip and expense
+ClassifyRefunded=Classify 'Refunded'

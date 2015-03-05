@@ -17,9 +17,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * To use this template, the following var must be defined
+ * Need to have following variables defined:
+ * $object (invoice, order, ...)
+ * $conf
+ * $langs
+ * $dateSelector
+ * $forceall (0 by default, 1 for supplier invoices/orders)
+ * $senderissupplier (0 by default, 1 for supplier invoices/orders)
+ * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ *
  * $type, $text, $description, $line
  */
+
+$usemargins=0;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+
+global $forceall, $senderissupplier, $inputalsopricewithtax;
+if (empty($dateSelector)) $dateSelector=0;
+if (empty($forceall)) $forceall=0;
+if (empty($senderissupplier)) $senderissupplier=0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -100,7 +118,7 @@
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
-	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
+	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php } ?>
 
@@ -123,13 +141,13 @@
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   ?>
-  	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php
   }
   if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td align="right" class="nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
   <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
@@ -176,7 +194,8 @@
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline)) {
+if (!empty($extrafieldsline))
+{
 	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ class CActionComm
     var $type;
     var $libelle;
     var $active;
+    var $color;
 
     var $type_actions=array();
 
@@ -59,12 +60,12 @@ class CActionComm
      */
     function fetch($id)
     {
-        $sql = "SELECT id, code, type, libelle, active";
+        $sql = "SELECT id, code, type, libelle, color, active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
         else $sql.= " WHERE code='".$id."'";
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -77,12 +78,13 @@ class CActionComm
                 $this->type    = $obj->type;
                 $this->libelle = $obj->libelle;
                 $this->active  = $obj->active;
+                $this->color   = $obj->color;
 
                 $this->db->free($resql);
                 return 1;
             }
             else
-            {
+			{
                 $this->db->free($resql);
                 return 0;
             }
@@ -95,13 +97,13 @@ class CActionComm
     }
 
     /**
-     *  Return list of event types
+     *  Return list of event types: array(id=>label) or array(code=>label)
      *
-     *  @param	int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
+     *  @param	string|int			$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
      *  @param	string		$idorcode		'id' or 'code'
      *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not
-     *  @return array      					Array of all event types if OK, <0 if KO
+     *  @param	int		$onlyautoornot	Group list by auto events or not
+     *  @return mixed      					Array of all event types if OK, <0 if KO
      */
     function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0)
     {
@@ -111,13 +113,13 @@ class CActionComm
         $repid = array();
         $repcode = array();
 
-        $sql = "SELECT id, code, libelle, module, type";
+        $sql = "SELECT id, code, libelle, module, type, color";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if ($active != '') $sql.=" WHERE active=".$active;
         if (! empty($excludetype)) $sql.=($active != ''?" AND":" WHERE")." type <> '".$excludetype."'";
         $sql.= " ORDER BY module, position";
 
-        dol_syslog(get_class($this)."::liste_array sql=".$sql);
+        dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version	1.7.6, 2011-02-27
+ * @version	1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_ReferenceHelper
 {
@@ -55,7 +55,7 @@ class PHPExcel_ReferenceHelper
 	 * @return PHPExcel_ReferenceHelper
 	 */
 	public static function getInstance() {
-		if (!isset(self::$_instance) || is_null(self::$_instance)) {
+		if (!isset(self::$_instance) || (self::$_instance === NULL)) {
 			self::$_instance = new PHPExcel_ReferenceHelper();
 		}
 
@@ -214,7 +214,7 @@ class PHPExcel_ReferenceHelper
 
 		// Update worksheet: column dimensions
 		$aColumnDimensions = array_reverse($pSheet->getColumnDimensions(), true);
-		if (count($aColumnDimensions) > 0) {
+		if (!empty($aColumnDimensions)) {
 			foreach ($aColumnDimensions as $objColumnDimension) {
 				$newReference = $this->updateCellReference($objColumnDimension->getColumnIndex() . '1', $pBefore, $pNumCols, $pNumRows);
 				list($newReference) = PHPExcel_Cell::coordinateFromString($newReference);
@@ -228,7 +228,7 @@ class PHPExcel_ReferenceHelper
 
 		// Update worksheet: row dimensions
 		$aRowDimensions = array_reverse($pSheet->getRowDimensions(), true);
-		if (count($aRowDimensions) > 0) {
+		if (!empty($aRowDimensions)) {
 			foreach ($aRowDimensions as $objRowDimension) {
 				$newReference = $this->updateCellReference('A' . $objRowDimension->getRowIndex(), $pBefore, $pNumCols, $pNumRows);
 				list(, $newReference) = PHPExcel_Cell::coordinateFromString($newReference);
@@ -312,8 +312,61 @@ class PHPExcel_ReferenceHelper
 
 
 		// Update worksheet: autofilter
-		if ($pSheet->getAutoFilter() != '') {
-			$pSheet->setAutoFilter( $this->updateCellReference($pSheet->getAutoFilter(), $pBefore, $pNumCols, $pNumRows) );
+		$autoFilter = $pSheet->getAutoFilter();
+		$autoFilterRange = $autoFilter->getRange();
+		if (!empty($autoFilterRange)) {
+			if ($pNumCols != 0) {
+				$autoFilterColumns = array_keys($autoFilter->getColumns());
+				if (count($autoFilterColumns) > 0) {
+					list($column,$row) = sscanf($pBefore,'%[A-Z]%d');
+					$columnIndex = PHPExcel_Cell::columnIndexFromString($column);
+					list($rangeStart,$rangeEnd) = PHPExcel_Cell::rangeBoundaries($autoFilterRange);
+					if ($columnIndex <= $rangeEnd[0]) {
+						if ($pNumCols < 0) {
+							//	If we're actually deleting any columns that fall within the autofilter range,
+							//		then we delete any rules for those columns
+							$deleteColumn = $columnIndex + $pNumCols - 1;
+							$deleteCount = abs($pNumCols);
+							for ($i = 1; $i <= $deleteCount; ++$i) {
+								if (in_array(PHPExcel_Cell::stringFromColumnIndex($deleteColumn),$autoFilterColumns)) {
+									$autoFilter->clearColumn(PHPExcel_Cell::stringFromColumnIndex($deleteColumn));
+								}
+								++$deleteColumn;
+							}
+						}
+						$startCol = ($columnIndex > $rangeStart[0]) ? $columnIndex : $rangeStart[0];
+
+						//	Shuffle columns in autofilter range
+						if ($pNumCols > 0) {
+							//	For insert, we shuffle from end to beginning to avoid overwriting
+							$startColID = PHPExcel_Cell::stringFromColumnIndex($startCol-1);
+							$toColID = PHPExcel_Cell::stringFromColumnIndex($startCol+$pNumCols-1);
+							$endColID = PHPExcel_Cell::stringFromColumnIndex($rangeEnd[0]);
+
+							$startColRef = $startCol;
+							$endColRef = $rangeEnd[0];
+							$toColRef = $rangeEnd[0]+$pNumCols;
+
+							do {
+								$autoFilter->shiftColumn(PHPExcel_Cell::stringFromColumnIndex($endColRef-1),PHPExcel_Cell::stringFromColumnIndex($toColRef-1));
+								--$endColRef;
+								--$toColRef;
+							} while ($startColRef <= $endColRef);
+						} else {
+							//	For delete, we shuffle from beginning to end to avoid overwriting
+							$startColID = PHPExcel_Cell::stringFromColumnIndex($startCol-1);
+							$toColID = PHPExcel_Cell::stringFromColumnIndex($startCol+$pNumCols-1);
+							$endColID = PHPExcel_Cell::stringFromColumnIndex($rangeEnd[0]);
+							do {
+								$autoFilter->shiftColumn($startColID,$toColID);
+								++$startColID;
+								++$toColID;
+							} while ($startColID != $endColID);
+						}
+					}
+				}
+			}
+			$pSheet->setAutoFilter( $this->updateCellReference($autoFilterRange, $pBefore, $pNumCols, $pNumRows) );
 		}
 
 
@@ -530,7 +583,7 @@ class PHPExcel_ReferenceHelper
 		foreach ($pPhpExcel->getWorksheetIterator() as $sheet) {
 			foreach ($sheet->getCellCollection(false) as $cellID) {
 				$cell = $sheet->getCell($cellID);
-				if (!is_null($cell) && $cell->getDataType() == PHPExcel_Cell_DataType::TYPE_FORMULA) {
+				if (($cell !== NULL) && ($cell->getDataType() == PHPExcel_Cell_DataType::TYPE_FORMULA)) {
 					$formula = $cell->getValue();
 					if (strpos($formula, $oldName) !== false) {
 						$formula = str_replace("'" . $oldName . "'!", "'" . $newName . "'!", $formula);

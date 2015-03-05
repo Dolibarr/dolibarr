@@ -50,14 +50,13 @@ if (GETPOST('action','alpha') == 'set')
 	$db->begin();
 
 	if (GETPOST('socid','int') < 0) $_POST["socid"]='';
-	/*if (GETPOST("CASHDESK_ID_BANKACCOUNT") < 0)  $_POST["CASHDESK_ID_BANKACCOUNT"]='';
-	if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
 
-	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST('socid','int'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST('CASHDESK_ID_BANKACCOUNT_CASH','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST('CASHDESK_ID_BANKACCOUNT_CB','alpha'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",GETPOST('CASHDESK_ID_WAREHOUSE','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",(GETPOST('socid','int') > 0 ? GETPOST('socid','int') : ''),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",(GETPOST('CASHDESK_ID_BANKACCOUNT_CASH','alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH','alpha') : ''),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",(GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE','alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE','alpha') : ''),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",(GETPOST('CASHDESK_ID_BANKACCOUNT_CB','alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB','alpha') : ''),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",(GETPOST('CASHDESK_ID_WAREHOUSE','alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE','alpha') : ''),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",GETPOST('CASHDESK_NO_DECREASE_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES','alpha'),'chaine',0,'',$conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
@@ -67,12 +66,12 @@ if (GETPOST('action','alpha') == 'set')
  	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -129,9 +128,34 @@ if (! empty($conf->banque->enabled))
 if (! empty($conf->stock->enabled))
 {
 	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
-	print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
+	if (empty($conf->productbatch->enabled)) {
+	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
+	}
+	else 
+	{
+	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+	       $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
+	    }
+	    print $langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch'); 
+	}
+	print '</td></tr>';
+
+	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
+	
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';	// Force warehouse (this is not a default value)
+	print '<td colspan="2">';
+	if (! $disabled)
+	{
+		print $formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1,$disabled);
+		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">('.$langs->trans("Create").')</a>';
+	}
+	else
+	{
+		print $langs->trans("StockDecreaseForPointOfSaleDisabled");
+	}
 	print '</td></tr>';
 }
 
@@ -151,8 +175,6 @@ print '<br>';
 print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
 
 print "</form>\n";
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

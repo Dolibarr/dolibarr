@@ -4,7 +4,8 @@ Sending=Saadetis
 Sendings=Saadetised
 Shipment=Saadetis
 Shipments=Saadetised
-Receivings=Saabumised
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Saadetiste ala
 ListOfSendings=Saadetiste nimekiri
 SendingMethod=Saatmisviis
@@ -14,7 +15,7 @@ SearchASending=Otsi saadetist
 StatisticsOfSendings=Saadetiste statistika
 NbOfSendings=Saadetiste arv
 NumberOfShipmentsByMonth=Saadetiste arv kuude järgi
-SendingCard=Saadetise kaart
+SendingCard=Shipment card
 NewSending=Uus saadetis
 CreateASending=Koosta saadetis
 CreateSending=Koosta saadetis
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Tühistatud
 StatusSendingDraftShort=Mustand
 StatusSendingValidatedShort=Kinnitatud
 StatusSendingProcessedShort=Töödeldud
-SendingSheet=Saateleht
+SendingSheet=Shipment sheet
 Carriers=Vedajad
 Carrier=Vedaja
 CarriersArea=Vedajate ala
@@ -54,23 +55,31 @@ StatsOnShipmentsOnlyValidated=Statistika põhineb vaid kinnitatud saadetistel. K
 DateDeliveryPlanned=Plaanitud kohaletoimetamise aeg
 DateReceived=Saadetise kättesaamise kuupäev
 SendShippingByEMail=Saada saadetis e-postiga
-SendShippingRef=Läheta saadetis %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Saatmisel toimuvad tegevused
 LinkToTrackYourPackage=Paki jälgimise link
 ShipmentCreationIsDoneFromOrder=Praegu luuakse saadetised tellimuse kaardilt.
-RelatedShippings=Seotud saatmised
+RelatedShippings=Related shipments
 ShipmentLine=Saadetise rida
 CarrierList=Vedajate nimekiri
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Kliendi saak
 SendingMethodTRANS=Transportija
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Lihtne saatelehtede dokumendi mudel
 DocumentModelTyphon=Täiuslikum saatelehtede dokumendi mudel (logo jne)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER on määratlemata
 SumOfProductVolumes=Toodete ruumala summa
 SumOfProductWeights=Toodete kaalude summa
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

@@ -54,6 +54,10 @@ class Conf
 	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array());
 
 	var $logbuffer					= array();
+
+	/**
+	 * @var LogHandlerInterface[]
+	 */
 	var $loghandlers                = array();
 
 	//! To store properties of multi-company
@@ -366,12 +370,25 @@ class Conf
 			unset($this->global->CONTACT_USE_SEARCH_TO_SELECT);
 		}
 
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+		}
+
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
 
-		// conf->global->COMPTA_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
-        if (empty($this->global->COMPTA_MODE)) $this->global->COMPTA_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+        if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+
+        // By default, suppliers objects can be linked to all projects
+        $conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
 
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;

@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client module setup
-NewFTPClient=New FTP connection setup
-FTPArea=FTP Area
-FTPAreaDesc=This screen show you content of a FTP server view
-SetupOfFTPClientModuleNotComplete=Setup of FTP client module seems to be not complete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
-FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
-FTPPassiveMode=Passive mode
+FTPClientSetup=FTP thiết lập mô-đun Khách hàng
+NewFTPClient=Mới thiết lập kết nối FTP
+FTPArea=FTP Diện tích
+FTPAreaDesc=Màn hình này hiển thị cho bạn xem nội dung của một máy chủ FTP
+SetupOfFTPClientModuleNotComplete=Thiết lập các mô-đun FTP client có vẻ là không hoàn thành
+FTPFeatureNotSupportedByYourPHP=PHP của bạn không hỗ trợ chức năng FTP
+FailedToConnectToFTPServer=Không thể kết nối đến máy chủ FTP (máy chủ% s, cổng% s)
+FailedToConnectToFTPServerWithCredentials=Không thể đăng nhập vào máy chủ FTP với quy định đăng nhập / mật khẩu
+FTPFailedToRemoveFile=Không thể loại bỏ các tập <b>tin% s.</b>
+FTPFailedToRemoveDir=Không thể loại bỏ thư <b>mục% s</b> (Kiểm tra quyền truy cập và thư mục mà là trống).
+FTPPassiveMode=Chế độ thụ động

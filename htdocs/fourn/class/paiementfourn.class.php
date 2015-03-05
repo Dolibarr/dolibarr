@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 /**
- *	\class      PaiementFourn
- *	\brief      Classe permettant la gestion des paiements des factures fournisseurs
+ *	Class to manage payments for supplier invoices
  */
 class PaiementFourn extends Paiement
 {
@@ -163,7 +162,7 @@ class PaiementFourn extends Paiement
 			$sql.= " VALUES ('".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaye)."', '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
-			dol_syslog("PaiementFourn::create sql=".$sql);
+			dol_syslog("PaiementFourn::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -215,18 +214,15 @@ class PaiementFourn extends Paiement
 
 				if (! $error)
 				{
-		            // Appel des triggers
-		            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		            // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
+                    if ($result < 0) $error++;
+                    // End call triggers
 				}
 			}
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -272,7 +268,7 @@ class PaiementFourn extends Paiement
 		{
 			if (count($billsarray))
 			{
-				$this->error='Can\'t delete a payment shared by at least one invoice with status payed';
+				$this->error="ErrorCantDeletePaymentSharedWithPayedInvoice";
 				$this->db->rollback();
 				return -1;
 			}
@@ -291,7 +287,7 @@ class PaiementFourn extends Paiement
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
-				$this->error='Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee';
+				$this->error="ErrorCantDeletePaymentReconciliated";
 				$this->db->rollback();
 				return -3;
 			}
@@ -300,13 +296,11 @@ class PaiementFourn extends Paiement
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 		$sql.= ' WHERE fk_paiementfourn = '.$this->id;
-		dol_syslog("sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
 			$sql.= ' WHERE rowid = '.$this->id;
-		    dol_syslog("sql=".$sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -350,7 +344,7 @@ class PaiementFourn extends Paiement
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT c.rowid, datec, fk_user_author, tms';
+		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -362,6 +356,7 @@ class PaiementFourn extends Paiement
 			{
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
+
 				if ($obj->fk_user_creat)
 				{
 					$cuser = new User($this->db);
@@ -386,10 +381,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	 *	Retourne la liste des factures sur lesquels porte le paiement
+	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         Critere de filtre
-	 *	@return     array           		Tableau des id de factures
+	 *	@param      string	$filter         SQL filter
+	 *	@return     array           		Array of supplier invoice id
 	 */
 	function getBillsArray($filter='')
 	{
@@ -398,7 +393,7 @@ class PaiementFourn extends Paiement
 		$sql.= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 
-		dol_syslog(get_class($this).'::getBillsArray sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -493,7 +488,7 @@ class PaiementFourn extends Paiement
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		$text=$this->ref;	// Sometimes ref contains label

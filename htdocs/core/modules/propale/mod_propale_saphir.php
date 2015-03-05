@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
 
 /**
- * \class      mod_propale_saphir
- * \brief      Class of file that contains the numbering module rules Saphir
+ * Class of file that contains the numbering module rules Saphir
  */
 class mod_propale_saphir extends ModeleNumRefPropales
 {
@@ -124,7 +123,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		$date=$propal->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$customercode,$date);
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date);
 
 		return  $numFinal;
 	}

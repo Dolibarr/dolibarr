@@ -1,8 +1,8 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Создать ссылку на файл или документ
+LinkedFiles=Ссылки на файлы и документы
+NoLinkFound=Нет зарегистрированных ссылок
+LinkComplete=Создана ссылка на файл
+ErrorFileNotLinked=Не возможно создать ссылку на файл
+LinkRemoved=Ссылка на файл %s удалена
+ErrorFailedToDeleteLink= При удалении ссылки на файл '<b>%s</b>' возникла ошибка
+ErrorFailedToUpdateLink= При обновлении ссылки на файл '<b>%s</b>' возникла ошибка

@@ -1,8 +1,8 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Fitxategi/dokumentu berria estekatu
+LinkedFiles=Estekatutako fitxategi eta dokumentuak
+NoLinkFound=Ez dago gordetako estekarik
+LinkComplete=Fitxategia ondo estekatu da
+ErrorFileNotLinked=Ezin izan da fitxategia estekatu
+LinkRemoved=%s esteka ezabatua izan da
+ErrorFailedToDeleteLink= Ezin izan da '<b>%s</b>' esteka ezabatu
+ErrorFailedToUpdateLink= Ezin izan da '<b>%s</b>' esteka berritu

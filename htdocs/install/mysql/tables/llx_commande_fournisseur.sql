@@ -23,23 +23,24 @@ create table llx_commande_fournisseur
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
 
-  ref					varchar(30) NOT NULL,          -- order number
+  ref					varchar(255) NOT NULL,          -- order number
   entity				integer DEFAULT 1 NOT NULL,	 -- multi company id
 
-  ref_ext				varchar(30),                  -- reference into an external system (not used by dolibarr)
-  ref_supplier			varchar(30),
+  ref_ext				varchar(64),                  -- reference into an external system (not used by dolibarr)
+  ref_supplier			varchar(255),
 
   fk_soc				integer NOT NULL,
-  fk_projet				integer DEFAULT 0,             -- projet auquel est rattache la commande
+  fk_projet				integer DEFAULT 0,             -- project id
 
   tms					timestamp,
   date_creation			datetime,                      -- date de creation 
   date_valid			datetime,                      -- date de validation
   date_approve			datetime,                      -- date de approve
   date_commande			date,                          -- date de la commande
-  fk_user_author		integer,                       -- createur de la commande
-  fk_user_valid			integer,                       -- valideur de la commande
-  fk_user_approve		integer,                       -- auteur approve
+  fk_user_author		integer,                       -- user making creation
+  fk_user_modif         integer,                       -- user making last change
+  fk_user_valid			integer,                       -- user validating
+  fk_user_approve		integer,                       -- user approving
   source				smallint NOT NULL,
   fk_statut				smallint  default 0,
   amount_ht				real      default 0,
@@ -54,10 +55,11 @@ create table llx_commande_fournisseur
   note_public			text,
   model_pdf				varchar(255),
 
-  date_livraison		date 	  default NULL,
+  date_livraison		datetime  default NULL,
+  fk_account            integer,                       -- bank account
   fk_cond_reglement		integer,                       -- condition de reglement
   fk_mode_reglement		integer,                       -- mode de reglement
-  fk_input_method	integer default 0,
+  fk_input_method	    integer default 0,
   import_key			varchar(14),
   extraparams			varchar(255)					-- for stock other parameters with json format
   

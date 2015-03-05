@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 // Define image path files and other constants
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
-$img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
+$img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
@@ -108,7 +108,7 @@ body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
+	background-color: #FCFCFC;
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -184,14 +184,6 @@ legend { margin-bottom: 8px; }
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
-.buttonajax {
-    font-family: <?php print $fontlist ?>;
-	border: 0px;
-	background-image: url(<?php echo $img_button ?>);
-	background-position: bottom;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-}
 form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
@@ -232,6 +224,23 @@ div.inline-block
 }
 .nounderline {
     text-decoration: none;
+}
+.cursorpointer {
+	cursor: pointer;
+}
+.badge {
+	display: inline-block;
+	min-width: 10px;
+	padding: 2px 5px;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 0.9em;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	background-color: #777;
+	border-radius: 10px;
 }
 
 
@@ -356,7 +365,6 @@ div.tmenu {
     height: <?php print $heightmenu; ?>px;
     background: #7FAEC6;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/table_bg.gif',1); ?>);
-/*    background-position: center bottom; */
     color: #000000;
     text-decoration: none;
 <?php } ?>
@@ -375,7 +383,9 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) {
+
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) {
 
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -397,7 +407,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 $mainmenuusedarray=array();	// Disable
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','cashdesk');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','agenda','ecm','cashdesk');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -434,7 +444,7 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 <?php
-}	// End test if not phone
+}	// End test if $dol_hide_topmenu
 ?>
 
 .tmenu{
@@ -711,8 +721,8 @@ div.blockvmenusearch
 {
 	padding-top: 1px;
 	padding-bottom: 1px;
-	height: 16px;
 	background: #DDDDDD !important;
+	min-height: 16px;
 }
 
 div.blockvmenubookmarks
@@ -1838,9 +1848,14 @@ td.hidden {
 
 table.cal_month    { border-spacing: 0px; }
 .cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B !important; border-right: 0; }
 .cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #ACBCBB; border-bottom: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B; border-right: 0; border-bottom: solid 1px #ACBCBB; }
+.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser { background: #FFFFFF; border-right: solid 1px #6C7C7B; border-top: solid 1px #A0A0A0; border-bottom: solid 1px #A0A0A0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; border-top: solid 1px #A0A0A0; border-right: solid 1px #6C7C7B; border-bottom: solid 1px #A0A0A0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
 table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -webkit-padding-start: 0px; -webkit-padding-start: 0px; }
@@ -1849,6 +1864,9 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
+.cal_peruser       { padding: 0px; }
+.peruser_busy      { background: #CC8888; }
+.peruser_notbusy   { background: #EEDDDD; }
 
 
 /* ============================================================================== */
@@ -2299,6 +2317,11 @@ div.ecmjqft {
 {
 	text-decoration: underline !important;
 }
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
+}
 
 
 /* ============================================================================== */
@@ -2440,6 +2463,14 @@ ul.ulmenu {
 	background-image: -ms-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
 	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
+}
+.lilevel2
+{
+	padding-left: 22px;
+}
+.lilevel3
+{
+	padding-left: 54px;
 }
 
 <?php

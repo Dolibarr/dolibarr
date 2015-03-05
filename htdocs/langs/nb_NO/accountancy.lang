@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Regnskap
+Globalparameters=Globale parametre
+Chartofaccounts=Chart of accounts
+Fiscalyear=Regnskapsår
+Menuaccount=Regnskapskonti
+Menuthirdpartyaccount=Thirdparty accounts
+MenuTools=Verktøy
+
+ConfigAccountingExpert=Configuration of the module accounting expert
+Journaux=Journals
+JournalFinancial=Financial journals
+Exports=Exports
+Export=Export
+Modelcsv=Model of export
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Select a model of export
+Modelcsv_normal=Classic export
+Modelcsv_CEGID=Export towards CEGID Expert
+BackToChartofaccounts=Return chart of accounts
+Back=Return
+
+Definechartofaccounts=Define a chart of accounts
+Selectchartofaccounts=Select a chart of accounts
+Validate=Validate
+Addanaccount=Add an accounting account
+AccountAccounting=Accounting account
+Ventilation=Breakdown
+ToDispatch=To dispatch
+Dispatched=Dispatched
+
+CustomersVentilation=Breakdown customers
+SuppliersVentilation=Breakdown suppliers
+TradeMargin=Trade margin
+Reports=Reports
+ByCustomerInvoice=By invoices customers
+ByMonth=By Month
+NewAccount=New accounting account
+Update=Update
+List=List
+Create=Create
+UpdateAccount=Modification of an accounting account
+UpdateMvts=Modification of a movement
+WriteBookKeeping=Record accounts in general ledger
+Bookkeeping=General ledger
+AccountBalanceByMonth=Account balance by month
+
+AccountingVentilation=Breakdown accounting
+AccountingVentilationSupplier=Breakdown accounting supplier
+AccountingVentilationCustomer=Breakdown accounting customer
+Line=Line
+
+CAHTF=Total purchase supplier HT
+InvoiceLines=Lines of invoice to be ventilated
+InvoiceLinesDone=Ventilated lines of invoice
+IntoAccount=In the accounting account
+
+Ventilate=Ventilate
+VentilationAuto=Automatic breakdown
+
+Processing=Processing
+EndProcessing=The end of processing
+AnyLineVentilate=Any lines to ventilate
+SelectedLines=Valgte linjer
+Lineofinvoice=Line of invoice
+VentilatedinAccount=Ventilated successfully in the accounting account
+NotVentilatedinAccount=Not ventilated in the accounting account
+
+ACCOUNTING_SEPARATORCSV=Column separator in export file
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+
+AccountLength=Length of the accounting accounts shown in Dolibarr
+AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+
+ACCOUNTING_SELL_JOURNAL=Sell journal
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
+ACCOUNTING_BANK_JOURNAL=Bank journal
+ACCOUNTING_CASH_JOURNAL=Cash journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_SOCIAL_JOURNAL=Social journal
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+
+Doctype=Dokumenttype
+Docdate=Dato
+Docref=Referanse
+Numerocompte=Konto
+Code_tiers=Tredjepart
+Labelcompte=Kontoetikett
+Debit=Debet
+Credit=Kredit
+Amount=Beløp
+Sens=Sens
+Codejournal=Journal
+
+DelBookKeeping=Slett innholdet i hovedboken
+
+SellsJournal=Salgsjournal
+PurchasesJournal=Innkjøpsjournal
+DescSellsJournal=Salgsjournal
+DescPurchasesJournal=Innkjøpsjournal
+BankJournal=Bankjournal
+DescBankJournal=Bank journal including all the types of payments other than cash
+CashJournal=Kontantjournal
+DescCashJournal=Cash journal including the type of payment cash
+
+CashPayment=Kontant Betaling
+
+SupplierInvoicePayment=Payment of invoice supplier
+CustomerInvoicePayment=Payment of invoice customer
+
+ThirdPartyAccount=Tredjepart konto
+
+NewAccountingMvt=Ny bevegelse
+NumMvts=Number of movement
+ListeMvts=List of the movement
+ErrorDebitCredit=Debet og Kredit kan ikke ha en verdi samtidig
+
+ReportThirdParty=List thirdparty account
+DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+
+ListAccounts=List of the accounting accounts
+
+Pcgversion=Version of the plan
+Pcgtype=Class of account
+Pcgsubtype=Under class of account
+Accountparent=Root of the account
+Active=Statement
+
+NewFiscalYear=New fiscal year
+
+DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+TotalVente=Total turnover HT
+TotalMarge=Total sales margin
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
+DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+ChangeAccount=Change the accounting account for lines selected by the account:
+Vide=-
+DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
+DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Validate Automatically
+
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+
+FicheVentilation=Breakdown card

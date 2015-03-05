@@ -35,11 +35,12 @@ class mod_task_simple extends ModeleNumRefTask
 	var $prefix='TK';
     var $error='';
 	var $nom = "Simple";
+	var $name = "Simple";
 
 
-    /** 
+    /**
      *  Return description of numbering module
-     * 
+     *
      *  @return     string      Text with description
      */
     function info()
@@ -49,9 +50,9 @@ class mod_task_simple extends ModeleNumRefTask
     }
 
 
-    /** 
+    /**
      *  Return an example of numbering module values
-     * 
+     *
      * 	@return     string      Example
      */
     function getExample()
@@ -62,7 +63,7 @@ class mod_task_simple extends ModeleNumRefTask
 
     /**  Test si les numeros deja en vigueur dans la base ne provoquent pas de
      *   de conflits qui empechera cette numerotation de fonctionner.
-     * 
+     *
      *   @return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -98,7 +99,7 @@ class mod_task_simple extends ModeleNumRefTask
 
    /**
 	*  Return next value
-	* 
+	*
 	*  @param   Societe	$objsoc		Object third party
 	*  @param   Task	$task		Object Task
 	*  @return	string				Value if OK, 0 if KO
@@ -122,7 +123,7 @@ class mod_task_simple extends ModeleNumRefTask
 		}
 		else
 		{
-			dol_syslog("mod_task_simple::getNextValue sql=".$sql);
+			dol_syslog("mod_task_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -130,7 +131,7 @@ class mod_task_simple extends ModeleNumRefTask
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m",$date);
-		
+
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s",$max+1);
 
@@ -139,9 +140,9 @@ class mod_task_simple extends ModeleNumRefTask
     }
 
 
-    /** 
+    /**
      * 	Return next reference not yet used as a reference
-     * 
+     *
      *  @param	Societe	$objsoc     Object third party
      *  @param  Task	$task		Object task
      *  @return string      		Next not used reference

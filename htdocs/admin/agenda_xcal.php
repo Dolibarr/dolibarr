@@ -142,7 +142,7 @@ print "</center>";
 
 print "</form>\n";
 
-print '</div>';
+dol_fiche_end();
 
 clearstatcache();
 
@@ -171,9 +171,11 @@ $message.='<br>';
 print $message;
 
 $message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
+//$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);
+
 print info_admin($message);
 
 if (! empty($conf->use_javascript_ajax))

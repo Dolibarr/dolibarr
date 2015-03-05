@@ -44,7 +44,7 @@ if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="ASC";
 
 $filter=GETPOST("filter");
-$search_nom=GETPOST("search_nom");
+$search_name=GETPOST("search_name");
 $search_contract=GETPOST("search_contract");
 $search_service=GETPOST("search_service");
 $statut=GETPOST('statut')?GETPOST('statut'):1;
@@ -69,6 +69,21 @@ $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 $companystatic=new Societe($db);
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_name="";
+	$search_contract="";
+	$search_service="";
+	$op1month="";
+	$op1day="";
+	$op1year="";
+	$filter_op1="";
+	$op2month="";
+	$op2day="";
+	$op2year="";
+	$filter_op2="";
+}
+
 /*
  * View
  */
@@ -80,7 +95,7 @@ $form=new Form($db);
 llxHeader();
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
-$sql.= " s.rowid as socid, s.nom,";
+$sql.= " s.rowid as socid, s.nom as name,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -101,7 +116,7 @@ if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
-if ($search_nom)      $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_name)     $sql.= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
@@ -113,7 +128,7 @@ $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 //print $sql;
-dol_syslog("contrat/services.php sql=".$sql);
+dol_syslog("contrat/services.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -122,7 +137,7 @@ if ($resql)
 
 	$param='';
 	if ($search_contract) $param.='&amp;search_contract='.urlencode($search_contract);
-	if ($search_nom)      $param.='&amp;search_nom='.urlencode($search_nom);
+	if ($search_name)      $param.='&amp;search_name='.urlencode($search_name);
 	if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
 	if ($mode)            $param.='&amp;mode='.$mode;
 	if ($filter)          $param.='&amp;filter='.$filter;
@@ -136,24 +151,24 @@ if ($resql)
 	if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 	if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 	if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-	print_barre_liste($title, $page, "services.php", $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Service"),"services.php", "p.description",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Contract"),$_SERVER["PHP_SELF"], "c.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Service"),$_SERVER["PHP_SELF"], "p.description",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"], "s.nom",$param,"","",$sortfield,$sortorder);
 	// Date debut
-	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
-	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
+	if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_ouverture_prevue",$param,'',' align="center"',$sortfield,$sortorder);
+	if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),$_SERVER["PHP_SELF"], "cd.date_ouverture",$param,'',' align="center"',$sortfield,$sortorder);
 	// Date fin
-	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
-	else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
+	if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),$_SERVER["PHP_SELF"], "cd.date_fin_validite",$param,'',' align="center"',$sortfield,$sortorder);
+	else print_liste_field_titre($langs->trans("DateEndRealShort"),$_SERVER["PHP_SELF"], "cd.date_cloture",$param,'',' align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "cd.statut,c.statut",$param,"","align=\"right\"",$sortfield,$sortorder);
 	print "</tr>\n";
 
-	print '<form method="POST" action="services.php">';
+	print '<form method="POST" action="'. $_SERVER["PHP_SELF"] .'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<tr class="liste_titre">';
@@ -168,7 +183,7 @@ if ($resql)
 	print '</td>';
 	// Third party
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="24" name="search_nom" value="'.dol_escape_htmltag($search_nom).'">';
+	print '<input type="text" class="flat" size="24" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
@@ -184,9 +199,9 @@ if ($resql)
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
 	print $form->select_date($filter_date2,'op2',0,0,1);
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print "</td>";
-	print "</tr>\n";
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print "</td></tr>\n";
 	print '</form>';
 
 	$contractstatic=new Contrat($db);
@@ -225,7 +240,7 @@ if ($resql)
 		// Third party
 		print '<td>';
 		$companystatic->id=$obj->socid;
-		$companystatic->nom=$obj->nom;
+		$companystatic->name=$obj->name;
 		$companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';

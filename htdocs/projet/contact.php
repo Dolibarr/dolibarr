@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2012 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,10 @@ $mine   = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($ref)
+if ($id > 0 || ! empty($ref))
 {
-    $object->fetch(0,$ref);
+    $object->fetch($id,$ref);
+    $object->fetch_thirdparty();
     $id=$object->id;
 }
 
@@ -79,11 +80,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -137,86 +138,76 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ( $object->fetch($id,$ref) > 0)
+	// To verify role of users
+	//$userAccess = $object->restrictedProjectArea($user,'read');
+	$userWrite  = $object->restrictedProjectArea($user,'write');
+	//$userDelete = $object->restrictedProjectArea($user,'delete');
+	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+	$head = project_prepare_head($object);
+	dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+
+
+	/*
+	 *   Projet synthese pour rappel
+	*/
+	print '<table class="border" width="100%">';
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+
+	// Ref
+	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+	// Define a complementary filter for search of next/prev ref.
+	if (! $user->rights->projet->all->lire)
 	{
-		if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
-
-		// To verify role of users
-		//$userAccess = $object->restrictedProjectArea($user,'read');
-		$userWrite  = $object->restrictedProjectArea($user,'write');
-		//$userDelete = $object->restrictedProjectArea($user,'delete');
-		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
-
-		$head = project_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
-
-
-		/*
-		 *   Projet synthese pour rappel
-		 */
-		print '<table class="border" width="100%">';
-
-		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
-
-		// Ref
-		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		// Define a complementary filter for search of next/prev ref.
-        if (! $user->rights->projet->all->lire)
-        {
-            $objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
-            $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
-        }
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-		print '</td></tr>';
-
-		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
-
-		// Customer
-		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
-		print '<td colspan="3">';
-		if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-
-		// Visibility
-		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		if ($object->public) print $langs->trans('SharedProject');
-		else print $langs->trans('PrivateProject');
-		print '</td></tr>';
-
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
-	   	// Date start
-		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print dol_print_date($object->date_start,'day');
-		print '</td></tr>';
-
-		// Date end
-		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print dol_print_date($object->date_end,'day');
-		print '</td></tr>';
-
-		print "</table>";
-
-		print '</div>';
-
-		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-		foreach($dirtpls as $reldir)
-		{
-			$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-			if ($res) break;
-		}
+		$objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+		$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 	}
-	else
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+	print '</td></tr>';
+
+	// Label
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+
+	// Customer
+	print "<tr><td>".$langs->trans("ThirdParty")."</td>";
+	print '<td colspan="3">';
+	if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1);
+	else print '&nbsp;';
+	print '</td></tr>';
+
+	// Visibility
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) print $langs->trans('SharedProject');
+	else print $langs->trans('PrivateProject');
+	print '</td></tr>';
+
+	// Statut
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+
+	// Date start
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print dol_print_date($object->date_start,'day');
+	print '</td></tr>';
+
+	// Date end
+	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+
+	print "</table>";
+
+	print '</div>';
+
+	// Contacts lines (modules that overwrite templates must declare this into descriptor)
+	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	foreach($dirtpls as $reldir)
 	{
-		print "ErrorRecordNotFound";
+		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		if ($res) break;
 	}
 }
 

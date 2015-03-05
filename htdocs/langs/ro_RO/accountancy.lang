@@ -1,0 +1,160 @@
+# Dolibarr language file - en_US - Accounting Expert
+CHARSET=UTF-8
+
+Accounting=Contabilitate
+Globalparameters=Parametri globali
+Chartofaccounts=Plan de conturi
+Fiscalyear=Ani fiscali
+Menuaccount=Conturi contabile
+Menuthirdpartyaccount=Conturi terţi
+MenuTools=Instrumente
+
+ConfigAccountingExpert=Configurare modul expert contabil
+Journaux=Jurnale
+JournalFinancial=Jurnale financiale
+Exports=Exporturi
+Export=Export
+Modelcsv=Model export
+OptionsDeactivatedForThisExportModel=Pentru acest model de export, optiunile sunt dezactivate
+Selectmodelcsv=Selectează un model de export
+Modelcsv_normal=Classic export
+Modelcsv_CEGID=Export către CEGID Expert
+BackToChartofaccounts=Înapi la plan de conturi
+Back=Return
+
+Definechartofaccounts=Defineşte un plan de conturi
+Selectchartofaccounts=Selectează un plan de conturi
+Validate=Validează
+Addanaccount=Add un cont contabil
+AccountAccounting=Cont contabil
+Ventilation=Ventilare
+ToDispatch=De ventilat
+Dispatched=Ventilat
+
+CustomersVentilation=Ventilare clienţi
+SuppliersVentilation=Ventilare furnizori
+TradeMargin=Marjă comercială
+Reports=Rapoarte
+ByCustomerInvoice=Pe facturi clienţi
+ByMonth=Pe lună
+NewAccount=Cont contabil nou
+Update=Modifică
+List=List
+Create=Crează
+UpdateAccount=Modificare cont contabil
+UpdateMvts=Modificare mişcare
+WriteBookKeeping=Înregistrare contabilă in Cartea Mare
+Bookkeeping=Cartea Mare
+AccountBalanceByMonth=Sold pe luni
+
+AccountingVentilation=Ventilare contabilă
+AccountingVentilationSupplier=Ventilare contabila furnizor
+AccountingVentilationCustomer=Ventilare contabila  client
+Line=Linie
+
+CAHTF=Total cumpărări furnizor fara taxe
+InvoiceLines=Liniile facturii de ventilat
+InvoiceLinesDone=Liniile facturii ventilate
+IntoAccount=În conturi contabile
+
+Ventilate=Ventilează
+VentilationAuto=Ventilare automată
+
+Processing=Procesează
+EndProcessing=Sfârşitul procesării
+AnyLineVentilate=Nicio linie de ventilat
+SelectedLines=Linii selectate
+Lineofinvoice=Linia facturii
+VentilatedinAccount=Ventilare cu succes in conturi contabile
+NotVentilatedinAccount=Ne ventilate in conturi contabile
+
+ACCOUNTING_SEPARATORCSV=Separator coloane in fisierul export
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Numărul de elemente de ventilat afişat pe pagină (maxim recomandat: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Începe sortarea paginilor ventilate "Trebuie ventilate" începand cu cele mai recente elemente
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Începe sortarea paginilor ventilate "Ventilare" începand cu cele mai recente elemente
+
+AccountLength=Lungimea conturilor contabile  afişate în Dolibarr
+AccountLengthDesc=Funcția pentru a simula lungirea unui cont contabil prin înlocuirea spatiile  libere cu cifra zero. Această funcție afectează numai  afişarea , aceasta nu va schimba conturile contabile înregistrate în Dolibarr. Pentru export, această funcţie este necesară să fie compatibil cu unele software-ul
+ACCOUNTING_LENGTH_GACCOUNT=Lungimea conturilor generale
+ACCOUNTING_LENGTH_AACCOUNT=Lungimea conturilor de terţi
+
+ACCOUNTING_SELL_JOURNAL=Jurnal vânzări
+ACCOUNTING_PURCHASE_JOURNAL=Jurnal cumpărări
+ACCOUNTING_BANK_JOURNAL=Jurnal bancă
+ACCOUNTING_CASH_JOURNAL=Jurnal casă
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal Diverse
+ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cont transfer
+ACCOUNTING_ACCOUNT_SUSPENSE=Cont  contabil de aşteptare
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cont Contabilitate Predefinit pentru produsele cumpărate(dacă nu este definit în fişa produsului)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cont Contabilitate Predefinit pentru produsele vândute (dacă nu este definit în fişa produsului)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cont Contabilitate Predefinit pentru serviciile cumpărate(dacă nu este definit în fişa produsului)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cont Contabilitate Predefinit pentru serviciilor vândute(dacă nu este definit în fişa produsului)
+
+Doctype=Tipul documentului
+Docdate=Data
+Docref=Referinţă
+Numerocompte=Cont
+Code_tiers=Terţ
+Labelcompte=Etichetă cont
+Debit=Debit
+Credit=Credit
+Amount=Sumă
+Sens=Sens
+Codejournal=Journal
+
+DelBookKeeping=Şterge înregistrări din Cartea Mare
+
+SellsJournal=Jurnal Vânzări
+PurchasesJournal=Jurnal Cumpărări
+DescSellsJournal=Jurnal Vânzări
+DescPurchasesJournal=Jurnal Cumpărări
+BankJournal=Jurnal Bancă
+DescBankJournal=Jurnal Banca inclusiv toate tipurile plaţilor altele decat numerar
+CashJournal=Jurnal Casă
+DescCashJournal=Jurnal Cash inclusiv tipul plaţii numerar
+
+CashPayment=Plaţi numerar
+
+SupplierInvoicePayment=Plata factura furnizor
+CustomerInvoicePayment=Incasare factura client
+
+ThirdPartyAccount=Cont terţi
+
+NewAccountingMvt=Transfer nou
+NumMvts=Numarul transferurilor
+ListeMvts=Lista transferurilor
+ErrorDebitCredit=Debitul și creditul nu pot avea o valoare, în același timp,
+
+ReportThirdParty=Lista Conturi terţi
+DescThirdPartyReport=Consultati aici lista terţilor furnizori și clienţi şi conturile lor  contabile
+
+ListAccounts=Lista conturilor contabile
+
+Pcgversion=Versiunea planului
+Pcgtype=Clasa contului
+Pcgsubtype=Sub Clasa contului
+Accountparent=Rădăcina contului
+Active=Extras 
+
+NewFiscalYear=An fiscal nou
+
+DescVentilCustomer=Consultati aici ventilarea contabilă anuală a facturilor de clienților ale dvs.
+TotalVente=Total Cifră de afaceri fără tva
+TotalMarge=Total Marje vânzări
+DescVentilDoneCustomer=Consultati aici lista liniilor de facturi client și conturile lor  contabile
+DescVentilTodoCustomer=Consultati aici lista liniilor de facturi client cu un cont contabil
+ChangeAccount=Schimbaţi contul contabil pentru liniile selectate prin contul: 
+Vide=-
+DescVentilSupplier=Consultati aici ventilarea contabilă anuală a facturilor de furnizori ale dvs.
+DescVentilTodoSupplier=Consultati aici lista liniilor de facturi furnizor cu un cont contabil
+DescVentilDoneSupplier=Consultati aici lista liniilor de facturi furnizor și conturile lor  contabile
+
+ValidateHistory=Validează automat
+
+ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
+
+FicheVentilation=Fişă Ventilare

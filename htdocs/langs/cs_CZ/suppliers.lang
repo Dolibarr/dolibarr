@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Dodavatelé
 Supplier=Dodavatel
-AddSupplier=Přidat dodavatele
+AddSupplier=Create a supplier
 SupplierRemoved=Dodavatel odstraní
 SuppliersInvoice=Dodavatelé faktura
 NewSupplier=Nový dodavatel
@@ -12,8 +12,8 @@ OrderDate=Objednat Datum
 BuyingPrice=Nákup cenu
 BuyingPriceMin=Minimální kupní cena
 BuyingPriceMinShort=Minimální kupní cena
-# TotalBuyingPriceMin=Total of subproducts buying prices
-# SomeSubProductHaveNoPrices=Some sub-products have no price defined
+TotalBuyingPriceMin=Total of subproducts buying prices
+SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Přidat cena dodavatele zboží
 ChangeSupplierPrice=Změna dodavatele cenu
 ErrorQtyTooLowForThisSupplier=Nedostatečné množství tohoto podniku, nebo není definována cena k tomuto produktu tohoto podniku
@@ -40,3 +40,7 @@ AddSupplierInvoice=Vytvořte dodavatelské faktury
 ListOfSupplierProductForSupplier=Seznam výrobků a cen dodavatelských <b>%s</b>
 NoneOrBatchFileNeverRan=Žádný nebo dávkový <b>%s</b> ne běžel nedávno
 SentToSuppliers=Odeslané dodavatelům
+ListOfSupplierOrders=List of supplier orders
+MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

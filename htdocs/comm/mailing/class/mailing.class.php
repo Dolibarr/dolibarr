@@ -57,8 +57,11 @@ class Mailing extends CommonObject
 
 	var $date_creat;
 	var $date_valid;
-	
+
 	var $extraparams=array();
+
+	public $statut_dest=array();
+	public $statuts=array();
 
 
 	/**
@@ -75,6 +78,12 @@ class Mailing extends CommonObject
 		$this->statuts[1] = 'MailingStatusValidated';
 		$this->statuts[2] = 'MailingStatusSentPartialy';
 		$this->statuts[3] = 'MailingStatusSentCompletely';
+
+		$this->statut_dest[-1] = 'MailingStatusError';
+		$this->statut_dest[1] = 'MailingStatusSent';
+		$this->statut_dest[2] = 'MailingStatusRead';
+		$this->statut_dest[3] = 'MailingStatusNotContact';
+
 	}
 
 	/**
@@ -109,7 +118,7 @@ class Mailing extends CommonObject
 			$this->titre = $langs->trans("NoTitle");
 		}
 
-		dol_syslog("Mailing::Create sql=".$sql);
+		dol_syslog("Mailing::Create", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -122,7 +131,6 @@ class Mailing extends CommonObject
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -132,7 +140,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -157,7 +164,7 @@ class Mailing extends CommonObject
 		$sql .= ", bgimage = '".($this->bgimage?$this->bgimage:null)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Mailing::Update sql=".$sql);
+		dol_syslog("Mailing::Update", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -166,7 +173,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -180,7 +186,7 @@ class Mailing extends CommonObject
 	function fetch($rowid)
 	{
 		global $conf;
-		
+
 		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
 		$sql.= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql.= ", m.statut, m.nbemail";
@@ -192,7 +198,7 @@ class Mailing extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql.= " WHERE m.rowid = ".$rowid;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -205,14 +211,14 @@ class Mailing extends CommonObject
 				$this->statut			= $obj->statut;
 				$this->nbemail			= $obj->nbemail;
 				$this->titre			= $obj->titre;
-				
-				$this->sujet			= $obj->sujet;				
+
+				$this->sujet			= $obj->sujet;
 				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
 					$this->body				= dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401);
 				}else {
 					$this->body				= $obj->body;
 				}
-				
+
 				$this->bgcolor			= $obj->bgcolor;
 				$this->bgimage			= $obj->bgimage;
 
@@ -226,7 +232,7 @@ class Mailing extends CommonObject
 				$this->date_creat		= $this->db->jdate($obj->date_creat);
 				$this->date_valid		= $this->db->jdate($obj->date_valid);
 				$this->date_envoi		= $this->db->jdate($obj->date_envoi);
-				
+
 				$this->extraparams		= (array) json_decode($obj->extraparams, true);
 
 				return 1;
@@ -260,6 +266,8 @@ class Mailing extends CommonObject
 		$error=0;
 
 		$object=new Mailing($this->db);
+
+		$object->context['createfromclone']='createfromclone';
 
 		$this->db->begin();
 
@@ -307,13 +315,13 @@ class Mailing extends CommonObject
 		{
 			//Clone target
 			if (!empty($option2)) {
-				
+
 				require_once DOL_DOCUMENT_ROOT .'/core/modules/mailings/modules_mailings.php';
-				
+
 				$mailing_target = new MailingTargets($this->db);
-				
+
 				$target_array=array();
-				
+
 				$sql = "SELECT fk_contact, ";
 				$sql.=" lastname,   ";
 				$sql.=" firstname,";
@@ -324,38 +332,39 @@ class Mailing extends CommonObject
 				$sql.=" source_type ";
 				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
 				$sql.= " WHERE fk_mailing = ".$fromid;
-				
-				dol_syslog(get_class($this)."::createFromClone sql=".$sql);
+
+				dol_syslog(get_class($this)."::createFromClone", LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
 				{
 					if ($this->db->num_rows($result))
 					{
 						while ($obj = $this->db->fetch_object($result)) {
-						
+
 							$target_array[]=array('fk_contact'=>$obj->fk_contact,
 							'lastname'=>$obj->lastname,
 							'firstname'=>$obj->firstname,
-							'email'=>$obj->email, 
+							'email'=>$obj->email,
 							'other'=>$obj->other,
 							'source_url'=>$obj->source_url,
 							'source_id'=>$obj->source_id,
 							'source_type'=>$obj->source_type);
 						}
-						
+
 					}
 				}
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog("Mailing::createFromClone ".$this->error, LOG_ERR);
 					return -1;
 				}
-				
+
 				$mailing_target->add_to_target($object->id, $target_array);
 			}
 
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -384,7 +393,7 @@ class Mailing extends CommonObject
 		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);
+		dol_syslog("Mailing::valid", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			return 1;
@@ -392,7 +401,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -409,7 +417,7 @@ class Mailing extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
 		$sql.= " WHERE rowid = ".$rowid;
 
-		dol_syslog("Mailing::delete sql=".$sql, LOG_DEBUG);
+		dol_syslog("Mailing::delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -418,7 +426,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -436,7 +443,7 @@ class Mailing extends CommonObject
 		$sql.= " SET statut = 0";
 		$sql.= " WHERE fk_mailing = ".$this->id;
 
-		dol_syslog("Mailing::reset_targets_status sql=".$sql, LOG_DEBUG);
+		dol_syslog("Mailing::reset_targets_status", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -445,7 +452,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -510,6 +516,61 @@ class Mailing extends CommonObject
 			if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
+	}
+
+
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string        			Label
+	 */
+	static public function libStatutDest($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('mails');
+
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statut_dest[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statut_dest[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		if ($mode == 3)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		if ($mode == 5)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+
+
+
+
 	}
 
 }

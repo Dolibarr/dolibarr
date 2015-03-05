@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OS Commerce
-OSCommerceSetup=OS Commerce модул за настройка
-OSCommerceSetupSaved=OS Commerce настройка спаси
-OSCommerceServer=OS Commerce хост сървъра / IP
-OSCommerceDatabaseName=OS Commerce името на базата данни
-OSCommercePrefix=OS Commerce таблици префикс
-OSCommerceUser=OS Commerce база данни за вход

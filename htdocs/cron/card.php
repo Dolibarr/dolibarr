@@ -227,7 +227,7 @@ llxHeader('',$langs->trans("CronAdd"));
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
 	$head=cron_prepare_head($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
+	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 }
 elseif ($action=='create')
 {
@@ -278,7 +278,7 @@ if ($action == 'execute'){
 
 if (empty($object->status) && $action != 'create')
 {
-	dol_htmloutput_mesg($langs->trans("CronTaskInactive"),'','warning',1);
+	setEventMessage($langs->trans("CronTaskInactive"), 'warnings');
 }
 
 if (($action=="create") || ($action=="edit"))
@@ -353,16 +353,20 @@ if (($action=="create") || ($action=="edit"))
 	print "<tr><td>";
 	print $langs->trans('CronEvery')."</td>";
 	print "<td><select name=\"nbfrequency\">";
-	for($i=1; $i<=60; $i++){
-		if(!is_null($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i){
+	for($i=1; $i<=60; $i++)
+	{
+		if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i)
+		{
 			print "<option value='".$i."' selected='selected'>".$i."</option>";
 		}
-		else{
+		else
+		{
 			print "<option value='".$i."'>".$i."</option>";
 		}
 	}
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
-	if($object->unitfrequency=="60"){
+	if($object->unitfrequency=="60")
+	{
 		$input .= ' checked="checked" />';
 	}
 	else{

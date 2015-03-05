@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -289,7 +289,9 @@ if ($what == 'postgresql')
     if (preg_match("/\s/",$command)) $command=$command=escapeshellarg($command);	// Use quotes on command
 
     //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
-    $param=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
+    //$param="-F c";
+    $param="-F p";
+    $param.=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
     $param.=" -U ".$dolibarr_main_db_user;
     if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
     if (GETPOST("sql_compat") && GETPOST("sql_compat") == 'ANSI') $param.="  --disable-dollar-quoting";
@@ -416,7 +418,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".getStaticMember($db, 'label')." dump via php
+    $sqlhead .= "-- ".$db::LABEL." dump via php
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------
@@ -464,11 +466,10 @@ function backup_tables($outputfile, $tables='*')
 	        fwrite($handle, "\n--\n-- Dumping data for table `".$table."`\n--\n");
 	        if (!GETPOST("nobin_nolocks")) fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
 	        if (GETPOST("nobin_disable_fk")) fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
-        
+
 	        $sql='SELECT * FROM '.$table;
 	        $result = $db->query($sql);
-	        $num_fields = $db->num_rows($result);
-	        while($row = $db->fetch_row($result)) 
+	        while($row = $db->fetch_row($result))
 	        {
 	            // For each row of data we print a line of INSERT
 	            fwrite($handle,'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
@@ -478,12 +479,12 @@ function backup_tables($outputfile, $tables='*')
 	                if ($row[$j] == null and !is_string($row[$j])) {
 	                    // IMPORTANT: if the field is NULL we set it NULL
 	                    $row[$j] = 'NULL';
-	                } elseif(is_string($row[$j]) and $row[$j] == '') {
+	                } elseif(is_string($row[$j]) && $row[$j] == '') {
 	                    // if it's an empty string, we set it as an empty string
 	                    $row[$j] = "''";
-	                } elseif(is_numeric($row[$j]) and !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+	                } elseif(is_numeric($row[$j]) && !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 	                    // if it's a number, we return it as-is
-	                    $row[$j] = $row[$j];
+//	                    $row[$j] = $row[$j];
 	                } else { // else for all other cases we escape the value and put quotes around
 	                    $row[$j] = addslashes($row[$j]);
 	                    $row[$j] = preg_replace("#\n#", "\\n", $row[$j]);
@@ -497,7 +498,7 @@ function backup_tables($outputfile, $tables='*')
 	        fwrite($handle,"\n\n\n");
 	    }
     }
-    
+
     /* Backup Procedure structure*/
     /*
      $result = $db->query('SHOW PROCEDURE STATUS');

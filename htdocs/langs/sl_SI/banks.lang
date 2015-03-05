@@ -8,6 +8,7 @@ FinancialAccount=Račun
 FinancialAccounts=Računi
 BankAccount=Bančni račun
 BankAccounts=Bančni računi
+ShowAccount=Prikaži račun
 AccountRef=Referenca finančnega računa
 AccountLabel=Naziv finančnega računa
 CashAccount=Gotovinski račun

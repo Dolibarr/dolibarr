@@ -129,6 +129,17 @@ class pdf_rouget extends ModelePdfExpedition
 
 			if (file_exists($dir))
 			{
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
@@ -201,10 +212,17 @@ class pdf_rouget extends ModelePdfExpedition
 							{
 								// Get code using getLabelFromKey
 								$code=$outputlangs->getLabelFromKey($this->db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
-								$label=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
-								$label.=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
+								$label='';
+								if ($object->tracking_url != $object->tracking_number) $label.=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
+								$label.=$outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
+								//var_dump($object->tracking_url != $object->tracking_number);exit;
+								if ($object->tracking_url != $object->tracking_number)
+								{
+									$label.=" : ";
+									$label.=$object->tracking_url;
+								}
 								$pdf->SetFont('','B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top+6, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 
 								$tab_top_alt = $pdf->GetY();
 							}
@@ -337,6 +355,18 @@ class pdf_rouget extends ModelePdfExpedition
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
+
+				// Add pdfgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -514,7 +544,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_creation,"daytext",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true), '', 'R');
 
 		if (! empty($object->client->code_client))
 		{
@@ -614,12 +644,12 @@ class pdf_rouget extends ModelePdfExpedition
 			{
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
@@ -663,7 +693,8 @@ class pdf_rouget extends ModelePdfExpedition
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SHIPPING_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		$showdetails=0;
+		return pdf_pagefoot($pdf,$outputlangs,'SHIPPING_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

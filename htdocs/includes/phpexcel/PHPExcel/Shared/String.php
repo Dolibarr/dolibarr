@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Shared
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.6, 2011-02-27
+ * @version    1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Shared
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Shared_String
 {
@@ -430,19 +430,29 @@ class PHPExcel_Shared_String
 	 * @param string $value UTF-8 encoded string
 	 * @return string
 	 */
-	public static function UTF8toBIFF8UnicodeShort($value)
+	public static function UTF8toBIFF8UnicodeShort($value, $arrcRuns = array())
 	{
 		// character count
 		$ln = self::CountCharacters($value, 'UTF-8');
 
 		// option flags
-		$opt = (self::getIsIconvEnabled() || self::getIsMbstringEnabled()) ?
-			0x0001 : 0x0000;
-
-		// characters
-		$chars = self::ConvertEncoding($value, 'UTF-16LE', 'UTF-8');
-
-		$data = pack('CC', $ln, $opt) . $chars;
+		if(empty($arrcRuns)){
+			$opt = (self::getIsIconvEnabled() || self::getIsMbstringEnabled()) ?
+				0x0001 : 0x0000;
+			$data = pack('CC', $ln, $opt);
+			// characters
+			$data .= self::ConvertEncoding($value, 'UTF-16LE', 'UTF-8');
+		}
+		else {
+			$data = pack('vC', $ln, 0x08);
+			$data .= pack('v', count($arrcRuns));
+			// characters
+			$data .= $value;
+			foreach ($arrcRuns as $cRun){
+				$data .= pack('v', $cRun['strlen']);
+				$data .= pack('v', $cRun['fontidx']);
+			}
+		}
 		return $data;
 	}
 
@@ -602,7 +612,7 @@ class PHPExcel_Shared_String
 	{
 		if (!isset(self::$_decimalSeparator)) {
 			$localeconv = localeconv();
-			self::$_decimalSeparator = $localeconv['decimal_point'] != ''
+			self::$_decimalSeparator = ($localeconv['decimal_point'] != '')
 				? $localeconv['decimal_point'] : $localeconv['mon_decimal_point'];
 
 			if (self::$_decimalSeparator == '') {
@@ -634,7 +644,7 @@ class PHPExcel_Shared_String
 	{
 		if (!isset(self::$_thousandsSeparator)) {
 			$localeconv = localeconv();
-			self::$_thousandsSeparator = $localeconv['thousands_sep'] != ''
+			self::$_thousandsSeparator = ($localeconv['thousands_sep'] != '')
 				? $localeconv['thousands_sep'] : $localeconv['mon_thousands_sep'];
 		}
 		return self::$_thousandsSeparator;
@@ -661,7 +671,7 @@ class PHPExcel_Shared_String
 	{
 		if (!isset(self::$_currencyCode)) {
 			$localeconv = localeconv();
-			self::$_currencyCode = $localeconv['currency_symbol'] != ''
+			self::$_currencyCode = ($localeconv['currency_symbol'] != '')
 				? $localeconv['currency_symbol'] : $localeconv['int_curr_symbol'];
 
 			if (self::$_currencyCode == '') {
@@ -673,10 +683,10 @@ class PHPExcel_Shared_String
 	}
 
 	/**
-	 *	Set the currency code. Only used by PHPExcel_Style_NumberFormat::toFormattedString()
+	 * Set the currency code. Only used by PHPExcel_Style_NumberFormat::toFormattedString()
 	 *		to format output by PHPExcel_Writer_HTML and PHPExcel_Writer_PDF
 	 *
-	 *	@param string $pValue Character for currency code
+	 * @param string $pValue Character for currency code
 	 */
 	public static function setCurrencyCode($pValue = '$')
 	{
@@ -703,4 +713,18 @@ class PHPExcel_Shared_String
 		return $pValue;
 	}
 
+	/**
+	 * Retrieve any leading numeric part of a string, or return the full string if no leading numeric
+	 *	(handles basic integer or float, but not exponent or non decimal)
+	 *
+	 * @param	string	$value
+	 * @return	mixed	string or only the leading numeric part of the string
+	 */
+	public static function testStringAsNumeric($value)
+	{
+		if (is_numeric($value))
+			return $value;
+		$v = floatval($value);
+		return (is_numeric(substr($value,0,strlen($v)))) ? $v : $value;
+	}
 }

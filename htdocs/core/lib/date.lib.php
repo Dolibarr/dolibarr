@@ -131,12 +131,13 @@ function getServerTimeZoneInt($refgmtdate='now')
  *
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y, w)
- *  @return     int      			        New timestamp
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h)
+ *  @return     int      			        	New timestamp
  */
 function dol_time_plus_duree($time,$duration_value,$duration_unit)
 {
 	if ($duration_value == 0)  return $time;
+	if ($duration_unit == 'h') return $time + (3600*$duration_value);
 	if ($duration_unit == 'w') return $time + (3600*24*7*$duration_value);
 	if ($duration_value > 0) $deltastring="+".abs($duration_value);
 	if ($duration_value < 0) $deltastring="-".abs($duration_value);
@@ -168,7 +169,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     sTime		 		 	Formated text of duration
+ *    	@return     string		 		 	Formated text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
 function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengthOfWeek=7)
@@ -442,10 +443,11 @@ function dol_get_next_week($day, $week, $month, $year)
  * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
- *  @return		int						Date for first day
+ *  @return		int						Date for first day, '' if error
  */
 function dol_get_first_day($year,$month=1,$gm=false)
 {
+	if ($year > 9999) return '';
 	return dol_mktime(0,0,0,$month,1,$year,$gm);
 }
 
@@ -455,10 +457,11 @@ function dol_get_first_day($year,$month=1,$gm=false)
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
  * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *	@return		int						Date for first day
+ *	@return		int						Date for first day, '' if error
  */
 function dol_get_last_day($year,$month=12,$gm=false)
 {
+	if ($year > 9999) return '';
 	if ($month == 12)
 	{
 		$month = 1;
@@ -476,34 +479,36 @@ function dol_get_last_day($year,$month=12,$gm=false)
 	return $datelim;
 }
 
-/**	Return first day of week for a date
+/**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.
  *
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
  * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *	@return		array				year,month,week,first_day,prev_year,prev_month,prev_day
+ *	@return		array				year,month,week,first_day,first_month,first_year,prev_day,prev_month,prev_year
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
 	global $conf;
 
+	//$day=2; $month=2; $year=2015;
 	$date = dol_mktime(0,0,0,$month,$day,$year,$gm);
 
 	//Checking conf of start week
 	$start_week = (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1);
 
-	$tmparray = dol_getdate($date,true);
+	$tmparray = dol_getdate($date,true);	// detail of current day
 
-	//Calculate days to count
+	//Calculate days = offset from current day
 	$days = $start_week - $tmparray['wday'];
  	if ($days>=1) $days=7-$days;
  	$days = abs($days);
     $seconds = $days*24*60*60;
+	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
     //Get first day of week
-    $tmpday = date($tmparray[0])-$seconds;
-	$tmpday = date("d",$tmpday);
+    $tmpdaytms = date($tmparray[0])-$seconds; // $tmparray[0] is day of parameters
+	$tmpday = date("d",$tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday>$day)
@@ -525,7 +530,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 	$tmpmonth = $prev_month;
 	$tmpyear = $prev_year;
 
-    //Get first day of next week
+	//Get first day of next week
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
 	$tmparray=dol_getdate($tmptime,true);
@@ -654,6 +659,49 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			$mois_paques = date("m", $date_paques);
 			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
 			// Paques
+
+			// Calul des samedis et dimanches
+			$jour_julien = unixtojd($timestampStart);
+			$jour_semaine = jddayofweek($jour_julien, 0);
+			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
+			//Samedi (6) et dimanche (0)
+		}
+
+		if ($countrycode == 'ES')
+		{
+			$countryfound=1;
+
+			// Definition des dates feriees fixes
+			if($jour == 1 && $mois == 1)   $ferie=true; // Año nuevo
+			if($jour == 6 && $mois == 1)   $ferie=true; // Día Reyes
+			if($jour == 1 && $mois == 5)   $ferie=true; // 1 Mayo
+			if($jour == 15 && $mois == 8)  $ferie=true; // 15 Agosto
+			if($jour == 12 && $mois == 10)  $ferie=true; // Día Hispanidad
+			if($jour == 1 && $mois == 11)  $ferie=true; // 1 noviembre
+			if($jour == 6 && $mois == 12) $ferie=true; // Constitución
+			if($jour == 8 && $mois == 12)  $ferie=true; // Inmaculada
+			if($jour == 25 && $mois == 12) $ferie=true; // 25 diciembre
+
+			// Calcul día de Pascua
+			$date_paques = easter_date($annee);
+			$jour_paques = date("d", $date_paques);
+			$mois_paques = date("m", $date_paques);
+			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
+			// Paques
+
+			// Viernes Santo
+            $date_viernes = mktime(
+                date("H", $date_paques),
+                date("i", $date_paques),
+                date("s", $date_paques),
+                date("m", $date_paques),
+                date("d", $date_paques) -2,
+                date("Y", $date_paques)
+            );
+			$jour_viernes = date("d", $date_viernes);
+			$mois_viernes = date("m", $date_viernes);
+			if($jour_viernes == $jour && $mois_viernes == $mois) $ferie=true;
+			//Viernes Santo
 
 			// Calul des samedis et dimanches
 			$jour_julien = unixtojd($timestampStart);

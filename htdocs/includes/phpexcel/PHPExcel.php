@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.6, 2011-02-27
+ * @version    1.7.8, 2012-10-12
  */
 
 
@@ -38,7 +38,7 @@ if (!defined('PHPEXCEL_ROOT')) {
  *
  * @category   PHPExcel
  * @package    PHPExcel
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel
 {
@@ -127,6 +127,11 @@ class PHPExcel
 	}
 
 
+	/**
+	 * Disconnect all worksheets from this PHPExcel workbook object,
+	 *    typically so that the PHPExcel object can be unset
+	 *
+	 */
 	public function disconnectWorksheets() {
 		foreach($this->_workSheetCollection as $k => &$worksheet) {
 			$worksheet->disconnectCells();
@@ -189,13 +194,26 @@ class PHPExcel
     /**
      * Create sheet and add it to this workbook
      *
+	 * @param int|null $iSheetIndex Index where sheet should go (0,1,..., or null for last)
      * @return PHPExcel_Worksheet
+     * @throws Exception
      */
-    public function createSheet($iSheetIndex = null)
+    public function createSheet($iSheetIndex = NULL)
     {
         $newSheet = new PHPExcel_Worksheet($this);
         $this->addSheet($newSheet, $iSheetIndex);
         return $newSheet;
+    }
+
+    /**
+     * Chech if a sheet with a specified name already exists
+     *
+     * @param string $pSheetName  Name of the worksheet to check
+     * @return boolean
+     */
+    public function sheetNameExists($pSheetName)
+    {
+		return ($this->getSheetByName($pSheetName) !== NULL);
     }
 
     /**
@@ -206,14 +224,18 @@ class PHPExcel
      * @return PHPExcel_Worksheet
      * @throws Exception
      */
-    public function addSheet(PHPExcel_Worksheet $pSheet = null, $iSheetIndex = null)
+    public function addSheet(PHPExcel_Worksheet $pSheet, $iSheetIndex = NULL)
     {
-        if(is_null($iSheetIndex))
-        {
+		if ($this->sheetNameExists($pSheet->getTitle())) {
+			throw new Exception("Workbook already contains a worksheet named '{$pSheet->getTitle()}'. Rename this worksheet first.");
+		}
+
+        if($iSheetIndex === NULL) {
+            if ($this->_activeSheetIndex < 0) {
+            	$this->_activeSheetIndex = 0;
+            }
             $this->_workSheetCollection[] = $pSheet;
-        }
-        else
-        {
+        } else {
             // Insert the sheet at the requested index
             array_splice(
                 $this->_workSheetCollection,
@@ -226,7 +248,6 @@ class PHPExcel
 			if ($this->_activeSheetIndex >= $iSheetIndex) {
 				++$this->_activeSheetIndex;
 			}
-
         }
 		return $pSheet;
     }
@@ -244,6 +265,12 @@ class PHPExcel
 		} else {
 			array_splice($this->_workSheetCollection, $pIndex, 1);
 		}
+		// Adjust active sheet index if necessary
+		if (($this->_activeSheetIndex >= $pIndex) &&
+			($pIndex > count($this->_workSheetCollection) - 1)) {
+			--$this->_activeSheetIndex;
+		}
+
 	}
 
 	/**
@@ -379,7 +406,7 @@ class PHPExcel
 	public function setActiveSheetIndexByName($pValue = '')
 	{
 		if (($worksheet = $this->getSheetByName($pValue)) instanceof PHPExcel_Worksheet) {
-			$this->setActiveSheetIndex($worksheet->getParent()->getIndex($worksheet));
+			$this->setActiveSheetIndex($this->getIndex($worksheet));
 			return $worksheet;
 		}
 
@@ -396,7 +423,7 @@ class PHPExcel
 		$returnValue = array();
 		$worksheetCount = $this->getSheetCount();
 		for ($i = 0; $i < $worksheetCount; ++$i) {
-			array_push($returnValue, $this->getSheet($i)->getTitle());
+			$returnValue[] = $this->getSheet($i)->getTitle();
 		}
 
 		return $returnValue;
@@ -411,7 +438,7 @@ class PHPExcel
 	 * @return PHPExcel_Worksheet
 	 */
 	public function addExternalSheet(PHPExcel_Worksheet $pSheet, $iSheetIndex = null) {
-		if (!is_null($this->getSheetByName($pSheet->getTitle()))) {
+		if ($this->sheetNameExists($pSheet->getTitle())) {
 			throw new Exception("Workbook already contains a worksheet named '{$pSheet->getTitle()}'. Rename the external sheet first.");
 		}
 
@@ -471,14 +498,14 @@ class PHPExcel
 	public function getNamedRange($namedRange, PHPExcel_Worksheet $pSheet = null) {
 		$returnValue = null;
 
-		if ($namedRange != '' && !is_null($namedRange)) {
+		if ($namedRange != '' && ($namedRange !== NULL)) {
 			// first look for global defined name
 			if (isset($this->_namedRanges[$namedRange])) {
 				$returnValue = $this->_namedRanges[$namedRange];
 			}
 
 			// then look for local defined name (has priority over global defined name if both names exist)
-			if (!is_null($pSheet) && isset($this->_namedRanges[$pSheet->getTitle() . '!' . $namedRange])) {
+			if (($pSheet !== NULL) && isset($this->_namedRanges[$pSheet->getTitle() . '!' . $namedRange])) {
 				$returnValue = $this->_namedRanges[$pSheet->getTitle() . '!' . $namedRange];
 			}
 		}
@@ -489,12 +516,12 @@ class PHPExcel
 	/**
 	 * Remove named range
 	 *
-	 * @param string $namedRange
-	 * @param PHPExcel_Worksheet|null $pSheet. Scope. Use null for global scope.
+	 * @param  string  $namedRange
+	 * @param  PHPExcel_Worksheet|null  $pSheet  Scope: use null for global scope.
 	 * @return PHPExcel
 	 */
 	public function removeNamedRange($namedRange, PHPExcel_Worksheet $pSheet = null) {
-		if (is_null($pSheet)) {
+		if ($pSheet === NULL) {
 			if (isset($this->_namedRanges[$namedRange])) {
 				unset($this->_namedRanges[$namedRange]);
 			}
@@ -556,7 +583,7 @@ class PHPExcel
 	/**
 	 * Get cellXf by index
 	 *
-	 * @param int $index
+	 * @param int $pIndex
 	 * @return PHPExcel_Style
 	 */
 	public function getCellXfByIndex($pIndex = 0)
@@ -597,7 +624,7 @@ class PHPExcel
 	/**
 	 * Add a cellXf to the workbook
 	 *
-	 * @param PHPExcel_Style
+	 * @param PHPExcel_Style $style
 	 */
 	public function addCellXf(PHPExcel_Style $style)
 	{
@@ -761,7 +788,7 @@ class PHPExcel
 		}
 
 		// make sure there is always at least one cellXf (there should be)
-		if (count($this->_cellXfCollection) == 0) {
+		if (empty($this->_cellXfCollection)) {
 			$this->_cellXfCollection[] = new PHPExcel_Style();
 		}
 

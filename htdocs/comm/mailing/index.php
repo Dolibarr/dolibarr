@@ -51,7 +51,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Recherche emails
 $var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
@@ -162,7 +162,7 @@ if ($result)
   print '<td colspan="2">'.$langs->trans("LastMailings",$limit).'</td>';
   print '<td align="center">'.$langs->trans("DateCreation").'</td>';
   print '<td align="center">'.$langs->trans("NbOfEMails").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
+  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
   $num = $db->num_rows($result);
   if ($num > 0)
@@ -176,7 +176,7 @@ if ($result)
 	  $var=!$var;
 
 	  print "<tr ".$bc[$var].">";
-	  print '<td class="nowrap"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
+	  print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
 	  print '<td>'.dol_trunc($obj->titre,38).'</td>';
 	  print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat),'day').'</td>';
 	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';

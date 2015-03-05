@@ -121,6 +121,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$subject = GETPOST('subject');
 						$message = GETPOST('message');
 						$sendtocc = GETPOST('sentocc');
+						$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
 
 						$substitutionarray=array(
 							'__ID__' => $object->id,
@@ -135,12 +136,13 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$message=make_substitutions($message, $substitutionarray);
 
 						$actiontypecode='AC_FAC';
-						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+						$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
 						if ($message)
 						{
-							$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
-							$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-							$actionmsg.=$message;
+							if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+							$actionmsg = dol_concatdesc($actionmsg, $message);
 						}
 
 						// Create form object
@@ -151,7 +153,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 						// Send mail
 						require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 						if ($mailfile->error)
 						{
 							$resultmasssend.='<div class="error">'.$mailfile->error.'</div>';
@@ -322,7 +324,7 @@ if ($action == 'remove_file')
 	$langs->load("other");
 	$upload_dir = $diroutputpdf;
 	$file = $upload_dir . '/' . GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,'');
+	$ret=dol_delete_file($file);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 	$action='';
@@ -366,9 +368,21 @@ $now=dol_now();
 $search_ref = GETPOST("search_ref");
 $search_refcustomer=GETPOST('search_refcustomer');
 $search_societe = GETPOST("search_societe");
+$search_paymentmode = GETPOST("search_paymentmode");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
 $late = GETPOST("late");
+
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_ref='';
+    $search_refcustomer='';
+    $search_societe='';
+    $search_paymentmode='';
+    $search_montant_ht='';
+    $search_montant_ttc='';
+}
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -382,10 +396,10 @@ if (! $sortorder) $sortorder="ASC";
 
 $limit = $conf->liste_limit;
 
-$sql = "SELECT s.nom, s.rowid as socid, s.email";
+$sql = "SELECT s.nom as name, s.rowid as socid, s.email";
 $sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
-$sql.= ", f.paye as paye, f.fk_statut, f.type";
+$sql.= ", f.paye as paye, f.fk_statut, f.type, f.fk_mode_reglement";
 $sql.= ", sum(pf.amount) as am";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -411,10 +425,12 @@ if (GETPOST('filtre'))
 if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$db->escape($search_ref)."%'";
 if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+if ($search_paymentmode)     $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY s.nom, s.rowid, s.email, f.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
+$sql.= " GROUP BY s.nom, s.rowid, s.email, f.rowid, f.facnumber, f.ref_client, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp,";
+$sql.= " f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, fk_mode_reglement";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
@@ -440,6 +456,7 @@ if ($resql)
 	if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
     	if ($search_refcustomer) $param.='&amp;search_ref='.urlencode($search_refcustomer);
 	if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
+	if ($search_societe)     $param.='&amp;search_paymentmode='.urlencode($search_paymentmode);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($late)               $param.='&amp;late='.urlencode($late);
@@ -447,7 +464,7 @@ if ($resql)
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=str_replace('&amp;','&',$param);
 
-	$titre=(! empty($socid)?$langs->trans("BillsCustomersUnpaidForCompany",$soc->nom):$langs->trans("BillsCustomersUnpaid"));
+	$titre=(! empty($socid)?$langs->trans("BillsCustomersUnpaidForCompany",$soc->name):$langs->trans("BillsCustomersUnpaid"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
 	else $titre.=' ('.$langs->trans("All").')';
 
@@ -457,8 +474,6 @@ if ($resql)
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
-	dol_htmloutput_mesg($mesg);
-
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
 
 	if (! empty($mode) && $action == 'presend')
@@ -467,7 +482,8 @@ if ($resql)
 		$formmail = new FormMail($db);
 
 		print '<br>';
-		print_fiche_titre($langs->trans("SendRemind"),'','').'<br>';
+		print_fiche_titre($langs->trans("SendRemind"),'','');
+		print '<br>';
 
 		$topicmail="MailTopicSendRemindUnpaidInvoices";
 		$modelmail="facture_relance";
@@ -527,10 +543,11 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"f.fk_reglement_mode","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Taxes"),$_SERVER["PHP_SELF"],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
@@ -552,12 +569,15 @@ if ($resql)
 	// Ref
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'"></td>';
-        print '<td class="liste_titre">';
-        print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
-        print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+    print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+	print '<td class="liste_titre" align="left">';
+	$form->select_types_paiements($search_paymentmode, 'search_paymentmode');
+	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'"></td>';
@@ -565,6 +585,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	if (empty($mode))
 	{
@@ -582,7 +603,7 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
+		$var=true;
 		$total_ht=0;
 		$total_tva=0;
 		$total_ttc=0;
@@ -629,15 +650,28 @@ if ($resql)
 
 			print "</td>\n";
 
-	                // Customer ref
-	                print '<td class="nowrap">';
-	                print $objp->ref_client;
-	                print '</td>';
+			// Customer ref
+			print '<td class="nowrap">';
+			print $objp->ref_client;
+			print '</td>';
 
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
+            print '<td>';
+            $thirdparty=new Societe($db);
+            $thirdparty->id=$objp->socid;
+            $thirdparty->name=$objp->name;
+            $thirdparty->client=$objp->client;
+            $thirdparty->code_client=$objp->code_client;
+            print $thirdparty->getNomUrl(1,'customer');
+            print '</td>';
+
+            // Payment mode
+            print '<td>';
+            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none');
+            print '</td>';
+
 
 			print '<td align="right">'.price($objp->total_ht).'</td>';
 			print '<td align="right">'.price($objp->total_tva);
@@ -691,7 +725,7 @@ if ($resql)
 		}
 
 		print '<tr class="liste_total">';
-		print '<td colspan="5" align="left">'.$langs->trans("Total").'</td>';
+		print '<td colspan="6" align="left">'.$langs->trans("Total").'</td>';
 		print '<td align="right"><b>'.price($total_ht).'</b></td>';
 		print '<td align="right"><b>'.price($total_tva).'</b></td>';
 		print '<td align="right"><b>'.price($total_ttc).'</b></td>';

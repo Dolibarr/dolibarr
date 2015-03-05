@@ -4,7 +4,8 @@ Sending=Lähettävä
 Sendings=Sendings
 Shipment=Lähettävä
 Shipments=Toimitukset
-Receivings=Receivings
+ShowSending=Show Sending
+Receivings=Receipts
 SendingsArea=Sendings alueella
 ListOfSendings=Luettelo sendings
 SendingMethod=Lähetysvalinnat menetelmä
@@ -13,8 +14,8 @@ LastSendings=Viimeisin %s sendings
 SearchASending=Haku lähettävä
 StatisticsOfSendings=Tilastot sendings
 NbOfSendings=Lukumäärä sendings
-# NumberOfShipmentsByMonth=Number of shipments by month
-SendingCard=Lähetysvalinnat-kortti
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipment card
 NewSending=Uusi lähettäminen
 CreateASending=Luo lähettäminen
 CreateSending=Luo lähettäminen
@@ -37,7 +38,7 @@ StatusSendingCanceledShort=Peruttu
 StatusSendingDraftShort=Vedos
 StatusSendingValidatedShort=Validoidut
 StatusSendingProcessedShort=Jalostettu
-SendingSheet=Lähetysvalinnat arkin
+SendingSheet=Shipment sheet
 Carriers=Varustamot
 Carrier=Carrier
 CarriersArea=Liikenteenharjoittajia alueella
@@ -50,27 +51,35 @@ Enlevement=Saanut asiakkaan
 DocumentModelSimple=Yksinkertaisen mallin
 DocumentModelMerou=Merou A5 malli
 WarningNoQtyLeftToSend=Varoitus, ei tuotteet odottavat lähettämistä.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Höylätty toimituspäivämäärä
 DateReceived=Päivämäärä toimitus sai
 SendShippingByEMail=Lähetä lähetys sähköpostitse
-SendShippingRef=Lähetä lähetys %s
+SendShippingRef=Submission of shipment %s
 ActionsOnShipping=Tapahtumat lähetystä
 LinkToTrackYourPackage=Linkki seurata pakettisi
 ShipmentCreationIsDoneFromOrder=Tällä hetkellä uuden lähetys tehdään tilauksesta kortin.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Related shipments
+ShipmentLine=Shipment line
+CarrierList=List of transporters
+SendingRunning=Product from ordered customer orders
+SuppliersReceiptRunning=Product from ordered supplier orders
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Saalis asiakas
 SendingMethodTRANS=Transporter
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Yksinkertaisen mallin toimitusten kuitit
 DocumentModelTyphon=Täydellisempi mallin toimitusten kuitit (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Jatkuva EXPEDITION_ADDON_NUMBER ei määritelty
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

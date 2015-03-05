@@ -24,13 +24,15 @@ create table llx_fichinter
   fk_projet			integer DEFAULT 0,          -- projet auquel est rattache la fiche
   fk_contrat		integer DEFAULT 0,          -- contrat auquel est rattache la fiche
   ref				varchar(30) NOT NULL,       -- number
+  ref_ext			varchar(255),
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
   tms				timestamp,
   datec				datetime,                   -- date de creation 
   date_valid		datetime,                   -- date de validation
-  datei				date,                       -- date de livraison du bon d'intervention
-  fk_user_author	integer,                    -- createur de la fiche
-  fk_user_valid		integer,                    -- valideur de la fiche
+  datei				date,						-- date de livraison du bon d'intervention
+  fk_user_author	integer,					-- user making creation
+  fk_user_modif     integer,                   -- user making last change
+  fk_user_valid		integer,                   -- valideur de la fiche
   fk_statut			smallint  DEFAULT 0,
   duree				real,                       -- duree totale de l'intervention
   description		text,
