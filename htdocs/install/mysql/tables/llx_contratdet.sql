@@ -27,7 +27,7 @@ create table llx_contratdet
 
   statut                smallint      DEFAULT 0,
 
-  label                 text,                              -- libelle du produit
+  label                 text,                              -- label du produit
   description           text,
   fk_remise_except		  integer       NULL,                -- Lien vers table des remises fixes
 

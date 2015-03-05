@@ -72,7 +72,7 @@ if ($type == "f")
  *
  */
 
-$sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
+$sql = "SELECT s.rowid, s.nom as name, st.label as stcomm";
 $sql.= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";

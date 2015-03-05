@@ -434,7 +434,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Type de contact
-				print '<td>'.$tab[$i]['libelle'].'</td>';
+				print '<td>'.$tab[$i]['label'].'</td>';
 
 				// Statut
 				print '<td align="center">';

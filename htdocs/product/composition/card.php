@@ -202,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->label.'</td>';
 		print '</tr>';
 
 		if (empty($conf->global->PRODUIT_MULTIPRICES))
@@ -490,7 +490,7 @@ if ($id > 0 || ! empty($ref))
 						print "\n<tr ".$bc[$var].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
-						$productstatic->libelle=$objp->label;
+						$productstatic->label=$objp->label;
 						$productstatic->type=$objp->type;
 
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';

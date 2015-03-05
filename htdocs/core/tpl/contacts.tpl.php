@@ -180,7 +180,7 @@ $userstatic=new User($db);
 			}
 			?>
 		</div>
-		<div class="tagtd"><?php echo $tab[$i]['libelle']; ?></div>
+		<div class="tagtd"><?php echo $tab[$i]['label']; ?></div>
 		<div class="tagtd" align="center">
 			<?php if ($object->statut >= 0) echo '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">'; ?>
 			<?php

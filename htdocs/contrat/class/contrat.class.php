@@ -707,7 +707,7 @@ class Contrat extends CommonObject
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
 
 				$line->ref				= $objp->ref;
-				$line->libelle			= $objp->label;        // Label produit
+				$line->label			= $objp->label;        // Label produit
 				$line->label			= $objp->label;        // For backward compatibility
 				$line->product_desc		= $objp->product_desc; // Description produit
 
@@ -781,7 +781,7 @@ class Contrat extends CommonObject
 				$line                 = new ContratLigne($this->db);
 				$line->id 			  = $objp->rowid;
 				$line->fk_contrat     = $objp->fk_contrat;
-				$line->libelle        = $objp->description;
+				$line->label        = $objp->description;
 				$line->desc           = $objp->description;
 				$line->qty            = $objp->qty;
 				$line->statut 		  = $objp->statut;
@@ -1673,7 +1673,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Return label of a contract status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + Long label of all services, 5=label court + Picto, 6=Picto of all services
 	 *  @return string      		Label
 	 */
 	function getLibStatut($mode)
@@ -1685,7 +1685,7 @@ class Contrat extends CommonObject
 	 *  Renvoi label of a given contrat status
 	 *
 	 *  @param	int		$statut      	Status id
-	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + label court, 3=Picto, 4=Picto + Long label of all services, 5=label court + Picto, 6=Picto of all services
 	 *	@return string      			Label
 	 */
 	function LibStatut($statut,$mode)
@@ -2161,7 +2161,7 @@ class ContratLigne extends CommonObject
 	 * @var string
 	 * @deprecated Use $label instead
 	 */
-	public $libelle;
+	public $label;
 
 	var $description;
 	var $date_commande;
@@ -2219,8 +2219,8 @@ class ContratLigne extends CommonObject
 	/**
 	 *  Return label of this contract line status
 	 *
-	 *	@param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string      		Libelle
+	 *	@param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+	 *  @return string      		label
 	 */
 	function getLibStatut($mode)
 	{
@@ -2231,9 +2231,9 @@ class ContratLigne extends CommonObject
 	 *  Return label of a contract line status
 	 *
 	 *  @param	int		$statut     Id statut
-	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@param  int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
 	 *	@param	int		$expired	0=Not expired, 1=Expired, -1=Both or unknown
-	 *  @return string      		Libelle
+	 *  @return string      		label
 	 */
 	function LibStatut($statut,$mode,$expired=-1)
 	{

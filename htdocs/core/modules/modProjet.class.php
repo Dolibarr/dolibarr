@@ -130,35 +130,35 @@ class modProjet extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 41; // id de la permission
-		$this->rights[$r][1] = "Lire les projets et tâches (partagés ou dont je suis contact)"; // libelle de la permission
+		$this->rights[$r][1] = "Lire les projets et tâches (partagés ou dont je suis contact)"; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 42; // id de la permission
-		$this->rights[$r][1] = "Creer/modifier les projets et tâches (partagés ou dont je suis contact)"; // libelle de la permission
+		$this->rights[$r][1] = "Creer/modifier les projets et tâches (partagés ou dont je suis contact)"; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 44; // id de la permission
-		$this->rights[$r][1] = "Supprimer les projets et tâches (partagés ou dont je suis contact)"; // libelle de la permission
+		$this->rights[$r][1] = "Supprimer les projets et tâches (partagés ou dont je suis contact)"; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 45; // id de la permission
-		$this->rights[$r][1] = "Exporter les projets"; // libelle de la permission
+		$this->rights[$r][1] = "Exporter les projets"; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 141; // id de la permission
-		$this->rights[$r][1] = "Lire tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // libelle de la permission
+		$this->rights[$r][1] = "Lire tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'all';
@@ -166,7 +166,7 @@ class modProjet extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 142; // id de la permission
-		$this->rights[$r][1] = "Creer/modifier tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // libelle de la permission
+		$this->rights[$r][1] = "Creer/modifier tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'all';
@@ -174,7 +174,7 @@ class modProjet extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 144; // id de la permission
-		$this->rights[$r][1] = "Supprimer tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // libelle de la permission
+		$this->rights[$r][1] = "Supprimer tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'all';

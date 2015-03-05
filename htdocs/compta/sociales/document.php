@@ -123,7 +123,7 @@ if ($object->id)
     }
 
     // Type
-    print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td></tr>";
+    print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_label."</td></tr>";
 
     // Period end date
     print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";

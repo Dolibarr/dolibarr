@@ -223,7 +223,7 @@ if ($resql)
 
         // Ref
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $form->showrefnav($entrepot, 'id', $linkback, 1, 'rowid', 'libelle');
+        print $form->showrefnav($entrepot, 'id', $linkback, 1, 'rowid', 'label');
         print '</td>';
 
         print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
@@ -468,7 +468,7 @@ if ($resql)
     print '</td>';
     // Product label
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
+    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->label:$search_product).'">';
     print '</td>';
     // Batch
 	if (! empty($conf->productbatch->enabled))
@@ -550,7 +550,7 @@ if ($resql)
         // Warehouse
         print '<td>';
         $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->label=$objp->stock;
         $warehousestatic->lieu=$objp->lieu;
         print $warehousestatic->getNomUrl(1);
         print "</td>\n";

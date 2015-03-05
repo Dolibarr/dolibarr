@@ -112,7 +112,7 @@ class FormOrder
 		
         $listofmethods=array();
 		
-		$sql = "SELECT rowid, code, libelle as label";
+		$sql = "SELECT rowid, code, label as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";
 

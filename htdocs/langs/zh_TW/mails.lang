@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (
 NoRemindSent=No EMail reminder sent
 ResultOfMassSending=Result of mass EMail reminders sending
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（聯系客戶，潛在客戶，供應商，...）
 MailingModuleDescDolibarrUsers=用戶與郵件全部Dolibarr
 MailingModuleDescFundationMembers=基金會成員與電子郵件

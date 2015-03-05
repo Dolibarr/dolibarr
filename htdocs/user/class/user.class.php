@@ -872,7 +872,7 @@ class User extends CommonObject
 						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 						$langs->load("stocks");
 						$entrepot = new Entrepot($this->db);
-						$entrepot->libelle = $langs->trans("PersonalStock",$this->getFullName($langs));
+						$entrepot->label = $langs->trans("PersonalStock",$this->getFullName($langs));
 						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock",$this->getFullName($langs));
 						$entrepot->statut = 1;
 						$entrepot->country_id = $mysoc->country_id;
@@ -1878,9 +1878,9 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Retourne le label du statut d'un user (actif, inactif)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param	int		$mode          0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
 	 *  @return	string 			       Label of status
 	 */
 	function getLibStatut($mode=0)
@@ -1889,10 +1889,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Renvoi le label d'un statut donne
 	 *
 	 *  @param	int		$statut        	Id statut
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          	0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
 	 *  @return string 			       	Label of status
 	 */
 	function LibStatut($statut,$mode=0)

@@ -44,7 +44,7 @@ class ChargeSociales extends CommonObject
     var $date_ech;
     var $lib;
     var $type;
-    var $type_libelle;
+    var $type_label;
     var $amount;
     var $paye;
     var $periode;
@@ -74,8 +74,8 @@ class ChargeSociales extends CommonObject
     function fetch($id, $ref='')
     {
         $sql = "SELECT cs.rowid, cs.date_ech,";
-        $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
-        $sql.= " c.libelle";
+        $sql.= " cs.label as lib, cs.fk_type, cs.amount, cs.paye, cs.periode,";
+        $sql.= " c.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
         $sql.= " WHERE cs.fk_type = c.id";
         if ($ref) $sql.= " AND cs.rowid = ".$ref;
@@ -94,7 +94,7 @@ class ChargeSociales extends CommonObject
                 $this->date_ech       = $this->db->jdate($obj->date_ech);
                 $this->lib            = $obj->lib;
                 $this->type           = $obj->fk_type;
-                $this->type_libelle   = $obj->libelle;
+                $this->type_label   = $obj->label;
                 $this->amount         = $obj->amount;
                 $this->paye           = $obj->paye;
                 $this->periode        = $this->db->jdate($obj->periode);
@@ -156,7 +156,7 @@ class ChargeSociales extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount, entity)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, label, date_ech, periode, amount, entity)";
         $sql.= " VALUES (".$this->type.",'".$this->db->escape($this->lib)."',";
         $sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
         $sql.= " '".price2num($newamount)."',";
@@ -264,7 +264,7 @@ class ChargeSociales extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
+        $sql.= " SET label='".$this->db->escape($this->lib)."',";
         $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
         $sql.= " periode='".$this->db->idate($this->periode)."'";
         $sql.= " WHERE rowid=".$this->id;
@@ -342,9 +342,9 @@ class ChargeSociales extends CommonObject
     }
 
     /**
-     *  Retourne le libelle du statut d'une charge (impaye, payee)
+     *  Retourne le label du statut d'une charge (impaye, payee)
      *
-     *  @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *  @param	int		$mode       	0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
@@ -354,10 +354,10 @@ class ChargeSociales extends CommonObject
     }
 
     /**
-     *  Renvoi le libelle d'un statut donne
+     *  Renvoi le label d'un statut donne
      *
      *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @param  int		$mode          	0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
@@ -410,7 +410,7 @@ class ChargeSociales extends CommonObject
      *  Renvoie nom clicable (avec eventuellement le picto)
      *
      *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     * 	@param	int		$maxlen			Longueur max libelle
+     * 	@param	int		$maxlen			Longueur max label
      *	@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$maxlen=0)
@@ -532,7 +532,7 @@ class ChargeSociales extends CommonObject
         $this->amount=100;
         $this->lib = 0;
         $this->type = 1;
-        $this->type_libelle = 'Social contribution label';
+        $this->type_label = 'Social contribution label';
     }
 }
 

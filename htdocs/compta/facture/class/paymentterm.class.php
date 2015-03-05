@@ -40,8 +40,8 @@ class PaymentTerm // extends CommonObject
 	var $code;
 	var $sortorder;
 	var $active;
-	var $libelle;
-	var $libelle_facture;
+	var $label;
+	var $label_facture;
 	var $fdm;
 	var $nbjour;
 	var $decalage;
@@ -78,8 +78,8 @@ class PaymentTerm // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->sortorder)) $this->sortorder=trim($this->sortorder);
 		if (isset($this->active)) $this->active=trim($this->active);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
-		if (isset($this->libelle_facture)) $this->libelle_facture=trim($this->libelle_facture);
+		if (isset($this->label)) $this->label=trim($this->label);
+		if (isset($this->label_facture)) $this->label_facture=trim($this->label_facture);
 		if (isset($this->fdm)) $this->fdm=trim($this->fdm);
 		if (isset($this->nbjour)) $this->nbjour=trim($this->nbjour);
 		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
@@ -96,8 +96,8 @@ class PaymentTerm // extends CommonObject
 		$sql.= "code,";
 		$sql.= "sortorder,";
 		$sql.= "active,";
-		$sql.= "libelle,";
-		$sql.= "libelle_facture,";
+		$sql.= "label,";
+		$sql.= "label_facture,";
 		$sql.= "fdm,";
 		$sql.= "nbjour,";
 		$sql.= "decalage";
@@ -109,8 +109,8 @@ class PaymentTerm // extends CommonObject
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->sortorder."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
-		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->libelle_facture)?'NULL':"'".$this->db->escape($this->libelle_facture)."'").",";
+		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
+		$sql.= " ".(! isset($this->label_facture)?'NULL':"'".$this->db->escape($this->label_facture)."'").",";
 		$sql.= " ".(! isset($this->fdm)?'NULL':"'".$this->fdm."'").",";
 		$sql.= " ".(! isset($this->nbjour)?'NULL':"'".$this->nbjour."'").",";
 		$sql.= " ".(! isset($this->decalage)?'NULL':"'".$this->decalage."'")."";
@@ -176,8 +176,8 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
 		$sql.= " t.active,";
-		$sql.= " t.libelle,";
-		$sql.= " t.libelle_facture,";
+		$sql.= " t.label,";
+		$sql.= " t.label_facture,";
 		$sql.= " t.fdm,";
 		$sql.= " t.nbjour,";
 		$sql.= " t.decalage";
@@ -199,8 +199,8 @@ class PaymentTerm // extends CommonObject
 				$this->code = $obj->code;
 				$this->sortorder = $obj->sortorder;
 				$this->active = $obj->active;
-				$this->libelle = $obj->libelle;
-				$this->libelle_facture = $obj->libelle_facture;
+				$this->label = $obj->label;
+				$this->label_facture = $obj->label_facture;
 				$this->fdm = $obj->fdm;
 				$this->nbjour = $obj->nbjour;
 				$this->decalage = $obj->decalage;
@@ -272,8 +272,8 @@ class PaymentTerm // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->sortorder)) $this->sortorder=trim($this->sortorder);
 		if (isset($this->active)) $this->active=trim($this->active);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
-		if (isset($this->libelle_facture)) $this->libelle_facture=trim($this->libelle_facture);
+		if (isset($this->label)) $this->label=trim($this->label);
+		if (isset($this->label_facture)) $this->label_facture=trim($this->label_facture);
 		if (isset($this->fdm)) $this->fdm=trim($this->fdm);
 		if (isset($this->nbjour)) $this->nbjour=trim($this->nbjour);
 		if (isset($this->decalage)) $this->decalage=trim($this->decalage);
@@ -289,8 +289,8 @@ class PaymentTerm // extends CommonObject
 		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
 		$sql.= " sortorder=".(isset($this->sortorder)?$this->sortorder:"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
-		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
-		$sql.= " libelle_facture=".(isset($this->libelle_facture)?"'".$this->db->escape($this->libelle_facture)."'":"null").",";
+		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
+		$sql.= " label_facture=".(isset($this->label_facture)?"'".$this->db->escape($this->label_facture)."'":"null").",";
 		$sql.= " fdm=".(isset($this->fdm)?$this->fdm:"null").",";
 		$sql.= " nbjour=".(isset($this->nbjour)?$this->nbjour:"null").",";
 		$sql.= " decalage=".(isset($this->decalage)?$this->decalage:"null")."";
@@ -469,8 +469,8 @@ class PaymentTerm // extends CommonObject
 		$this->code='';
 		$this->sortorder='';
 		$this->active='';
-		$this->libelle='';
-		$this->libelle_facture='';
+		$this->label='';
+		$this->label_facture='';
 		$this->fdm='';
 		$this->nbjour='';
 		$this->decalage='';

@@ -137,7 +137,7 @@ if ($action == 'set')
 	$scandir = GETPOST('scandir','alpha');
 
 	$type='company';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, label, description)";
 	$sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
@@ -179,7 +179,7 @@ if ($action == 'setdoc')
     dol_syslog("societe.php ".$sql);
 	$result1=$db->query($sql_del);
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, label, description)";
 	$sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");

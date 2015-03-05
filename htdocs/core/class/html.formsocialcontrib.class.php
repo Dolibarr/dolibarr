@@ -64,19 +64,19 @@ class FormSocialContrib
 
         if (! empty($mysoc->country_id))
         {
-            $sql = "SELECT c.id, c.libelle as type";
+            $sql = "SELECT c.id, c.label as type";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
             $sql.= " WHERE c.active = 1";
             $sql.= " AND c.fk_pays = ".$mysoc->country_id;
-            $sql.= " ORDER BY c.libelle ASC";
+            $sql.= " ORDER BY c.label ASC";
         }
         else
         {
-            $sql = "SELECT c.id, c.libelle as type";
+            $sql = "SELECT c.id, c.label as type";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql.= " WHERE c.active = 1 AND c.fk_pays = co.rowid";
             $sql.= " AND co.code = '".$mysoc->country_code."'";
-            $sql.= " ORDER BY c.libelle ASC";
+            $sql.= " ORDER BY c.label ASC";
         }
 
         dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);

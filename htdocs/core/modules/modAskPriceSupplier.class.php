@@ -100,40 +100,40 @@ class modAskPriceSupplier extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Read supplier proposals'; // libelle de la permission
+		$this->rights[$r][1] = 'Read supplier proposals'; // label de la permission
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Create/modify supplier proposals'; // libelle de la permission
+		$this->rights[$r][1] = 'Create/modify supplier proposals'; // label de la permission
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Validate supplier proposals'; // libelle de la permission
+		$this->rights[$r][1] = 'Validate supplier proposals'; // label de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = '';
 		$this->rights[$r][5] = 'validate';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
+		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // label de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = '';
         $this->rights[$r][5] = 'send_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Delete supplier proposals'; // libelle de la permission
+		$this->rights[$r][1] = 'Delete supplier proposals'; // label de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Close supplier price requests'; // libelle de la permission
+		$this->rights[$r][1] = 'Close supplier price requests'; // label de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
 

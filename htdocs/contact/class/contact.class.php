@@ -927,7 +927,7 @@ class Contact extends CommonObject
 	/**
 	 *	Return label of contact status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@param      int			$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
 	function getLibStatut($mode)
@@ -936,11 +936,11 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *	Renvoi le label d'un statut donne
 	 *
 	 *  @param      int			$statut     Id statut
-	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string					Libelle
+	 *  @param      int			$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+	 *  @return     string					label
 	 */
 	function LibStatut($statut,$mode)
 	{

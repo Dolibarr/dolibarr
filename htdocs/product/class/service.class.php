@@ -32,7 +32,7 @@ class Service extends CommonObject
 	var $db;
 
 	var $id;
-	var $libelle;
+	var $label;
 	var $price;
 	var $tms;
 	var $debut;

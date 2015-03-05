@@ -125,8 +125,8 @@ if ($object->id)
 	print '</td>';
 	print '</tr>';
 
-	// Libelle
-	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
+	// label
+	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td>';
 	print '</tr>';
 
 	// Status (to sell)

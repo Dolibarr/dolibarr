@@ -152,7 +152,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 121; // id de la permission
-		$this->rights[$r][1] = 'Lire les societes'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les societes'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
@@ -176,7 +176,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
-		$this->rights[$r][1] = 'Creer modifier les societes'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer modifier les societes'; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
@@ -200,14 +200,14 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les societes'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les societes'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 126; // id de la permission
-		$this->rights[$r][1] = 'Exporter les societes'; // libelle de la permission
+		$this->rights[$r][1] = 'Exporter les societes'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
@@ -223,7 +223,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
-		$this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les contacts'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -231,7 +231,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 282; // id de la permission
-		$this->rights[$r][1] = 'Creer modifier les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer modifier les contacts'; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -239,7 +239,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 283; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les contacts'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -247,7 +247,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 286; // id de la permission
-		$this->rights[$r][1] = 'Exporter les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Exporter les contacts'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -264,10 +264,10 @@ class modSociete extends DolibarrModules
 		$this->export_label[$r]='ExportDataset_company_1';
 		$this->export_icon[$r]='company';
 		$this->export_permission[$r]=array(array("societe","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.status'=>"Status",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.code_compta'=>"AccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.default_lang'=>"DefaultLang",'s.siren'=>"ProfId1",'s.siret'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.idprof5'=>"ProfId5",'s.idprof6'=>"ProfId6",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_private'=>"NotePrivate",'s.note_public'=>"NotePublic",'t.libelle'=>"ThirdPartyType",'ce.code'=>"Staff","cfj.libelle"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','st.code'=>'ProspectStatus','d.nom'=>'State');
+		$this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.status'=>"Status",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.code_compta'=>"AccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.default_lang'=>"DefaultLang",'s.siren'=>"ProfId1",'s.siret'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.idprof5'=>"ProfId5",'s.idprof6'=>"ProfId6",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_private'=>"NotePrivate",'s.note_public'=>"NotePublic",'t.label'=>"ThirdPartyType",'ce.code'=>"Staff","cfj.label"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','st.code'=>'ProspectStatus','d.nom'=>'State');
 		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
-		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Text",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Number",'s.note'=>"Text",'t.libelle'=>"Text",'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code','s.fk_stcomm'=>'List:c_stcomm:libelle:code','d.nom'=>'List:c_departements:nom:rowid');
-		$this->export_TypeFields_array[$r]=array('s.nom'=>"Text",'s.status'=>"Number",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.code_compta'=>"Text",'s.code_compta_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Number",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.libelle'=>"Text",'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code','st.code'=>'List:c_stcomm:libelle:code','d.nom'=>'Text');
+		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Text",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Number",'s.note'=>"Text",'t.label'=>"Text",'ce.code'=>"List:c_effectif:label:code","cfj.label"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code','s.fk_stcomm'=>'List:c_stcomm:label:code','d.nom'=>'List:c_departements:nom:rowid');
+		$this->export_TypeFields_array[$r]=array('s.nom'=>"Text",'s.status'=>"Number",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.code_compta'=>"Text",'s.code_compta_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Number",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.label'=>"Text",'ce.code'=>"List:c_effectif:label:code","cfj.label"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code','st.code'=>'List:c_stcomm:label:code','d.nom'=>'Text');
 		$this->export_entities_array[$r]=array();	// We define here only fields that use another picto
         // Add extra fields
         $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe'";

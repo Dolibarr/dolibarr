@@ -85,21 +85,21 @@ class modService extends DolibarrModules
 		$r=0;
 
 		$this->rights[$r][0] = 531; // id de la permission
-		$this->rights[$r][1] = 'Lire les services'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les services'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
         $r++;
 
 		$this->rights[$r][0] = 532; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les services'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier les services'; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
         $r++;
 
 		$this->rights[$r][0] = 534; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les services'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les services'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';

@@ -207,8 +207,8 @@ class FactureRec extends Facture
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
-		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
+		$sql.= ', p.code as mode_reglement_code, p.label as mode_reglement_label';
+		$sql.= ', c.code as cond_reglement_code, c.label as cond_reglement_label, c.label_facture as cond_reglement_label_doc';
 		$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
@@ -246,11 +246,11 @@ class FactureRec extends Facture
 				$this->date_lim_reglement     = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
 				$this->mode_reglement_code    = $obj->mode_reglement_code;
-				$this->mode_reglement         = $obj->mode_reglement_libelle;
+				$this->mode_reglement         = $obj->mode_reglement_label;
 				$this->cond_reglement_id      = $obj->fk_cond_reglement;
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
-				$this->cond_reglement         = $obj->cond_reglement_libelle;
-				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
+				$this->cond_reglement         = $obj->cond_reglement_label;
+				$this->cond_reglement_doc     = $obj->cond_reglement_label_doc;
 				$this->fk_project             = $obj->fk_projet;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
@@ -320,7 +320,7 @@ class FactureRec extends Facture
 				$line->desc             = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
 				$line->product_ref      = $objp->product_ref;		// Ref product
-				$line->libelle          = $objp->product_label;		// deprecated
+				$line->label          = $objp->product_label;		// deprecated
 				$line->product_label	= $objp->product_label;		// Label product
 				$line->product_desc     = $objp->product_desc;		// Description product
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product

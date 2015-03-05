@@ -32,8 +32,8 @@ class ExpenseReport extends CommonObject
 	var $user_author_infos;
 	var $user_validator_infos;
 
-	var $libelle_paiement;
-	var $libelle_statut;
+	var $label_paiement;
+	var $label_statut;
 	var $code_paiement;
 	var $code_statut;
 
@@ -269,7 +269,7 @@ class ExpenseReport extends CommonObject
 		$sql.= " d.date_debut, d.date_fin, d.date_create, d.date_valid, d.date_approve, d.date_paiement,"; 			// DATES (datetime)
 		$sql.= " d.fk_user_author, d.fk_user_validator, d.fk_c_expensereport_statuts as status, d.fk_c_paiement,";
 		$sql.= " d.fk_user_valid, d.fk_user_approve, d.fk_user_paid,";
-		$sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";								// INNER JOIN paiement
+		$sql.= " dp.label as label_paiement, dp.code as code_paiement";								// INNER JOIN paiement
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement dp ON d.fk_c_paiement = dp.id";
 		if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
 		else $sql.= " WHERE d.rowid = ".$id;
@@ -336,8 +336,8 @@ class ExpenseReport extends CommonObject
 					$this->user_paid_infos = dolGetFirstLastname($user_paid->firstname, $user_paid->lastname);
 				}
 
-				$this->libelle_statut 	= $obj->libelle_statut;
-				$this->libelle_paiement = $obj->libelle_paiement;
+				$this->label_statut 	= $obj->label_statut;
+				$this->label_paiement = $obj->label_paiement;
 				$this->code_statut 		= $obj->code_statut;
 				$this->code_paiement 	= $obj->code_paiement;
 
@@ -704,7 +704,7 @@ class ExpenseReport extends CommonObject
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
 		$sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.fk_c_tva,';
 		$sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
-		$sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
+		$sql.= ' ctf.code as code_type_fees, ctf.label as label_type_fees,';
 		$sql.= ' p.ref as ref_projet, p.title as title_projet';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON de.fk_c_type_fees = ctf.id';
@@ -738,7 +738,7 @@ class ExpenseReport extends CommonObject
 				$deplig->total_ttc		= $objp->total_ttc;
 
 				$deplig->type_fees_code 	= $objp->code_type_fees;
-				$deplig->type_fees_libelle 	= $objp->libelle_type_fees;
+				$deplig->type_fees_label 	= $objp->label_type_fees;
 				$deplig->tva_taux			= $objp->taux_tva;
 				$deplig->projet_ref			= $objp->ref_projet;
 				$deplig->projet_title		= $objp->title_projet;
@@ -1221,13 +1221,13 @@ class ExpenseReport extends CommonObject
 			$ligne->rowid			= $rowid;
 
 			// Select des infos sur le type fees
-			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
+			$sql = "SELECT c.code as code_type_fees, c.label as label_type_fees";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees c";
 			$sql.= " WHERE c.id = ".$type_fees_id;
 			$result = $this->db->query($sql);
 			$objp_fees = $this->db->fetch_object($result);
 			$ligne->type_fees_code 		= $objp_fees->code_type_fees;
-			$ligne->type_fees_libelle 	= $objp_fees->libelle_type_fees;
+			$ligne->type_fees_label 	= $objp_fees->label_type_fees;
 
 			// Select des informations du projet
 			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
@@ -1427,7 +1427,7 @@ class ExpenseReportLine
 	var $fk_expensereport;
 
 	var $type_fees_code;
-	var $type_fees_libelle;
+	var $type_fees_label;
 
 	var $projet_ref;
 	var $projet_title;
@@ -1458,7 +1458,7 @@ class ExpenseReportLine
 	{
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
 		$sql.= ' fde.fk_c_tva as tva_taux, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
-		$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
+		$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_label,';
 		$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det fde';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON fde.fk_c_type_fees=ctf.id';
@@ -1481,7 +1481,7 @@ class ExpenseReportLine
 			$this->fk_c_type_fees = $objp->fk_c_type_fees;
 			$this->fk_projet = $objp->fk_projet;
 			$this->type_fees_code = $objp->type_fees_code;
-			$this->type_fees_libelle = $objp->type_fees_libelle;
+			$this->type_fees_label = $objp->type_fees_label;
 			$this->projet_ref = $objp->projet_ref;
 			$this->projet_title = $objp->projet_title;
 			$this->tva_taux = $objp->tva_taux;

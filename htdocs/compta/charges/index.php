@@ -176,7 +176,7 @@ if ($conf->tax->enabled)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="140px"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.label","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
@@ -185,8 +185,8 @@ if ($conf->tax->enabled)
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT c.id, c.libelle as lib,";
-	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
+	$sql = "SELECT c.id, c.label as lib,";
+	$sql.= " cs.rowid, cs.label, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
 	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment,";
 	$sql.= " pct.code as payment_code";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
@@ -231,8 +231,8 @@ if ($conf->tax->enabled)
 			// Label
 			print '<td>';
 			$socialcontrib->id=$obj->rowid;
-			$socialcontrib->ref=$obj->libelle;
-			$socialcontrib->lib=$obj->libelle;
+			$socialcontrib->ref=$obj->label;
+			$socialcontrib->lib=$obj->label;
 			print $socialcontrib->getNomUrl(1,'20');
 			print '</td>';
 			// Type

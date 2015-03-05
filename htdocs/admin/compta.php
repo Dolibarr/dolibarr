@@ -153,8 +153,8 @@ foreach ($list as $key)
 	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
-	$libelle = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
+	$label = $langs->trans($key);
+	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value
 	print '<td>';

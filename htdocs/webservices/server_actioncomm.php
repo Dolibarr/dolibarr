@@ -149,7 +149,7 @@ $server->wsdl->addComplexType(
 	'',
 	array(
 	'code' => array('name'=>'code','type'=>'xsd:string'),
-	'libelle' => array('name'=>'libelle','type'=>'xsd:string')
+	'label' => array('name'=>'label','type'=>'xsd:string')
 	)
 );
 
@@ -372,8 +372,8 @@ function getListActionCommType($authentication)
 			if ($result > 0)
 			{
 				$resultarray=array();
-				foreach($cactioncomm->liste_array as $code=>$libeller) {
-					$resultarray[]=array('code'=>$code,'libelle'=>$libeller);
+				foreach($cactioncomm->liste_array as $code=>$labelr) {
+					$resultarray[]=array('code'=>$code,'label'=>$labelr);
 				}
 
 				 $objectresp = array(

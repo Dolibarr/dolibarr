@@ -301,7 +301,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 										$outputlangs->setDefaultLang($newlang);
 									}
 
-									$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+									$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 								}
 								else
 								{
@@ -309,7 +309,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 								}
 
 								if ($conf->global->PRODUIT_DESC_IN_FORM)
-									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
+									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->label)?dol_htmlentitiesbr($lines[$i]->desc):'';
 							}
 							else {
 							    $desc = dol_htmlentitiesbr($lines[$i]->desc);
@@ -1317,7 +1317,7 @@ else
                 if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
                 {
                     print '<tr '.$bc[$var].' valign="top">';
-                    // Libelle
+                    // label
                     if ($objp->fk_product > 0)
                     {
                         print '<td>';

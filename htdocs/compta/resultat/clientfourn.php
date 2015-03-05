@@ -383,7 +383,7 @@ print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->t
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT c.id, c.libelle as label, sum(cs.amount) as amount";
+    $sql = "SELECT c.id, c.label as label, sum(cs.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= " WHERE cs.fk_type = c.id";
@@ -393,7 +393,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-    $sql = "SELECT c.id, c.libelle as label, sum(p.amount) as amount";
+    $sql = "SELECT c.id, c.label as label, sum(p.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -404,8 +404,8 @@ else
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
 $sql.= " AND cs.entity = ".$conf->entity;
-$sql.= " GROUP BY c.libelle, c.id";
-$sql.= " ORDER BY c.libelle, c.id";
+$sql.= " GROUP BY c.label, c.id";
+$sql.= " ORDER BY c.label, c.id";
 
 dol_syslog("get social contributions deductible=0", LOG_DEBUG);
 $result=$db->query($sql);
@@ -457,7 +457,7 @@ print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->t
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT c.id, c.libelle as label, sum(cs.amount) as amount";
+    $sql = "SELECT c.id, c.label as label, sum(cs.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= " WHERE cs.fk_type = c.id";
@@ -465,12 +465,12 @@ if ($modecompta == 'CREANCES-DETTES')
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
     $sql.= " AND cs.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle, c.id";
-    $sql.= " ORDER BY c.libelle, c.id";
+    $sql.= " GROUP BY c.label, c.id";
+    $sql.= " ORDER BY c.label, c.id";
 }
 else
 {
-    $sql = "SELECT c.id, c.libelle as label, sum(p.amount) as amount";
+    $sql = "SELECT c.id, c.label as label, sum(p.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -480,8 +480,8 @@ else
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
     $sql.= " AND cs.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle, c.id";
-    $sql.= " ORDER BY c.libelle, c.id";
+    $sql.= " GROUP BY c.label, c.id";
+    $sql.= " ORDER BY c.label, c.id";
 }
 
 dol_syslog("get social contributions deductible=1", LOG_DEBUG);

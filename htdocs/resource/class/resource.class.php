@@ -840,7 +840,7 @@ class Resource extends CommonObject
     		while ($i < $num)
     		{
     			$obj = $this->db->fetch_object($resql);
-    			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+    			// Si traduction existe, on l'utilise, sinon on prend le label par defaut
     			$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
     			$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
     			$this->cache_code_type_resource[$obj->rowid]['label'] = $label;

@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Alle valgte tredjeparter der e-post er satt (merk 
 NoRemindSent=Ingen e-post påminnelse sendt
 ResultOfMassSending=Resultatet av masse e-post påminnelser sending
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Alle tredjeparters kontaktpersoner (kunder, prospekter, leverandører, ...)
 MailingModuleDescDolibarrUsers=Alle Dolibarr-brukere med egen e-post
 MailingModuleDescFundationMembers=Medlemmer med e-postadresser

@@ -409,7 +409,7 @@ $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
-$sql.= ' ca.code as type_code, ca.libelle as type_label';
+$sql.= ' ca.code as type_code, ca.label as type_label';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 // We must filter on assignement table
@@ -492,7 +492,7 @@ if ($resql)
         $event->datef=$db->jdate($obj->datep2);
         $event->type_code=$obj->type_code;
         $event->type_label=$obj->type_label;
-        $event->libelle=$obj->label;
+        $event->label=$obj->label;
         $event->percentage=$obj->percent;
         $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
@@ -604,7 +604,7 @@ if ($showbirthday)
             $event->datep=dol_mktime(0,0,0,$datearray['mon'],$datearray['mday'],$year,true);    // For full day events, date are also GMT but they wont but converted during output
             $event->datef=$event->datep;
             $event->type_code='BIRTHDAY';
-            $event->libelle=$langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname,$obj->lastname);
+            $event->label=$langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname,$obj->lastname);
             $event->percentage=100;
             $event->fulldayevent=true;
 
@@ -821,9 +821,9 @@ if (count($listofextcals))
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
 
-                    if($icalevent['SUMMARY']) $event->libelle=$icalevent['SUMMARY'];
-                    elseif($icalevent['DESCRIPTION']) $event->libelle=dol_nl2br($icalevent['DESCRIPTION'],1);
-                    else $event->libelle = $langs->trans("ExtSiteNoLabel");
+                    if($icalevent['SUMMARY']) $event->label=$icalevent['SUMMARY'];
+                    elseif($icalevent['DESCRIPTION']) $event->label=dol_nl2br($icalevent['DESCRIPTION'],1);
+                    else $event->label = $langs->trans("ExtSiteNoLabel");
 
                     $event->date_start_in_calendar=$event->datep;
 
@@ -1303,10 +1303,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             //print $daterange;
                             if ($event->type_code != 'ICALEVENT')
                             {
-                                $savlabel=$event->libelle;
-                                $event->libelle=$daterange;
+                                $savlabel=$event->label;
+                                $event->label=$daterange;
                                 print $event->getNomUrl(0);
-                                $event->libelle=$savlabel;
+                                $event->label=$savlabel;
                             }
                             else
                             {
@@ -1324,7 +1324,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         }
 
                         // Show title
-                        if ($event->type_code == 'ICALEVENT') print dol_trunc($event->libelle,$maxnbofchar);
+                        if ($event->type_code == 'ICALEVENT') print dol_trunc($event->label,$maxnbofchar);
                         else print $event->getNomUrl(0,$maxnbofchar,'cal_event');
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname,$maxnbofchar).')';

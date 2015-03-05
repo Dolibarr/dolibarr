@@ -144,7 +144,7 @@ class pdf_paiement
         $lines=array();
 
 		$sql = "SELECT p.datep as dp, f.facnumber";
-		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
+		//$sql .= ", c.label as paiement_type, p.num_paiement";
 		$sql.= ", c.code as paiement_code, p.num_paiement";
 		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
 		$sql.= ", pf.amount as pf_amount ";

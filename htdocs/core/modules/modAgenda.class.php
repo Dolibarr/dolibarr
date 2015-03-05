@@ -106,7 +106,7 @@ class modAgenda extends DolibarrModules
 		$r=0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     label par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
 		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
@@ -369,20 +369,20 @@ class modAgenda extends DolibarrModules
 		$this->export_permission[$r]=array(array("agenda","export"));
 		$this->export_fields_array[$r]=array('ac.id'=>"ActionId",'ac.ref_ext'=>"ExternalRef",'ac.datec'=>"ActionDateCreation",'ac.datep'=>"DateActionBegin",
 			'ac.datep2'=>"DateActionEnd",'ac.label'=>"Title",'ac.note'=>"Note",'ac.percent'=>"Percent",'ac.durationp'=>"durationp",
-			'cac.libelle'=>"ActionType",
+			'cac.label'=>"ActionType",
 			's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town',
 			'co.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4',
 			's.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra');
 		$this->export_TypeFields_array[$r]=array('ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
 			'ac.datep2'=>"Date",'ac.label'=>"Text",'ac.note'=>"Text",'ac.percent'=>"Number",
 			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:rowid",
+			'cac.label'=>"List:c_actioncomm:label:rowid",
 			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
 			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text',
 			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
 		$this->export_entities_array[$r]=array('ac.id'=>"action",'ac.ref_ext'=>"action",'ac.datec'=>"action",'ac.datep'=>"action",
 			'ac.datep2'=>"action",'ac.label'=>"action",'ac.note'=>"action",'ac.percent'=>"action",'ac.durationp'=>"action",
-			'cac.libelle'=>"action",
+			'cac.label'=>"action",
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company',
 			'co.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company',
 			's.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',);

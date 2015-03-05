@@ -234,7 +234,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 $sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
-$sql.= ", st.libelle as stcomm";
+$sql.= ", st.label as stcomm";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

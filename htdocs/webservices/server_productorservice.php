@@ -503,7 +503,7 @@ function createProductOrService($authentication,$product)
         $newobject->ref=$product['ref'];
         $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->label=$product['label'];    // TODO deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];
@@ -633,7 +633,7 @@ function updateProductOrService($authentication,$product)
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->label=$product['label'];    // TODO deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];

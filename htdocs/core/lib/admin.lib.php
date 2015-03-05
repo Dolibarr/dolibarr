@@ -1217,7 +1217,7 @@ function addDocumentModel($name, $type, $label='', $description='')
 
 	$db->begin();
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, label, description)";
     $sql.= " VALUES ('".$db->escape($name)."','".$type."',".$conf->entity.", ";
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");

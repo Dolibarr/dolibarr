@@ -61,7 +61,7 @@ class FormCompany
 
 		$effs = array();
 
-		$sql = "SELECT id, code, libelle";
+		$sql = "SELECT id, code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
 		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
@@ -79,7 +79,7 @@ class FormCompany
 				if (! $mode) $key=$objp->id;
 				else $key=$objp->code;
 				if ($langs->trans($objp->code) != $objp->code) $effs[$key] = $langs->trans($objp->code);
-				else $effs[$key] = $objp->libelle;
+				else $effs[$key] = $objp->label;
 				if ($effs[$key]=='-') $effs[$key]='';
 				$i++;
 			}
@@ -92,7 +92,7 @@ class FormCompany
 	/**
 	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
 	 *
-	 *	@param	int		$mode		0=renvoi id+libelle, 1=renvoi code+libelle
+	 *	@param	int		$mode		0=renvoi id+label, 1=renvoi code+label
 	 *	@param  string	$filter     Add a SQL filter to select
 	 *  @return array				Array of types d'effectifs
 	 */
@@ -100,7 +100,7 @@ class FormCompany
 	{
 		$effs = array();
 
-		$sql = "SELECT id, code, libelle";
+		$sql = "SELECT id, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
 		$sql.= " WHERE active = 1";
 		if ($filter) $sql.=" ".$filter;
@@ -118,7 +118,7 @@ class FormCompany
 				if (! $mode) $key=$objp->id;
 				else $key=$objp->code;
 
-				$effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
+				$effs[$key] = $objp->label!='-'?$objp->label:'';
 				$i++;
 			}
 			$this->db->free($resql);
@@ -269,7 +269,7 @@ class FormCompany
 						{
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
-						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+						// Si traduction existe, on l'utilise, sinon on prend le label par defaut
 						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
 						$out.= '</option>';
 					}
@@ -392,7 +392,7 @@ class FormCompany
 					{
 						$out.= '<option value="'.$obj->code.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// Si traduction existe, on l'utilise, sinon on prend le label par defaut
 					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label!='-'?$obj->label:''));
 					$out.= '</option>';
 					$i++;
@@ -441,7 +441,7 @@ class FormCompany
 		$out='';
 
 		// On recherche les formes juridiques actives des pays actifs
-		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
+		$sql  = "SELECT f.rowid, f.code as code , f.label as label, f.active, c.label as country, c.code as country_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";

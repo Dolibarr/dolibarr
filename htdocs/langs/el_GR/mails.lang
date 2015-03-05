@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Όλοι Πελ./Προμ. έχουν επιλεγ
 NoRemindSent=Τα  EMail να αποσταλούν χωρίς υπενθύμιση
 ResultOfMassSending=Αποτέλεσμα της μαζικής αποστολής email υπενθύμισης
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Επαφές για όλα τα στοιχεία (πελάτης, προοπτική, προμηθευτής, ...)
 MailingModuleDescDolibarrUsers=All Dolibarr users with emails
 MailingModuleDescFundationMembers=Foundation members with emails

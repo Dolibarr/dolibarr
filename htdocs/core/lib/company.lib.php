@@ -370,13 +370,13 @@ function currency_name($code_iso,$withcode='')
 {
     global $langs,$db;
 
-    // Si il existe une traduction, on peut renvoyer de suite le libelle
+    // Si il existe une traduction, on peut renvoyer de suite le label
     if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
     {
         return $langs->trans("Currency".$code_iso);
     }
 
-    // Si pas de traduction, on consulte le libelle par defaut en table
+    // Si pas de traduction, on consulte le label par defaut en table
     $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
     $sql.= " WHERE code_iso='".$code_iso."'";
 
@@ -412,7 +412,7 @@ function getFormeJuridiqueLabel($code)
 
     if (! $code) return '';
 
-    $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+    $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
     $sql.= " WHERE code='$code'";
 
     dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
@@ -424,7 +424,7 @@ function getFormeJuridiqueLabel($code)
         if ($num)
         {
             $obj = $db->fetch_object($resql);
-            $label=($obj->libelle!='-' ? $obj->libelle : '');
+            $label=($obj->label!='-' ? $obj->label : '');
             return $label;
         }
         else
@@ -904,7 +904,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.percent,";
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " a.fk_element, a.elementtype,";
-        $sql.= " c.code as acode, c.libelle,";
+        $sql.= " c.code as acode, c.label,";
         $sql.= " u.login, u.rowid";
         if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
@@ -965,9 +965,9 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     $actionstatic->type_code=$obj->acode;
                     $transcode=$langs->trans("Action".$obj->acode);
-                    $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                    //$actionstatic->libelle=$libelle;
-                    $actionstatic->libelle=$obj->label;
+                    $label=($transcode!="Action".$obj->acode?$transcode:$obj->label);
+                    //$actionstatic->label=$label;
+                    $actionstatic->label=$obj->label;
                     $actionstatic->id=$obj->id;
                     //$out.='<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
 
@@ -1056,7 +1056,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.note, a.percent,";
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.fk_user_author, a.fk_contact,";
-        $sql.= " c.code as acode, c.libelle,";
+        $sql.= " c.code as acode, c.label,";
         $sql.= " u.login, u.rowid as user_id";
         if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
@@ -1092,7 +1092,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 		'note'=>$obj->label,
                 		'percent'=>$obj->percent,
                 		'acode'=>$obj->acode,
-                		'libelle'=>$obj->libelle,
+                		'label'=>$obj->label,
                 		'userid'=>$obj->user_id,
                 		'login'=>$obj->login,
                 		'contact_id'=>$obj->fk_contact,
@@ -1212,9 +1212,9 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             {
                 $actionstatic->type_code=$histo[$key]['acode'];
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
-                $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['libelle']);
-                //$actionstatic->libelle=$libelle;
-                $actionstatic->libelle=$histo[$key]['note'];
+                $label=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['label']);
+                //$actionstatic->label=$label;
+                $actionstatic->label=$histo[$key]['note'];
                 $actionstatic->id=$histo[$key]['id'];
                 $out.=$actionstatic->getNomUrl(1,40);
             }
@@ -1222,8 +1222,8 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             {
                 $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
-                $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-                $out.=dol_trunc($libelle,40);
+                $label=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
+                $out.=dol_trunc($label,40);
             }
             $out.='</td>';
 

@@ -207,7 +207,7 @@ print '</table>';
  */
 
 $disable_delete = 0;
-$sql = 'SELECT f.rowid as scid, f.libelle, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
+$sql = 'SELECT f.rowid as scid, f.label, f.paye, f.amount as sc_amount, pf.amount, pc.label as sc_type';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql.= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
 $sql.= ' AND f.entity = '.$conf->entity;
@@ -248,11 +248,11 @@ if ($resql)
 			print "</td>\n";
 			// Type
             print '<td>';
-            print $socialcontrib->type_libelle;
+            print $socialcontrib->type_label;
             /*print $socialcontrib->type;*/
             print "</td>\n";
 			// Label
-			print '<td>'.$objp->libelle.'</td>';
+			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
 			print '<td align="right">'.price($objp->sc_amount).'</td>';
 			// Status

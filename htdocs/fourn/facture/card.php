@@ -345,7 +345,7 @@ if (empty($reshook))
 	        $object->ref           = $_POST['ref'];
 			$object->ref_supplier  = $_POST['ref_supplier'];
 	        $object->socid         = $_POST['socid'];
-	        $object->libelle       = $_POST['libelle'];
+	        $object->label       = $_POST['label'];
 	        $object->date          = $datefacture;
 	        $object->date_echeance = $datedue;
 	        $object->note_public   = GETPOST('note_public');
@@ -414,7 +414,7 @@ if (empty($reshook))
 	                    $num=count($lines);
 	                    for ($i = 0; $i < $num; $i++)
 	                    {
-	                        $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+	                        $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->label);
 	                        $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
 	                        // Dates
@@ -690,7 +690,7 @@ if (empty($reshook))
 	        {
 	            $result=$productsupplier->fetch($idprod);
 
-	            $label = $productsupplier->libelle;
+	            $label = $productsupplier->label;
 
 	            $desc = $productsupplier->description;
 	            if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
@@ -1432,7 +1432,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="label" value="'.(isset($_POST['label'])?$_POST['label']:'').'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
@@ -1469,7 +1469,7 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
@@ -2034,7 +2034,7 @@ else
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else
 			{
@@ -2147,7 +2147,7 @@ else
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($object->lines[$i]->fk_product);
                     $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$product_static->libelle;
+                    $text.= ' - '.$product_static->label;
                     print $text;
                     print '<br>';
                 }
@@ -2207,7 +2207,7 @@ else
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($object->lines[$i]->fk_product);
                     $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$product_static->libelle;
+                    $text.= ' - '.$product_static->label;
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($object->lines[$i]->description));
                     print $form->textwithtooltip($text,$description,3,'','',$i);
 
@@ -2215,7 +2215,7 @@ else
                     print_date_range($date_start,$date_end);
 
                     // Add description in form
-                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
+                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->label)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
                 }
 
                 // Description - Editor wysiwyg
@@ -2566,7 +2566,7 @@ else
 
             if (is_array($contactarr) && count($contactarr)>0) {
             	foreach($contactarr as $contact) {
-            		if ($contact['libelle']==$langs->trans('TypeContact_invoice_supplier_external_BILLING')) {
+            		if ($contact['label']==$langs->trans('TypeContact_invoice_supplier_external_BILLING')) {
             			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
             			$contactstatic=new Contact($db);
             			$contactstatic->fetch($contact['id']);

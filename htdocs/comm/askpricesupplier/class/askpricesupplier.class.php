@@ -1007,8 +1007,8 @@ class AskPriceSupplier extends CommonObject
         $sql.= ', p.fk_account';
         $sql.= ", p.fk_shipping_method";
         $sql.= ", c.label as statut_label";
-        $sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
-        $sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
+        $sql.= ", cr.code as cond_reglement_code, cr.label as cond_reglement, cr.label_facture as cond_reglement_label_doc";
+        $sql.= ", cp.code as mode_reglement_code, cp.label as mode_reglement";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."askpricesupplier as p";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
@@ -1044,7 +1044,7 @@ class AskPriceSupplier extends CommonObject
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
-                $this->statut_libelle       = $obj->statut_label;
+                $this->statut_label       = $obj->statut_label;
 
                 $this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
                 $this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
@@ -1060,7 +1060,7 @@ class AskPriceSupplier extends CommonObject
                 $this->cond_reglement_id    = $obj->fk_cond_reglement;
                 $this->cond_reglement_code  = $obj->cond_reglement_code;
                 $this->cond_reglement       = $obj->cond_reglement;
-                $this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
+                $this->cond_reglement_doc   = $obj->cond_reglement_label_doc;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
@@ -1141,7 +1141,7 @@ class AskPriceSupplier extends CommonObject
 
                         $line->ref				= $objp->product_ref;		// TODO deprecated
                         $line->product_ref		= $objp->product_ref;
-                        $line->libelle			= $objp->product_label;		// TODO deprecated
+                        $line->label			= $objp->product_label;		// TODO deprecated
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
@@ -2465,7 +2465,7 @@ class AskPriceSupplierLigne  extends CommonObject
 
     // From llx_product
     var $ref;						// Reference produit
-    var $libelle;       // Label produit
+    var $label;       // Label produit
     var $product_desc;  // Description produit
 
     var $localtax1_tx;		// Local tax 1
@@ -2544,7 +2544,7 @@ class AskPriceSupplierLigne  extends CommonObject
 
 			$this->ref				= $objp->product_ref;      // deprecated
 			$this->product_ref		= $objp->product_ref;
-			$this->libelle			= $objp->product_label;  // deprecated
+			$this->label			= $objp->product_label;  // deprecated
 			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
 

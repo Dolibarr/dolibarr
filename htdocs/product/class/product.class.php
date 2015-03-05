@@ -58,7 +58,7 @@ class Product extends CommonObject
 	var $id ;
 	//! Ref
 	var $ref;
-	var $libelle;            // TODO deprecated
+	var $label;            // TODO deprecated
 	var $label;
 	var $description;
 	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
@@ -202,7 +202,7 @@ class Product extends CommonObject
 		if (dol_strlen(trim($this->ref)) == 0)
 		$err++;
 
-		if (dol_strlen(trim($this->libelle)) == 0)
+		if (dol_strlen(trim($this->label)) == 0)
 		$err++;
 
 		if ($err > 0)
@@ -230,7 +230,7 @@ class Product extends CommonObject
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		if (empty($this->type)) $this->type=0;
 		$this->price_ttc=price2num($this->price_ttc);
 		$this->price=price2num($this->price);
@@ -283,7 +283,7 @@ class Product extends CommonObject
         $this->barcode=trim($this->barcode);
 
         // Check parameters
-		if (empty($this->libelle))
+		if (empty($this->label))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
 			return -1;
@@ -367,7 +367,7 @@ class Product extends CommonObject
 					$sql.= ", ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 					$sql.= ", ".price2num($price_min_ht);
 					$sql.= ", ".price2num($price_min_ttc);
-					$sql.= ", ".(! empty($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null");
+					$sql.= ", ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
 					$sql.= ", ".$user->id;
 					$sql.= ", ".$this->type;
 					$sql.= ", ".price2num($price_ht);
@@ -557,11 +557,11 @@ class Product extends CommonObject
 		$error=0;
 
 		// Check parameters
-		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
+		if (! $this->label) $this->label = 'MISSING LABEL';
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note = (isset($this->note) ? trim($this->note) : null);
 		$this->weight = price2num($this->weight);
@@ -636,7 +636,7 @@ class Product extends CommonObject
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-			$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
+			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
 			$sql.= ", ref = '" . $this->ref ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
@@ -926,7 +926,7 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".$this->db->escape($this->libelle)."',";
+					$sql2.= " SET label='".$this->db->escape($this->label)."',";
 					$sql2.= " description='".$this->db->escape($this->description)."',";
 					$sql2.= " note='".$this->db->escape($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
@@ -934,7 +934,7 @@ class Product extends CommonObject
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->libelle);
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
@@ -1489,7 +1489,7 @@ class Product extends CommonObject
 				$this->id						= $obj->rowid;
 				$this->ref						= $obj->ref;
 				$this->ref_ext					= $obj->ref_ext;
-				$this->libelle					= $obj->label;		// TODO deprecated
+				$this->label					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
 				$this->url						= $obj->url;
@@ -3048,9 +3048,9 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du finished du produit
+	 *  Retourne le label du finished du produit
 	 *
-	 *  @return     string		Libelle
+	 *  @return     string		label
 	 */
 	function getLibFinished()
 	{
@@ -3719,7 +3719,7 @@ class Product extends CommonObject
         // Initialize parameters
         $this->id=0;
         $this->ref = 'PRODUCT_SPEC';
-        $this->libelle = 'PRODUCT SPECIMEN';
+        $this->label = 'PRODUCT SPECIMEN';
         $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
         $this->specimen=1;
         $this->country_id=1;

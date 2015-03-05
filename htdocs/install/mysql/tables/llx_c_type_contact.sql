@@ -20,7 +20,7 @@
 --
 -- element est le nom de la table utilisant le type de contact.
 -- i.e. contact, facture, projet, societe (sans le llx_ devant).
--- Libelle est un texte decrivant le type de contact.
+-- label est un texte decrivant le type de contact.
 -- active precise si cette valeur est 'active' ou 'archive'.
 --
 -- ========================================================================
@@ -32,7 +32,7 @@ create table llx_c_type_contact
   element       varchar(30) NOT NULL,
   source        varchar(8)  DEFAULT 'external' NOT NULL,
   code          varchar(32) NOT NULL,
-  libelle 	    varchar(64)	NOT NULL,
+  label 	    varchar(64)	NOT NULL,
   active  	    tinyint DEFAULT 1  NOT NULL,
   module        varchar(32) NULL
 )ENGINE=innodb;

@@ -90,7 +90,7 @@ $now=dol_now();
 $sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-$sql.= " t.libelle as type, t.cotisation";
+$sql.= " t.label as type, t.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
 $sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
@@ -185,7 +185,7 @@ if ($resql)
 	{
 		$membertype=new AdherentType($db);
 		$result=$membertype->fetch(GETPOST("type"));
-		$titre.=" (".$membertype->libelle.")";
+		$titre.=" (".$membertype->label.")";
 	}
 
 	$param="";
@@ -225,7 +225,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.label",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
@@ -304,7 +304,7 @@ if ($resql)
 
 		// Type
 		$membertypestatic->id=$objp->type_id;
-		$membertypestatic->libelle=$objp->type;
+		$membertypestatic->label=$objp->type;
 		print '<td class="nowrap">';
 		print $membertypestatic->getNomUrl(1,32);
 		print '</td>';

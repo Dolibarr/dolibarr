@@ -259,7 +259,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 										$outputlangs->setDefaultLang($newlang);
 									}
 
-									$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+									$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 								}
 								else
 								{
@@ -1801,7 +1801,7 @@ else if ($id > 0 || ! empty($ref))
 
 		if (is_array($contactarr) && count($contactarr)>0) {
 			foreach($contactarr as $contact) {
-				if ($contact['libelle']==$langs->trans('TypeContact_fichinter_external_CUSTOMER')) {
+				if ($contact['label']==$langs->trans('TypeContact_fichinter_external_CUSTOMER')) {
 					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 					$contactstatic=new Contact($db);
 					$contactstatic->fetch($contact['id']);

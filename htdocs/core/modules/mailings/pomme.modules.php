@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_pomme extends MailingTargets
 {
 	var $name='DolibarrUsers';                      // Identifiant du module mailing
-	var $desc='Dolibarr users with emails';  		// Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	var $desc='Dolibarr users with emails';  		// label utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	var $require_module=array();                    // Module mailing actif si modules require_module actifs
 	var $require_admin=1;                           // Module mailing actif pour user admin ou non
 	var $picto='user';

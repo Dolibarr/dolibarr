@@ -601,7 +601,7 @@ else
 		        print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
-					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 				}
 				else 
 				{
@@ -638,7 +638,7 @@ else
 				$entrepot = new Entrepot($db);
 				$entrepot->fetch($object->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
-				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->label.'</a></td>';
 				print '</tr>';
 			}
 

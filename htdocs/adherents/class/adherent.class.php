@@ -88,7 +88,7 @@ class Adherent extends CommonObject
     var $birth;
 
     var $typeid;			// Id type adherent
-    var $type;				// Libelle type adherent
+    var $type;				// label type adherent
     var $need_subscription;
 
     var $user_id;
@@ -1065,7 +1065,7 @@ class Adherent extends CommonObject
         $sql.= " d.state_id,";
         $sql.= " c.rowid as country_id, c.code as country_code, c.label as country,";
         $sql.= " dep.nom as state, dep.code_departement as state_code,";
-        $sql.= " t.libelle as type, t.cotisation as cotisation,";
+        $sql.= " t.label as type, t.cotisation as cotisation,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
@@ -1551,7 +1551,7 @@ class Adherent extends CommonObject
      *    	Renvoie nom clicable (avec eventuellement le picto)
      *
      *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param	int		$maxlen			length max libelle
+     *		@param	int		$maxlen			length max label
      *		@param	string	$option			Page lien
      *		@return	string					Chaine avec URL
      */
@@ -1591,9 +1591,9 @@ class Adherent extends CommonObject
     }
 
     /**
-     *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
+     *  Retourne le label du statut d'un adherent (brouillon, valide, resilie)
      *
-     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
      *  @return string				Label
      */
     function getLibStatut($mode=0)
@@ -1602,12 +1602,12 @@ class Adherent extends CommonObject
     }
 
     /**
-     *  Renvoi le libelle d'un statut donne
+     *  Renvoi le label d'un statut donne
      *
      *  @param	int			$statut      			Id statut
      *	@param	int			$need_subscription		1 si type adherent avec cotisation, 0 sinon
      *	@param	int     	$date_end_subscription	Date fin adhesion
-     *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @param  int			$mode        			0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
      *  @return string      						Label
      */
     function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
@@ -1811,7 +1811,7 @@ class Adherent extends CommonObject
         $this->datevalid=time();
 
         $this->typeid=1;				// Id type adherent
-        $this->type='Type adherent';	// Libelle type adherent
+        $this->type='Type adherent';	// label type adherent
         $this->need_subscription=0;
 
         $this->first_subscription_date=time();

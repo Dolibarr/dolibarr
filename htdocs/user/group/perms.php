@@ -142,7 +142,7 @@ if ($id)
     // Lecture des droits groupes
     $permsgroup = array();
 
-    $sql = "SELECT r.id, r.libelle, r.module ";
+    $sql = "SELECT r.id, r.label, r.module ";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
     $sql.= " WHERE ugr.fk_id = r.id";
@@ -223,9 +223,9 @@ if ($id)
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
 
-    $sql = "SELECT r.id, r.libelle, r.module";
+    $sql = "SELECT r.id, r.label, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-    $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+    $sql.= " WHERE r.label NOT LIKE 'tou%'";    // On ignore droits "tous"
     if(! empty($conf->multicompany->enabled))
     {
         if (empty($conf->multicompany->transverse_mode))
@@ -315,8 +315,8 @@ if ($id)
                 print '<td>&nbsp</td>';
             }
 
-            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-            print '<td>'.$perm_libelle. '</td>';
+            $perm_label=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->label));
+            print '<td>'.$perm_label. '</td>';
 
             print '</tr>';
 

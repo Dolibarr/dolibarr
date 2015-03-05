@@ -75,7 +75,7 @@ class Paiement extends CommonObject
 	function fetch($id)
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
-		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
+		$sql.= ' c.code as type_code, c.label as type_label,';
 		$sql.= ' p.num_paiement, p.note,';
 		$sql.= ' b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
@@ -99,7 +99,7 @@ class Paiement extends CommonObject
 				$this->montant        = $obj->amount;   // deprecated
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
-				$this->type_libelle   = $obj->type_libelle;
+				$this->type_label   = $obj->type_label;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
 
@@ -760,10 +760,10 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 * Retourne le label du statut d'une facture (brouillon, validee, abandonnee, payee)
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 * @param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+	 * @return  string				label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -771,15 +771,15 @@ class Paiement extends CommonObject
 	}
 
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 * Renvoi le label d'un statut donne
 	 *
 	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 * @param   int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+	 * @return	string  		    label du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{
-		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs;	// TODO Renvoyer le label anglais et faire traduction a affichage
 
 		$langs->load('compta');
 		if ($mode == 0)

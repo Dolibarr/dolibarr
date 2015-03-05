@@ -66,7 +66,7 @@ class box_actions extends ModeleBoxes
         if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
             $sql.= ", ta.code";
-            $sql.= ", ta.libelle as type_label";
+            $sql.= ", ta.label as type_label";
             $sql.= ", s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";

@@ -77,13 +77,13 @@ class modBarcode extends DolibarrModules
 		$this->rights_class = 'barcode';
 
 		$this->rights[1][0] = 300; // id de la permission
-		$this->rights[1][1] = 'Read barcodes'; // libelle de la permission
+		$this->rights[1][1] = 'Read barcodes'; // label de la permission
 		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire_advance';
 
 		$this->rights[2][0] = 301; // id de la permission
-		$this->rights[2][1] = 'Create/modify barcodes'; // libelle de la permission
+		$this->rights[2][1] = 'Create/modify barcodes'; // label de la permission
 		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[2][4] = 'creer_advance';
@@ -132,12 +132,12 @@ class modBarcode extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN8', 'EAN8', 0, '1234567', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN13', 'EAN13', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('UPC', 'UPC', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('ISBN', 'ISBN', 0, '123456789', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('C39', 'Code 39', 0, '1234567890', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('C128', 'Code 128', 0, 'ABCD1234567890', __ENTITY__)",'ignoreerror'=>1)
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, label, coder, example, entity) VALUES ('EAN8', 'EAN8', 0, '1234567', __ENTITY__)",'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, label, coder, example, entity) VALUES ('EAN13', 'EAN13', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, label, coder, example, entity) VALUES ('UPC', 'UPC', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, label, coder, example, entity) VALUES ('ISBN', 'ISBN', 0, '123456789', __ENTITY__)",'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, label, coder, example, entity) VALUES ('C39', 'Code 39', 0, '1234567890', __ENTITY__)",'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, label, coder, example, entity) VALUES ('C128', 'Code 128', 0, 'ABCD1234567890', __ENTITY__)",'ignoreerror'=>1)
 		);
 
 		return $this->_init($sql, $options);

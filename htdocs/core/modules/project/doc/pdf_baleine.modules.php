@@ -212,7 +212,7 @@ class pdf_baleine extends ModelePDFProjects
 
 					// Description of ligne
 					$ref=$object->lines[$i]->ref;
-					$libelleline=$object->lines[$i]->label;
+					$labelline=$object->lines[$i]->label;
 					$progress=$object->lines[$i]->progress.'%';
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
@@ -223,7 +223,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->SetXY($this->posxref, $curY);
 					$pdf->MultiCell(60, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
 					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell(108, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->MultiCell(108, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 					$pdf->SetXY($this->posxprogress, $curY);
 					$pdf->MultiCell(16, 3, $progress, 0, 'L');
 					$pdf->SetXY($this->posxdatestart, $curY);

@@ -36,7 +36,7 @@ class Entrepot extends CommonObject
 	public $table_element='entrepot';
 
 	var $id;
-	var $libelle;
+	var $label;
 	var $description;
 	//! Statut 1 pour ouvert, 0 pour ferme
 	var $statut;
@@ -75,8 +75,8 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
-		// Si libelle non defini, erreur
-		if ($this->libelle == '')
+		// Si label non defini, erreur
+		if ($this->label == '')
 		{
 			$this->error = "ErrorFieldRequired";
 			return 0;
@@ -87,7 +87,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
-		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->label)."')";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -135,7 +135,7 @@ class Entrepot extends CommonObject
 	 */
 	function update($id, $user)
 	{
-		$this->libelle=$this->db->escape(trim($this->libelle));
+		$this->label=$this->db->escape(trim($this->label));
 		$this->description=$this->db->escape(trim($this->description));
 
 		$this->lieu=$this->db->escape(trim($this->lieu));
@@ -146,7 +146,7 @@ class Entrepot extends CommonObject
 		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
+		$sql .= " SET label = '" . $this->db->escape($this->label) ."'";
 		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
@@ -265,7 +265,7 @@ class Entrepot extends CommonObject
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
-				$this->libelle        = $obj->label;
+				$this->label        = $obj->label;
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
 				$this->lieu           = $obj->lieu;
@@ -514,7 +514,7 @@ class Entrepot extends CommonObject
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
-        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->libelle;
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
@@ -522,7 +522,7 @@ class Entrepot extends CommonObject
         $lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($label, 'stock', 'class="classfortooltip"').$lienfin.' ');
-		$result.=$lien.$this->libelle.$lienfin;
+		$result.=$lien.$this->label.$lienfin;
 		return $result;
 	}
 
@@ -541,7 +541,7 @@ class Entrepot extends CommonObject
 
         // Initialize parameters
         $this->id=0;
-        $this->libelle = 'WAREHOUSE SPECIMEN';
+        $this->label = 'WAREHOUSE SPECIMEN';
         $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now,'dayhourlog');
 		$this->statut=1;
         $this->specimen=1;

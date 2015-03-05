@@ -93,7 +93,7 @@ class Expedition extends CommonObject
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 
 	/**
 	 *	Constructor
@@ -434,7 +434,7 @@ class Expedition extends CommonObject
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
         $sql.= ', e.fk_incoterms, e.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.label as label_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -493,7 +493,7 @@ class Expedition extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;									
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 			
 				$this->db->free($result);
 
@@ -1186,7 +1186,7 @@ class Expedition extends CommonObject
 				$line->ref				= $obj->product_ref;		// TODO deprecated
                 $line->product_ref		= $obj->product_ref;
                 $line->product_label	= $obj->product_label;
-				$line->libelle        	= $obj->product_label;		// TODO deprecated
+				$line->label        	= $obj->product_label;		// TODO deprecated
 				$line->label			= $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
@@ -1295,7 +1295,7 @@ class Expedition extends CommonObject
      *	Return status label
      *
      *	@param      int		$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
-     *	@return     string      		Libelle
+     *	@return     string      		label
      */
 	function getLibStatut($mode=0)
 	{
@@ -1412,7 +1412,7 @@ class Expedition extends CommonObject
 		{
 			$line=new ExpeditionLigne($this->db);
 			$line->desc=$langs->trans("Description")." ".$xnbp;
-			$line->libelle=$langs->trans("Description")." ".$xnbp;
+			$line->label=$langs->trans("Description")." ".$xnbp;
 			$line->qty=10;
 			$line->qty_asked=5;
 			$line->qty_shipped=4;
@@ -1468,10 +1468,10 @@ class Expedition extends CommonObject
 		global $langs;
 		$meths = array();
 
-		$sql = "SELECT em.rowid, em.code, em.libelle";
+		$sql = "SELECT em.rowid, em.code, em.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		$sql.= " WHERE em.active = 1";
-		$sql.= " ORDER BY em.libelle ASC";
+		$sql.= " ORDER BY em.label ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1479,7 +1479,7 @@ class Expedition extends CommonObject
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
 			}
 		}
 	}
@@ -1497,7 +1497,7 @@ class Expedition extends CommonObject
         $this->listmeths = array();
         $i=0;
 
-        $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
+        $sql = "SELECT em.rowid, em.code, em.label, em.description, em.tracking, em.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
         if ($id!='') $sql.= " WHERE em.rowid=".$id;
 
@@ -1509,7 +1509,7 @@ class Expedition extends CommonObject
                 $this->listmeths[$i]['rowid'] = $obj->rowid;
                 $this->listmeths[$i]['code'] = $obj->code;
                 $label=$langs->trans('SendingMethod'.$obj->code);
-                $this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+                $this->listmeths[$i]['label'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
                 $this->listmeths[$i]['description'] = $obj->description;
                 $this->listmeths[$i]['tracking'] = $obj->tracking;
                 $this->listmeths[$i]['active'] = $obj->active;
@@ -1529,15 +1529,15 @@ class Expedition extends CommonObject
     {
         if ($id=='')
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-            $sql.=" VALUES ('".$this->update['code']."','".$this->update['libelle']."','".$this->update['description']."','".$this->update['tracking']."')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, label, description, tracking)";
+            $sql.=" VALUES ('".$this->update['code']."','".$this->update['label']."','".$this->update['description']."','".$this->update['tracking']."')";
             $resql = $this->db->query($sql);
         }
         else
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
             $sql.= " code='".$this->update['code']."'";
-            $sql.= ",libelle='".$this->update['libelle']."'";
+            $sql.= ",label='".$this->update['label']."'";
             $sql.= ",description='".$this->update['description']."'";
             $sql.= ",tracking='".$this->update['tracking']."'";
             $sql.= " WHERE rowid=".$id;
@@ -1691,7 +1691,7 @@ class ExpeditionLigne
 
 	// From llx_commandedet or llx_propaldet
 	var $qty_asked;
-	var $libelle;       // Label produit
+	var $label;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;
 

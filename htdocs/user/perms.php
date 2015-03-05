@@ -173,7 +173,7 @@ $db->commit();
 // Lecture des droits utilisateurs
 $permsuser = array();
 
-$sql = "SELECT r.id, r.libelle, r.module";
+$sql = "SELECT r.id, r.label, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= " WHERE ur.fk_id = r.id";
@@ -214,7 +214,7 @@ else
 $permsgroupbyentity = array();
 $aEntities = array();
 
-$sql = "SELECT r.id, r.libelle, r.module, gu.entity";
+$sql = "SELECT r.id, r.label, r.module, gu.entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu";
@@ -300,9 +300,9 @@ print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle, r.module";
+$sql = "SELECT r.id, r.label, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+$sql.= " WHERE r.label NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity);
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
@@ -412,8 +412,8 @@ if ($result)
         	print '<td>&nbsp</td>';
         }
 
-        $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-        print '<td>'.$perm_libelle. '</td>';
+        $perm_label=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->label));
+        print '<td>'.$perm_label. '</td>';
 
         print '</tr>'."\n";
 

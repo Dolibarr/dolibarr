@@ -422,7 +422,7 @@ if ($resql)
         $event->datef=$db->jdate($obj->datep2);
         $event->type_code=$obj->code;
         $event->type_color=$obj->color;
-        //$event->libelle=$obj->label;				// deprecated
+        //$event->label=$obj->label;				// deprecated
         $event->label=$obj->label;
         $event->percentage=$obj->percent;
         //$event->author->id=$obj->fk_user_author;	// user id of creator
@@ -664,12 +664,12 @@ else
 // Load array of colors by type
 $colorsbytype=array();
 $labelbytype=array();
-$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
+$sql="SELECT code, color, label FROM ".MAIN_DB_PREFIX."c_actioncomm";
 $resql=$db->query($sql);
 while ($obj = $db->fetch_object($resql))
 {
 	$colorsbytype[$obj->code]=$obj->color;
-	$labelbytype[$obj->code]=$obj->libelle;
+	$labelbytype[$obj->code]=$obj->label;
 }
 
 // Loop on each user to show calendar

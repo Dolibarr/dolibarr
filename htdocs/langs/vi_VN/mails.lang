@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Tất cả thirdparties chọn, và nếu một em
 NoRemindSent=Không có lời nhắc nhở gửi thư điện tử
 ResultOfMassSending=Kết quả của khối lượng thư điện tử gửi nhắc nhở
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Liên hệ / địa chỉ của tất cả các bên thứ ba (khách hàng, khách hàng tiềm năng, nhà cung cấp, ...)
 MailingModuleDescDolibarrUsers=Người sử dụng Dolibarr
 MailingModuleDescFundationMembers=Thành viên sáng lập với các email

@@ -21,7 +21,7 @@ create table llx_c_ecotaxe
 (
   rowid        integer      AUTO_INCREMENT PRIMARY KEY,
   code         varchar(64)  NOT NULL,  		-- Code servant a la traduction et a la reference interne
-  libelle      varchar(255),                -- Description
+  label      varchar(255),                -- Description
   price        double(24,8),                -- Montant HT
   organization varchar(255),                -- Organisme gerant le bareme tarifaire
   fk_pays      integer NOT NULL,            -- Pays correspondant

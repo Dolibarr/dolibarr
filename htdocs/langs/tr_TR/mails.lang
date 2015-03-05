@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Tüm üçüncü partiler seçilmiş ve bir eposta 
 NoRemindSent=Gönderile Eposta anımsatması yok
 ResultOfMassSending=Toplu Eposta anımsatması gönderme sonucu
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Tüm üçüncü partilerin kişileri (müşteri, aday, tedarikçi, ...)
 MailingModuleDescDolibarrUsers=Dolibarr kullanıcıları
 MailingModuleDescFundationMembers=Epostaları ile kurum üyeleri

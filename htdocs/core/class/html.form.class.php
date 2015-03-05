@@ -57,7 +57,7 @@ class Form
     var $cache_vatrates=array();
 
     var $tva_taux_value;
-    var $tva_taux_libelle;
+    var $tva_taux_label;
 
 
     /**
@@ -734,7 +734,7 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+                // Si traduction existe, on l'utilise, sinon on prend le label par defaut
                 $label=($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
                 $this->cache_types_fees[$obj->code] = $label;
                 $i++;
@@ -2318,7 +2318,7 @@ class Form
 
         if (count($this->cache_conditions_paiements)) return 0;    // Cache deja charge
 
-        $sql = "SELECT rowid, code, libelle";
+        $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
@@ -2332,10 +2332,10 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                // Si traduction existe, on l'utilise, sinon on prend le label par defaut
+                $label=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->label!='-'?$obj->label:''));
                 $this->cache_conditions_paiements[$obj->rowid]['code'] =$obj->code;
-                $this->cache_conditions_paiements[$obj->rowid]['label']=$libelle;
+                $this->cache_conditions_paiements[$obj->rowid]['label']=$label;
                 $i++;
             }
             return 1;
@@ -2371,7 +2371,7 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+                // Si traduction existe, on l'utilise, sinon on prend le label par defaut
                 $label=($langs->trans("AvailabilityType".$obj->code)!=("AvailabilityType".$obj->code)?$langs->trans("AvailabilityType".$obj->code):($obj->label!='-'?$obj->label:''));
                 $this->cache_availability[$obj->rowid]['code'] =$obj->code;
                 $this->cache_availability[$obj->rowid]['label']=$label;
@@ -2445,7 +2445,7 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+                // Si traduction existe, on l'utilise, sinon on prend le label par defaut
                 $label=($langs->trans("DemandReasonType".$obj->code)!=("DemandReasonType".$obj->code)?$langs->trans("DemandReasonType".$obj->code):($obj->label!='-'?$obj->label:''));
                 $tmparray[$obj->rowid]['id']   =$obj->rowid;
                 $tmparray[$obj->rowid]['code'] =$obj->code;
@@ -2511,7 +2511,7 @@ class Form
 
         if (count($this->cache_types_paiements)) return 0;    // Cache deja charge
 
-        $sql = "SELECT id, code, libelle, type";
+        $sql = "SELECT id, code, label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
         $sql.= " ORDER BY id";
@@ -2525,10 +2525,10 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                // Si traduction existe, on l'utilise, sinon on prend le label par defaut
+                $label=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
-                $this->cache_types_paiements[$obj->id]['label']=$libelle;
+                $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
                 $i++;
             }
@@ -2583,7 +2583,7 @@ class Form
      *      @param	string	$selected       Id du mode de paiement pre-selectionne
      *      @param  string	$htmlname       Nom de la zone select
      *      @param  string	$filtertype     To filter on field type in llx_c_paiement (array('code'=>xx,'label'=>zz))
-     *      @param  int		$format         0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+     *      @param  int		$format         0=id+label, 1=code+code, 2=code+label, 3=id+code
      *      @param  int		$empty			1=peut etre vide, 0 sinon
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
@@ -2697,11 +2697,11 @@ class Form
         $langs->load("admin");
         $langs->load("deliveries");
 
-        $sql = "SELECT rowid, code, libelle";
+        $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
         $sql.= " WHERE active = 1";
         if ($filtre) $sql.=" AND ".$filtre;
-        $sql.= " ORDER BY libelle ASC";
+        $sql.= " ORDER BY label ASC";
 
         dol_syslog(get_class($this)."::selectShippingMode", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -3924,7 +3924,7 @@ class Form
         		$return.= '</option>';
 
         		$this->tva_taux_value[]		= $rate['txtva'];
-        		$this->tva_taux_libelle[]	= $rate['libtva'];
+        		$this->tva_taux_label[]	= $rate['libtva'];
         		$this->tva_taux_npr[]		= $rate['nprtva'];
         	}
 

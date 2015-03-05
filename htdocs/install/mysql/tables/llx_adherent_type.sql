@@ -28,7 +28,7 @@ create table llx_adherent_type
   entity           integer DEFAULT 1 NOT NULL,	-- multi company id
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
-  libelle          varchar(50) NOT NULL,
+  label          varchar(50) NOT NULL,
   cotisation       varchar(3) NOT NULL DEFAULT 'yes',
   vote             varchar(3) NOT NULL DEFAULT 'yes',
   note             text,

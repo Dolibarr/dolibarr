@@ -86,49 +86,49 @@ class modBanque extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 111; // id de la permission
-		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les comptes bancaires'; // label de la permission
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 112; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier montant/supprimer ecriture bancaire'; // label de la permission
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'modifier';
 
 		$r++;
 		$this->rights[$r][0] = 113; // id de la permission
-		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)'; // libelle de la permission
+		$this->rights[$r][1] = 'Configurer les comptes bancaires (creer, gerer categories)'; // label de la permission
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'configurer';
 
 		$r++;
 		$this->rights[$r][0] = 114; // id de la permission
-		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires'; // libelle de la permission
+		$this->rights[$r][1] = 'Rapprocher les ecritures bancaires'; // label de la permission
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'consolidate';
 
 		$r++;
 		$this->rights[$r][0] = 115; // id de la permission
-		$this->rights[$r][1] = 'Exporter transactions et releves'; // libelle de la permission
+		$this->rights[$r][1] = 'Exporter transactions et releves'; // label de la permission
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 116; // id de la permission
-		$this->rights[$r][1] = 'Virements entre comptes'; // libelle de la permission
+		$this->rights[$r][1] = 'Virements entre comptes'; // label de la permission
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'transfer';
 
 		$r++;
 		$this->rights[$r][0] = 117; // id de la permission
-		$this->rights[$r][1] = 'Gerer les envois de cheques'; // libelle de la permission
+		$this->rights[$r][1] = 'Gerer les envois de cheques'; // label de la permission
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cheque';

@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (
 NoRemindSent=No EMail reminder sent
 ResultOfMassSending=Result of mass EMail reminders sending
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakty / adresy všetkých tretích strán (zákazník, vyhliadka, dodávateľ, ...)
 MailingModuleDescDolibarrUsers=Dolibarr užívatelia
 MailingModuleDescFundationMembers=Členmi Nadácia s e-mailami

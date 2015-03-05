@@ -360,11 +360,11 @@ class Translate
 		}
 		else if (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','label');
 		}
         else if (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','label');
         }
         else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
@@ -775,7 +775,7 @@ class Translate
 			{
 				$obj = $db->fetch_object($resql);
 
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+				// Si traduction existe, on l'utilise, sinon on prend le label par defaut
 				$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$this->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
 				$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
 				$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];

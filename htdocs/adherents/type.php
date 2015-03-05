@@ -81,7 +81,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	{
 		$adht = new AdherentType($db);
 
-		$adht->libelle     = trim($_POST["libelle"]);
+		$adht->label     = trim($_POST["label"]);
 		$adht->cotisation  = trim($_POST["cotisation"]);
 		$adht->note        = trim($_POST["comment"]);
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
@@ -91,7 +91,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
 		if ($ret < 0) $error++;
 
-		if ($adht->libelle)
+		if ($adht->label)
 		{
 			$id=$adht->create($user);
 			if ($id > 0)
@@ -119,7 +119,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	{
 		$adht = new AdherentType($db);
 		$adht->id          = $_POST["rowid"];
-		$adht->libelle     = trim($_POST["libelle"]);
+		$adht->label     = trim($_POST["label"]);
 		$adht->cotisation  = trim($_POST["cotisation"]);
 		$adht->note        = trim($_POST["comment"]);
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
@@ -169,7 +169,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	print_fiche_titre($langs->trans("MembersTypes"));
 
 
-	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
+	$sql = "SELECT d.rowid, d.label, d.cotisation, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity().")";
 
@@ -196,7 +196,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
-			print '<td>'.$objp->libelle.'</td>';
+			print '<td>'.$objp->label.'</td>';
 			print '<td align="center">'.yn($objp->cotisation).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
 			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
@@ -245,7 +245,7 @@ if ($action == 'create')
 
 	print '<input type="hidden" name="action" value="add">';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("cotisation",1,1);
@@ -316,7 +316,7 @@ if ($rowid > 0)
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.$adht->libelle.'</td></tr>';
+		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.$adht->label.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print yn($adht->cotisation);
@@ -377,7 +377,7 @@ if ($rowid > 0)
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-		$sql.= " t.libelle as type, t.cotisation";
+		$sql.= " t.label as type, t.cotisation";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql.= " AND d.entity IN (".getEntity().")";
@@ -456,7 +456,7 @@ if ($rowid > 0)
 		    {
 				$membertype=new AdherentType($db);
 		        $result=$membertype->fetch($type);
-				$titre.=" (".$membertype->libelle.")";
+				$titre.=" (".$membertype->label.")";
 		    }
 
 		    $param="&rowid=".$rowid;
@@ -543,7 +543,7 @@ if ($rowid > 0)
 		        // Type
 		        /*print '<td class="nowrap">';
 		        $membertypestatic->id=$objp->type_id;
-		        $membertypestatic->libelle=$objp->type;
+		        $membertypestatic->label=$objp->type;
 		        print $membertypestatic->getNomUrl(1,12);
 		        print '</td>';
 				*/
@@ -643,7 +643,7 @@ if ($rowid > 0)
 
 		print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td>'.$adht->id.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.$adht->label.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print $form->selectyesno("cotisation",$adht->cotisation,1);

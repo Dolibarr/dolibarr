@@ -1022,7 +1022,7 @@ if (empty($reshook))
 									if($srcobject->element == 'shipping' && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS && $lines[$i]->qty == 0) continue;
 
 									$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
-									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->label);
 									if ($object->situation_counter == 1) $lines[$i]->situation_percent =  0;
 
 									if ($lines[$i]->subprice < 0)
@@ -2284,7 +2284,7 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
@@ -3009,7 +3009,7 @@ if ($action == 'create')
 
 	// Payments already done (from payment on this invoice)
 	$sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
-	$sql .= ' c.code as payment_code, c.libelle as payment_label,';
+	$sql .= ' c.code as payment_code, c.label as payment_label,';
 	$sql .= ' pf.amount,';
 	$sql .= ' ba.rowid as baid, ba.ref, ba.label';
 	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_paiement as c, ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p';
@@ -3404,7 +3404,7 @@ if ($action == 'create')
         print '<td colspan="3">';
 		if ($action != 'editincoterm')
 		{
-			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
 		else 
 		{
@@ -3918,7 +3918,7 @@ if ($action == 'create')
 
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ($contactarr as $contact) {
-				if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
+				if ($contact['label'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
 
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 

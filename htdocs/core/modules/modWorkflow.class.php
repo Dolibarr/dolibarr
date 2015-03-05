@@ -92,7 +92,7 @@ class modWorkflow extends DolibarrModules
         /*
         $r++;
         $this->rights[$r][0] = 6001; // id de la permission
-        $this->rights[$r][1] = "Lire les workflow"; // libelle de la permission
+        $this->rights[$r][1] = "Lire les workflow"; // label de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';

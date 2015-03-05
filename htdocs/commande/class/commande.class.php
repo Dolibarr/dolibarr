@@ -109,7 +109,7 @@ class Commande extends CommonOrder
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 
 
     /**
@@ -990,7 +990,7 @@ class Commande extends CommonOrder
             {
                 $line = new OrderLine($this->db);
 
-                $line->libelle           = $object->lines[$i]->libelle;
+                $line->label           = $object->lines[$i]->label;
                 $line->label             = $object->lines[$i]->label;
                 $line->desc              = $object->lines[$i]->desc;
                 $line->price             = $object->lines[$i]->price;
@@ -1339,7 +1339,7 @@ class Commande extends CommonOrder
             $line->localtax1_tx=$localtax1_tx;
             $line->localtax2_tx=$localtax2_tx;
             $line->ref=$prod->ref;
-            $line->libelle=$prod->libelle;
+            $line->label=$prod->label;
             $line->product_desc=$prod->description;
 
             // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
@@ -1398,9 +1398,9 @@ class Commande extends CommonOrder
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', c.fk_incoterms, c.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
-        $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-        $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
+        $sql.= ", i.label as label_incoterms";
+        $sql.= ', p.code as mode_reglement_code, p.label as mode_reglement_label';
+        $sql.= ', cr.code as cond_reglement_code, cr.label as cond_reglement_label, cr.label_facture as cond_reglement_label_doc';
         $sql.= ', ca.code as availability_code';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
@@ -1450,11 +1450,11 @@ class Commande extends CommonOrder
                 $this->modelpdf				= $obj->model_pdf;
                 $this->mode_reglement_id	= $obj->fk_mode_reglement;
                 $this->mode_reglement_code	= $obj->mode_reglement_code;
-                $this->mode_reglement		= $obj->mode_reglement_libelle;
+                $this->mode_reglement		= $obj->mode_reglement_label;
                 $this->cond_reglement_id	= $obj->fk_cond_reglement;
                 $this->cond_reglement_code	= $obj->cond_reglement_code;
-                $this->cond_reglement		= $obj->cond_reglement_libelle;
-                $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
+                $this->cond_reglement		= $obj->cond_reglement_label;
+                $this->cond_reglement_doc	= $obj->cond_reglement_label_doc;
                 $this->fk_account           = $obj->fk_account;
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;
@@ -1467,7 +1467,7 @@ class Commande extends CommonOrder
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;									
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
@@ -1650,7 +1650,7 @@ class Commande extends CommonOrder
 
                 $line->ref				= $objp->product_ref;		// TODO deprecated
                 $line->product_ref		= $objp->product_ref;
-                $line->libelle			= $objp->product_label;		// TODO deprecated
+                $line->label			= $objp->product_label;		// TODO deprecated
                 $line->product_label	= $objp->product_label;
                 $line->product_desc     = $objp->product_desc; 		// Description produit
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
@@ -2821,8 +2821,8 @@ class Commande extends CommonOrder
     /**
      *	Return status label of Order
      *
-     *	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *	@return     string      		Libelle
+     *	@param      int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+     *	@return     string      		label
      */
     function getLibStatut($mode)
     {
@@ -2834,7 +2834,7 @@ class Commande extends CommonOrder
      *
      *	@param		int		$statut      	Id statut
      *  @param      int		$billed    		If invoiced
-     *	@param      int		$mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *	@param      int		$mode        	0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
      *  @return     string					Label of status
      */
     function LibStatut($statut,$billed,$mode)
@@ -3289,7 +3289,7 @@ class OrderLine extends CommonOrderLine
 
     // From llx_product
     var $ref;				// deprecated
-    var $libelle;			// deprecated
+    var $label;			// deprecated
     var $product_ref;
     var $product_label; 	// Label produit
     var $product_desc;  	// Description produit
@@ -3323,7 +3323,7 @@ class OrderLine extends CommonOrderLine
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.label as custom_label, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
         $sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
-        $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+        $sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -3365,8 +3365,8 @@ class OrderLine extends CommonOrderLine
 
             $this->ref				= $objp->product_ref;      // deprecated
             $this->product_ref		= $objp->product_ref;
-            $this->libelle			= $objp->product_libelle;  // deprecated
-            $this->product_label	= $objp->product_libelle;
+            $this->label			= $objp->product_label;  // deprecated
+            $this->product_label	= $objp->product_label;
             $this->product_desc     = $objp->product_desc;
 
             $this->date_start       = $this->db->jdate($objp->date_start);

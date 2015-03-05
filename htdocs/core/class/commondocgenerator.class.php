@@ -470,7 +470,7 @@ abstract class CommonDocGenerator
 	    	$array_key.'_note'=>$object->note_public,
 	    	$array_key.'_tracking_number'=>$object->tracking_number,
 	    	$array_key.'_tracking_url'=>$object->tracking_url,
-	    	$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
+	    	$array_key.'_shipping_method'=>$object->listmeths[0]['label'],
 	    	$array_key.'_weight'=>$object->trueWeight.' '.measuring_units_string($object->weight_units, 'weight'),
 	    	$array_key.'_width'=>$object->trueWidth.' '.measuring_units_string($object->width_units, 'size'),
 	    	$array_key.'_height'=>$object->trueHeight.' '.measuring_units_string($object->height_units, 'size'),
