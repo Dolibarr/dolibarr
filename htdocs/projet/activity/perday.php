@@ -48,6 +48,13 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
+$now=dol_now();
+
+$year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
+$month=GETPOST("month","int")?GETPOST("month","int"):date("m");
+$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
+$day=GETPOST("day","int")?GETPOST("day","int"):date("d");
+
 
 /*
  * Actions
@@ -76,8 +83,10 @@ $taskstatic = new Task($db);
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
 
+$usertoprocess=$user;
+
 //$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
 if ($id)
 {
@@ -87,14 +96,14 @@ if ($id)
 
 $onlyopened=1;	// or -1
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
-$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess,0,($project->id?$project->id:$projectsListId),0);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($project->id?$project->id:$projectsListId),0);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
 
 
-llxHeader("",$title,"");
+llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
@@ -136,6 +145,40 @@ print "\n";
 	dol_fiche_end();
 */
 
+
+$startdayarray=dol_get_first_day_week($day, $month, $year);
+
+$prev = $startdayarray;
+$prev_year  = $prev['prev_year'];
+$prev_month = $prev['prev_month'];
+$prev_day   = $prev['prev_day'];
+$first_day  = $prev['first_day'];
+$first_month= $prev['first_month'];
+$first_year = $prev['first_year'];
+$week = $prev['week'];
+
+$day = (int) $day;
+$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next_year  = $next['year'];
+$next_month = $next['month'];
+$next_day   = $next['day'];
+
+// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
+$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
+$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+
+$tmpday = $first_day;
+
+// Show navigation bar
+$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
+$nav.=" </span>\n";
+$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+$nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$picto='calendarweek';
+print '<div align="right">'.$nav.'</div>';
+
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
@@ -144,7 +187,16 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-print '<td colspan="2" align="right">'.$langs->trans("xxx").'</td>';
+if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
+else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
+
+$startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
+
+for($i=0;$i<7;$i++)
+{
+	print '<td width="7%" align="center">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'day').'</td>';
+}
+
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
@@ -154,6 +206,17 @@ if (count($tasksarray) > 0)
 {
 	$j=0;
 	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+
+	print '<tr class="liste_total">
+                <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[3]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[4]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[5]">&nbsp;</div></td>
+                <td class="liste_total" width="7%" align="center"><div id="totalDay[6]">&nbsp;</div></td>
+    </tr>';
 }
 else
 {
@@ -161,9 +224,23 @@ else
 }
 print "</table>";
 
+print '<input type="hidden" name="timestamp" value="1425423513"/>'."\n";
+print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
+
 dol_fiche_end();
 
-print '</form>';
+print '<div class="center">';
+print '<input type="button" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '</div>';
+
+print '</form>'."\n\n";
+
+
+print '<script type="text/javascript">';
+print "jQuery(document).ready(function () {\n";
+print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print "});";
+print '</script>';
 
 
 llxFooter();

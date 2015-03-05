@@ -264,6 +264,7 @@ MAIN_MAIL_EMAIL_FROM=Adresse email de l'émetteur pour l'envoi d'emails automati
 MAIN_MAIL_ERRORS_TO=Adresse email utilisée pour les retours d'erreurs des emails envoyés
 MAIN_MAIL_AUTOCOPY_TO= Envoyer systématiquement une copie cachée des emails envoyés à
 MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Envoyer systématiquement une copie cachée des propositions envoyées par email à
+MAIN_MAIL_AUTOCOPY_ASKPRICESUPPLIER_TO= Envoyer systématiquement une copie cachée des demandes de prix envoyées par email à
 MAIN_MAIL_AUTOCOPY_ORDER_TO= Envoyer systématiquement une copie cachée des commandes envoyées par emails à
 MAIN_MAIL_AUTOCOPY_INVOICE_TO= Envoyer systématiquement une copie cachée des factures envoyées par email à
 MAIN_DISABLE_ALL_MAILS=Désactiver globalement tout envoi d'emails (pour mode test ou démos)
@@ -1158,6 +1159,14 @@ UseOptionLineIfNoQuantity=Une ligne de produit/service ayant une quantité nulle
 FreeLegalTextOnProposal=Mention complémentaire sur les propositions commerciales
 WatermarkOnDraftProposal=Filigrane sur les brouillons de propositions commerciales (aucun si vide)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Saisir le compte bancaire cible lors de la proposition commerciale
+##### AskPriceSupplier #####
+AskPriceSupplierSetup=Configuration du module Demandes de Prix Fournisseurs
+AskPriceSupplierNumberingModules=Modèles de numérotation des demandes de prix fournisseurs
+AskPriceSupplierPDFModules=Modèles de documents de demandes de prix fournisseurs
+AskPriceSupplierPDFModules=Modèles de documents de demandes de prix fournisseurs
+FreeLegalTextOnAskPriceSupplier=Mention complémentaire sur les demandes de prix fournisseurs
+WatermarkOnDraftAskPriceSupplier=Filigrane sur les brouillons de demandes de prix (aucun si vide)
+BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Saisir le compte bancaire cible lors de la demande de prix
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modèles de numérotation des commandes

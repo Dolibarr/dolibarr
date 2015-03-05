@@ -62,6 +62,10 @@ create table llx_payment_loan
   fk_user_modif		integer
 )ENGINE=innodb;
 
+UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
+ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
+
+
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
@@ -155,6 +159,7 @@ ALTER TABLE llx_contratdet_extrafields ADD INDEX idx_contratdet_extrafields (fk_
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN delivery_time_days integer;
 
+
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN comment	varchar(255);
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN status integer;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN tms timestamp;
@@ -240,7 +245,6 @@ CREATE TABLE llx_expensereport_det
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
 
 
-
 create table llx_commande_fournisseurdet_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -269,3 +273,134 @@ ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_parent_line integer NULL after f
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
+
+ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;    
+ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
+
+
+  
+-- Module AskPriceSupplier --
+CREATE TABLE llx_askpricesupplier (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ref varchar(30) NOT NULL,
+  entity integer NOT NULL DEFAULT '1',
+  ref_ext varchar(255) DEFAULT NULL,
+  ref_int varchar(255) DEFAULT NULL,
+  fk_soc integer DEFAULT NULL,
+  fk_projet integer DEFAULT NULL,
+  tms timestamp,
+  datec datetime DEFAULT NULL,
+  date_valid datetime DEFAULT NULL,
+  date_cloture datetime DEFAULT NULL,
+  fk_user_author integer DEFAULT NULL,
+  fk_user_modif integer DEFAULT NULL,
+  fk_user_valid integer DEFAULT NULL,
+  fk_user_cloture integer DEFAULT NULL,
+  fk_statut smallint NOT NULL DEFAULT '0',
+  price double DEFAULT '0',
+  remise_percent double DEFAULT '0',
+  remise_absolue double DEFAULT '0',
+  remise double DEFAULT '0',
+  total_ht double(24,8) DEFAULT 0,
+  tva double(24,8) DEFAULT 0,
+  localtax1 double(24,8) DEFAULT 0,
+  localtax2 double(24,8) DEFAULT 0,
+  total double(24,8) DEFAULT 0,
+  fk_account integer DEFAULT NULL,
+  fk_currency varchar(3) DEFAULT NULL,
+  fk_cond_reglement integer DEFAULT NULL,
+  fk_mode_reglement integer DEFAULT NULL,
+  note_private text,
+  note_public text,
+  model_pdf varchar(255) DEFAULT NULL,
+  date_livraison date DEFAULT NULL,
+  fk_shipping_method integer DEFAULT NULL,
+  import_key varchar(14) DEFAULT NULL,
+  extraparams varchar(255) DEFAULT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_askpricesupplierdet (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fk_askpricesupplier integer NOT NULL,
+  fk_parent_line integer DEFAULT NULL,
+  fk_product integer DEFAULT NULL,
+  label varchar(255) DEFAULT NULL,
+  description text,
+  fk_remise_except integer DEFAULT NULL,
+  tva_tx double(6,3) DEFAULT 0,
+  localtax1_tx double(6,3) DEFAULT 0,
+  localtax1_type varchar(10) DEFAULT NULL,
+  localtax2_tx double(6,3) DEFAULT 0,
+  localtax2_type varchar(10) DEFAULT NULL,
+  qty double DEFAULT NULL,
+  remise_percent double DEFAULT '0',
+  remise double DEFAULT '0',
+  price double DEFAULT NULL,
+  subprice double(24,8) DEFAULT 0,
+  total_ht double(24,8) DEFAULT 0,
+  total_tva double(24,8) DEFAULT 0,
+  total_localtax1 double(24,8) DEFAULT 0,
+  total_localtax2 double(24,8) DEFAULT 0,
+  total_ttc double(24,8) DEFAULT 0,
+  product_type integer DEFAULT 0,
+  info_bits integer DEFAULT 0,
+  buy_price_ht double(24,8) DEFAULT 0,
+  fk_product_fournisseur_price integer DEFAULT NULL,
+  special_code integer DEFAULT 0,
+  rang integer DEFAULT 0,
+  ref_fourn varchar(30) DEFAULT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_askpricesupplier_extrafields (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_askpricesupplierdet_extrafields (
+  rowid integer AUTO_INCREMENT PRIMAR KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=innodb;
+-- End Module AskPriceSupplier --
+
+
+ALTER TABLE llx_societe ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_societe ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_propal ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_propal ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_commande ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_commande ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_facture ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_facture ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_facture_fourn ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_expedition ADD COLUMN fk_incoterms integer;
+ALTER TABLE llx_expedition ADD COLUMN location_incoterms varchar(255);
+ALTER TABLE llx_livraison ADD COLUMN 	fk_incoterms integer;
+ALTER TABLE llx_livraison ADD COLUMN 	location_incoterms varchar(255);
+
+CREATE TABLE llx_c_incoterms (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  code varchar(3) NOT NULL,
+  libelle varchar(255) NOT NULL,
+  active tinyint DEFAULT 1  NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_incoterms ADD UNIQUE INDEX uk_c_incoterms (code);
+
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('EXW', 'Ex Works, au départ non chargé, non dédouané sortie d''usine (uniquement adapté aux flux domestiques, nationaux)', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('FCA', 'Free Carrier, marchandises dédouanées et chargées dans le pays de départ, chez le vendeur ou chez le commissionnaire de transport de l''acheteur', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('FAS', 'Free Alongside Ship, sur le quai du port de départ', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('FOB', 'Free On Board, chargé sur le bateau, les frais de chargement dans celui-ci étant fonction du liner term indiqué par la compagnie maritime (à la charge du vendeur)', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('CFR', 'Cost and Freight, chargé dans le bateau, livraison au port de départ, frais payés jusqu''au port d''arrivée, sans assurance pour le transport, non déchargé du navire à destination (les frais de déchargement sont inclus ou non au port d''arrivée)', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('CIF', 'Cost, Insurance and Freight, chargé sur le bateau, frais jusqu''au port d''arrivée, avec l''assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('CPT', 'Carriage Paid To, livraison au premier transporteur, frais jusqu''au déchargement du mode de transport, sans assurance pour le transport', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('CIP', 'Carriage and Insurance Paid to, idem CPT, avec assurance marchandise transportée souscrite par le vendeur pour le compte de l''acheteur', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DAT', 'Delivered At Terminal, marchandises (déchargées) livrées sur quai, dans un terminal maritime, fluvial, aérien, routier ou ferroviaire désigné (dédouanement import, et post-acheminement payés par l''acheteur)', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DAP', 'Delivered At Place, marchandises (non déchargées) mises à disposition de l''acheteur dans le pays d''importation au lieu précisé dans le contrat (déchargement, dédouanement import payé par l''acheteur)', 1);
+INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DDP', 'Delivered Duty Paid, marchandises (non déchargées) livrées à destination finale, dédouanement import et taxes à la charge du vendeur ; l''acheteur prend en charge uniquement le déchargement (si exclusion des taxes type TVA, le préciser clairement)', 1);
