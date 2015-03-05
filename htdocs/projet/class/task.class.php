@@ -807,7 +807,7 @@ class Task extends CommonObject
         if ($ret >= 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
 			if (isset($this->progress)) $sql.= ", progress = " . $this->progress;	// Do not overwrite value if not provided
             $sql.= " WHERE rowid = ".$this->id;
 
@@ -980,7 +980,7 @@ class Task extends CommonObject
             $newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective + '".$newDuration."'";
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
