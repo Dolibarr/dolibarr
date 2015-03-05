@@ -171,6 +171,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
+%_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
 %_datadir/dolibarr/htdocs/externalsite
 %_datadir/dolibarr/htdocs/fichinter
