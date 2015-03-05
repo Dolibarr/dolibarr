@@ -586,7 +586,7 @@ class Task extends CommonObject
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
-        //print $sql;
+        //print $sql;exit;
         dol_syslog(get_class($this)."::getTasksArray", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -759,6 +759,8 @@ class Task extends CommonObject
     {
         global $conf,$langs;
 
+        dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
+
         $ret = 0;
 
         // Check parameters
@@ -790,8 +792,8 @@ class Task extends CommonObject
         $sql.= ", ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
-        if ($this->db->query($sql) )
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
             $ret = $tasktime_id;
@@ -800,21 +802,22 @@ class Task extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('TASK_TIMESPENT_CREATE',$user);
-                if ($result < 0) { $this->db->rollback(); $ret=-1; }
+                if ($result < 0) { $ret=-1; }
                 // End call triggers
             }
         }
         else
 		{
             $this->error=$this->db->lasterror();
-            $this->db->rollback();
             $ret = -1;
         }
 
         if ($ret >= 0)
         {
+        	// Recalculate amount of time spent for task and update denormalized field
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
+            //$sql.= " SET duration_effective = (".$this->db->ifsql('duration_effective IS NULL', 0, 'duration_effective').") + ".price2num($this->timespent_duration);
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
 			if (isset($this->progress)) $sql.= ", progress = " . $this->progress;	// Do not overwrite value if not provided
             $sql.= " WHERE rowid = ".$this->id;
 
@@ -822,7 +825,6 @@ class Task extends CommonObject
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
-                $this->db->rollback();
                 $ret = -2;
             }
 
@@ -834,12 +836,18 @@ class Task extends CommonObject
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
-                $this->db->rollback();
                 $ret = -2;
             }
         }
 
-        if ($ret >=0) $this->db->commit();
+        if ($ret >=0)
+        {
+        	$this->db->commit();
+        }
+        else
+		{
+        	$this->db->rollback();
+        }
         return $ret;
     }
 
