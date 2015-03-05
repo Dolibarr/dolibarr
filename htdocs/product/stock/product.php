@@ -402,7 +402,7 @@ if ($id > 0 || $ref)
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->label.'</td>';
 		print '</tr>';
 
         // Status (to sell)
@@ -861,7 +861,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$entrepotstatic->id=$obj->rowid;
-		$entrepotstatic->libelle=$obj->label;
+		$entrepotstatic->label=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';

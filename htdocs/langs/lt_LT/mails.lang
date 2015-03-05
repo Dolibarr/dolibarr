@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Visos trečiosios šalys atrinktos ir e-paštas yr
 NoRemindSent=Priminimo e-paštu nėra išsiųsta
 ResultOfMassSending=Masinių e-pašto priminimų siuntimo rezultatas
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Visų treąiųjų šalių kontaktai/adresai (kliento, numatomo kliento, tiekėjo, ...)
 MailingModuleDescDolibarrUsers=Dolibarr vartotojai
 MailingModuleDescFundationMembers=Organizacijos nariai su e-paštu

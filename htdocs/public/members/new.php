@@ -427,7 +427,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
 else
 {
     $adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-    //print $adht->libelle;
+    //print $adht->label;
     print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
 }
 // Moral/Physic attribute

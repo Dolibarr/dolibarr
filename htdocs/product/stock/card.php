@@ -64,7 +64,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object = new Entrepot($db);
 
 	$object->ref         = GETPOST("ref");
-	$object->libelle     = GETPOST("libelle");
+	$object->label     = GETPOST("label");
 	$object->description = GETPOST("desc");
 	$object->statut      = GETPOST("statut");
 	$object->lieu        = GETPOST("lieu");
@@ -73,7 +73,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->town        = GETPOST("town");
 	$object->country_id  = GETPOST("country_id");
 
-	if (! empty($object->libelle))
+	if (! empty($object->label))
 	{
 		$id = $object->create($user);
 		if ($id > 0)
@@ -127,7 +127,7 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 	$object = new Entrepot($db);
 	if ($object->fetch($id))
 	{
-		$object->libelle     = GETPOST("libelle");
+		$object->label     = GETPOST("label");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -186,7 +186,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="label" size="20" value=""></td></tr>';
 
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
 
@@ -254,7 +254,7 @@ else
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->label),"confirm_delete",'',0,2);
 			}
 
 			print '<table class="border" width="100%">';
@@ -263,7 +263,7 @@ else
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'libelle');
+			print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'label');
 			print '</td>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
@@ -521,7 +521,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
+			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="label" size="20" value="'.$object->label.'"></td></tr>';
 
 			print '<tr><td width="20%">'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
 

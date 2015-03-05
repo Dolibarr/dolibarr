@@ -63,7 +63,7 @@ class Livraison extends CommonObject
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 
 	/**
 	 * Constructor
@@ -273,7 +273,7 @@ class Livraison extends CommonObject
 		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
         $sql.= ', l.fk_incoterms, l.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.label as label_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
@@ -308,7 +308,7 @@ class Livraison extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;									
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -510,7 +510,7 @@ class Livraison extends CommonObject
 		{
 			$line = new LivraisonLigne($this->db);
 			$line->origin_line_id    = $expedition->lines[$i]->origin_line_id;
-			$line->libelle           = $expedition->lines[$i]->libelle;
+			$line->label           = $expedition->lines[$i]->label;
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
@@ -729,7 +729,7 @@ class Livraison extends CommonObject
 				$line->qty_shipped		= $obj->qty_shipped;
 
 				$line->ref				= $obj->product_ref;		// deprecated
-				$line->libelle			= $obj->product_label;		// deprecated
+				$line->label			= $obj->product_label;		// deprecated
 				$line->product_label	= $obj->product_label;		// Product label
 				$line->product_ref		= $obj->product_ref;		// Product ref
 				$line->product_desc		= $obj->product_desc;		// Product description
@@ -751,7 +751,7 @@ class Livraison extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une expedition
+	 *  Retourne le label du statut d'une expedition
 	 *
 	 *  @param	int			$mode		Mode
 	 *  @return string      			Label
@@ -762,10 +762,10 @@ class Livraison extends CommonObject
 	}
 
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *	Renvoi le label d'un statut donne
 	 *
 	 *  @param	int			$statut     Id statut
-	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int			$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
 	 *  @return string					Label
 	 */
 	function LibStatut($statut,$mode)

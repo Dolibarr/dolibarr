@@ -188,7 +188,7 @@ if ($socname)
 $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.rowid, s.nom as name, s.barcode, s.town, s.datec, s.code_client, s.code_fournisseur, ";
-$sql.= " st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
+$sql.= " st.label as stcomm, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";

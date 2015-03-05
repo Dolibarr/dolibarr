@@ -199,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql.= " d.datefin,";
 			$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql.= " t.libelle as type, t.cotisation";
+			$sql.= " t.label as type, t.cotisation";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE d.fk_soc=".$id;
@@ -222,7 +222,7 @@ if ($id > 0 || ! empty($ref))
 					print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
 					print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
 					print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.label",$param,"","",$sortfield,$sortorder);
 					print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
 					print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
 					print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
@@ -263,7 +263,7 @@ if ($id > 0 || ! empty($ref))
 
 						// Type
 						$membertypestatic->id=$objp->type_id;
-						$membertypestatic->libelle=$objp->type;
+						$membertypestatic->label=$objp->type;
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1,32);
 						print '</td>';

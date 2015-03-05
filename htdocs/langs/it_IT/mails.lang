@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Tutte le terze parti sono selezionate e le mail do
 NoRemindSent=Nessun promemoria email inviato
 ResultOfMassSending=Risultato del mass Email di promemoria inviato
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contatti di soggetti terzi (clienti, clienti potenziali, fornitori)
 MailingModuleDescDolibarrUsers=Tutti gli utenti Dolibarr con indirizzi email
 MailingModuleDescFundationMembers=Membri fondazione con indirizzi email

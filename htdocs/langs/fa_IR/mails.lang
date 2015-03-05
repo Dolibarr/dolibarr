@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=همه thirdparties انتخاب شده و اگر 
 NoRemindSent=آدرس ایمیل یادآوری ارسال
 ResultOfMassSending=نتیجه شده از یادآوری ایمیل انبوه ارسال
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=تماس / آدرس تمام اشخاص ثالث (مشتری، چشم انداز، تامین کننده، ...)
 MailingModuleDescDolibarrUsers=کاربران Dolibarr
 MailingModuleDescFundationMembers=اعضای بنیاد با ایمیل

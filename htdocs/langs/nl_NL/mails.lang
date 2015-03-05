@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Alle relaties geselecteerd en als een e-mail is in
 NoRemindSent=Geen e-mail reminder gestuurd
 ResultOfMassSending=Resultaat van massale e-mail herinneringen verzending
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacten van alle derde partijen (afnemer, prospect, leverancier, etc)
 MailingModuleDescDolibarrUsers=Alle Dolibarr gebruikers met e-mailadres
 MailingModuleDescFundationMembers=Stichtingsleden  met e-mailadres

@@ -2028,7 +2028,7 @@ else
             print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else 
 			{
@@ -2224,7 +2224,7 @@ else
 			{
 			foreach($contactarr as $contact)
 			{
-			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+			if ($contact['label']==$langs->trans('TypeContact_facture_external_BILLING')) {
 
 			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 

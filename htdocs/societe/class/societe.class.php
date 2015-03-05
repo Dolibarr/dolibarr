@@ -355,7 +355,7 @@ class Societe extends CommonObject
 	// Incoterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 
     /**
      * To contains a clone of this when we need to save old properties of object
@@ -992,13 +992,13 @@ class Societe extends CommonObject
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
-        $sql .= ', fj.libelle as forme_juridique';
-        $sql .= ', e.libelle as effectif';
+        $sql .= ', fj.label as forme_juridique';
+        $sql .= ', e.label as effectif';
         $sql .= ', c.code as country_code, c.label as country';
         $sql .= ', d.code_departement as state_code, d.nom as state';
-        $sql .= ', st.libelle as stcomm';
+        $sql .= ', st.label as stcomm';
         $sql .= ', te.code as typent_code';
-		$sql .= ', i.libelle as libelle_incoterms';
+		$sql .= ', i.label as label_incoterms';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -1057,9 +1057,9 @@ class Societe extends CommonObject
                 $this->state        = ($obj->state!='-'?$obj->state:'');
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
-                $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
+                $label=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
                 $this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
-                $this->statut_commercial = $libelle;    // libelle statut commercial
+                $this->statut_commercial = $label;    // label statut commercial
 
                 $this->email = $obj->email;
                 $this->skype = $obj->skype;
@@ -1138,7 +1138,7 @@ class Societe extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
                 $result = 1;
 
@@ -1812,8 +1812,8 @@ class Societe extends CommonObject
     /**
      *    Return label of status (activity, closed)
      *
-     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *    @return   string        		Libelle
+     *    @param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long
+     *    @return   string        		label
      */
     function getLibStatut($mode=0)
     {
@@ -1821,11 +1821,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Renvoi le libelle d'un statut donne
+     *  Renvoi le label d'un statut donne
      *
      *  @param	int		$statut         Id statut
-     *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *  @return	string          		Libelle du statut
+     *  @param	int		$mode           0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+     *  @return	string          		label du statut
      */
     function LibStatut($statut,$mode=0)
     {
@@ -3009,7 +3009,7 @@ class Societe extends CommonObject
 	/**
 	 *	Return prostect level
 	 *
-	 *  @return     string        Libelle
+	 *  @return     string        label
 	 */
 	function getLibProspLevel()
 	{
@@ -3070,8 +3070,8 @@ class Societe extends CommonObject
 	/**
 	 *  Return status of prospect
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *  @return string        		Libelle
+	 *  @param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long
+	 *  @return string        		label
 	 */
 	function getLibProspCommStatut($mode=0)
 	{
@@ -3083,7 +3083,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param	int		$statut        	Id statut
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string        			Libelle du statut
+	 *  @return string        			label du statut
 	 */
 	function LibProspCommStatut($statut,$mode=0)
 	{
@@ -3229,10 +3229,10 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Renvoi le label d'un statut donne
 	 *
 	 *  @param	int		$statut         Id statut
-	 *  @return	string          		Libelle du statut
+	 *  @return	string          		label du statut
 	 */
 	function LibCustProspStatut($statut)
 	{

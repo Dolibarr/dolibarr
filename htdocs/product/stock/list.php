@@ -104,7 +104,7 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
             $entrepot->id = $objp->rowid;
-            $entrepot->libelle = $objp->ref;
+            $entrepot->label = $objp->ref;
             $entrepot->lieu = $objp->lieu;
             print "<tr ".$bc[$var].">";
             print '<td>' . $entrepot->getNomUrl(1) . '</td>';
