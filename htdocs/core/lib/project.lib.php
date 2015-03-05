@@ -234,10 +234,10 @@ function project_admin_prepare_head()
 /**
  * Show task lines with a particular parent
  *
- * @param	string	 	$inc				Counter that count number of lines legitimate to show (for return)
- * @param 	int			$parent				Id of parent task to start
- * @param 	array		$lines				Array of all tasks
- * @param 	int			$level				Level of task
+ * @param	string	   	$inc				Line number (start to 0, then increased by recursive call)
+ * @param   string		$parent				Id of parent project to show (0 to show all)
+ * @param   Task[]		$lines				Array of lines
+ * @param   int			$level				Level (start to 0, then increased/decrease by recursive call)
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
  * @param	int			$taskrole			Array of roles of user for each tasks
@@ -482,12 +482,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 /**
  * Output a task line into a pertime intput mode
  *
- * @param	string	   	$inc					?
- * @param   string		$parent					?
- * @param   Task[]		$lines					?
- * @param   int			$level					?
- * @param   string		$projectsrole			?
- * @param   string		$tasksrole				?
+ * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
+ * @param   string		$parent					Id of parent project to show (0 to show all)
+ * @param   Task[]		$lines					Array of lines
+ * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
+ * @param   string		$projectsrole			Array of roles user has on project
+ * @param   string		$tasksrole				Array of roles user has on task
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
@@ -628,12 +628,12 @@ function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$
 /**
  * Output a task line into a perday intput mode
  *
- * @param	string	   	$inc					?
- * @param   string		$parent					?
- * @param   Task[]		$lines					?
- * @param   int			$level					?
- * @param   string		$projectsrole			?
- * @param   string		$tasksrole				?
+ * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
+ * @param   string		$parent					Id of parent project to show (0 to show all)
+ * @param   Task[]		$lines					Array of lines
+ * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
+ * @param   string		$projectsrole			Array of roles user has on project
+ * @param   string		$tasksrole				Array of roles user has on task
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
@@ -750,7 +750,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 		        {
 		        	$dayWorkLoad = 0;
                     $tableCell ='<td align="center">';
-                    $tableCell.='<input type="text" class="center" size="2" disabled="disabled" value="'.convertSecondToTime($dayWorkLoad,'allhourmin').'">+';
+                    $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled="disabled" value="'.convertSecondToTime($dayWorkLoad,'allhourmin').'"></span>+';
 		        	$tableCell.='<input type="text" class="center" size="2" id="task['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 		        	$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
                     $tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\');updateTotal('.$idw.',\''.$modeinput.'\')" />';
@@ -927,7 +927,8 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 
 	print "</table>";
 
-	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
+	{
 		//Add the year filter input
 		print '<table width="100%">';
 		print '<tr>';

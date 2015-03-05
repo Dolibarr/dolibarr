@@ -137,3 +137,4 @@ ProjectDraft=Draft projects
 FirstAddRessourceToAllocateTime=Associate a ressource to allocate time
 InputPerTime=Input per time
 InputPerDay=Input per day 
+TimeAlreadyRecorded=Time spent already recorded for this task/day and user %s
