@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -361,19 +362,23 @@ if (! empty($conf->use_javascript_ajax))
 	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 	if (is_array($showextcals) && count($showextcals) > 0)
 	{
+		$s.='<script type="text/javascript">' . "\n";
+		$s.='jQuery(document).ready(function () {
+
+				jQuery("table input[name^=\"check_\"]").click(function() {
+					var name = $(this).attr("name");
+
+					jQuery(".family_" + name.replace("check_", "")).toggle();
+                });
+
+			});' . "\n";
+		$s.='</script>' . "\n";
+
 		foreach ($showextcals as $val)
 		{
-			$htmlname = dol_string_nospecial($val['name']);
-			$htmlname = dol_string_nospecial($htmlname,'_',array("\.","#"));
-			$s.='<script type="text/javascript">' . "\n";
-			$s.='jQuery(document).ready(function () {' . "\n";
-			$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
-			$s.=' 		/* alert("'.$htmlname.'"); */';
-			$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
-			$s.='		});' . "\n";
-			$s.='});' . "\n";
-			$s.='</script>' . "\n";
-			$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+			$htmlname = md5($val['name']);
+
+			$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 		}
 	}
 	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
@@ -1174,7 +1179,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
                     	$color=$event->icalcolor;
-                    	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unmovable');
+                    	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unmovable');
                     }
                     else if ($event->type_code == 'BIRTHDAY')
                     {
