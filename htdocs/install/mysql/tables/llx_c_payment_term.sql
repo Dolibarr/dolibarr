@@ -22,8 +22,8 @@ create table llx_c_payment_term
   code            varchar(16),
   sortorder       smallint,
   active          tinyint DEFAULT 1,
-  libelle         varchar(255),
-  libelle_facture text,
+  label         varchar(255),
+  label_facture text,
   fdm             tinyint,    -- reglement fin de mois
   nbjour          smallint,
   decalage		  smallint,

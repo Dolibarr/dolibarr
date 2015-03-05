@@ -1024,27 +1024,27 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	}
 
 	// Description short of product line
-	$libelleproduitservice=$label;
+	$labelproduitservice=$label;
 
 	// Description long of product line
 	if (! empty($desc) && ($desc != $label))
 	{
-		if ($libelleproduitservice && empty($hidedesc))
+		if ($labelproduitservice && empty($hidedesc))
 		{
-			$libelleproduitservice.='__N__';
+			$labelproduitservice.='__N__';
 		}
 
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
+			$labelproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
 		}
 		elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
+			$labelproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
 			// Add date of deposit
 			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
@@ -1052,11 +1052,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc)) $labelproduitservice.=$desc;
 			}
 			else
 			{
-				$libelleproduitservice.=$desc;
+				$labelproduitservice.=$desc;
 			}
 		}
 	}
@@ -1086,10 +1086,10 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				if ($issupplierline) $ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');   // Show local ref and supplier ref
 				else $ref_prodserv = $prodser->ref; // Show local ref only
 
-				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
+				if (! empty($labelproduitservice)) $ref_prodserv .= " - ";
 			}
 
-			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$labelproduitservice=$prefix_prodserv.$ref_prodserv.$labelproduitservice;
 		}
 	}
 
@@ -1105,7 +1105,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			// Adding the descriptions if they are filled
 			$desccateg=$cate->add_description;
 			if ($desccateg)
-				$libelleproduitservice.='__N__'.$desccateg;
+				$labelproduitservice.='__N__'.$desccateg;
 		}
 	}
 
@@ -1126,8 +1126,8 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice.="__N__".$period;
-		//print $libelleproduitservice;
+		$labelproduitservice.="__N__".$period;
+		//print $labelproduitservice;
 	}
 
 	if ($dbatch)
@@ -1140,16 +1140,16 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			if ($detail->sellby) $dte[]=$outputlangs->transnoentitiesnoconv('printSellby',dol_print_date($detail->sellby, $format, false, $outputlangs));
 			if ($detail->batch) $dte[]=$outputlangs->transnoentitiesnoconv('printBatch',$detail->batch);
 			$dte[]=$outputlangs->transnoentitiesnoconv('printQty',$detail->dluo_qty);
-			$libelleproduitservice.= "__N__  ".implode($dte,"-");
+			$labelproduitservice.= "__N__  ".implode($dte,"-");
 		}
 	}
 
 	// Now we convert \n into br
-	if (dol_textishtml($libelleproduitservice)) $libelleproduitservice=preg_replace('/__N__/','<br>',$libelleproduitservice);
-	else $libelleproduitservice=preg_replace('/__N__/',"\n",$libelleproduitservice);
-	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
+	if (dol_textishtml($labelproduitservice)) $labelproduitservice=preg_replace('/__N__/','<br>',$labelproduitservice);
+	else $labelproduitservice=preg_replace('/__N__/',"\n",$labelproduitservice);
+	$labelproduitservice=dol_htmlentitiesbr($labelproduitservice,1);
 
-	return $libelleproduitservice;
+	return $labelproduitservice;
 }
 
 /**

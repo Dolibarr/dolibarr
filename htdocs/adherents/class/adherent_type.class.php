@@ -43,7 +43,7 @@ class AdherentType extends CommonObject
      */
     public $ref;
 
-    var $libelle;
+    var $label;
     var $statut;
     var $cotisation;  // Soumis a la cotisation
     var $vote;		  // droit de vote
@@ -76,10 +76,10 @@ class AdherentType extends CommonObject
         $this->statut=trim($this->statut);
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
-        $sql.= "libelle";
+        $sql.= "label";
         $sql.= ", entity";
         $sql.= ") VALUES (";
-        $sql.= "'".$this->db->escape($this->libelle)."'";
+        $sql.= "'".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -110,12 +110,12 @@ class AdherentType extends CommonObject
 
     	$error=0;
 
-        $this->libelle=trim($this->libelle);
+        $this->label=trim($this->label);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
         $sql.= "SET ";
         $sql.= "statut = ".$this->statut.",";
-        $sql.= "libelle = '".$this->db->escape($this->libelle) ."',";
+        $sql.= "label = '".$this->db->escape($this->label) ."',";
         $sql.= "cotisation = '".$this->cotisation."',";
         $sql.= "note = '".$this->db->escape($this->note)."',";
         $sql.= "vote = '".$this->vote."',";
@@ -193,7 +193,7 @@ class AdherentType extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
+        $sql = "SELECT d.rowid, d.label, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
         $sql .= " WHERE d.rowid = ".$rowid;
 
@@ -208,7 +208,7 @@ class AdherentType extends CommonObject
 
                 $this->id             = $obj->rowid;
                 $this->ref            = $obj->rowid;
-                $this->libelle        = $obj->libelle;
+                $this->label        = $obj->label;
                 $this->statut         = $obj->statut;
                 $this->cotisation     = $obj->cotisation;
                 $this->mail_valid     = $obj->mail_valid;
@@ -235,7 +235,7 @@ class AdherentType extends CommonObject
 
         $projets = array();
 
-        $sql = "SELECT rowid, libelle";
+        $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
         $sql.= " WHERE entity = ".$conf->entity;
 
@@ -251,7 +251,7 @@ class AdherentType extends CommonObject
                 {
                     $obj = $this->db->fetch_object($resql);
 
-                    $projets[$obj->rowid] = $langs->trans($obj->libelle);
+                    $projets[$obj->rowid] = $langs->trans($obj->label);
                     $i++;
                 }
             }
@@ -269,7 +269,7 @@ class AdherentType extends CommonObject
      *    	Renvoie nom clicable (avec eventuellement le picto)
      *
      *		@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		int		$maxlen			length max libelle
+     *		@param		int		$maxlen			length max label
      *		@return		string					String with URL
      */
     function getNomUrl($withpicto=0,$maxlen=0)
@@ -277,7 +277,7 @@ class AdherentType extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowTypeCard",$this->libelle);
+        $label=$langs->trans("ShowTypeCard",$this->label);
 
         $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $lienfin='</a>';
@@ -286,7 +286,7 @@ class AdherentType extends CommonObject
 
         if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
+        $result.=$lien.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$lienfin;
         return $result;
     }
 

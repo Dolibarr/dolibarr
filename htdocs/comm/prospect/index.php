@@ -70,7 +70,7 @@ if (! empty($conf->propal->enabled))
  *
  */
 
-$sql = "SELECT count(*) as cc, st.libelle, st.id";
+$sql = "SELECT count(*) as cc, st.label, st.id";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

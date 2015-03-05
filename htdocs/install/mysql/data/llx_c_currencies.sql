@@ -28,7 +28,7 @@
 --
 
 --
--- Currencies (primary code - code ISO4217 - libelle us)
+-- Currencies (primary code - code ISO4217 - label us)
 --
 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ALL', '[76,101,107]', 1,		'Albania Lek');

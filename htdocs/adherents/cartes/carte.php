@@ -63,7 +63,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     // requete en prenant que les adherents a jour de cotisation
     $sql = "SELECT d.rowid, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
     $sql.= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
-    $sql.= " t.libelle as type,";
+    $sql.= " t.label as type,";
     $sql.= " c.code as country_code, c.label as country";
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";

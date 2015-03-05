@@ -408,7 +408,7 @@ abstract class CommonObject
         if ($source == 'internal') $sql.=", '-1' as socid";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
         $sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-        $sql.= ", tc.source, tc.element, tc.code, tc.libelle";
+        $sql.= ", tc.source, tc.element, tc.code, tc.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
         if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
@@ -435,11 +435,11 @@ abstract class CommonObject
                 if (! $list)
                 {
                     $transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-                    $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
+                    $label_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->label);
                     $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
 					               'nom'=>$obj->lastname,      // For backward compatibility
 					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email,
-					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut, 'fk_c_type_contact' => $obj->fk_c_type_contact);
+					               'rowid'=>$obj->rowid,'code'=>$obj->code,'label'=>$label_type,'status'=>$obj->statut, 'fk_c_type_contact' => $obj->fk_c_type_contact);
                 }
                 else
                 {
@@ -469,7 +469,7 @@ abstract class CommonObject
     function swapContactStatus($rowid)
     {
         $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
-        $sql.= " tc.code, tc.libelle";
+        $sql.= " tc.code, tc.label";
         //$sql.= ", s.fk_soc";
         $sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
         //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lie a une societe
@@ -513,7 +513,7 @@ abstract class CommonObject
         if (empty($order)) $order='code';
 
         $tab = array();
-        $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
+        $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
         if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
@@ -532,9 +532,9 @@ abstract class CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $transkey="TypeContact_".$this->element."_".$source."_".$obj->code;
-                $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
-                if (empty($option)) $tab[$obj->rowid]=$libelle_type;
-                else $tab[$obj->code]=$libelle_type;
+                $label_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->label);
+                if (empty($option)) $tab[$obj->rowid]=$label_type;
+                else $tab[$obj->code]=$label_type;
                 $i++;
             }
             return $tab;
@@ -703,7 +703,7 @@ abstract class CommonObject
         {
             if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder))    // If data not already loaded
             {
-                $sql = "SELECT rowid, code, libelle as label, coder";
+                $sql = "SELECT rowid, code, label as label, coder";
                 $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
                 $sql.= " WHERE rowid = ".$idtype;
                 dol_syslog(get_class($this).'::fetch_barcode', LOG_DEBUG);
@@ -2399,7 +2399,7 @@ abstract class CommonObject
     function display_incoterms()
     {
         $out = '';
-		$this->incoterms_libelle = '';
+		$this->incoterms_label = '';
 		if (!empty($this->fk_incoterms))
 		{
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
@@ -2458,12 +2458,12 @@ abstract class CommonObject
             	$this->fk_incoterms = $id_incoterm;
 				$this->location_incoterms = $location;
 				
-				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+				$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
 				$res = $this->db->query($sql);
 				if ($res)
 				{
 					$obj = $this->db->fetch_object($res);
-					$this->libelle_incoterms = $obj->libelle;
+					$this->label_incoterms = $obj->label;
 				} 
                 return 1;
             }

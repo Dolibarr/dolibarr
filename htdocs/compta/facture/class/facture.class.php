@@ -135,7 +135,7 @@ class Facture extends CommonInvoice
 	//Incoterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 
 	/**
 	 * @var int Situation cycle reference number
@@ -773,7 +773,7 @@ class Facture extends CommonInvoice
 		{
 			$line = new FactureLigne($this->db);
 
-			$line->libelle			= $object->lines[$i]->libelle;
+			$line->label			= $object->lines[$i]->label;
 			$line->label			= $object->lines[$i]->label;
 			$line->desc				= $object->lines[$i]->desc;
 			$line->subprice			= $object->lines[$i]->subprice;
@@ -933,10 +933,10 @@ class Facture extends CommonInvoice
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
 		$sql.= ', f.fk_account';
-		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
+		$sql.= ', p.code as mode_reglement_code, p.label as mode_reglement_label';
+		$sql.= ', c.code as cond_reglement_code, c.label as cond_reglement_label, c.label_facture as cond_reglement_label_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.label as label_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -981,11 +981,11 @@ class Facture extends CommonInvoice
 				$this->date_lim_reglement	= $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
-				$this->mode_reglement		= $obj->mode_reglement_libelle;
+				$this->mode_reglement		= $obj->mode_reglement_label;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
-				$this->cond_reglement		= $obj->cond_reglement_libelle;
-				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
+				$this->cond_reglement		= $obj->cond_reglement_label;
+				$this->cond_reglement_doc	= $obj->cond_reglement_label_doc;
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
 				$this->fk_project			= $obj->fk_projet;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -1003,7 +1003,7 @@ class Facture extends CommonInvoice
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;									
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 				
 				if ($this->statut == 0)	$this->brouillon = 1;
 
@@ -1080,7 +1080,7 @@ class Facture extends CommonInvoice
 				$line->desc             = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
 				$line->product_ref      = $objp->product_ref;		// Ref product
-				$line->libelle          = $objp->product_label;		// TODO deprecated
+				$line->label          = $objp->product_label;		// TODO deprecated
 				$line->product_label	= $objp->product_label;		// Label product
 				$line->product_desc     = $objp->product_desc;		// Description product
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
@@ -3675,7 +3675,7 @@ class FactureLigne extends CommonInvoiceLine
 	// From llx_product
 	var $ref;				// Product ref (deprecated)
 	var $product_ref;       // Product ref
-	var $libelle;      		// Product label (deprecated)
+	var $label;      		// Product label (deprecated)
 	var $product_label;     // Product label
 	var $product_desc;  	// Description produit
 
@@ -3715,7 +3715,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation,';
 		$sql.= ' fd.situation_percent, fd.fk_prev_id,';
-		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql.= ' WHERE fd.rowid = '.$rowid;
@@ -3758,8 +3758,8 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->ref					= $objp->product_ref;      // deprecated
 			$this->product_ref			= $objp->product_ref;
-			$this->libelle				= $objp->product_libelle;  // deprecated
-			$this->product_label		= $objp->product_libelle;
+			$this->label				= $objp->product_label;  // deprecated
+			$this->product_label		= $objp->product_label;
 			$this->product_desc			= $objp->product_desc;
 
 			$this->situation_percent    = $objp->situation_percent;

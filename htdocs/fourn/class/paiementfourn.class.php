@@ -59,7 +59,7 @@ class PaiementFourn extends Paiement
 	 * Label of payment type
 	 * @var string
 	 */
-	public $type_libelle;
+	public $type_label;
 
 	/**
 	 * Code of Payment type
@@ -86,7 +86,7 @@ class PaiementFourn extends Paiement
 	function fetch($id)
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
-		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
+		$sql.= ' c.code as paiement_code, c.label as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
@@ -108,7 +108,7 @@ class PaiementFourn extends Paiement
 				$this->montant        = $obj->amount;
 				$this->note           = $obj->note;
 				$this->type_code      = $obj->paiement_code;
-				$this->type_libelle   = $obj->paiement_type;
+				$this->type_label   = $obj->paiement_type;
 				$this->statut         = $obj->statut;
 				$error = 1;
 			}
@@ -419,10 +419,10 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	*	Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	*	Retourne le label du statut d'une facture (brouillon, validee, abandonnee, payee)
 	*
-	*	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*	@return     string				Libelle
+	*	@param      int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+	*	@return     string				label
 	*/
 	function getLibStatut($mode=0)
 	{
@@ -430,11 +430,11 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	*	Renvoi le libelle d'un statut donne
+	*	Renvoi le label d'un statut donne
 	*
 	*	@param      int		$status     Statut
-	*	@param      int		$mode      0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*	@return     string      		Libelle du statut
+	*	@param      int		$mode      0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+	*	@return     string      		label du statut
 	*/
 	function LibStatut($status,$mode=0)
 	{

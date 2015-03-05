@@ -341,7 +341,7 @@ if ($id > 0)
 		}
 
 		// Type
-		print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
+		print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_label."</td>";
 
 		$rowspan=5;
 		print '<td rowspan="'.$rowspan.'" valign="top">';
@@ -350,7 +350,7 @@ if ($id > 0)
 		 * Payments
 		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
-		$sql.= "c.code as type_code,c.libelle as paiement_type";
+		$sql.= "c.code as type_code,c.label as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
 		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";

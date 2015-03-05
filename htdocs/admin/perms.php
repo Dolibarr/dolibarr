@@ -128,9 +128,9 @@ dol_fiche_head($head, 'default', $langs->trans("Security"));
 print '<table class="noborder" width="100%">';
 
 // Affiche lignes des permissions
-$sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
+$sql = "SELECT r.id, r.label, r.module, r.perms, r.subperms, r.bydefault";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+$sql.= " WHERE r.label NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND entity IN (".(! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
 $sql.= " ORDER BY r.module, r.id";
@@ -192,8 +192,8 @@ if ($result)
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 
-        $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-        print '<td>'.$perm_libelle. '</td>';
+        $perm_label=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->label));
+        print '<td>'.$perm_label. '</td>';
 
         print '<td align="center">';
         if ($obj->bydefault == 1)

@@ -1040,14 +1040,14 @@ abstract class DolibarrModules
 	                        if (dol_strlen($r_subperms) )
 	                        {
 	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+	                            $sql.= " (id, entity, label, module, type, bydefault, perms, subperms)";
 	                            $sql.= " VALUES ";
 	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
 	                        }
 	                        else
 	                        {
 	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+	                            $sql.= " (id, entity, label, module, type, bydefault, perms)";
 	                            $sql.= " VALUES ";
 	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
 	                        }
@@ -1055,7 +1055,7 @@ abstract class DolibarrModules
 	                    else
 						{
 	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-	                        $sql .= " (id, entity, libelle, module, type, bydefault)";
+	                        $sql .= " (id, entity, label, module, type, bydefault)";
 	                        $sql .= " VALUES ";
 	                        $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 	                    }

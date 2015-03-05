@@ -204,7 +204,7 @@ if ($action == 'add')
 				{
 					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
 				}
-				else $object->label = $cactioncomm->libelle;
+				else $object->label = $cactioncomm->label;
 			}
 		}
 		$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;

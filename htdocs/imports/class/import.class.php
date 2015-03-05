@@ -132,7 +132,7 @@ class Import
 						$this->array_import_icon[$i]=(isset($module->import_icon[$r])?$module->import_icon[$r]:$module->picto);
 						// Code du dataset export
 						$this->array_import_code[$i]=$module->import_code[$r];
-						// Libelle du dataset export
+						// label du dataset export
 						$this->array_import_label[$i]=$module->getImportDatasetLabel($r);
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i]=$module->import_tables_array[$r];

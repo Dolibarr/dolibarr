@@ -238,7 +238,7 @@ if ($result)
         // Login
         print '<td>'.$adherent->login.'</td>';
 
-        // Libelle
+        // label
         print '<td>';
         print dol_trunc($objp->note,32);
         print '</td>';

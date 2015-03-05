@@ -167,7 +167,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
     $sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
-	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
+	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.label as ref, (-1*cs.amount) as total_ttc, ccs.label as type, cs.date_ech as dlr";
 	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql3.= " WHERE cs.entity = ".$conf->entity;

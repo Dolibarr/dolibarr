@@ -43,7 +43,7 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	global $db, $conf, $langs;
 
 	$idprod=$line->fk_product;
-	$label=(! empty($line->label)?$line->label:(! empty($line->libelle)?$line->libelle:''));
+	$label=(! empty($line->label)?$line->label:(! empty($line->label)?$line->label:''));
 	$desc=(! empty($line->desc)?$line->desc:(! empty($line->description)?$line->description:''));
 	$ref_supplier=(! empty($line->ref_supplier)?$line->ref_supplier:(! empty($line->ref_fourn)?$line->ref_fourn:''));    // TODO Not yet saved for supplier invoices, only supplier orders
 	$note=(! empty($line->note)?$line->note:'');
@@ -64,7 +64,7 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	}
 
 	// Description short of product line
-	$libelleproduitservice=$label;
+	$labelproduitservice=$label;
 
 	// Description long of product line
 	if ($desc && ($desc != $label))
@@ -73,25 +73,25 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
+			$labelproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
 		}
 		elseif ($desc == '(DEPOSIT)' && $line->fk_remise_except)
 		{
 		    $discount=new DiscountAbsolute($db);
 		    $discount->fetch($line->fk_remise_except);
-		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
+		    $labelproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
 		    // Add date of deposit
-		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.=' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
+		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $labelproduitservice.=' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
 		else
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice=dol_concatdesc($libelleproduitservice, $desc);
+				if (empty($hidedesc)) $labelproduitservice=dol_concatdesc($labelproduitservice, $desc);
 			}
 			else
 			{
-				$libelleproduitservice=dol_concatdesc($libelleproduitservice, $desc);
+				$labelproduitservice=dol_concatdesc($labelproduitservice, $desc);
 			}
 		}
 	}
@@ -124,7 +124,7 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 				$ref_prodserv .= " - ";
 			}
 
-			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$labelproduitservice=$prefix_prodserv.$ref_prodserv.$labelproduitservice;
 		}
 	}
 
@@ -145,10 +145,10 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice=dol_concatdesc($libelleproduitservice, $period);
-		//print $libelleproduitservice;
+		$labelproduitservice=dol_concatdesc($labelproduitservice, $period);
+		//print $labelproduitservice;
 	}
 
-	return $libelleproduitservice;
+	return $labelproduitservice;
 }
 

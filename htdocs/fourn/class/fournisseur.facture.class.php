@@ -64,7 +64,7 @@ class FactureFournisseur extends CommonInvoice
     var $paye;
 
     var $author;
-    var $libelle;
+    var $label;
     var $datec;            // Creation date
     var $tms;              // Last update date
     var $date;             // Invoice date
@@ -96,7 +96,7 @@ class FactureFournisseur extends CommonInvoice
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 	
     var $extraparams=array();
 
@@ -179,7 +179,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= "ref";
         $sql.= ", ref_supplier";
         $sql.= ", entity";
-        $sql.= ", libelle";
+        $sql.= ", label";
         $sql.= ", fk_soc";
         $sql.= ", datec";
         $sql.= ", datef";
@@ -197,7 +197,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= "'(PROV)'";
         $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", ".$conf->entity;
-        $sql.= ", '".$this->db->escape($this->libelle)."'";
+        $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -348,7 +348,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.datec,";
         $sql.= " t.datef,";
         $sql.= " t.tms,";
-        $sql.= " t.libelle,";
+        $sql.= " t.label,";
         $sql.= " t.paye,";
         $sql.= " t.amount,";
         $sql.= " t.remise,";
@@ -375,11 +375,11 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.model_pdf,";
         $sql.= " t.import_key,";
         $sql.= " t.extraparams,";
-        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
-        $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
+        $sql.= " cr.code as cond_reglement_code, cr.label as cond_reglement_label,";
+        $sql.= " p.code as mode_reglement_code, p.label as mode_reglement_label,";
         $sql.= ' s.nom as socnom, s.rowid as socid,';
         $sql.= ' t.fk_incoterms, t.location_incoterms,';
-        $sql.= " i.libelle as libelle_incoterms";
+        $sql.= " i.label as label_incoterms";
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid)";
@@ -407,8 +407,8 @@ class FactureFournisseur extends CommonInvoice
                 $this->date					= $this->db->jdate($obj->datef);
                 $this->datep				= $this->db->jdate($obj->datef);
                 $this->tms					= $this->db->jdate($obj->tms);
-                $this->libelle				= $obj->libelle;
-                $this->label				= $obj->libelle;
+                $this->label				= $obj->label;
+                $this->label				= $obj->label;
                 $this->paye					= $obj->paye;
                 $this->amount				= $obj->amount;
                 $this->remise				= $obj->remise;
@@ -430,12 +430,12 @@ class FactureFournisseur extends CommonInvoice
                 $this->fk_project			= $obj->fk_projet;
 	            $this->cond_reglement_id	= $obj->fk_cond_reglement;
 	            $this->cond_reglement_code	= $obj->cond_reglement_code;
-	            $this->cond_reglement		= $obj->cond_reglement_libelle;
-	            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+	            $this->cond_reglement		= $obj->cond_reglement_label;
+	            $this->cond_reglement_doc	= $obj->cond_reglement_label;
                 $this->fk_account           = $obj->fk_account;
 	            $this->mode_reglement_id	= $obj->fk_mode_reglement;
 	            $this->mode_reglement_code	= $obj->mode_reglement_code;
-	            $this->mode_reglement		= $obj->mode_reglement_libelle;
+	            $this->mode_reglement		= $obj->mode_reglement_label;
                 $this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
                 $this->note					= $obj->note_private;	// deprecated
                 $this->note_private			= $obj->note_private;
@@ -447,7 +447,7 @@ class FactureFournisseur extends CommonInvoice
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;									
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 				
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
@@ -525,7 +525,7 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->product_ref		= $obj->product_ref;       // Internal reference
                     $this->lines[$i]->ref				= $obj->product_ref;       // deprecated.
                     $this->lines[$i]->ref_supplier		= $obj->ref_supplier;      // Reference product supplier TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields it into updateline
-                    $this->lines[$i]->libelle			= $obj->label;             // This field may contains label of product (when invoice create from order)
+                    $this->lines[$i]->label			= $obj->label;             // This field may contains label of product (when invoice create from order)
                     $this->lines[$i]->product_desc		= $obj->product_desc;      // Description du produit
                     $this->lines[$i]->pu_ht				= $obj->pu_ht;
                     $this->lines[$i]->pu_ttc			= $obj->pu_ttc;
@@ -579,7 +579,7 @@ class FactureFournisseur extends CommonInvoice
         if (isset($this->entity)) $this->entity=trim($this->entity);
         if (isset($this->type)) $this->type=trim($this->type);
         if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
-        if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+        if (isset($this->label)) $this->label=trim($this->label);
         if (isset($this->paye)) $this->paye=trim($this->paye);
         if (isset($this->amount)) $this->amount=trim($this->amount);
         if (isset($this->remise)) $this->remise=trim($this->remise);
@@ -619,7 +619,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
         $sql.= " datef=".(dol_strlen($this->date)!=0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
         if (dol_strlen($this->tms) != 0) $sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-        $sql.= " libelle=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
+        $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
         $sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
         $sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";

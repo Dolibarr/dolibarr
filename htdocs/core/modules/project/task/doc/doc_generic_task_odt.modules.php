@@ -188,7 +188,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		return array(
 		'projcontacts_id'=>$contact['id'],
 		'projcontacts_rowid'=>$contact['rowid'],
-		'projcontacts_role'=>$contact['libelle'],
+		'projcontacts_role'=>$contact['label'],
 		'projcontacts_lastname'=>$contact['lastname'],
 		'projcontacts_firstname'=>$contact['firstname'],
 		'projcontacts_fullcivname'=>$contact['fullname'],
@@ -250,7 +250,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
 		'taskressource_rowid'=>$taskressource['rowid'],
-		'taskressource_role'=>$taskressource['libelle'],
+		'taskressource_role'=>$taskressource['label'],
 		'taskressource_lastname'=>$taskressource['lastname'],
 		'taskressource_firstname'=>$taskressource['firstname'],
 		'taskressource_fullcivname'=>$taskressource['fullname'],

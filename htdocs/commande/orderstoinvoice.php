@@ -231,7 +231,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 								$num=count($lines);
 								for ($i=0;$i<$num;$i++)
 								{
-									$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+									$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->label);
 									if ($lines[$i]->subprice < 0)
 									{
 										// Negative line, we create a discount line

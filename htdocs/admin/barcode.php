@@ -198,7 +198,7 @@ print '<td width="200" align="center">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, code as encoding, libelle, coder, example";
+$sql = "SELECT rowid, code as encoding, label, coder, example";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY code";
@@ -216,7 +216,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr '.$bc[$var].'><td width="100">';
-		print $obj->libelle;
+		print $obj->label;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
 		//print "L'EAN se compose de 8 caracteres, 7 chiffres plus une cle de controle.<br>";

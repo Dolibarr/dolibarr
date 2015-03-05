@@ -122,7 +122,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver import
+	 *  Renvoi label d'un driver import
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string
@@ -155,7 +155,7 @@ class ModeleImports
 	}
 
 	/**
-	 *  Renvoi libelle de librairie externe du driver
+	 *  Renvoi label de librairie externe du driver
 	 *
 	 *	@param	string	$key	Key
 	 *	@return	string

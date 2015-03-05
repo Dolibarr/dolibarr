@@ -59,14 +59,14 @@ $AdherentsResilies=array();
 $AdherentType=array();
 
 // Liste les adherents
-$sql = "SELECT t.rowid, t.libelle, t.cotisation,";
+$sql = "SELECT t.rowid, t.label, t.cotisation,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " ON t.rowid = d.fk_adherent_type";
 $sql.= " AND d.entity IN (".getEntity().")";
 $sql.= " WHERE t.entity IN (".getEntity().")";
-$sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
+$sql.= " GROUP BY t.rowid, t.label, t.cotisation, d.statut";
 
 dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
 $result = $db->query($sql);
@@ -81,7 +81,7 @@ if ($result)
 		$adhtype=new AdherentType($db);
 		$adhtype->id=$objp->rowid;
 		$adhtype->cotisation=$objp->cotisation;
-		$adhtype->libelle=$objp->libelle;
+		$adhtype->label=$objp->label;
 		$AdherentType[$objp->rowid]=$adhtype;
 
 		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
@@ -210,7 +210,7 @@ $max=5;
 
 $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
-$sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
+$sql.= " ta.rowid as typeid, ta.label, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql.= " WHERE a.entity IN (".getEntity().")";
 $sql.= " AND a.fk_adherent_type = ta.rowid";
@@ -249,7 +249,7 @@ if ($resql)
 			}
 			$staticmember->ref=$staticmember->getFullName($langs);
 			$statictype->id=$obj->typeid;
-			$statictype->libelle=$obj->libelle;
+			$statictype->label=$obj->label;
 			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';

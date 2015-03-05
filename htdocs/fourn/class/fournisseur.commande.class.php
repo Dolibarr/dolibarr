@@ -89,7 +89,7 @@ class CommandeFournisseur extends CommonOrder
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	var $label_incoterms;  //Used into tooltip
 	
     var $extraparams=array();
 
@@ -144,11 +144,11 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
         $sql.= " c.fk_account,";
         $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams,";
-        $sql.= " cm.libelle as methode_commande,";
-        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
-        $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
+        $sql.= " cm.label as methode_commande,";
+        $sql.= " cr.code as cond_reglement_code, cr.label as cond_reglement_label,";
+        $sql.= " p.code as mode_reglement_code, p.label as mode_reglement_label";
         $sql.= ', c.fk_incoterms, c.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.label as label_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id)";
@@ -198,12 +198,12 @@ class CommandeFournisseur extends CommonOrder
             $this->fk_project			= $obj->fk_project;
             $this->cond_reglement_id	= $obj->fk_cond_reglement;
             $this->cond_reglement_code	= $obj->cond_reglement_code;
-            $this->cond_reglement		= $obj->cond_reglement_libelle;
-            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+            $this->cond_reglement		= $obj->cond_reglement_label;
+            $this->cond_reglement_doc	= $obj->cond_reglement_label;
             $this->fk_account           = $obj->fk_account;
             $this->mode_reglement_id	= $obj->fk_mode_reglement;
             $this->mode_reglement_code	= $obj->mode_reglement_code;
-            $this->mode_reglement		= $obj->mode_reglement_libelle;
+            $this->mode_reglement		= $obj->mode_reglement_label;
             $this->note					= $obj->note_private;    // deprecated
             $this->note_private			= $obj->note_private;
             $this->note_public			= $obj->note_public;
@@ -212,7 +212,7 @@ class CommandeFournisseur extends CommonOrder
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
 			$this->location_incoterms = $obj->location_incoterms;									
-			$this->libelle_incoterms = $obj->libelle_incoterms;
+			$this->label_incoterms = $obj->label_incoterms;
 				
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
@@ -273,7 +273,7 @@ class CommandeFournisseur extends CommonOrder
 
                     $line->fk_product          = $objp->fk_product;    // Id du produit
 
-                    $line->libelle             = $objp->product_label; // TODO deprecated
+                    $line->label             = $objp->product_label; // TODO deprecated
                     $line->product_label       = $objp->product_label; // Label produit
                     $line->product_desc        = $objp->product_desc;  // Description produit
 
@@ -1195,7 +1195,7 @@ class CommandeFournisseur extends CommonOrder
                     $result=$prod->get_buyprice($fk_prod_fourn_price,$qty,$fk_product,$fourn_ref);
                     if ($result > 0)
                     {
-                        $label = $prod->libelle;
+                        $label = $prod->label;
                         $pu    = $prod->fourn_pu;
                         $ref   = $prod->ref_fourn;
                         $product_type = $prod->type;
@@ -1592,7 +1592,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function get_methodes_commande()
     {
-        $sql = "SELECT rowid, libelle";
+        $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
         $sql.= " WHERE active = 1";
 
@@ -1770,13 +1770,13 @@ class CommandeFournisseur extends CommonOrder
             $prod = new Product($this->db);
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
             {
-                $libelle  = $prod->libelle;
+                $label  = $prod->label;
                 $ref      = $prod->ref;
             }
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
             $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
-            $sql .= " VALUES (".$idc.", '" . $this->db->escape($libelle) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
+            $sql .= " VALUES (".$idc.", '" . $this->db->escape($label) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
             $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
             $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
             $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."');";
@@ -2175,7 +2175,7 @@ class CommandeFournisseur extends CommonOrder
 
         if ($this->methode_commande_id > 0)
         {
-            $sql = "SELECT rowid, code, libelle as label";
+            $sql = "SELECT rowid, code, label as label";
             $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
             $sql.= " WHERE active=1 AND rowid = ".$db->escape($this->methode_commande_id);
 
@@ -2302,7 +2302,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     var $date_end;
 
     // From llx_product
-    var $libelle;       // Label produit
+    var $label;       // Label produit
     var $product_desc;  // Description produit
 
     // From llx_product_fournisseur_price
@@ -2332,7 +2332,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
-        $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
+        $sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -2361,7 +2361,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->product_type     = $objp->product_type;
 
             $this->ref	            = $objp->product_ref;
-            $this->product_libelle  = $objp->product_libelle;
+            $this->product_label  = $objp->product_label;
             $this->product_desc     = $objp->product_desc;
 
             $this->date_start       = $this->db->jdate($objp->date_start);

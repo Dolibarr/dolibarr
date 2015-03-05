@@ -21,7 +21,7 @@ create table llx_c_shipment_mode
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   code             varchar(30) NOT NULL,
-  libelle          varchar(50) NOT NULL,
+  label          varchar(50) NOT NULL,
   description      text,
   tracking         varchar(255) NOT NULL,
   active           tinyint DEFAULT 0,

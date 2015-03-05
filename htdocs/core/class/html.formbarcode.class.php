@@ -108,7 +108,7 @@ class FormBarCode
     {
         global $langs,$conf;
 
-        $sql = "SELECT rowid, code, libelle";
+        $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
         $sql.= " WHERE coder <> '0'";
         $sql.= " AND entity = ".$conf->entity;
@@ -143,7 +143,7 @@ class FormBarCode
                 {
                     print '<option value="'.$obj->rowid.'">';
                 }
-                print $obj->libelle;
+                print $obj->label;
                 print '</option>';
                 $i++;
             }

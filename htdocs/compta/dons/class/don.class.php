@@ -83,10 +83,10 @@ class Don extends CommonObject
 
 
     /**
-     * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+     * 	Retourne le label du statut d'un don (brouillon, validee, abandonnee, payee)
      *
-     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *  @return string        		Libelle
+     *  @param	int		$mode       0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long
+     *  @return string        		label
      */
     function getLibStatut($mode=0)
     {
@@ -94,11 +94,11 @@ class Don extends CommonObject
     }
 
     /**
-     *  Renvoi le libelle d'un statut donne
+     *  Renvoi le label d'un statut donne
      *
      *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *  @return string 			       	Libelle du statut
+     *  @param  int		$mode          	0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
+     *  @return string 			       	label du statut
      */
     function LibStatut($statut,$mode=0)
     {
@@ -493,7 +493,7 @@ class Don extends CommonObject
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-        $sql.= " 	d.country, d.public, d.amount, d.fk_paiement, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
+        $sql.= " 	d.country, d.public, d.amount, d.fk_paiement, d.note_private, d.note_public, cp.label, d.email, d.phone, ";
         $sql.= " 	d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -530,7 +530,7 @@ class Don extends CommonObject
                 $this->fk_project     = $obj->fk_don_projet;
                 $this->public         = $obj->public;
                 $this->modepaiementid = $obj->fk_paiement;
-                $this->modepaiement   = $obj->libelle;
+                $this->modepaiement   = $obj->label;
                 $this->amount         = $obj->amount;
                 $this->note_private	  = $obj->note_private;
                 $this->note_public	  = $obj->note_public;

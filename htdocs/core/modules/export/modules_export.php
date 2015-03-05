@@ -105,7 +105,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver export
+	 *  Renvoi label d'un driver export
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label
@@ -138,7 +138,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi libelle de librairie externe du driver
+	 *  Renvoi label de librairie externe du driver
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label of library

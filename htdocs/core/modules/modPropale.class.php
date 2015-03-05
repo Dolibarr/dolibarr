@@ -113,21 +113,21 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 21; // id de la permission
-		$this->rights[$r][1] = 'Lire les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les propositions commerciales'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 22; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier les propositions commerciales'; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 24; // id de la permission
-		$this->rights[$r][1] = 'Valider les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Valider les propositions commerciales'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'propal_advance';
@@ -135,7 +135,7 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 25; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les propositions commerciales aux clients'; // libelle de la permission
+		$this->rights[$r][1] = 'Envoyer les propositions commerciales aux clients'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'propal_advance';
@@ -143,21 +143,21 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 26; // id de la permission
-		$this->rights[$r][1] = 'Cloturer les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Cloturer les propositions commerciales'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
 
 		$r++;
 		$this->rights[$r][0] = 27; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les propositions commerciales'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 28; // id de la permission
-		$this->rights[$r][1] = 'Exporter les propositions commerciales et attributs'; // libelle de la permission
+		$this->rights[$r][1] = 'Exporter les propositions commerciales et attributs'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';

@@ -35,7 +35,7 @@ class Ctypent // extends CommonObject
 
     var $id;
 	var $code;
-	var $libelle;
+	var $label;
 	var $active;
 	var $module;
 
@@ -70,7 +70,7 @@ class Ctypent // extends CommonObject
 
 		if (isset($this->id)) $this->id=trim($this->id);
 		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->active)) $this->active=trim($this->active);
 		if (isset($this->module)) $this->module=trim($this->module);
 
@@ -84,7 +84,7 @@ class Ctypent // extends CommonObject
 
 		$sql.= "id,";
 		$sql.= "code,";
-		$sql.= "libelle,";
+		$sql.= "label,";
 		$sql.= "active,";
 		$sql.= "module";
 
@@ -93,7 +93,7 @@ class Ctypent // extends CommonObject
 
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->id."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
-		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
+		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'").",";
 		$sql.= " ".(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'")."";
 
@@ -157,14 +157,14 @@ class Ctypent // extends CommonObject
         $sql = "SELECT";
 		$sql.= " t.id,";
 		$sql.= " t.code,";
-		$sql.= " t.libelle as label,";
+		$sql.= " t.label as label,";
 		$sql.= " t.fk_country as country_id,";
 		$sql.= " t.active,";
 		$sql.= " t.module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_typent as t";
         if ($id)   $sql.= " WHERE t.id = ".$id;
         elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-        elseif ($label) $sql.= " WHERE t.libelle = '".$this->db->escape($label)."'";
+        elseif ($label) $sql.= " WHERE t.label = '".$this->db->escape($label)."'";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -175,7 +175,7 @@ class Ctypent // extends CommonObject
 
                 $this->id    = $obj->id;
 				$this->code = $obj->code;
-				$this->libelle = $obj->label;
+				$this->label = $obj->label;
 				$this->country_id = $obj->country_id;
 				$this->active = $obj->active;
 				$this->module = $obj->module;
@@ -206,7 +206,7 @@ class Ctypent // extends CommonObject
 
 		// Clean parameters
 		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->active)) $this->active=trim($this->active);
 		if (isset($this->module)) $this->module=trim($this->module);
 
@@ -217,7 +217,7 @@ class Ctypent // extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_typent SET";
 		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
-		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
+		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
 		$sql.= " module=".(isset($this->module)?"'".$this->db->escape($this->module)."'":"null")."";
         $sql.= " WHERE id=".$this->id;

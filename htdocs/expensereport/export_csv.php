@@ -45,7 +45,7 @@ if($num < 1) {
 
    $insert = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
    $insert.= "`id` ,";
-   $insert.= "`libelle` ,";
+   $insert.= "`label` ,";
    $insert.= "`module` ,";
    $insert.= "`entity` ,";
    $insert.= "`perms` ,";
@@ -150,7 +150,7 @@ if (isset($_POST['action']))
 				$ligne.= "--->, Ligne, Type, Description, ----, ----, ----\n";
 
 
-				$sql2 = "SELECT de.rowid, t.label as libelle, de.comments, de.total_ht, de.total_tva, de.total_ttc";
+				$sql2 = "SELECT de.rowid, t.label as label, de.comments, de.total_ht, de.total_tva, de.total_ttc";
 				$sql2.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de,";
 				$sql2.= " ".MAIN_DB_PREFIX."c_type_fees as t";
 				$sql2.= " WHERE de.fk_c_type_fees = t.id";
@@ -171,7 +171,7 @@ if (isset($_POST['action']))
 						$objet2->comments = str_replace("\r\n",' ',$objet2->comments);
 						$objet2->comments = str_replace("\n",' ',$objet2->comments);
 
-						$ligne.= "--->, {$objet2->rowid}, {$objet2->libelle}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
+						$ligne.= "--->, {$objet2->rowid}, {$objet2->label}, {$objet2->comments}, {$objet2->total_ht}, {$objet2->total_tva}, {$objet2->total_ttc}\n";
 					}
 				}
 

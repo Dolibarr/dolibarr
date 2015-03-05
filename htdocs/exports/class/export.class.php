@@ -33,11 +33,11 @@ class Export
 
 	var $array_export_code=array();             // Tableau de "idmodule_numlot"
 	var $array_export_module=array();           // Tableau de "nom de modules"
-	var $array_export_label=array();            // Tableau de "libelle de lots"
+	var $array_export_label=array();            // Tableau de "label de lots"
 	var $array_export_sql_start=array();        // Tableau des "requetes sql"
 	var $array_export_sql_end=array();          // Tableau des "requetes sql"
 	var $array_export_sql_order=array();        // Tableau des "requetes sql"
-	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
+	var $array_export_fields=array();           // Tableau des listes de champ+label a exporter
 	var $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
 	var $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
 	var $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
@@ -163,9 +163,9 @@ class Export
 									$this->array_export_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
 									// Code du dataset export
 									$this->array_export_code[$i]=$module->export_code[$r];
-									// Libelle du dataset export
+									// label du dataset export
 									$this->array_export_label[$i]=$module->getExportDatasetLabel($r);
-									// Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Tableau des champ a exporter (cle=champ, valeur=label)
 									$this->array_export_fields[$i]=$module->export_fields_array[$r];
 									// Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
 									$this->array_export_TypeFields[$i]=(isset($module->export_TypeFields_array[$r])?$module->export_TypeFields_array[$r]:'');
@@ -374,7 +374,7 @@ class Export
 			case 'List':
 				// 0 : Type du champ
 				// 1 : Nom de la table
-				// 2 : Nom du champ contenant le libelle
+				// 2 : Nom du champ contenant le label
 				// 3 : Nom du champ contenant la cle (si different de rowid)
 				if (count($InfoFieldList)==4)
 					$keyList=$InfoFieldList[3];

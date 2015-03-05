@@ -144,7 +144,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 			$object->ref = $_POST['ref'];
 			$object->ref_supplier = $_POST['ref_supplier'];
 			$object->socid = $_POST['socid'];
-			$object->libelle = $_POST['libelle'];
+			$object->label = $_POST['label'];
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
 			$object->note_public = GETPOST('note_public');
@@ -201,9 +201,9 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 							$fk_parent_line = 0;
 							$num = count($lines);
 							for($i = 0; $i < $num; $i ++) {
-								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->label);
 
-								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->label);
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 								// Dates

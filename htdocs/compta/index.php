@@ -414,7 +414,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$langs->load("boxes");
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_fournisseur";
@@ -426,7 +426,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.label, ff.total_ht, ff.tva, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
 	$sql.= " ORDER BY ff.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -568,14 +568,14 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$chargestatic=new ChargeSociales($db);
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
-		$sql.= " cc.libelle,";
+		$sql.= " cc.label,";
 		$sql.= " SUM(pc.amount) as sumpaid";
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
 		$sql.= " WHERE c.fk_type = cc.id";
 		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " AND c.paye = 0";
-		$sql.= " GROUP BY c.rowid, c.amount, c.date_ech, c.paye, cc.libelle";
+		$sql.= " GROUP BY c.rowid, c.amount, c.date_ech, c.paye, cc.label";
 
 		$resql = $db->query($sql);
 		if ( $resql )
@@ -600,8 +600,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$obj = $db->fetch_object($resql);
 					print "<tr ".$bc[$var].">";
 					$chargestatic->id=$obj->rowid;
-					$chargestatic->ref=$obj->libelle;
-					$chargestatic->lib=$obj->libelle;
+					$chargestatic->ref=$obj->label;
+					$chargestatic->lib=$obj->label;
 					$chargestatic->paye=$obj->paye;
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($obj->date_ech,'day').'</td>';
@@ -861,7 +861,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_client";
@@ -876,7 +876,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_ttc, ff.paye,";
+	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.label, ff.total_ht, ff.tva, ff.total_ttc, ff.paye,";
 	$sql.= " s.nom, s.rowid";
 
 	$resql=$db->query($sql);
@@ -965,7 +965,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
-		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
+		print '<td><a href="action/card.php">'.$obj->label.' '.$obj->label.'</a></td></tr>';
 		$i++;
 	}
 	$db->free($resql);

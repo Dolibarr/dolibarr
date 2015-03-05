@@ -675,7 +675,7 @@ if (! GETPOST('action'))
     if (! $sortfield) $sortfield='p.datep';
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
-    $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
+    $sql.=', f.rowid as facid, c.label as paiement_type, p.num_paiement';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
     $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
     $sql.= ' AND f.entity = '.$conf->entity;
@@ -699,7 +699,7 @@ if (! GETPOST('action'))
         print '<tr class="liste_titre">';
         print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'label','','','',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
         print '<td>&nbsp;</td>';
         print "</tr>\n";

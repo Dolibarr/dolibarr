@@ -21,7 +21,7 @@ create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
   date_ech   datetime NOT NULL,             -- date echeance
-  libelle    varchar(80) NOT NULL,
+  label    varchar(80) NOT NULL,
   entity     integer DEFAULT 1 NOT NULL,	  -- multi company id
   tms                   timestamp,
   date_creation         datetime,						-- date de creation 

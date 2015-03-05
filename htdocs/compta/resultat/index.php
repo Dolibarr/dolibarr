@@ -373,7 +373,7 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
+	$sql = "SELECT c.label as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -381,7 +381,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
+	$sql = "SELECT c.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -390,7 +390,7 @@ else
 	$sql.= " AND c.deductible = 0";
 }
 $sql.= " AND cs.entity = ".$conf->entity;
-$sql.= " GROUP BY c.libelle, dm";
+$sql.= " GROUP BY c.label, dm";
 
 dol_syslog("get social contributions deductible=0 ", LOG_DEBUG);
 $result=$db->query($sql);
@@ -423,7 +423,7 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
+	$sql = "SELECT c.label as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -431,7 +431,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
+	$sql = "SELECT c.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -440,7 +440,7 @@ else
 	$sql.= " AND c.deductible = 1";
 }
 $sql.= " AND cs.entity = ".$conf->entity;
-$sql.= " GROUP BY c.libelle, dm";
+$sql.= " GROUP BY c.label, dm";
 
 dol_syslog("get social contributions paid deductible=1", LOG_DEBUG);
 $result=$db->query($sql);

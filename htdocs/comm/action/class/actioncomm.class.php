@@ -62,7 +62,7 @@ class ActionComm extends CommonObject
      * @var string
      * @deprecated Use $label
      */
-    public $libelle;
+    public $label;
 
     var $datec;			// Date creation record (datec)
     var $datem;			// Date modification record (tms)
@@ -406,7 +406,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_contact, a.percent as percentage,";
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-        $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
+        $sql.= " c.id as type_id, c.code as type_code, c.label,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
@@ -433,8 +433,8 @@ class ActionComm extends CommonObject
                 $this->type_id   = $obj->type_id;
                 $this->type_code = $obj->type_code;
                 $transcode=$langs->trans("Action".$obj->type_code);
-                $type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
-                $this->type      = $type_libelle;
+                $type_label=($transcode!="Action".$obj->type_code?$transcode:$obj->label);
+                $this->type      = $type_label;
 
 				$this->code					= $obj->code;
                 $this->label				= $obj->label;
@@ -880,7 +880,7 @@ class ActionComm extends CommonObject
     /**
      *    	Return label of status
      *
-     *    	@param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *    	@param	int		$mode           0=label long, 1=label court, 2=Picto + label court, 3=Picto, 4=Picto + label long, 5=label court + Picto
      *      @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
      *    	@return string          		String with status
      */
@@ -958,7 +958,7 @@ class ActionComm extends CommonObject
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
      * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param	int		$maxlength			Nombre de caracteres max dans libelle
+     *		@param	int		$maxlength			Nombre de caracteres max dans label
      *		@param	string	$classname			Force style class on a link
      * 		@param	string	$option				''=Link to action,'birthday'=Link to contact
      * 		@param	int		$overwritepicto		1=Overwrite picto
@@ -972,36 +972,36 @@ class ActionComm extends CommonObject
         $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
         $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
         $label = $this->label;
-        if (empty($label)) $label=$this->libelle;   // For backward compatibility
+        if (empty($label)) $label=$this->label;   // For backward compatibility
         $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'" class="classfortooltip">';
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
         else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
         $lienfin='</a>';
-        //print 'rrr'.$this->libelle.'-'.$withpicto;
+        //print 'rrr'.$this->label.'-'.$withpicto;
 
         if ($withpicto == 2)
         {
-            $libelle=$label;
-            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->transnoentities("Action".$this->type_code);
-            $libelleshort='';
+            $label=$label;
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $label=$langs->transnoentities("Action".$this->type_code);
+            $labelshort='';
         }
         else
         {
-            $libelle=(empty($this->libelle)?$label:$this->libelle.(($label && $label != $this->libelle)?' '.$label:''));
-            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
-            $libelleshort=dol_trunc($libelle,$maxlength);
+            $label=(empty($this->label)?$label:$this->label.(($label && $label != $this->label)?' '.$label:''));
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($label)) $label=($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+            $labelshort=dol_trunc($label,$maxlength);
         }
 
         if ($withpicto)
         {
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
             {
-                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+                $label.=(($this->type_code && $label!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$lienfin;
+            $result.=$lien.img_object($langs->trans("ShowAction").': '.$label, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$lienfin;
         }
         if ($withpicto==1) $result.=' ';
-        $result.=$lien.$libelleshort.$lienfin;
+        $result.=$lien.$labelshort.$lienfin;
         return $result;
     }
 
@@ -1078,7 +1078,7 @@ class ActionComm extends CommonObject
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
             $sql.= " u.firstname, u.lastname,";
             $sql.= " s.nom as socname,";
-            $sql.= " c.id as type_id, c.code as type_code, c.libelle";
+            $sql.= " c.id as type_id, c.code as type_code, c.label";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";	// Link to get author of event for export
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
@@ -1143,7 +1143,7 @@ class ActionComm extends CommonObject
                     $event['location']=$obj->location;
                     $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['punctual']=$obj->punctual;
-                    $event['category']=$obj->libelle;	// libelle type action
+                    $event['category']=$obj->label;	// label type action
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file

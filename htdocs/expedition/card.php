@@ -597,7 +597,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -1205,7 +1205,7 @@ else if ($id || $ref)
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else 
 			{
@@ -1365,7 +1365,7 @@ else if ($id || $ref)
 						if ($detail_entrepot->entrepot_id > 0) {
 							$entrepot = new Entrepot($db);
 							$entrepot->fetch($detail_entrepot->entrepot_id);
-							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
+							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->label,$detail_entrepot->qty_shipped).'<br/>';
 						}
 					}
 					print $form->textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
@@ -1593,7 +1593,7 @@ else if ($id || $ref)
 		if (is_array($contactarr) && count($contactarr)>0) {
 			foreach($contactarr as $contact) {
 
-				if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
+				if ($contact['label']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
 
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 

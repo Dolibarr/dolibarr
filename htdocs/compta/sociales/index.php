@@ -89,8 +89,8 @@ $chargesociale_static=new ChargeSociales($db);
 llxHeader();
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
-$sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
-$sql.= " c.libelle as type_lib,";
+$sql.= " cs.amount, cs.date_ech, cs.label, cs.paye, cs.periode,";
+$sql.= " c.label as type_lib,";
 $sql.= " SUM(pc.amount) as alreadypayed";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -100,7 +100,7 @@ $sql.= " AND cs.entity = ".$conf->entity;
 
 // Search criteria
 if ($search_ref)	$sql.=" AND cs.rowid=".$search_ref;
-if ($search_label) 	$sql.=" AND cs.libelle LIKE '%".$db->escape($search_label)."%'";
+if ($search_label) 	$sql.=" AND cs.label LIKE '%".$db->escape($search_label)."%'";
 if ($search_amount) $sql.=" AND cs.amount='".$db->escape(price2num(trim($search_amount)))."'";
 if ($year > 0)
 {
@@ -118,7 +118,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND cs.fk_type=".$typeid;
 }
-$sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.label, cs.paye, cs.periode, c.label";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -158,7 +158,7 @@ if ($resql)
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.label","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
@@ -204,7 +204,7 @@ if ($resql)
 			print '</td>';
 
 			// Label
-			print '<td>'.dol_trunc($obj->libelle,42).'</td>';
+			print '<td>'.dol_trunc($obj->label,42).'</td>';
 
 			// Type
 			print '<td>'.dol_trunc($obj->type_lib,16).'</td>';

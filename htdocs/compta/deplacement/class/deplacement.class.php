@@ -291,10 +291,10 @@ class Deplacement extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut
+	 * Retourne le label du statut
 	 *
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return  string   		   	Libelle
+	 * @return  string   		   	label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -302,11 +302,11 @@ class Deplacement extends CommonObject
 	}
 
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Renvoi le label d'un statut donne
 	 *
 	 *  @param	int		$statut     Id status
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string      		Libelle
+	 *  @return string      		label
 	 */
 	function LibStatut($statut,$mode=0)
 	{

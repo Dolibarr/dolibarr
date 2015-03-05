@@ -80,7 +80,7 @@ if (GETPOST("orphelins"))
     // Paiements lies a aucune facture (pour aide au diagnostic)
     $sql = "SELECT p.rowid, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
-    //$sql.= " c.libelle as paiement_type";
+    //$sql.= " c.label as paiement_type";
     $sql.= " c.code as paiement_code";
     $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p,";
     $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
@@ -93,7 +93,7 @@ else
 {
     $sql = "SELECT DISTINCT p.rowid, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
-    //$sql.= " c.libelle as paiement_type,";
+    //$sql.= " c.label as paiement_type,";
     $sql.= " c.code as paiement_code,";
     $sql.= " ba.rowid as bid, ba.label,";
     $sql.= " s.rowid as socid, s.nom as name";
@@ -152,7 +152,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$paramlist,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.label","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);

@@ -103,21 +103,21 @@ class modProduct extends DolibarrModules
 		$r=0;
 
 		$this->rights[$r][0] = 31; // id de la permission
-		$this->rights[$r][1] = 'Lire les produits'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les produits'; // label de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 		$r++;
 
 		$this->rights[$r][0] = 32; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les produits'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier les produits'; // label de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
 		$this->rights[$r][0] = 34; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les produits'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les produits'; // label de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';

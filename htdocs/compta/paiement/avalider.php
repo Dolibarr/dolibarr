@@ -56,7 +56,7 @@ if (! $sortfield) $sortfield="p.rowid";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
-$sql.=", c.libelle as paiement_type, p.num_paiement";
+$sql.=", c.label as paiement_type, p.num_paiement";
 $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
 if ($socid)
 {
@@ -86,8 +86,8 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.label","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"c.label","","",'align="right"',$sortfield,$sortorder);
     print "<td>&nbsp;</td>";
     print "</tr>\n";
 

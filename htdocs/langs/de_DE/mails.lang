@@ -88,7 +88,7 @@ AllRecipientSelectedForRemind=Alle Partner ausgewählt und wenn eine Email angeg
 NoRemindSent=Keine eMail-Erinnerung versandt
 ResultOfMassSending=Ergebnis der Massen-eMail-Erinnerung
 
-# Libelle des modules de liste de destinataires mailing
+# label des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakte aller Partner (Kunden, Leads, Lieferanten, ...)
 MailingModuleDescDolibarrUsers=Alle Systembenutzer mit E-Mail-Adresse
 MailingModuleDescFundationMembers=Alle Stiftungsmitglieder mit E-Mail-Adresse

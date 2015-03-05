@@ -77,12 +77,12 @@ $cancel != $langs->trans("Cancel") &&
 	// update de l'objet
 	if ( $_POST["forcelangprod"] == $current_lang )
 	{
-		$object->label			= $_POST["libelle"];
+		$object->label			= $_POST["label"];
 		$object->description	= dol_htmlcleanlastbr($_POST["desc"]);
 	}
 	else
 	{
-		$object->multilangs[$_POST["forcelangprod"]]["label"]			= $_POST["libelle"];
+		$object->multilangs[$_POST["forcelangprod"]]["label"]			= $_POST["label"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"]   	= dol_htmlcleanlastbr($_POST["desc"]);
 	}
 
@@ -110,12 +110,12 @@ $cancel != $langs->trans("Cancel") &&
 	{
 		if ( $key == $current_lang )
 		{
-			$object->label			= $_POST["libelle-".$key];
+			$object->label			= $_POST["label-".$key];
 			$object->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
 		}
 		else
 		{
-			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
+			$object->multilangs[$key]["label"]			= $_POST["label-".$key];
 			$object->multilangs[$key]["description"]	= dol_htmlcleanlastbr($_POST["desc-".$key]);
 		}
 	}
@@ -179,7 +179,7 @@ if ($action == 'edit')
 		{
 			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
 			print '<table class="border" width="100%">';
-			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
+			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="label-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 			$doleditor->Create();
@@ -259,7 +259,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Translation').'</td><td>';
     print $formadmin->select_language('','forcelangprod',0,$object->multilangs);
 	print '</td></tr>';
-	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
+	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="label" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();

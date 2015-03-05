@@ -34,7 +34,7 @@ create table llx_facture_fourn
   datec					datetime,                      -- date de creation de la facture
   datef					date,                          -- date de la facture
   tms					timestamp,                     -- date creation/modification
-  libelle				varchar(255),
+  label				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
   amount				double(24,8)     DEFAULT 0 NOT NULL,
   remise				double(24,8)     DEFAULT 0,

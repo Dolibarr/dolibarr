@@ -168,9 +168,9 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Retourne le libelle du type de facture
+	 *	Retourne le label du type de facture
 	 *
-	 *	@return     string        Libelle
+	 *	@return     string        label
 	 */
 	function getLibType()
 	{
@@ -197,14 +197,14 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *	Renvoi le label d'un statut donne
 	 *
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
 	 *	@param		double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *	@param		int		$type			Type facture
-	 *	@return     string        			Libelle du statut
+	 *	@return     string        			label du statut
 	 */
 	function LibStatut($paye,$status,$mode=0,$alreadypaid=-1,$type=0)
 	{
