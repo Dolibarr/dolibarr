@@ -62,8 +62,8 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     {
         if (intval($time) > 0)
         {
-            // Hours or minutes
-            if (preg_match("/([0-9]+)(hour|min)/",$key,$matches))
+            // Hours or minutes of duration
+            if (preg_match("/([0-9]+)duration(hour|min)/",$key,$matches))
             {
                 $id = $matches[1];
 				if ($id > 0)
@@ -86,15 +86,33 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 		    $task->progress = GETPOST($key . 'progress', 'int');
 	        $task->timespent_duration = $val;
 	        $task->timespent_fk_user = $user->id;
-	        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$key}month"],$_POST["{$key}day"],$_POST["{$key}year"]);
-	        $task->addTimeSpent($user);
+	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
+	        {
+	        	$task->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
+	        	$task->timespent_withhour = 1;
+	        }
+	        else
+			{
+	        	$task->timespent_date = dol_mktime(12,0,0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
+			}
+
+			$result=$task->addTimeSpent($user);
+			if ($result < 0)
+			{
+				setEventMessages($task->error, $task->errors, 'errors');
+				$error++;
+				break;
+			}
     	}
 
-    	setEventMessage($langs->trans("RecordSaved"));
+    	if (! $error)
+    	{
+	    	setEventMessage($langs->trans("RecordSaved"));
 
-        // Redirect to avoid submit twice on back
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid.($mode?'&mode='.$mode:''));
-        exit;
+    	    // Redirect to avoid submit twice on back
+        	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:''));
+        	exit;
+    	}
     }
     else
     {
@@ -116,8 +134,9 @@ $taskstatic = new Task($db);
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
 
-//$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
+$usertoprocess = $user;
+
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
 if ($id)
 {
@@ -127,8 +146,8 @@ if ($id)
 
 $onlyopened=1;	// or -1
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
-$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess,0,($project->id?$project->id:$projectsListId),0);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($project->id?$project->id:$projectsListId),0);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -184,7 +203,10 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-print '<td colspan="2" align="right">'.$langs->trans("NewTimeSpent").'</td>';
+if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
+else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
+print '<td align="center">'.$langs->trans("DateAndHour").'</td>';
+print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to

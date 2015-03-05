@@ -19,6 +19,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
+ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
+
+
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order

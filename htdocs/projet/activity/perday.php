@@ -83,8 +83,10 @@ $taskstatic = new Task($db);
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
 
+$usertoprocess=$user;
+
 //$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
 
 if ($id)
 {
@@ -94,8 +96,8 @@ if ($id)
 
 $onlyopened=1;	// or -1
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0,'',$onlyopened);    // We want to see all task of opened project i am allowed to see, not only mine. Later only mine will be editable later.
-$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($user,0,($project->id?$project->id:$projectsListId),0);
-$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$project->id:$projectsListId),0);
+$projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess,0,($project->id?$project->id:$projectsListId),0);
+$tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($project->id?$project->id:$projectsListId),0);
 //var_dump($tasksarray);
 //var_dump($projectsrole);
 //var_dump($taskrole);
@@ -184,7 +186,9 @@ print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
-//print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
+else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
 
 $startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
 
@@ -204,7 +208,7 @@ if (count($tasksarray) > 0)
 	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 
 	print '<tr class="liste_total">
-                <td class="liste_total" colspan="5" align="right">'.$langs->trans("Total").'</td>
+                <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>
                 <td class="liste_total" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
                 <td class="liste_total" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
                 <td class="liste_total" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>

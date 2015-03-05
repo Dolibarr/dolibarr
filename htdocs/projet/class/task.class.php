@@ -61,6 +61,7 @@ class Task extends CommonObject
     var $timespent_old_duration;
     var $timespent_date;
     var $timespent_datehour;		// More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+    var $timespent_withhour;		// 1 = we entered also start hours for timesheet line
     var $timespent_fk_user;
     var $timespent_note;
 
@@ -780,6 +781,7 @@ class Task extends CommonObject
         $sql.= "fk_task";
         $sql.= ", task_date";
         $sql.= ", task_datehour";
+        $sql.= ", task_date_withhour";
         $sql.= ", task_duration";
         $sql.= ", fk_user";
         $sql.= ", note";
@@ -787,6 +789,7 @@ class Task extends CommonObject
         $sql.= $this->id;
         $sql.= ", '".$this->db->idate($this->timespent_date)."'";
         $sql.= ", '".$this->db->idate($this->timespent_datehour)."'";
+        $sql.= ", ".(empty($this->timespent_withhour)?0:1);
         $sql.= ", ".$this->timespent_duration;
         $sql.= ", ".$this->timespent_fk_user;
         $sql.= ", ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
@@ -816,7 +819,6 @@ class Task extends CommonObject
         {
         	// Recalculate amount of time spent for task and update denormalized field
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            //$sql.= " SET duration_effective = (".$this->db->ifsql('duration_effective IS NULL', 0, 'duration_effective').") + ".price2num($this->timespent_duration);
             $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
 			if (isset($this->progress)) $sql.= ", progress = " . $this->progress;	// Do not overwrite value if not provided
             $sql.= " WHERE rowid = ".$this->id;
@@ -906,6 +908,8 @@ class Task extends CommonObject
         $sql.= " t.rowid,";
         $sql.= " t.fk_task,";
         $sql.= " t.task_date,";
+        $sql.= " t.task_datehour,";
+        $sql.= " t.task_date_withhour,";
         $sql.= " t.task_duration,";
         $sql.= " t.fk_user,";
         $sql.= " t.note";
@@ -922,7 +926,9 @@ class Task extends CommonObject
 
                 $this->timespent_id			= $obj->rowid;
                 $this->id					= $obj->fk_task;
-                $this->timespent_date		= $obj->task_date;
+                $this->timespent_date		= $this->db->jdate($obj->task_date);
+                $this->timespent_datehour   = $this->db->jdate($obj->task_datehour);
+                $this->timespent_withhour   = $obj->task_date_withhour;
                 $this->timespent_duration	= $obj->task_duration;
                 $this->timespent_fk_user	= $obj->fk_user;
                 $this->timespent_note		= $obj->note;
@@ -961,6 +967,7 @@ class Task extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
         $sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
         $sql.= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
+        $sql.= " task_date_withhour = ".(empty($this->timespent_withhour)?0:1);
         $sql.= " task_duration = ".$this->timespent_duration.",";
         $sql.= " fk_user = ".$this->timespent_fk_user.",";
         $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
@@ -995,7 +1002,7 @@ class Task extends CommonObject
             $newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective + '".$newDuration."'";
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);

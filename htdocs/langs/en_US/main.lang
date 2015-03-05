@@ -220,6 +220,7 @@ Cards=Cards
 Card=Card
 Now=Now
 Date=Date
+DateAndHour=Date and hour
 DateStart=Date start
 DateEnd=Date end
 DateCreation=Creation date
