@@ -29,22 +29,21 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 /**
  *	Class to manage Dolibarr database access for a Sqlite database
  */
-class DoliDBSqlite extends DoliDB
+class DoliDBSqlite3 extends DoliDB
 {
     //! Database type
-    public $type='sqlite';
+    public $type='sqlite3';
     //! Database label
-    const LABEL='PDO Sqlite';
+    const LABEL='Sqlite3';
     //! Version min database
     const VERSIONMIN='3.0.0';
 	//! Resultset of last query
 	private $_results;
 
-	/**
-	 * Indique que les fonctions personnalisées sont définies
-	 * @var boolean
-	 */
-	private static $customFunctionsDefined = false;
+	const WEEK_MONDAY_FIRST=1;
+	const WEEK_YEAR = 2;
+	const WEEK_FIRST_WEEKDAY=4;
+
 
     /**
 	 *	Constructor.
@@ -78,7 +77,7 @@ class DoliDBSqlite extends DoliDB
             $this->connected = 0;
             $this->ok = 0;
             $this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
-            dol_syslog(get_class($this)."::DoliDBSqlite : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
+            dol_syslog(get_class($this)."::DoliDBSqlite3 : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
             return $this->ok;
         }*/
 
@@ -87,7 +86,7 @@ class DoliDBSqlite extends DoliDB
             $this->connected = 0;
             $this->ok = 0;
             $this->error=$langs->trans("ErrorWrongHostParameter");
-            dol_syslog(get_class($this)."::DoliDBSqlite : Erreur Connect, wrong host parameters",LOG_ERR);
+            dol_syslog(get_class($this)."::DoliDBSqlite3 : Erreur Connect, wrong host parameters",LOG_ERR);
             return $this->ok;
         }*/
 
@@ -102,7 +101,15 @@ class DoliDBSqlite extends DoliDB
             $this->database_selected = 1;
             $this->database_name = $name;
 
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->addCustomFunction('IF');
+			$this->addCustomFunction('MONTH');
+			$this->addCustomFunction('CURTIME');
+			$this->addCustomFunction('CURDATE');
+			$this->addCustomFunction('WEEK', 1);
+			$this->addCustomFunction('WEEK', 2);
+			$this->addCustomFunction('WEEKDAY');
+			$this->addCustomFunction('date_format');
+            //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         else
         {
@@ -112,7 +119,7 @@ class DoliDBSqlite extends DoliDB
             $this->database_selected = 0;
             $this->database_name = '';
             //$this->error=sqlite_connect_error();
-            dol_syslog(get_class($this)."::DoliDBSqlite : Erreur Connect ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error,LOG_ERR);
         }
 
         return $this->ok;
@@ -322,14 +329,16 @@ class DoliDBSqlite extends DoliDB
         if (empty($dir)) $dir=DOL_DATA_ROOT;
         // With sqlite, port must be in connect parameters
         //if (! $newport) $newport=3306;
+		$database_name = $dir.'/database_'.$name.'.sdb';
         try {
             /*** connect to SQLite database ***/
-            $this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            //$this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
+			$this->db = new SQLite3($database_name);
+            //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
-        catch(PDOException $e)
+        catch(Exception $e)
         {
-            $this->error='PDO SQLITE '.$e->getMessage().' current dir='.$dir.'/database_'.$name.'.sdb';
+            $this->error=  self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
             return '';
         }
 
@@ -345,9 +354,7 @@ class DoliDBSqlite extends DoliDB
      */
     function getVersion()
     {
-        $resql=$this->query('SELECT sqlite_version() as sqliteversion');
-        $row=$this->fetch_row($resql);
-        return $row[0];
+		return $this->db->version()['versionString'];
     }
 
     /**
@@ -376,6 +383,7 @@ class DoliDBSqlite extends DoliDB
         {
 	        if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
             $this->connected=0;
+			$this->db->close();
             $this->db=null;    // Clean this->db
             return true;
         }
@@ -411,13 +419,10 @@ class DoliDBSqlite extends DoliDB
 			$constraintname=trim($reg[2]);
 			$tablename=trim($reg[1]);
 
-			$res = $this->db->query("SELECT sql FROM sqlite_master WHERE name='" . $tablename . "'");
-			$descTable = $res->fetchColumn();
-			$res->closeCursor();
+			$descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='" . $tablename . "'");
 
 			// 1- Renommer la table avec un nom temporaire
-			$res = $this->query('ALTER TABLE ' . $tablename . ' RENAME TO tmp_' . $tablename);
-			$res->closeCursor();
+			$this->query('ALTER TABLE ' . $tablename . ' RENAME TO tmp_' . $tablename);
 
 			// 2- Recréer la table avec la contrainte ajoutée
 
@@ -429,17 +434,13 @@ class DoliDBSqlite extends DoliDB
 			$descTable .= ')';
 
 			// Création proprement dite de la table
-			$res = $this->query($descTable);
-			$res->closeCursor();
+			$this->query($descTable);
 
 			// 3- Transférer les données
-			$res = $this->query('INSERT INTO ' . $tablename . ' SELECT * FROM tmp_' . $tablename);
-			$res->closeCursor();
-
+			$this->query('INSERT INTO ' . $tablename . ' SELECT * FROM tmp_' . $tablename);
 
 			// 4- Supprimer la table temporaire
-			$res = $this->query('DROP TABLE tmp_' . $tablename);
-			$res->closeCursor();
+			$this->query('DROP TABLE tmp_' . $tablename);
 
 			// dummy statement
 			$query="SELECT 0";
@@ -455,10 +456,13 @@ class DoliDBSqlite extends DoliDB
         try {
             //$ret = $this->db->exec($query);
             $ret = $this->db->query($query);        // $ret is a PDO object
+			if ($ret) {
+				$ret->queryString = $query;
+			}
         }
-        catch(PDOException $e)
+        catch(Exception $e)
         {
-            $this->error=$e->getMessage();
+            $this->error=$this->db->lastErrorMsg();
         }
 
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
@@ -497,7 +501,11 @@ class DoliDBSqlite extends DoliDB
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
-        return $resultset->fetch(PDO::FETCH_OBJ);
+        //return $resultset->fetch(PDO::FETCH_OBJ);
+		$ret = $resultset->fetchArray(SQLITE3_ASSOC);
+		if ($ret) {
+			return (object)$ret;
+		}
     }
 
 
@@ -511,7 +519,11 @@ class DoliDBSqlite extends DoliDB
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
-        return $resultset->fetch(PDO::FETCH_ASSOC);
+        //return $resultset->fetch(PDO::FETCH_ASSOC);
+		$ret = $resultset->fetchArray(SQLITE3_ASSOC);
+		if ($ret) {
+			return (array)$ret;
+		}
     }
 
     /**
@@ -526,7 +538,7 @@ class DoliDBSqlite extends DoliDB
         if (! is_bool($resultset))
         {
             if (! is_object($resultset)) { $resultset=$this->_results; }
-            return $resultset->fetch(PDO::FETCH_NUM);
+            return $resultset->fetchArray(SQLITE3_NUM);
         }
         else
         {
@@ -547,10 +559,9 @@ class DoliDBSqlite extends DoliDB
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
 		if (preg_match("/^SELECT/i", $resultset->queryString)) {
-			$res = $this->db->query("SELECT count(*) FROM (" . $resultset->queryString . ") q");
-			return $res->fetchColumn();
+			return $this->db->querySingle("SELECT count(*) FROM (" . $resultset->queryString . ") q");
 		}
-		return $resultset->rowCount();
+		return 0;
     }
 
     /**
@@ -564,9 +575,12 @@ class DoliDBSqlite extends DoliDB
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
+		if (preg_match("/^SELECT/i", $resultset->queryString)) {
+			return $this->num_rows($resultset);
+		}
         // mysql necessite un link de base pour cette fonction contrairement
         // a pqsql qui prend un resultset
-        return $resultset->rowCount();
+        return $this->db->changes();
     }
 
 
@@ -581,7 +595,7 @@ class DoliDBSqlite extends DoliDB
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
         // Si resultset en est un, on libere la memoire
-        if (is_object($resultset)) $resultset->closeCursor();
+        if ($resultset && is_object($resultset)) $resultset->finalize();
     }
 
 	/**
@@ -592,12 +606,7 @@ class DoliDBSqlite extends DoliDB
 	 */
     function escape($stringtoencode)
     {
-		$ret = $this->db->quote($stringtoencode);
-		$l = strlen($ret);
-		if ($l >= 2) {
-			return substr($ret, 1, $l -2);
-		}
-		return '';
+		return Sqlite3::escapeString($stringtoencode);
     }
 
     /**
@@ -645,8 +654,8 @@ class DoliDBSqlite extends DoliDB
             {
                 return $errorcode_map[$this->db->errorCode()];
             }*/
-            $errno=$this->db->errorCode();
-			if ($errno=='HY000')
+            $errno=$this->db->lastErrorCode();
+			if ($errno=='HY000' || $errno == 0)
 			{
                 if (preg_match('/table.*already exists/i',$this->error))     return 'DB_ERROR_TABLE_ALREADY_EXISTS';
                 elseif (preg_match('/index.*already exists/i',$this->error)) return 'DB_ERROR_KEY_NAME_ALREADY_EXISTS';
@@ -656,6 +665,9 @@ class DoliDBSqlite extends DoliDB
 			{
                 if (preg_match('/column.* not unique/i',$this->error))       return 'DB_ERROR_RECORD_ALREADY_EXISTS';
                 elseif (preg_match('/PRIMARY KEY must be unique/i',$this->error)) return 'DB_ERROR_RECORD_ALREADY_EXISTS';
+			}
+			if ($errno > 1) {
+				// TODO Voir la liste des messages d'erreur
 			}
 
             return ($errno?'DB_ERROR_'.$errno:'0');
@@ -687,7 +699,7 @@ class DoliDBSqlite extends DoliDB
      */
     function last_insert_id($tab,$fieldid='rowid')
     {
-        return $this->db->lastInsertId();
+        return $this->db->lastInsertRowId();
     }
 
     /**
@@ -1171,15 +1183,39 @@ class DoliDBSqlite extends DoliDB
     function getServerParametersValues($filter='')
     {
         $result=array();
+		static $pragmas;
+		if (! isset($pragmas)) {
+			// Définition de la liste des pragmas utilisés qui ne retournent qu'une seule valeur
+			// indépendante de la base de données.
+			// cf. http://www.sqlite.org/pragma.html
+			$pragmas = array(
+				'application_id', 'auto_vacuum', 'automatic_index', 'busy_timeout', 'cache_size',
+				'cache_spill', 'case_sensitive_like', 'checkpoint_fullsync', 'collation_list',
+				'compile_options', 'data_version',	/*'database_list',*/
+				'defer_foreign_keys', 'encoding', 'foreign_key_check', 'freelist_count',
+				'full_column_names', 'fullsync', 'ingore_check_constraints', 'integrity_check',
+				'journal_mode', 'journal_size_limit', 'legacy_file_format', 'locking_mode',
+				'max_page_count', 'page_count', 'page_size', 'parser_trace',
+				'query_only', 'quick_check', 'read_uncommitted', 'recursive_triggers',
+				'reverse_unordered_selects', 'schema_version', 'user_version',
+				'secure_delete', 'short_column_names', 'shrink_memory', 'soft_heap_limit',
+				'synchronous', 'temp_store', /*'temp_store_directory',*/ 'threads',
+				'vdbe_addoptrace', 'vdbe_debug', 'vdbe_listing', 'vdbe_trace',
+				'wal_autocheckpoint',
+			);
+		}
 
-        $sql='SHOW VARIABLES';
-        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
-        $resql=$this->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
-        }
-
+		// TODO prendre en compte le filtre
+		foreach($pragmas as $var) {
+			$sql = "PRAGMA $var";
+			$resql=$this->query($sql);
+			if ($resql)
+			{
+				$obj = $this->fetch_row($resql);
+				//dol_syslog(get_class($this)."::select_db getServerParametersValues $var=". print_r($obj, true), LOG_DEBUG);
+				$result[$var] = $obj[0];
+			}
+		}
         return $result;
     }
 
@@ -1192,7 +1228,7 @@ class DoliDBSqlite extends DoliDB
     function getServerStatusValues($filter='')
     {
         $result=array();
-
+		/*
         $sql='SHOW STATUS';
         if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
@@ -1200,9 +1236,243 @@ class DoliDBSqlite extends DoliDB
         {
             while ($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
+		 */
 
         return $result;
     }
+
+	/**
+	 * Permet le chargement d'une fonction personnalisee dans le moteur de base de donnees.
+	 * Note: le nom de la fonction personnalisee est prefixee par 'db_'. La fonction doit être
+	 * statique et publique. Le nombre de parametres est determine automatiquement.
+	 * @param string $name Le nom de la fonction a definir dans Sqlite
+	 */
+	private function addCustomFunction($name, $arg_count = -1) {
+		if ($this->db) {
+			$localname = __CLASS__ . '::' . 'db_' . $name;
+			$reflectClass = new ReflectionClass(__CLASS__);
+			$reflectFunction = $reflectClass->getMethod('db_' . $name);
+			if ($arg_count < 0) {
+				$arg_count = $reflectFunction->getNumberOfParameters();
+			}
+			if (!$this->db->createFunction($name, $localname , $arg_count)) {
+				$this->error = "unable to create custom function '$name'";
+			}
+		}
+	}
+
+	/**
+	 * Cette fonction est l'equivalent de la fonction MONTH de MySql.
+	 * @param string $date
+	 * @return integer
+	 */
+	public static function db_MONTH($date) {
+		return date('n', strtotime($date));
+	}
+
+	/**
+	 *  calcule du numéro de semaine
+	 *
+	 *  @param string date
+	 *  @param int mode
+	 */
+	public static function db_WEEK($date, $mode = 0) {
+		$arr = date_parse($date);
+		$calc_year = 0;
+		return self::calc_week($arr['year'], $arr['month'], $arr['day'], self::week_mode($mode), $calc_year);
+	}
+
+	public static function db_CURDATE() {
+		return date('Y-m-d');
+	}
+
+	public static function db_CURTIME() {
+		return date('H:i:s');
+	}
+
+	public static function db_WEEKDAY($date) {
+		$arr = date_parse($date);
+		return self::calc_weekday(self::calc_daynr($arr['year'], $arr['month'], $arr['day']), 0);
+
+	}
+
+	/**
+	 * Cette fonction est l'equivelent de la fonction date_format de MySQL.
+	 * @staticvar string $mysql_replacement	Les symboles formatage a remplacer
+	 * @param string $date la date dans un format ISO
+	 * @param string $format la chaine de formatage
+	 * @return string La date formatee.
+	 */
+	public static function db_date_format($date, $format) {
+		static $mysql_replacement;
+		if (! isset($mysql_replacement)) {
+			$mysql_replacement = array(
+				'%' => '%',
+				'a' => 'D',
+				'b' => 'M',
+				'c' => 'n',
+				'D' => 'jS',
+				'd' => 'd',
+				'e' => 'j',
+				'f' => 'u',
+				'H' => 'H',
+				'h' => 'h',
+				'I' => 'h',
+				'i' => 'i',
+				'k' => 'H',
+				'l' => 'g',
+				'M' => 'F',
+				'm' => 'm',
+				'p' => 'A',
+				'r' => 'h:i:s A',
+				'S' => 's',
+				's' => 's',
+				'T' => 'H:i:s',
+				'W' => 'l',
+				'w' => 'w',
+				'Y' => 'Y',
+				'y' => 'y',
+			);
+		}
+
+		$fmt = '';
+		$lg = strlen($format);
+		$state = 0;
+		$timestamp = strtotime($date);
+		$yday = date('z', $timestamp);
+		$month = (integer)date("n", $timestamp);
+		$year = (integer)date("Y", $timestamp);
+		$day = (integer)date("d", $timestamp);
+		for($idx = 0; $idx < $lg; ++$idx) {
+			$char = $format[$idx];
+			if ($state == 0) {
+				if ($char == '%') {
+					$state = 1;
+				} else {
+					$fmt .= $char;
+				}
+			}
+			elseif ($state == 1) {
+				if (array_key_exists($char, $mysql_replacement)) {
+					$fmt .= $mysql_replacement[$char];
+				} else {
+					$calc_year = 0;
+					switch ($char) {
+						case 'j':	// day of the year 001
+							$char = sprintf("%03d", $yday+1);
+							break;
+						case 'U': // mode 0: semaine 0 = premiere semaine complète qui commence un dimanche
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 4, $calc_year));
+							break;
+						case 'u': // mode 1: semaine 0 = première semaine de 4 jours. Début le dimanche
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 1, $calc_year));
+							break;
+						case 'V': // mode 2: semaine 1 = premiere semaine complète qui commence un dimanche
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 6, $calc_year));
+							break;
+						case 'v':  // mode 3: semaine 1 = premiere semaine de 4 jours. Début le lundi
+							$char = sprintf("%02d", self::calc_week($year, $month, $day, 3, $calc_year));
+							break;
+						case 'X':
+							self::calc_week($year, $month, $day, 6, $calc_year);
+							$char = sprintf("%04d", $calc_year);
+							break;
+						case 'x':
+							self::calc_week($year, $month, $day, 3, $calc_year);
+							$char = sprintf("%04d", $calc_year);
+							break;
+					}
+					$fmt .= $char;
+				}
+				$state = 0;
+			}
+		}
+		return date($fmt, strtotime($date));
+	}
+
+	/**
+	 * Equivalent de la fonction MySQL IF
+	 * @param boolean $test Le resultat du test
+	 * @param mixed $true_part Partie a retourner si vrai
+	 * @param mixed $false_part Partie a retourner si faux
+	 * @return mixed Partie selectionnee en fonction du test
+	 */
+	public static function db_IF($test, $true_part, $false_part) {
+		return ( $test ) ? $true_part : $false_part;
+	}
+
+	// Adapté de mytime.c des sources de mariadb
+	// fonction calc_daynr
+	private static function calc_daynr($year, $month, $day) {
+		$y = $year;
+		if ($y == 0 && $month == 0) return 0;
+		$num = (365* $y + 31 * ($month - 1) + $day);
+		if ($month <= 2) {
+			$y--; }
+		else {
+			$num -= floor(($month * 4 + 23) / 10);
+		}
+		$temp = floor(($y / 100 + 1) * 3 / 4);
+		return $num + floor($y / 4) - $temp;
+	}
+
+	private static function calc_weekday($daynr, $sunday_first_day_of_week) {
+	  $ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
+	  return $ret;
+	}
+
+	private static function calc_days_in_year($year)
+	{
+	  return (($year & 3) == 0 && ($year%100 || ($year%400 == 0 && $year)) ? 366 : 365);
+	}
+
+	private static function week_mode($mode) {
+		$week_format= ($mode & 7);
+		if (!($week_format & self::WEEK_MONDAY_FIRST)) {
+			$week_format^= self::WEEK_FIRST_WEEKDAY;
+		}
+		return $week_format;
+	}
+
+
+	private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year) {
+		$daynr=self::calc_daynr($year,$month,$day);
+		$first_daynr=self::calc_daynr($year,1,1);
+		$monday_first= ($week_behaviour & self::WEEK_MONDAY_FIRST) ? 1 : 0;
+		$week_year= ($week_behaviour & self::WEEK_YEAR) ? 1 : 0;
+		$first_weekday= ($week_behaviour & self::WEEK_FIRST_WEEKDAY) ? 1 : 0;
+
+		$weekday=self::calc_weekday($first_daynr, !$monday_first);
+		$calc_year=$year;
+
+		if ($month == 1 && $day <= 7-$weekday)
+		{
+			if (!$week_year && (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)))
+				return 0;
+			$week_year= 1;
+			$calc_year--;
+			$first_daynr-= ($days=self::calc_days_in_year($calc_year));
+			$weekday= ($weekday + 53*7- $days) % 7;
+	  }
+
+	  if (($first_weekday && $weekday != 0) || (!$first_weekday && $weekday >= 4)) {
+		$days= $daynr - ($first_daynr+ (7-$weekday));
+	  }
+	  else {
+		$days= $daynr - ($first_daynr - $weekday);
+	  }
+
+	  if ($week_year && $days >= 52*7)
+	  {
+		$weekday= ($weekday + self::calc_days_in_year($calc_year)) % 7;
+		if ((!$first_weekday && $weekday < 4) || ($first_weekday && $weekday == 0))
+		{
+		  $calc_year++;
+		  return 1;
+		}
+	  }
+	  return floor($days/7+1);
+	}
 
 }
 
