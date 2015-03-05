@@ -180,7 +180,7 @@ else
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
-		print '<td>Rows</td>';
+		print '<td>'.$langs->trans("NbOfRecord").'</td>';
 		print "</tr>\n";
 
 		$sql = "SELECT name, type FROM sqlite_master where type='table' and name not like 'sqlite%' ORDER BY name";

@@ -39,166 +39,166 @@ abstract class DolibarrModules
      */
     public $db;
 
-	/**
-	 * @var string Relative path to module style sheet
-	 * @deprecated
-	 */
-	public $style_sheet = '';
+    /**
+     * @var string Relative path to module style sheet
+     * @deprecated
+     */
+    public $style_sheet = '';
 
-	/**
-	 * @var array Paths to create when module is activated
-	 */
-	public $dirs = array();
+    /**
+     * @var array Paths to create when module is activated
+     */
+    public $dirs = array();
 
-	/**
-	 * @var array Module boxes
-	 */
-	public $boxes = array();
+    /**
+     * @var array Module boxes
+     */
+    public $boxes = array();
 
-	/**
-	 * @var array Module constants
-	 */
-	public $const = array();
+    /**
+     * @var array Module constants
+     */
+    public $const = array();
 
-	/**
-	 * @var array Module access rights
-	 */
-	public $rights;
+    /**
+     * @var array Module access rights
+     */
+    public $rights;
 
-	/**
-	 * @var string Module access rights family
-	 */
-	public $rights_class;
+    /**
+     * @var string Module access rights family
+     */
+    public $rights_class;
 
-	/**
-	 * @var array Module menu entries
-	 */
-	public $menu = array();
+    /**
+     * @var array Module menu entries
+     */
+    public $menu = array();
 
-	/**
-	 * @var array Module parts
-	 *  array(
-	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
-	 *      'triggers' => 0,
-	 *      // Set this to 1 if module has its own login method directory (/mymodule/core/login)
+    /**
+     * @var array Module parts
+     *  array(
+     *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
+     *      'triggers' => 0,
+     *      // Set this to 1 if module has its own login method directory (/mymodule/core/login)
 	 *  	'login' => 0,
-	 *      // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
+     *      // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
 	 *	    'substitutions' => 0,
-	 *      // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
+     *      // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
 	 *	    'menus' => 0,
-	 *      // Set this to 1 if module has its own theme directory (/mymodule/theme)
+     *      // Set this to 1 if module has its own theme directory (/mymodule/theme)
 	 *	    'theme' => 0,
-	 *      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
-	 *      'tpl' => 0,
-	 *      // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
+     *      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
+     *      'tpl' => 0,
+     *      // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
 	 *	    'barcode' => 0,
-	 *      // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
+     *      // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
 	 *	    'models' => 0,
-	 *      // Set this to relative path of css file if module has its own css file
+     *      // Set this to relative path of css file if module has its own css file
 	 *	    'css' => '/mymodule/css/mymodule.css.php',
-	 *      // Set this to relative path of js file if module must load a js on all pages
+     *      // Set this to relative path of js file if module must load a js on all pages
 	 *	    'js' => '/mymodule/js/mymodule.js',
-	 *      // Set here all hooks context managed by module
+     *      // Set here all hooks context managed by module
 	 *	    'hooks' => array('hookcontext1','hookcontext2'),
-	 *      // Set here all workflow context managed by module
+     *      // Set here all workflow context managed by module
 	 *	    'workflow' => array(
-	 *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
-	 *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
-	 *              'picto'=>'yourpicto@mymodule'
-	 *          )
-	 *      )
-	 *  )
-	 */
-	public $module_parts = array();
+     *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
+     *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
+     *              'picto'=>'yourpicto@mymodule'
+     *          )
+     *      )
+     *  )
+     */
+    public $module_parts = array();
 
-	/**
-	 * @var string Module documents ?
-	 * @deprecated Seems unused anywhere
-	 */
-	public $docs;
+    /**
+     * @var string Module documents ?
+     * @deprecated Seems unused anywhere
+     */
+    public $docs;
 
-	/**
-	 * @var string ?
-	 * @deprecated Seems unused anywhere
-	 */
-	public $dbversion = "-";
+    /**
+     * @var string ?
+     * @deprecated Seems unused anywhere
+     */
+    public $dbversion = "-";
 
-	/**
-	 * @var string Error message
-	 */
-	public $error;
+    /**
+     * @var string Error message
+     */
+    public $error;
 
-	/**
-	 * @var int Module unique ID
-	 */
-	public $numero;
+    /**
+     * @var int Module unique ID
+     */
+    public $numero;
 
-	/**
-	 * @var string Module name
-	 */
-	public $name;
+    /**
+     * @var string Module name
+     */
+    public $name;
 
-	/**
-	 * @var string Module version
-	 */
-	public $version;
+    /**
+     * @var string Module version
+     */
+    public $version;
 
-	/**
-	 * @var string Module description
-	 */
-	public $description;
+    /**
+     * @var string Module description
+     */
+    public $description;
 
-	/**
-	 * @var string[] Module language files
-	 */
-	public $langfiles;
+    /**
+     * @var string[] Module language files
+     */
+    public $langfiles;
 
-	/**
-	 * @var string Module export code
-	 */
-	public $export_code;
+    /**
+     * @var string Module export code
+     */
+    public $export_code;
 
-	/**
-	 * @var string Module export label
-	 */
-	public $export_label;
+    /**
+     * @var string Module export label
+     */
+    public $export_label;
 
-	/**
-	 * @var string Module import code
-	 */
-	public $import_code;
+    /**
+     * @var string Module import code
+     */
+    public $import_code;
 
-	/**
-	 * @var string Module import label
-	 */
-	public $import_label;
+    /**
+     * @var string Module import label
+     */
+    public $import_label;
 
-	/**
-	 * @var string Module constant name
-	 */
-	public $const_name;
+    /**
+     * @var string Module constant name
+     */
+    public $const_name;
 
-	/**
-	 * @var bool Module can't be disabled
-	 */
-	public $always_enabled;
+    /**
+     * @var bool Module can't be disabled
+     */
+    public $always_enabled;
 
-	/**
-	 * @var bool Module is enabled globally (Multicompany support)
-	 */
-	public $core_enabled;
+    /**
+     * @var bool Module is enabled globally (Multicompany support)
+     */
+    public $core_enabled;
 
-	/**
-	 * Enables a module.
-	 * Inserts all informations into database
-	 *
+    /**
+     * Enables a module.
+     * Inserts all informations into database
+     *
 	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
-	 * @param   string      $options    String with options when disabling module:
-	 *                                    'noboxes' = Do not insert boxes
-	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
-	 *
-	 * @return  int                         1 if OK, 0 if KO
-	 */
+     * @param   string      $options    String with options when disabling module:
+     *                                    'noboxes' = Do not insert boxes
+     *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+     *
+     * @return  int                         1 if OK, 0 if KO
+     */
     function _init($array_sql, $options='')
     {
         global $conf;
@@ -232,12 +232,12 @@ abstract class DolibarrModules
 
         // Execute addons requests
         $num=count($array_sql);
-    	for ($i = 0; $i < $num; $i++)
+        for ($i = 0; $i < $num; $i++)
         {
             if (! $err)
             {
                 $val=$array_sql[$i];
-	            $sql=$val;
+                $sql=$val;
                 $ignoreerror=0;
                 if (is_array($val))
                 {
@@ -367,12 +367,12 @@ abstract class DolibarrModules
             // If module name translation using it's unique id does not exists, we take use its name to find translation
             if (is_array($this->langfiles))
             {
-            	foreach($this->langfiles as $val)
-            	{
-            		if ($val) $langs->load($val);
-            	}
+                foreach($this->langfiles as $val)
+                {
+                    if ($val) $langs->load($val);
+                }
             }
-       		return $langs->trans($this->name);
+            return $langs->trans($this->name);
         }
     }
 
@@ -389,20 +389,20 @@ abstract class DolibarrModules
 
         if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
         {
-	        // If module description translation exists
+            // If module description translation exists
             return $langs->trans("Module".$this->numero."Desc");
         }
         else
-		{
+        {
             // If module description translation using it's unique id does not exists, we take use its name to find translation
             if (is_array($this->langfiles))
             {
-            	foreach($this->langfiles as $val)
-            	{
-            		if ($val) $langs->load($val);
-            	}
+                foreach($this->langfiles as $val)
+                {
+                    if ($val) $langs->load($val);
+                }
             }
-       		return $langs->trans($this->description);
+            return $langs->trans($this->description);
         }
     }
 
@@ -429,7 +429,7 @@ abstract class DolibarrModules
         else $ret=$langs->trans("VersionUnknown");
 
         if (preg_match('/_deprecated/',$this->version)) $ret.=' ('.$langs->trans("Deprecated").')';
-		return $ret;
+        return $ret;
     }
 
 
@@ -582,9 +582,9 @@ abstract class DolibarrModules
         global $conf;
 
         $error=0;
-		$dirfound=0;
+        $dirfound=0;
 
-		if (empty($reldir)) return 1;
+        if (empty($reldir)) return 1;
 
         include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
@@ -599,10 +599,10 @@ abstract class DolibarrModules
                 $handle=@opendir($dir);         // Dir may not exists
                 if (is_resource($handle))
                 {
-                	$dirfound++;
+                    $dirfound++;
 
-	                // Run llx_mytable.sql files
-                	while (($file = readdir($handle))!==false)
+                    // Run llx_mytable.sql files
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -613,8 +613,8 @@ abstract class DolibarrModules
 
                     rewinddir($handle);
 
-	                // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
-                	while (($file = readdir($handle))!==false)
+                    // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -626,7 +626,7 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
-                	while (($file = readdir($handle))!==false)
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -638,7 +638,7 @@ abstract class DolibarrModules
                     rewinddir($handle);
 
                     // Run update_xxx.sql files
-                	while (($file = readdir($handle))!==false)
+                    while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
@@ -671,9 +671,9 @@ abstract class DolibarrModules
      */
     function insert_boxes($option='')
     {
-		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 
-    	global $conf;
+        global $conf;
 
         $err=0;
 
@@ -681,8 +681,8 @@ abstract class DolibarrModules
         {
             $pos_name = InfoBox::getListOfPagesForBoxes();
 
-			foreach ($this->boxes as $key => $value)
-			{
+            foreach ($this->boxes as $key => $value)
+            {
                 $file  = isset($this->boxes[$key]['file'])?$this->boxes[$key]['file']:'';
                 $note  = isset($this->boxes[$key]['note'])?$this->boxes[$key]['note']:'';
                 $enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton'])?$this->boxes[$key]['enabledbydefaulton']:'Home';
@@ -724,15 +724,15 @@ abstract class DolibarrModules
 
                             foreach ($pos_name as $key2 => $val2)
                             {
-                            	//print 'key2='.$key2.'-val2='.$val2."<br>\n";
+                                //print 'key2='.$key2.'-val2='.$val2."<br>\n";
                             	if ($enabledbydefaulton && $val2 != $enabledbydefaulton) continue;		// Not enabled by default onto this page.
 
-	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
-    	                        $sql.= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
+                                $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
+                                $sql.= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
 
-    	                        dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
-                            	$resql=$this->db->query($sql);
-                            	if (! $resql) $err++;
+                                dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
+                                $resql=$this->db->query($sql);
+                                if (! $resql) $err++;
                             }
                         }
 
@@ -741,7 +741,7 @@ abstract class DolibarrModules
                             $this->db->commit();
                         }
                         else
-						{
+                        {
                             $this->error=$this->db->lasterror();
                             $this->db->rollback();
                         }
@@ -781,11 +781,22 @@ abstract class DolibarrModules
 
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
 
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-                $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
-                $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-                $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
-                $sql.= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+                if ($this->db->type == 'sqlite3') {
+                    // sqlite doesn't support "USING" syntax.
+                    // TODO: remove this dependency.
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes ";
+                    $sql .= "WHERE ".MAIN_DB_PREFIX."boxes.box_id IN (";
+                    $sql .= "SELECT ".MAIN_DB_PREFIX."boxes_def.rowid ";
+                    $sql .= "FROM ".MAIN_DB_PREFIX."boxes_def ";
+                    $sql .= "WHERE ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."') ";
+                    $sql .= "AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+                } else {
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
+                    $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+                    $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
+                    $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
+                    $sql.= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
+                }
 
                 dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1027,54 +1038,54 @@ abstract class DolibarrModules
 
                     if (empty($r_type)) $r_type='w';
 
-	                // Search if perm already present
-    	            $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
-        	        $sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
-					$resqlselect=$this->db->query($sql);
+                    // Search if perm already present
+                    $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
+                    $sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
+                    $resqlselect=$this->db->query($sql);
 
-					$obj = $this->db->fetch_object($resqlselect);
+                    $obj = $this->db->fetch_object($resqlselect);
                     if ($obj->nb == 0)
                     {
-	                    if (dol_strlen($r_perms) )
-	                    {
-	                        if (dol_strlen($r_subperms) )
-	                        {
-	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-	                            $sql.= " VALUES ";
-	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
-	                        }
-	                        else
-	                        {
-	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
-	                            $sql.= " VALUES ";
-	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
-	                        }
-	                    }
-	                    else
-						{
-	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-	                        $sql .= " (id, entity, libelle, module, type, bydefault)";
-	                        $sql .= " VALUES ";
-	                        $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
-	                    }
+                        if (dol_strlen($r_perms) )
+                        {
+                            if (dol_strlen($r_subperms) )
+                            {
+                                $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+                                $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+                                $sql.= " VALUES ";
+                                $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+                            }
+                            else
+                            {
+                                $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+                                $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+                                $sql.= " VALUES ";
+                                $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+                            }
+                        }
+                        else
+                        {
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+                            $sql .= " (id, entity, libelle, module, type, bydefault)";
+                            $sql .= " VALUES ";
+                            $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+                        }
 
-                    	$resqlinsert=$this->db->query($sql,1);
+                        $resqlinsert=$this->db->query($sql,1);
 
-	                    if (! $resqlinsert)
-	                    {
-	                        if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
-	                        {
-	                            $this->error=$this->db->lasterror();
-	                            $err++;
-	                            break;
-	                        }
-	                        else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+                        if (! $resqlinsert)
+                        {
+                            if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+                            {
+                                $this->error=$this->db->lasterror();
+                                $err++;
+                                break;
+                            }
+                            else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 
-	                    }
+                        }
 
-	                    $this->db->free($resqlinsert);
+                        $this->db->free($resqlinsert);
                     }
 
                     $this->db->free($resqlselect);
@@ -1082,9 +1093,9 @@ abstract class DolibarrModules
                     // If we want to init permissions on admin users
                     if ($reinitadminperms)
                     {
-                    	if (! class_exists('User')) {
-							require DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-                    	}
+                        if (! class_exists('User')) {
+                            require DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+                        }
                         $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
                         dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
                         $resqlseladmin=$this->db->query($sql,1);
@@ -1099,7 +1110,7 @@ abstract class DolibarrModules
                                 $tmpuser=new User($this->db);
                                 $tmpuser->fetch($obj2->rowid);
                                 if (!empty($tmpuser->id)) {
-                                	$tmpuser->addrights($r_id);
+                                    $tmpuser->addrights($r_id);
                                 }
                                 $i++;
                             }
@@ -1158,7 +1169,7 @@ abstract class DolibarrModules
      */
     function insert_menus()
     {
-    	global $user;
+        global $user;
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/menubase.class.php';
 
@@ -1415,68 +1426,68 @@ abstract class DolibarrModules
      */
     function insert_module_parts()
     {
-    	global $conf;
+        global $conf;
 
-    	$error=0;
-    	$entity=$conf->entity;
+        $error=0;
+        $entity=$conf->entity;
 
-    	if (is_array($this->module_parts) && ! empty($this->module_parts))
-    	{
-    		foreach($this->module_parts as $key => $value)
-    		{
+        if (is_array($this->module_parts) && ! empty($this->module_parts))
+        {
+            foreach($this->module_parts as $key => $value)
+            {
     			if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
 
-    			$newvalue = $value;
+                $newvalue = $value;
 
-    			// Serialize array parameters
-    			if (is_array($value))
-    			{
-    				// Can defined other parameters
-    				if (is_array($value['data']) && ! empty($value['data']))
-    				{
-    					$newvalue = json_encode($value['data']);
-    					if (isset($value['entity'])) $entity = $value['entity'];
-    				}
-    				else
-    				{
-    					$newvalue = json_encode($value);
-    				}
-    			}
+                // Serialize array parameters
+                if (is_array($value))
+                {
+                    // Can defined other parameters
+                    if (is_array($value['data']) && ! empty($value['data']))
+                    {
+                        $newvalue = json_encode($value['data']);
+                        if (isset($value['entity'])) $entity = $value['entity'];
+                    }
+                    else
+                    {
+                        $newvalue = json_encode($value);
+                    }
+                }
 
-    			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
-    			$sql.= "name";
-    			$sql.= ", type";
-    			$sql.= ", value";
-    			$sql.= ", note";
-    			$sql.= ", visible";
-    			$sql.= ", entity";
-    			$sql.= ")";
-    			$sql.= " VALUES (";
-    			$sql.= $this->db->encrypt($this->const_name."_".strtoupper($key), 1);
-    			$sql.= ", 'chaine'";
-    			$sql.= ", ".$this->db->encrypt($newvalue, 1);
-    			$sql.= ", null";
-    			$sql.= ", '0'";
-    			$sql.= ", ".$entity;
-    			$sql.= ")";
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
+                $sql.= "name";
+                $sql.= ", type";
+                $sql.= ", value";
+                $sql.= ", note";
+                $sql.= ", visible";
+                $sql.= ", entity";
+                $sql.= ")";
+                $sql.= " VALUES (";
+                $sql.= $this->db->encrypt($this->const_name."_".strtoupper($key), 1);
+                $sql.= ", 'chaine'";
+                $sql.= ", ".$this->db->encrypt($newvalue, 1);
+                $sql.= ", null";
+                $sql.= ", '0'";
+                $sql.= ", ".$entity;
+                $sql.= ")";
 
-    			dol_syslog(get_class($this)."::insert_const_".$key."", LOG_DEBUG);
-    			$resql=$this->db->query($sql,1);
-    			if (! $resql)
-    			{
-    			    if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
-    			    {
-        			    $error++;
-        				$this->error=$this->db->lasterror();
-    			    }
-    			    else
-    			    {
-    			        dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
-    			    }
-    			}
-    		}
-    	}
-    	return $error;
+                dol_syslog(get_class($this)."::insert_const_".$key."", LOG_DEBUG);
+                $resql=$this->db->query($sql,1);
+                if (! $resql)
+                {
+                    if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
+                    {
+                        $error++;
+                        $this->error=$this->db->lasterror();
+                    }
+                    else
+                    {
+                        dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
+                    }
+                }
+            }
+        }
+        return $error;
     }
 
     /**
@@ -1486,31 +1497,31 @@ abstract class DolibarrModules
      */
     function delete_module_parts()
     {
-    	global $conf;
+        global $conf;
 
-    	$err=0;
-    	$entity=$conf->entity;
+        $err=0;
+        $entity=$conf->entity;
 
-    	if (is_array($this->module_parts) && ! empty($this->module_parts))
-    	{
-    		foreach($this->module_parts as $key => $value)
-    		{
-    			// If entity is defined
-    			if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
+        if (is_array($this->module_parts) && ! empty($this->module_parts))
+        {
+            foreach($this->module_parts as $key => $value)
+            {
+                // If entity is defined
+                if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
 
-    			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-    			$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
-    			$sql.= " AND entity = ".$entity;
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+                $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
+                $sql.= " AND entity = ".$entity;
 
-    			dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
-    			if (! $this->db->query($sql))
-    			{
-    				$this->error=$this->db->lasterror();
-    				$err++;
-    			}
-    		}
-    	}
-    	return $err;
+                dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
+                if (! $this->db->query($sql))
+                {
+                    $this->error=$this->db->lasterror();
+                    $err++;
+                }
+            }
+        }
+        return $err;
     }
 
 }
