@@ -555,10 +555,12 @@ function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$
 				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=$lines[$i]->label;
+				$taskstatic->date_start=$lines[$i]->date_start;
+				$taskstatic->date_end=$lines[$i]->date_end;
 				print $taskstatic->getNomUrl(0);
-				print "<br>";
-				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
+				//print "<br>";
+				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
 				// Planned Workload
@@ -714,10 +716,12 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=$lines[$i]->label;
+				$taskstatic->date_start=$lines[$i]->date_start;
+				$taskstatic->date_end=$lines[$i]->date_end;
 				print $taskstatic->getNomUrl(0);
-				print "<br>";
-				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-				print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
+				//print "<br>";
+				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
 				// Planned Workload

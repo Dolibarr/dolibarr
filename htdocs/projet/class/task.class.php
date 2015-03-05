@@ -506,9 +506,18 @@ class Task extends CommonObject
         global $langs;
 
         $result='';
-        $label=$langs->trans("ShowTask").': '.$this->ref.($this->label?' - '.$this->label:'');
+        $label = '<u>' . $langs->trans("ShowTask") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->title))
+            $label .= '<br><b>' . $langs->trans('LabelTask') . ':</b> ' . $this->label;
+        if ($this->date_start || $this->date_end)
+        {
+        	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
+        }
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
         $lienfin='</a>';
 
         $picto='projecttask';
