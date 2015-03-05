@@ -869,7 +869,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					}
 
 					$color=$event->icalcolor;
-					$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
+					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unsortable');
 				}
 				else if ($event->type_code == 'BIRTHDAY')
 				{

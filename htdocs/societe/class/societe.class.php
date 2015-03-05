@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -42,7 +42,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("askpricesupplier", "propal","commande","facture","contrat","facture_fourn","commande_fournisseur");    // To test if we can delete object
+    protected $childtables=array("askpricesupplier","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -352,7 +352,7 @@ class Societe extends CommonObject
 
     var $array_options;
 
-	// Incoterms 
+	// Incoterms
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
@@ -741,7 +741,7 @@ class Societe extends CommonObject
         //Incoterms
         $this->fk_incoterms = (int) $this->fk_incoterms;
 		$this->location_incoterms = trim($this->location_incoterms);
-        
+
         $this->db->begin();
 
         // Check name is required and codes are ok or unique.
@@ -1137,9 +1137,9 @@ class Societe extends CommonObject
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-					
+
                 $result = 1;
 
                 // Retreive all extrafield for thirdparty
@@ -2089,7 +2089,7 @@ class Societe extends CommonObject
         $bac->fetch(0,$this->id);
         return $bac->getRibLabel(true);
     }
-	
+
 
     /**
      * Return Array of RIB

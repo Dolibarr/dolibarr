@@ -32,9 +32,9 @@
  */
 
 require '../../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 $langs->load('companies');
 $langs->load('bills');

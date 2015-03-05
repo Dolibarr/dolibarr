@@ -126,7 +126,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		}
 
 	    //Supplier invoices take invoice date instead of creation date for the mask
-		$numFinal=get_next_value($db,$mask,'facture_fourn','ref','',$objsoc->code_fournisseur,$object->date);
+		$numFinal=get_next_value($db,$mask,'facture_fourn','ref','',$objsoc,$object->date);
 
 		return  $numFinal;
 	}
