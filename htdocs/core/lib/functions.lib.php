@@ -4961,7 +4961,7 @@ function natural_search($fields, $value, $numeric=0)
     
     if ($numeric)
     {
-    	$value=preg_replace('/([<>=]+)\s([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+    	$value=preg_replace('/([<>=]+)\s([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
     }
     $crits = explode(' ', $value);
     $res = '';

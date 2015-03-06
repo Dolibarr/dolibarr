@@ -100,7 +100,7 @@ $offset = $conf->liste_limit * $page ;
 
 
 /*
- * Mode Liste
+ * Mode list
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
@@ -130,13 +130,13 @@ if ($search_user)
 {
 	$sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
-if ($search_ht)
+if ($search_ht != '')
 {
-	$sql .= " AND cf.total_ht = '".$db->escape(price2num($search_ht))."'";
+	$sql .= natural_search("cf.total_ht",$search_ht, 1);
 }
-if ($search_ttc)
+if ($search_ttc != '')
 {
-	$sql .= " AND cf.total_ttc = '".$db->escape(price2num($search_ttc))."'";
+	$sql .= natural_search("cf.total_ttc", $search_ttc, 1);
 }
 if ($sall)
 {
@@ -214,8 +214,8 @@ if ($resql)
 		print '</td>';
 	}
 	print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_user" value="'.$search_user.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" size="4" class="flat" name="search_ht" value="'.$search_ht.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" size="4" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" size="6" class="flat" name="search_ht" value="'.$search_ht.'"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" size="6" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
