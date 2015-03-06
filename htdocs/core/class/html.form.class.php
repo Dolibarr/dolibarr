@@ -480,7 +480,7 @@ class Form
      *  @param	string	$selected       Id or Code or Label of preselected country
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
-     *  @param	string	$maxlength		Max length for labels (0=no limit)
+     *  @param	integer	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
     function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0)
@@ -658,7 +658,7 @@ class Form
      *	@param  string	$htmlname       Name of field in html form
      * 	@param	int		$showempty		Add an empty field
      * 	@param	int		$hidetext		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
-     * 	@param	string	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
+     * 	@param	integer	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
      *  @return	void
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
@@ -1072,9 +1072,9 @@ class Form
      *	@param  int		$showempty      0=no empty value, 1=add an empty value
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
-     *	@param	string	$showfunction   Add function into label
+     *	@param	integer	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
-     *	@param	string	$showsoc	    Add company into label
+     *	@param	integer	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	bool	$options_only	Return options only (for ajax treatment)
@@ -1095,10 +1095,10 @@ class Form
      *	@param  int		$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit)
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
-     *	@param	string	$showfunction   Add function into label
+     *	@param	integer	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
      *	@param	bool	$options_only	Return options only (for ajax treatment)
-     *	@param	string	$showsoc	    Add company into label
+     *	@param	integer	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@return	 int					<0 if KO, Nb of contact in list if OK
