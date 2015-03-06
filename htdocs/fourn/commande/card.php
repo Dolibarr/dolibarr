@@ -288,7 +288,7 @@ if (empty($reshook))
 	    	$idprod=0;
 	    	$productsupplier = new ProductFournisseur($db);
 
-	    	if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-2;	// Same behaviour than with combolist. When not select idprodfournprice is now -2 (to avoid conflict with next action that may return -1)
+    		if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
 	    	if (GETPOST('idprodfournprice') > 0)
 	    	{
@@ -332,12 +332,12 @@ if (empty($reshook))
 	    			$array_options
 	    		);
 	    	}
-	    	if ($idprod == -2 || $idprod == 0)
+	    	if ($idprod == -99 || $idprod == 0)
 	    	{
-	    		// Product not selected
-	    		$error++;
-	    		$langs->load("errors");
-	    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
+    			// Product not selected
+    			$error++;
+    			$langs->load("errors");
+    			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), 'errors');
 	    	}
 	    	if ($idprod == -1)
 	    	{
