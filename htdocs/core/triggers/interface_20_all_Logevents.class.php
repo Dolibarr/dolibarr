@@ -43,11 +43,11 @@ class InterfaceLogevents extends DolibarrTriggers
 	 * @param string		$action		Event action code
 	 * @param Object		$object     Object
 	 * @param User			$user       Object user
-	 * @param Translate		$langs      Object langs
+	 * @param Translate		$langs      Object langs. May have not been defined
 	 * @param conf			$conf       Object conf
 	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs = null, Conf $conf)
     {
     	if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
 
