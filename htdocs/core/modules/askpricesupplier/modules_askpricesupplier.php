@@ -43,7 +43,7 @@ abstract class ModelePDFAskPriceSupplier extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -149,7 +149,7 @@ abstract class ModeleNumRefAskPriceSupplier
  *  Create a document onto disk according to template module.
  *
  * 	@param	    DoliDB		$db  			Database handler
- * 	@param	    object		$object			Object askpricesupplier
+ * 	@param	    AskPriceSupplier		$object			Object askpricesupplier
  * 	@param	    string		$modele			Force model to use ('' to not force)
  * 	@param		Translate	$outputlangs	Object langs to use for output
  *  @param      int			$hidedetails    Hide details of lines
