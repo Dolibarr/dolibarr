@@ -316,7 +316,7 @@ CREATE TABLE llx_askpricesupplier_extrafields (
 ) ENGINE=innodb;
 
 CREATE TABLE llx_askpricesupplierdet_extrafields (
-  rowid integer AUTO_INCREMENT PRIMAR KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_object integer NOT NULL,
   import_key varchar(14) DEFAULT NULL
