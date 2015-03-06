@@ -393,7 +393,7 @@ if ($id > 0 || ! empty($ref))
 							}
 							else
 							{
-								print '<td>';
+								print '<td colspan="4">';
 								print $linktoprod;
 								print "</td>";
 							}
