@@ -153,12 +153,12 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			$form->select_produits('', 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
 		}
 		else
 		{
 			$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tag will be edited with which ajax json response key
+					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tags that will be edited with which ajax json response key
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);
@@ -192,23 +192,16 @@ else {
 	</td>
 
 	<td align="right"><?php
-	if (GETPOST('prod_entry_mode') != 'predef')
-	{
-		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
-		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
-	}
+	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
 	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
-	<?php } ?>
 	</td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
-	<?php } ?>
 	</td>
 	<?php } ?>
 	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
@@ -273,7 +266,7 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
+if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
@@ -493,6 +486,11 @@ jQuery(document).ready(function() {
   		if (jQuery('#idprod').val() > 0) jQuery('#dp_desc').focus();
 		if (jQuery('#idprodfournprice').val() > 0) jQuery('#dp_desc').focus();
 	});
+
+	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
+		setforpredef();
+	<?php } ?>
+
 });
 
 /* Function to set fields from choice */
