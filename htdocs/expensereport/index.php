@@ -25,8 +25,8 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-dol_include_once("/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 $langs->load("companies");
 $langs->load("users");

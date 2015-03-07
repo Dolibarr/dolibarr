@@ -19,11 +19,11 @@
 
 /**
  *       \file       htdocs/expensereport/class/expensereportstats.class.php
- *       \ingroup    factures
+ *       \ingroup    ExpenseReport
  *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
  */
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-dol_include_once('/expensereport/class/expensereport.class.php');
+include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 /**
  *  Classe permettant la gestion des stats des expensereports et notes de frais
