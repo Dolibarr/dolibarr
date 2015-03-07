@@ -444,9 +444,9 @@ class doc_generic_task_odt extends ModelePDFTask
 				complete_substitutions_array($substitutionarray, $langs, $object);
 
 				// Open and load template
-				require_once ODTPHP_PATH.'odf.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/odtphp/DolibarrOdf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new DolibarrOdf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->projet->dir_temp,

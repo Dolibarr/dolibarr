@@ -297,9 +297,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 
 				// Open and load template
-				require_once ODTPHP_PATH.'odf.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/odtphp/DolibarrOdf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new DolibarrOdf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->commande->dir_temp,

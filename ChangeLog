@@ -28,6 +28,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #1825 ] External agenda: hide/show checkbox doesn't work
 - Fix: [ bug #1790 ] Email form behaves in an unexpected way when pressing Enter key
 - Fix: Bad SEPA xml file creation
+- Fix: [ bug #1856 ] ODT Templates - Templating keys are not always recognized
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.

@@ -12,6 +12,7 @@ class OdfException extends Exception
  * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
  * @copyright  GPL License 2010 -  Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
+ * @copyright  GPL License 2015 - Marcos García - marcosgdf@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.4.6 (last update 2013-04-07)
  */
@@ -113,14 +114,8 @@ class Odf
 	public function setVars($key, $value, $encode = true, $charset = 'ISO-8859')
 	{
 		$tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
-		// TODO Warning string may be:
-		// <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
-		// instead of {aaa} so we should enhance this function.
-		//print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
 		if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml , $tag) === false) {
-			//if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
 			throw new OdfException("var $key not found in the document");
-			//}
 		}
 
 		$value=$this->htmlToUTFAndPreOdf($value);
@@ -271,7 +266,7 @@ IMG;
 	 * @param  string	$type		'content' or 'styles'
 	 * @return void
 	 */
-	private function _parse($type='content')
+	protected function _parse($type='content')
 	{
 		// Conditionals substitution
 		// Note: must be done before content substitution, else the variable will be replaced by its value and the conditional won't work anymore

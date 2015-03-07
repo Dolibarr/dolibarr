@@ -297,9 +297,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 
 				// Open and load template
-				require_once ODTPHP_PATH.'odf.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/odtphp/DolibarrOdf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new DolibarrOdf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->expedition->dir_temp,

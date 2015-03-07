@@ -229,9 +229,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
 
 				// Open and load template
-				require_once ODTPHP_PATH.'odf.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/odtphp/DolibarrOdf.php';
 				try {
-					$odfHandler = new odf(
+					$odfHandler = new DolibarrOdf(
 					    $srctemplatepath,
 					    array(
 	    					'PATH_TO_TMP'	  => $conf->societe->multidir_temp[$object->entity],
