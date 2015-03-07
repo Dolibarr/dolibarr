@@ -88,16 +88,16 @@ $pagenext = $page + 1;
 $sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts as status,";
 $sql.= " d.date_debut, d.date_fin,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
-$sql.= " FROM ".MAIN_DB_PREFIX."expensereport d\n";
-$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid\n";
+$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 
 
 
 // WHERE
 if(!empty($search_ref)){
-	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'\n";
+	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'";
 }else{
-	$sql.= " WHERE 1 = 1\n";
+	$sql.= " WHERE 1 = 1";
 }
 // DATE START
 if ($month_start > 0) {
@@ -156,7 +156,7 @@ if ($month_start > 0) {
 		}
 	}
 }
-if (!empty($search_user) && $search_user > 0) $sql.= " AND d.fk_user_author = ".$search_user."\n";
+if (!empty($search_user) && $search_user > 0) $sql.= " AND d.fk_user_author = '".$search_user."'";
 if($search_state != '') $sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
 
 // RESTRICT RIGHTS

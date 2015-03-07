@@ -270,7 +270,7 @@ class ExpenseReport extends CommonObject
 		$sql.= " d.fk_user_author, d.fk_user_validator, d.fk_c_expensereport_statuts as status, d.fk_c_paiement,";
 		$sql.= " d.fk_user_valid, d.fk_user_approve, d.fk_user_paid,";
 		$sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";								// INNER JOIN paiement
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement dp ON d.fk_c_paiement = dp.id";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
 		if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
 		else $sql.= " WHERE d.rowid = ".$id;
 		$sql.= $restrict;
@@ -707,8 +707,8 @@ class ExpenseReport extends CommonObject
 		$sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
 		$sql.= ' p.ref as ref_projet, p.title as title_projet';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON de.fk_c_type_fees = ctf.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet p ON de.fk_projet = p.rowid';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
 		$sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
 
 		dol_syslog('ExpenseReport::fetch_lines sql='.$sql, LOG_DEBUG);
@@ -1186,7 +1186,7 @@ class ExpenseReport extends CommonObject
 
 			// Select du taux de tva par rapport au code
 			$sql = "SELECT t.taux as taux_tva";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva t";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 			$sql.= " WHERE t.rowid = ".$c_tva;
 			$result = $this->db->query($sql);
 			$objp_tva = $this->db->fetch_object($result);
@@ -1222,7 +1222,7 @@ class ExpenseReport extends CommonObject
 
 			// Select des infos sur le type fees
 			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees c";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 			$sql.= " WHERE c.id = ".$type_fees_id;
 			$result = $this->db->query($sql);
 			$objp_fees = $this->db->fetch_object($result);
@@ -1231,7 +1231,7 @@ class ExpenseReport extends CommonObject
 
 			// Select des informations du projet
 			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet p";
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql.= " WHERE p.rowid = ".$projet_id;
 			$result = $this->db->query($sql);
 			$objp_projet = $this->db->fetch_object($result);
@@ -1460,9 +1460,9 @@ class ExpenseReportLine
 		$sql.= ' fde.fk_c_tva as tva_taux, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 		$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 		$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det fde';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON fde.fk_c_type_fees=ctf.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet pjt ON fde.fk_projet=pjt.rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 		$sql.= ' WHERE fde.rowid = '.$rowid;
 
 		$result = $this->db->query($sql);

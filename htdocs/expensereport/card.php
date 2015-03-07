@@ -733,12 +733,12 @@ if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->
 			$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 
 			if ($insertid > 0):
-			$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport d";
+			$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport as d";
 			$sql.= " SET integration_compta = 1, fk_bank_account = $idAccount";
 			$sql.= " WHERE rowid = $idTrip";
 			$resql=$db->query($sql);
 			if($result):
-			Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 			else:
 			dol_print_error($db);
@@ -1529,9 +1529,9 @@ else
 				$sql.= ' fde.fk_c_tva as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det fde';
-				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON fde.fk_c_type_fees=ctf.id';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet pjt ON fde.fk_projet=pjt.rowid';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
+				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$id;
 
 				$resql = $db->query($sql);
