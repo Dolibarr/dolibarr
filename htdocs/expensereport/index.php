@@ -111,8 +111,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
-//$listoftype=$tripandexpense_static->listOfTypes();
-$listoftype=$label;
+$listoftype=$tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
     $dataseries[]=array('label'=>$label,'data'=>(isset($somme[$code])?(int) $somme[$code]:0));

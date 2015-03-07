@@ -1420,6 +1420,39 @@ class ExpenseReport extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
+	
+	/**
+	 * List of types
+	 *
+	 * @param	int		$active		Active or not
+	 * @return	array
+	 */
+	function listOfTypes($active=1)
+	{
+		global $langs;
+		$ret=array();
+		$sql = "SELECT id, code, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";
+		$sql.= " WHERE active = ".$active;
+		dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ( $result )
+		{
+			$num = $this->db->num_rows($result);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				$ret[$obj->code]=(($langs->trans($obj->code)!=$obj->code)?$langs->trans($obj->code):$obj->label);
+				$i++;
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+		return $ret;
+	}
 
 }
 
