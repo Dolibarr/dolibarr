@@ -111,12 +111,7 @@ class box_clients extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
                     $thirdpartystatic->id = $objp->socid;
-                    $thirdpartystatic->name = $objp->name;
-                    $thirdpartystatic->code_client = $objp->code_client;
-                    $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-                    $thirdpartystatic->client = $objp->client;
-                    $thirdpartystatic->fournisseur = $objp->fournisseur;
-                    $thirdpartystatic->logo = $objp->logo;
+                    foreach ($objp as $key => $value) $thirdpartystatic->$key = $value;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
