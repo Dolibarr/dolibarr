@@ -85,7 +85,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts as status,";
+$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
@@ -157,7 +157,7 @@ if ($month_start > 0) {
 	}
 }
 if (!empty($search_user) && $search_user > 0) $sql.= " AND d.fk_user_author = '".$search_user."'";
-if($search_state != '') $sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
+if($search_state != '') $sql.= " AND d.fk_statut = '$search_state'\n";
 
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))

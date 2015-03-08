@@ -59,7 +59,7 @@ class ExpenseReportStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field='total_ht';
 
-		$this->where = " fk_c_expensereport_statuts > 0 and date_valid > '2000-01-01'";
+		$this->where = " fk_statut > 0 and date_valid > '2000-01-01'";
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)
 		{

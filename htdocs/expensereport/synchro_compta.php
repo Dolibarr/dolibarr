@@ -136,11 +136,11 @@ else:
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("ViewAccountSynch").'">';
 	print "</form>";
 
-	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valid, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
+	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valid, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_statut";
 	$sql.= " ,CONCAT(u.firstname,' ',u.lastname) as declarant_NDF";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
-	$sql.= " WHERE d.fk_c_expensereport_statuts = 6";
+	$sql.= " WHERE d.fk_statut = 6";
 	$sql.= " ORDER BY d.date_valid DESC";
 
 	$resql=$db->query($sql);
