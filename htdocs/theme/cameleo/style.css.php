@@ -185,6 +185,23 @@ legend { margin-bottom: 8px; }
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
 }
+.button:disabled {
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    cursor: auto;
+}
+.buttonRefused {
+	pointer-events: none;
+   	cursor: default;	
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
 form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;

@@ -2141,7 +2141,8 @@ abstract class CommonObject
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
         if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
-
+		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
