@@ -45,7 +45,7 @@ $search_user=GETPOST('search_user');
 $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
-$search_status=(GETPOST('search_status','int')!=''?GETPOST('search_status','int'):GETPOST('statut','int'));
+$search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -153,9 +153,9 @@ if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
 }
-if ($search_status >= 0)
+if ($search_status != '' && $search_status >= 0)
 {
-	if ($search_status == 6 || $search_status == 7) $sql.=" AND cf.fk_statut IN (6,7)";
+	if (strstr($search_status, ',')) $sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
 	else $sql.=" AND cf.fk_statut = ".$search_status;
 }
 
@@ -205,9 +205,9 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
+	print '<td class="liste_titre"><input size="8" type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
 	if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_refsupp" value="'.$search_refsupp.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.$search_company.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_company" value="'.$search_company.'"></td>';
 	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
 	{
 		print '<td class="liste_titre">';

@@ -143,7 +143,7 @@ if (empty($reshook))
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	if ($action == 'set_incoterms' && $user->rights->fournisseur->commande->creer)
 	{
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -734,15 +734,14 @@ if (empty($reshook))
 		}
 	}
 
-	// Receive
+	// Set status of reception (complete, partial, ...)
 	if ($action == 'livraison' && $user->rights->fournisseur->commande->receptionner)
 	{
-
-	    if ($_POST["type"])
+	    if (GETPOST("type") != '')
 	    {
-	        $date_liv = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result	= $object->Livraison($user, $date_liv, $_POST["type"], $_POST["comment"]);
+	        $result	= $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
 	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -754,8 +753,7 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-	            dol_print_error($db,$object->error);
-	            exit;
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	    else
@@ -2598,14 +2596,21 @@ elseif (! empty($object->id))
 				}
 
 				// Reopen
-				if (in_array($object->statut, array(2, 5, 6, 7, 9)))
+				if (in_array($object->statut, array(2)))
+				{
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+					}
+				}
+				if (in_array($object->statut, array(5, 6, 7, 9)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 					}
 				}
-
+				
 				// Create bill
 				if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
 				{
