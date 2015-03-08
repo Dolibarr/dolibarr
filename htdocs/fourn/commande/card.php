@@ -1950,6 +1950,33 @@ elseif (! empty($object->id))
 
 		print_titre($langs->trans('SendOrderByMail'));
 
+        require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+        $mailing = new Mailing($db);
+        $mail_template = GETPOST('mailtemplate', 'int');
+        $mail_template = $mail_template > 0 ? $mail_template : null;
+
+        // Manual or premade template selector
+		print '<table>';
+        print '<tr><td width="180">'.$langs->trans("Template").'</td><td>';
+        $mail_templates = array(0 => $langs->trans("None"));
+        foreach ($mailing->listMailings(1) as $entry) {
+            $mail_templates[$entry["id"]] = $entry["description"];
+        }
+        print $form->selectarray('mailtemplate', $mail_templates, $mail_template);
+        print '</td></tr>';
+
+        // This code reloads page when mail template is changed
+        print '<script type="text/javascript">
+            jQuery(document).ready(run);
+            function run() {
+                jQuery("#mailtemplate").change(on_change);
+            }
+            function on_change() {
+                window.location = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init&mailtemplate=" + $("#mailtemplate").attr("value");
+            }
+        </script>';
+		print '</table>';
+
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
@@ -1964,9 +1991,15 @@ elseif (! empty($object->id))
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__ORDERREF__');
 		$formmail->withfile=2;
-		$formmail->withbody=1;
+        if (empty($mail_template)) {
+            $formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
+            $formmail->withbody = 1;
+        } else {
+            $mailing->fetch($mail_template);
+            $formmail->withtopic = $mailing->handleSubstitutions(0, $object);
+            $formmail->withbody = $mailing->handleSubstitutions(1, $object);
+        }
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
@@ -1997,9 +2030,11 @@ elseif (! empty($object->id))
 
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
-		$formmail->param['models']='order_supplier_send';
 		$formmail->param['orderid']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+		if (empty($mail_template)) {
+			$formmail->param['models']='order_supplier_send';
+		}
 
 		// Init list of files
 		if (GETPOST("mode")=='init')
