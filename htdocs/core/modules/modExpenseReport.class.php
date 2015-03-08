@@ -270,7 +270,7 @@ class modExpenseReport extends DolibarrModules
 									'titre'=>'ListToApprove',
 									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detaillist_approve',
-									'url'=>'/expensereport/list.php?search_state=2',
+									'url'=>'/expensereport/list.php?search_status=2',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.

@@ -508,7 +508,7 @@ class pdf_standard extends ModeleExpenseReport
 		*/
 
 	    // Filligrane brouillon
-		if ($object->fk_c_expensereport_statuts==1 && ! empty($conf->global->EXPENSEREPORT_FREE_TEXT))
+		if ($object->fk_statut==1 && ! empty($conf->global->EXPENSEREPORT_FREE_TEXT))
 		{
  			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_FREE_TEXT);
 		}
@@ -640,7 +640,7 @@ class pdf_standard extends ModeleExpenseReport
 	   		$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create,"day",false,$outpulangs),0,'L');
    		}
 
-   		if ($object->fk_c_expensereport_statuts==99)
+   		if ($object->fk_statut==99)
    		{
    			if ($object->fk_user_refuse > 0)
    			{
@@ -656,7 +656,7 @@ class pdf_standard extends ModeleExpenseReport
 	   			$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outpulangs),0,'L');
    			}
    		}
-   		else if($object->fk_c_expensereport_statuts==4)
+   		else if($object->fk_statut==4)
    		{
    			if ($object->fk_user_cancel > 0)
    			{
@@ -686,7 +686,7 @@ class pdf_standard extends ModeleExpenseReport
    			}
    		}
 
-   		if($object->fk_c_expensereport_statuts==6)
+   		if($object->fk_statut==6)
    		{
    			if ($object->fk_user_paid > 0)
    			{

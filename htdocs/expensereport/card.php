@@ -1712,17 +1712,17 @@ else
 
 						print '<tr>';
 
-						// Sélection date
+						// Select date
 						print '<td style="text-align:center;">';
 						$form->select_date($date?$date:-1,'date');
 						print '</td>';
 
-						// Sélection projet
+						// Select project
 						print '<td>';
 						$formproject->select_projects(-1, GETPOST('fk_projet'), 'fk_projet', 0, 0, 1, 1);
 						print '</td>';
 
-						// Sélection type
+						// Select type
 						print '<td>';
 						select_type_fees_id(GETPOST('fk_c_type_fees'),'fk_c_type_fees',1);
 						print '</td>';
@@ -1732,7 +1732,7 @@ else
 						print '<textarea class="flat_ndf centpercent" name="comments">'.GETPOST('comments').'</textarea>';
 						print '</td>';
 
-						// Sélection TVA
+						// Select VAT
 						print '<td style="text-align:right;">';
 						$defaultvat=-1;
 						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
@@ -1747,7 +1747,7 @@ else
 						print '<input type="text" size="6" name="value_unit" value="'.GETPOST('value_unit').'">';
 						print '</td>';
 
-						// Quantité
+						// Quantity
 						print '<td style="text-align:right;">';
 						print '<input type="text" size="4" name="qty"  value="'.GETPOST('qty').'">';
 						print '</td>';
