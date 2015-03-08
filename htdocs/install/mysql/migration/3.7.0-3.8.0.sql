@@ -195,5 +195,7 @@ CREATE TABLE llx_expensereport_det
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
-
+-- Add mail type column
+ALTER TABLE llx_mailing ADD COLUMN mail_type smallint DEFAULT 0;
+ALTER TABLE llx_mailing ADD COLUMN line varchar(255) NULL;
 

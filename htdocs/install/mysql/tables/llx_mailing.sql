@@ -50,5 +50,7 @@ create table llx_mailing
   joined_file1		varchar(255),
   joined_file2		varchar(255),
   joined_file3		varchar(255),
-  joined_file4		varchar(255)
+  joined_file4		varchar(255),
+  mail_type		smallint	DEFAULT 0,           -- Type of mail
+  line			varchar(255)	NULL                 -- Format for some mail types which require line formatting
 )ENGINE=innodb;
