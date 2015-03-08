@@ -43,10 +43,12 @@ function emailing_prepare_head(Mailing $object)
 		return $head;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("MailRecipients");
-	$head[$h][2] = 'targets';
-	$h++;
+	if ($object->mail_type == 0) {
+		$head[$h][0] = DOL_URL_ROOT . "/comm/mailing/cibles.php?id=" . $object->id;
+		$head[$h][1] = $langs->trans("MailRecipients");
+		$head[$h][2] = 'targets';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/info.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Info");

@@ -59,8 +59,6 @@ class FormMailing  extends Form
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 		$mailing = new Mailing($this->db);
 
-
-		$array = $mailing->statut_dest;
 		//Cannot use form->selectarray because empty value is defaulted to -1 in this method and we use here status -1...
 
 		$out = '<select name="'.$htmlname.'" class="flat">';
@@ -69,7 +67,7 @@ class FormMailing  extends Form
 			$out .= '<option value=""></option>';
 		}
 
-		foreach($mailing->statut_dest as $id=>$status) {
+		foreach(Mailing::$statut_dest as $id=>$status) {
 			if ($selectedid==$id)  {
 				$selected=" selected=selected ";
 			}else {

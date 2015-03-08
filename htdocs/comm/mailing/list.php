@@ -57,7 +57,7 @@ $form = new Form($db);
 
 if ($filteremail)
 {
-	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql = "SELECT m.rowid, m.titre, m.mail_type, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi,";
 	$sql.= " mc.statut as sendstatut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql.= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
@@ -71,7 +71,7 @@ if ($filteremail)
 }
 else
 {
-	$sql = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
+	$sql = "SELECT m.rowid, m.titre, m.mail_type, m.nbemail, m.statut, m.date_creat as datec, m.date_envoi as date_envoi";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
 	$sql.= " WHERE m.entity = ".$conf->entity;
 	if ($sref) $sql.= " AND m.rowid = '".$sref."'";
@@ -101,6 +101,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"m.rowid",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"m.titre",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("MailType"),$_SERVER["PHP_SELF"],"m.mail_type",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"m.date_creat",$param,"",'align="center"',$sortfield,$sortorder);
 	if (! $filteremail) print_liste_field_titre($langs->trans("NbOfEMails"),$_SERVER["PHP_SELF"],"m.nbemail",$param,"",'align="center"',$sortfield,$sortorder);
 	if (! $filteremail) print_liste_field_titre($langs->trans("DateLastSend"),$_SERVER["PHP_SELF"],"m.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
@@ -119,6 +120,7 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print "</td>";
@@ -139,6 +141,7 @@ if ($result)
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$obj->rowid.'">';
 		print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
 		print '<td>'.$obj->titre.'</td>';
+		print '<td>'.$langs->trans("MailType".$obj->mail_type).'</td>';
 		// Date creation
 		print '<td align="center">';
 		print dol_print_date($db->jdate($obj->datec),'day');
