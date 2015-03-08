@@ -679,7 +679,7 @@ if ($action == 'create')
 		print '<td>';
 
 		// Mail line
-		$doleditor = new DolEditor('line', $_POST['line'], '', 320, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 3, 70);
+		$doleditor = new DolEditor('line', $_POST['line'], '', 320, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, 70);
 		$doleditor->Create();
 		print '</td></tr>';
 	}
@@ -1003,7 +1003,7 @@ else
             //Mail line substitutions
             $line_substitutions = $object->getSubstitutionsLang(1);
             if (!empty($line_substitutions)) {
-                print '<tr><td width="25%" valign="top">' . $langs->trans("MailMessage") . '<br>';
+                print '<tr><td width="25%" valign="top">' . $langs->trans("MailLine") . '<br>';
                 print '<br><i>' . $langs->trans("CommonSubstitutions") . ':<br>';
                 foreach ($line_substitutions as $key => $val) {
                     print $key . ' = ' . $langs->trans($val) . '<br>';
@@ -1150,7 +1150,7 @@ else
 				print '<td>';
 
 				// Mail line
-				$doleditor = new DolEditor('line', $object->line, '', 320, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 3, 120);
+				$doleditor = new DolEditor('line', $object->line, '', 320, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, 120);
 				$doleditor->Create();
 				print '</td></tr>';
 			}

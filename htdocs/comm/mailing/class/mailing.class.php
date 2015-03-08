@@ -833,7 +833,7 @@ class Mailing extends CommonObject
      */
     function listMailings($mail_type = null)
     {
-        $sql = "SELECT rowid, titre, mail_type";
+        $sql = "SELECT rowid, statut, titre, mail_type";
         $sql.= " FROM ".MAIN_DB_PREFIX."mailing";
         if ($mail_type != null) {
             $sql.= " WHERE mail_type = ".$mail_type;
@@ -849,7 +849,9 @@ class Mailing extends CommonObject
             {
                 $mail = array();
                 $mail["id"]             = $record["rowid"];
+                $mail["statut"]         = $record["statut"];
                 $mail["description"]    = $record["titre"];
+                $mail["mail_type"]      = $record["mail_type"];
                 $retarray[]=$mail;
             }
 
