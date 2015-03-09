@@ -180,7 +180,7 @@ class modFournisseur extends DolibarrModules
             $r++;
             $this->rights[$r][0] = 1189;
             $this->rights[$r][1] = 'Check/Uncheck a supplier order reception';
-            $this->rights[$r][2] = 'd';
+            $this->rights[$r][2] = 'w';
             $this->rights[$r][3] = 0;
             $this->rights[$r][4] = 'commande_advance';
             $this->rights[$r][5] = 'check';
