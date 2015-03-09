@@ -110,7 +110,6 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
-
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Validate supplier proposals'; // libelle de la permission

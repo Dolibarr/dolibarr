@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
@@ -251,11 +251,11 @@ class modFournisseur extends DolibarrModules
             $this->export_icon[$r]='bill';
             $this->export_permission[$r]=array(array("fournisseur","facture","export"));
             $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"InvoiceId",'f.ref'=>"InvoiceRef",'f.ref_supplier'=>"RefSupplier",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus','f.note_public'=>"InvoiceNote",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel','p.accountancy_code_buy'=>'ProductAccountancyBuyCode');
-            //$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.total_tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Text",'fd.qty'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.tva'=>"Number",'fd.product_type'=>'Boolean','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
-            $this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.total_tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Text",'fd.qty'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.tva'=>"Number",'fd.product_type'=>'Boolean','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
+            //$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:CompanyName",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.total_tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Text",'fd.qty'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.tva'=>"Number",'fd.product_type'=>'Number','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
+            $this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.total_tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Text",'fd.qty'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.tva'=>"Number",'fd.product_type'=>'Number','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
             $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company','f.rowid'=>"invoice",'f.ref'=>"invoice",'f.ref_supplier'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note_public'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.tva_tx'=>"invoice_line",'fd.qty'=>"invoice_line",'fd.remise_percent'=>"invoice_line",'fd.total_ht'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva'=>"invoice_line",'fd.product_type'=>'invoice_line','fd.fk_product'=>'product','p.ref'=>'product','p.label'=>'product','p.accountancy_code_buy'=>'product');
             $this->export_dependencies_array[$r]=array('invoice_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-			// Add extra fields
+			// Add extra fields object
 			$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn'";
 			$resql=$this->db->query($sql);
 			if ($resql)    // This can fail when class is used on old database (during migration for example)
@@ -288,13 +288,48 @@ class modFournisseur extends DolibarrModules
 					$this->export_entities_array[$r][$fieldname]='invoice';
 				}
 			}
-			// End add axtra fields
-            $this->export_sql_start[$r]='SELECT DISTINCT ';
+			// End add extra fields
+			// Add extra fields line
+			$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det'";
+			$resql=$this->db->query($sql);
+			if ($resql)    // This can fail when class is used on old database (during migration for example)
+			{
+				while ($obj=$this->db->fetch_object($resql))
+				{
+					$fieldname='extraline.'.$obj->name;
+					$fieldlabel=ucfirst($obj->label);
+					$typeFilter="Text";
+					switch($obj->type)
+					{
+						case 'int':
+						case 'double':
+						case 'price':
+							$typeFilter="Numeric";
+							break;
+						case 'date':
+						case 'datetime':
+							$typeFilter="Date";
+							break;
+						case 'boolean':
+							$typeFilter="Boolean";
+							break;
+						case 'sellist':
+							$typeFilter="List:".$obj->param;
+							break;
+					}
+					$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+					$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+					$this->export_entities_array[$r][$fieldname]='invoice_line';
+				}
+			}
+			// End add extra fields line
+			$this->export_sql_start[$r]='SELECT DISTINCT ';
             $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_extrafields as extra ON f.rowid = extra.fk_object';
             $this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'facture_fourn_det as fd';
+            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det_extrafields as extraline ON fd.rowid = extraline.fk_object';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
             $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
@@ -309,7 +344,7 @@ class modFournisseur extends DolibarrModules
             $this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.total_tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_public'=>"Text",'pf.amount'=>'Number','p.datep'=>'Date','p.num_paiement'=>'Number');
             $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company','f.rowid'=>"invoice",'f.ref'=>"invoice",'f.ref_supplier'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note_public'=>"invoice",'p.rowid'=>'payment','pf.amount'=>'payment','p.datep'=>'payment','p.num_paiement'=>'payment');
             $this->export_dependencies_array[$r]=array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-			// Add extra fields
+			// Add extra fields object
 			$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn'";
 			$resql=$this->db->query($sql);
 			if ($resql)    // This can fail when class is used on old database (during migration for example)
@@ -342,7 +377,7 @@ class modFournisseur extends DolibarrModules
 					$this->export_entities_array[$r][$fieldname]='invoice';
 				}
 			}
-			// End add axtra fields
+			// End add extra fields object
             $this->export_sql_start[$r]='SELECT DISTINCT ';
             $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
@@ -361,10 +396,10 @@ class modFournisseur extends DolibarrModules
             $this->export_icon[$r]='order';
             $this->export_permission[$r]=array(array("fournisseur","commande","export"));
             $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"OrderId",'f.ref'=>"Ref",'f.ref_supplier'=>"RefSupplier",'f.date_creation'=>"DateCreation",'f.date_commande'=>"OrderDate",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.fk_statut'=>'Status','f.note_public'=>"NotePublic",'f.note_private'=>"NotePrivate",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
-            $this->export_TypeFields_array[$r]=array('s.rowid'=>"company",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','c.code'=>'Text','s.tel'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.date_creation'=>"Date",'f.date_commande'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.fk_statut'=>'Status','f.note_public'=>"Text",'f.note_private'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Number",'fd.qty'=>"Number",'fd.remise_percent'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.total_tva'=>"Number",'fd.product_type'=>'Boolean','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
+            $this->export_TypeFields_array[$r]=array('s.rowid'=>"company",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','c.code'=>'Text','s.tel'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.date_creation'=>"Date",'f.date_commande'=>"Date",'f.total_ht'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.fk_statut'=>'Status','f.note_public'=>"Text",'f.note_private'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Number",'fd.qty'=>"Number",'fd.remise_percent'=>"Number",'fd.total_ht'=>"Number",'fd.total_ttc'=>"Number",'fd.total_tva'=>"Number",'fd.product_type'=>'Number','fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
             $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company','f.rowid'=>"order",'f.ref'=>"order",'f.ref_supplier'=>"order",'f.date_creation'=>"order",'f.date_commande'=>"order",'f.total_ht'=>"order",'f.total_ttc'=>"order",'f.tva'=>"order",'f.fk_statut'=>'order','f.note_public'=>"order",'f.note_private'=>"order",'fd.rowid'=>'order_line','fd.description'=>"order_line",'fd.tva_tx'=>"order_line",'fd.qty'=>"order_line",'fd.remise_percent'=>"order_line",'fd.total_ht'=>"order_line",'fd.total_ttc'=>"order_line",'fd.total_tva'=>"order_line",'fd.product_type'=>'order_line','fd.fk_product'=>'product','p.ref'=>'product','p.label'=>'product');
             $this->export_dependencies_array[$r]=array('order_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-			// Add extra fields
+			// Add extra fields object
 			$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur'";
 			$resql=$this->db->query($sql);
 			if ($resql)    // This can fail when class is used on old database (during migration for example)
@@ -397,13 +432,48 @@ class modFournisseur extends DolibarrModules
 					$this->export_entities_array[$r][$fieldname]='order';
 				}
 			}
-			// End add axtra fields
+			// End add extra fields object
+			// Add extra fields line
+			$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet'";
+			$resql=$this->db->query($sql);
+			if ($resql)    // This can fail when class is used on old database (during migration for example)
+			{
+				while ($obj=$this->db->fetch_object($resql))
+				{
+					$fieldname='extraline.'.$obj->name;
+					$fieldlabel=ucfirst($obj->label);
+					$typeFilter="Text";
+					switch($obj->type)
+					{
+						case 'int':
+						case 'double':
+						case 'price':
+							$typeFilter="Numeric";
+							break;
+						case 'date':
+						case 'datetime':
+							$typeFilter="Date";
+							break;
+						case 'boolean':
+							$typeFilter="Boolean";
+							break;
+						case 'sellist':
+							$typeFilter="List:".$obj->param;
+							break;
+					}
+					$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+					$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+					$this->export_entities_array[$r][$fieldname]='order_line';
+				}
+			}
+			// End add extra fields line
             $this->export_sql_start[$r]='SELECT DISTINCT ';
             $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur_extrafields as extra ON f.rowid = extra.fk_object,';
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseurdet as fd';
+            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields as extraline ON fd.rowid = extraline.fk_object';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
             $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_order',1).')';
