@@ -590,7 +590,7 @@ class ExtraFields
 	 * @param	string	$value          Value to show (for date type it must be in timestamp format)
 	 * @param	string	$moreparam      To add more parametes on html input tag
 	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @return	void
+	 * @return	string
 	 */
 	function showInputField($key,$value,$moreparam='',$keyprefix='')
 	{
@@ -1061,9 +1061,9 @@ class ExtraFields
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
 	 * @param   array	$extralabels    $array of extrafields
-	 * @param   object	$object        Object
-	 * @param	string	$onlykey		Only following key is filled
-	 * @return	int						1 if array_options set / 0 if no value
+	 * @param   object	$object         Object
+	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
+	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	function setOptionalsFromPost($extralabels,&$object,$onlykey='')
 	{

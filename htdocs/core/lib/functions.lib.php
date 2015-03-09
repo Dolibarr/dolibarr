@@ -10,8 +10,8 @@
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	mixed				Return value of static property
+ * @deprecated Dolibarr now requires 5.3.0+
  */
 function getStaticMember($class, $member)
 {
@@ -156,7 +157,7 @@ function getBrowserInfo()
 	elseif (preg_match('/epiphany/i',$_SERVER["HTTP_USER_AGENT"]))                       { $name='epiphany';  $version=$reg[2]; }
 	elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
 	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
+	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version= end($reg); }    // MS products at end
 	// Other
 	$firefox=0;
 	if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
@@ -385,7 +386,7 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	string	$unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int	$unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
  * 	@see        	dol_string_nospecial, dol_string_unaccent
@@ -454,18 +455,18 @@ function dol_string_unaccent($str)
 /**
  *	Clean a string from all punctuation characters to use it as a ref or login
  *
- *	@param	string	$str            String to clean
- * 	@param	string	$newstr			String to replace forbidden chars with
- *  @param  array	$badchars       List of forbidden characters
- * 	@return string          		Cleaned string
+ *	@param	string	$str            	String to clean
+ * 	@param	string	$newstr				String to replace forbidden chars with
+ *  @param  array	$badcharstoreplace  List of forbidden characters
+ * 	@return string          			Cleaned string
  *
  * 	@see    		dol_sanitizeFilename, dol_string_unaccent
  */
-function dol_string_nospecial($str,$newstr='_',$badchars='')
+function dol_string_nospecial($str,$newstr='_',$badcharstoreplace='')
 {
 	$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	$forbidden_chars_to_remove=array();
-	if (is_array($badchars)) $forbidden_chars_to_replace=$badchars;
+	if (is_array($badcharstoreplace)) $forbidden_chars_to_replace=$badcharstoreplace;
 	//$forbidden_chars_to_remove=array("(",")");
 
 	return str_replace($forbidden_chars_to_replace,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
@@ -487,8 +488,8 @@ function dolEscapeXML($string)
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		string		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
- *  @param		string		$noescapebackslashn	0=Escape also \n. 1=Do not escape \n.
+ *  @param		int		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param		int		$noescapebackslashn	0=Escape also \n. 1=Do not escape \n.
  *  @return     string     		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
@@ -572,7 +573,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 	global $conf, $user;
 
 	// If syslog module enabled
-	if (empty($conf->syslog->enabled)) return false;
+	if (empty($conf->syslog->enabled)) return;
 
 	if (! empty($level))
 	{
@@ -582,7 +583,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		{
 			throw new Exception('Incorrect log level');
 		}
-		if ($level > $conf->global->SYSLOG_LEVEL) return false;
+		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
 		// If adding log inside HTML page is required
 		if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
@@ -590,6 +591,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
+		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a HTML handler
 		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
 		{
@@ -657,7 +659,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
- * 	@return	void
+ * 	@return	string
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
@@ -739,7 +741,7 @@ function dol_fiche_end($notab=0)
  *	Return tab footer of a card
  *
  *	@param  int		$notab		0=Add tab footer, 1=no tab footer
- *  @return	void
+ *  @return	string
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -768,7 +770,7 @@ function dol_bc($var,$moreclass='')
  *      @param  Object		$object         A company or contact object
  * 	    @param	int			$withcountry	1=Add country into address string
  *      @param	string		$sep			Separator to use to build string
- *      @param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
+ *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @return string          			Formated string
  */
 function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
@@ -1348,7 +1350,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  * 	@param 	string	$country 	Country code to use for formatting
  * 	@param 	int		$cid 		Id of contact if known
  * 	@param 	int		$socid 		Id of third party if known
- * 	@param 	int		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
  * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  * 	@return string 				Formated phone number
  */
@@ -1564,6 +1566,7 @@ function isValidEmail($address)
 /**
  *  Return true if phone number syntax is ok
  *
+ * TODO: Decide what to do with this
  *  @param	string		$phone		phone (Ex: "0601010101")
  *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
@@ -2542,7 +2545,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
- *	@return	void
+ *	@return	string
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
 {
@@ -2647,16 +2650,16 @@ function print_fiche_titre($title, $mesg='', $picto='title.png', $pictoisfullpat
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
- * 	@return	void
+ * 	@return	string
  */
-function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
+function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id=0)
 {
 	global $conf;
 
 	$return='';
 
 	if ($picto == 'setup') $picto='title.png';
-	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
@@ -2695,7 +2698,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	global $conf,$langs;
 
 	if ($picto == 'setup') $picto='title.png';
-	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	if (($num > $conf->liste_limit) || ($num == -1))
 	{
@@ -3010,7 +3013,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 
 /**
  *	Return localtax rate for a particular vat, when selling a product with vat $tva, from a $thirdparty_buyer to a $thirdparty_seller
- *  Note: It applies same rule than get_default_tva
+ *  Note: This function applies same rules than get_default_tva
  *
  * 	@param	float		$tva			        Vat taxe
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
@@ -3111,13 +3114,10 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 		}
 	}
 
-
-
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
-	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
-
+	$sql .= " AND t.taux = ".((float) $tva)." AND t.active = 1";
 	dol_syslog("get_localtax", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3188,23 +3188,23 @@ function get_localtax_by_third($local)
  *  Instead this function must be called when adding a line to get (array of localtax and type) and
  *  provide it to the function calcul_price_total.
  *
- *  @param		float	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param		int		$buyer         		Company object
- *  @param		int		$seller        		Company object
- *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ *  @param	float	$vatrate			VAT Rate
+ *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
+ *  @param	Societe	$buyer         		Company object
+ *  @param	Societe	$seller        		Company object
+ *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 {
 	global $db;
 
-	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
+	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local);
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
-	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+	$sql .= " AND t.taux = ".((float) $vatrate)." AND t.active = 1";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3256,30 +3256,6 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
 			}
-
-			if(! isOnlyOneLocalTax(2))
-			{
-				if(! isOnlyOneLocalTax(1))
-				{
-					return array($obj->localtax2_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax2_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-			}
-			else
-			{
-				if(! isOnlyOneLocalTax(1))
-				{
-					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type,get_localtax($vatrate, 1, $buyer, $seller) ,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-			}
-
 		}
 	}
 
@@ -3783,8 +3759,8 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
- * 	all entities but &,<,> are converted. This permits to encode special chars to entities with no double
- *  encoding for already encoded HTML strings.
+ * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,> are converted.
+ *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
  *              - writeHTMLCell -> param must be encoded into HTML.
@@ -3801,7 +3777,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
 {
 	$newstring=$stringtoencode;
-	if (dol_textishtml($stringtoencode))
+	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
 	{
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		if ($removelasteolbr) $newstring=preg_replace('/<br>$/i','',$newstring);	// Remove last <br> (remove only last one)
@@ -4014,7 +3990,7 @@ function dol_textishtml($msg,$option=0)
  *
  *  @param	string	$text1		Text 1
  *  @param	string	$text2		Text 2
- *  @param  string	$forxml     false=Use <br>, true=Use <br />
+ *  @param  bool	$forxml     false=Use <br>, true=Use <br />
  *  @return	string				Text 1 + new line + Text2
  *  @see    dol_textishtml
  */
@@ -4056,7 +4032,7 @@ function make_substitutions($chaine,$substitutionarray)
  *
  *  @param  array		$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
- *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
+ *  @param  object		$object                 If we want substitution from special constants, we provide data in a source object
  *  @param  Mixed		$parameters       		Add more parameters (useful to pass product lines)
  *  @param  string      $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
@@ -4099,8 +4075,8 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 /**
  *    Format output for start and end date
  *
- *    @param	timestamp	$date_start    Start date
- *    @param    timestamp	$date_end      End date
+ *    @param	int	$date_start    Start date
+ *    @param    int	$date_end      End date
  *    @param    string		$format        Output format
  *    @param	Translate	$outputlangs   Output language
  *    @return	void
@@ -4113,8 +4089,8 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *    Format output for start and end date
  *
- *    @param	timestamp	$date_start    Start date
- *    @param    timestamp	$date_end      End date
+ *    @param	int	$date_start    Start date
+ *    @param    int	$date_end      End date
  *    @param    string		$format        Output format
  *    @param	Translate	$outputlangs   Output language
  *    @return	string						String
@@ -4610,6 +4586,8 @@ function picto_from_langcode($codelang)
 
 	if (empty($codelang)) return '';
 
+	if (empty($codelang)) return '';
+
 	if ($codelang == 'auto')
 	{
 		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
@@ -4639,7 +4617,7 @@ function picto_from_langcode($codelang)
  *
  *  @param	Conf			$conf           Object conf
  *  @param  Translate		$langs          Object langs
- *  @param  Object|null		$object         Object object
+ *  @param  object|null		$object         Object object
  *  @param  array			$head          	Object head
  *  @param  int				$h				New position to fill
  *  @param  string			$type           Value for object where objectvalue can be

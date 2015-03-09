@@ -24,10 +24,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Deplacement	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function trip_prepare_head($object)
+function trip_prepare_head(Deplacement $object)
 {
 	global $langs, $conf;
 

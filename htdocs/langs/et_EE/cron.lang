@@ -14,8 +14,8 @@ URLToLaunchCronJobs=Croni poolt kontrollitavate ja käivitatavate programmide ja
 OrToLaunchASpecificJob=Või mõne kindla programmi kontrollimiseks ja käivitamiseks
 KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
 FileToLaunchCronJobs=Käsurea käsk cron programmide käivitamiseks
-CronExplainHowToRunUnix=Unix keskonnas on soovitatav kasutada crontabi käsurealt käivitatavate käskude jooksutamiseks
-CronExplainHowToRunWin=Microsoft(tm) Windows keskkonnas võib kasutada Toiminguajasti tööriista kindlate intervallide tagant käivitavate tegevuste plaanimiseks.
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Plaanitud käivitused
 CronListActive=List of active/scheduled jobs

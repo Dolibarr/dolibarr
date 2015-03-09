@@ -69,6 +69,8 @@ $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (!
 $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
+$datelivraison=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), GETPOST('liv_sec','int'), GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
+
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -144,8 +146,6 @@ if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer)
 // date de livraison
 if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
 {
-	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
-
 	$result=$object->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
@@ -251,7 +251,7 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     	$idprod=0;
     	$productsupplier = new ProductFournisseur($db);
 
-    	if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-2;	// Same behaviour than with combolist. When not select idprodfournprice is now -2 (to avoid conflict with next action that may return -1)
+    	if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
     	if (GETPOST('idprodfournprice') > 0)
     	{
@@ -294,12 +294,12 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     			$date_end
     		);
     	}
-    	if ($idprod == -2 || $idprod == 0)
+    	if ($idprod == 0 || $idprod == -99)
     	{
     		// Product not selected
     		$error++;
     		$langs->load("errors");
-    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
+    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), 'errors');
     	}
     	if ($idprod == -1)
     	{
@@ -334,7 +334,7 @@ if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     	else
     	{
     		$ttc = price2num($_POST['price_ttc']);
-    		$ht = $ttc / (1 + ($tauxtva / 100));
+    		$ht = $ttc / (1 + ($tva_tx / 100));
     		$price_base_type = 'HT';
     		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
     	}
@@ -780,11 +780,10 @@ if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+	if ($ret < 0) $error++;
 
-	if($ret < 0) $error++;
-
-	if (!$error)
+	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
@@ -797,7 +796,6 @@ if ($action == 'update_extras')
 		{
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-
 				$result=$object->insertExtraFields();
 
 				if ($result < 0)
@@ -841,21 +839,29 @@ if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         $object->fk_account        = GETPOST('fk_account', 'int');
         $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
+		$object->date_livraison = $datelivraison;
 
 		// Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+       	if (! $error)
+       	{
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
+       	}
 
-        $id = $object->create($user);
-		if ($id < 0)
-		{
-			$error++;
-		}
+       	if (! $error)
+       	{
+			$id = $object->create($user);
+        	if ($id < 0)
+        	{
+        		$error++;
+	        	setEventMessage($langs->trans($object->error), 'errors');
+        	}
+        }
 
         if ($error)
         {
             $langs->load("errors");
             $db->rollback();
-	        setEventMessage($langs->trans($object->error), 'errors');
             $action='create';
             $_GET['socid']=$_POST['socid'];
         }
@@ -1272,6 +1278,16 @@ if ($action=="create")
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
+	// Planned delivery date
+	print '<tr><td>';
+	print $langs->trans('DateDeliveryPlanned');
+	print '</td>';
+	print '<td>';
+	$usehourmin=0;
+	if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin=1;
+	$form->select_date($datelivraison?$datelivraison:-1,'liv_',$usehourmin,$usehourmin,'',"set");
+	print '</td></tr>';
+
     // Bank Account
     if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && ! empty($conf->banque->enabled))
     {
@@ -1588,13 +1604,17 @@ elseif (! empty($object->id))
 		print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		$form->select_date($object->date_livraison?$object->date_livraison:-1,'liv_','','','',"setdate_livraison");
+		$usehourmin=0;
+		if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin=1;
+		$form->select_date($object->date_livraison?$object->date_livraison:-1,'liv_',$usehourmin,$usehourmin,'',"setdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
 	else
 	{
-		print $object->date_livraison ? dol_print_date($object->date_livraison,'daytext') : '&nbsp;';
+		$usehourmin='day';
+		if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin='dayhour';
+		print $object->date_livraison ? dol_print_date($object->date_livraison, $usehourmin) : '&nbsp;';
 	}
 	print '</td></tr>';
 

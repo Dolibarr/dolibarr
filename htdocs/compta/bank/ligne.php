@@ -384,7 +384,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print $form->select_types_paiements($objp->fk_type,"value",'',2);
+            $form->select_types_paiements($objp->fk_type,"value",'',2);
             print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
             if ($objp->receiptid)
             {

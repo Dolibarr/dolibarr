@@ -8,6 +8,7 @@ FinancialAccount=Račun
 FinancialAccounts=Računi
 BankAccount=Bankovni račun
 BankAccounts=Bankovni računi
+ShowAccount=Show Account
 AccountRef=Financial account ref
 AccountLabel=Financial account label
 CashAccount=Cash account

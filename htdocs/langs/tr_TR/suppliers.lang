@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>%s</b> yürütülmedi
 SentToSuppliers=Tedarikçilere gönderilen
 ListOfSupplierOrders=Tedarikçi siparişleri listesi
 MenuOrdersSupplierToBill=Faturalanacak tedarikçi siparişleri
+NbDaysToDelivery=Gün olarak teslim süresi
+DescNbDaysToDelivery=Sipariş ürün listesindeki en uzun teslim süresi

@@ -59,6 +59,11 @@ class Facture extends CommonInvoice
 	//! Id client
 	var $socid;
 	//! Objet societe client (to load with fetch_client method)
+
+	/**
+	 * Customer
+	 * @var Societe
+	 */
 	var $client;
 	var $author;
 	var $fk_user_author;
@@ -82,7 +87,10 @@ class Facture extends CommonInvoice
 	var $total_tva=0;
 	var $total_ttc=0;
 	var $revenuestamp;
-	var $note;			// deprecated
+	/**
+	 * @deprecated
+	 */
+	var $note;
 	var $note_private;
 	var $note_public;
 	//! 0=draft,
@@ -111,7 +119,10 @@ class Facture extends CommonInvoice
     var $fk_account;                // Id of bank account
 	var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
 	var $modelpdf;
-	var $products=array();	// deprecated
+	/**
+	 * @deprecated
+	 */
+	var $products=array();
 	var $lines=array();
 	var $line;
 	var $extraparams=array();
@@ -596,6 +607,8 @@ class Facture extends CommonInvoice
 
 		$error=0;
 
+		$this->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// get extrafields so they will be clone
@@ -681,6 +694,8 @@ class Facture extends CommonInvoice
             if ($result < 0) $error++;
             // End call triggers
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -1931,8 +1946,8 @@ class Facture extends CommonInvoice
 	 *  	@param		double		$txlocaltax2		Local tax 2 rate
 	 *		@param    	int			$fk_product      	Id of predefined product/service
 	 * 		@param    	double		$remise_percent  	Percent of discount on line
-	 * 		@param    	timestamp	$date_start      	Date start of service
-	 * 		@param    	timestamp	$date_end        	Date end of service
+	 * 		@param    	int	$date_start      	Date start of service
+	 * 		@param    	int	$date_end        	Date end of service
 	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
 	 * 		@param    	int			$info_bits			Bits de type de lignes
 	 *		@param    	int			$fk_remise_except	Id discount used
@@ -2033,6 +2048,9 @@ class Facture extends CommonInvoice
 
 			// Insert line
 			$this->line=new FactureLigne($this->db);
+
+			$this->line->context = $this->context;
+
 			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
@@ -2107,8 +2125,8 @@ class Facture extends CommonInvoice
 	 *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *  @param     	double		$qty             	Quantity
 	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param     	date		$date_start      	Date de debut de validite du service
-	 *  @param     	date		$date_end        	Date de fin de validite du service
+	 *  @param     	int		$date_start      	Date de debut de validite du service
+	 *  @param     	int		$date_end        	Date de fin de validite du service
 	 *  @param     	double		$txtva          	VAT Rate
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
@@ -2171,7 +2189,9 @@ class Facture extends CommonInvoice
 			// Update line into database
 			$this->line=new FactureLigne($this->db);
 
-			// Stock previous line records
+            $this->line->context = $this->context;
+
+            // Stock previous line records
 			$staticline=new FactureLigne($this->db);
 			$staticline->fetch($rowid);
 			$this->line->oldline = $staticline;
@@ -2283,6 +2303,8 @@ class Facture extends CommonInvoice
 		}
 
 		$line=new FactureLigne($this->db);
+
+        $line->context = $this->context;
 
 		// For triggers
 		$line->fetch($rowid);
@@ -2947,7 +2969,7 @@ class Facture extends CommonInvoice
 	/**
 	 *  Supprime une demande de prelevement
 	 *
-	 *  @param  Use		$user       utilisateur creant la demande
+	 *  @param  User		$user       utilisateur creant la demande
 	 *  @param  int		$did        id de la demande a supprimer
 	 *  @return	int					<0 if OK, >0 if KO
 	 */

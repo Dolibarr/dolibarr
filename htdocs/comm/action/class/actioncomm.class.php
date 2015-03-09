@@ -37,27 +37,67 @@ class ActionComm extends CommonObject
     public $table_rowid = 'id';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    /**
+     * Id of the event
+     * @var int
+     */
     var $id;
+
+    /**
+     * Id of the event. Use $id as possible
+     * @var int
+     */
+    public $ref;
 
     var $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
     var $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
     var $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
     var $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+
     var $label;
+
+    /**
+     * @var string
+     * @deprecated Use $label
+     */
+    public $libelle;
 
     var $datec;			// Date creation record (datec)
     var $datem;			// Date modification record (tms)
-    var $author;		// Object user that create action 	//deprecated
-    var $usermod;		// Object user that modified action	// deprecated
+
+    /**
+     * Object user that create action
+     * @var User
+     * @deprecated
+     */
+    var $author;
+
+    /**
+     * Object user that modified action
+     * @var User
+     * @deprecated
+     */
+    var $usermod;
     var $authorid;		// Id user that create action
     var $usermodid;		// Id user that modified action
 
     var $datep;			// Date action start (datep)
     var $datef;			// Date action end (datep2)
-    var $durationp = -1;      // -1=Unkown duration			// deprecated
+
+    /**
+     * @var int -1=Unkown duration
+     * @deprecated
+     */
+    var $durationp = -1;
     var $fulldayevent = 0;    // 1=Event on full day
-    var $punctual = 1;        // Milestone					// deprecated. Milestone is already event with end date = start date
+
+    /**
+     * Milestone
+     * @var int
+     * @deprecated Milestone is already event with end date = start date
+     */
+    var $punctual = 1;
     var $percentage;    // Percentage
     var $location;      // Location
 
@@ -68,14 +108,41 @@ class ActionComm extends CommonObject
 	var $userassigned = array();	// Array of user ids
     var $userownerid;		// Id of user owner
     var $userdoneid;	// Id of user done
-    var $usertodo;		// Object user of owner				// deprecated
-    var $userdone;	 	// Object user that did action		// deprecated
+
+    /**
+     * Object user of owner
+     * @var User
+     * @deprecated
+     */
+    var $usertodo;
+
+    /**
+     * Object user that did action
+     * @var User
+     * @deprecated
+     */
+    var $userdone;
 
     var $socid;
     var $contactid;
-    var $societe;		// Company linked to action (optional)
-    var $contact;		// Contact linked to action (optional)
-    var $fk_project;	// Id of project (optional)
+
+    /**
+     * Company linked to action (optional)
+     * @var Societe|null
+     */
+    var $societe;
+
+    /**
+     * Contact linked to action (optional)
+     * @var Contact|null
+     */
+    var $contact;
+
+    /**
+     * Id of project (optional)
+     * @var int
+     */
+    var $fk_project;
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
@@ -95,8 +162,6 @@ class ActionComm extends CommonObject
      */
     function __construct($db)
     {
-    	global $langs;
-
         $this->db = $db;
 
         $this->societe = new stdClass();	// deprecated
@@ -119,12 +184,12 @@ class ActionComm extends CommonObject
         $now=dol_now();
 
         // Check parameters
-        if (empty($this->userownerid)) 
+        if (empty($this->userownerid))
         {
         	$this->errors[]='ErrorPropertyUserowneridNotDefined';
         	return -1;
         }
-        
+
         // Clean parameters
         $this->label=dol_trunc(trim($this->label),128);
         $this->location=dol_trunc(trim($this->location),128);
@@ -149,7 +214,7 @@ class ActionComm extends CommonObject
         $userdoneid=$this->userdoneid;
 
         // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
-        if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned)) 
+        if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned))
         	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
 
         if (! $this->type_id || ! $this->type_code)
@@ -239,12 +304,11 @@ class ActionComm extends CommonObject
 				{
 			        if (! is_array($val))	// For backward compatibility when val=id
 			        {
-			        	$tmpid=$val;
 			        	$val=array('id'=>$val);
 			        }
-					
+
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['mandatory']?$val['mandatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory'])?'0':$val['mandatory']).", ".(empty($val['transparency'])?'0':$val['transparency']).", ".(empty($val['answer_status'])?'0':$val['answer_status']).")";
 
 					$resql = $this->db->query($sql);
 					if (! $resql)
@@ -337,12 +401,13 @@ class ActionComm extends CommonObject
         $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
-        $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
-        $sql.= " WHERE a.fk_action=c.id";
-        if ($ref) $sql.= " AND a.id=".$ref;		// No field ref, we use id
-        else $sql.= " AND a.id=".$id;
+        $sql.= " WHERE ";
+        if ($ref) $sql.= " a.id=".$ref;		// No field ref, we use id
+        else $sql.= " a.id=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -421,9 +486,7 @@ class ActionComm extends CommonObject
      */
     function fetch_userassigned()
     {
-        global $langs;
-
-        $sql.="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
+        $sql ="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
 		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
 		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
 		$resql2=$this->db->query($sql);
@@ -609,7 +672,7 @@ class ActionComm extends CommonObject
 				foreach($this->userassigned as $key => $val)
 				{
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".($val['manadatory']?$val['manadatory']:'0').", ".($val['transparency']?$val['transparency']:'0').", ".($val['answer_status']?$val['answer_status']:'0').")";
+					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['manadatory'])?'0':$val['manadatory']).", ".(empty($val['transparency'])?'0':$val['transparency']).", ".(empty($val['answer_status'])?'0':$val['answer_status']).")";
 
 					$resql = $this->db->query($sql);
 					if (! $resql)
@@ -885,7 +948,7 @@ class ActionComm extends CommonObject
      * 		@param	int		$overwritepicto		1=Overwrite picto
      *		@return	string						Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto='')
+    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0)
     {
         global $conf,$langs;
 
@@ -1145,7 +1208,7 @@ class ActionComm extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf,$user;
+        global $user;
 
         $now=dol_now();
 
@@ -1162,6 +1225,7 @@ class ActionComm extends CommonObject
         $this->datef=$now;
         $this->author=$user;
         $this->usermod=$user;
+        $this->usertodo=$user;
         $this->fulldayevent=0;
         $this->punctual=0;
         $this->percentage=0;

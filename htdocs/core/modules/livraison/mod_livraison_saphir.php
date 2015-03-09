@@ -120,7 +120,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'livraison','ref','',$objsoc->code_client,$object->date_livraison);
+		$numFinal=get_next_value($db,$mask,'livraison','ref','',$objsoc,$object->date_livraison);
 
 		return  $numFinal;
     }

@@ -718,19 +718,20 @@ class pdf_einstein extends ModelePDFCommandes
         // If payment mode not forced or forced to VIR, show payment with BAN
         if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
         {
-	        if (! empty($conf->global->FACTURE_RIB_NUMBER))
-	        {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+        	if (! empty($object->fk_bank) || ! empty($conf->global->FACTURE_RIB_NUMBER))
+			{
+				$bankid=(empty($object->fk_bank)?$conf->global->FACTURE_RIB_NUMBER:$object->fk_bank);
+				$account = new Account($this->db);
+				$account->fetch($bankid);
 
-                $curx=$this->marge_gauche;
-                $cury=$posy;
+				$curx=$this->marge_gauche;
+				$cury=$posy;
 
-                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
+				$posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
 
-                $posy+=2;
-	        }
-		}
+				$posy+=2;
+			}
+        }
 
 		return $posy;
 	}

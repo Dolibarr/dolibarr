@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configuração do módulo de Workflow
-WorkflowDesc=Este módulo é desenhado para modificar o comportamento de acções automáticas na aplicação. Por padrão, o fluxo de trabalho é aberto (você fazer a coisa de forma que você quiser). Você pode habilitar ações automáticas .
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Não há fluxo de trabalho você pode modificar para o módulo que você tenha ativado.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar um pedido do cliente automaticamente, após uma proposta comercial ser assinada
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente, após uma proposta comercial ser assinada

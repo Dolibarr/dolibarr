@@ -585,7 +585,7 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
-			
+
 			foreach ($amount_ht as $tva_tx => $xxx) {
 				$discount->amount_ht = abs($amount_ht [$tva_tx]);
 				$discount->amount_tva = abs($amount_tva [$tva_tx]);
@@ -636,7 +636,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-		if ($ret < 0) $error ++;
+		if ($ret < 0) $error++;
 
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
@@ -1676,8 +1676,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
@@ -2736,7 +2735,7 @@ if ($action == 'create')
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
 		{
-			if ($object->statut == 0 && $object->type != TYPE_CREDIT_NOTE && $object->type != TYPE_DEPOSIT)
+			if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT)
 				print ' (' . $addabsolutediscount . ')<br>';
 			else
 				print '. ';
@@ -3602,13 +3601,13 @@ if ($action == 'create')
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
-		$formmail->substit ['__FACREF__'] = $object->ref;
-		$formmail->substit ['__SIGNATURE__'] = $user->signature;
-		$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit ['__PERSONALIZED__'] = '';
-		$formmail->substit ['__CONTACTCIVNAME__'] = '';
+		$formmail->substit['__FACREF__'] = $object->ref;
+		$formmail->substit['__SIGNATURE__'] = $user->signature;
+		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->substit['__CONTACTCIVNAME__'] = '';
 
 		// Find the good contact adress
 		$custcontact = '';
@@ -3617,7 +3616,7 @@ if ($action == 'create')
 
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ($contactarr as $contact) {
-				if ($contact ['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
+				if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
 
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
@@ -3628,15 +3627,15 @@ if ($action == 'create')
 			}
 
 			if (! empty($custcontact)) {
-				$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
 		}
 
 		// Tableau des parametres complementaires du post
-		$formmail->param ['action'] = $action;
-		$formmail->param ['models'] = $modelmail;
-		$formmail->param ['facid'] = $object->id;
-		$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+		$formmail->param['action'] = $action;
+		$formmail->param['models'] = $modelmail;
+		$formmail->param['facid'] = $object->id;
+		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 		// Init list of files
 		if (GETPOST("mode") == 'init') {

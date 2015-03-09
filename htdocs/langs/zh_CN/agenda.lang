@@ -58,8 +58,9 @@ OrderSentByEMail=客户订单通过电子邮件发送%s
 InvoiceSentByEMail=客户发票通过电子邮件发送%s
 SupplierOrderSentByEMail=供应商的订单通过电子邮件发送%s
 SupplierInvoiceSentByEMail=供应商的发票通过电子邮件发送%s
-ShippingSentByEMail=通过电子邮件发送的航运%s
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= 第三方创建
 DateActionPlannedStart= 计划开始日期
 DateActionPlannedEnd= 计划结束日期
@@ -68,7 +69,7 @@ DateActionDoneEnd= 真正的结束日期
 DateActionStart= 开始日期
 DateActionEnd= 结束日期
 AgendaUrlOptions1=您还可以添加以下参数来筛选输出：
-AgendaUrlOptions2=<b>login=%s</b> 表示限制只导出创造用户，受影响用户或使用者或执行者为<b>%s</b>的待办事项。
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>表示限制只导出使用者与受影响者为<b>%s</b>的待办事项。
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.

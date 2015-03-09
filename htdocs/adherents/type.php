@@ -89,10 +89,11 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+		if ($ret < 0) $error++;
 
 		if ($adht->libelle)
 		{
-			$id=$adht->create($user->id);
+			$id=$adht->create($user);
 			if ($id > 0)
 			{
 				header("Location: ".$_SERVER["PHP_SELF"]);
@@ -126,8 +127,9 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+		if ($ret < 0) $error++;
 
-		$adht->update($user->id);
+		$adht->update($user);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
 		exit;

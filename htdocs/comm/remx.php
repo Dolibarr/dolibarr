@@ -534,7 +534,7 @@ if ($socid > 0)
 	}
 	else
 	{
-		print dol_print_error($db);
+		dol_print_error($db);
 	}
 
 }

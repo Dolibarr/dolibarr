@@ -29,6 +29,7 @@ ReportTurnover=Käive
 PaymentsNotLinkedToInvoice=Makseid ei ole seotud ühegi arvega, seega ei ole nad seotud ühegi kolmanda isikuga
 PaymentsNotLinkedToUser=Ühegi kasutajaga sidumata maksed
 Profit=Kasum
+AccountingResult=Accounting result
 Balance=Saldo
 Debit=Deebet
 Credit=Kreedit

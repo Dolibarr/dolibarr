@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Настройка на модула изглежд�
 ErrorBadMask=Грешка на маска
 ErrorBadMaskFailedToLocatePosOfSequence=Грешка, маска без поредния номер
 ErrorBadMaskBadRazMonth=Грешка, неправилна стойност за нулиране
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Грешка. Изберете поне един запис.
 ErrorProductWithRefNotExist=Каталог с <i>&quot;%s&quot;</i> модели не съществуват
 ErrorDeleteNotPossibleLineIsConsolidated=Ненужното не е възможно, тъй като записът е свързана с банкова transation, че е conciliated
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Задължителни параметри на настройката все още не са определени

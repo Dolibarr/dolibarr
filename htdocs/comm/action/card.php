@@ -274,6 +274,7 @@ if ($action == 'add')
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	if ($ret < 0) $error++;
 
 	if (! $error)
 	{
@@ -429,6 +430,7 @@ if ($action == 'update')
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
 		if (! $error)
 		{

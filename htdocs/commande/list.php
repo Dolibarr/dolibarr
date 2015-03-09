@@ -361,19 +361,22 @@ if ($resql)
                     // stock order and stock order_supplier
                     $stock_order=0;
                     $stock_order_supplier=0;
-                    if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
-                        if (! empty($conf->commande->enabled)) {
+                    if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+                    {
+                        if (! empty($conf->commande->enabled))
+                        {
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
-                                $generic_product->load_stats_commande(0,'1,2',true);
+                                $generic_product->load_stats_commande(0,'1,2');
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
                             } else {
                                 $generic_product->stats_commande['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'];
                             }
                             $stock_order=$generic_product->stats_commande['qty'];
                         }
-                        if (! empty($conf->fournisseur->enabled)) {
+                        if (! empty($conf->fournisseur->enabled))
+                        {
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
-                                $generic_product->load_stats_commande_fournisseur(0,'3',true);
+                                $generic_product->load_stats_commande_fournisseur(0,'3');
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
                             } else {
                                 $generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'];
@@ -500,7 +503,7 @@ if ($resql)
 }
 else
 {
-	print dol_print_error($db);
+	dol_print_error($db);
 }
 
 llxFooter();

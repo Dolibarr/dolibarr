@@ -200,6 +200,7 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
         if (! GETPOST("lastname"))
         {
@@ -303,6 +304,7 @@ if (empty($reshook))
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
             $result = $object->update($contactid, $user);
 

@@ -58,8 +58,9 @@ OrderSentByEMail=Kundorderprojekt %s via e-post
 InvoiceSentByEMail=Kundfaktura %s via e-post
 SupplierOrderSentByEMail=Leverantör beställa %s via e-post
 SupplierInvoiceSentByEMail=Leverantörsfaktura %s via e-post
-ShippingSentByEMail=Frakt %s via e-post
-ShippingValidated= Frakt %s validerade
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Tredje part har skapats
 DateActionPlannedStart= Planerat startdatum
 DateActionPlannedEnd= Planerat slutdatum
@@ -68,7 +69,7 @@ DateActionDoneEnd= Real slutdatum
 DateActionStart= Startdatum
 DateActionEnd= Slutdatum
 AgendaUrlOptions1=Du kan också lägga till följande parametrar för att filtrera utgång:
-AgendaUrlOptions2=<b>login = %s</b> att begränsa produktionen till åtgärder inrättade av, påverkas eller göras av användaren <b>%s.</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>Logina =%s</b> ​​att begränsa produktionen till åtgärder som ägs av en användare<b>%s.</b>
 AgendaUrlOptions4=<b>logint = %s</b> att begränsa produktionen till handlande påverkade användarnas <b>%s.</b>
 AgendaUrlOptionsProject=<b>projekt = PROJECT_ID</b> att begränsa produktionen till åtgärder i samband med projektet <b>PROJECT_ID.</b>

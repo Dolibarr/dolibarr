@@ -957,6 +957,11 @@ if (empty($reshook))
 		if (GETPOST('model')) {
 			$object->setDocModel($user, GETPOST('model'));
 		}
+	    if (GETPOST('fk_bank')) { // this field may come from an external module
+            $object->fk_bank = GETPOST('fk_bank');
+        } else {
+            $object->fk_bank = $object->fk_account;
+        }
 
 		// Define output language
 		$outputlangs = $langs;
@@ -1080,10 +1085,10 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
-		if (! $error) {
+		if (! $error)
+		{
 			// Actions on extra fields (by external module or standard code)
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('propaldao'));

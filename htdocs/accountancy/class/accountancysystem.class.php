@@ -66,8 +66,8 @@ class AccountancySystem
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_system");
 
 			if ($id > 0) {
-				$this->id = $id;
-				$result = $this->id;
+				$this->rowid = $id;
+				$result = $this->rowid;
 			} else {
 				$result = - 2;
 				$this->error = "AccountancySystem::Create Erreur $result";
