@@ -1098,7 +1098,7 @@ else
         	$ref = substr($object->ref, 1, 4);
         	if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
         	{
-        		$numref = $object->getNextNumRef($soc);
+        		$numref = $object->getNextNumRef($object->thirdparty);
         	}
         	else
         	{

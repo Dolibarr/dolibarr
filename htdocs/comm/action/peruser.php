@@ -305,16 +305,16 @@ if ($conf->use_javascript_ajax)
 		{
 			foreach ($showextcals as $val)
 			{
-				$htmlname = dol_string_nospecial($val['name']);
+				$htmlname = md5($val['name']);
 				$s.='<script type="text/javascript">' . "\n";
 				$s.='jQuery(document).ready(function () {' . "\n";
-				$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
+				$s.='		jQuery("#check_ext' . $htmlname . '").click(function() {';
 				$s.=' 		/* alert("'.$htmlname.'"); */';
-				$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
+				$s.=' 		jQuery(".family_ext' . $htmlname . '").toggle();';
 				$s.='		});' . "\n";
 				$s.='});' . "\n";
 				$s.='</script>' . "\n";
-				$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 			}
 		}
 	}
@@ -869,7 +869,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					}
 
 					$color=$event->icalcolor;
-					$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
+					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unsortable');
 				}
 				else if ($event->type_code == 'BIRTHDAY')
 				{
