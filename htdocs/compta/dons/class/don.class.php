@@ -701,12 +701,28 @@ class Don extends CommonObject
 
 
     /**
-     *	Return clicable name (with picto eventually)
+     *  Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *	@return	string					Chaine avec URL
+     *  @param  int     $withpicto      0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *  @return string                  Chaine avec URL
+     *  @deprecated
      */
     function getNomUrl($withpicto=0)
+    {
+        return $this->getHtmlLink($withpicto);
+    }
+
+    /**
+     *  Return clicable name (with picto eventually)
+     *
+     *  @param  int     $withpicto      Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
+     *  @param  string  $option         On what the link point to
+     *  @param  int     $maxlen         Max length of visible user name
+     *  @param  string  $more           More
+     *  @param  string  $notooltip      1=Disable tooltip
+     *  @return string                  String with URL
+    */
+    function getHtmlLink($withpicto=0, $option='', $maxlen=24, $more, $notooltip=0)
     {
         global $langs;
 

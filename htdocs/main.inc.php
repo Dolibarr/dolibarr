@@ -1432,7 +1432,22 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $toprightmenu.='<div class="login_block_user">';
 	    // Add login user link
 	    //$toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'login_block_elem2',2);	// This include div class="login"
-        $toprightmenu.= $user->getNomurl(0, '', true, 0, 11);
+        $more = '<br>';
+        $more.= '<br><u>'.$langs->trans("Connection").'</u>';
+        $more.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+        if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $more.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
+        $more.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+        $more.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin,"dayhour");
+        $more.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin,"dayhour");
+        $more.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+        $more.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+        $s=picto_from_langcode($langs->getDefaultLang());
+        $more.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
+        $more.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+        if (! empty($conf->browser->phone)) $more.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
+        if (! empty($_SESSION["disablemodules"])) $more.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
+
+        $toprightmenu.= $user->getHtmlLink(0, '', 11, $more, 0);
 		$toprightmenu.='</div>';
 
 	    $toprightmenu.='<div class="login_block_other">';
