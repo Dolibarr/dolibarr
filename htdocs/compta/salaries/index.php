@@ -83,7 +83,8 @@ $form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.salary, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_societe as fk_soc,";
+$sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id,";
@@ -125,7 +126,7 @@ if ($result)
     print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("CurrentSalary"),$_SERVER["PHP_SELF"],"u.salary","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.salary","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datev","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
@@ -164,6 +165,10 @@ if ($result)
         $userstatic->id=$obj->uid;
         $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
+        $userstatic->admin=$obj->admin;
+        $userstatic->login=$obj->login;
+        $userstatic->email=$obj->email;
+        $userstatic->societe_id=$obj->fk_soc;
         $salstatic->id=$obj->rowid;
 		$salstatic->ref=$obj->rowid;
         // Ref
