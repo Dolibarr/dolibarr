@@ -4949,7 +4949,7 @@ function dol_getmypid()
  * Generate natural SQL search string
  *
  * @param 	string|string[]	$fields 	String or array of strings, filled with the name of fields in the SQL query
- * @param 	string 			$value 		The value to look for. 
+ * @param 	string 			$value 		The value to look for.
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
  * @param	string			$number		0=value is list of keywords, 1=value is a numeric test
@@ -4958,10 +4958,10 @@ function dol_getmypid()
 function natural_search($fields, $value, $numeric=0)
 {
     global $db,$langs;
-    
+
     if ($numeric)
     {
-    	$value=preg_replace('/([<>=]+)\s([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+    	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
     }
     $crits = explode(' ', $value);
     $res = '';
@@ -4970,19 +4970,19 @@ function natural_search($fields, $value, $numeric=0)
     $nboffields = count($fields);
     $end2 = count($crits);
     $j = 0;
-    foreach ($crits as $crit) 
+    foreach ($crits as $crit)
     {
         $i = 0; $i2 = 0;
         $newres = '';
-        foreach ($fields as $field) 
+        foreach ($fields as $field)
         {
-            if ($numeric) 
+            if ($numeric)
             {
             	$operator='=';
             	$newcrit = preg_replace('/([<>=]+)/','',trim($crit));
-            	
+
             	preg_match('/([<>=]+)/',trim($crit), $reg);
-            	if ($reg[1]) 
+            	if ($reg[1])
             	{
             		$operator = $reg[1];
             	}
@@ -4992,7 +4992,7 @@ function natural_search($fields, $value, $numeric=0)
             		$i2++;	// a criteria was added to string
             	}
             }
-            else 
+            else
             {
             	$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
             	$i2++;	// a criteria was added to string
