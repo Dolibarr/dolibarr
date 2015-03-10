@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       dev/skeletons/commandefournisseurdispatch.class.php
+ *  \file       fourn/class/fournisseur.commande.dispatch.class.php
  *  \ingroup    fournisseur stock
  *  \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *				Initialy built by build_class_from_table on 2015-02-24 10:38
@@ -70,10 +70,10 @@ class CommandeFournisseurDispatch extends CommonObject
 
         // List of language codes for status
         $this->statuts[0] = 'Received';
-        $this->statuts[1] = 'Approved';
+        $this->statuts[1] = 'Verified';
         $this->statuts[2] = 'Denied';
         $this->statutshort[0] = 'Received';
-        $this->statutshort[1] = 'Approved';
+        $this->statutshort[1] = 'Verified';
         $this->statutshort[2] = 'Denied';
 
         return 1;
@@ -494,23 +494,17 @@ class CommandeFournisseurDispatch extends CommonObject
         if ($mode == 3)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
         }
         if ($mode == 4)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut1').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut3').' '.$langs->trans($this->statuts[$statut]);
-            if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
         }
         if ($mode == 5)
         {
             if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut4');
         }
     }
 

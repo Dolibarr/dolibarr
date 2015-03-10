@@ -125,7 +125,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
 }
-$sql .= " ORDER BY ".$sortfield." ".$sortorder;
+$sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
@@ -225,11 +225,11 @@ if ($resql)
 		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');
 		print '</td>';
 
-		print '<td align="right">'.price($objp->price).'</td>';
+		print '<td align="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
 
 		print '<td align="right">'.$objp->qty.'</td>';
 
-		print '<td align="right">'.price($objp->unitprice).'</td>';
+		print '<td align="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
 
 		print "</tr>\n";
 		$i++;
