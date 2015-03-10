@@ -32,9 +32,9 @@ class ExpeditionLineBatch extends CommonObject
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
 	var $id;
-	var $sellby='';
-	var $eatby='';
-	var $batch='';
+	var $sellby;
+	var $eatby;
+	var $batch;
 	var $dluo_qty;
 	var $entrepot_id;
 	var $fk_origin_stock;
