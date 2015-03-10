@@ -21,6 +21,8 @@
 
 ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
 
+ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
+
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
 
