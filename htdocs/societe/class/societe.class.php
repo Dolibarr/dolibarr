@@ -1158,11 +1158,20 @@ class Societe extends CommonObject
      * 	@param		boolean		$case		Case sensitive (true/false)
      * 	@param		boolean		$similar	Add test if string inside name into database, or name into database inside string. Do not use this: Not compatible with other database.
      * 	@param		string		$clause		Clause for filters
-     * 	@return		array		Array of thirdparties object
+     * 	@return		array|int				<0 if KO, array of thirdparties object if OK
      */
     function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
     {
     	$thirdparties = array();
+
+    	dol_syslog("searchByName name=".$name." type=".$type." exact=".$exact);
+
+    	// Check parameter
+    	if (empty($name))
+    	{
+    		$this->errors[]='ErrorBadValueForParameter';
+    		return -1;
+    	}
 
     	// Generation requete recherche
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -1242,7 +1251,7 @@ class Societe extends CommonObject
     	}
     	else
     	{
-    		$this->error=$this->db->error().' sql='.$sql;
+    		$this->error=$this->db->lasterror();
     		return -1;
     	}
     }
