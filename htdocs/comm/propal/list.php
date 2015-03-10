@@ -388,7 +388,7 @@ if ($result)
 
 		// Date proposal
 		print '<td align="center">';
-		print dol_print_date($db->jdate($obj->dp), 'day');
+		print dol_print_date($db->jdate($objp->dp), 'day');
 		print "</td>\n";
 
 		// Date end validity
