@@ -77,8 +77,10 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
-	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
+	$dateech=@dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
+	$dateperiod=@dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
+    $amount=GETPOST('amount');
+    $actioncode=GETPOST('actioncode');
 	if (! $dateech)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
@@ -89,12 +91,12 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
 		$action = 'create';
 	}
-	elseif (! $_POST["actioncode"] > 0)
+	elseif (! $actioncode > 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
 		$action = 'create';
 	}
-	elseif (! $_POST["amount"])
+	elseif (empty($amount))
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
 		$action = 'create';
@@ -103,11 +105,11 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	{
 		$chargesociales=new ChargeSociales($db);
 
-		$chargesociales->type=$_POST["actioncode"];
-		$chargesociales->lib=$_POST["label"];
+		$chargesociales->type=$actioncode;
+		$chargesociales->lib=GETPOST('label');
 		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$dateperiod;
-		$chargesociales->amount=$_POST["amount"];
+		$chargesociales->amount=price2num($amount);
 
 		$id=$chargesociales->create($user);
 		if ($id <= 0)
@@ -120,32 +122,39 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	$dateech=dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
-	$dateperiod=dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
-	if (! $dateech)
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
-		$action = 'edit';
-	}
-	elseif (! $dateperiod)
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
-		$action = 'edit';
-	}
+    $dateech=dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
+    $dateperiod=dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
+    $amount=GETPOST('amount');
+    if (! $dateech)
+    {
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
+        $action = 'edit';
+    }
+    elseif (! $dateperiod)
+    {
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
+        $action = 'edit';
+    }
+    elseif (empty($amount))
+    {
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
+        $action = 'edit';
+    }
 	else
 	{
-		$chargesociales=new ChargeSociales($db);
-		$result=$chargesociales->fetch($_GET["id"]);
+        $chargesociales=new ChargeSociales($db);
+        $result=$chargesociales->fetch($id);
 
-		$chargesociales->lib=$_POST["label"];
-		$chargesociales->date_ech=$dateech;
-		$chargesociales->periode=$dateperiod;
+        $chargesociales->lib=GETPOST('label');
+        $chargesociales->date_ech=$dateech;
+        $chargesociales->periode=$dateperiod;
+        $chargesociales->amount=price2num($amount);
 
-		$result=$chargesociales->update($user);
-		if ($result <= 0)
-		{
-			setEventMessage($chargesociales->error, 'errors');
-		}
+        $result=$chargesociales->update($user);
+        if ($result <= 0)
+        {
+            setEventMessage($chargesociales->error, 'errors');
+        }
 	}
 }
 
@@ -437,7 +446,15 @@ if ($id > 0)
 		}
 
 		// Amount
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+        if ($action == 'edit')
+        {
+            print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
+            print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
+            print "</td></tr>";
+        }
+        else {
+            print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+        }
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
