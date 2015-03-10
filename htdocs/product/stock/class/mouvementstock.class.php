@@ -292,7 +292,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Add movement for sub products (recursive call)
-		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
+		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK))
 		{
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode);	// we use 0 as price, because pmp is not changed for subproduct
 		}
@@ -341,8 +341,7 @@ class MouvementStock extends CommonObject
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
-		// TODO Select only subproduct with incdec tag
-		//$sql.= " AND incdec = 1";
+		$sql.= " AND incdec = 1";
 
 		dol_syslog(get_class($this)."::_createSubProduct", LOG_DEBUG);
 		$resql=$this->db->query($sql);

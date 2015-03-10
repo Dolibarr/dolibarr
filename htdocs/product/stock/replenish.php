@@ -373,6 +373,17 @@ $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
+	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
+	'<input type="hidden" name="sortfield" value="' . $sortfield . '">'.
+	'<input type="hidden" name="sortorder" value="' . $sortorder . '">'.
+	'<input type="hidden" name="type" value="' . $type . '">'.
+	'<input type="hidden" name="linecount" value="' . $num . '">'.
+	'<input type="hidden" name="action" value="order">'.
+	'<input type="hidden" name="mode" value="' . $mode . '">';
+
 dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
 
 print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
@@ -423,16 +434,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	);
 }
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
-	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
-	'<input type="hidden" name="sortfield" value="' . $sortfield . '">'.
-	'<input type="hidden" name="sortorder" value="' . $sortorder . '">'.
-	'<input type="hidden" name="type" value="' . $type . '">'.
-	'<input type="hidden" name="linecount" value="' . $num . '">'.
-	'<input type="hidden" name="action" value="order">'.
-	'<input type="hidden" name="mode" value="' . $mode . '">'.
-
-	'<table class="liste" width="100%">';
+print '<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
 $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
@@ -504,7 +506,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
-		$form = new Form($db);
 		$var =! $var;
 
 		if ($usevirtualstock)
@@ -517,7 +518,13 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$stock = $prod->stock_reel;
 		}
 
-		$ordered = $prod->stats_commande_fournisseur['qty']-$prod->stats_reception['qty'];
+		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+		$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+		$result=$prod->load_stats_reception(0,'4');
+
+		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
+		//print $prod->stats_reception['qty'];
+		$ordered = $prod->stats_commande_fournisseur['qty'] - $prod->stats_reception['qty'];
 
 		$warning='';
 		if ($objp->alertstock && ($stock < $objp->alertstock))
@@ -592,12 +599,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 print '</table>';
 
 
-$value=$langs->trans("CreateOrders");
-print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
-
-
-print '</form>';
-
 if ($num > $conf->liste_limit)
 {
 	if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha'))
@@ -606,42 +607,29 @@ if ($num > $conf->liste_limit)
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
 		$filters .= '&mode=' . $mode;
-		print_barre_liste(
-			'',
-			$page,
-			'replenish.php',
-			$filters,
-			$sortfield,
-			$sortorder,
-			'',
-			$num,
-			0,
-			''
-		);
-	} else {
+		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
+	}
+	else
+	{
 		$filters = '&sref=' . $sref . '&snom=' . $snom;
 		$filters .= '&fourn_id=' . $fourn_id;
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
 		$filters .= '&mode=' . $mode;
-		print_barre_liste(
-			'',
-			$page,
-			'replenish.php',
-			$filters,
-			$sortfield,
-			$sortorder,
-			'',
-			$num,
-			0,
-			''
-		);
+		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
 	}
 }
 
 $db->free($resql);
 
 dol_fiche_end();
+
+
+$value=$langs->trans("CreateOrders");
+print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
+
+
+print '</form>';
 
 
 // TODO Replace this with jquery

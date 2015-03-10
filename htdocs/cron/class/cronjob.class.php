@@ -718,6 +718,8 @@ class Cronjob extends CommonObject
 
 		$object=new Cronjob($this->db);
 
+		$object->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -743,6 +745,8 @@ class Cronjob extends CommonObject
 
 
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)

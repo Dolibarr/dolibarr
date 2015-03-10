@@ -49,6 +49,7 @@ abstract class CommonObject
     public $errors;
 
     public $canvas;                // Contains canvas name if it is
+	public $context=array();		// Use to pass context information
 
     public $name;
     public $lastname;
@@ -887,7 +888,7 @@ abstract class CommonObject
 
         if (! $this->table_element)
         {
-            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
             return -1;
         }
 
@@ -1775,6 +1776,7 @@ abstract class CommonObject
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
             if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
+            if ($this->element == 'askpricesupplier')                                      $fieldttc='total';
 
             if (empty($nodatabaseupdate))
             {
@@ -1965,6 +1967,9 @@ abstract class CommonObject
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
+                    else if ($objecttype == 'askpricesupplier')			{
+                        $classpath = 'comm/askpricesupplier/class';
+                    }
                     else if ($objecttype == 'shipping')			{
                         $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
                     }
@@ -2121,7 +2126,7 @@ abstract class CommonObject
      *
      *      @param	int		$status			Status to set
      *      @param	int		$elementId		Id of element to force (use this->id by default)
-     *      @param	string	$elementType	Type of element to force (use ->this->element by default)
+     *      @param	string	$elementType	Type of element to force (use this->table_element by default)
      *      @return int						<0 if KO, >0 if OK
      */
     function setStatut($status,$elementId='',$elementType='')
@@ -2135,9 +2140,13 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-
+        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
+		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
+        // If status = 1 = validated, update also fk_user_valid
+        if ($status == 1 && $elementTable == 'expensereport') $sql.=", fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid=".$elementId;
 
         dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
@@ -2383,6 +2392,91 @@ abstract class CommonObject
     }
 
 
+	/**
+     *    Return incoterms informations
+     *
+     *    @return	string	incoterms info
+     */
+    function display_incoterms()
+    {
+        $out = '';
+		$this->incoterms_libelle = '';
+		if (!empty($this->fk_incoterms))
+		{
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$res = $this->db->fetch_object($result);
+				$out .= $res->code;
+			}
+		}
+
+		$out .= ' - '.$this->location_incoterms;
+
+		return $out;
+    }
+
+	/**
+     *    Return incoterms informations for pdf display
+     *
+     *    @return	string		incoterms info
+     */
+	function getIncotermsForPDF()
+	{
+		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$res = $this->db->fetch_object($resql);
+			return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+     *    Define incoterms values of current object
+     *
+     *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
+	 * 	  @param 	string  $location		 location of incoterm
+     *    @return	int     		<0 if KO, >0 if OK
+     */
+    function setIncoterms($id_incoterm, $location)
+    {
+        if ($this->id && $this->table_element)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
+			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+            $sql.= " WHERE rowid = " . $this->id;
+			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+            	$this->fk_incoterms = $id_incoterm;
+				$this->location_incoterms = $location;
+
+				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+				$res = $this->db->query($sql);
+				if ($res)
+				{
+					$obj = $this->db->fetch_object($res);
+					$this->libelle_incoterms = $obj->libelle;
+				}
+                return 1;
+            }
+            else
+			{
+                return -1;
+            }
+        }
+        else return -1;
+    }
+
+
     /**
      *  Return if a country is inside the EEC (European Economic Community)
      *
@@ -2480,6 +2574,10 @@ abstract class CommonObject
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
+        		else if ($objecttype == 'askpricesupplier')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
+        		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
         			$tplpath = 'expedition';
         			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
@@ -2564,38 +2662,48 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
+	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
+
+		// Define usemargins
+		$usemargins=0;
+		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
+		print '<td>'.$langs->trans('Description').'</td>';
 
-		// VAT
-		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
-
-		// Price HT
-		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
-
-		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
-
-		// Qty
-		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
-
-		// Reduction short
-		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
-
-		if ($this->situation_cycle_ref) {
-			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
+		if ($this->element == 'askpricesupplier')
+		{
+			print '<td align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
 		}
 
-		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		// VAT
+		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+
+		// Price HT
+		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+
+		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
+
+		// Qty
+		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+
+		// Reduction short
+		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+
+		if ($this->situation_cycle_ref) {
+			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
+		}
+
+		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
@@ -2650,7 +2758,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline,$permtoedit);
 			}
 
 			$i++;
@@ -2671,9 +2779,10 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
+	 *  @param	int			$permtoedit			Permission to edit
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
@@ -3493,7 +3602,8 @@ abstract class CommonObject
 
     /**
      *	Add/Update all extra fields values for the current object.
-     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */

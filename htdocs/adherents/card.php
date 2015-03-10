@@ -302,6 +302,7 @@ if (empty($reshook))
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
 			// Check if we need to also synchronize user information
 			$nosyncuser=0;
@@ -471,6 +472,7 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
 		// Check parameters
 		if (empty($morphy) || $morphy == "-1") {

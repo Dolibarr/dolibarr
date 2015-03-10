@@ -128,7 +128,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
             $error++;
         }
-        if ($object->type == '-1') 	// Otherwise it is TF_LUNCH,...
+        if ($object->type == '-1')
         {
 	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
             $error++;

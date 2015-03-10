@@ -1125,6 +1125,24 @@ td.formdocbutton {padding-top:6px;}
 	);
 	color:white;
 }
+.button:disabled {
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    cursor: auto;
+}
+.buttonRefused {
+	pointer-events: none;
+   	cursor: default;	
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+
 
 /* ============================================================================== */
 /* Tables                                                                         */

@@ -24,8 +24,8 @@ CKEDITOR.editorConfig = function( config )
 	config.fullPage = false;	// Not a full html page string, just part of it
 	config.dialog_backgroundCoverColor = 'rgb(255, 254, 253)';
 	//config.contentsCss = '/css/mysitestyles.css';
-	config.image_previewText=' ';
-
+	config.image_previewText=' ';	// Must no be empty
+		
 	config.toolbar_Full =
 	[
 	    ['Source','-','Save','NewPage','Preview','-','Templates'],
@@ -45,30 +45,33 @@ CKEDITOR.editorConfig = function( config )
 	    ['Maximize', 'ShowBlocks','-','About']
 	];
 
+	// Used for mailing fields
 	config.toolbar_dolibarr_mailings = 
 	[
 	 	['Source','Maximize'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
 	 	['Undo','Redo','-','Find','Replace'],
-	    ['Font','FontSize'],
+	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent','CreateDiv'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar']
 	 ];
 	
+	// Used for notes fields
 	config.toolbar_dolibarr_notes =
 	[
-	 	['Source'],
+	 	['Source','Maximize'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
 	 	['Undo','Redo','-','Find','Replace'],
-	    ['Font','FontSize'],
+	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar']
 	];
 	
+	// Used for details lines
 	config.toolbar_dolibarr_details =
 	[
 	 	['Source','Maximize'],
@@ -86,5 +89,4 @@ CKEDITOR.editorConfig = function( config )
 	 	['Source','Maximize'],
 	 	['Find']
 	];	
-	
 };

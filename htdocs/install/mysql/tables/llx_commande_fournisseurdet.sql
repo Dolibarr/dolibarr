@@ -22,6 +22,7 @@ create table llx_commande_fournisseurdet
 (
   rowid                      integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande                integer      NOT NULL,
+  fk_parent_line             integer NULL,
   fk_product                 integer,
   ref                        varchar(50),  -- supplier product ref
   label                      varchar(255), -- product label
@@ -44,5 +45,7 @@ create table llx_commande_fournisseurdet
   date_start                 datetime     DEFAULT NULL,       -- date debut si service
   date_end                   datetime     DEFAULT NULL,       -- date fin si service
   info_bits	                 integer      DEFAULT 0,     -- TVA NPR ou non
+  special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
+  rang						 integer      DEFAULT 0,
   import_key				 varchar(14)
 )ENGINE=innodb;

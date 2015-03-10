@@ -50,6 +50,7 @@ if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
 
 // Special cases
 if ($module == 'propal')                { $permission=$user->rights->propale->creer;}
+elseif ($module == 'askpricesupplier')                { $permission=$user->rights->askpricesupplier->creer;}
 elseif ($module == 'fichinter')         { $permission=$user->rights->ficheinter->creer;}
 elseif ($module == 'project')           { $permission=$user->rights->projet->creer;}
 elseif ($module == 'project_task')      { $permission=$user->rights->projet->creer;}

@@ -151,8 +151,9 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][1] = 'Annuler les commandes clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'annuler';
-
+		$this->rights[$r][4] = 'order_advance';
+		$this->rights[$r][5] = 'annuler';
+		
 		$r++;
 		$this->rights[$r][0] = 89;
 		$this->rights[$r][1] = 'Supprimer les commandes clients';
@@ -192,7 +193,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'commandedet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
-		$this->export_sql_end[$r] .=' AND c.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('commande',1).')';
 	}
 
 

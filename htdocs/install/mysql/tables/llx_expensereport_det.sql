@@ -21,7 +21,7 @@ CREATE TABLE llx_expensereport_det
    rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
-   fk_projet integer NOT NULL,
+   fk_projet integer,
    fk_c_tva integer NOT NULL,
    comments text NOT NULL,
    product_type integer DEFAULT -1,

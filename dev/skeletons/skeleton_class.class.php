@@ -136,7 +136,7 @@ class Skeleton_Class extends CommonObject
      *
      *  @param	int		$id    	Id object
      *  @param	string	$ref	Ref
-     *  @return int          	<0 if KO, >0 if OK
+     *  @return int          	<0 if KO, 0 if not found, >0 if OK
      */
     function fetch($id,$ref='')
     {
@@ -154,7 +154,8 @@ class Skeleton_Class extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($this->db->num_rows($resql))
+        	$numrows = $this->db->num_rows($resql);
+            if ($numrows)
             {
                 $obj = $this->db->fetch_object($resql);
 
@@ -165,7 +166,7 @@ class Skeleton_Class extends CommonObject
             }
             $this->db->free($resql);
 
-            return 1;
+            return ($numrows?1:0);
         }
         else
         {

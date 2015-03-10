@@ -42,5 +42,5 @@ NoneOrBatchFileNeverRan=Nobena datoteka ali paket <b>%s</b> nedavno ni bila zagn
 SentToSuppliers=Pošlji dobaviteljem
 ListOfSupplierOrders=Seznam naročil dobaviitelja
 MenuOrdersSupplierToBill=Zaračunavanje naročil dobavitelja
-NbDaysToDelivery=Delivery delay in days
-DescNbDaysToDelivery=The biggest delay is display among order product list
+NbDaysToDelivery=Zakasnitev dobave v dnevih
+DescNbDaysToDelivery=Največja zakasnitev je prikazana med seznami naročenih proizvodov

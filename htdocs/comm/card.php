@@ -143,10 +143,10 @@ if (empty($reshook))
 	}
 
 	// update outstandng limit
-	if ($action == 'setOutstandingBill')
+	if ($action == 'setoutstanding_limit')
 	{
 		$object->fetch($id);
-		$object->outstanding_limit=GETPOST('OutstandingBill');
+		$object->outstanding_limit=GETPOST('setoutstanding_limit');
 		$result=$object->set_OutstandingBill($user);
 		if ($result < 0) setEventMessage($object->error,'errors');
 	}
@@ -393,13 +393,14 @@ if ($id > 0)
 	{
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
+		print $form->editfieldkey("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer);
 		print '</td><td colspan="3">';
-		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer,'amount',($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		// display amount and link to unpaid bill
 		$outstandigBills = $object->get_OutstandingBill();
 		if ($outstandigBills != 0)
-			print " / <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills).'</a>';
+			print " (".$langs->trans("CurrentOutstandingBill")." <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills, '', $langs, 0, 0, -1, $conf->currency).'</a>)';
 		print '</td>';
 		print '</tr>';
 	}

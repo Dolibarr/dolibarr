@@ -117,6 +117,11 @@ class Propal extends CommonObject
     var $labelstatut_short=array();
 
     var $specimen;
+	
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
 
 
     /**
@@ -235,27 +240,30 @@ class Propal extends CommonObject
                 return -5;
             }
 
-            $propalligne=new PropaleLigne($this->db);
-            $propalligne->fk_propal=$this->id;
-            $propalligne->fk_remise_except=$remise->id;
-            $propalligne->desc=$remise->description;   	// Description ligne
-            $propalligne->tva_tx=$remise->tva_tx;
-            $propalligne->subprice=-$remise->amount_ht;
-            $propalligne->fk_product=0;					// Id produit predefini
-            $propalligne->qty=1;
-            $propalligne->remise=0;
-            $propalligne->remise_percent=0;
-            $propalligne->rang=-1;
-            $propalligne->info_bits=2;
+            $line=new PropaleLigne($this->db);
+
+            $this->line->context = $this->context;
+
+            $line->fk_propal=$this->id;
+            $line->fk_remise_except=$remise->id;
+            $line->desc=$remise->description;   	// Description ligne
+            $line->tva_tx=$remise->tva_tx;
+            $line->subprice=-$remise->amount_ht;
+            $line->fk_product=0;					// Id produit predefini
+            $line->qty=1;
+            $line->remise=0;
+            $line->remise_percent=0;
+            $line->rang=-1;
+            $line->info_bits=2;
 
             // TODO deprecated
-            $propalligne->price=-$remise->amount_ht;
+            $line->price=-$remise->amount_ht;
 
-            $propalligne->total_ht  = -$remise->amount_ht;
-            $propalligne->total_tva = -$remise->amount_tva;
-            $propalligne->total_ttc = -$remise->amount_ttc;
+            $line->total_ht  = -$remise->amount_ht;
+            $line->total_tva = -$remise->amount_tva;
+            $line->total_ttc = -$remise->amount_ttc;
 
-            $result=$propalligne->insert();
+            $result=$line->insert();
             if ($result > 0)
             {
                 $result=$this->update_price(1);
@@ -272,7 +280,7 @@ class Propal extends CommonObject
             }
             else
             {
-                $this->error=$propalligne->error;
+                $this->error=$line->error;
                 $this->db->rollback();
                 return -2;
             }
@@ -311,12 +319,12 @@ class Propal extends CommonObject
      *      @param		string		$label				???
      *		@param      int			$date_start       	Start date of the line
      *		@param      int			$date_end         	End date of the line
-     *      @param		array		$array_option		extrafields array
+     *      @param		array		$array_options		extrafields array
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0)
     {
     	global $mysoc;
 
@@ -389,6 +397,8 @@ class Propal extends CommonObject
             // Insert line
             $this->line=new PropaleLigne($this->db);
 
+            $this->line->context = $this->context;
+
             $this->line->fk_propal=$this->id;
             $this->line->label=$label;
             $this->line->desc=$desc;
@@ -435,8 +445,8 @@ class Propal extends CommonObject
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-            if (is_array($array_option) && count($array_option)>0) {
-            	$this->line->array_options=$array_option;
+            if (is_array($array_options) && count($array_options)>0) {
+            	$this->line->array_options=$array_options;
             }
 
             $result=$this->line->insert();
@@ -491,10 +501,10 @@ class Propal extends CommonObject
      *  @param		int			$type				0/1=Product/service
      *	@param      int			$date_start       	Start date of the line
      *	@param      int			$date_end         	End date of the line
-	 *  @param		array		$array_option		extrafields array
+	 *  @param		array		$array_options		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0)
     {
         global $mysoc;
 
@@ -540,6 +550,8 @@ class Propal extends CommonObject
 
             // Update line
             $this->line=new PropaleLigne($this->db);
+
+            $this->line->context = $this->context;
 
             // Stock previous line records
             $staticline=new PropaleLigne($this->db);
@@ -594,8 +606,8 @@ class Propal extends CommonObject
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-            if (is_array($array_option) && count($array_option)>0) {
-            	$this->line->array_options=$array_option;
+            if (is_array($array_options) && count($array_options)>0) {
+            	$this->line->array_options=$array_options;
             }
 
             $result=$this->line->update();
@@ -741,6 +753,8 @@ class Propal extends CommonObject
         $sql.= ", fk_availability";
         $sql.= ", fk_input_reason";
         $sql.= ", fk_projet";
+        $sql.= ", fk_incoterms";
+        $sql.= ", location_incoterms";
         $sql.= ", entity";
         $sql.= ") ";
         $sql.= " VALUES (";
@@ -768,6 +782,8 @@ class Propal extends CommonObject
         $sql.= ", ".$this->availability_id;
         $sql.= ", ".$this->demand_reason_id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -949,6 +965,8 @@ class Propal extends CommonObject
     {
         global $user,$langs,$conf,$hookmanager;
 
+        $this->context['createfromclone']='createfromclone';
+
         $error=0;
         $now=dol_now();
 
@@ -1042,6 +1060,8 @@ class Propal extends CommonObject
             // End call triggers
         }
 
+        unset($this->context['createfromclone']);
+
         // End
         if (! $error)
         {
@@ -1084,6 +1104,8 @@ class Propal extends CommonObject
         $sql.= ", p.fk_mode_reglement";
         $sql.= ', p.fk_account';
         $sql.= ", p.fk_shipping_method";
+        $sql.= ", p.fk_incoterms, p.location_incoterms";
+        $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
         $sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
@@ -1094,6 +1116,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
         if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1161,6 +1184,11 @@ class Propal extends CommonObject
                 $this->user_valid_id  = $obj->fk_user_valid;
                 $this->user_close_id  = $obj->fk_user_cloture;
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+				
                 if ($obj->fk_statut == 0)
                 {
                     $this->brouillon = 1;
@@ -1192,6 +1220,11 @@ class Propal extends CommonObject
                 $result = $this->db->query($sql);
                 if ($result)
                 {
+                	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+                	$extrafieldsline=new ExtraFields($this->db);
+                	$line = new PropaleLigne($this->db);
+                	$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
+                	
                     $num = $this->db->num_rows($result);
                     $i = 0;
 
@@ -1201,7 +1234,8 @@ class Propal extends CommonObject
 
                         $line                   = new PropaleLigne($this->db);
 
-                        $line->rowid			= $objp->rowid;
+                        $line->rowid			= $objp->rowid; //Deprecated
+                        $line->id				= $objp->rowid;
                         $line->fk_propal		= $objp->fk_propal;
                         $line->fk_parent_line	= $objp->fk_parent_line;
                         $line->product_type     = $objp->product_type;
@@ -1242,6 +1276,8 @@ class Propal extends CommonObject
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
 
+                        $line->fetch_optionals($line->id,$extralabelsline);
+                        
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
                         //print "xx $i ".$this->lines[$i]->fk_product;
@@ -1255,12 +1291,6 @@ class Propal extends CommonObject
                     return -1;
                 }
 
-                // Retreive all extrafield for propal
-                // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
 
                 return 1;
             }
@@ -3112,6 +3142,7 @@ class PropaleLigne  extends CommonObject
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
+        if (empty($this->subprice)) $this->subprice=0;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 

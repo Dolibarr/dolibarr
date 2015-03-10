@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefou
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 if (! empty($conf->projet->enabled))	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('orders');
@@ -45,6 +46,8 @@ if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
 
 // Security check
 $id = GETPOST("id",'int');
+$lineid = GETPOST('lineid', 'int');
+$action = GETPOST('action');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
@@ -64,7 +67,41 @@ $mesg='';
  * Actions
  */
 
-if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->receptionner)
+if ($action == 'checkdispatchline' &&
+	! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+)
+{
+	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+	$result=$supplierorderdispatch->fetch($lineid);
+	if (! $result) dol_print_error($db);
+	$result=$supplierorderdispatch->setStatut(1);
+	if ($result < 0)
+	{
+		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+		$error++;
+		$action='';
+	}
+}
+
+if ($action == 'uncheckdispatchline' &&
+	! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+)
+{
+	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+	$result=$supplierorderdispatch->fetch($lineid);
+	if (! $result) dol_print_error($db);
+	$result=$supplierorderdispatch->setStatut(0);
+	if ($result < 0)
+	{
+		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+		$error++;
+		$action='';
+	}
+}
+
+if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 {
 	$commande = new CommandeFournisseur($db);
 	$commande->fetch($id);
@@ -75,61 +112,70 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 
 	foreach($_POST as $key => $value)
 	{
-		if (preg_match('/^product_([0-9]+)$/i', $key, $reg))
+		if (preg_match('/^product_([0-9]+)$/i', $key, $reg))	// without batch module enabled
 		{
+			$numline=$reg[1] + 1;	// line of product
 			$prod = "product_".$reg[1];
 			$qty = "qty_".$reg[1];
 			$ent = "entrepot_".$reg[1];
 			$pu = "pu_".$reg[1];	// This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_".$reg[1];
-			if (GETPOST($ent,'int') > 0)
+
+			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
-				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'));
-				if ($result < 0)
+				if (! GETPOST($ent,'int') > 0)
 				{
-					setEventMessages($commande->error, $commande->errors, 'errors');
+					dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
+					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' ' .($numline);
+					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 					$error++;
 				}
-			}
-			else
-			{
-				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
-				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
-				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
-				$error++;
+				
+				if (! $error)
+				{
+					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'));
+					if ($result < 0)
+					{
+						setEventMessages($commande->error, $commande->errors, 'errors');
+						$error++;
+					}
+				}
 			}
 		}
-		else if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))
+		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// with batch module enabled
 		{
 			//eat-by date dispatch
+			$numline=$reg[2] + 1;	// line of product
 			$prod = "product_".$reg[1]."_".$reg[2];
 			$qty = "qty_".$reg[1]."_".$reg[2];
 			$ent = "entrepot_".$reg[1]."_".$reg[2];
 			$pu = "pu_".$reg[1]."_".$reg[2];
+			$fk_commandefourndet = "fk_commandefourndet_".$reg[1]."_".$reg[2];
 			$lot = "lot_number_".$reg[1]."_".$reg[2];
 			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1]."_".$reg[2].'month'], $_POST['dluo_'.$reg[1]."_".$reg[2].'day'], $_POST['dluo_'.$reg[1]."_".$reg[2].'year']);
 			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1]."_".$reg[2].'month'], $_POST['dlc_'.$reg[1]."_".$reg[2].'day'], $_POST['dlc_'.$reg[1]."_".$reg[2].'year']);
 
-			if (! (GETPOST($ent,'int') > 0))
+			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
-				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
-				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
-				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
-				$error++;
-			}
-
-			if (! $error)
-			{
-				if (! ((GETPOST($qty) > 0) && ($_POST[$lot] || $dDLUO || $dDLC)))
+				if (! (GETPOST($ent,'int') > 0))
 				{
-					dol_syslog('No dispatch for line '.$key.' as qty is not set or eat-by date are not set');
-					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
+					dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
+					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' ' .($numline).'-'.($reg[1]+1);
 					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 					$error++;
 				}
-				else
+
+				if (! ($_POST[$lot] || $dDLUO || $dDLC))
 				{
-					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot));
+					dol_syslog('No dispatch for line '.$key.' as serial/eat-by/sellby date are not set');
+					$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').' ' .($numline).'-'.($reg[1]+1);
+					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
+					$error++;
+				}
+				
+				if (! $error)
+				{
+					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'));
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -173,6 +219,11 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
  * View
  */
 
+$form =	new Form($db);
+$warehouse_static = new Entrepot($db);
+$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+
 $help_url='EN:CommandeFournisseur';
 if (!empty($conf->productbatch->enabled))
 {
@@ -182,9 +233,6 @@ else
 {
 	llxHeader('',$langs->trans("OrderCard"),$help_url);
 }
-
-$form =	new Form($db);
-$warehouse_static = new Entrepot($db);
 
 $now=dol_now();
 
@@ -282,7 +330,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="dispatch">';
 			print '<table class="noborder" width="100%">';
 
-			// Set $products_dispatched with qty dispatech for each product id
+			// Set $products_dispatched with qty dispatched for each product id
 			$products_dispatched = array();
 			$sql = "SELECT l.rowid, cfd.fk_product, sum(cfd.qty) as qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
@@ -389,7 +437,7 @@ if ($id > 0 || ! empty($ref))
 							}
 							else
 							{
-								print '<td>';
+								print '<td colspan="4">';
 								print $linktoprod;
 								print "</td>";
 							}
@@ -421,6 +469,7 @@ if ($id > 0 || ! empty($ref))
 
 								print '<tr '.$bc[$var].' name="dluo'.$suffix.'">';
 								print '<td>';
+								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 								print '</td>';
@@ -441,8 +490,8 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">';
 							if (empty($conf->productbatch->enabled) || $objp->tobatch!=1)
 							{
-								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'">';
+								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 							}
 							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'">';
@@ -452,11 +501,11 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">';
 							if (count($listwarehouses)>1)
 							{
-								print $form->selectarray("entrepot".$suffix, $listwarehouses, '', 1, 0, 0, '', 0, 0, $disabled);
+								print $form->selectarray("entrepot".$suffix, $listwarehouses, GETPOST("entrepot".$suffix), 1, 0, 0, '', 0, 0, $disabled);
 							}
 							elseif  (count($listwarehouses)==1)
 							{
-								print $form->selectarray("entrepot".$suffix, $listwarehouses, '', 0, 0, 0, '', 0, 0, $disabled);
+								print $form->selectarray("entrepot".$suffix, $listwarehouses, GETPOST("entrepot".$suffix), 0, 0, 0, '', 0, 0, $disabled);
 							}
 							else
 							{
@@ -506,7 +555,7 @@ if ($id > 0 || ! empty($ref))
 		// List of already dispatching
 		$sql = "SELECT p.ref, p.label,";
 		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
-		$sql.= " cfd.rowid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
+		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -540,7 +589,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td></td>';
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 				print '<td>'.$langs->trans("Comment").'</td>';
-				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) print '<td align="right">'.$langs->trans("Status").'</td>';
+				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) print '<td align="center" colspan="2">'.$langs->trans("Status").'</td>';
 				print "</tr>\n";
 
 				$var=false;
@@ -548,6 +597,7 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
+					
 					print "<tr ".$bc[$var].">";
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
@@ -578,11 +628,43 @@ if ($id > 0 || ! empty($ref))
 					// Status
 					if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
 					{
-						print '<td>';
-						print $objp->status;
+						print '<td align="right">';
+						$supplierorderdispatch->status = (empty($objp->status)?0:$objp->status);
+						//print $supplierorderdispatch->status;
+						print $supplierorderdispatch->getLibStatut(5);
 						print '</td>';
-					}
 
+						// Add button to check/uncheck disaptching
+						print '<td align="center">';
+						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       					|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))
+							)
+						{
+							if (empty($objp->status)) 
+							{
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Check").'</a>';
+							}
+							else
+							{
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Uncheck").'</a>';
+							}
+						}
+						else
+						{
+							$disabled='';
+							if ($commande->statut == 5) $disabled=1;
+							if (empty($objp->status)) 
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Check").'</a>';
+							}
+							else 
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Uncheck").'</a>';
+							}
+						}
+						print '</td>';	
+					}
+					
 					print "</tr>\n";
 
 					$i++;

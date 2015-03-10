@@ -94,21 +94,21 @@ class modProjet extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
 		$this->const[$r][3] = 'Name of PDF/ODT tasks manager class';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "PROJECT_TASK_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_task_simple";
 		$this->const[$r][3] = 'Name of Numbering Rule task manager class';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/tasks";
@@ -155,7 +155,7 @@ class modProjet extends DolibarrModules
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
-		
+
 		$r++;
 		$this->rights[$r][0] = 141; // id de la permission
 		$this->rights[$r][1] = "Lire tous les projets et tâches (y compris prives qui ne me sont pas affectes)"; // libelle de la permission
@@ -189,7 +189,7 @@ class modProjet extends DolibarrModules
 		$this->export_label[$r]='ProjectsAndTasksLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("projet","export"));
 		$this->export_dependencies_array[$r]=array('task_time'=>'ppt.rowid');
-		
+
 		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_country:label',
 		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
 		'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','p.description'=>"Text",
@@ -199,11 +199,11 @@ class modProjet extends DolibarrModules
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company',
 		's.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
 		'p.rowid'=>"project",'p.ref'=>"project",'p.datec'=>"project",'p.dateo'=>"project",'p.datee'=>"project",'p.duree'=>"project",'p.fk_statut'=>"project",'p.description'=>"project");
-		
+
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country',
 		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
 		'p.rowid'=>"ProjectId",'p.ref'=>"RefProject",'p.datec'=>"DateCreation",'p.dateo'=>"DateStart",'p.datee'=>"DateEnd",'p.fk_statut'=>'Status','p.description'=>"Description");
-        
+
 		// Add fields for project
 		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array());
 		// Add extra fields
@@ -239,7 +239,7 @@ class modProjet extends DolibarrModules
         		$this->export_entities_array[$r][$fieldname]='project';
         	}
         }
-        // End add extra fields	
+        // End add extra fields
 
 		// Add fields for tasks
         $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('pt.rowid'=>'RefTask','pt.dateo'=>"TaskDateStart",'pt.datee'=>"TaskDateEnd",'pt.duration_effective'=>"DurationEffective",'pt.planned_workload'=>"PlannedWorkload",'pt.progress'=>"Progress",'pt.description'=>"TaskDescription"));
@@ -277,10 +277,10 @@ class modProjet extends DolibarrModules
         		$this->export_entities_array[$r][$fieldname]='projecttask';
         	}
         }
-        // End add extra fields		
+        // End add extra fields
 		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('ptt.task_date'=>'TaskTimeDate','ptt.task_duration'=>"TimesSpent",'ptt.fk_user'=>"TaskTimeUser",'ptt.note'=>"TaskTimeNote"));
         $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r], array('ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time"));
-        
+
         $this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'projet as p';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON p.rowid = extra.fk_object';
@@ -289,7 +289,7 @@ class modProjet extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task,";
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .=' WHERE p.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('project',1).')';
 
 	}
 
@@ -344,12 +344,12 @@ class modProjet extends DolibarrModules
 				return 0;
 			}
 		}
-		
+
 		$sql = array(
 				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")"
 		);
-		
+
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','project',".$conf->entity.")",

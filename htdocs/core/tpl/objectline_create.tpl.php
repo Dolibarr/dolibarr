@@ -31,7 +31,7 @@
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','askpricesupplier','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -42,8 +42,8 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
-if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal', 'askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+//print $object->element;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -52,6 +52,9 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><span id="title_fourn_ref"><?php echo $langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
+	<?php } ?>
 	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
@@ -158,12 +161,12 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			$form->select_produits('', 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
 		}
 		else
 		{
 			$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tag will be edited with which ajax json response key
+					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tags that will be edited with which ajax json response key
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);
@@ -195,25 +198,22 @@ else {
 	$doleditor->Create();
 	?>
 	</td>
-
+	
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+	<?php } ?>
+	
 	<td align="right"><?php
-	if (GETPOST('prod_entry_mode') != 'predef')
-	{
-		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
-		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
-	}
+	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
 	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
-	<?php } ?>
 	</td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
-	<?php } ?>
 	</td>
 	<?php } ?>
 	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
@@ -263,18 +263,28 @@ else {
 	</td>
 	<?php
 	// Lines for extrafield
-	if (!empty($extrafieldsline)) {
+	if (!empty($extrafieldsline))
+	{
 		if ($this->table_element_line=='commandedet') {
 			$newline = new OrderLine($this->db);
 		}
 		elseif ($this->table_element_line=='propaldet') {
 			$newline = new PropaleLigne($this->db);
 		}
+		elseif ($this->table_element_line=='askpricesupplierdet') {
+			$newline = new AskPriceSupplierLigne($this->db);
+		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
 		}
 		elseif ($this->table_element_line=='contratdet') {
 			$newline = new ContratLigne($this->db);
+		}
+		elseif ($this->table_element_line=='commande_fournisseurdet') {
+			$newline = new CommandeFournisseurLigne($this->db);
+		}
+		elseif ($this->table_element_line=='facture_fourn_det') {
+			$newline = new FactureFournisseurLigne($this->db);
 		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
@@ -284,13 +294,13 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
+if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
 	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+	if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 
 	if (! empty($usemargins))
 	{
@@ -538,6 +548,11 @@ jQuery(document).ready(function() {
   		if (jQuery('#idprod').val() > 0) jQuery('#dp_desc').focus();
 		if (jQuery('#idprodfournprice').val() > 0) jQuery('#dp_desc').focus();
 	});
+
+	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
+		setforpredef();
+	<?php } ?>
+
 });
 
 /* Function to set fields from choice */
@@ -566,11 +581,11 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_free").attr('checked',false);
 	jQuery("#prod_entry_mode_predef").attr('checked',true);
 	jQuery("#price_ht").hide();
+	jQuery("#title_up_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
 	jQuery("#title_vat").hide();
-	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ttc").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists

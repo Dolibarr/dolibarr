@@ -18,4 +18,4 @@ printQty=Mik: %d
 AddDispatchBatchLine=Dağıtımda bir Raf Ömrü satırı ekle
 BatchDefaultNumber=Tanımlanmamış
 WhenProductBatchModuleOnOptionAreForced=Parti/Seri devredeyken, stok arttırma/eksiltme modu son seçime zorlanır ve düzenlenemez. Diğer seçenekler istediğiniz gibi yapılandırılabilir.
-ProductDoesNotUseBatchSerial=This product does not use batch/serial number
+ProductDoesNotUseBatchSerial=Bu ürün parti/seri numarası kullanmaz

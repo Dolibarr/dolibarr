@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
@@ -38,6 +38,9 @@ if (! empty($conf->projet->enabled)) {
 }
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
+
+if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
+$MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 
 $filter=GETPOST("filter",'',3);
 $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
@@ -170,7 +173,7 @@ $listofextcals=array();
 if (empty($conf->global->AGENDA_DISABLE_EXT))
 {
     $i=0;
-    while($i < $conf->global->AGENDA_EXT_NB)
+    while($i < $MAXAGENDA)
     {
         $i++;
         $source='AGENDA_EXT_SRC'.$i;
@@ -188,7 +191,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT))
 if (empty($user->conf->AGENDA_DISABLE_EXT))
 {
 	$i=0;
-	while($i < $conf->global->AGENDA_EXT_NB)
+	while($i < $MAXAGENDA)
 	{
 		$i++;
 		$source='AGENDA_EXT_SRC_'.$user->id.'_'.$i;
@@ -360,16 +363,16 @@ if (! empty($conf->use_javascript_ajax))
 	{
 		foreach ($showextcals as $val)
 		{
-			$htmlname = dol_string_nospecial($val['name']);
+			$htmlname = md5($val['name']);
 			$s.='<script type="text/javascript">' . "\n";
 			$s.='jQuery(document).ready(function () {' . "\n";
-			$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
+			$s.='		jQuery("#check_ext' . $htmlname . '").click(function() {';
 			$s.=' 		/* alert("'.$htmlname.'"); */';
-			$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
+			$s.=' 		jQuery(".family_ext' . $htmlname . '").toggle();';
 			$s.='		});' . "\n";
 			$s.='});' . "\n";
 			$s.='</script>' . "\n";
-			$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 		}
 	}
 	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
@@ -1170,7 +1173,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
                     	$color=$event->icalcolor;
-                    	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unmovable');
+                    	$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unmovable');
                     }
                     else if ($event->type_code == 'BIRTHDAY')
                     {

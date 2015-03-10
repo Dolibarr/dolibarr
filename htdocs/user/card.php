@@ -1,14 +1,14 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,27 +211,31 @@ if ($action == 'add' && $canadduser)
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
-        // If multicompany is off, admin users must all be on entity 0.
+        // Set entity of new user
+        $entity=GETPOST('entity','int');
         if (! empty($conf->multicompany->enabled))
         {
-        	$entity=GETPOST('entity','int');
         	if (! empty($_POST["superadmin"]))
         	{
         		$object->entity = 0;
         	}
         	else if ($conf->multicompany->transverse_mode)
         	{
-        		$object->entity = 1; // all users in master entity
+        		$object->entity = 1; // all users are forced into master entity
         	}
         	else
         	{
-        		$object->entity = (empty($entity) ? 0 : $entity);
+        		$object->entity = ($entity == '' ? 1 : $entity);
         	}
         }
         else
-        {
-        	$object->entity = (empty($entity) ? 0 : $entity);
+		{
+        	$object->entity = ($entity == '' ? 1 : $entity);
+        	/*if ($user->admin && $user->entity == 0 && GETPOST("admin",'alpha'))
+        	{
+        	}*/
         }
 
         $db->begin();
@@ -358,6 +362,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             // Fill array 'array_options' with data from add form
         	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
             if (! empty($conf->multicompany->enabled))
             {
@@ -382,20 +387,22 @@ if ($action == 'update' && ! $_POST["cancel"])
             if (GETPOST('deletephoto')) $object->photo='';
             if (! empty($_FILES['photo']['name'])) $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
-            $ret=$object->update($user);
-
-            if ($ret < 0)
+            if (! $error)
             {
-            	$error++;
-                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-                {
-                    $langs->load("errors");
-	                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
-                }
-                else
-              {
-	              setEventMessage($object->error, 'errors');
-                }
+	            $ret=$object->update($user);
+	            if ($ret < 0)
+	            {
+	            	$error++;
+	                if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	                {
+	                    $langs->load("errors");
+		                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
+	                }
+	                else
+	              {
+		              setEventMessage($object->error, 'errors');
+	                }
+	            }
             }
 
             if (! $error && isset($_POST['contactid']))
@@ -980,6 +987,15 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
     print "</tr>\n";
+	
+	// Accountancy code
+	if ($conf->salaries->enabled)
+	{
+		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td>';
+		print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
+		print '</td></tr>';
+	}
 
 	// User color
 	if (! empty($conf->agenda->enabled))
@@ -1123,7 +1139,7 @@ else
          */
         if ($action != 'edit')
         {
-            $rowspan=17;
+            $rowspan=19;
 
             print '<table class="border" width="100%">';
 
@@ -1319,13 +1335,12 @@ else
 		    print "</tr>\n";
 
 			// Accountancy code
-			if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
+			if ($conf->salaries->enabled)
 			{
-				$rowspan++;
-            	print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-            	print '<td colspan="2">'.$object->accountancy_code.'</td>';
+				print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td colspan="2">'.$object->accountancy_code.'</td>';
 			}
-
+				
 			// Color user
 			if (! empty($conf->agenda->enabled))
             {
@@ -1654,7 +1669,7 @@ else
          */
         if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
         {
-            $rowspan=15;
+            $rowspan=16;
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
@@ -2021,23 +2036,23 @@ else
 		    print "</tr>\n";
 
 		    // Accountancy code
-            if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
-            {
-	            print "<tr>";
-	            print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-	            print '<td>';
-	            if ($caneditfield)
-	            {
-	                print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
-	            }
-	            else
-	            {
-	                print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-	                print $object->accountancy_code;
-	            }
-	            print '</td>';
-	            print "</tr>";
-            }
+			if ($conf->salaries->enabled)
+			{
+				print "<tr>";
+				print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>';
+				if ($caneditfield)
+				{
+					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print $object->accountancy_code;
+				}
+				print '</td>';
+				print "</tr>";
+			}	
 
 			// User color
 			if (! empty($conf->agenda->enabled))

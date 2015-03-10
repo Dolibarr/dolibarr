@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
  */
 
 require '../main.inc.php';
@@ -137,12 +136,12 @@ else:
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("ViewAccountSynch").'">';
 	print "</form>";
 
-	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valide, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
+	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valid, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
 	$sql.= " ,CONCAT(u.firstname,' ',u.lastname) as declarant_NDF";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport d";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid";
 	$sql.= " WHERE d.fk_c_expensereport_statuts = 6";
-	$sql.= " ORDER BY d.date_valide DESC";
+	$sql.= " ORDER BY d.date_valid DESC";
 
 	$resql=$db->query($sql);
 	if ($resql):
@@ -170,7 +169,7 @@ else:
 					$var=!$var;
 						print "<tr $bc[$var]>";
 							print '<td>'.$objp->ref.'</td>';
-							print '<td>'.dol_print_date($db->jdate($objp->date_valide),'day').'</td>';
+							print '<td>'.dol_print_date($db->jdate($objp->date_valid),'day').'</td>';
 							print '<td><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->declarant_NDF.'</a></td>';
 							print '<td align="center">'.$objp->total_ttc.' '.$langs->trans("EURO").'</td>';
 

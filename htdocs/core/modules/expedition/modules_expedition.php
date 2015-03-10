@@ -43,7 +43,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -146,7 +146,7 @@ abstract class ModelNumRefExpedition
  * 	Cree un bon d'expedition sur disque
  *
  * 	@param	DoliDB		$db  			Objet base de donnee
- * 	@param	Object		$object			Object expedition
+ * 	@param	Expedition		$object			Object expedition
  * 	@param	string		$modele			Force le modele a utiliser ('' to not force)
  * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
  *  @return int             			<=0 if KO, >0 if OK

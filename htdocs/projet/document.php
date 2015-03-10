@@ -46,11 +46,11 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
 $object = new Project($db);
-if ($id > 0 || ! empty($ref))
-{
-	$object->fetch($id,$ref);
-	$object->fetch_thirdparty();
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+
+if ($id > 0 || ! empty($ref)) {
+    $upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters

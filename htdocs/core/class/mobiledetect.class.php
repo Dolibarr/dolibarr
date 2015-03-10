@@ -687,7 +687,7 @@ class MobileDetect
     /**
      * Retrieve the User-Agent.
      *
-     * @return string|null The user agent if it's set.
+     * @return string The user agent if it's set.
      */
     public function getUserAgent()
     {
@@ -879,7 +879,7 @@ class MobileDetect
      *
      * @param  string                 $name			Name
      * @param  array                  $arguments	Arguments
-     * @return mixed
+     * @return null|boolean
      *
      * @throws BadMethodCallException when the method doesn't exist and doesn't start with 'is'
      * @method boolean is[...]()
@@ -926,7 +926,7 @@ class MobileDetect
      *
      * @param 	string 	$key		Key
      * @param 	string 	$userAgent 	deprecated
-     * @return 	mixed
+     * @return 	null|boolean
      */
     protected function matchUAAgainstKey($key, $userAgent = null)
     {
@@ -1009,7 +1009,7 @@ class MobileDetect
      * @param string 		$key			key
      * @param string        $userAgent   	deprecated
      * @param string        $httpHeaders 	deprecated
-     * @return bool|int|null
+     * @return null|boolean
      *
      * @todo: The httpHeaders part is not yet used.
      */

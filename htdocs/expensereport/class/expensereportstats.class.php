@@ -49,7 +49,7 @@ class ExpenseReportStats extends Stats
 	 */
 	function __construct($db, $socid=0, $userid=0)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->db = $db;
         $this->socid = $socid;
@@ -59,24 +59,33 @@ class ExpenseReportStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field='total_ht';
 
-		$this->where = " fk_c_expensereport_statuts > 0 and date_valide > '2000-01-01'";
+		$this->where = " fk_c_expensereport_statuts > 0 and date_valid > '2000-01-01'";
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)
 		{
 			$this->where.=" AND fk_soc = ".$this->socid;
 		}
-        if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+
+		// Only me and subordinates
+		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+		{
+			$childids = $user->getAllChildIds();
+			$childids[]=$user->id;
+			$this->where.=" AND fk_user_author IN (".(join(',',$childids)).")";
+		}
+
+		if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 
 	/**
-	 * 	Renvoie le nombre de facture par annee
+	 * 	Return nb of expense report per year
 	 *
 	 *	@return		array	Array of values
 	 */
 	function getNbByYear()
 	{
-		$sql = "SELECT YEAR(date_valide) as dm, count(*)";
+		$sql = "SELECT YEAR(date_valid) as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;
@@ -93,9 +102,9 @@ class ExpenseReportStats extends Stats
 	 */
 	function getNbByMonth($year)
 	{
-		$sql = "SELECT MONTH(date_valide) as dm, count(*)";
+		$sql = "SELECT MONTH(date_valid) as dm, count(*)";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE YEAR(date_valide) = ".$year;
+		$sql.= " WHERE YEAR(date_valid) = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -114,9 +123,9 @@ class ExpenseReportStats extends Stats
 	 */
 	function getAmountByMonth($year)
 	{
-		$sql = "SELECT date_format(date_valide,'%m') as dm, sum(".$this->field.")";
+		$sql = "SELECT date_format(date_valid,'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(date_valide,'%Y') = '".$year."'";
+		$sql.= " WHERE date_format(date_valid,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
 		$sql.= $this->db->order('dm','DESC');
@@ -134,9 +143,9 @@ class ExpenseReportStats extends Stats
 	 */
 	function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(date_valide,'%m') as dm, avg(".$this->field.")";
+		$sql = "SELECT date_format(date_valid,'%m') as dm, avg(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(date_valide,'%Y') = '".$year."'";
+		$sql.= " WHERE date_format(date_valid,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -151,7 +160,7 @@ class ExpenseReportStats extends Stats
 	 */
 	function getAllByYear()
 	{
-		$sql = "SELECT date_format(date_valide,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(date_valid,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";

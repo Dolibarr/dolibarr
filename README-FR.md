@@ -21,8 +21,9 @@ vous devez vous réorienter vers DoliWamp (la version tout-en-un
 de Dolibarr pour Windows), DoliDeb (la version tout-en-un pour Debian ou
 Ubuntu) ou DoliRpm (la version tout-en-un de Dolibarr pour Fedora, Redhat,
 OpenSuse, Mandriva ou Mageia).
-Vous pouvez les télécharger à l'adresse: 
-http://www.dolibarr.org/downloads/
+
+Vous pouvez les télécharger depuis la rubrique *download* du portail officiel: 
+http://www.dolibarr.org/
 
 Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (Mysql),
 vous pouvez installer Dolibarr avec cette version de la manière suivante:

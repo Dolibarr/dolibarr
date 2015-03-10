@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -16,7 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
  */
 
 /**
@@ -37,8 +37,24 @@ $socid = $_GET["socid"]?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport','','');
 
-$search_ref=GETPOST('search_ref');
+$search_ref   = GETPOST('search_ref');
+$search_user  = GETPOST('search_user','int');
+$search_state = GETPOST('search_state','int');
+$month_start  = GETPOST("month_start","int");
+$year_start   = GETPOST("year_start","int");
+$month_end    = GETPOST("month_end","int");
+$year_end     = GETPOST("year_end","int");
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+{
+	$search_ref="";
+	$search_user="";
+	$search_state="";
+	$month_start="";
+	$year_start="";
+	$month_end="";
+	$year_end="";
+}
 
 /*
  * View
@@ -48,19 +64,10 @@ $html = new Form($db);
 $formother = new FormOther($db);
 $expensereporttmp=new ExpenseReport($db);
 
-llxHeader();
+llxHeader('', $langs->trans("ListOfTrips"));
 
 $max_year = 5;
 $min_year = 5;
-
-$month_start   = $_GET['month_start'];
-$year_start    = $_GET['year_start'];
-$month_end     = $_GET['month_end'];
-$year_end      = $_GET['year_end'];
-
-$search_ref = GETPOST('search_ref');
-$search_user = GETPOST('search_user','int');
-$search_state = GETPOST('search_state','int');
 
 $sortorder     = $_GET["sortorder"];
 $sortfield     = $_GET["sortfield"];
@@ -84,13 +91,14 @@ $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport d\n";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid\n";
 
+
+
 // WHERE
 if(!empty($search_ref)){
 	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'\n";
 }else{
 	$sql.= " WHERE 1 = 1\n";
 }
-
 // DATE START
 if ($month_start > 0) {
 	if ($year_start > 0) {
@@ -148,13 +156,15 @@ if ($month_start > 0) {
 		}
 	}
 }
-
-if (!empty($search_user) && $search_user != -1) $sql.= " AND d.fk_user_author = '$search_user'\n";
+if (!empty($search_user) && $search_user > 0) $sql.= " AND d.fk_user_author = ".$search_user."\n";
 if($search_state != '') $sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
 
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)){
-	$sql.= " AND d.fk_user_author = '{$user->id}'\n";
+if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
+{
+	$childids = $user->getAllChildIds();
+	$childids[]=$user->id;
+	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -180,10 +190,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("TotalVAT"),$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalTTC"),$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre();
+	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
-	// FILTRES
+	// Filters
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
@@ -221,9 +231,11 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	select_expensereport_statut($search_state,'search_state');
 	print '</td>';
-	print '<td class="liste_titre" align="right" width="20px">';
-	print ' <input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
-	print "</td>";
+
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
 
 	print "</tr>\n";
 
@@ -291,7 +303,7 @@ if ($resql)
 	print "</form>";
 
 	print '<div class="tabsAction">';
-	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">Ajouter une note de frais</a>';
+	print '<a href="'.dol_buildpath('/expensereport/card.php',1).'?action=create" class="butAction">'.$langs->trans("NewTrip").'</a>';
 	print '</div>';
 
 	$db->free($resql);

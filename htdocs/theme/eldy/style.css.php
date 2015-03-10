@@ -361,6 +361,15 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
     -moz-box-shadow: none;
     cursor: auto;
 }
+.buttonRefused {
+	pointer-events: none;
+   	cursor: default;	
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
 form {
     padding:0px;
     margin:0px;
@@ -392,6 +401,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+textarea.centpercent {
+	width: 96%;
 }
 .center {
     text-align: center;
@@ -444,11 +456,17 @@ th .button {
 .hideobject { display: none; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
+.minwidth300 { min-width: 300px; }
+.maxwidth100 { max-width: 100px; }
+.maxwidth200 { max-width: 200px; }
+.maxwidth300 { max-width: 300px; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 .maxwidthonsmartphone { max-width: 100px; }
+.maxwidth100onsmartphone { max-width: 100px; }
 .maxwidth200onsmartphone { max-width: 200px; }
+.maxwidth300onsmartphone { max-width: 300px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>

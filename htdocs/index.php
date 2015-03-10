@@ -311,14 +311,15 @@ print '</tr>'."\n";
 // Do not include sections without management permission
 //
 
-require DOL_DOCUMENT_ROOT.'/core/class/WorkboardResponse.class.php';
+require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
     include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
     $board=new ActionComm($db);
-	$dashboardlines[] = $board->load_board($user);
+
+    $dashboardlines[] = $board->load_board($user);
 }
 
 // Number of customer orders a deal

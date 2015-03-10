@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2013-2014 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,7 +271,7 @@ abstract class DoliDB implements Database
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	int					$gm			1=Input informations are GMT values, otherwise local to server TZ
-	 *	@return	timestamp|string				Date TMS
+	 *	@return	int|string						Date TMS
 	 */
 	function jdate($string, $gm=false)
 	{

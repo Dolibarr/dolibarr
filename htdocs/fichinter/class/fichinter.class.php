@@ -889,10 +889,10 @@ class Fichinter extends CommonObject
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
-	 *  @param		array	$array_option			Array option
+	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option='')
+	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_options='')
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -908,8 +908,8 @@ class Fichinter extends CommonObject
 			$line->datei        = $date_intervention;
 			$line->duration     = $duration;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$line->array_options=$array_options;
 			}
 
 			$result=$line->insert($user);
