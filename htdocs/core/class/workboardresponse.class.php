@@ -49,8 +49,8 @@ class WorkboardResponse
 	public $url_late;
 
 	/**
-	 * Delay time to mark an item as late
-	 * @var int
+	 * Delay time to mark an item as late. In number of days.
+	 * @var double
 	 */
 	public $warning_delay;
 
