@@ -20,6 +20,7 @@
 
 
 ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
 
 ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
 
