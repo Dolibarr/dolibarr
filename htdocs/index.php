@@ -311,7 +311,7 @@ print '</tr>'."\n";
 // Do not include sections without management permission
 //
 
-require DOL_DOCUMENT_ROOT.'/core/class/WorkboardResponse.class.php';
+require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
