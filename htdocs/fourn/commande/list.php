@@ -140,7 +140,7 @@ if ($search_ttc != '')
 }
 if ($sall)
 {
-	$sql .= natural_search(array('cf.ref', 'cf.note_public', 'cf.note_private'), $sall);
+	$sql .= natural_search(array('cf.ref', 'cf.ref_supplier', 'cf.note_public', 'cf.note_private'), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
