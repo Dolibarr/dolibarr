@@ -4952,7 +4952,7 @@ function dol_getmypid()
  * @param 	string 			$value 		The value to look for.
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
- * @param	string			$number		0=value is list of keywords, 1=value is a numeric test
+ * @param	string			$numeric	0=value is list of keywords, 1=value is a numeric test
  * @return 	string 			$res 		The statement to append to the SQL query
  */
 function natural_search($fields, $value, $numeric=0)
