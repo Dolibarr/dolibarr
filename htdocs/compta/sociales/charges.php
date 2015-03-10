@@ -483,7 +483,7 @@ if ($id > 0)
 			print "<div class=\"tabsAction\">\n";
 
 			// Edit
-			if ($user->rights->tax->charges->creer)
+			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
@@ -517,7 +517,7 @@ if ($id > 0)
 	}
 	else
 	{
-		/* Charge non trouv� */
+		/* Social contribution not found */
 		dol_print_error('',$object->error);
 	}
 }
