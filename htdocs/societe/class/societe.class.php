@@ -953,7 +953,7 @@ class Societe extends CommonObject
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
-     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof.
+     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
@@ -1008,7 +1008,7 @@ class Societe extends CommonObject
             {
                 $this->error='Fetch several records found for ref='.$ref;
                 dol_syslog($this->error, LOG_ERR);
-                $result = -1;
+                $result = -2;
             }
             if ($num)
             {
@@ -1128,17 +1128,15 @@ class Societe extends CommonObject
                	$this->fetch_optionals($this->id,$extralabels);
             }
             else
-            {
-                $this->error='Fetch no third party found for id='.$rowid;
-                dol_syslog($this->error, LOG_ERR);
-                $result = -2;
+			{
+                $result = 0;
             }
 
             $this->db->free($resql);
         }
         else
-        {
-            $this->error=$this->db->error();
+		{
+            $this->error=$this->db->lasterror();
             $result = -3;
         }
 
