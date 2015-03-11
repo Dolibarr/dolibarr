@@ -66,7 +66,8 @@ else if ($conf->db->type == 'mssql')
 	//$sqls[0] = "";
 	//$base=3;
 }
-else if ($conf->db->type == 'sqlite3') {
+else if ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
+{
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;
 }
@@ -176,7 +177,7 @@ else
 
 	if ($base == 4)
 	{
-		// Sqlite3
+		// Sqlite by PDO or by Sqlite3
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';

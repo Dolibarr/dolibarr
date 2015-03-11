@@ -354,7 +354,8 @@ class DoliDBSqlite3 extends DoliDB
      */
     function getVersion()
     {
-        return $this->db->version()['versionString'];
+    	$tmp=$this->db->version();
+        return $tmp['versionString'];
     }
 
     /**

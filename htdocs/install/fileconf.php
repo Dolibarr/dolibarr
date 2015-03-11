@@ -306,7 +306,7 @@ if (! empty($force_install_message))
                     $class='DoliDB'.ucfirst($type);
                     include_once $dir."/".$file;
 
-                    if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete unti sqlit does not manage foreign key creation after table creation
+                    if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete until sqlite does not manage foreign key creation after table creation
 
 		            // Version min of database
                     $versionbasemin=explode('.',$class::VERSIONMIN);
@@ -320,6 +320,7 @@ if (! empty($force_install_message))
 		            if ($type=='mysqli') { $testfunction='mysqli_connect'; $testclass=''; }
 		            if ($type=='pgsql')  { $testfunction='pg_connect'; $testclass=''; }
 		            if ($type=='mssql')  { $testfunction='mssql_connect'; $testclass=''; }
+		        	if ($type=='sqlite') { $testfunction=''; $testclass='PDO'; }
 		            if ($type=='sqlite3') { $testfunction=''; $testclass='SQLite3'; }
 		            $option.='<option value="'.$type.'"'.($defaultype == $type?' selected="selected"':'');
 		            if ($testfunction && ! function_exists($testfunction)) $option.=' disabled="disabled"';

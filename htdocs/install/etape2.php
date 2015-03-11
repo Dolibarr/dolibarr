@@ -51,7 +51,8 @@ if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
-if ($dolibarr_main_db_type == "sqlite3")  $choix=4;
+if ($dolibarr_main_db_type == "sqlite")  $choix=4;
+if ($dolibarr_main_db_type == "sqlite3")  $choix=5;
 
 //if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into etape2.php page');
 
