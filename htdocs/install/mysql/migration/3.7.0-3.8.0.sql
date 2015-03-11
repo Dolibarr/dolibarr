@@ -162,7 +162,7 @@ CREATE TABLE llx_expensereport (
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
   fk_user_paid 		integer DEFAULT NULL,
-  fk_c_expensereport_statuts integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
+  fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
   note_public		text,
   note_private 		text,

@@ -109,7 +109,7 @@ if ($action == 'add' && $user->rights->expensereport->creer)
 	$object->date_debut = $date_start;
 	$object->date_fin = $date_end;
 
-	$object->fk_c_expensereport_statuts = 1;
+	$object->fk_statut = 1;
 	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
 	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
 	$object->note_public				= GETPOST('note_public');
@@ -151,7 +151,7 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	$object->date_debut = $date_start;
 	$object->date_fin = $date_end;
 
-	if($object->fk_c_expensereport_statuts < 3)
+	if($object->fk_statut < 3)
 	{
 		$object->fk_user_validator = GETPOST('fk_user_validator','int');
 	}
@@ -733,12 +733,12 @@ if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->
 			$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 
 			if ($insertid > 0):
-			$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport d";
+			$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport as d";
 			$sql.= " SET integration_compta = 1, fk_bank_account = $idAccount";
 			$sql.= " WHERE rowid = $idTrip";
 			$resql=$db->query($sql);
 			if($result):
-			Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 			else:
 			dol_print_error($db);
@@ -1197,7 +1197,7 @@ else
 
 			$head = expensereport_prepare_head($object);
 
-			if ($action == 'edit' && ($object->fk_c_expensereport_statuts < 3 || $object->fk_c_expensereport_statuts==99))
+			if ($action == 'edit' && ($object->fk_statut < 3 || $object->fk_statut==99))
 			{
 				print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1205,7 +1205,7 @@ else
 
 				dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-				if($object->fk_c_expensereport_statuts==99)
+				if($object->fk_statut==99)
 				{
 					print '<input type="hidden" name="action" value="updateFromRefuse">';
 				}
@@ -1246,7 +1246,7 @@ else
 					print '</tr>';
 				}
 
-				if($object->fk_c_expensereport_statuts<3)
+				if($object->fk_statut<3)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';	// Approbator
@@ -1275,7 +1275,7 @@ else
 				$userfee->fetch($object->fk_user_author);
 				print $userfee->getNomUrl(1);
 				print '</td></tr>';
-				if ($object->fk_c_expensereport_statuts==6)
+				if ($object->fk_statut==6)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
@@ -1437,7 +1437,7 @@ else
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
 				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
 				print '</tr>';
-				if($object->fk_c_expensereport_statuts==6)
+				if($object->fk_statut==6)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
@@ -1452,7 +1452,7 @@ else
 					print '</tr>';
 				}
 
-				if($object->fk_c_expensereport_statuts<3)	// informed
+				if($object->fk_statut<3)	// informed
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';
@@ -1465,7 +1465,7 @@ else
 					}
 					print '</td></tr>';
 				}
-				elseif($object->fk_c_expensereport_statuts==4)
+				elseif($object->fk_statut==4)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("CANCEL_USER").'</span></td>';
@@ -1504,7 +1504,7 @@ else
 					print '</tr>';
 				}
 
-				if($object->fk_c_expensereport_statuts==99 || !empty($object->detail_refuse))
+				if($object->fk_statut==99 || !empty($object->detail_refuse))
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("REFUSEUR").'</td>';
@@ -1529,9 +1529,9 @@ else
 				$sql.= ' fde.fk_c_tva as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det fde';
-				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees ctf ON fde.fk_c_type_fees=ctf.id';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet pjt ON fde.fk_projet=pjt.rowid';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
+				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$id;
 
 				$resql = $db->query($sql);
@@ -1566,7 +1566,7 @@ else
 							print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 						}
 						// Ajout des boutons de modification/suppression
-						if ($object->fk_c_expensereport_statuts < 2 || $object->fk_c_expensereport_statuts==99)
+						if ($object->fk_statut < 2 || $object->fk_statut==99)
 						{
 							print '<td style="text-align:right;"></td>';
 						}
@@ -1609,7 +1609,7 @@ else
 								}
 
 								// Ajout des boutons de modification/suppression
-								if($object->fk_c_expensereport_statuts<2 OR $object->fk_c_expensereport_statuts==99)
+								if($object->fk_statut<2 OR $object->fk_statut==99)
 								{
 									print '<td style="text-align:right;" class="nowrap">';
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
@@ -1689,7 +1689,7 @@ else
 					//print '</div>';
 
 					// Add a line
-					if (($object->fk_c_expensereport_statuts==0 || $object->fk_c_expensereport_statuts==99) && $action != 'editline')
+					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline')
 					{
 						print_fiche_titre($langs->trans("AddLine"),'','');
 
@@ -1712,17 +1712,17 @@ else
 
 						print '<tr>';
 
-						// Sélection date
+						// Select date
 						print '<td style="text-align:center;">';
 						$form->select_date($date?$date:-1,'date');
 						print '</td>';
 
-						// Sélection projet
+						// Select project
 						print '<td>';
 						$formproject->select_projects(-1, GETPOST('fk_projet'), 'fk_projet', 0, 0, 1, 1);
 						print '</td>';
 
-						// Sélection type
+						// Select type
 						print '<td>';
 						select_type_fees_id(GETPOST('fk_c_type_fees'),'fk_c_type_fees',1);
 						print '</td>';
@@ -1732,7 +1732,7 @@ else
 						print '<textarea class="flat_ndf centpercent" name="comments">'.GETPOST('comments').'</textarea>';
 						print '</td>';
 
-						// Sélection TVA
+						// Select VAT
 						print '<td style="text-align:right;">';
 						$defaultvat=-1;
 						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
@@ -1747,7 +1747,7 @@ else
 						print '<input type="text" size="6" name="value_unit" value="'.GETPOST('value_unit').'">';
 						print '</td>';
 
-						// Quantité
+						// Quantity
 						print '<td style="text-align:right;">';
 						print '<input type="text" size="4" name="qty"  value="'.GETPOST('qty').'">';
 						print '</td>';
@@ -1799,7 +1799,7 @@ if ($action != 'create' && $action != 'edit')
 	*	ET fk_user_author == user courant
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
-	if ($user->rights->expensereport->creer && $object->fk_c_expensereport_statuts==0)
+	if ($user->rights->expensereport->creer && $object->fk_statut==0)
 	{
 		if ($object->fk_user_author == $user->id)
 		{
@@ -1825,7 +1825,7 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET fk_user_author == user courant
 	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	 */
-	if($user->rights->expensereport->creer && $object->fk_c_expensereport_statuts==99)
+	if($user->rights->expensereport->creer && $object->fk_statut==99)
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
@@ -1845,7 +1845,7 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==5)
+	if ($user->rights->expensereport->to_paid && $object->fk_statut==5)
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
@@ -1859,7 +1859,7 @@ if ($action != 'create' && $action != 'edit')
 	*	ET fk_user_validator == user courant
 	*	Afficher : "Valider" / "Refuser" / "Supprimer"
 	*/
-	if ($object->fk_c_expensereport_statuts == 2)
+	if ($object->fk_statut == 2)
 	{
 		if ($object->fk_user_author == $user->id)
 		{
@@ -1868,7 +1868,7 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
-	if ($user->rights->expensereport->approve && $object->fk_c_expensereport_statuts == 2)
+	if ($user->rights->expensereport->approve && $object->fk_statut == 2)
 	{
 		//if($object->fk_user_validator==$user->id)
 		//{
@@ -1895,7 +1895,7 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET user à droit de "to_paid"
 	*	Afficher : "Annuler" / "Payer" / "Supprimer"
 	*/
-	if ($user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts == 5)
+	if ($user->rights->expensereport->to_paid && $object->fk_statut == 5)
 	{
 		// Payer
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$id.'">'.$langs->trans('TO_PAID').'</a>';
@@ -1918,7 +1918,7 @@ if ($action != 'create' && $action != 'edit')
 	*	ET user à droit "to_paid"
 	*	Afficher : "Annuler"
 	*/
-	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_c_expensereport_statuts==6)
+	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_statut==6)
 	{
 		// Annuler
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
@@ -1933,7 +1933,7 @@ if ($action != 'create' && $action != 'edit')
 	 * 	ET user à droit "supprimer"
 	 *	Afficher : "Supprimer"
 	 */
-	if ($user->rights->expensereport->supprimer && $object->fk_c_expensereport_statuts==4)
+	if ($user->rights->expensereport->supprimer && $object->fk_statut==4)
 	{
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
@@ -1959,7 +1959,7 @@ print '<div style="width:50%">';
 /*
  * Documents generes
  */
-if($user->rights->expensereport->export && $object->fk_c_expensereport_statuts>0 && $action != 'edit')
+if($user->rights->expensereport->export && $object->fk_statut>0 && $action != 'edit')
 {
 	$filename	=	dol_sanitizeFileName($object->ref);
 	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
