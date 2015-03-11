@@ -320,7 +320,7 @@ if (! empty($force_install_message))
 		            if ($type=='mysqli') { $testfunction='mysqli_connect'; $testclass=''; }
 		            if ($type=='pgsql')  { $testfunction='pg_connect'; $testclass=''; }
 		            if ($type=='mssql')  { $testfunction='mssql_connect'; $testclass=''; }
-		            if ($type=='sqlite') { $testfunction=''; $testclass='PDO'; }
+		            if ($type=='sqlite3') { $testfunction=''; $testclass='SQLite3'; }
 		            $option.='<option value="'.$type.'"'.($defaultype == $type?' selected="selected"':'');
 		            if ($testfunction && ! function_exists($testfunction)) $option.=' disabled="disabled"';
 		            if ($testclass && ! class_exists($testclass)) $option.=' disabled="disabled"';
@@ -330,6 +330,7 @@ if (! empty($force_install_message))
 		            // Experimental
 		            if ($type=='mssql')  $option.=' '.$langs->trans("Experimental");
 		            elseif ($type=='sqlite') $option.=' '.$langs->trans("Experimental");
+		            elseif ($type=='sqlite3') $option.=' '.$langs->trans("Experimental");
 		            // No available
 		            elseif (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
 		            $option.='</option>';
@@ -479,7 +480,7 @@ if (! empty($force_install_message))
 jQuery(document).ready(function() {
 
 	jQuery("#db_type").change(function() {
-		if (jQuery("#db_type").val()=='sqlite') { jQuery(".hidesqlite").hide(); }
+		if (jQuery("#db_type").val()=='sqlite' || jQuery("#db_type").val()=='sqlite3') { jQuery(".hidesqlite").hide(); }
 		else  { jQuery(".hidesqlite").show(); }
 	});
 
