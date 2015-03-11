@@ -524,7 +524,7 @@ class Export
 		if ($resql)
 		{
 			//$this->array_export_label[$indice]
-			if ($conf->global->EXPORT_PREFIX)
+			if ($conf->global->EXPORT_PREFIX_SPEC)
 				$filename=$conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
 			else
 				$filename="export_".$datatoexport;
