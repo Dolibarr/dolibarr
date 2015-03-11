@@ -505,7 +505,7 @@ class DoliDBSqlite3 extends DoliDB
         //return $resultset->fetch(PDO::FETCH_OBJ);
         $ret = $resultset->fetchArray(SQLITE3_ASSOC);
         if ($ret) {
-            return (object)$ret;
+            return (object) $ret;
         }
     }
 
@@ -523,7 +523,7 @@ class DoliDBSqlite3 extends DoliDB
         //return $resultset->fetch(PDO::FETCH_ASSOC);
         $ret = $resultset->fetchArray(SQLITE3_ASSOC);
         if ($ret) {
-            return (array)$ret;
+            return (array) $ret;
         }
     }
 
@@ -1248,19 +1248,23 @@ class DoliDBSqlite3 extends DoliDB
 
     /**
      * Permet le chargement d'une fonction personnalisee dans le moteur de base de donnees.
-     * Note: le nom de la fonction personnalisee est prefixee par 'db_'. La fonction doit être
+     * Note: le nom de la fonction personnalisee est prefixee par 'db'. La fonction doit être
      * statique et publique. Le nombre de parametres est determine automatiquement.
-     * @param string $name Le nom de la fonction a definir dans Sqlite
+     *
+     * @param 	string 	$name 			Le nom de la fonction a definir dans Sqlite
+     * @param	int		$arg_count		Arg count
+     * @return	void
      */
     private function addCustomFunction($name, $arg_count = -1) {
         if ($this->db) {
-            $localname = __CLASS__ . '::' . 'db_' . $name;
+            $localname = __CLASS__ . '::' . 'db' . $name;
             $reflectClass = new ReflectionClass(__CLASS__);
-            $reflectFunction = $reflectClass->getMethod('db_' . $name);
+            $reflectFunction = $reflectClass->getMethod('db' . $name);
             if ($arg_count < 0) {
                 $arg_count = $reflectFunction->getNumberOfParameters();
             }
-            if (!$this->db->createFunction($name, $localname , $arg_count)) {
+            if (!$this->db->createFunction($name, $localname, $arg_count))
+            {
                 $this->error = "unable to create custom function '$name'";
             }
         }
@@ -1268,34 +1272,54 @@ class DoliDBSqlite3 extends DoliDB
 
     /**
      * Cette fonction est l'equivalent de la fonction MONTH de MySql.
-     * @param string $date
-     * @return integer
+     *
+     * @param 	string 		$date		Date
+     * @return 	integer
      */
-    public static function db_MONTH($date) {
+    public static function dbMONTH($date)
+    {
         return date('n', strtotime($date));
     }
 
     /**
      *  calcule du numéro de semaine
      *
-     *  @param string date
-     *  @param int mode
+     *  @param 	string	 	$date		Date
+     *  @param 	int 		$mode		Mode
+     *  @return	string
      */
-    public static function db_WEEK($date, $mode = 0) {
+    public static function dbWEEK($date, $mode = 0)
+    {
         $arr = date_parse($date);
         $calc_year = 0;
         return self::calc_week($arr['year'], $arr['month'], $arr['day'], self::week_mode($mode), $calc_year);
     }
 
-    public static function db_CURDATE() {
+    /**
+     *  db_CURDATE
+     *
+     *  @return	string
+     */
+    public static function dbCURDATE() {
         return date('Y-m-d');
     }
 
-    public static function db_CURTIME() {
+    /**
+     *  db_CURTIME
+     *
+     *  @return	string
+     */
+    public static function dbCURTIME() {
         return date('H:i:s');
     }
 
-    public static function db_WEEKDAY($date) {
+    /**
+     *  dbWEEKDAY
+     *
+     *  @param	int		$date			Date
+     *  @return	string
+     */
+    public static function dbWEEKDAY($date) {
         $arr = date_parse($date);
         return self::calc_weekday(self::calc_daynr($arr['year'], $arr['month'], $arr['day']), 0);
 
@@ -1304,11 +1328,13 @@ class DoliDBSqlite3 extends DoliDB
     /**
      * Cette fonction est l'equivelent de la fonction date_format de MySQL.
 	 * @staticvar string $mysql_replacement	Les symboles formatage a remplacer
-     * @param string $date la date dans un format ISO
-     * @param string $format la chaine de formatage
-     * @return string La date formatee.
+	 *
+     * @param 	string $date 	la date dans un format ISO
+     * @param 	string $format 	la chaine de formatage
+     * @return 	string 			La date formatee.
      */
-    public static function db_date_format($date, $format) {
+    public static function dbdate_format($date, $format)
+    {
         static $mysql_replacement;
         if (! isset($mysql_replacement)) {
             $mysql_replacement = array(
@@ -1345,9 +1371,9 @@ class DoliDBSqlite3 extends DoliDB
         $state = 0;
         $timestamp = strtotime($date);
         $yday = date('z', $timestamp);
-        $month = (integer)date("n", $timestamp);
-        $year = (integer)date("Y", $timestamp);
-        $day = (integer)date("d", $timestamp);
+        $month = (integer) date("n", $timestamp);
+        $year = (integer) date("Y", $timestamp);
+        $day = (integer) date("d", $timestamp);
         for($idx = 0; $idx < $lg; ++$idx) {
             $char = $format[$idx];
             if ($state == 0) {
@@ -1395,19 +1421,15 @@ class DoliDBSqlite3 extends DoliDB
         return date($fmt, strtotime($date));
     }
 
-    /**
-     * Equivalent de la fonction MySQL IF
-     * @param boolean $test Le resultat du test
-     * @param mixed $true_part Partie a retourner si vrai
-     * @param mixed $false_part Partie a retourner si faux
-     * @return mixed Partie selectionnee en fonction du test
-     */
-    public static function db_IF($test, $true_part, $false_part) {
-        return ( $test ) ? $true_part : $false_part;
-    }
 
-    // Adapté de mytime.c des sources de mariadb
-    // fonction calc_daynr
+    /**
+     * calc_daynr
+     *
+     * @param 	string 	$year		Year
+     * @param 	string 	$month		Month
+     * @param	string	$day 		Day
+     * @return string La date formatee.
+     */
     private static function calc_daynr($year, $month, $day) {
         $y = $year;
         if ($y == 0 && $month == 0) return 0;
@@ -1421,16 +1443,34 @@ class DoliDBSqlite3 extends DoliDB
         return $num + floor($y / 4) - $temp;
     }
 
+    /**
+     * calc_weekday
+     *
+     * @param string	$daynr							???
+     * @param string	$sunday_first_day_of_week		???
+     */
     private static function calc_weekday($daynr, $sunday_first_day_of_week) {
       $ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
       return $ret;
     }
 
+    /**
+     * calc_days_in_year
+     *
+     * @param 	string	$year		Year
+     * @return	int					Nb of days in year
+     */
     private static function calc_days_in_year($year)
     {
       return (($year & 3) == 0 && ($year%100 || ($year%400 == 0 && $year)) ? 366 : 365);
     }
 
+    /**
+     * week_mode
+     *
+     * @param 	string	$mode		Mode
+     * @return	string				Week format
+     */
     private static function week_mode($mode) {
         $week_format= ($mode & 7);
         if (!($week_format & self::WEEK_MONDAY_FIRST)) {
@@ -1439,7 +1479,16 @@ class DoliDBSqlite3 extends DoliDB
         return $week_format;
     }
 
-
+	/**
+	 * calc_week
+	 *
+	 * @param 	string	$year				Year
+	 * @param 	string	$month				Month
+	 * @param 	string	$day				Day
+	 * @param 	string	$week_behaviour		Week behaviour
+	 * @param 	string	$calc_year			???
+	 * @return	string						???
+	 */
     private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year) {
         $daynr=self::calc_daynr($year,$month,$day);
         $first_daynr=self::calc_daynr($year,1,1);

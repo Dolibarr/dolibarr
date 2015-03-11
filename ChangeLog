@@ -226,6 +226,7 @@ Dolibarr better:
 - Fix: [ bug #1827 ] Tax reports gives incorrect amounts when using external modules that create lines with special codes
 - Fix: [ bug #1822 ] SQL error in clientfourn.php report with PostgreSQL
 - Fix: [ bug #1832 ] SQL error when adding a product with no price defined to an object
+- Fix: [ bug #1833 ] user permissions in contact/note.php not working
 - Fix: [ bug #1826 ] Supplier payment types are not translated into fourn/facture/paiement.php
 - Fix: [ bug #1830 ] Salaries payment only allows checking accounts
 - Fix: [ bug #1825 ] External agenda: hide/show checkbox doesn't work
