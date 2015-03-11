@@ -1255,11 +1255,14 @@ class DoliDBSqlite3 extends DoliDB
      * @param	int		$arg_count		Arg count
      * @return	void
      */
-    private function addCustomFunction($name, $arg_count = -1) {
-        if ($this->db) {
-            $localname = __CLASS__ . '::' . 'db' . $name;
+    private function addCustomFunction($name, $arg_count = -1)
+    {
+        if ($this->db)
+        {
+        	$newname=preg_replace('/_/','',$name);
+            $localname = __CLASS__ . '::' . 'db' . $newname;
             $reflectClass = new ReflectionClass(__CLASS__);
-            $reflectFunction = $reflectClass->getMethod('db' . $name);
+            $reflectFunction = $reflectClass->getMethod('db' . $newname);
             if ($arg_count < 0) {
                 $arg_count = $reflectFunction->getNumberOfParameters();
             }
@@ -1333,7 +1336,7 @@ class DoliDBSqlite3 extends DoliDB
      * @param 	string $format 	la chaine de formatage
      * @return 	string 			La date formatee.
      */
-    public static function dbdate_format($date, $format)
+    public static function dbdateformat($date, $format)
     {
         static $mysql_replacement;
         if (! isset($mysql_replacement)) {
