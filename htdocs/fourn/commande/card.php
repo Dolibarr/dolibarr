@@ -1947,28 +1947,28 @@ elseif (! empty($object->id))
 
 	// Ligne de	3 colonnes
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-	print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<td colspan="2">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '</tr>';
 
-	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($object->total_tva).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="2">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right">'.price($object->total_localtax1).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<td colspan="2">'.price($object->total_localtax1,'',$langs,1,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right">'.price($object->total_localtax2).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<td colspan="2">'.price($object->total_localtax2,'',$langs,1,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="2">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '</tr>';
 
 	print "</table><br>";
 
@@ -2610,7 +2610,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 					}
 				}
-				
+
 				// Create bill
 				if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
 				{

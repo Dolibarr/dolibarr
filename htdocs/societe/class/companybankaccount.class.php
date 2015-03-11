@@ -49,6 +49,10 @@ class CompanyBankAccount extends Account
     var $owner_address;
     var $default_rib;
 
+    var $datec;
+    var $datem;
+
+
     /**
 	 *  Constructor
 	 *
@@ -174,7 +178,7 @@ class CompanyBankAccount extends Account
     {
         if (empty($id) && empty($socid)) return -1;
 
-        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label";
+        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label, datec, tms as datem";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
@@ -200,6 +204,8 @@ class CompanyBankAccount extends Account
                 $this->owner_address   = $obj->owner_address;
                 $this->label           = $obj->label;
                 $this->default_rib     = $obj->default_rib;
+                $this->datec           = $this->db->jdate($obj->datec);
+                $this->datem           = $this->db->jdate($obj->datem);
             }
             $this->db->free($resql);
 

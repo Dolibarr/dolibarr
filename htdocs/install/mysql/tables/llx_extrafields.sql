@@ -32,5 +32,6 @@ create table llx_extrafields
 	perms			varchar(255),
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,
-	param		text
+	param			text,
+	list			integer DEFAULT 0
 )ENGINE=innodb;

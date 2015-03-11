@@ -2140,7 +2140,7 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
+        if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
         
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
