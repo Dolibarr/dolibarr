@@ -779,8 +779,21 @@ if (empty($reshook))
 
 					$desc = dol_concatdesc($desc, $product_desc);
 
+					// Add dimensions into product description
+					/*if (empty($conf->global->MAIN_PRODUCT_DISABLE_AUTOADD_DIM))
+					{
+						$text='';
+						if ($prod->weight) $text.=($text?"\n":"").$outputlangs->trans("Weight").': '.$prod->weight.' '.$prod->weight_units;
+						if ($prod->length) $text.=($text?"\n":"").$outputlangs->trans("Length").': '.$prod->length.' '.$prod->length_units;
+						if ($prod->surface) $text.=($text?"\n":"").$outputlangs->trans("Surface").': '.$prod->surface.' '.$prod->surface_units;
+						if ($prod->volume) $text.=($text?"\n":"").$outputlangs->trans("Volume").': '.$prod->volume.' '.$prod->volume_units;
+
+						$desc = dol_concatdesc($desc, $text);
+					}*/
+
 					// Add custom code and origin country into description
-					if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
+					if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
+					{
 						$tmptxt = '(';
 						if (! empty($prod->customcode))
 							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
