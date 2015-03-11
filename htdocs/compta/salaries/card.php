@@ -365,7 +365,7 @@ if ($id)
 	print "<div class=\"tabsAction\">\n";
 	if ($salpayment->rappro == 0)
 	{
-		if (! empty($user->rights->tax->charges->supprimer))
+		if (! empty($user->rights->salaries->delete))
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$salpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
