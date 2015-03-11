@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
@@ -21,11 +21,11 @@
  */
 
 /**
- *	\defgroup   askpricesupplier     Module de demandes de prix fournisseurs
- *	\brief      Module pour gerer la tenue des demandes fournisseurs
+ *	\defgroup   askpricesupplier     Module to request supplier price proposals
+ *	\brief      Module to request supplier price proposals
  *	\file       htdocs/core/modules/modAskPriceSupplier.class.php
  *	\ingroup    askpricesupplier
- *	\brief      Fichier de description et activation du module AskPriceSupplier
+ *	\brief      File to describe and activate module AskPriceSupplier
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -109,7 +109,6 @@ class modAskPriceSupplier extends DolibarrModules
 		$this->rights[$r][1] = 'Create/modify supplier proposals'; // libelle de la permission
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
-
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission

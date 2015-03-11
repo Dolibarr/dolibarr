@@ -8,7 +8,7 @@
 <dir name="/opensurvey" >
 <md5file name="results.php">46f56dc7dfff82250816df2bd2db313c</md5file>
 <md5file name="exportcsv.php">67798229e915f5841274ee70487feec4</md5file>
-<md5file name="card.php">8d61cfa815ca3bb981582bcc7db0a6bd</md5file>
+<md5file name="card.php">e9fb1ad286fe67ee78fa8ce60a7be71c</md5file>
 </dir>
 <dir name="/opensurvey/public" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -19,7 +19,7 @@
 <md5file name="opensurveysondage.class.php">91885edae345ea489237442ebe3c8304</md5file>
 </dir>
 <dir name="/opensurvey/wizard" >
-<md5file name="choix_date.php">706b9f915c400211b1c85c6ca6c11060</md5file>
+<md5file name="choix_date.php">6734d43389eded6e6ec04df0d0ac6a0c</md5file>
 <md5file name="create_survey.php">4f72962320b42bab18deef783febd12b</md5file>
 <md5file name="choix_autre.php">6fe0eb8de0e5c45c09845bb8242fcb1c</md5file>
 <md5file name="index.php">dacb01d46e370bb3bcc9574cd082f464</md5file>
@@ -95,18 +95,18 @@
 </dir>
 <dir name="/imports" >
 <md5file name="index.php">68f0a32904f0ff877cb2c2820b38dc9b</md5file>
-<md5file name="import.php">083d2c1c63007a5a3487ec43bdd926d1</md5file>
+<md5file name="import.php">00b0eb68f7ef07e9d614ae942f84e9a8</md5file>
 <md5file name="emptyexample.php">08194ccdf2c8801e9ce4acd3fc6a8829</md5file>
 </dir>
 <dir name="/admin" >
-<md5file name="agenda_extsites.php">66a88729f0af41a466b40b1430f229f7</md5file>
+<md5file name="agenda_extsites.php">422a9396b9040de1212afd253cc738aa</md5file>
 <md5file name="dict.php">772b9a692d9998d6e7d8fd6e28ccb042</md5file>
 <md5file name="barcode.php">1f2562ebcb87267a49e9c8ec11f92d90</md5file>
 <md5file name="ihm.php">1e47fc4e62453875065109ef46259108</md5file>
 <md5file name="agenda.php">e8f85ee5f1ce535b1a6933f18ed09ba0</md5file>
 <md5file name="security.php">e047fd0ab0886550203c49269e7ad1ca</md5file>
 <md5file name="prelevement.php">5f6244d1e0c7f706ccaed8c71240fc35</md5file>
-<md5file name="order_extrafields.php">4f7695bf300da817cbee7feffaa21508</md5file>
+<md5file name="order_extrafields.php">0b882db2159085006ffd37c772f7d8bf</md5file>
 <md5file name="ecm.php">10b05107d83798c17e2de027dfa923e6</md5file>
 <md5file name="security_other.php">fb72e6073af1b2f0763f9edfb4394d6c</md5file>
 <md5file name="limits.php">942423fa65f36d20685e565e76434771</md5file>
@@ -135,6 +135,7 @@
 <md5file name="perms.php">90662aecd9eb51bf87b91f76d452381e</md5file>
 <md5file name="fckeditor.php">35b24d3c1592ad0e60c99c81a94be6b9</md5file>
 <md5file name="salaries.php">773f9a324037de24ba20edfa4f69099d</md5file>
+<md5file name="askpricesupplier.php">b791736af07760c81845b8fa160c6e39</md5file>
 <md5file name="supplier_invoice.php">858f4d351d6a865bccffef7fa262d99b</md5file>
 <md5file name="confexped.php">42b9d3d703feb637b4babe11190adb52</md5file>
 <md5file name="ldap.php">7f6bef974f62fb589b0c2d193750d714</md5file>
@@ -142,7 +143,7 @@
 <md5file name="geoipmaxmind.php">1ea47e3f2a830596d139ec65f559a508</md5file>
 <md5file name="boxes.php">2067170df6bc861d12d11a277986747a</md5file>
 <md5file name="propal.php">c1be7df4483ccc0e3b2ee08f977d911b</md5file>
-<md5file name="orderdet_extrafields.php">5f00bbdd645ef9bbf53ea25feeeac3f3</md5file>
+<md5file name="orderdet_extrafields.php">15c0b5e011ee5e983f3f5c96db67d760</md5file>
 <md5file name="workflow.php">4489937620fe0ce4998a18b327a79cfa</md5file>
 <md5file name="commande.php">b447c8a39fa7d8217dfa5519af90e911</md5file>
 <md5file name="sms.php">967aa7e79415181dfb2963777a90720d</md5file>
@@ -154,15 +155,15 @@
 <dir name="/admin/system" >
 <md5file name="database-tables.php">41afb11aefb73a16398bd906a0201864</md5file>
 <md5file name="xcache.php">ef51c84433eab6197f43d0559f22fd4b</md5file>
-<md5file name="browser.php">01cacadfbda4293ab21e779e06146085</md5file>
+<md5file name="browser.php">b2ee036efc506d6afd50dd7ac7ccc811</md5file>
 <md5file name="dbtable.php">e79892f863bfba42a2658e43a2e8546b</md5file>
 <md5file name="about.php">978cfbff83d963db5c848161fc3ab286</md5file>
 <md5file name="index.php">69a64091740dccdfd8bd2f61df53fba3</md5file>
 <md5file name="filecheck.php">dcce80148d3ea055836f7f38ab71f0c1</md5file>
 <md5file name="perf.php">89a36b8dd5d33e53b92b491bc3edddfe</md5file>
 <md5file name="xdebug.php">8b3806e68b169d4cd2c1320a5ab6fe8f</md5file>
-<md5file name="dolibarr.php">5abcc5736ddd1748f943313023e76de6</md5file>
-<md5file name="constall.php">937159f009bc845bd67dda6fc8c86b77</md5file>
+<md5file name="dolibarr.php">3d6c42d646e2503f6a71b3618358f697</md5file>
+<md5file name="constall.php">46395deac9909d4a668bba6b94ee4c8a</md5file>
 <md5file name="modules.php">a08eb617d4122bc3972c2c04da32cb70</md5file>
 <md5file name="phpinfo.php">bf729609f42e090aed2a970401930e6d</md5file>
 <md5file name="web.php">2a6afbab650385179de02fe9205455d7</md5file>
@@ -174,8 +175,8 @@
 <md5file name="triggers.php">2cf90126aba2b06f593f838a592ed66a</md5file>
 <md5file name="agenda_other.php">69be8c3d12533054535cbebb7d7efd07</md5file>
 <md5file name="index.php">0c89a620fdc2487c3cf242fa34acbfd6</md5file>
-<md5file name="supplierinvoice_extrafields.php">77a59143907052032b136e6883a0e1c2</md5file>
-<md5file name="supplierorderdet_extrafields.php">381ef356a676703edf225c3a56071002</md5file>
+<md5file name="supplierinvoice_extrafields.php">b3d4f333045789b87703c3c385194b0a</md5file>
+<md5file name="supplierorderdet_extrafields.php">a5605b39b6125fc36ea7a6b083e30578</md5file>
 <md5file name="mailing.php">19e39ed2f2ac92ccec072d8d3d741104</md5file>
 <md5file name="contract.php">0b3730d08a8d573f9195b07f58ccf09f</md5file>
 <md5file name="facture.php">448ed84f8c692dae865030fdadfabb3e</md5file>
@@ -183,10 +184,10 @@
 <md5file name="ldap_contacts.php">edcd9c936456f8945c9e05797b68a0c3</md5file>
 <md5file name="expedition.php">6ff462498bec936a81e4762d3fdbf31f</md5file>
 <md5file name="user.php">849d81f9f23ca9b07ea52367b4a666f5</md5file>
-<md5file name="pdf.php">e549c764f41502093e349cd471306f3c</md5file>
+<md5file name="pdf.php">9af36af76afed9fe2efe0337be9ddf71</md5file>
 <md5file name="ldap_members.php">80f1b4396367b316403e0a81ae68c9ac</md5file>
 <md5file name="mailman.php">cbafb5e0cfab93c9964b37d5c90b049c</md5file>
-<md5file name="stock.php">f075b322db82ca5a1082e18033cea0f6</md5file>
+<md5file name="stock.php">c535a4a7b059b3963f5a5ddff9056faf</md5file>
 <md5file name="livraison.php">a1ce81dd3436a5f87396dbc8213500d7</md5file>
 <md5file name="bank.php">7b09d4f614806db46728a2fcf577f388</md5file>
 <md5file name="mails.php">5343a79284c9127377a8827395d5b204</md5file>
@@ -199,11 +200,11 @@
 <md5file name="modules.php">0987559b12f37ae2490c1a5f5dd83076</md5file>
 <md5file name="external_rss.php">32769f39902632408013c5860b088804</md5file>
 <md5file name="supplier_order.php">b3bf4266b0325db6ed8d9cd310cd2ef6</md5file>
-<md5file name="bank_extrafields.php">a377699a88d8e920c8860ebb24aeacf2</md5file>
-<md5file name="supplierinvoicedet_extrafields.php">e62424215546778bde995edfa9692ca0</md5file>
+<md5file name="bank_extrafields.php">4acbc9a5abb1a5d5afb9eaac8e18d34d</md5file>
+<md5file name="supplierinvoicedet_extrafields.php">7e14eae5d5e6edcad2751240257a81f4</md5file>
 <md5file name="agenda_xcal.php">4bdf86d2111c1a361549dbb6523edb65</md5file>
-<md5file name="supplierorder_extrafields.php">105fea1b3cecab53fca1d10fde1a8823</md5file>
-<md5file name="agenda_extrafields.php">2887d01ae3349dff6c04d5902a5d6e5e</md5file>
+<md5file name="supplierorder_extrafields.php">bc0db72496553e902eec64ef13a66b08</md5file>
+<md5file name="agenda_extrafields.php">8d97de9a3fac4e667f273bb41f920d93</md5file>
 <md5file name="clicktodial.php">6a605a7186f129ee54393898a6d9f4b0</md5file>
 <md5file name="ldap_groups.php">5813003639fb8751dc574567dbf90989</md5file>
 <md5file name="proxy.php">114d8997f2920c105be850fc6ca8cdc1</md5file>
@@ -253,7 +254,7 @@
 <md5file name="view_log.php">22cb27adf9a761ca0cb76e0e54b71890</md5file>
 <md5file name="index.php">3d9cc4ec66df38298e16365e009dfe66</md5file>
 <md5file name="common.inc.php">26c66f78f5db62e9af07cb11280afc24</md5file>
-<md5file name="tomergewithdefine_holiday.php">368d57ca80f31c58192581ec7ca7f649</md5file>
+<md5file name="tomergewithdefine_holiday.php">9bba5c89e5dd034e4d6ddd1b19a8abd7</md5file>
 <md5file name="define_holiday.php">5c25310c78417e37fd75c8769e3c172f</md5file>
 </dir>
 <dir name="/holiday/img" >
@@ -5349,64 +5350,108 @@
 <md5file name="jquery-latest.js">3a316818411b5a80ef878dc5c8483950</md5file>
 </dir>
 <dir name="/includes/tcpdf" >
-<md5file name="composer.json">f4d6dda9a7e9a13fae9a0b5666a1af85</md5file>
-<md5file name="tcpdf_autoconfig.php">26adcdd9610a48fcda8eddfd22fab072</md5file>
-<md5file name="tcpdf_barcodes_1d.php">27f0f0c023d8775a7d970a0550caa3ef</md5file>
+<md5file name="composer.json">3c06688411baa451d053f64eeccb1834</md5file>
+<md5file name="tcpdf_autoconfig.php">bcb93bbeb8cf2831e49ff5541d277a1f</md5file>
+<md5file name="tcpdf_barcodes_1d.php">d306e9ad7b8b67464493c3281417afdc</md5file>
 <md5file name="tcpdf_import.php">6bb88a8a3d69511d1bf9e7af12ab5f47</md5file>
 </dir>
 <dir name="/includes/tcpdf/fonts" >
-<md5file name="freemono.php">443543014f50021a6aab6e3dc45ed587</md5file>
-<md5file name="dejavusanscondensedi.php">a8231d248b1a221019ad16fdd605a9fd</md5file>
+<md5file name="freemono.php">2652ce7b4dcf00a1b07d8b1debedf867</md5file>
+<md5file name="dejavusanscondensedi.php">a1775d6ba3d8b76629dcdc2c1006048b</md5file>
+<md5file name="pdfasymbol.php">a874a391c41c223a007297af0fc82d71</md5file>
 <md5file name="uni2cid_ag15.php">0f6007361d5e4c8f34a2e83d402567b1</md5file>
-<md5file name="dejavusansextralight.php">b49ce165ab6bb7d90fd020bb3958ff1f</md5file>
-<md5file name="dejavusansmono.php">8ee3baf3211d960fc39e28c4e2a793c8</md5file>
+<md5file name="times.php">a75033315ee90464410b47cc27ce9ff0</md5file>
+<md5file name="dejavusansextralight.php">bc1d75d2d4988d2ad9cac651bc44b8b3</md5file>
+<md5file name="pdfahelveticab.php">36cc4107f0d39d89b8031042c4159468</md5file>
+<md5file name="timesi.php">8fd8e9a11cca513a4da0f25ff1a24149</md5file>
+<md5file name="dejavusansmono.php">5af577705b43ce01285f2721a4850ac4</md5file>
+<md5file name="pdfatimesbi.php">2937220203e5a52762f5c9a4527e1988</md5file>
+<md5file name="courierb.php">baadbf936466cfc106ae73e5f15dba89</md5file>
+<md5file name="freesans.php">4fd59032d7c3a59fd45028bafa245721</md5file>
 <md5file name="zapfdingbats.php">191b3c2e856e750c06c0ba7987f902fb</md5file>
 <md5file name="stsongstdlight.php">eb85dc872664c0769e9fab1b7540b4d5</md5file>
-<md5file name="cid0kr.php">cc2cb448f60c5ecf61f6879aec325801</md5file>
-<md5file name="freemonob.php">d4836ebb5fa4e49eb36ba797c9f117e2</md5file>
+<md5file name="cid0kr.php">17dfe118f580bc2a08e21e8104ef68eb</md5file>
+<md5file name="timesb.php">ad485022027867116de0bf6c25b1854a</md5file>
+<md5file name="pdfacourierb.php">5aeb1084e3a6ae5ef7ecc2bfc7a15592</md5file>
+<md5file name="pdfacourieri.php">8702f5d6fbad08bf74378506ef376f83</md5file>
+<md5file name="freemonob.php">7596c070ac1bc839022e0a7aba2156ef</md5file>
+<md5file name="dejavuserifcondensedb.php">bcc98729a04598aecb86c451b91433ea</md5file>
+<md5file name="dejavuserifi.php">368af9ad30db4935e51b2109b9d4e9ca</md5file>
 <md5file name="helveticai.php">e0a7f23376f50de631db93814aff2e35</md5file>
 <md5file name="uni2cid_ak12.php">7ad3c70ef87d3657f918d3ee3649f31f</md5file>
-<md5file name="dejavusansmonoi.php">b2664e1ae97756c12114cb3371848ba2</md5file>
+<md5file name="dejavuserifcondensedi.php">52b7639c5c4e35f33bb3c69cbfa0588d</md5file>
+<md5file name="dejavusansmonoi.php">a2a228f499608ddddeb2ba54834a5b7f</md5file>
 <md5file name="msungstdlight.php">c940b153fb6c5b3498efa181881b5b6c</md5file>
-<md5file name="cid0jp.php">fcc615d2a469180dd6a29ee6c04e866f</md5file>
-<md5file name="dejavusansi.php">5a3660e46c91205c9203901c6b47cf8e</md5file>
+<md5file name="cid0jp.php">f9f9da534cce6a9124cc6b919329944b</md5file>
+<md5file name="pdfatimes.php">287cb7bb6e6966708534cb9ed48d48ac</md5file>
+<md5file name="dejavuserifcondensed.php">4775a411c20fe8fb13e9fb3a46629dc3</md5file>
+<md5file name="freesansbi.php">9b2ce8f93949146d63dfef4d4784ad4c</md5file>
+<md5file name="dejavuserifb.php">18638db567f8b6fd7b1c6641ebf2c958</md5file>
+<md5file name="freeserifi.php">463334491415afc3e56661e87196b4f8</md5file>
+<md5file name="dejavusansi.php">016527b52b6af2d6784fffeb23a2349b</md5file>
 <md5file name="helvetica.php">2a315fa2593161154c319788f0ef2127</md5file>
-<md5file name="dejavusans.php">544195d15ad41278307f99c79129ed72</md5file>
-<md5file name="dejavusansbi.php">f163ef4cda9bb39f8abfcfcf2b683e0d</md5file>
+<md5file name="dejavusans.php">8b75ae7921f26b4f4b11d18ed921248e</md5file>
+<md5file name="dejavusansbi.php">7db990cc030127f1b64a4d3492f8f3e2</md5file>
+<md5file name="courieri.php">afdcd64e0d7d78942401354d7f5f180d</md5file>
+<md5file name="hysmyeongjostdmedium.php">51f6fe162641de3714866950d5eff4e8</md5file>
+<md5file name="freeserifbi.php">0a9d5e42c711a284436fa6f267e8ab85</md5file>
+<md5file name="kozgopromedium.php">2c5e8a67d1a805aae9842bbad59a873f</md5file>
 <md5file name="helveticabi.php">c22fdc8941f2956e0930b20105870468</md5file>
+<md5file name="pdfacourierbi.php">1f2386bedbebd633223278c1fd25109a</md5file>
+<md5file name="pdfatimesi.php">e0d060c7f70126e74c443b72ae560791</md5file>
+<md5file name="symbol.php">20e28c8b386ddbb38ead777f717d7c44</md5file>
 <md5file name="uni2cid_ac15.php">96c6b586a6afb6d72dc8b93b30f844d5</md5file>
-<md5file name="dejavusansmonob.php">768d12956504372d4dcffea0f0bc2865</md5file>
-<md5file name="dejavusansb.php">39b329017c9d46eeb7f89f11e8540c96</md5file>
-<md5file name="dejavusanscondensed.php">a01d7dccbd0a43d02a87035b60b5ca8c</md5file>
-<md5file name="freemonoi.php">8745faaac931fd3990eaad40b663a00d</md5file>
-<md5file name="dejavusanscondensedbi.php">82f254a1bc551aee1583bd6461b62cfe</md5file>
+<md5file name="pdfahelveticabi.php">351ce642d2008500c8780cce574acdb2</md5file>
+<md5file name="dejavusansmonob.php">fc1cb0e9030ce6b891319ce46dd8c434</md5file>
+<md5file name="dejavusansb.php">95bf00532c504c237041c4e3f04936a1</md5file>
+<md5file name="freeserifb.php">bdf5ae55ea4d553beb785266dd0f9ffa</md5file>
+<md5file name="courier.php">2894170c52a47ac02bf094bf047f1984</md5file>
+<md5file name="pdfahelveticai.php">fa8aa7a5c2077676637614809bc0ea0c</md5file>
+<md5file name="pdfahelvetica.php">b8f1f393d7a247fdfe7668acf776e9d2</md5file>
+<md5file name="pdfacourier.php">35b71c6a8e678cdaa9d484ebab42c2ca</md5file>
+<md5file name="pdfatimesb.php">8f55434707b160cf1a8331d27e37e7e4</md5file>
+<md5file name="freesansi.php">4711cc4662b9136a881497c27b596135</md5file>
+<md5file name="dejavuserifcondensedbi.php">950310a6c12362b084a68b0cfa7f3373</md5file>
+<md5file name="dejavusanscondensed.php">6ac17b4d7485fe73dd2d754ce2a0e2d9</md5file>
+<md5file name="freemonoi.php">96fe7b1e5cd48c7332cf17b789f7af66</md5file>
+<md5file name="freeserif.php">02aac38356af65808e08e21f1ddd225d</md5file>
+<md5file name="dejavuserifbi.php">bccc18d3b8c2b941ef7ef6602aab6c69</md5file>
+<md5file name="dejavusanscondensedbi.php">de96058dc4fedbe4ccca03f9966ff743</md5file>
 <md5file name="helveticab.php">3daad3713df02c15beebd09ceecacacd</md5file>
-<md5file name="cid0ct.php">0583253d3e49f14e3b6306fa788a6f66</md5file>
-<md5file name="dejavusansmonobi.php">d0a111306e668d146a52e2299597888e</md5file>
-<md5file name="cid0cs.php">a722bf1cb509c0218c9b0d41386fdbbe</md5file>
+<md5file name="cid0ct.php">b8b582e30d3f3bd8867221dcc3dbf365</md5file>
+<md5file name="dejavusansmonobi.php">75c68bb955477a99fc98600f5e1f40a3</md5file>
+<md5file name="freesansb.php">bf1c8fcdd3706774086cd133a6e04d45</md5file>
+<md5file name="dejavuserif.php">eee692f442eaec2b8291419a2017e50b</md5file>
+<md5file name="courierbi.php">f9389202889738a0935be0d96f3aa609</md5file>
+<md5file name="cid0cs.php">9b187fb3a908fb75b7b2a8573a4d13c4</md5file>
 <md5file name="uni2cid_aj16.php">c458a95a74915bb3e01102060bf3d27c</md5file>
-<md5file name="freemonobi.php">66a08a1e2a2405c7ad5affeca0f81b2f</md5file>
-<md5file name="dejavusanscondensedb.php">4674617014723f062743145bd2952df7</md5file>
+<md5file name="kozminproregular.php">78fdf805f1cea6cd01912192821ec734</md5file>
+<md5file name="pdfazapfdingbats.php">34b9ef2cadf050ad58f391a7990c6975</md5file>
+<md5file name="aefurat.php">c0f60dd955a2bd3e6bace66eb362c9a5</md5file>
+<md5file name="timesbi.php">a5f3fbbef1831fe0bcd060edb6e5010b</md5file>
+<md5file name="aealarabiya.php">c49883919b7912057b1ffad674a9c7c2</md5file>
+<md5file name="freemonobi.php">99d8349acae8fcd95094364adf24dae2</md5file>
+<md5file name="dejavusanscondensedb.php">72b2fd6a41260897ef758436603d33a2</md5file>
 </dir>
 <dir name="/includes/tcpdf/include" >
 <md5file name="tcpdf_colors.php">cacdbe68a428ae36151a3d1152b2b77b</md5file>
-<md5file name="tcpdf_static.php">1aa821a18b07bc7cba92552a372b8f9d</md5file>
-<md5file name="tcpdf_images.php">42f2f6e2122319a302b2769011897b2a</md5file>
-<md5file name="tcpdf_filters.php">205fd4b7bc978688de8420087c161bcb</md5file>
+<md5file name="tcpdf_static.php">86c5b7ba9581a58bf6e465aea7d52e46</md5file>
+<md5file name="tcpdf_images.php">3c4338d70de8c99a86b3ee15924172a1</md5file>
+<md5file name="tcpdf_filters.php">fb794db6e06fa3cf7479fc889894caf3</md5file>
 </dir>
 <dir name="/includes/tcpdf/include/barcodes" >
-<md5file name="pdf417.php">0d24de61581243b069fb508efbc78a67</md5file>
-<md5file name="datamatrix.php">561027d7adbd2358225866cba60568d2</md5file>
+<md5file name="pdf417.php">3abe66ba8da6b6bf9cf1c6b0e907d51d</md5file>
+<md5file name="datamatrix.php">9a29da1e201fb23de4f499adbb9f6a71</md5file>
 <md5file name="qrcode.php">edd56d70cac390ef63feeef7e9d71b3f</md5file>
 </dir>
 <dir name="/includes/tcpdf/include" >
-<md5file name="tcpdf_fonts.php">75837274a0d67e19ee975aaef9e283ee</md5file>
+<md5file name="tcpdf_fonts.php">5f4ae32bd59400b8f788ac644b693ed2</md5file>
 <md5file name="tcpdf_font_data.php">8f83bbc144d70505672f82679546c72d</md5file>
 </dir>
 <dir name="/includes/tcpdf" >
-<md5file name="tcpdf_parser.php">5c546b7f37191a754b6743a640c6a0cd</md5file>
+<md5file name="tcpdf_parser.php">809d819fe86dc60509c0b39997fc0d4f</md5file>
 <md5file name="tcpdf_barcodes_2d.php">17bfd10e3232de9145f5b74a6ef6afac</md5file>
-<md5file name="tcpdf.php">bd2d14a110664154fc509e3d3f9421dd</md5file>
+<md5file name="tcpdf.php">67b77209f88a051d1a7dd39e6584212b</md5file>
 </dir>
 <dir name="/includes/phpexcel" >
 <md5file name="PHPExcel.php">b162a10416c2cba0be1ba5d979e19145</md5file>
@@ -5756,8 +5801,13 @@
 <md5file name="http_class.php">93d0209adac1b1a2b4e3cf2173cf995a</md5file>
 <md5file name="CupsPrintIPP.php">20e95e9c16378e6ac4df49011220f904</md5file>
 </dir>
+<dir name="/includes/tcpdi" >
+<md5file name="tcpdi_parser.php">778ee87bf2f490b2737b2575d6a8367d</md5file>
+<md5file name="fpdf_tpl.php">36e0aff3d3354e60d6470d44c07d1760</md5file>
+<md5file name="tcpdi.php">c6f393b8430b95f521554b427d675a68</md5file>
+</dir>
 <dir name="/includes/fpdfi" >
-<md5file name="pdf_parser.php">4ad543978a9d6664dccfe0e58b428c5f</md5file>
+<md5file name="pdf_parser.php">d2a5b87e5832c708a67b8718e6cb89bd</md5file>
 <md5file name="fpdi.php">6bff9cf68d35e1f83c670731e270c91c</md5file>
 <md5file name="fpdi_pdf_parser.php">f6b62af680035531c943bb9fe3f416a1</md5file>
 <md5file name="fpdf_tpl.php">725a7d1d35aaa7deb29d8d7b68d5a7f9</md5file>
@@ -5802,7 +5852,7 @@
 <md5file name="mailing-unsubscribe.php">758456bd92e4f81e1fdff423d4f914ab</md5file>
 </dir>
 <dir name="/public" >
-<md5file name="offline.php">f80e903b3aef314dc7e173ba95324c56</md5file>
+<md5file name="offline.php">fc8213a4a5a98ee458ddacc6bdd363c4</md5file>
 </dir>
 <dir name="/public/paypal" >
 <md5file name="paymentok.php">edc900f68ee6af819ace6dc30b968d80</md5file>
@@ -5814,7 +5864,7 @@
 <md5file name="error-404.php">69caa949b7e0f3137c6ce7482f38e0f8</md5file>
 </dir>
 <dir name="/public/agenda" >
-<md5file name="agendaexport.php">c234c6e7b71d97e977d881538fab1d5e</md5file>
+<md5file name="agendaexport.php">a040ae2fc7273f1761c0b6294465db86</md5file>
 <md5file name="index.php">a0fa0788291ee95ccb306b8aded3fce3</md5file>
 </dir>
 <dir name="/public" >
@@ -5837,7 +5887,7 @@
 <md5file name="index.php">ac2861b424e2b7e30a532f37b33d6889</md5file>
 <md5file name="public_list.php">97bfaff0b5c453d074f05fef1fc4c3df</md5file>
 <md5file name="public_card.php">35433c33dbc3525adc99ba89816d3733</md5file>
-<md5file name="new.php">45b742c58510d055adee01e93aa33ff3</md5file>
+<md5file name="new.php">4aad58f34304117925aeb72dde0e16ec</md5file>
 </dir>
 <dir name="/public/cron" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -5931,32 +5981,34 @@
 <md5file name="index.php">af876c926d49c59376d8b6d642ce9f66</md5file>
 </dir>
 <dir name="/comm/action" >
-<md5file name="peruser.php">b30fb8f9811c1fa4d96fb35456366a8d</md5file>
+<md5file name="peruser.php">2ba22b10ce887c66563fb062cab1d79c</md5file>
 <md5file name="document.php">5fa21d6616fd146640d8cb59d52fd6d2</md5file>
-<md5file name="card.php">0425a56b168d7f707d31028ad6122c26</md5file>
+<md5file name="card.php">62e1ab1273d5a8dba9003cf14e678f94</md5file>
 <md5file name="listactions.php">9f9e7fb20c0cfc32dd7879ea99bcb3a0</md5file>
 </dir>
 <dir name="/comm/action/class" >
-<md5file name="actioncomm.class.php">fedfac2139ca74edbddaba770b52995e</md5file>
+<md5file name="actioncomm.class.php">9b6ecbb4d4ec11fe513ec2a724749201</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="cactioncomm.class.php">5c09b3d75fcba736c3353468236e5338</md5file>
 <md5file name="ical.class.php">688c47e56752db341e110657c4f6f4de</md5file>
 </dir>
 <dir name="/comm/action" >
-<md5file name="index.php">d6d72917df770c5f42763d5bafd71857</md5file>
+<md5file name="index.php">6f0972a6d7681bb65406b323efa8c202</md5file>
 <md5file name="info.php">0a81d81144952f49baecb31cfc610fee</md5file>
 </dir>
 <dir name="/comm/admin" >
-<md5file name="propaldet_extrafields.php">453d482e2c6217d080e4ba4ac382aff7</md5file>
+<md5file name="askpricesupplierdet_extrafields.php">85a44971ad662216ae35ee13cc448517</md5file>
+<md5file name="propaldet_extrafields.php">3cfe3654b3fc16954d91d3968fe71e24</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="propal_extrafields.php">46ff31a1787666ae78665dcea6351800</md5file>
+<md5file name="askpricesupplier_extrafields.php">e4a89a0342afbc8771e9178a78677517</md5file>
+<md5file name="propal_extrafields.php">0e38e1224840ed30469ccfc96cae5407</md5file>
 </dir>
 <dir name="/comm/mailing" >
 <md5file name="card.php">2e7c67c1f808b58e33a5d256c282f02f</md5file>
 </dir>
 <dir name="/comm/mailing/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="mailing.class.php">33d557efbd941e679c386377e63d949b</md5file>
+<md5file name="mailing.class.php">17cd44fc331db26f8a7eb438b6f83cd3</md5file>
 </dir>
 <dir name="/comm/mailing" >
 <md5file name="cibles.php">e122c4a3c7fd8e1814f52d447e2d1a87</md5file>
@@ -5965,8 +6017,8 @@
 <md5file name="list.php">0ea32bda75dc7855fd061f23d129c35c</md5file>
 </dir>
 <dir name="/comm" >
-<md5file name="card.php">de6be0f3faeef94e762c4e1ea1def02d</md5file>
-<md5file name="propal.php">f38b902b5ce63c83e6dc6ffe2f9cf0bb</md5file>
+<md5file name="card.php">c5afccdb1da5846e310db9f174201302</md5file>
+<md5file name="propal.php">ad942ced24fef3b0b541041a3ce20205</md5file>
 <md5file name="address.php">25b3ce6e2f12f227c4a1ac8db9fab357</md5file>
 </dir>
 <dir name="/comm/prospect" >
@@ -5986,6 +6038,24 @@
 <md5file name="index.php">d25255649d1fb417a7e7041ed86dc8c9</md5file>
 <md5file name="multiprix.php">23a9fe711137f3cb4f06dd011d38c23b</md5file>
 </dir>
+<dir name="/comm/askpricesupplier/tpl" >
+<md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
+<md5file name="linkedobjectblock.tpl.php">93f6a40587eabe04d03bd3e910a780c3</md5file>
+</dir>
+<dir name="/comm/askpricesupplier" >
+<md5file name="document.php">9b2c6de73503cceb102e875a364f6626</md5file>
+<md5file name="card.php">6c5d484bdf6d9ef4529adc17eb829766</md5file>
+<md5file name="note.php">65e54e9e6458c353a92eeaafdb0d0022</md5file>
+</dir>
+<dir name="/comm/askpricesupplier/class" >
+<md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
+<md5file name="askpricesupplier.class.php">cff8400cdba7775f87330b11ec9a4a65</md5file>
+</dir>
+<dir name="/comm/askpricesupplier" >
+<md5file name="index.php">8a6845f5a3f6180df651c1be45e24878</md5file>
+<md5file name="info.php">bebba22e7a5fdb20a52dfcf1b64772a1</md5file>
+<md5file name="list.php">477b247136b3b54b251d5257ed61ee19</md5file>
+</dir>
 <dir name="/comm/propal/tpl" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="linkedobjectblock.tpl.php">0ac7cc84f48f255d71c0be34442038c1</md5file>
@@ -6000,7 +6070,7 @@
 <dir name="/comm/propal/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="propalestats.class.php">7d845e5c3c1ac2c7b1c49de0d7e1c7e9</md5file>
-<md5file name="propal.class.php">8d01e83c7ea6584ed8244fe84628bd7b</md5file>
+<md5file name="propal.class.php">241877437e8750febbd662602dd0efcd</md5file>
 </dir>
 <dir name="/comm/propal" >
 <md5file name="contact.php">abefa8f7d035ae87eb5b45b0c43843be</md5file>
@@ -6014,16 +6084,16 @@
 <md5file name="remx.php">a7a90ee73e8f7f25267dc0ed66b3d8aa</md5file>
 </dir>
 <dir name="/categories" >
-<md5file name="edit.php">a7f47e13476c054174040b29f993c271</md5file>
+<md5file name="edit.php">c541711e1f2070a1cc8528e9991d7fed</md5file>
 </dir>
 <dir name="/categories/admin" >
-<md5file name="categorie_extrafields.php">3cf2e98145b2f736130d75ebce1998f2</md5file>
+<md5file name="categorie_extrafields.php">fb4334120f1d5c30e64da6c12d2c777f</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="categorie.php">1d09e4bcc7c8b15b8870ee521b50f1f6</md5file>
 </dir>
 <dir name="/categories" >
 <md5file name="traduction.php">f94fa580d25989d4f7a0729699c794f4</md5file>
-<md5file name="card.php">dcd7588470066bf274c070ea79bf0b3c</md5file>
+<md5file name="card.php">bdb60ef8622cea7e270534ffb78c9714</md5file>
 </dir>
 <dir name="/categories/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -6037,7 +6107,7 @@
 </dir>
 <dir name="/contact" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="card.php">c5b4ae74b2b2e938d18d6f91ae094157</md5file>
+<md5file name="card.php">4cc2f72a3e23dd082248e7e1582b9cb1</md5file>
 <md5file name="note.php">502547de717912a19aca06ddd223995c</md5file>
 <md5file name="ldap.php">4c457d8c88e79b1bab6c830a9162e718</md5file>
 <md5file name="exportimport.php">2395be35cede1fb715ef9a4e497300a0</md5file>
@@ -6075,12 +6145,12 @@
 </dir>
 <dir name="/product/composition" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="card.php">8c73a6f5b6e511bc183fcf2b5c1f8783</md5file>
+<md5file name="card.php">ff07e29c887a25d0261857b7bc9e1deb</md5file>
 </dir>
 <dir name="/product/admin" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="product.php">63a86b61d1158210eedd7055b3bfd935</md5file>
-<md5file name="product_extrafields.php">d9f10175f29b8f142255f95be2d07965</md5file>
+<md5file name="product_extrafields.php">dd4877a4d2778561d4ccdbdba4b8b76d</md5file>
 <md5file name="product_tools.php">648275f02e4c1be714897110a9aae56c</md5file>
 </dir>
 <dir name="/product" >
@@ -6097,9 +6167,9 @@
 <md5file name="facture_fournisseur.php">2a452e950585fb39d94e41a414471df5</md5file>
 </dir>
 <dir name="/product" >
-<md5file name="price.php">4703a36c950de669ee918e763e014fe1</md5file>
+<md5file name="price.php">4dfd0119f671aa86ba1405c9814b08b0</md5file>
 <md5file name="document.php">977109b651acad563d27a9f05efa820a</md5file>
-<md5file name="card.php">f0bd1599b002694c6ec351d6606921f4</md5file>
+<md5file name="card.php">3fa0561c00883f627c54f080237ca03d</md5file>
 </dir>
 <dir name="/product/ajax" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -6112,9 +6182,9 @@
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="service.class.php">3e8b72640f3dd0117bde24b366b7a8f5</md5file>
 <md5file name="html.formproduct.class.php">6a1a6da93f9c2d77d68c8edb90139899</md5file>
-<md5file name="productcustomerprice.class.php">3285c87826c9621ebf4352cf2a3ee2a0</md5file>
-<md5file name="productbatch.class.php">8a1c4f997f37fb274bc58c905649c0e0</md5file>
-<md5file name="product.class.php">2211e75d50ae16f94e147f2f05a85d91</md5file>
+<md5file name="productcustomerprice.class.php">6f6227ce98c203851dcddd1f027a86d5</md5file>
+<md5file name="productbatch.class.php">4ae815a0b31e0c4b8b900b7da88ab8c1</md5file>
+<md5file name="product.class.php">1806b43471d2254c540ce3ab52353877</md5file>
 <md5file name="priceparser.class.php">d6e07b8cab924d1b1b4e7b467aad3e67</md5file>
 <md5file name="priceexpression.class.php">80c65c798aad65e52c21289ba4fc8db2</md5file>
 </dir>
@@ -6152,29 +6222,29 @@
 </dir>
 <dir name="/product" >
 <md5file name="index.php">926bd78111e0f27f638bb0705f92439b</md5file>
-<md5file name="list.php">8e16469fd236e9975f6a14a9e59c147c</md5file>
+<md5file name="list.php">7a998e3b11f1086c7953293442f3530a</md5file>
 <md5file name="reassort.php">37d695c0d624c79d4d5fa14dd131876e</md5file>
 </dir>
 <dir name="/product/stock" >
-<md5file name="product.php">040fcead42553050d648d53d01d642b6</md5file>
+<md5file name="product.php">01ec301f4005d3565727c01ea5b63eb5</md5file>
 <md5file name="massstockmove.php">58e190fe5c72ba2cd4db99fd17aac7ac</md5file>
-<md5file name="replenish.php">212fcab202e934b30e6fcc7c5128ed3d</md5file>
-<md5file name="card.php">6a692cc606a48741b08fef765bdaec4c</md5file>
+<md5file name="replenish.php">a0668dc98834af718fd96f310c7f6003</md5file>
+<md5file name="card.php">56db30e1de65b6fb81931cd4469be39b</md5file>
 </dir>
 <dir name="/product/stock/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="entrepot.class.php">3d18b6afcda65c40d3e5b1565e0ae3f1</md5file>
-<md5file name="mouvementstock.class.php">0cde765c7d578d103c71dfc4197438c8</md5file>
+<md5file name="mouvementstock.class.php">091c302f41e52a36598a19df1860971f</md5file>
 </dir>
 <dir name="/product/stock" >
 <md5file name="mouvement.php">4bac12077505462bd962adb666852966</md5file>
-<md5file name="replenishorders.php">3ce4735205d14eef357f1fc90d655ece</md5file>
+<md5file name="replenishorders.php">22a2ab52185732bcafd64fbd4a68eea8</md5file>
 <md5file name="index.php">cc7d7a963ee9ef58ede0680241f53de1</md5file>
 <md5file name="fiche-valo.php">ebb2e597917e22900853dfa300de88da</md5file>
 </dir>
 <dir name="/product/stock/lib" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="replenishment.lib.php">5b69636b3ce9773a65a8750f65d31ee9</md5file>
+<md5file name="replenishment.lib.php">2c6f884e37b89f861f19faba99009ecb</md5file>
 </dir>
 <dir name="/product/stock" >
 <md5file name="info.php">32df7d91f327cfdcd67d831f6e7535eb</md5file>
@@ -6297,10 +6367,11 @@
 <md5file name="io.php">1fce4641b42b1c6680093428f2ccada5</md5file>
 </dir>
 <dir name="/core" >
-<md5file name="actions_setnotes.inc.php">f4306fe54c33047d10182d177f39b89f</md5file>
+<md5file name="actions_setnotes.inc.php">255c511cf57d5c863564fd3ec0bae654</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="search_page.php">957b9030b18c319e7c1529a4ffc72b85</md5file>
 <md5file name="antispamimage.php">6b6851714ab5e4f9491c2500a26c8ceb</md5file>
+<md5file name="actions_fetchobject.inc.php">29dbab62db9356e1b3574520bf3fa8b6</md5file>
 </dir>
 <dir name="/core/tpl" >
 <md5file name="passwordforgotten.tpl.php">6dee88d0cf667f9b940d2696690f6744</md5file>
@@ -6314,24 +6385,27 @@
 <md5file name="fileupload_main.tpl.php">5ef3117292cb272cb72190d67bda189d</md5file>
 </dir>
 <dir name="/core/tpl" >
-<md5file name="admin_extrafields_add.tpl.php">25d6c35728da1df381db408e61137d98</md5file>
+<md5file name="admin_extrafields_add.tpl.php">9e42ef4e51c3d0795c44215d8264acc4</md5file>
 <md5file name="resource_add.tpl.php">ff890ffae74d79a90ade34016ffd241d</md5file>
 <md5file name="originproductline.tpl.php">1e1d68cabdaa8e946ad786f083a114a1</md5file>
 <md5file name="footer.tpl.php">080945adaf8304688ce778f8acc821fe</md5file>
 <md5file name="login.tpl.php">a2546e7613e0c76e1c26692507f66836</md5file>
 <md5file name="bloc_showhide.tpl.php">8cc4b11d20b0e01eb7e7b7401c2f12c8</md5file>
-<md5file name="notes.tpl.php">190087a51700f34c1b861261d838a6cf</md5file>
+<md5file name="notes.tpl.php">10740fb22bfc2ac1b339e9d784cb9c23</md5file>
 <md5file name="extrafields_view.tpl.php">6cea8bdd89a385b695dda1279e3021fa</md5file>
-<md5file name="admin_extrafields.tpl.php">e48ba3cc3d7d8641f31fb4d1e1cce67a</md5file>
-<md5file name="objectline_create.tpl.php">fbe31176a2ece8671e34270b56ed9224</md5file>
-<md5file name="document_actions_post_headers.tpl.php">cf7fe720eedb6cef5c6cb67feb5a31ea</md5file>
+<md5file name="objectline_create.tpl.php">c41cd25f077b172e0acff8f4e6830847</md5file>
+<md5file name="document_actions_post_headers.tpl.php">ae990e59fea5de5b4483ff48d541723f</md5file>
+<md5file name="admin_extrafields_view.tpl.php">bd68e17f01cde910409d40075ec640bf</md5file>
 <md5file name="contacts.tpl.php">4aeaafb21fcc66d532de0612676423e5</md5file>
 <md5file name="header.tpl.php">b7c3b27785924f5b023754855bbe3177</md5file>
-<md5file name="objectline_view.tpl.php">526b1578733967a53e9c7ea0d3687334</md5file>
+<md5file name="objectline_view.tpl.php">537bb9602db6a018f9e12b2286bd26e6</md5file>
 <md5file name="document_actions_pre_headers.tpl.php">9e2d3bb695cfcdfebe705c171aa299ec</md5file>
-<md5file name="admin_extrafields_edit.tpl.php">d7f98378b22bf02d1e96caa8c354a518</md5file>
+<md5file name="admin_extrafields_edit.tpl.php">02e18a866ed73982a37672572da83321</md5file>
 <md5file name="resource_view.tpl.php">60d139c55b1533b31a8fcd4150ac35ed</md5file>
-<md5file name="objectline_edit.tpl.php">d02f3b80bd620e44b248b763a745c555</md5file>
+<md5file name="objectline_edit.tpl.php">cd235b4afb8a95d5975434d7526fd7d3</md5file>
+</dir>
+<dir name="/core" >
+<md5file name="actions_lineupdown.inc.php">a4a1f69d36f0c22e9eb2767ea3f0adbd</md5file>
 </dir>
 <dir name="/core/menus" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -6341,11 +6415,11 @@
 <md5file name="empty.php">6534c21938d98c00bad6449081c65979</md5file>
 <md5file name="eldy_menu.php">42a382d9a7146ddbf4c31c3aa55d6623</md5file>
 <md5file name="auguria_menu.php">7a69303716cb7dff3ae011d2202de8f8</md5file>
-<md5file name="eldy.lib.php">8c209ae5445bf45531c133034a243439</md5file>
+<md5file name="eldy.lib.php">9b9fe5839d3b4cdf2bd5bd8faae1206b</md5file>
 <md5file name="auguria.lib.php">b4987de205c69745a11bb3ca910cf99f</md5file>
 </dir>
 <dir name="/core/menus" >
-<md5file name="init_menu_auguria.sql">b9ef591e526bb7585e2e9e7224d9ce66</md5file>
+<md5file name="init_menu_auguria.sql">61d3ec9976c54d1a116baee6582b4d8c</md5file>
 </dir>
 <dir name="/core" >
 <md5file name="get_menudiv.php">3beda9cd6565bab822fd85e21efcf733</md5file>
@@ -6378,21 +6452,21 @@
 <md5file name="smtps.class.php">6648383dfcecce0fa8010ee26e19c029</md5file>
 <md5file name="cookie.class.php">10d80a81dab8b4b36bc477b7d06b2c89</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="html.formbank.class.php">bd966e5b800b4d63bc3884eb6c4dc944</md5file>
+<md5file name="html.formbank.class.php">4c2e051a6a49ecd0ff1f82fe3c63118c</md5file>
 <md5file name="html.formorder.class.php">f0e5ef9a4d74a8c802f1b67415f319a1</md5file>
 <md5file name="link.class.php">d67feaff91ea41dbdb614dce38ba542f</md5file>
 <md5file name="google.class.php">6a42f85c4852916c71548c179234aeef</md5file>
 <md5file name="canvas.class.php">0db78f95e23062feab46593d28704532</md5file>
 <md5file name="commonorder.class.php">639d7ee6567e210b36ecae473c5ce5fd</md5file>
-<md5file name="html.form.class.php">14dcc1c1453ec2180a3bdc0cc53fc18d</md5file>
+<md5file name="html.form.class.php">f772672fe0aeee71dd5c6bfd8d14808e</md5file>
 <md5file name="html.formmailing.class.php">2de8820df5ad2c53044c62ff4ad718b9</md5file>
 <md5file name="html.formprojet.class.php">454ff3948173d81e3f0c7ac1b77fc91a</md5file>
 <md5file name="html.formsocialcontrib.class.php">98b51504f52bc57c9d900d0fc1bdb4ab</md5file>
-<md5file name="html.formactions.class.php">84fca517a57320901e6f4d09aee570e5</md5file>
-<md5file name="commonobject.class.php">47fdbddb0716950e3754211aa67c8c43</md5file>
+<md5file name="html.formactions.class.php">620414a7322b7ecf17e2644a9a3f80cb</md5file>
+<md5file name="commonobject.class.php">9a92997f7f8d84b6ef1685765babe1e5</md5file>
 <md5file name="html.formpropal.class.php">f01a62497c9a085386bdc7c1defae763</md5file>
 <md5file name="hookmanager.class.php">ea8f7edcca4e35f95a3f2b7eed940d90</md5file>
-<md5file name="html.formfile.class.php">66809106d19298be518b4f947dc0f323</md5file>
+<md5file name="html.formfile.class.php">7f6a63a8afc26cee7c61918fd7559f77</md5file>
 <md5file name="dolprintipp.class.php">a14866ebe77e5755d7b9772210696e42</md5file>
 <md5file name="discount.class.php">b28954162df69981caec0998d15b77cc</md5file>
 <md5file name="doleditor.class.php">447cb865dedd025c82a0402a41d2253e</md5file>
@@ -6400,29 +6474,30 @@
 <md5file name="menu.class.php">7b53b4073832d6097d69bdf50ccf5ba2</md5file>
 <md5file name="html.formintervention.class.php">1b0a44d142ae00530558bf5a6562492d</md5file>
 <md5file name="dolexception.class.php">6cbfa567b0f4153bbc7f74adfe6bb4d2</md5file>
-<md5file name="extrafields.class.php">b6f90f0325529e3a39ebe651d0f910e7</md5file>
+<md5file name="extrafields.class.php">efa61e935b3bddded6bf488f1c27109f</md5file>
 <md5file name="translate.class.php">88379d7c5cf4379d141f0e277fc2d499</md5file>
 <md5file name="fileupload.class.php">3c36fca38f15327101e2cc37493e60fa</md5file>
 <md5file name="html.formsms.class.php">c3d1e1b3f31c8bc2c6ac7582205a85ab</md5file>
 <md5file name="commonobjectline.class.php">2c4b8a901ebd2581714ea5b7db8ffd1b</md5file>
 <md5file name="ccountry.class.php">daff44759e4f9c193a667ed427ba5444</md5file>
-<md5file name="html.formmail.class.php">29b823646e763c2e7a64098be3ba5130</md5file>
+<md5file name="html.formmail.class.php">dd505607a04547e95b76e3821ae75568</md5file>
+<md5file name="html.formaskpricesupplier.class.php">666a30d3eb073d969dae5b1f73fa7d2e</md5file>
 <md5file name="dolgeoip.class.php">f4d35924864fb87b787ab9a9925fb091</md5file>
 <md5file name="ldap.class.php">2cf0c82aa4ed8fa0e22c393b7f5ecee4</md5file>
 <md5file name="mobiledetect.class.php">2cb5c8f2cf03c6df6d3b70394b454d1e</md5file>
 <md5file name="interfaces.class.php">c65c84d23e2a8ad950ca58a1a2ca90db</md5file>
 <md5file name="html.formcontract.class.php">73aae48b832026e3d24c305f58743806</md5file>
 <md5file name="genericobject.class.php">e7df06c253dee16873fac26b32670722</md5file>
-<md5file name="ctypent.class.php">d4ce19166b58327ea8fe72de57a8dd85</md5file>
+<md5file name="ctypent.class.php">0bb1fb4ad3250cc312d571055323db79</md5file>
 <md5file name="events.class.php">507d7fd927984729187a4891f616f37c</md5file>
 <md5file name="antivir.class.php">ed773b5b64093d6017aecdf1ca79fef5</md5file>
 <md5file name="commondocgenerator.class.php">4b15299e9a1c837d8e32aafe9abb00d7</md5file>
 <md5file name="dolgraph.class.php">b418b86d6c9003364c5a060946082ccb</md5file>
 <md5file name="html.formcron.class.php">16f583734d76081ef1a4b44d1e0657a6</md5file>
-<md5file name="html.formother.class.php">4dd69e598e667405299c866a9277af26</md5file>
-<md5file name="conf.class.php">e07da2dad2151513bd8dcbfe29d43e3c</md5file>
+<md5file name="html.formother.class.php">dcff719e866b3af9fd9555b5a5867d64</md5file>
+<md5file name="conf.class.php">e72a74aa70d48feb14c3a5fde6089fcc</md5file>
 <md5file name="rssparser.class.php">a239faf6b54526481abaffe15d1f594d</md5file>
-<md5file name="CMailFile.class.php">4b9010ae3ecbf6e792d3bfb687ea2ab7</md5file>
+<md5file name="CMailFile.class.php">e28bd469ef1c049843bc41dbe0f84d66</md5file>
 <md5file name="fiscalyear.class.php">fe33e132e503f32398fb9809fe51da85</md5file>
 <md5file name="commoninvoice.class.php">4b85147a9ebfcb923038a17487822286</md5file>
 <md5file name="stats.class.php">e639d0ea5fc52734d43abbba8262dbb0</md5file>
@@ -6436,7 +6511,7 @@
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="mysql.class.php">80f54c48fa46d0aaa977e404035aadf5</md5file>
 <md5file name="DoliDB.class.php">febda7bf2f326668d1f627ea9f2230b1</md5file>
-<md5file name="pgsql.class.php">4e6602a9b00bab8fd936f4800a1014ec</md5file>
+<md5file name="pgsql.class.php">4f695f9327d6b2361640731a09e99a33</md5file>
 <md5file name="mssql.class.php">fe8c6f4acebea37d34b626a537db0e29</md5file>
 <md5file name="Database.interface.php">90ffdb58422df4e942a1a90cf5225c11</md5file>
 <md5file name="mysqli.class.php">f1a8c3f9d6af74c305810725f125691f</md5file>
@@ -6460,8 +6535,8 @@
 <md5file name="format_cards.lib.php">38da2f7fcc1f2fe80b87db53e8767282</md5file>
 <md5file name="geturl.lib.php">51e003dd68580f4f37558726f8452b53</md5file>
 <md5file name="functionsnumtoword.lib.php">748938e5e5aadef1aef9a8b79362b1bc</md5file>
-<md5file name="bank.lib.php">e4a93615651fab4af7d9288cdcecc86e</md5file>
-<md5file name="fourn.lib.php">6d73868eae09dc15710f4c71ea25d7a0</md5file>
+<md5file name="bank.lib.php">0de6fae1b00ab6cd538ffeef40f045be</md5file>
+<md5file name="fourn.lib.php">00de18319f0abfb4c50f76b60f3fa2e7</md5file>
 <md5file name="import.lib.php">6b58f5c0cad8d233b94b0874a41e4c7d</md5file>
 <md5file name="fiscalyear.lib.php">9596a02e5898fe117ac4d2f080a1b3bf</md5file>
 <md5file name="resource.lib.php">afee7ccb55d1420cc8e36da4657825d1</md5file>
@@ -6469,7 +6544,7 @@
 <md5file name="categories.lib.php">d2b5ecf5e328a75e984f342ec80a60e2</md5file>
 <md5file name="cron.lib.php">07e043e1c42a0fe90d2226eaacb013e2</md5file>
 <md5file name="accounting.lib.php">4cd01a2e1b1d02f7bfaff7792fb45da9</md5file>
-<md5file name="project.lib.php">f12d4e2a7b8866e08c4635b6776c1b02</md5file>
+<md5file name="project.lib.php">81a2f4c5a6b5946b088aabf7f5e9404e</md5file>
 <md5file name="ajax.lib.php">ce24eb153015acfdeca2e5559cc41583</md5file>
 <md5file name="order.lib.php">a969dd13ed2ab6f921564ecd22121515</md5file>
 <md5file name="json.lib.php">c2ced639d9b476d69e952e110169346b</md5file>
@@ -6477,22 +6552,23 @@
 <md5file name="images.lib.php">3e30f76aaabd46ad9759658b706af3f8</md5file>
 <md5file name="sendings.lib.php">4d7e3a9cca8144dca5f184f23e63953a</md5file>
 <md5file name="ldap.lib.php">60c540c4dfb653ef65e67a628645f590</md5file>
-<md5file name="agenda.lib.php">abb811eb8d79dbeb78f5e67711905618</md5file>
-<md5file name="functions2.lib.php">1653a3d486b7113e331b01813407091a</md5file>
+<md5file name="agenda.lib.php">3c3312f639641a1e2f7d5eab79209b7f</md5file>
+<md5file name="functions2.lib.php">604bdd7909398dc5d136d47f9fc4bf39</md5file>
 <md5file name="stock.lib.php">98ca2d412c720690b46b8bf566cf4fb5</md5file>
 <md5file name="propal.lib.php">a9d45ffd6281800146fcfb2e3ab90ab6</md5file>
 <md5file name="fichinter.lib.php">66b21a3ea2de0ae271e470c339c40d07</md5file>
 <md5file name="treeview.lib.php">9bfcd5451fd684e35ed69b3912791a6c</md5file>
 <md5file name="payments.lib.php">b416db3eacff1ad448692d14aadff327</md5file>
-<md5file name="date.lib.php">b37a46d1de1e9b957b33881225da36dd</md5file>
+<md5file name="date.lib.php">c8f2877e5e9d05fde24a7c7059c145ed</md5file>
 <md5file name="files.lib.php">b0bd3479b483ba56d613a91242e0efdb</md5file>
 <md5file name="doc.lib.php">0bbc469b628cbc940ebdd59f2e218b6c</md5file>
 <md5file name="report.lib.php">e1ed3c24b7fa01be0254d5e6393237e5</md5file>
 <md5file name="barcode.lib.php">0e5a8ff24a2f4bb98d5c6c732e57619a</md5file>
 <md5file name="company.lib.php">811dbf5341b537fccdf98ff790cda72c</md5file>
 <md5file name="memory.lib.php">d868ca6c92ed42be6d193a71b5ae5a7d</md5file>
-<md5file name="functions.lib.php">11709bdc16ba921e8fe3774a1c7aba5f</md5file>
+<md5file name="functions.lib.php">d3361d904c96677405ad3081d4bbfc4f</md5file>
 <md5file name="admin.lib.php">503104f81619bf8296bdd1893079765f</md5file>
+<md5file name="askpricesupplier.lib.php">595325924223d40b0ea97c9df4ebfde4</md5file>
 <md5file name="invoice.lib.php">aa7ebaddf8d815b3dfd1b3281f26de84</md5file>
 <md5file name="holiday.lib.php">59519c8b2bd240bdfc50476ea344cf8a</md5file>
 <md5file name="expensereport.lib.php">f68235c447fde10de92e0732d17258bd</md5file>
@@ -6502,7 +6578,7 @@
 <md5file name="functions_ch.lib.php">3cfbb9ef9c493bf739d501114cbe798c</md5file>
 <md5file name="prelevement.lib.php">0d3a43a7afc190f34f52855f28a34e4f</md5file>
 <md5file name="ecm.lib.php">48f9b2c134655de1b0f5f7d50f01b765</md5file>
-<md5file name="pdf.lib.php">b3c941e7ae9574a1330c98ce07aade9f</md5file>
+<md5file name="pdf.lib.php">03f439fdc6137b29736006bd4bee8ec5</md5file>
 <md5file name="mailmanspip.lib.php">70c6fc7d08f3c562322c9f53273f1393</md5file>
 </dir>
 <dir name="/core" >
@@ -6547,7 +6623,7 @@
 <md5file name="actions_printing.inc.php">8c78f30a301fd7c5092ed59d95f2f688</md5file>
 </dir>
 <dir name="/core/modules" >
-<md5file name="modSociete.class.php">db4b88a7cb7f2e983e9349a0564aa877</md5file>
+<md5file name="modSociete.class.php">841ebb62c8967f82132d6c19e372bdff</md5file>
 </dir>
 <dir name="/core/modules/member" >
 <md5file name="modules_cards.php">f8bfc1daca01458dceb9aebc7ffb5ddf</md5file>
@@ -6578,10 +6654,12 @@
 <md5file name="modFacture.class.php">79a20f938fb5d3f145447ae44db05477</md5file>
 <md5file name="modSyncSupplierWebServices.class.php">f2a1930d9be82084b365ccc8819d8484</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
+<md5file name="modIncoterm.class.php">5468ba4d16d0e057cf45f0984a79ac2e</md5file>
 <md5file name="modFTP.class.php">1de24508893015db0757ec63e74a8086</md5file>
 <md5file name="DolibarrModules.class.php">2ae8b7de36d0e4c3630977569bf93bd6</md5file>
-<md5file name="modCategorie.class.php">7af81ecb2106b1ca78c310332a02c604</md5file>
+<md5file name="modCategorie.class.php">050cbe3b9406a05a76f6a8d1c2fed6e6</md5file>
 <md5file name="modOpenSurvey.class.php">2b19c3592fbed5e4bd96730f87af438c</md5file>
+<md5file name="modAskPriceSupplier.class.php">69bb08052b60d7d59cbe0e6ff0e45089</md5file>
 </dir>
 <dir name="/core/modules/printing" >
 <md5file name="printipp.modules.php">de943e7a2b8a603c3ebc34507309a46d</md5file>
@@ -6603,7 +6681,7 @@
 <dir name="/core/modules/contract" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="mod_contract_serpis.php">4553664f3a8bd058468c8fe3a6622db9</md5file>
-<md5file name="mod_contract_magre.php">86a595136563ba16d9b4fbb1cb97415c</md5file>
+<md5file name="mod_contract_magre.php">7ffccecde85645232cd150f4ceb54f8d</md5file>
 <md5file name="mod_contract_olive.php">f0e4f84ac2849eef8c8da252f2a875fd</md5file>
 <md5file name="modules_contract.php">fdc9f14617e70aba304986ff7e32811e</md5file>
 </dir>
@@ -6692,7 +6770,7 @@
 <md5file name="pdf_merou.modules.php">347df504c0b23da0ae91c9b5a344c1a2</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="doc_generic_shipment_odt.modules.php">9b301131818ad7072d10624d9fce65b8</md5file>
-<md5file name="pdf_rouget.modules.php">215929b6545fc8cfacbb7386e4cbedca</md5file>
+<md5file name="pdf_rouget.modules.php">fd0799a717f127a9c48bcb11d33a4d72</md5file>
 </dir>
 <dir name="/core/modules/expedition" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -6717,7 +6795,7 @@
 <md5file name="pomme.modules.php">80af429597316aca3852de474a686ff4</md5file>
 </dir>
 <dir name="/core/modules" >
-<md5file name="modExpenseReport.class.php">391c970a033d0593a16fb904119818d7</md5file>
+<md5file name="modExpenseReport.class.php">5a89df7d532fb5730ba5fa40e3fb4037</md5file>
 </dir>
 <dir name="/core/modules/dons" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -6728,12 +6806,12 @@
 <dir name="/core/modules" >
 <md5file name="modHoliday.class.php">35063f32bb86ee8cd1460cc9b50460ba</md5file>
 <md5file name="modNotification.class.php">cc44ae6151419f24f801a399a8da8e9a</md5file>
-<md5file name="modFournisseur.class.php">577a5a6dd151bcd7cf6d8fcbd70677e8</md5file>
+<md5file name="modFournisseur.class.php">1a4b02d31eef47e71fb394b5688cd663</md5file>
 </dir>
 <dir name="/core/modules/facture/doc" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="doc_generic_invoice_odt.modules.php">6b8b8ce50599e40cb74603a883f5d49b</md5file>
-<md5file name="pdf_crabe.modules.php">b6e05cae93872a350f3ca2352f15f6ea</md5file>
+<md5file name="pdf_crabe.modules.php">2cce9a1d8bf4c822dda113e210bc4f6b</md5file>
 </dir>
 <dir name="/core/modules/facture" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -6764,11 +6842,11 @@
 </dir>
 <dir name="/core/modules/livraison/doc" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="pdf_typhon.modules.php">70b0380559e50123f150a6f30a4d6699</md5file>
+<md5file name="pdf_typhon.modules.php">be907e7e9b0ac5a24a34af01ec1c21a6</md5file>
 </dir>
 <dir name="/core/modules/livraison" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="mod_livraison_saphir.php">04876764536d2c0ff37e0f1c9035c639</md5file>
+<md5file name="mod_livraison_saphir.php">a64def4ba4a8a55272108f79d0667e39</md5file>
 <md5file name="modules_livraison.php">3621a212806836a2b3ca23f601c1b670</md5file>
 <md5file name="mod_livraison_jade.php">b3f46a3f7cc553bcda255db88fd2309a</md5file>
 </dir>
@@ -6777,6 +6855,19 @@
 <md5file name="modWorkflow.class.php">6bb3fb472a3ff31f31945a68bb806cde</md5file>
 <md5file name="modTax.class.php">29977b078710f6ebe992f5b534b7d897</md5file>
 <md5file name="modExternalRss.class.php">e1efd5d8bc348da70c325a08fc8c37a8</md5file>
+</dir>
+<dir name="/core/modules/askpricesupplier/doc" >
+<md5file name="pdf_aurore.modules.php">d175d0af5c450eb501bca361a275c309</md5file>
+<md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
+<md5file name="doc_generic_askpricesupplier_odt.modules.php">13e7a0e137341f5a38764ea645b425f8</md5file>
+</dir>
+<dir name="/core/modules/askpricesupplier" >
+<md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
+<md5file name="mod_askpricesupplier_marbre.php">e4239be8b90a077f8afc116e683151c9</md5file>
+<md5file name="mod_askpricesupplier_saphir.php">751806f248816fea7429cc7c4132539b</md5file>
+<md5file name="modules_askpricesupplier.php">ebf0a4412227a0b61ae52df0105d46fe</md5file>
+</dir>
+<dir name="/core/modules" >
 <md5file name="modProjet.class.php">610022638254b2075ec4bba535c5fe37</md5file>
 </dir>
 <dir name="/core/modules/project/doc" >
@@ -6819,10 +6910,10 @@
 </dir>
 <dir name="/core/modules/supplier_order/pdf" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="pdf_muscadet.modules.php">6a04d0a55d694688b7a8e43c72f63891</md5file>
+<md5file name="pdf_muscadet.modules.php">9f8ec55a2df1f58b2ebd299fae8a1c6d</md5file>
 </dir>
 <dir name="/core/modules/supplier_order" >
-<md5file name="mod_commande_fournisseur_orchidee.php">5ba605e1b76e515803012ab67abe2e4a</md5file>
+<md5file name="mod_commande_fournisseur_orchidee.php">bcc3831429d49ff3a32c645c64be2e0e</md5file>
 <md5file name="modules_commandefournisseur.php">0276bf6040d05e80ab5f6c6910f6ddfc</md5file>
 </dir>
 <dir name="/core/modules" >
@@ -6837,10 +6928,10 @@
 <md5file name="modules_fichinter.php">bea23817aaf13e638fc0e6d274b0a63f</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="mod_pacific.php">2f133b07231a558b4551cfe813b6dd92</md5file>
-<md5file name="mod_arctic.php">c304ed5cba54aec736b4550b472a1337</md5file>
+<md5file name="mod_arctic.php">ccba00148532ae0e30f6f1d082817c10</md5file>
 </dir>
 <dir name="/core/modules/import" >
-<md5file name="import_csv.modules.php">36473125e09319a9870285bf7302b83e</md5file>
+<md5file name="import_csv.modules.php">83bd77075a70f4b3a661fb57a0f0212f</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="modules_import.php">db3734d67e45bf4a5140fbb38effa947</md5file>
 </dir>
@@ -6861,28 +6952,28 @@
 </dir>
 <dir name="/core/modules/supplier_invoice/pdf" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="pdf_canelle.modules.php">bd77bec5b425c9fbc1a4830a3ccccaa6</md5file>
+<md5file name="pdf_canelle.modules.php">6be749cfe859aafce02b030d57362ad7</md5file>
 </dir>
 <dir name="/core/modules/supplier_invoice" >
-<md5file name="mod_facture_fournisseur_tulip.php">60d1a2024e5d8c9d6cdc0c295a243652</md5file>
+<md5file name="mod_facture_fournisseur_tulip.php">898b153724a1748b8ea360e0b94aba77</md5file>
 </dir>
 <dir name="/core/modules/commande/doc" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="pdf_proforma.modules.php">d07b23771a6639fd5f6216da796ff343</md5file>
-<md5file name="pdf_einstein.modules.php">290e1eed5e28283e741bea66c30ec042</md5file>
+<md5file name="pdf_einstein.modules.php">b1328a661909e538f58d43197eac2a40</md5file>
 <md5file name="doc_generic_order_odt.modules.php">5cba7b9316b591829c756097ae0485cb</md5file>
 </dir>
 <dir name="/core/modules/commande" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="mod_commande_marbre.php">1f669f066fd46b6c9ca05177e177ed23</md5file>
-<md5file name="mod_commande_saphir.php">bef21989e641a45d0f362fcb97281341</md5file>
+<md5file name="mod_commande_saphir.php">3c270b13f4a5b576799d30edf1b7061c</md5file>
 <md5file name="modules_commande.php">00b8f993b58e8278a8115fb82ba7db57</md5file>
 </dir>
 <dir name="/core/modules" >
 <md5file name="modMargin.class.php">32cfbcb58d6ae71455e0c58f951f2849</md5file>
 </dir>
 <dir name="/core/modules/expensereport" >
-<md5file name="modules_expensereport.php">bbdf49461b8f7bfda4446af93641d362</md5file>
+<md5file name="modules_expensereport.php">69db05aac79ae05729e3797abcc2f1d1</md5file>
 </dir>
 <dir name="/core/modules/expensereport/doc" >
 <md5file name="pdf_standard.modules.php">710958b3055ce271a53ebd4e6325eee4</md5file>
@@ -6893,13 +6984,13 @@
 <dir name="/core/modules/propale/doc" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="doc_generic_proposal_odt.modules.php">4dfcdf4d3cb3af826834c1fbb852f513</md5file>
-<md5file name="pdf_azur.modules.php">9ee40eca1f3111186855090e11978198</md5file>
+<md5file name="pdf_azur.modules.php">08bd77ccf4ecfd2cccf23e9925909375</md5file>
 </dir>
 <dir name="/core/modules/propale" >
 <md5file name="modules_propale.php">d787be1614e93a5b0dff651c2d1962b8</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="mod_propale_marbre.php">fc2cd8f1b832bcd093d8f65cf48d6be1</md5file>
-<md5file name="mod_propale_saphir.php">94d4a670a65a20356db9e332884b5b3e</md5file>
+<md5file name="mod_propale_saphir.php">eea69eebcbf32860db846f30a803b9e5</md5file>
 </dir>
 <dir name="/core/modules" >
 <md5file name="modMailing.class.php">05afeb97327056d436d21d891b041057</md5file>
@@ -6937,6 +7028,7 @@
 <md5file name="lib_batch.js">e1e875671e566acb90ca03d16b7e63ed</md5file>
 <md5file name="lib_rare.js">be1a34c1c77c5431dfcee9caaabcfd88</md5file>
 <md5file name="timepicker.js.php">f71705be8958fd18f828eb64eb254202</md5file>
+<md5file name="timesheet.js">3be7925340a260d3ffccc912ede415b5</md5file>
 <md5file name="dst.js">36602e78494c46c4704cc578d4fb90cd</md5file>
 <md5file name="blockUI.js">d0889baa672fc0c803bf11ba7f57f6b1</md5file>
 </dir>
@@ -6956,7 +7048,7 @@
 <md5file name="server_supplier_invoice.php">1a47a847fe417086b3f0b8d467d35d1b</md5file>
 <md5file name="server_actioncomm.php">b69b43bab30c28687680635f91a53017</md5file>
 <md5file name="index.php">311aab84570c363ed4ff7e5069f5d949</md5file>
-<md5file name="server_contact.php">fa7542a63fa8d175b25c6db3d460d8a2</md5file>
+<md5file name="server_contact.php">3f0df7430bd8ed69801318a62221f4b6</md5file>
 <md5file name="server_category.php">6ce7b2cb223fead83bb4294741e580e2</md5file>
 </dir>
 <dir name="/exports" >
@@ -7001,8 +7093,8 @@
 <md5file name="linesalesrepresentative.tpl.php">6a4676f26cc4774608c53cd47ae76efa</md5file>
 </dir>
 <dir name="/societe/admin" >
-<md5file name="societe_extrafields.php">5cdd42491af381a414bea885fb5c234a</md5file>
-<md5file name="contact_extrafields.php">8df084360e41bb5dcce4719ba16c4804</md5file>
+<md5file name="societe_extrafields.php">3273ff24d482f29e015604a5a5190712</md5file>
+<md5file name="contact_extrafields.php">6b13618c39c1ae78d6be5a9580a25daf</md5file>
 <md5file name="societe.php">a90e349b1dfda275772af8b109e8be6f</md5file>
 </dir>
 <dir name="/societe" >
@@ -7024,7 +7116,7 @@
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="companybankaccount.class.php">86b05756ec73691d2b88e25bbce1e86a</md5file>
 <md5file name="address.class.php">b123826d90b2ffa257bd9880c090a6ac</md5file>
-<md5file name="societe.class.php">f454a5cbdd36bfd22d6240b85e503e3d</md5file>
+<md5file name="societe.class.php">30a766af9cb25ef9be5c36d4823109f3</md5file>
 <md5file name="client.class.php">59d8e23aebde2396d3440271828f4e20</md5file>
 </dir>
 <dir name="/societe/canvas" >
@@ -7068,7 +7160,7 @@
 <md5file name="index.php">1921a40ef2e203a9c7e33e33d8481630</md5file>
 </dir>
 <dir name="/societe" >
-<md5file name="soc.php">84c13b91d89d2ca2851e10c25a0cd166</md5file>
+<md5file name="soc.php">3bd4ca8f6d546fed7f45d59930fab106</md5file>
 <md5file name="consumption.php">3afe82801f5cd602354186397efe9210</md5file>
 </dir>
 <dir name="/expedition/tpl" >
@@ -7080,20 +7172,56 @@
 <md5file name="index.php">7d040a1858a6f1e8b3d8e7fc68b1b008</md5file>
 </dir>
 <dir name="/expedition" >
-<md5file name="card.php">2d1bc07a8c28954534f37204c02c33f5</md5file>
+<md5file name="card.php">4515ffcb074f47a2d9a4af2766b074cb</md5file>
 <md5file name="note.php">a267dd6d9a787dbaa95ee81e9812a81a</md5file>
 </dir>
 <dir name="/expedition/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="expeditionbatch.class.php">90bc49dfe52d6be339781906352ddbdb</md5file>
 <md5file name="expeditionstats.class.php">b3586b44a75323dbf02f85aea44e25db</md5file>
-<md5file name="expedition.class.php">e4d79c5376e95d08abe328aefaee064f</md5file>
+<md5file name="expedition.class.php">d5cde2d518971a3d6bd1e682b7c42092</md5file>
 </dir>
 <dir name="/expedition" >
 <md5file name="contact.php">1699071ff4bb09210ac267d430c05352</md5file>
 <md5file name="index.php">4d460db883bd693a816b29931a993917</md5file>
 <md5file name="list.php">202fffca61e528efe134dd32a3a44c64</md5file>
 <md5file name="shipment.php">9db7bfe5fec55a085d9f0dec8717479c</md5file>
+</dir>
+<dir name="/timesheet/admin" >
+<md5file name="timesheetsetup.php">83e824012a7c92746e71afc022ecb636</md5file>
+</dir>
+<dir name="/timesheet/core/modules" >
+<md5file name="modTimesheet.class.php">18df2d1590e825952abeb40304a9597a</md5file>
+</dir>
+<dir name="/timesheet/class" >
+<md5file name="projectTimesheet.class.php">596d7781222e476b027a59499fa2d92a</md5file>
+<md5file name="userTimesheet.class.php">ffae59f2cf83f882b269e06e420602c3</md5file>
+<md5file name="timesheet.class.php">7dd46b8a806a7567c0a88a13fa4f905b</md5file>
+</dir>
+<dir name="/timesheet/timesheet" >
+<md5file name="list.php">9b9b0157749548ed0fa38782aca9b1e1</md5file>
+<md5file name="submit.php">296f4be076bb584ea5779e3059648a53</md5file>
+</dir>
+<dir name="/timesheet" >
+<md5file name="timesheet.php">1b2ed3db48be32e106a6dd6351f324be</md5file>
+<md5file name="reportproject.php">b1688c8a3bd5948865884f0eaf3a0251</md5file>
+</dir>
+<dir name="/timesheet/langs/en_US" >
+<md5file name="timesheet.lang">99bd91055f47d5a74f9c395d74fbab6c</md5file>
+</dir>
+<dir name="/timesheet/langs/it_IT" >
+<md5file name="timesheet.lang">74d1739c0d14cabc655cde37e2fb25a8</md5file>
+</dir>
+<dir name="/timesheet/langs/fr_FR" >
+<md5file name="timesheet.lang">81d6b2b51a9b495e2512ab0952fb3afa</md5file>
+</dir>
+<dir name="/timesheet" >
+<md5file name="timesheet.js">3542838ab2e1d4ec2cdd98db328a247d</md5file>
+<md5file name="reportuser.php">3645cf8b754a2925eb02025881aa3ffb</md5file>
+</dir>
+<dir name="/timesheet/img" >
+<md5file name="object_timesheet.png">fd8e048c8923d556fd7ae7c5234ad474</md5file>
+<md5file name="timesheet.png">b9dce9a8342b0e0d203581e86770d28d</md5file>
 </dir>
 <dir name="" >
 <md5file name="disabled.php">d9cb53a9d7329a35ccba6560d05ca39c</md5file>
@@ -7118,8 +7246,8 @@
 </dir>
 <dir name="/adherents/admin" >
 <md5file name="public.php">3b3a6cb8fed3de208bc9a97209fed209</md5file>
-<md5file name="adherent_extrafields.php">c4b52ea2075814429b8a00a486f74baf</md5file>
-<md5file name="adherent_type_extrafields.php">3229eae002e5525f9b545644256aede8</md5file>
+<md5file name="adherent_extrafields.php">a42209411960f30b6b6e5e38bc560af4</md5file>
+<md5file name="adherent_type_extrafields.php">7855abdb54739fae3eb0ae1d5a18ecb2</md5file>
 <md5file name="adherent.php">583594a72118966d0ce436acbf5ab344</md5file>
 </dir>
 <dir name="/adherents" >
@@ -7132,10 +7260,10 @@
 </dir>
 <dir name="/adherents" >
 <md5file name="document.php">1aaa761fff1db6880a873b2f7aba4769</md5file>
-<md5file name="card.php">73b7987dbc53760d356ad398d8f31a6b</md5file>
+<md5file name="card.php">96ee353361cdd805d62109efa227f63d</md5file>
 <md5file name="note.php">ffcd5053589c705062adeade31ce92f6</md5file>
 <md5file name="ldap.php">68dc3ea2cd9c6508a925df50fa011221</md5file>
-<md5file name="type.php">95444b95d6bfbb4cc05bddb1fd2d430b</md5file>
+<md5file name="type.php">694616680b479a5a29cc4bcf08d2b0a9</md5file>
 <md5file name="fiche_subscription.php">deac83a4c0eda829eedb0f9136a1fae5</md5file>
 </dir>
 <dir name="/adherents/class" >
@@ -7204,9 +7332,8 @@
 <dir name="/accountancy/journal" >
 <md5file name="purchasesjournal.php">bda3f6f14b6ef2f298a116a9e5e4de47</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="cashjournal.php">14cf870bc89190b003d4b67d08399a82</md5file>
 <md5file name="sellsjournal.php">9b4cf41fd9e3065e1849aff895a0999d</md5file>
-<md5file name="bankjournal.php">b9866ad3e2a12514c3062cf74a711f6e</md5file>
+<md5file name="bankjournal.php">b34de60c5a1ca8b6e1e0d1c614022e80</md5file>
 <md5file name="index.php">3b29a33fb5f50c27d39d0645b1d1d96b</md5file>
 </dir>
 <dir name="/accountancy/bookkeeping" >
@@ -7221,50 +7348,51 @@
 </dir>
 <dir name="/livraison" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="card.php">87a15a164f064663c4d567a67b877a14</md5file>
+<md5file name="card.php">282d8a4bd07329456966b4a7a359ddc5</md5file>
 </dir>
 <dir name="/livraison/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="livraison.class.php">51b4e94e74766a82470e5ff6c5753cea</md5file>
+<md5file name="livraison.class.php">c0b5fb2dce5b0a621a8653d6db38785c</md5file>
 </dir>
 <dir name="/projet" >
 <md5file name="ganttchart.inc.php">3d863d079d9ebd0a4d6450acbed047f3</md5file>
 </dir>
 <dir name="/projet/admin" >
-<md5file name="project_extrafields.php">68ef70376e6452b0db41d188de3e7309</md5file>
+<md5file name="project_extrafields.php">2ff2dde238be1c2c76ff373412a78e9e</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="project_task_extrafields.php">583e353c57d884970f1753605d7ab749</md5file>
+<md5file name="project_task_extrafields.php">ec17764560eab22337e40b09dab7fa84</md5file>
 <md5file name="project.php">bc584ec274c28d5fd6bc06909523cb8d</md5file>
 </dir>
 <dir name="/projet/activity" >
-<md5file name="index.php">447dafbb6d90617a37c7f8e9038d2d45</md5file>
-<md5file name="list.php">5d709c9a142b17a1cd1439197ac62ff2</md5file>
+<md5file name="perday.php">db597412bbafac95b4df7c52007804d3</md5file>
+<md5file name="pertime.php">0950ed07fcf3abc1d21340fcc9d51be9</md5file>
+<md5file name="index.php">138f3da6669669416a9600e7bcf485ec</md5file>
 </dir>
 <dir name="/projet" >
-<md5file name="document.php">e01dc79eab31ca899f8bd155d989482e</md5file>
-<md5file name="card.php">9946885ee4e9044e9a3fab8e6bf4f0c1</md5file>
-<md5file name="note.php">8574e2c0ea7292d815892d241b029a73</md5file>
+<md5file name="document.php">bdabc11685cbe7bcd760143cc3431e3f</md5file>
+<md5file name="card.php">4b52f2ecd9144b4fc8cf9484c23157af</md5file>
+<md5file name="note.php">b0599b42b4a17c1d140801a1b2dbfcc1</md5file>
 </dir>
 <dir name="/projet/tasks" >
 <md5file name="document.php">0529ddc77e8c681c33c47b9b7687e810</md5file>
 <md5file name="note.php">faa2eda13c5607ace72e34e9c0966a0c</md5file>
 <md5file name="contact.php">b704dae630c7215138b1f90caf77b450</md5file>
-<md5file name="time.php">285e61a9ffd5231adede10df1871ab5d</md5file>
-<md5file name="task.php">714867efd7c071524ee3b0b4667a3ddd</md5file>
-<md5file name="index.php">9477e6a93b94cf81c26b5cbcd7f7fd67</md5file>
+<md5file name="time.php">5da52c371983bff1e44d50c00565aa5c</md5file>
+<md5file name="task.php">dc5cd8b4ba8b06cf2c836d35f5117a5a</md5file>
+<md5file name="index.php">4fb1cb61faf463c209fddd1bb0b3ff81</md5file>
 </dir>
 <dir name="/projet/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="task.class.php">d2d4f3c4b03e226a2ae751d35adc84c7</md5file>
-<md5file name="project.class.php">f60aa8f7e04400f4af3bab2ea21f3383</md5file>
+<md5file name="task.class.php">b03a23d99ff8934ba5a850184a0b0d0c</md5file>
+<md5file name="project.class.php">c86ea16e4f10b94df31701289c00b4ab</md5file>
 </dir>
 <dir name="/projet" >
-<md5file name="contact.php">9ad62e69014ff23f232dcc43859b6018</md5file>
-<md5file name="ganttview.php">c741e135218d1dbfbcc03a6a4e0271a9</md5file>
-<md5file name="index.php">1960bfd361ca2e7b2582c1633c35b0a3</md5file>
+<md5file name="contact.php">0896aa5a8e5444e0bb03ae80c097e82d</md5file>
+<md5file name="ganttview.php">dd5996e0d69cf32275d6870b55b56bfa</md5file>
+<md5file name="index.php">c7e4e70e698600098ac2c42e411db419</md5file>
 <md5file name="list.php">07fe07a999542e322404d77a30264169</md5file>
-<md5file name="element.php">18296a04b5d36082d8afca4e449f1ee6</md5file>
-<md5file name="tasks.php">87f5b2af13b175d47eca8a33bcc68005</md5file>
+<md5file name="element.php">86aac7d09e8e3ac69c3279b861b80968</md5file>
+<md5file name="tasks.php">93cad33fd939e06b959b63c019777d91</md5file>
 <md5file name="jsgantt_language.js.php">43cc87a6b84afe612af178e9c0945279</md5file>
 </dir>
 <dir name="/compta/deplacement/stats" >
@@ -7321,7 +7449,7 @@
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="rejetprelevement.class.php">7bd2acd718a001933d1b9723411d4371</md5file>
 <md5file name="ligneprelevement.class.php">6288df74fb85f7c954c18bf614aafcd3</md5file>
-<md5file name="bonprelevement.class.php">845e63a81a5b8edfa079c2fec094d6e1</md5file>
+<md5file name="bonprelevement.class.php">aed3cd0e313e75338a46d0dc30bb718c</md5file>
 </dir>
 <dir name="/compta/prelevement" >
 <md5file name="bons.php">55cc97fa2026cc42b4771d975b45fedb</md5file>
@@ -7345,7 +7473,7 @@
 <dir name="/compta/sociales/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="chargesociales.class.php">cbf93873197cf6bdd0e36cd66d2a87c8</md5file>
-<md5file name="paymentsocialcontribution.class.php">86da383df93404580615782f4265bcb8</md5file>
+<md5file name="paymentsocialcontribution.class.php">009c4b4f2f9ed03cb27e8a74b3839136</md5file>
 </dir>
 <dir name="/compta/sociales" >
 <md5file name="index.php">2758f3882de560e1d11d208959c0627e</md5file>
@@ -7364,27 +7492,26 @@
 </dir>
 <dir name="/compta/bank" >
 <md5file name="annuel.php">ab88360e0141e3ddb3c8be3ee745008b</md5file>
-<md5file name="treso.php">099c61f85742fec38c0e6fedff80d7eb</md5file>
-<md5file name="card.php">f15cbc07a79882808b31c59831725260</md5file>
-<md5file name="bankid_fr.php">2f76a335578ef4412e9b3b4a222ccb08</md5file>
+<md5file name="treso.php">f81a579ee5ec1adcd1a1de6fce3cb5c8</md5file>
+<md5file name="card.php">5aad4002fc93b2b92d994edbbf95c50b</md5file>
 <md5file name="bilan.php">6fe5e34cc37004b4342377afa27fe78e</md5file>
 <md5file name="account.php">65306d3a5faf1ede100f0b433e707aa9</md5file>
 </dir>
 <dir name="/compta/bank/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="account.class.php">5baae840658acdb066b3294b07d6ed63</md5file>
-<md5file name="bankcateg.class.php">e2e322bda8e0a19f571796b5ca46a266</md5file>
+<md5file name="account.class.php">d6814238960c3d3ae89a8748af2cd846</md5file>
+<md5file name="bankcateg.class.php">1dc3d6a1dd909a8a58fe8eca47ead5ac</md5file>
 </dir>
 <dir name="/compta/bank" >
 <md5file name="releve.php">87ab6c05827eaa2db8236ca2c0262ead</md5file>
-<md5file name="categ.php">04e84d93b6851156225d86b33bc68056</md5file>
+<md5file name="categ.php">1d878883bffeb35ff573a04d207a7938</md5file>
 <md5file name="search.php">748fa3c47dca5861db4a736455d0f981</md5file>
-<md5file name="index.php">762d623e34cb8c1d8b575801543027c8</md5file>
-<md5file name="budget.php">e99a525c7011b5cc748b27040716cfd1</md5file>
+<md5file name="index.php">b3cf8bd9552d63ecc9746ca05452bf2f</md5file>
+<md5file name="budget.php">674268c96f941fc5a6cd52da5fb0fd43</md5file>
 <md5file name="info.php">abcdf41603da0d617bee025c713adb41</md5file>
 <md5file name="graph.php">c7c981cbe885fadb6853ac3250aab799</md5file>
 <md5file name="rappro.php">b9a967a29731ccf78b3693d680e3790a</md5file>
-<md5file name="virement.php">848ba012f7bb08ead96269cac742157a</md5file>
+<md5file name="virement.php">4a04cfbfb8d5f124746c3e2cd8007186</md5file>
 <md5file name="ligne.php">ccf2ea9b4262741181a0cff7c620146c</md5file>
 </dir>
 <dir name="/compta" >
@@ -7409,7 +7536,7 @@
 <md5file name="sellsjournal.php">76e6aec3a1262b7b199fd88ae651d049</md5file>
 </dir>
 <dir name="/compta" >
-<md5file name="hrm.php">1d00dfe3dd378ed263a943b10148ffb6</md5file>
+<md5file name="hrm.php">a3148c5d3f8b6a38cf976cc250985d9f</md5file>
 </dir>
 <dir name="/compta/dons" >
 <md5file name="card.php">479aca46b8b848649e96c290319deff5</md5file>
@@ -7432,9 +7559,9 @@
 <md5file name="linkedobjectblock.tpl.php">4c3fefbce8919598e7f04618a3e54ea2</md5file>
 </dir>
 <dir name="/compta/facture/admin" >
-<md5file name="facture_cust_extrafields.php">03f893c7c0667770a66ed0fd11f1a710</md5file>
+<md5file name="facture_cust_extrafields.php">a63bc90ab57ab5555e882b8db7130b63</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="facturedet_cust_extrafields.php">0d39677613072296fbda7f35c0ed9d70</md5file>
+<md5file name="facturedet_cust_extrafields.php">60a4cd8e106aecadb8d082876de57a25</md5file>
 </dir>
 <dir name="/compta/facture/stats" >
 <md5file name="index.php">d60fa512ab394825284751728195161c</md5file>
@@ -7444,10 +7571,10 @@
 <md5file name="note.php">cf7beba0674c611eca3eb40103a9d56d</md5file>
 </dir>
 <dir name="/compta/facture/class" >
-<md5file name="paymentterm.class.php">c61793fa62504e540c4c08fc387776f1</md5file>
+<md5file name="paymentterm.class.php">be4909eb830f52517bb34572822210b6</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="facture-rec.class.php">cf3df8807edf32bdf31d3d0d148cba77</md5file>
-<md5file name="facture.class.php">d93f9826f6e8ef4bc66e8a92ae30020e</md5file>
+<md5file name="facture.class.php">1f61fc5521e5a125d27fce95bd4ae5dc</md5file>
 <md5file name="facturestats.class.php">6d0f156645b7ce84c269ff3adb915803</md5file>
 </dir>
 <dir name="/compta/facture" >
@@ -7469,7 +7596,7 @@
 <md5file name="index.php">831e6575098342dfa342551494097a24</md5file>
 </dir>
 <dir name="/compta" >
-<md5file name="facture.php">062c91c56e9a1aacf0045ba9ef2d295c</md5file>
+<md5file name="facture.php">c425f95f5b0e994be961e09520cde9b3</md5file>
 </dir>
 <dir name="/compta/ventilation" >
 <md5file name="card.php">d6d047f9389cde6f11b9175ffda432ac</md5file>
@@ -7509,7 +7636,7 @@
 <md5file name="reglement.php">af528677086b2c26806ac47af95d9d9d</md5file>
 </dir>
 <dir name="" >
-<md5file name="main.inc.php">fa82bbcd66e5d31ac2f43c52caaa4acc</md5file>
+<md5file name="main.inc.php">43b599b8900f31fcd51d013ccac558b2</md5file>
 </dir>
 <dir name="/paybox" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -7542,7 +7669,7 @@
 <md5file name="info.php">fde1dac27ff95323136138883a8cb086</md5file>
 </dir>
 <dir name="/fourn" >
-<md5file name="card.php">020e671dfeaf92176c35766720c2b8ec</md5file>
+<md5file name="card.php">64e3aebc902234add5ddbc3714b778fc</md5file>
 </dir>
 <dir name="/fourn/ajax" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -7559,9 +7686,9 @@
 <md5file name="fournisseur.class.php">b3c7a210b2be2599c7fe2af126eeb062</md5file>
 <md5file name="paiementfourn.class.php">994337d7c14c76b4537aa2e748b48729</md5file>
 <md5file name="fournisseur.commande.dispatch.class.php">b77816831ef40cf1b79779e1ada51d8e</md5file>
-<md5file name="fournisseur.commande.class.php">1b526413dd24dc7b5d6910cf07f3aa1a</md5file>
-<md5file name="fournisseur.product.class.php">319b65909579d3ec171265423a48e35e</md5file>
-<md5file name="fournisseur.facture.class.php">d6a0e0fc84f08a62d144e63ccd0f798d</md5file>
+<md5file name="fournisseur.commande.class.php">5446b7733bcb58774c487c717831a8f4</md5file>
+<md5file name="fournisseur.product.class.php">dd0fa2140f5450e0f05d6555af374289</md5file>
+<md5file name="fournisseur.facture.class.php">ca4c5271c26dc0bd0f7537f2d4fe8d75</md5file>
 </dir>
 <dir name="/fourn" >
 <md5file name="recap-fourn.php">fe62c00b682dd677dbca4764d5f0fe97</md5file>
@@ -7576,8 +7703,8 @@
 </dir>
 <dir name="/fourn/facture" >
 <md5file name="document.php">21055e6d625cd5dc3e805ededd1f350a</md5file>
-<md5file name="card.php">bcc15386db16f0050d01b4d80fe68dbd</md5file>
-<md5file name="paiement.php">d77e4af5d17f15fdfd920ec8fda7fc45</md5file>
+<md5file name="card.php">aec47b386df0e0df628a1e31f109e998</md5file>
+<md5file name="paiement.php">0f079eeaf763fe056f582fd3d821b216</md5file>
 <md5file name="note.php">95559609c47c88b112952073fb77410e</md5file>
 <md5file name="contact.php">b79674bb1410c34f6428a0e392318740</md5file>
 <md5file name="info.php">ee9a71add932db04def7fb3a6d8af20f</md5file>
@@ -7597,10 +7724,10 @@
 </dir>
 <dir name="/fourn/commande" >
 <md5file name="document.php">ea1a3bd45013d291cafdce135ebbd13c</md5file>
-<md5file name="card.php">c78c359e1ac036fa9a991e635efbfac5</md5file>
+<md5file name="card.php">5b0073ef255ade9c14c4d56a735c5684</md5file>
 <md5file name="note.php">221d0b581479c434f039e58da4718a8d</md5file>
 <md5file name="contact.php">a6f5b10b14e766e788351b506b6f6024</md5file>
-<md5file name="dispatch.php">48ac89c72e2794fbcbb1078e0fe7d9ba</md5file>
+<md5file name="dispatch.php">f94ccfe8360d382460cf8aca0492b9a0</md5file>
 <md5file name="index.php">9423e6de63cf281df2bcda0892da0a88</md5file>
 <md5file name="orderstoinvoice.php">c8506bcf84839f36e61a555912e7c31c</md5file>
 <md5file name="list.php">2e5082f8e6d7976945c0e8e951d5f261</md5file>
@@ -7633,7 +7760,7 @@
 </dir>
 <dir name="/user/group" >
 <md5file name="perms.php">bef639ba5d15fbe93aa7df26bf6c3a70</md5file>
-<md5file name="card.php">32160cab79f75fc38ed26bb590037169</md5file>
+<md5file name="card.php">70bd9741b82ec97e1e005663b8ee8671</md5file>
 <md5file name="ldap.php">d00dcd6a42cd0d91cbd5639c56a4b6a7</md5file>
 <md5file name="index.php">008656d6620cb1ef43935edc30fd2994</md5file>
 </dir>
@@ -7641,15 +7768,15 @@
 <md5file name="passwordforgotten.php">7ab5486f4cec78b1c4d93a1df0d83b51</md5file>
 </dir>
 <dir name="/user/admin" >
-<md5file name="group_extrafields.php">8b9453a22ca4ec5cd5f504b0f3338238</md5file>
+<md5file name="group_extrafields.php">73644c7a9c7312b638a8de811c0f71b8</md5file>
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="user_extrafields.php">0e3fff0ddbce47ecce252c82a6e02fa7</md5file>
+<md5file name="user_extrafields.php">770001d8b9e70249a27cfc567e770219</md5file>
 </dir>
 <dir name="/user" >
 <md5file name="logout.php">f47f735ec8627b7b3e9ce6a5e1643d4c</md5file>
 <md5file name="perms.php">fff5ddf9542281c2d2568153781b4c73</md5file>
 <md5file name="document.php">16e1a29a5b79d4a3668b3a71ca3d86df</md5file>
-<md5file name="card.php">992dde85a7ee2f81661fd7a54abf7f89</md5file>
+<md5file name="card.php">5aa861a485746b0cce73cee39a4eebc6</md5file>
 <md5file name="note.php">78a3befa9a3a9bdb40420e432352250b</md5file>
 <md5file name="ldap.php">a42439ac674abe10958f58d747f7cde0</md5file>
 </dir>
@@ -8029,19 +8156,19 @@
 <md5file name="externalsite.lang">f1f34d8c0f864daa5e8ab56801027430</md5file>
 </dir>
 <dir name="/langs/en_US" >
-<md5file name="projects.lang">b7454525aa100e079c56a92ef4866283</md5file>
+<md5file name="projects.lang">831fe459f7d3606afc5482fbfbe85278</md5file>
 <md5file name="cashdesk.lang">c3e50ad0d4c93692a2810e136ada70d7</md5file>
 <md5file name="workflow.lang">ab274a62d5a3a8ab5f1e745725b83dfc</md5file>
 <md5file name="bills.lang">c4e9cd5c18af616969894e4dceb95f97</md5file>
 <md5file name="orders.lang">462f3f2edf24c9118a0a6df7f00765fa</md5file>
-<md5file name="admin.lang">a7f112322d606a3807c6e4eff9bf9b1f</md5file>
+<md5file name="admin.lang">5b2e22d569f45024f23cd0f6c213ea86</md5file>
 <md5file name="withdrawals.lang">90a76b121fb7fe4b51daad580591cc8c</md5file>
 <md5file name="boxes.lang">ef12ff29adae2685e120e58aa04e23bc</md5file>
 <md5file name="members.lang">bc8b10dd8cc1f841662dfdd87868197c</md5file>
 <md5file name="ecm.lang">311cb7d4bf06cb181cfffb6e44ed5826</md5file>
 <md5file name="link.lang">e1161971bb06488cabe9066c8e827741</md5file>
-<md5file name="stocks.lang">90086ae0090269082c6221cdaff54d9c</md5file>
-<md5file name="products.lang">4573107d98f6599ed40b01012378fa81</md5file>
+<md5file name="stocks.lang">f7b4e392e8e49b03c37439ecd4210e83</md5file>
+<md5file name="products.lang">7528006b9faf6605713f4b2f19f19f17</md5file>
 <md5file name="printing.lang">3222e8667905ffdb07a756fa25a26bd9</md5file>
 <md5file name="banks.lang">c710e46b08ef99b41b5167db96309c81</md5file>
 <md5file name="agenda.lang">f28164a5a95f0a8408bfa00f4a40680d</md5file>
@@ -8060,7 +8187,7 @@
 <md5file name="paypal.lang">75fb4c310c4f0554d3ac9859d0c5b646</md5file>
 <md5file name="cron.lang">e337dc8e080a86ce2e187cf3a38d0b10</md5file>
 <md5file name="interventions.lang">de30767cf0a5d454269ab9986fce13c0</md5file>
-<md5file name="errors.lang">b84cc0bb32567be3d521af1a1d2b4cce</md5file>
+<md5file name="errors.lang">1c3f72b75a408faa2fd8b60944cc2533</md5file>
 <md5file name="compta.lang">34be9245428cb84ae31c992eb21f33d3</md5file>
 <md5file name="suppliers.lang">9eea13d3889d78fdbc614dea77011565</md5file>
 <md5file name="opensurvey.lang">6f3b6f771da549d8e22263e795ddecaf</md5file>
@@ -8070,14 +8197,15 @@
 <md5file name="mailmanspip.lang">fb5913e34a812d5fdf9e25b8ca8c9fb2</md5file>
 <md5file name="install.lang">3c801db51ff672838b9306c63df460e0</md5file>
 <md5file name="propal.lang">51a8ed92619d4857e0eaddd369a14b38</md5file>
-<md5file name="main.lang">a4fcafdd9412d243c46e1b55d7911f2c</md5file>
+<md5file name="main.lang">3687aa1cf5d5f099a8b746660efe601c</md5file>
 <md5file name="languages.lang">5f5e1f71ef91392a3edee6cdf5e03408</md5file>
 <md5file name="bookmarks.lang">8cc192424d2a8a3a8439cf6c9e9c866d</md5file>
 <md5file name="sms.lang">228b0316d26bdd36e56a9158eea64ef6</md5file>
 <md5file name="dict.lang">59b195fcff4d3877045fee21c364d524</md5file>
 <md5file name="mails.lang">324f3b1c1afefe3296f76db472cbc9f6</md5file>
-<md5file name="other.lang">8d2578f24429a8c9863f267bd792fb16</md5file>
-<md5file name="commercial.lang">6ec9a9a11b06059192bcf4a71a34dd22</md5file>
+<md5file name="other.lang">4897fa688236216c771946add0f2564c</md5file>
+<md5file name="commercial.lang">d01fdb1e6043fb26b049108da5e4df60</md5file>
+<md5file name="askpricesupplier.lang">d091b8b83cd5b9dfb948872eb9b9e4dc</md5file>
 <md5file name="salaries.lang">a171ba167ab22bbfd25e570f28bd8483</md5file>
 <md5file name="trips.lang">f0d89af2ab05f3af36e1a4edec69c7db</md5file>
 <md5file name="sendings.lang">1a6980f79392b14b3a7e00db58f915ff</md5file>
@@ -9748,24 +9876,24 @@
 <md5file name="externalsite.lang">be05aa1b12e3b558de747e470b5731c8</md5file>
 </dir>
 <dir name="/langs/es_ES" >
-<md5file name="projects.lang">c2f72a6d3ee9b7e45506ead106bc8f86</md5file>
+<md5file name="projects.lang">65db64d894cf8b776148fc4324d16986</md5file>
 <md5file name="cashdesk.lang">3262db34410c13ae4d777e263d779217</md5file>
-<md5file name="workflow.lang">d11569807aab1e77f9bcd96fe375bde9</md5file>
+<md5file name="workflow.lang">97af3c06de8fcf9955b0d09d7d2c7397</md5file>
 <md5file name="bills.lang">c08f79985fa33fe026ef475f840f87b1</md5file>
-<md5file name="orders.lang">e61deb16dd6421608631ed5c1f671c6a</md5file>
-<md5file name="admin.lang">f71ca57649aece8045b66345a612e20a</md5file>
-<md5file name="withdrawals.lang">48451fe44b83835898ec108b9d9bf866</md5file>
+<md5file name="orders.lang">1a6a7ea85a76cb09bc7568856b7f9a28</md5file>
+<md5file name="admin.lang">4a00c2ddb39f4e28db51f6d0f3283859</md5file>
+<md5file name="withdrawals.lang">385be3b28799de9f80d0ef46508efbdc</md5file>
 <md5file name="boxes.lang">98fec0976eec22385c2b735cb80d7448</md5file>
 <md5file name="members.lang">b7c27239e68ce6f51296820da50bfffa</md5file>
 <md5file name="ecm.lang">60d670dc85d029ed1c3f63693d0d4288</md5file>
 <md5file name="link.lang">186dbbf4b11a9684557157006bf2a232</md5file>
-<md5file name="stocks.lang">8e42376332e36c72edf33421d3f12bf8</md5file>
-<md5file name="products.lang">cb73d7bfbdae912945ec4d98c0d1ec9b</md5file>
+<md5file name="stocks.lang">78663365fd9c3f521c456712bf1aaf17</md5file>
+<md5file name="products.lang">45ac46e656485f54c2e642c00ece251c</md5file>
 <md5file name="banks.lang">cfc96587347a77604730af23372d747f</md5file>
-<md5file name="agenda.lang">6b1538d4b9683808221f30ddad0414d8</md5file>
+<md5file name="agenda.lang">398d48fad9f224e2c8a811b7e63cfb5b</md5file>
 <md5file name="help.lang">f5f165bb15c6391fc12ebac3e0a0f3e6</md5file>
 <md5file name="holiday.lang">555145f760c70cf34b190b7214e3b5cc</md5file>
-<md5file name="productbatch.lang">dd62bf79621c56e565feabc0b84574d0</md5file>
+<md5file name="productbatch.lang">c4db7841d9ac141c2e07f986344cf10e</md5file>
 <md5file name="resource.lang">7508982db7d5e9e5c7fec3f096de32b0</md5file>
 <md5file name="categories.lang">aa86f6cb23c2ae8294bcbd6f2315e8ed</md5file>
 <md5file name="paybox.lang">c56f3ea358f24bb4e820768e948b416b</md5file>
@@ -9776,11 +9904,11 @@
 <md5file name="ftp.lang">2da0a1995db50d0752d2e509a3bca37f</md5file>
 <md5file name="exports.lang">78f2edd4512d3859d13e1c90618932ff</md5file>
 <md5file name="paypal.lang">10c2dcc555137e38039193ccedfc0cd3</md5file>
-<md5file name="cron.lang">b0d093ebda261c4ac0a6bb982cfa41f0</md5file>
+<md5file name="cron.lang">f3cb3a7da6c4a8e947856ce9a7529a90</md5file>
 <md5file name="interventions.lang">418334153f5b6a5543f6cb5a28f3c82b</md5file>
-<md5file name="errors.lang">bac99d873d638b05891fda9f7c62d562</md5file>
-<md5file name="compta.lang">021de63f1074cc73a6d83a3e83a5ae55</md5file>
-<md5file name="suppliers.lang">c7f8ee7a8d27fb0d86b5386b8cd9a6f7</md5file>
+<md5file name="errors.lang">c760d45b0959664fe5ef8f18e31cd4ae</md5file>
+<md5file name="compta.lang">d01ee19b9b423b0378dfb48c8a20b021</md5file>
+<md5file name="suppliers.lang">914772c1d09c8268418beaafaf36313d</md5file>
 <md5file name="opensurvey.lang">199dcc4ae427c0d0e5fbde6c0d2d2f99</md5file>
 <md5file name="donations.lang">57da58850de2f4591fc18e23473ba8ad</md5file>
 <md5file name="contracts.lang">08fc6ae338f02d76f77339c8537012ba</md5file>
@@ -9799,8 +9927,8 @@
 <md5file name="commercial.lang">7dcd96797a60b5e466e25990e534f588</md5file>
 <md5file name="salaries.lang">1818aababec2539efc6cee74006d4d0c</md5file>
 <md5file name="trips.lang">16202ce23ad23f4f86fcbd0c5d16dea2</md5file>
-<md5file name="sendings.lang">83a5a0b9fdc95c8f1647075e8c63c00a</md5file>
-<md5file name="accountancy.lang">d95dd0afca51ee1616ffe9550cfc1f93</md5file>
+<md5file name="sendings.lang">2086b1a692e4c3cc5dbe6edbc87976d4</md5file>
+<md5file name="accountancy.lang">8dcd21c1d37a27cc9a9f227a2b283388</md5file>
 <md5file name="externalsite.lang">87eae3bfbea127d8e90970cf3fe8a9a1</md5file>
 </dir>
 <dir name="/langs/fi_FI" >
@@ -10153,8 +10281,9 @@
 <md5file name="workflow.lang">9ff187bdce93767cf2f24dbb5b0a34c5</md5file>
 <md5file name="bills.lang">c04364a46b55ae75b65db731f040dbee</md5file>
 <md5file name="orders.lang">5437aca264069f35e46a3fc46f04c2d9</md5file>
-<md5file name="admin.lang">438c872ca8fdb808934df640ad361350</md5file>
+<md5file name="admin.lang">b00df950231dc8222d5a74855b0708b5</md5file>
 <md5file name="withdrawals.lang">9d95d44e6045f242b1ad717ed35f195b</md5file>
+<md5file name="incoterm.lang">5f1f15ee0a4ecc70e93427b814af9489</md5file>
 <md5file name="boxes.lang">cf750bc5baeb59198423a8ba9039fccf</md5file>
 <md5file name="members.lang">b50591f99fa324afaba5e4e1d15829f3</md5file>
 <md5file name="ecm.lang">349416524f35254fa72144bc7e08f9a6</md5file>
@@ -10188,15 +10317,16 @@
 <md5file name="mailmanspip.lang">1008cbc1e61ed90dfd79c57cd620c92b</md5file>
 <md5file name="install.lang">46f6b55d98da9ef1ffec9b1d1a6125bd</md5file>
 <md5file name="propal.lang">e4e03fc7d82d2da0126d8445f09f61c2</md5file>
-<md5file name="main.lang">7a0cedeb2e3c160aa33e736ebba6059e</md5file>
+<md5file name="main.lang">03cdf6ba23e31c14abc2bb3a79b7472c</md5file>
 <md5file name="languages.lang">fab14e1ece001f18e03308c4abd5d7b6</md5file>
 <md5file name="bookmarks.lang">2bac51be88c59c5ee21511836859e221</md5file>
 <md5file name="sms.lang">0889424a15f7ae4d5147e680d379e3c0</md5file>
 <md5file name="dict.lang">b8357efaf2331cd36af04b80256e3181</md5file>
 <md5file name="mails.lang">5a0de7d0f34fd6f63ae32d20e0a32b9d</md5file>
 <md5file name="printipp.lang">a1fe9c904ea0bd6d6ea490b977432ffc</md5file>
-<md5file name="other.lang">d98e38cacdacd9d7c74df773358d6e6f</md5file>
+<md5file name="other.lang">f424ed5d8ad204b2ccfd39045ab44d3b</md5file>
 <md5file name="commercial.lang">3bb797554b6eedd86f67a0c36e9918ec</md5file>
+<md5file name="askpricesupplier.lang">89b6756ccb0d05b4191b704aafaf5803</md5file>
 <md5file name="salaries.lang">9afb68804040e5f7d92d7c308b79f770</md5file>
 <md5file name="trips.lang">d7d2fd96c741b616945e848ade9f9539</md5file>
 <md5file name="sendings.lang">7767ff394313f1229871b8ee58c26a99</md5file>
@@ -10429,7 +10559,7 @@
 <md5file name="cidlookup.php">52517073ee32fd105af7fccfde018e29</md5file>
 </dir>
 <dir name="" >
-<md5file name="filefunc.inc.php">2fb346f0383dd975a301eca9a423c12a</md5file>
+<md5file name="filefunc.inc.php">ca1f6c3cde7a72fc33fa826f580ca872</md5file>
 </dir>
 <dir name="/fichinter" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
@@ -10440,17 +10570,17 @@
 </dir>
 <dir name="/fichinter/admin" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="fichinter_extrafields.php">1ba9555290fac6190106a623ece3376f</md5file>
-<md5file name="fichinterdet_extrafields.php">3a9bf22080b7d3c4d3a154affe9d6095</md5file>
+<md5file name="fichinter_extrafields.php">e4a286e635b8486ef952cd5e7c063272</md5file>
+<md5file name="fichinterdet_extrafields.php">daa87eb4e5a5dec7a491a6313f9335c9</md5file>
 </dir>
 <dir name="/fichinter" >
 <md5file name="document.php">bdd80120aa3357c1ac276e8b2ffb81a6</md5file>
-<md5file name="card.php">7cb5f8fa9f76dae5e107abfbc0e35d82</md5file>
+<md5file name="card.php">720ce5f162f6879e42bd51a2e677966c</md5file>
 <md5file name="note.php">8326aa93734dd8035a04c12062e68ce4</md5file>
 </dir>
 <dir name="/fichinter/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="fichinter.class.php">a6eb7d29b6a4649096f384711efdf232</md5file>
+<md5file name="fichinter.class.php">529b00d17c929c47878ebeb1cf313267</md5file>
 </dir>
 <dir name="/fichinter" >
 <md5file name="contact.php">099f9b1f56cae48a1b679ed282e3766d</md5file>
@@ -12286,6 +12416,7 @@
 <md5file name="printer.png">2e0eb0e3d978cfc35b462a199aeded78</md5file>
 <md5file name="disable.png">9e36c55b53a1b080066d9947a92d2ce3</md5file>
 <md5file name="editdelete.png">9e36c55b53a1b080066d9947a92d2ce3</md5file>
+<md5file name="object_askpricesupplier.png">8f120e35f8b6608fb34e38edf9a2687c</md5file>
 <md5file name="object_intervention.png">a9e38adb81052e1178a2486de8a87c28</md5file>
 <md5file name="switch_off.png">7389cc51b77b11b297ccce79048a1c7f</md5file>
 <md5file name="object_payment.png">0474bee65715fc6918a92b668178be6c</md5file>
@@ -12350,7 +12481,7 @@
 </dir>
 <dir name="/cron/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="cronjob.class.php">be5e2576e65fca0640a3e943edb7b4a2</md5file>
+<md5file name="cronjob.class.php">b7ac1e65cfb2226f71c4c585b87ef36d</md5file>
 </dir>
 <dir name="/cron" >
 <md5file name="info.php">fd6a54cb5cf80f075d7687ad66dd2cb9</md5file>
@@ -12368,20 +12499,20 @@
 </dir>
 <dir name="/commande" >
 <md5file name="document.php">11689e5722e4204b9d01e5e4483b92ef</md5file>
-<md5file name="card.php">cc97395704f8c817d0c92e81b4626429</md5file>
+<md5file name="card.php">ba1182650ae38ce16735a2f783046f85</md5file>
 <md5file name="note.php">a20a84fb09238e216ab80d91674426b1</md5file>
 </dir>
 <dir name="/commande/class" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="commandestats.class.php">4b94e9ad89c520b4cc4ab986a1cfb5f8</md5file>
-<md5file name="commande.class.php">348ac1d0cc575dcee2a8bd3fe3da6096</md5file>
+<md5file name="commande.class.php">62867ac6e7f63524ba1bbd195e5504ef</md5file>
 </dir>
 <dir name="/commande" >
 <md5file name="contact.php">96a92bc03a6ca67f39d363c36031dee7</md5file>
 <md5file name="index.php">db802ba04a77501799a7073600802c80</md5file>
 <md5file name="orderstoinvoice.php">0e4f03114e8298dfc23bb94d0df5d390</md5file>
 <md5file name="info.php">5e1aea18f899b4a763a0291dcf1f2b90</md5file>
-<md5file name="list.php">c6798747955c37d2da47a6753d831cf4</md5file>
+<md5file name="list.php">f34e17319f0c0f4b26c44fed42091c3b</md5file>
 <md5file name="apercu.php">eed35a94809263558ac663233eaa2f38</md5file>
 </dir>
 <dir name="/contrat/tpl" >
@@ -12390,44 +12521,153 @@
 </dir>
 <dir name="/contrat/admin" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
-<md5file name="contractdet_extrafields.php">74d19c16439bec3b2eeabde4bb8b6b1d</md5file>
-<md5file name="contract_extrafields.php">15faab5d58a32bd40d3f163cfaf951b6</md5file>
+<md5file name="contractdet_extrafields.php">2174cc25f7e4e713034396fa94be1c93</md5file>
+<md5file name="contract_extrafields.php">8334218ca0707e5c27f28b6897c673e6</md5file>
 </dir>
 <dir name="/contrat" >
 <md5file name="document.php">a1838ba6f718aeec0172bc6e9d90f4b6</md5file>
-<md5file name="card.php">eb474eb2e1039037169aaacb91443c3e</md5file>
+<md5file name="card.php">1d1dd963b8dfb47170403042c4c86431</md5file>
 <md5file name="note.php">7770e9e8e3fb4b98bc149059c5bc9633</md5file>
 </dir>
 <dir name="/contrat/class" >
-<md5file name="contrat.class.php">7aece8343f1f3c70f617733955c2bce6</md5file>
+<md5file name="contrat.class.php">b0fd3b28285996794ea374e10881da03</md5file>
 </dir>
 <dir name="/contrat" >
 <md5file name="contact.php">7b7cde9c324feeed6e94f50e1655ba40</md5file>
 <md5file name="services.php">3c77ad60389c5eaaa410ac4a176b3ab6</md5file>
 <md5file name="index.php">bdb99f4a1594eaf4923129f21035a88d</md5file>
 <md5file name="info.php">966129fc8b4d82883741779cf87ea57a</md5file>
-<md5file name="list.php">9c258004b01196601cc918cc09857b0a</md5file>
+<md5file name="list.php">a2252f5482460d20d054a1f7d36f4dbe</md5file>
+</dir>
+<dir name="/management/admin" >
+<md5file name="admin.php">3064b1ab98d9562f84c353c586a36765</md5file>
+<md5file name="about.php">4d843333d740ee7e132b9aba3ca84c79</md5file>
+</dir>
+<dir name="/management/dbl35-corechange/core/class" >
+<md5file name="html.form.class.php">352318e7e91b1ea9e37097409c9907a4</md5file>
+</dir>
+<dir name="/management/dbl35-corechange/compta" >
+<md5file name="facture.php">48e867f61a945a10e84ccc6b297b530d</md5file>
+</dir>
+<dir name="/management/dbl35-corechange/fichinter" >
+<md5file name="fiche.php">decda684aa41b7e3d4c9cbd82c57bf16</md5file>
+</dir>
+<dir name="/management/dbl37-corechange/fichinter" >
+<md5file name="card.php">e85c36b02b54ca8575353e41a035ef98</md5file>
+</dir>
+<dir name="/management/core/lib" >
+<md5file name="oldmanagement.lib.php">a9edd5331230715886153f1ac2535d10</md5file>
+<md5file name="management.lib.php">a76cbf5801d8a007cdf2b8d82534e922</md5file>
+<md5file name="project.lib.php">a7f9c53e667b559a168e9c669751b9b4</md5file>
+</dir>
+<dir name="/management/core/modules" >
+<md5file name="modManagement.class.php">09fd73462e6973de1e5b4d5ea13015f3</md5file>
+</dir>
+<dir name="/management/core/modules/project" >
+<md5file name="rapport.pdf.php">c030f0ca220a0377d27db496ed8b5318</md5file>
+</dir>
+<dir name="/management/core/modules/fichinter/doc" >
+<md5file name="pdf_soleil.modules.php">4fbee2586602efafa0764319b427939f</md5file>
+</dir>
+<dir name="/management/core/triggers" >
+<md5file name="interface_90_modManagement_Taskstatut.class.php">2acaf08f39c54745ac076d2e907273a8</md5file>
+</dir>
+<dir name="/management/class" >
+<md5file name="managementcontrat.class.php">628ed9cddef9a2221251063053805324</md5file>
+<md5file name="managementtask.class.php">1fa2e700c74403c7941380638b09d82c</md5file>
+<md5file name="managementcontratterm.class.php">75f02406119800a1604d0b579ef3e61b</md5file>
+<md5file name="managementfichinter.class.php">4f45d10b5ee1f09cb3fe944a95d6862b</md5file>
+<md5file name="managementproject.class.php">f2a7ed553bd2288e8618c2c270a904df</md5file>
+</dir>
+<dir name="/management/dbl36-corechange/core/class" >
+<md5file name="html.form.class.php">8e3e6864c5fc86e81a2fa2ab2a39c6cf</md5file>
+</dir>
+<dir name="/management/dbl36-corechange/compta" >
+<md5file name="facture.php">dc14015d4641c2ace184a65f28bbe2a8</md5file>
+</dir>
+<dir name="/management/dbl36-corechange/fichinter" >
+<md5file name="fiche.php">eb6922c389258f0bcdee9efd22fb92ce</md5file>
+</dir>
+<dir name="/management/projet" >
+<md5file name="startstoptime.php">8aa3a2b726bc259ba9d57cb66d1ebeee</md5file>
+</dir>
+<dir name="/management/projet/stats" >
+<md5file name="month.php">569784a8bbe92385bb2e32740788ad5c</md5file>
+<md5file name="index.php">b31ffb415b0662026fc6b92c0f87953c</md5file>
+</dir>
+<dir name="/management/projet/tasks/rapport" >
+<md5file name="index.php">839af79be6bad3e0880427117aa63e1f</md5file>
+</dir>
+<dir name="/management/projet/tasks" >
+<md5file name="calendar.php">ced84ab2bf5bd9391ea24b6bc30e987d</md5file>
+</dir>
+<dir name="/management/projet/class" >
+<md5file name="projectstats.class.php">1f34e4ab0ec69431bd6661f39e138684</md5file>
+</dir>
+<dir name="/management/projet" >
+<md5file name="reportproject.php">19399c45ec6fb7cd97adf8455d766818</md5file>
+<md5file name="listtime.php">aee69fb06398d6982ddbd7a4c8462a50</md5file>
+<md5file name="reporttime.php">6802f7660d7b71d1684e3a0ad0472ad8</md5file>
+<md5file name="costintask.php">5ace6d4ad483742bc7d0679a934ed312</md5file>
+</dir>
+<dir name="/management/sql" >
+<md5file name="update.sql">593cc9cb911cbd7433bc198d2e0ea7f5</md5file>
+<md5file name="llx_contrat_term.sql">93c7eed93f34e0951873519d5c60df2b</md5file>
+</dir>
+<dir name="/management/langs/en_US" >
+<md5file name="projects.lang">d6051e8e91e3b9275fb3315c5f10bd4d</md5file>
+<md5file name="interventions.lang">e4552f8e8c2cb90661b4d9693e13ba52</md5file>
+</dir>
+<dir name="/management/langs/fr_FR" >
+<md5file name="projects.lang">a2621ad34bd5b20864c8cf669c3d8a93</md5file>
+<md5file name="management.lang">469ce28873bd63023d33e9738b52d92e</md5file>
+<md5file name="contracts.lang">b98d1eb79425c7db97a6837942aa64f7</md5file>
+</dir>
+<dir name="/management" >
+<md5file name="userthm.php">8a6217da856e75f4de79612f74f12e9e</md5file>
+</dir>
+<dir name="/management/fichinter" >
+<md5file name="calendar.php">660ce536dc1d691a14b4cede3f8c25cc</md5file>
+<md5file name="listtotal.php">7abe92af6f134fc8ab7b414ddfa9fdc3</md5file>
+<md5file name="rapport.php">8a8f3a86b7714c89caddbe4bdc73af8f</md5file>
+</dir>
+<dir name="/management/fichinter/stats" >
+<md5file name="month.php">1bf6a453a4d929acc0c868e4cf6bc083</md5file>
+<md5file name="index.php">144997b030c9e8c99a686d3c8d17ead6</md5file>
+</dir>
+<dir name="/management/fichinter/class" >
+<md5file name="fichinterstats.class.php">7e9686417f83eab48e7d19d61b6a5f7f</md5file>
+</dir>
+<dir name="/management/contrat" >
+<md5file name="terms.php">060b91056472c88d12426eaddd919c41</md5file>
+<md5file name="termtobill.php">4a313ea27e6c40565d7381b271199751</md5file>
+<md5file name="element.php">a911dbae66b9f63328e9033182ae455a</md5file>
+</dir>
+<dir name="/management/img" >
+<md5file name="patastools.png">a9d6e5bf4ae47e75eacbee49bce7d945</md5file>
+<md5file name="patas-monkey_logo.png">15a61b5570ae5be9f79bfd79f6ee6faa</md5file>
+<md5file name="object_management.png">df00595a449a2aa6ebd8e79c8aad37ee</md5file>
 </dir>
 <dir name="/expensereport/stats" >
 <md5file name="index.php">9382e7efb69651b29045f2421d618717</md5file>
 </dir>
 <dir name="/expensereport" >
 <md5file name="document.php">0b959ec99ed9ee63f065c7d40454b9ec</md5file>
-<md5file name="card.php">ce4ff827937faf5800380ff9867324b5</md5file>
+<md5file name="card.php">a7387351fcf1eaf404d6f7f41b178ca4</md5file>
 </dir>
 <dir name="/expensereport/ajax" >
-<md5file name="ajaxprojet.php">be24a0530d2ce043c5f6df3e85e309b1</md5file>
+<md5file name="ajaxprojet.php">2c0d16fc13d82dcc90011730fb8c32aa</md5file>
 </dir>
 <dir name="/expensereport/class" >
-<md5file name="expensereport.class.php">dc472d539640920357d694745d5c7f9d</md5file>
+<md5file name="expensereport.class.php">c660c836df813f50dfdfe793821cbb94</md5file>
 <md5file name="expensereportstats.class.php">1ebef0db96238c1bd7372bea81b9761d</md5file>
 </dir>
 <dir name="/expensereport" >
 <md5file name="export_csv.php">4a3747f8978a90ab4ed41be95c2f5695</md5file>
 <md5file name="index.php">4f9ad2e49a960637c6f48ee7c228ee0f</md5file>
 <md5file name="info.php">0e96616ba6ef78c2874b6c9fb9c10c7a</md5file>
-<md5file name="list.php">857ef0aa17df0f205806791dcd65427c</md5file>
-<md5file name="synchro_compta.php">986e2f39e85074de9facf0ea7973f315</md5file>
+<md5file name="list.php">9da09c907dca9a53fd16ba8b261e4f62</md5file>
+<md5file name="synchro_compta.php">6df215e0c6cc349308be769a25c4ce74</md5file>
 </dir>
 <dir name="/bookmarks" >
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>

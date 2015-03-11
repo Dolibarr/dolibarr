@@ -917,7 +917,7 @@ class Account extends CommonObject
      *
      *      @param	User	$user        		Objet user
      *		@param	int		$filteraccountid	To get info for a particular account id
-     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+     *      @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
      */
     function load_board($user,$filteraccountid=0)
     {
@@ -940,7 +940,7 @@ class Account extends CommonObject
 	        $langs->load("banks");
 	        $now=dol_now();
 
-            require_once DOL_DOCUMENT_ROOT.'/core/class/WorkboardResponse.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;

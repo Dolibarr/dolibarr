@@ -106,6 +106,8 @@ class CommandeFournisseur extends CommonOrder
      */
     function __construct($db)
     {
+    	global $conf;
+    	
         $this->db = $db;
         $this->products = array();
         $this->lines = array();
@@ -114,7 +116,8 @@ class CommandeFournisseur extends CommonOrder
         $this->statuts[0] = 'StatusOrderDraft';
         $this->statuts[1] = 'StatusOrderValidated';
         $this->statuts[2] = 'StatusOrderApproved';
-        $this->statuts[3] = 'StatusOrderOnProcess';
+        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
+        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
         $this->statuts[4] = 'StatusOrderReceivedPartially';
         $this->statuts[5] = 'StatusOrderReceivedAll';
         $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
@@ -1618,19 +1621,65 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
+    
+    /**
+	 * Return array of dispathed lines waiting to be approved for this order
+	 * 
+	 * @param	int		$status		Filter on stats (-1 = no filter, 0 = lines draft to be approved, 1 = approved lines)
+	 * @return	array				Array of lines
+     */
+    function getDispachedLines($status=-1)
+    {
+    	$ret = array();
+    	
+    	// List of already dispatched lines
+		$sql = "SELECT p.ref, p.label,";
+		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
+		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
+		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
+		$sql.= " WHERE cfd.fk_commande = ".$this->id;
+		$sql.= " AND cfd.fk_product = p.rowid";
+		if ($status >= 0) $sql.=" AND cfd.status = ".$status;
+		$sql.= " ORDER BY cfd.rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num)
+			{
+				$objp = $this->db->fetch_object($resql);
+				if ($objp) $ret[]=array('id'=>$objp->dispatchedlineid, 'productid'=>$objp->fk_product, 'warehouseid'=>$objp->warehouse_id);
+				
+				$i++;
+			}
+		}
+		else dol_print_error($this->db, 'Failed to execute request to get dispatched lines');
+		
+		return $ret;
+    }
+    
+    
     /**
      * 	Set a delivery in database for this supplier order
      *
      *	@param	User	$user		User that input data
      *	@param	date	$date		Date of reception
-     *	@param	string	$type		Type of receipt
+     *	@param	string	$type		Type of receipt ('tot' = total/done, 'par' = partial, 'nev' = never, 'can' = cancel)
      *	@param	string	$comment	Comment
      *	@return	int					<0 if KO, >0 if OK
      */
     function Livraison($user, $date, $type, $comment)
     {
+    	global $conf;
+    	
         $result = 0;
-
+		$error = 0;
+		
         dol_syslog(get_class($this)."::Livraison");
 
         if ($user->rights->fournisseur->commande->receptionner)
@@ -1640,7 +1689,27 @@ class CommandeFournisseur extends CommonOrder
             if ($type == 'nev') $statut = 7;
             if ($type == 'can') $statut = 7;
 
-            if ($statut == 4 or $statut == 5 or $statut == 7)
+        	if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && ($type == 'tot'))
+	    	{
+	    		// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
+	    		$dispatchedlinearray=$this->getDispachedLines(0);
+	    		if (count($dispatchedlinearray) > 0)
+	    		{
+	    			$result=-1;
+	    			$error++;
+	    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
+	    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
+	    		}
+	    	}
+
+            if (! $error && ! ($statut == 4 or $statut == 5 or $statut == 7))
+            {
+            	$error++;
+                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
+                $result = -2;
+            }
+	    	
+            if (! $error)
             {
                 $this->db->begin();
 
@@ -1664,11 +1733,6 @@ class CommandeFournisseur extends CommonOrder
                     $this->error=$this->db->lasterror();
                     $result = -1;
                 }
-            }
-            else
-            {
-                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
-                $result = -2;
             }
         }
         else

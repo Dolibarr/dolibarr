@@ -108,10 +108,45 @@ llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 
-print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
+$startdayarray=dol_get_first_day_week($day, $month, $year);
+
+$prev = $startdayarray;
+$prev_year  = $prev['prev_year'];
+$prev_month = $prev['prev_month'];
+$prev_day   = $prev['prev_day'];
+$first_day  = $prev['first_day'];
+$first_month= $prev['first_month'];
+$first_year = $prev['first_year'];
+$week = $prev['week'];
+
+$day = (int) $day;
+$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next_year  = $next['year'];
+$next_month = $next['month'];
+$next_day   = $next['day'];
+
+// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
+$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
+$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+
+$tmpday = $first_day;
+
+// Show navigation bar
+$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
+$nav.=" </span>\n";
+$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+$nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$picto='calendarweek';
+
+
+print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<input type="hidden" name="day" value="'.$day.'">';
+print '<input type="hidden" name="month" value="'.$month.'">';
+print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperday', '', 0, 'task');
@@ -146,36 +181,6 @@ print "\n";
 */
 
 
-$startdayarray=dol_get_first_day_week($day, $month, $year);
-
-$prev = $startdayarray;
-$prev_year  = $prev['prev_year'];
-$prev_month = $prev['prev_month'];
-$prev_day   = $prev['prev_day'];
-$first_day  = $prev['first_day'];
-$first_month= $prev['first_month'];
-$first_year = $prev['first_year'];
-$week = $prev['week'];
-
-$day = (int) $day;
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
-$next_year  = $next['year'];
-$next_month = $next['month'];
-$next_day   = $next['day'];
-
-// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
-
-$tmpday = $first_day;
-
-// Show navigation bar
-$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
-$nav.=" </span>\n";
-$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
-$nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$picto='calendarweek';
 print '<div align="right">'.$nav.'</div>';
 
 
@@ -230,7 +235,7 @@ print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.cou
 dol_fiche_end();
 
 print '<div class="center">';
-print '<input type="button" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '</div>';
 
 print '</form>'."\n\n";

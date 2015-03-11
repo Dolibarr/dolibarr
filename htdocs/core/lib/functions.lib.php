@@ -1157,7 +1157,7 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	timestamp|string			Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -4946,34 +4946,64 @@ function dol_getmypid()
 
 
 /**
- * Natural search
+ * Generate natural SQL search string
  *
- * @param 	mixed 	$fields 	String or array of strings filled with the fields names in the SQL query
- * @param 	string 	$value 		The value to look for (example: "keyword1 keyword2")
- * @return 	string 	$res 		The statement to append to the SQL query
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of fields in the SQL query
+ * @param 	string 			$value 		The value to look for.
+ *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
+ *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
+ * @param	string			$numeric	0=value is list of keywords, 1=value is a numeric test
+ * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value)
+function natural_search($fields, $value, $numeric=0)
 {
-    global $db;
+    global $db,$langs;
+
+    if ($numeric)
+    {
+    	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+    }
     $crits = explode(' ', $value);
     $res = '';
     if (! is_array($fields)) $fields = array($fields);
 
-    $end = count($fields);
+    $nboffields = count($fields);
     $end2 = count($crits);
     $j = 0;
-    foreach ($crits as $crit) {
-        $i = 0;
-        foreach ($fields as $field) {
-            if ( $i > 0 && $i < $end) $res .= " OR ";
-            $res .= $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+    foreach ($crits as $crit)
+    {
+        $i = 0; $i2 = 0;
+        $newres = '';
+        foreach ($fields as $field)
+        {
+            if ($numeric)
+            {
+            	$operator='=';
+            	$newcrit = preg_replace('/([<>=]+)/','',trim($crit));
+
+            	preg_match('/([<>=]+)/',trim($crit), $reg);
+            	if ($reg[1])
+            	{
+            		$operator = $reg[1];
+            	}
+            	if ($newcrit != '')
+            	{
+            		$newres .= ($i2 > 0 ? ' OR ' : '') . $field . ' '.$operator.' '.price2num($newcrit);
+            		$i2++;	// a criteria was added to string
+            	}
+            }
+            else
+            {
+            	$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+            	$i2++;	// a criteria was added to string
+            }
             $i++;
         }
-        if ($end > 1) $res .= ')';
-        if ($j < $end2 - 1) $res .= " AND ";
-        if ($end > 1 && $j < $end2 - 1) $res .= '(';
+        if ($newres) $res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') .$newres . ($i2 > 1 ? ')' : '');
         $j++;
     }
-    return " AND " . ($end > 1? '(' : '') . $res;
+    $res = " AND (" . $res . ")";
+    //print 'xx'.$res.'yy';
+    return $res;
 }
 

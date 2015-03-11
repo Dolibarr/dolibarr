@@ -1962,11 +1962,11 @@ if ($action == 'create')
 		// Outstanding Bill
 		$outstandigBills = $soc->get_OutstandingBill();
 		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandigBills, '', $langs, 0, 0, - 1, $conf->currency);
+		print price($outstandigBills, '', $langs, 0, 0, -1, $conf->currency);
 		if ($soc->outstanding_limit != '')
 		{
 			if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
-			print ' / ' . price($soc->outstanding_limit);
+			print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 		}
 		print ')';
 		print '</td>';

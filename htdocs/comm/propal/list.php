@@ -182,9 +182,9 @@ if ($search_author)
 {
 	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
 }
-if ($search_montant_ht)
+if ($search_montant_ht != '')
 {
-	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+	$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 }
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
@@ -316,12 +316,12 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 	// Amount
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
 	// Author
 	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+	print '<input class="flat" size="6" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$formpropal->selectProposalStatus($viewstatut,1);

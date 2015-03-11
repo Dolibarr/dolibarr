@@ -888,7 +888,7 @@ abstract class CommonObject
 
         if (! $this->table_element)
         {
-            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
             return -1;
         }
 
@@ -2140,8 +2140,9 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
-
+        if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
+		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
@@ -2389,8 +2390,8 @@ abstract class CommonObject
     		return 1;
     	}
     }
-	
-	
+
+
 	/**
      *    Return incoterms informations
      *
@@ -2409,13 +2410,13 @@ abstract class CommonObject
 				$res = $this->db->fetch_object($result);
 				$out .= $res->code;
 			}
-		} 
-		
+		}
+
 		$out .= ' - '.$this->location_incoterms;
-		
+
 		return $out;
     }
-	
+
 	/**
      *    Return incoterms informations for pdf display
      *
@@ -2430,12 +2431,12 @@ abstract class CommonObject
 			$res = $this->db->fetch_object($resql);
 			return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
 		}
-		else 
+		else
 		{
-			return false;	
+			return false;
 		}
 	}
-	
+
 	/**
      *    Define incoterms values of current object
      *
@@ -2457,14 +2458,14 @@ abstract class CommonObject
             {
             	$this->fk_incoterms = $id_incoterm;
 				$this->location_incoterms = $location;
-				
+
 				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
 				$res = $this->db->query($sql);
 				if ($res)
 				{
 					$obj = $this->db->fetch_object($res);
 					$this->libelle_incoterms = $obj->libelle;
-				} 
+				}
                 return 1;
             }
             else

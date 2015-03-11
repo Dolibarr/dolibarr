@@ -143,7 +143,7 @@ if (empty($reshook))
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	if ($action == 'set_incoterms' && $user->rights->fournisseur->commande->creer)
 	{
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
@@ -288,7 +288,7 @@ if (empty($reshook))
 	    	$idprod=0;
 	    	$productsupplier = new ProductFournisseur($db);
 
-	    	if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-2;	// Same behaviour than with combolist. When not select idprodfournprice is now -2 (to avoid conflict with next action that may return -1)
+    		if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
 	    	if (GETPOST('idprodfournprice') > 0)
 	    	{
@@ -332,12 +332,12 @@ if (empty($reshook))
 	    			$array_options
 	    		);
 	    	}
-	    	if ($idprod == -2 || $idprod == 0)
+	    	if ($idprod == -99 || $idprod == 0)
 	    	{
-	    		// Product not selected
-	    		$error++;
-	    		$langs->load("errors");
-	    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
+    			// Product not selected
+    			$error++;
+    			$langs->load("errors");
+    			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")).' '.$langs->trans("or").' '.$langs->trans("NoPriceDefinedForThisSupplier"), 'errors');
 	    	}
 	    	if ($idprod == -1)
 	    	{
@@ -734,15 +734,14 @@ if (empty($reshook))
 		}
 	}
 
-	// Receive
+	// Set status of reception (complete, partial, ...)
 	if ($action == 'livraison' && $user->rights->fournisseur->commande->receptionner)
 	{
-
-	    if ($_POST["type"])
+	    if (GETPOST("type") != '')
 	    {
-	        $date_liv = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result	= $object->Livraison($user, $date_liv, $_POST["type"], $_POST["comment"]);
+	        $result	= $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
 	        if ($result > 0)
 	        {
 	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -754,8 +753,7 @@ if (empty($reshook))
 	        }
 	        else
 	        {
-	            dol_print_error($db,$object->error);
-	            exit;
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	    else
@@ -1949,28 +1947,28 @@ elseif (! empty($object->id))
 
 	// Ligne de	3 colonnes
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-	print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<td colspan="2">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '</tr>';
 
-	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($object->total_tva).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="2">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right">'.price($object->total_localtax1).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<td colspan="2">'.price($object->total_localtax1,'',$langs,1,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right">'.price($object->total_localtax2).'</td>';
-		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<td colspan="2">'.price($object->total_localtax2,'',$langs,1,-1,-1,$conf->currency).'</td>';
+		print '</tr>';
 	}
 
-	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
-	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="2">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '</tr>';
 
 	print "</table><br>";
 
@@ -2598,7 +2596,14 @@ elseif (! empty($object->id))
 				}
 
 				// Reopen
-				if (in_array($object->statut, array(2, 5, 6, 7, 9)))
+				if (in_array($object->statut, array(2)))
+				{
+					if ($user->rights->fournisseur->commande->commander)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
+					}
+				}
+				if (in_array($object->statut, array(5, 6, 7, 9)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{

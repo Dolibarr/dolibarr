@@ -220,13 +220,13 @@ if (empty($reshook))
 		if ($datecommande == '') {
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), 'errors');
 			$action = 'create';
-			$error ++;
+			$error++;
 		}
 
 		if ($socid < 1) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
 			$action = 'create';
-			$error ++;
+			$error++;
 		}
 
 		if (! $error) {
@@ -350,7 +350,7 @@ if (empty($reshook))
 								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options);
 
 								if ($result < 0) {
-									$error ++;
+									$error++;
 									break;
 								}
 
@@ -365,14 +365,14 @@ if (empty($reshook))
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 							                                                                               // modified by hook
 							if ($reshook < 0)
-								$error ++;
+								$error++;
 						} else {
 							setEventMessage($srcobject->error, 'errors');
-							$error ++;
+							$error++;
 						}
 					} else {
 						setEventMessage($object->error, 'errors');
-						$error ++;
+						$error++;
 					}
 				} else {
 					// Required extrafield left blank, error message already defined by setOptionalsFromPost()
@@ -408,7 +408,7 @@ if (empty($reshook))
 					$result = $object->add_contact(GETPOST('contactid'), 'CUSTOMER', 'external');
 					if ($result < 0) {
 						setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
-						$error ++;
+						$error++;
 					}
 				}
 
@@ -579,24 +579,24 @@ if (empty($reshook))
 
 		if (empty($idprod) && ($price_ht < 0) && ($qty < 0)) {
 			setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-			$error ++;
+			$error++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-			$error ++;
+			$error++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 		{
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
-			$error ++;
+			$error++;
 		}
 		if ($qty == '') {
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-			$error ++;
+			$error++;
 		}
 		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
 			setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-			$error ++;
+			$error++;
 		}
 
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
@@ -852,7 +852,7 @@ if (empty($reshook))
 
 			if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
 				setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), 'errors');
-				$error ++;
+				$error++;
 			}
 		} else {
 			$type = GETPOST('type');
@@ -861,7 +861,7 @@ if (empty($reshook))
 			// Check parameters
 			if (GETPOST('type') < 0) {
 				setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), 'errors');
-				$error ++;
+				$error++;
 			}
 		}
 
@@ -1125,10 +1125,10 @@ if (empty($reshook))
 			if (empty($reshook)) {
 				$result = $object->insertExtraFields();
 				if ($result < 0) {
-					$error ++;
+					$error++;
 				}
 			} else if ($reshook < 0)
-				$error ++;
+				$error++;
 		}
 
 		if ($error)
@@ -2243,7 +2243,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Cancel order
-				if ($object->statut == 1 && $user->rights->commande->annuler) {
+				if ($object->statut == 1 && 
+				    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->cloturer))
+			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->annuler)))
+				) 
+				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=cancel">' . $langs->trans('Cancel') . '</a></div>';
 				}
 

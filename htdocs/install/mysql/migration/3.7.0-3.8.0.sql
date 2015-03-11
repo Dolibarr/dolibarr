@@ -62,6 +62,11 @@ create table llx_payment_loan
   fk_user_modif		integer
 )ENGINE=innodb;
 
+ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
+
+ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
+
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
 
@@ -200,7 +205,7 @@ CREATE TABLE llx_expensereport (
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
   fk_user_paid 		integer DEFAULT NULL,
-  fk_c_expensereport_statuts integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
+  fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
   note_public		text,
   note_private 		text,
@@ -359,7 +364,7 @@ CREATE TABLE llx_askpricesupplier_extrafields (
 ) ENGINE=innodb;
 
 CREATE TABLE llx_askpricesupplierdet_extrafields (
-  rowid integer AUTO_INCREMENT PRIMAR KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_object integer NOT NULL,
   import_key varchar(14) DEFAULT NULL
