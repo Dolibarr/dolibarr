@@ -249,7 +249,7 @@ if ($action == 'export_csv')
 	$purchase_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 
 	header('Content-Type: text/csv');
-	if ($conf->global->EXPORT_PREFIX)
+	if ($conf->global->EXPORT_PREFIX_SPEC)
 		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_achats.csv";
 	else
 		$filename="journal_achats.csv";
