@@ -2142,7 +2142,7 @@ abstract class CommonObject
         if ($elementTable == 'user') $fieldstatus="statut";
         if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
@@ -2804,12 +2804,7 @@ abstract class CommonObject
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($this->db);
-
-				$product_static->type=$line->fk_product_type;
-				$product_static->id=$line->fk_product;
-				$product_static->ref=$line->ref;
-                if (! empty($line->entity))
-                    $product_static->entity=$line->entity;
+				$product_static->fetch($line->fk_product);
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -2842,7 +2837,7 @@ abstract class CommonObject
 				}
 
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
-				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));
+				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)

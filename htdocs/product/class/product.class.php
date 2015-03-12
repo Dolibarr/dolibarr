@@ -2656,13 +2656,13 @@ class Product extends CommonObject
 	 *	@param		int		$level			Init level
 	 *  @return 	void
 	 */
-	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1)
+	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1, $id_parent=0)
 	{
 		global $conf,$langs;
 
 		$product = new Product($this->db);
 		//var_dump($prod);
-		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (there is no mode sub_product) or an id of a sub_product
+		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (first call starting with root top) or an id of a sub_product
 		{
 			if (is_array($desc_pere))	// If desc_pere is an array, this means it's a child
 			{
@@ -2679,6 +2679,7 @@ class Product extends CommonObject
 				$this->load_stock();	// Load stock
 				$this->res[]= array(
 					'id'=>$id,					// Id product
+					'id_parent'=>$id_parent,
 					'ref'=>$this->ref,			// Ref product
 					'nb'=>$nb,					// Nb of units that compose parent product
 					'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
@@ -2696,7 +2697,7 @@ class Product extends CommonObject
 				if (is_array($desc_pere['childs']))
 				{
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1, $id);
 				}
 			}
 		}
@@ -2718,7 +2719,7 @@ class Product extends CommonObject
 			$this->res[]= array($desc_pere[1],$desc_pere[0]);
 			if(count($desc_pere) >1)
 			{
-				$this ->fetch_prods($desc_pere);
+				$this->fetch_prods($desc_pere);
 			}
 		}
 	}
@@ -2736,7 +2737,7 @@ class Product extends CommonObject
 		{
 			foreach($this->sousprods as $prod_name => $desc_product)
 			{
-				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply);
+				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply,1,$this->id);
 			}
 		}
 		//var_dump($this->res);
@@ -2751,13 +2752,11 @@ class Product extends CommonObject
 	function get_each_prod()
 	{
 		$this->res = array();
-		if(is_array($this -> sousprods))
+		if (is_array($this->sousprods))
 		{
-			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			foreach($this->sousprods as $nom_pere => $desc_pere)
 			{
-				if(count($desc_pere) >1)
-				$this ->fetch_prods($desc_pere);
-
+				if (count($desc_pere) >1) $this->fetch_prods($desc_pere);
 			}
 			sort($this->res);
 		}
@@ -2769,10 +2768,10 @@ class Product extends CommonObject
 	 *  Return all Father products fo current product
 	 *
 	 *  @return 	array prod
+	 *  @see		getParent
 	 */
 	function getFather()
 	{
-
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
@@ -2803,10 +2802,10 @@ class Product extends CommonObject
 	 *  Return all direct parent products fo current product
 	 *
 	 *  @return 	array prod
+	 *  @see		getFather
 	 */
 	function getParent()
 	{
-
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
@@ -2833,10 +2832,11 @@ class Product extends CommonObject
 	/**
 	 *  Return childs of product $id
 	 *
-	 * 	@param		int		$id			Id of product to search childs of
-	 *  @return     array       		Prod
+	 * 	@param		int		$id					Id of product to search childs of
+	 *  @param		int		$firstlevelonly		Return only direct child
+	 *  @return     array       				Prod
 	 */
-	function getChildsArbo($id)
+	function getChildsArbo($id, $firstlevelonly=0)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2861,10 +2861,13 @@ class Product extends CommonObject
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-				$listofchilds=$this->getChildsArbo($rec['id']);
-				foreach($listofchilds as $keyChild => $valueChild)
+				if (empty($firstlevelonly))
 				{
-					$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+					$listofchilds=$this->getChildsArbo($rec['id']);
+					foreach($listofchilds as $keyChild => $valueChild)
+					{
+						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+					}
 				}
 			}
 
@@ -2910,6 +2913,7 @@ class Product extends CommonObject
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $conf, $langs;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
         $newref=$this->ref;
@@ -2920,6 +2924,14 @@ class Product extends CommonObject
             $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
         if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
+
+        $tmptext='';
+		if ($this->weight) $tmptext.="<br>".$langs->trans("Weight").': '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+		if ($this->length) $tmptext.="<br>".$langs->trans("Length").': '.$this->length.' '.measuring_units_string($this->length_units,'length');
+		if ($this->surface) $tmptext.="<br>".$langs->trans("Surface").': '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+		if ($this->volume) $tmptext.="<br>".$langs->trans("Volume").': '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+        if ($tmptext) $label .= $tmptext;
+
         if (! empty($this->entity))
             $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
