@@ -1527,7 +1527,7 @@ class Form
             		print img_picto($langs->trans("Search"), 'search');
             	}
             }
-            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' autofocus />';
             if ($hidelabel == 3) {
             	print img_picto($langs->trans("Search"), 'search');
             }
@@ -1644,7 +1644,7 @@ class Form
             require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
             $num = $this->db->num_rows($result);
 
-            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'" autofocus>';
             $out.='<option value="0" selected="selected">&nbsp;</option>';
 
             $i = 0;
