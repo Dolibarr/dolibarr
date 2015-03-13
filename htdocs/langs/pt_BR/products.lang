@@ -88,7 +88,6 @@ SuppliersPricesOfProductsOrServices=Preços (de produtos ou serviços) Fornecedo
 CustomCode=Codigo NCM
 CountryOrigin=Pais de origem
 HiddenIntoCombo=Escondido nas listas de seleções
-Nature=Tipo de produto
 ProductCodeModel=Modelo de ref. de produto
 ServiceCodeModel=Modelo de ref. de serviço
 AddThisProductCard=Criar ficha produto

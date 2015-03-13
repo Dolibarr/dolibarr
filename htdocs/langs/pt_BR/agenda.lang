@@ -2,7 +2,6 @@
 IdAgenda=ID evento
 Actions=Eventos
 ActionsArea=Área de eventos (Atividades e Tarefas)
-LocalAgenda=Calendário interno
 ActionsOwnedBy=Evento de propriedade do
 DoneBy=Concluído por
 Event=Evento
