@@ -162,6 +162,7 @@ For translators:
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
+- New: Syslog module can be set to use ChromePHP plugin to output log server into browser console.
 - New: Add a css style "cursorpointer".
 - New: Select list of users can return user into hierarchy.
 - New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
