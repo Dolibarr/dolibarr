@@ -368,5 +368,5 @@ INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DAP', 'Delivered At
 INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DDP', 'Delivered Duty Paid, marchandises (non déchargées) livrées à destination finale, dédouanement import et taxes à la charge du vendeur ; l''acheteur prend en charge uniquement le déchargement (si exclusion des taxes type TVA, le préciser clairement)', 1);
 
 -- Extrafields fk_object must be unique (1-1 relation)
-ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields
+ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
