@@ -37,8 +37,12 @@ then
 		export aa=`echo $dirshort | nawk -F"_" '{ print $1 }'`
         export bb=`echo $dirshort | nawk -F"_" '{ print $2 }'`
         aaupper=`echo $dirshort | nawk -F"_" '{ print toupper($1) }'`
+        if [ $aaupper = "EN" ]
+        then
+        	aaupper="US"
+        fi
     	bblower=`echo $dirshort | nawk -F"_" '{ print tolower($2) }'`
-    	if [ "$aa" != "$bblower" ]
+    	if [ "$aa" != "$bblower" -a "$bblower" != "us" ]
     	then
     	    reflang="htdocs/langs/"$aa"_"$aaupper
     	    if [ -d $reflang ]

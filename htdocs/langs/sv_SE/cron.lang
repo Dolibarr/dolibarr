@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL för att kontrollera och starta cron-jobb om det behövs
 OrToLaunchASpecificJob=Eller för att kontrollera och starta ett specifikt arbete
 KeyForCronAccess=Säkerhetsnyckel för URL för att lansera cron-jobb
 FileToLaunchCronJobs=Kommandorad för att starta cron jobb
-CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
+CronExplainHowToRunUnix=I en Unix-miljö bör följande rad läggas i crontab så kommandot exekveras var 5:e minut.
+CronExplainHowToRunWin=I Microsoft(tm) Windows-miljö kan schemalagd aktivitet användas för att exekvera kommandoraden var 5:e minut
 # Menu
 CronJobs=Schemalagda jobb
 CronListActive=Lista över aktiva / schemalagda jobb
@@ -84,3 +84,4 @@ CronType_command=Skalkommando
 CronMenu=Cron
 CronCannotLoadClass=Det går inte att läsa in klassen% s eller objekt% s
 UseMenuModuleToolsToAddCronJobs=Gå in på menyn "Home - Moduler verktyg - Job list" för att se och redigera schemalagda jobb.
+TaskDisabled=Task disabled

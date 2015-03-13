@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Dostawcy
-Supplier=Dostawca
 AddSupplier=Create a supplier
 SupplierRemoved=Dostawca usunięty
 SuppliersInvoice=Faktury dostawców
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Faktury i płatności dostawcy
 ExportDataset_fournisseur_3=Zamówienia dostawcy i pozycje na zamówieniu
 ApproveThisOrder=Zatwierdź to zamówienie
 ConfirmApproveThisOrder=Czy na pewno chcesz zatwierdzić zamówienie <b>%s</b> ?
-DenyingThisOrder=Odrzuć to zamówienie
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Czy na pewno chcesz odrzucić zamówienie <b>%s</b> ?
 ConfirmCancelThisOrder=Czy na pewno chcesz anulować zamówienie <b>%s</b> ?
 AddCustomerOrder=Stwórz zamówienie Klienta

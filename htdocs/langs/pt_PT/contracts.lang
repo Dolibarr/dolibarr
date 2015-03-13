@@ -19,6 +19,7 @@ ServiceStatusLateShort=Expirado
 ServiceStatusClosed=Fechado
 ServicesLegend=Legenda para os serviços
 Contracts=contractos
+ContractsAndLine=Contracts and line of contracts
 Contract=Contrato
 NoContracts=Sem contractos
 MenuServices=Serviços

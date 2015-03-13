@@ -84,3 +84,4 @@ CronType_command=Shell commando
 CronMenu=Cron
 CronCannotLoadClass=Kan klasse %s of object %s niet laden
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+TaskDisabled=Task disabled

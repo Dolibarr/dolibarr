@@ -19,6 +19,7 @@ ServiceStatusLateShort=Lakkaa
 ServiceStatusClosed=Suljettu
 ServicesLegend=Palvelut legenda
 Contracts=Sopimukset
+ContractsAndLine=Contracts and line of contracts
 Contract=Sopimus
 NoContracts=Sopimuksia ei
 MenuServices=Palvelut

@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kod rachunkowości dla wypłat
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Kod rachunkowości dla obciązeń finansowych
+Salary=Wypłata
+Salaries=Wypłaty
+Employee=Zatrudnienie
+NewSalaryPayment=Nowa wypłata
+SalaryPayment=Wypłata wynagrodzenia
+SalariesPayments=Wypłaty wynagordzeń
+ShowSalaryPayment=Pokaż wypłaty wynagrodzeń
+THM=Średnia cena za godzine
+TJM=Średnia cena za dzień
+CurrentSalary=Current salary

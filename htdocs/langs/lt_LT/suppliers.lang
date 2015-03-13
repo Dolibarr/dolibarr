@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Tiekėjai
-Supplier=Tiekėjas
 AddSupplier=Create a supplier
 SupplierRemoved=Tiekėjas pašalintas
 SuppliersInvoice=Tiekėjo sąskaita-faktūra
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Tiekėjo sąskaitos-faktūros ir mokėjimai
 ExportDataset_fournisseur_3=Tiekėjo užsakymai ir užsakymo eilutės
 ApproveThisOrder=Patvirtinti šį užsakymą
 ConfirmApproveThisOrder=Ar tikrai norite patvirtinti užsakymą <b>%s</b> ?
-DenyingThisOrder=Neigiantis šį užsakymą
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Ar tikrai norite atsisakyti šio užsakymo <b> s?</b>
 ConfirmCancelThisOrder=Ar tikrai norite atšaukti šį užsakymą <b>%s</b> ?
 AddCustomerOrder=Sukurti kliento užsakymą

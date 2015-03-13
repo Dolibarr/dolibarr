@@ -156,6 +156,7 @@ LastStepDesc=<strong>Zadnji korak</strong>: Tukaj določite uporabniško ime in 
 ActivateModule=Vključite modul %s
 ShowEditTechnicalParameters=Kliknite tukaj za prikaz/popravek naprednih parametrov (expertni način)
 WarningUpgrade=Pozor:\nAli ste najprej naredili varnostno kopijo baze podatkov ?\nTo je zelo priporočeno: na primer zaradi nekaterih hroščev v sistemu baze podatkov (na primer mysql verzija 5.5.40), lahko med tem postopkom izgubite nekatere podatke ali tabele, zato je priporočeno imeti celotno kopijo vaše baze podatkov pred začetkom migracije.\n\nKliknite OK za začetek procesa migracije...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade
