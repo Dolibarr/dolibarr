@@ -596,7 +596,7 @@ class ExtraFields
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 					$this->attribute_perms[$tab->name]=$tab->perms;
-					$this->attribute_perms[$tab->name]=$tab->list;
+					$this->attribute_list[$tab->name]=$tab->list;
 				}
 			}
 		}
