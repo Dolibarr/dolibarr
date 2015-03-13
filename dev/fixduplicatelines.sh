@@ -9,17 +9,19 @@
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
+	echo "Find exact duplicated lines into file (not cross file checking)"
 	echo "Usage: deduplicatefilelinesrecursively.sh [list|fix]"
 fi
 
 # To detect
 if [ "x$1" = "xlist" ]
 then
-    for file in `find . -type f -name *.lang`
+    for file in `find htdocs/langs/en_US -type f -name *.lang`
     do
-        if [ `sort "$file" | uniq -d | wc -l` -gt 0 ]
+        if [ `sort "$file" | grep -v '^$' | uniq -d | wc -l` -gt 0 ]
         then
-            echo "$file"
+            echo "***** $file"
+            sort "$file" | grep -v '^$' | uniq -d
         fi
     done
 fi
@@ -27,7 +29,7 @@ fi
 # To fix
 if [ "x$1" = "xfix" ]
 then
-    for file in `find . -type f -name *.lang`
+    for file in `find htdocs/langs/en_US -type f -name *.lang`
     do
     	awk -i inplace ' !x[$0]++' "$file"
     done;
