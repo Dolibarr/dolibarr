@@ -52,8 +52,12 @@ $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 $object = new Fournisseur($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('suppliercard','globalcard'));
+
 
 /*
  * Action
@@ -253,7 +257,16 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
-    // Module Adherent
+	// Other attributes
+	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields);
+	}
+
+	// Module Adherent
     if (! empty($conf->adherent->enabled))
     {
         $langs->load("members");
