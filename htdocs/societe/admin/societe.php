@@ -114,11 +114,7 @@ if ($action == 'setModuleOptions')
     	{
     		$param=GETPOST("param".$i,'alpha');
     		$value=GETPOST("value".$i,'alpha');
-			// Use the default values if the field is not set
-			if ($param == '') {
-				$param = null;
-			}
-			$res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
 	    	if (! $res > 0) $error++;
     	}
     }
