@@ -31,8 +31,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/priceexpression.class.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/priceparser.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_expression.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
@@ -705,7 +705,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 					on_change();
 				}
 				function on_click() {
-					window.location = "'.DOL_URL_ROOT.'/product/expression.php?id='.$id.'&tab=price&eid=" + $("#eid").attr("value");
+					window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=price&eid=" + $("#eid").attr("value");
 				}
 				function on_change() {
 					if ($("#eid").attr("value") == 0) {

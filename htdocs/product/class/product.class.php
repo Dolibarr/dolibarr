@@ -1194,7 +1194,7 @@ class Product extends CommonObject
 			{
                 if (!empty($obj->fk_supplier_price_expression))
                 {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
                     if ($price_result >= 0) {
@@ -1229,7 +1229,7 @@ class Product extends CommonObject
 					{
 		                if (!empty($obj->fk_supplier_price_expression))
 		                {
-							require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 		                	$priceparser = new PriceParser($this->db);
 		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
 		                    if ($result >= 0) {
@@ -1685,7 +1685,7 @@ class Product extends CommonObject
 
                 if (!empty($this->fk_price_expression) && empty($ignore_expression))
                 {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProduct($this);
                     if ($price_result >= 0)
