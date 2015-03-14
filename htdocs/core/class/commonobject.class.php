@@ -3624,6 +3624,7 @@ abstract class CommonObject
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
                	$attributeSize  = $extrafields->attribute_size[$attributeKey];
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	$attributeParam = $extrafields->attribute_param[$attributeKey];  
                	switch ($attributeType)
                	{
                		case 'int':
@@ -3646,6 +3647,19 @@ abstract class CommonObject
             		case 'datetime':
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
+           		case 'link':
+				$param_list=array_keys($attributeParam ['options']);
+				// 0 : ObjectName
+				// 1 : classPath
+				$InfoFieldList = explode(":", $param_list[0]);
+				dol_include_once($InfoFieldList[1]);
+				$object = new $InfoFieldList[0]($this->db);
+				if ($value)
+				{
+					$object->fetch(0,$value);
+					$this->array_options[$key]=$object->id;
+				}
+				break;
                	}
             }
             $this->db->begin();

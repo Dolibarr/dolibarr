@@ -68,7 +68,7 @@ if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_ar
 		}
 	}
 }
-elseif (($type== 'sellist') || ($type == 'chkbxlst'))
+elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 {
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
