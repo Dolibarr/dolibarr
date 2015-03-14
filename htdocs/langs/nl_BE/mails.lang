@@ -32,7 +32,6 @@ ConfirmValidMailing=Weet u zeker dat u deze mailing wilt valideren om te verzend
 ConfirmDeleteMailing=Weet u zeker dat u deze mailing wilt verwijderen?
 NoTargetYet=Nog geen ontvangers gedefiniëerd (Ga op het tabblad "Ontvangers")
 RemoveRecipient=Verwijder ontvanger
-CommonSubstitutions=Common substitutions
 YouCanAddYourOwnPredefindedListHere=Om uw email selector module te creëren, zie htdocs/core/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=Bij het gebruik van test-modus, substituties variabelen worden vervangen door algemene waarden
 MailingAddFile=Bestand toevoegen

@@ -32,6 +32,7 @@ then
     for dir in `find htdocs/langs/$3* -type d`
     do
     	dirshort=`basename $dir`
+    	
     	#echo $dirshort
     	
 		export aa=`echo $dirshort | nawk -F"_" '{ print $1 }'`
@@ -42,7 +43,7 @@ then
         	aaupper="US"
         fi
     	bblower=`echo $dirshort | nawk -F"_" '{ print tolower($2) }'`
-    	if [ "$aa" != "$bblower" -a "$bblower" != "us" ]
+    	if [ "$aa" != "$bblower" -a "$dirshort" != "en_US" ]
     	then
     	    reflang="htdocs/langs/"$aa"_"$aaupper
     	    if [ -d $reflang ]
@@ -52,6 +53,15 @@ then
     			echo ./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
     			./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
     			for fic in `ls htdocs/langs/${aa}_${bb}/*.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done 
+    			for fic in `ls htdocs/langs/${aa}_${bb}/*.lang`; 
+    			do f=`cat $fic | wc -l`; 
+    			    #echo $f lines into file $fic; 
+    			    if [ $f = 1 ] 
+    			    then 
+    			        echo Only one line remainging into file $fic, we delete it;
+    			        rm $fic 
+    			    fi;
+    			done
     		fi
     	fi
     done;

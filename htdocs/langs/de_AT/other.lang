@@ -28,7 +28,6 @@ PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Hier finden Sie
 PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Hier finden Sie die Versandkosten __SHIPPINGREF__ \n\nSincerely \n\n__SIGNATURE__
 PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Hier finden Sie die Intervention __FICHINTERREF__ \n\nSincerely \n\n__SIGNATURE__
 FeatureNotYetAvailableShort=Erhältlich in einer der nächsten Versionen
-Top=Top
 Bottom=Boden
 Right=Recht
 CalculatedWeight=Errechnetes Gewicht
