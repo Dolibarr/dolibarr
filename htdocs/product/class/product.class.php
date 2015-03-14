@@ -138,6 +138,8 @@ class Product extends CommonObject
 	var $stats_commande=array();
 	var $stats_contrat=array();
 	var $stats_facture=array();
+    var $stats_commande_fournisseur=array();
+
 	var $multilangs=array();
 
 	//! Taille de l'image
@@ -3309,31 +3311,6 @@ class Product extends CommonObject
 
 		if (is_numeric($result) && $result > 0) return 1;
 		else return -1;
-	}
-
-	/**
-	 *  Build thumb
-	 *
-	 *  @param  string	$file           Chemin du fichier d'origine
-	 *  @return	void
-	 */
-	function add_thumb($file)
-	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
-
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
-
-		$file_osencoded=dol_osencode($file);
-		if (file_exists($file_osencoded))
-		{
-			// Create small thumbs for company (Ratio is near 16/9)
-	        // Used on logon for example
-	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-	        // Create mini thumbs for company (Ratio is near 16/9)
-	        // Used on menu or for setup page for example
-	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-		}
 	}
 
 	/**

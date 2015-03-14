@@ -3458,6 +3458,31 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *  Build thumb
+	 *
+	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *	@return		void
+	 */
+	function add_thumb($file)
+	{
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
+
+		$file_osencoded=dol_osencode($file);
+		if (file_exists($file_osencoded))
+		{
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file_osencoded, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file_osencoded, $maxwidthmini, $maxheightmini, '_mini', $quality);
+		}
+	}
+
 
 	/* Functions common to commonobject and commonobjectline */
 
@@ -3624,7 +3649,7 @@ abstract class CommonObject
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
                	$attributeSize  = $extrafields->attribute_size[$attributeKey];
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
-               	$attributeParam = $extrafields->attribute_param[$attributeKey];  
+               	$attributeParam = $extrafields->attribute_param[$attributeKey];
                	switch ($attributeType)
                	{
                		case 'int':
