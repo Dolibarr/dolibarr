@@ -16,16 +16,17 @@
  */
 
 /**
- *  \file	   htdocs/product/expression.php
+ *  \file	   htdocs/product/expression/editor.php
  *  \ingroup	product
  *  \brief	  Page for editing expression
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/priceexpression.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $langs->load("products");
 $langs->load("accountancy"); //"Back" translation is on this file
@@ -47,6 +48,7 @@ $product = new Product($db);
 $product->fetch($id, '');
 
 $price_expression = new PriceExpression($db);
+$price_globals = new PriceGlobalVariable($db);
 
 //Fetch expression data
 if (empty($eid)) //This also disables fetch when eid == 0
@@ -184,8 +186,17 @@ print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
 print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title?$price_expression->title:'').'">';
 print '</td></tr>';
 
+//Help text
+$help_text = $langs->trans("PriceExpressionEditorHelp1");
+$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
+$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
+$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
+$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
+foreach ($price_globals->listGlobalVariables() as $entry) {
+    $help_text.= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
+}
+
 //Price expression editor
-$help_text = $langs->trans("PriceExpressionEditorHelp1").'<br><br>'.$langs->trans("PriceExpressionEditorHelp2").'<br><br>'.$langs->trans("PriceExpressionEditorHelp3").'<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,4,80);
@@ -194,7 +205,7 @@ print '</td></tr>';
 print '</table>';
 
 //Buttons
-print '<center>';
+print '<div style="text-align: center;">';
 print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
@@ -205,9 +216,9 @@ else
 {
 	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 }
-print '</center>';
+print '</div>';
 
-print '</form>';	
+print '</form>';
 
 // This code reloads the page depending of selected option, goes to page selected by tab when back is pressed
 print '<script type="text/javascript">
@@ -217,7 +228,7 @@ print '<script type="text/javascript">
 		jQuery("#expression_selection").change(on_change);
 	}
 	function on_click() {
-		window.location = "'.str_replace('expression.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.($tab == 'price' ? '&action=edit_price' : '').'";
+		window.location = "'.str_replace('dynamic_price/editor.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.($tab == 'price' ? '&action=edit_price' : '').'";
 	}
 	function on_change() {
 		window.location = "'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid=" + $("#expression_selection").attr("value");
