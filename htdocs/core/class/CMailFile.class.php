@@ -36,12 +36,12 @@
  */
 class CMailFile
 {
-	var $subject;      // Topic:       Subject of email
-	var $addr_from;    // From:        Label of sender (name but can contains an email inside <>)
-	                   // Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	                   //              Use it with an email from a sending host from is a SPF protected domain and sending host is not this domain.
-	                   // Return-Path: Email where to send bounds.
-	var $errors_to;    // Errors-To:   Email where to send errors.
+	var $subject;      	// Topic:       Subject of email
+	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@mydomain.com>' or 'John Doe <myemail@mydomain.com>' or '<myemail+trackingid@mydomain.com>')
+	                   	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
+	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, use for Sender an email of the protected domain.
+	                   	// Return-Path: Email where to send bounds.
+	var $errors_to;		// Errors-To:	Email where to send errors.
 	var $addr_to;
 	var $addr_cc;
 	var $addr_bcc;

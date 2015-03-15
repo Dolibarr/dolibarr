@@ -50,7 +50,7 @@ class modAdherent extends DolibarrModules
         $this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Gestion des adhérents d'une association";
+        $this->description = "Management of members of a foundation or association";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
@@ -137,7 +137,7 @@ class modAdherent extends DolibarrModules
 
         $r++;
         $this->rights[$r][0] = 75;
-        $this->rights[$r][1] = 'Setup types and attributes of members';
+        $this->rights[$r][1] = 'Setup types of membership';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'configurer';

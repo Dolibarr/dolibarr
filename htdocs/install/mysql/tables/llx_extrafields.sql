@@ -29,7 +29,9 @@ create table llx_extrafields
 	size            varchar(8) DEFAULT NULL,
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
+	perms			varchar(255),
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,
-	param		text
+	param			text,
+	list			integer DEFAULT 0
 )ENGINE=innodb;

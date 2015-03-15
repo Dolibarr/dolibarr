@@ -66,7 +66,7 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -97,7 +97,6 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND t.fk_typepayment=".$typeid;
 }
-$sql.= " GROUP BY t.rowid, t.fk_typepayment, t.amount, t.datev, t.label";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -111,7 +110,7 @@ if ($result)
 
 	$param='';
 	if ($typeid) $param.='&amp;typeid='.$typeid;
-	
+
 	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -125,7 +124,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("");
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
@@ -138,21 +137,21 @@ if ($result)
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
-    
+
 	while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
-		
+
 		if ($obj->payment_code <> '')
 		{
-			$type = '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';  
+			$type = '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		}
 		else
 		{
 			$type = '<td>&nbsp;</td>';
 		}
-		
+
         print "<tr ".$bc[$var].">";
 
 		$tva_static->id=$obj->rowid;
@@ -172,12 +171,12 @@ if ($result)
     }
     print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
     print "<td align=\"right\"><b>".price($total)."</b></td>";
-	print "<td>&nbsp;</td></tr>"; 
+	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
-	
+
 	print '</form>';
-	
+
     $db->free($result);
 }
 else
@@ -186,6 +185,6 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();

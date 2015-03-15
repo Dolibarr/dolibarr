@@ -47,6 +47,11 @@ class Address
 	var $fax;
 	var $note;
 
+	/**
+	 * Adresses liees a la societe
+	 * @var array
+	 */
+	public $lines;
 
 	/**
 	 *  Constructor
@@ -391,7 +396,7 @@ class Address
 	 *
 	 *  @param	int		$id      id de la societe a supprimer
 	 *  @param	int		$socid	id third party
-	 *  @return	void
+	 *  @return	<0 KO >0 OK
 	 */
 	function delete($id,$socid)
 	{
@@ -403,10 +408,11 @@ class Address
 
 		$result = $this->db->query($sql);
 
-		if (!$result)
-		{
-			print $this->db->error() . '<br>' . $sql;
+		if (!$result) {
+			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -422,11 +428,12 @@ class Address
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowAddress").': '.$this->label;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label,'address').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label, 'address', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.$this->label.$lienfin;
 		return $result;
 	}

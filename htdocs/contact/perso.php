@@ -111,11 +111,11 @@ if ($action == 'edit')
             $objsoc = new Societe($db);
             $objsoc->fetch($object->socid);
 
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td>';
         }
         else
         {
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
         }
@@ -145,11 +145,11 @@ if ($action == 'edit')
 
     print "</table><br>";
 
-    print '<center>';
+    print '<div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; ';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</center>';
+    print '</div>';
 
     print "</form>";
 }
@@ -179,12 +179,12 @@ else
             $objsoc = new Societe($db);
             $objsoc->fetch($object->socid);
 
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
         }
 
         else
         {
-            print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
         }

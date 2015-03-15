@@ -42,7 +42,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return boolean
+	 * @return int
 	 */
 	public function isActive()
 	{
@@ -53,7 +53,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		    restore_include_path();
 		    if ($res)
 		    {
-		        return true;
+		        return 1;
 		    }
 		}
 		catch(Exception $e)
@@ -61,7 +61,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		    print '<!-- FirePHP not available into PHP -->'."\n";
 		}
 
-		return false;
+		return -1;
 	}
 
 	///**
@@ -86,7 +86,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	boolean		True if configuration ok
+	 * 	@return	array		Array of errors. Empty array if ok.
 	 */
 	public function checkConfiguration()
 	{

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2011-2014 Alexandre Spangaro  <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -82,7 +83,8 @@ $form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_societe as fk_soc,";
+$sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id,";
@@ -93,7 +95,7 @@ $sql.= " AND s.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
 if ($search_label) 	$sql.=" AND s.label LIKE '%".$db->escape($search_label)."%'";
-if ($search_amount) $sql.=" AND s.amount='".$db->escape(price2num(trim($search_amount)))."'";
+if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
 if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
@@ -124,9 +126,10 @@ if ($result)
     print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.salary","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datev","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre("");
     print "</tr>\n";
@@ -136,6 +139,9 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
+	// People
+	print '<td class="liste_titre">&nbsp;</td>';
+	// Current salary
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="14" name="search_label" value="'.$search_label.'"></td>';
@@ -159,10 +165,19 @@ if ($result)
         $userstatic->id=$obj->uid;
         $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
+        $userstatic->admin=$obj->admin;
+        $userstatic->login=$obj->login;
+        $userstatic->email=$obj->email;
+        $userstatic->societe_id=$obj->fk_soc;
         $salstatic->id=$obj->rowid;
 		$salstatic->ref=$obj->rowid;
-        print "<td>".$salstatic->getNomUrl(1)."</td>\n";
+        // Ref
+		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
+		// User name
 		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+		// Current salary
+		print "<td>".($obj->salary?price($obj->salary):'')."</td>\n";
+		// Label payment
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
         // Type
@@ -176,7 +191,7 @@ if ($result)
 
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").'</td>';
     print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
 	print "<td>&nbsp;</td></tr>";
 

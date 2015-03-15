@@ -54,6 +54,10 @@ class Conf
 	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array());
 
 	var $logbuffer					= array();
+
+	/**
+	 * @var LogHandlerInterface[]
+	 */
 	var $loghandlers                = array();
 
 	//! To store properties of multi-company
@@ -72,8 +76,6 @@ class Conf
 
 	/**
 	 * Constructor
-	 *
-	 * @return Conf
 	 */
 	function __construct()
 	{
@@ -364,6 +366,27 @@ class Conf
 			unset($this->global->PRODUIT_USE_SEARCH_TO_SELECT);
 			unset($this->global->COMPANY_USE_SEARCH_TO_SELECT);
 			unset($this->global->CONTACT_USE_SEARCH_TO_SELECT);
+			unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			$this->global->STOCK_CALCULATE_ON_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
+			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
 		}
 
 		// conf->currency
@@ -372,6 +395,9 @@ class Conf
 
 		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+
+        // By default, suppliers ojbects can be linked to all projects
+        $conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
 
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
@@ -426,8 +452,11 @@ class Conf
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// Define list of limited modules
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,askpricesupplier,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
+		// Enable select2
+		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)) $conf->global->MAIN_USE_JQUERY_MULTISELECT='select2';
+		
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;
         if (empty($this->global->MAIN_USE_RESPONSE_TIMEOUT)) $this->global->MAIN_USE_RESPONSE_TIMEOUT=30;

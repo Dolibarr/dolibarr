@@ -8,6 +8,7 @@ FinancialAccount=Fiók
 FinancialAccounts=Számlák
 BankAccount=Bankszámla
 BankAccounts=Bankszámlák
+ShowAccount=Show Account
 AccountRef=Pénzügyi mérleg ref
 AccountLabel=Pénzügyi mérleg címke
 CashAccount=Készpénz számla

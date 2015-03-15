@@ -160,10 +160,9 @@ function ordersupplier_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations.
  *
- *  @param	Object	$object		order
  *  @return	array   	        head array with tabs
  */
-function supplierorder_admin_prepare_head($object)
+function supplierorder_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -180,19 +179,31 @@ function supplierorder_admin_prepare_head($object)
 	$head[$h][2] = 'invoice';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
+	$head[$h][2] = 'supplierorderdet';
+	$h++;
+
+
+
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin','remove');
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
+	$head[$h][2] = 'supplierinvoicedet';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin','remove');
 
 	return $head;
 }

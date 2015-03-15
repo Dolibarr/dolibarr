@@ -89,10 +89,11 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+		if ($ret < 0) $error++;
 
 		if ($adht->libelle)
 		{
-			$id=$adht->create($user->id);
+			$id=$adht->create($user);
 			if ($id > 0)
 			{
 				header("Location: ".$_SERVER["PHP_SELF"]);
@@ -126,8 +127,9 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+		if ($ret < 0) $error++;
 
-		$adht->update($user->id);
+		$adht->update($user);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
 		exit;
@@ -271,9 +273,11 @@ if ($action == 'create')
 	}
 	print "</table>\n";
 
-	print '<br>';
-	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center">';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print "</form>\n";
 }
@@ -678,8 +682,11 @@ if ($rowid > 0)
 			print '</table><br><br>';
 		}
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
-		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print "</form>";
 	}

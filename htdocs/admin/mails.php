@@ -65,12 +65,12 @@ if ($action == 'update' && empty($_POST["cancel"]))
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
     // Send mode parameters
-	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_SMTP_PORT"]))   dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_SMTP_SERVER"])) dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_SMTPS_ID"]))    dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",    GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_SMTPS_PW"]))    dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",    GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',0);
-	if (isset($_POST["MAIN_MAIL_EMAIL_TLS"]))   dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",   GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',0);
+	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",      GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
     // Content parameters
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
@@ -477,11 +477,11 @@ if ($action == 'edit')
 	print '"></td></tr>';
 	print '</table>';
 
-	print '<br><center>';
+	print '<br><div class="center">';
 	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print '</form>';
 	print '<br>';

@@ -200,7 +200,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				$nblignes = count($object->lines);
 
@@ -269,10 +269,33 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
+				// Incoterm
+				$height_incoterms = 0;
+				if ($conf->incoterm->enabled)
+				{
+					$desc_incoterms = $object->getIncotermsForPDF();
+					if ($desc_incoterms)
+					{
+						$tab_top = 88;
+
+						$pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+						$nexY = $pdf->GetY();
+						$height_incoterms=$nexY-$tab_top;
+	
+						// Rect prend une longueur en 3eme param
+						$pdf->SetDrawColor(192,192,192);
+						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
+	
+						$tab_top = $nexY+6;
+						$height_incoterms += 4;
+					}
+				}
+				
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
-					$tab_top = 88;
+					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
@@ -976,15 +999,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$title=$outputlangs->transnoentities("SupplierOrder");
+		$title=$outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref);
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$pdf->SetFont('','B',$default_font_size);
-
-		$posy+=6;
-		$pdf->SetXY($posx,$posy);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$pdf->SetFont('','B', $default_font_size);
 
 		if ($object->ref_supplier)
 		{
@@ -994,10 +1012,22 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : " . $outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
 		}
 
-		$posy+=2;
 		$pdf->SetFont('','', $default_font_size -1);
 
-        $posy+=5;
+		$posy+=6;
+		if (! empty($conf->global->PDF_SHOW_PROJECT))
+		{
+			$object->fetch_projet();
+			$pdf->SetXY($posx,$posy);
+			if (! empty($object->project->ref))
+			{
+				$langs->load("projects");
+				$pdf->SetTextColor(0,0,60);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
+        		$posy+=4;
+			}
+		}
+
 		$pdf->SetXY($posx,$posy);
 		if (! empty($object->date_commande))
 		{
@@ -1011,7 +1041,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 
 		$pdf->SetTextColor(0,0,60);
-		if (! empty($object->date_livraison)) $pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+		$usehourmin='day';
+		if ( empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin='dayhour';
+		if (! empty($object->date_livraison)) $pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,$usehourmin,false,$outputlangs,true), '', 'R');
 
 		$posy+=5;
 		$pdf->SetTextColor(0,0,60);
@@ -1022,7 +1054,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;

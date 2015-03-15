@@ -91,12 +91,15 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
-		$result=$object->update($user);
-
-		if ($result < 0)
+		if (! $error)
 		{
-		    setEventMessages($object->error,$object->errors,'errors');
+			$result=$object->update($user);
+			if ($result < 0)
+			{
+			    setEventMessages($object->error,$object->errors,'errors');
+			}
 		}
 	}
 	else
@@ -262,8 +265,6 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			dol_fiche_end();
-
-			print '<br>';
 		}
 
 		/*
@@ -295,9 +296,6 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head=task_prepare_head($object);
-		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
-
-
 
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{
@@ -306,6 +304,8 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
+
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
 
 			print '<table class="border" width="100%">';
 
@@ -372,10 +372,12 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
-			print '<center><br>';
+			dol_fiche_end();
+
+			print '<div align="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '<center>';
+			print '</div>';
 
 			print '</form>';
 		}
@@ -386,6 +388,8 @@ if ($id > 0 || ! empty($ref))
 			 */
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
+
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
 
 			if ($action == 'delete')
 			{
@@ -437,17 +441,23 @@ if ($id > 0 || ! empty($ref))
 
 			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
-			print convertSecondToTime($object->planned_workload,'allhourmin');
+			if ($object->planned_workload != '')
+			{
+				print convertSecondToTime($object->planned_workload,'allhourmin');
+			}
 			print '</td></tr>';
 
 			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-			print $object->progress.' %';
+			if ($object->progress != '')
+			{
+				print $object->progress.' %';
+			}
 			print '</td></tr>';
 
 			// Progress calculated
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			if ($object->planned_workload)
+			if ($object->planned_workload != '')
 			{
 				$tmparray=$object->getSummaryOfTimeSpent();
 				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
@@ -471,12 +481,11 @@ if ($id > 0 || ! empty($ref))
 
 			print '</table>';
 
+			dol_fiche_end();
 		}
 
-		dol_fiche_end();
 
-
-		if ($_GET["action"] != 'edit')
+		if ($action != 'edit')
 		{
 			/*
 			 * Actions

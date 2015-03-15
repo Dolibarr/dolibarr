@@ -45,10 +45,13 @@ class CompanyBankAccount extends Account
     var $cle_rib;
     var $bic;
     var $iban;
-    var $iban_prefix;		// deprecated
     var $proprio;
     var $owner_address;
     var $default_rib;
+
+    var $datec;
+    var $datem;
+
 
     /**
 	 *  Constructor
@@ -141,7 +144,7 @@ class CompanyBankAccount extends Account
         $sql .= ",number='".$this->number."'";
         $sql .= ",cle_rib='".$this->cle_rib."'";
         $sql .= ",bic='".$this->bic."'";
-        $sql .= ",iban_prefix = '".$this->iban_prefix."'";
+        $sql .= ",iban_prefix = '".$this->iban."'";
         $sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
         $sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -175,7 +178,7 @@ class CompanyBankAccount extends Account
     {
         if (empty($id) && empty($socid)) return -1;
 
-        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label";
+        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label, datec, tms as datem";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
@@ -196,12 +199,13 @@ class CompanyBankAccount extends Account
                 $this->cle_rib         = $obj->cle_rib;
                 $this->bic             = $obj->bic;
                 $this->iban		       = $obj->iban;
-                $this->iban_prefix     = $obj->iban;	// deprecated
                 $this->domiciliation   = $obj->domiciliation;
                 $this->proprio         = $obj->proprio;
                 $this->owner_address   = $obj->owner_address;
                 $this->label           = $obj->label;
                 $this->default_rib     = $obj->default_rib;
+                $this->datec           = $this->db->jdate($obj->datec);
+                $this->datem           = $this->db->jdate($obj->datem);
             }
             $this->db->free($resql);
 

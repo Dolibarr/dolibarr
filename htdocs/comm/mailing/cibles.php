@@ -118,8 +118,7 @@ if ($action == 'add')
 if (GETPOST('clearlist'))
 {
 	// Chargement de la classe
-	$classname = "MailingTargets";
-	$obj = new $classname($db);
+	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
 
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -135,8 +134,7 @@ if ($action == 'delete')
 	{
 		if (!empty($id))
 		{
-			$classname = "MailingTargets";
-			$obj = new $classname($db);
+			$obj = new MailingTargets($db);
 			$obj->update_nb($id);
 
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -276,7 +274,8 @@ if ($object->fetch($id) >= 0)
 
 				$obj = new $classname($db);
 
-				$qualified=1;
+				// Check dependencies
+				$qualified=(isset($obj->enabled)?$obj->enabled:1);
 				foreach ($obj->require_module as $key)
 				{
 					if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))

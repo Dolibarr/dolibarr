@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-if ($id > 0 || ! empty($ref)) {
+if ($id > 0 || ! empty($ref) && $action!='add') {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
@@ -82,6 +83,10 @@ if ($id > 0 || ! empty($ref)) {
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+$extrafieldsline = new ExtraFields($db);
+$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -202,6 +207,13 @@ if ($action == 'add' && $user->rights->contrat->creer)
 		$error++;
 	}
 
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	if ($ret < 0) {
+		$error ++;
+		$action = 'create';
+	}
+
 	if (! $error)
 	{
 		$object->socid						= $socid;
@@ -273,7 +285,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	                {
 	                    $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-						if ($product_type == 1) { //only services	// TODO Exclude also deee
+						if ($product_type == 1 || (! empty($conf->global->CONTRACT_SUPPORT_PRODUCTS) && in_array($product_type, array(0,1)))) { 	// TODO Exclude also deee
 							// service prédéfini
 							if ($lines[$i]->fk_product > 0)
 							{
@@ -351,10 +363,6 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	    }
 	    else
 	    {
-
-	    	// Fill array 'array_options' with data from add form
-	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-
 	        $result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -405,6 +413,18 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
     {
     	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")),'errors');
     	$error++;
+    }
+
+    // Extrafields
+    $extrafieldsline = new ExtraFields($db);
+    $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+    $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+    // Unset extrafield
+    if (is_array($extralabelsline)) {
+    	// Get extra fields
+    	foreach ($extralabelsline as $key => $value) {
+    		unset($_POST["options_" . $key]);
+    	}
     }
 
     if (! $error)
@@ -519,7 +539,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $pu_ttc,
                 $info_bits,
       			$fk_fournprice,
-      			$pa_ht
+      			$pa_ht,
+            	$array_options
             );
         }
 
@@ -536,10 +557,10 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$model=$object->modelpdf;
-				if (empty($model)) { $tmp=getListOfModels($db, 'contract'); $keys=array_keys($tmp); $model=$keys[0]; }
+
 				$ret = $object->fetch($id); // Reload to get new records
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			unset($_POST ['prod_entry_mode']);
@@ -616,6 +637,12 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->fk_fournprice=$fk_fournprice;
         $objectline->pa_ht=$pa_ht;
 
+        // Extrafields
+        $extrafieldsline = new ExtraFields($db);
+        $extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
+        $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+        $objectline->array_options=$array_options;
+
         // TODO verifier price_min si fk_product et multiprix
 
         $result=$objectline->update($user);
@@ -658,7 +685,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contr
 // Close all lines
 else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
-    $result = $object->cloture($user);
+    $object->cloture($user);
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
@@ -718,19 +745,25 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		setEventMessage($object->error,'errors');
 	}
 } elseif ($action=='setref_supplier') {
-	$result = $object->fetch($id);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-	}
-	$object->ref_supplier=GETPOST('ref_supplier','alpha');
 
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-		$action='editref_supplier';
-	} else {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
+	$cancelbutton = GETPOST('cancel');
+
+	if (!$cancelbutton) {
+
+		$result = $object->fetch($id);
+		if ($result < 0) {
+			setEventMessage($object->errors, 'errors');
+		}
+		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessage($object->errors, 'errors');
+			$action = 'editref_supplier';
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
 	}
 } elseif ($action=='setref') {
 	$object->ref=GETPOST('ref','alpha');
@@ -847,7 +880,7 @@ $formfile = new FormFile($db);
 $objectlignestatic=new ContratLigne($db);
 
 // Load object modContract
-$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 {
 	$module = substr($module, 0, dol_strlen($module)-4);
@@ -1020,13 +1053,18 @@ if ($action == 'create')
 
     print "</table>\n";
 
+    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+
     if (is_object($objectsrc))
     {
         print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-	}
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+        if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))
+        {
+        	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
+        }
+	}
 
     print "</form>\n";
 
@@ -1043,6 +1081,8 @@ else
 
     if ($object->id > 0)
     {
+    	$object->fetch_thirdparty();
+
         $result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
         if ($result < 0) dol_print_error($db,$object->error);
 
@@ -1081,7 +1121,7 @@ else
         	$ref = substr($object->ref, 1, 4);
         	if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
         	{
-        		$numref = $object->getNextNumRef($soc);
+        		$numref = $object->getNextNumRef($object->thirdparty);
         	}
         	else
         	{
@@ -1178,11 +1218,11 @@ else
             print '</td><td colspan="3">';
             if ($action == "classify")
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"projectid");
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"projectid", 0, 0, 1);
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"none");
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"none", 0, 0);
             }
             print "</td></tr>";
         }
@@ -1222,8 +1262,10 @@ else
         /*
          * Lines of contracts
          */
-        $productstatic=new Product($db);
 
+	    if ($conf->product->enabled || $conf->service->enabled) {
+			$productstatic=new Product($db);
+	    }
 
         $usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -1290,7 +1332,7 @@ else
                         	$productstatic->ref=$objp->label;
                         	print $productstatic->getNomUrl(0,'',16);
                         }
-                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) and $objp->description)
+                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) && !empty($objp->description))
                             print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
                     }
@@ -1375,6 +1417,16 @@ else
                         print '</td>';
                         print '</tr>';
                     }
+
+
+                    //Display lines extrafields
+                    if (is_array($extralabelslines) && count($extralabelslines)>0) {
+                    	print '<tr '.$bc[$var].'>';
+                    	$line = new ContratLigne($db);
+                    	$line->fetch_optionals($objp->rowid,$extralabelslines);
+                    	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print '</tr>';
+                    }
                 }
                 // Ligne en mode update
                 else
@@ -1432,6 +1484,15 @@ else
                     print '<br>'.$langs->trans("DateEndPlanned").' ';
                     $form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
+
+                    if (is_array($extralabelslines) && count($extralabelslines)>0) {
+                    	print '<tr '.$bc[$var].'>';
+                    	$line = new ContratLigne($db);
+                    	$line->fetch_optionals($objp->rowid,$extralabelslines);
+                    	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan));
+                    	print '</tr>';
+                    }
+
                     print '</tr>';
                 }
 
@@ -1665,7 +1726,7 @@ else
         }
 
 		// Form to add new line
-        if ($user->rights->contrat->creer && ($object->statut >= 0))
+        if ($user->rights->contrat->creer && ($object->statut == 0))
         {
         	$dateSelector=1;
 
@@ -1714,6 +1775,9 @@ else
         if ($user->societe_id == 0)
         {
             print '<div class="tabsAction">';
+
+            $parameters=array();
+            $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             if ($object->statut == 0 && $nbofservices)
             {

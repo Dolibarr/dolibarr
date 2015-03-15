@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -19,14 +19,14 @@
  */
 
 /**
- * \file		accountingex/core/modules/modAccounting.class.php
+ * \file		htdocs/core/modules/modAccounting.class.php
  * \ingroup		Accounting Expert
  * \brief		Module to activate Accounting Expert module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- * \class	modAccountingExpert
+ * \class	modAccounting
  * \brief	Description and activation class for module accounting expert
  */
 class modAccounting extends DolibarrModules
@@ -68,7 +68,7 @@ class modAccounting extends DolibarrModules
 		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
-		$this->phpmin = array(5, 2); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 3); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 6); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("accountancy");
 
@@ -87,7 +87,7 @@ class modAccounting extends DolibarrModules
 				"With this constants on, bank account number is always required"
 		);
 		$this->const[1] = array(
-				"ACCOUNTING_SEPARATORCSV",
+				"ACCOUNTING_EXPORT_SEPARATORCSV",
 				"string",
 				","
 		);
@@ -112,59 +112,84 @@ class modAccounting extends DolibarrModules
 				"SOC"
 		);
 		$this->const[6] = array(
-				"ACCOUNTING_CASH_JOURNAL",
-				"chaine",
-				"CAI"
-		);
-		$this->const[7] = array(
 				"ACCOUNTING_MISCELLANEOUS_JOURNAL",
 				"chaine",
 				"OD"
 		);
-		$this->const[8] = array(
-				"ACCOUNTING_BANK_JOURNAL",
-				"chaine",
-				"BQ"
-		); // Deprecated Move into llx_bank_account
-		$this->const[9] = array(
+		$this->const[7] = array(
 				"ACCOUNTING_ACCOUNT_TRANSFER_CASH",
 				"chaine",
 				"58"
 		);
-		$this->const[10] = array(
+		$this->const[8] = array(
 				"CHARTOFACCOUNTS",
 				"chaine",
 				"2"
 		);
-		$this->const[11] = array(
-				"ACCOUNTING_MODELCSV",
+		$this->const[9] = array(
+				"ACCOUNTING_EXPORT_MODELCSV",
 				"chaine",
-				"0"
+				"1"
 		);
-		$this->const[12] = array(
+		$this->const[10] = array(
 				"ACCOUNTING_LENGTH_GACCOUNT",
 				"chaine",
 				""
 		);
-		$this->const[13] = array(
+		$this->const[11] = array(
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
 				""
 		);
-		$this->const[14] = array(
+		$this->const[12] = array(
 				"ACCOUNTING_LIMIT_LIST_VENTILATION",
 				"chaine",
 				"50"
 		);
-		$this->const[15] = array(
+		$this->const[13] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
 				"1"
 		);
-		$this->const[16] = array(
+		$this->const[14] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
 				"yesno",
 				"1"
+		);
+		$this->const[15] = array (
+				"ACCOUNTING_GROUPBYACCOUNT",
+				"yesno",
+				"1"
+		);
+		$this->const[16] = array (
+				"ACCOUNTING_EXPORT_DATE",
+				"chaine",
+				"%d%m%Y"
+		);
+		$this->const[17] = array (
+				"ACCOUNTING_EXPORT_PIECE",
+				"yesno",
+				"1"
+		);
+		$this->const[18] = array (
+				"ACCOUNTING_EXPORT_GLOBAL_ACCOUNT",
+				"yesno",
+				"1" 
+		);
+		$this->const[19] = array (
+				"ACCOUNTING_EXPORT_LABEL",
+				"yesno",
+				"1"
+		);
+		$this->const[20] = array (
+				"ACCOUNTING_EXPORT_AMOUNT",
+				"yesno",
+				"1" 
+		);
+		$this->const[21] = array (
+				"ACCOUNTING_EXPORT_DEVISE",
+				"yesno",
+				"1" 
 		);
 
 		// Tabs

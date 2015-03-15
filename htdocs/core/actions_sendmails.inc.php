@@ -103,7 +103,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			else	// Id du contact
 			{
-				$sendto = $thirdparty->contact_get_property($_POST['receiver'],'email');
+				$sendto = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
 				$sendtoid = $_POST['receiver'];
 			}
 		}
@@ -120,7 +120,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 			else	// Id du contact
 			{
-				$sendtocc = $thirdparty->contact_get_property($_POST['receivercc'],'email');
+				$sendtocc = $thirdparty->contact_get_property((int) $_POST['receivercc'],'email');
 			}
 		}
 
@@ -131,7 +131,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
-			$sendtocc = $sendtocc;
 			$sendtobcc= GETPOST('sendtoccc');
 			if ($mode == 'emailfromproposal') $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO);
 			if ($mode == 'emailfromorder')    $sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO);
@@ -211,19 +210,17 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				else
 				{
 					$langs->load("other");
-					$mesg='<div class="error">';
 					if ($mailfile->error)
 					{
+						$mesg='';
 						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
 						$mesg.='<br>'.$mailfile->error;
+						setEventMessage($mesg,'errors');
 					}
 					else
 					{
-						$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
 					}
-					$mesg.='</div>';
-
-					setEventMessage($mesg,'warnings');
 					$action = 'presend';
 				}
 			}

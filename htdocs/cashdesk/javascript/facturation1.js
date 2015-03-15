@@ -16,7 +16,7 @@
  */
 
 // Calcul et affichage en temps reel des informations sur le produit en cours
-function modif () {
+function modif() {
 
 	var prix_unit = parseFloat ( document.getElementById('frmQte').txtPrixUnit.value );
 	var qte = parseFloat ( document.getElementById('frmQte').txtQte.value );
@@ -71,7 +71,7 @@ function modif () {
 }
 
 // Affecte la source de la requete (liste deroulante ou champ texte 'ref') au champ cache
-function setSource (aSrc) {
+function setSource(aSrc) {
 
 	document.getElementById('frmFacturation').hdnSource.value = aSrc;
 	document.getElementById('frmFacturation').submit();
@@ -79,7 +79,7 @@ function setSource (aSrc) {
 }
 
 // Verification de la coherence des informations saisies dans le formulaire de choix du nombre d'articles
-function verifSaisie () {
+function verifSaisie() {
 
 	if ( document.getElementById('frmQte').txtQte.value ) {
 
@@ -95,17 +95,17 @@ function verifSaisie () {
 }
 
 // Verification de la coherence des informations saisies dans le formulaire de calcul de la difference
-function verifDifference () {
+function verifDifference() {
 
 	var du = parseFloat ( document.getElementById('frmDifference').txtDu.value );
 	var encaisse = parseFloat ( document.getElementById('frmDifference').txtEncaisse.value );
 
-	if ( encaisse > du ) {
+	if (encaisse > du) {
 
 		resultat = Math.round ( (encaisse - du) * 100 ) / 100;
 		document.getElementById('frmDifference').txtRendu.value = resultat.toFixed(2);
 
-	} else if ( encaisse == du ) {
+	} else if (encaisse == du) {
 
 		document.getElementById('frmDifference').txtRendu.value = '0';
 
@@ -118,14 +118,14 @@ function verifDifference () {
 }
 
 // Affecte le moyen de paiement (ESP, CB ou CHQ) au champ cache en fonction du bouton clique
-function verifClic (aChoix) {
+function verifClic(aChoix) {
 
 	document.getElementById('frmDifference').hdnChoix.value = aChoix;
 
 }
 
 // Determination du moyen de paiement, et validation du formulaire si les donnees sont coherentes
-function verifReglement () {
+function verifReglement() {
 
 	var choix = document.getElementById('frmDifference').hdnChoix.value;
 	var du = parseFloat (document.getElementById('frmDifference').txtDu.value);
@@ -172,5 +172,4 @@ function verifReglement () {
 		return false;
 
 	}
-
 }

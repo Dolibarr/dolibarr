@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OS Commerce
-OSCommerceSetup=Configuration du module OS Commerce
-OSCommerceSetupSaved=Configuration OS Commerce sauvegardée
-OSCommerceServer=Nom d'hôte / adresse IP serveur base de données OS Commerce
-OSCommerceDatabaseName=Nom base de données OS Commerce
-OSCommercePrefix=Préfixe tables base de données OS Commerce
-OSCommerceUser=Identifiant d'accès base de données OS Commerce

@@ -65,7 +65,7 @@ error_reporting($err);
 if ($action == 'update' && empty($_POST["cancel"]))
 {
 	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
-	
+
 	dolibarr_set_const($db, "MAIN_MENU_STANDARD",      $_POST["MAIN_MENU_STANDARD"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE",     $_POST["MAIN_MENU_SMARTPHONE"],'chaine',0,'',$conf->entity);
 
@@ -89,11 +89,11 @@ if ($action == 'update' && empty($_POST["cancel"]))
 			$file='init_menu_'.$key.'.sql';
 		    $fullpath=dol_buildpath($dirmenu.$file);
 		    //print 'action='.$action.' Search menu into fullpath='.$fullpath.'<br>';exit;
-		    
+
 			if (file_exists($fullpath))
 			{
 				$db->begin();
-	
+
 				$result=run_sql($fullpath,1,'',1,$key,'none');
 				if ($result > 0)
 				{
@@ -152,6 +152,10 @@ $head[$h][2] = 'misc';
 $h++;
 
 
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="update">';
+
 dol_fiche_head($head, 'handler', $langs->trans("Menus"));
 
 print $langs->trans("MenusDesc")."<br>\n";
@@ -160,10 +164,6 @@ print "<br>\n";
 
 if ($action == 'edit')
 {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
-
 	clearstatcache();
 
 	// Gestionnaires de menu
@@ -183,10 +183,10 @@ if ($action == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
-	print $formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled="disabled"');
+	$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '<td>';
-	print $formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled="disabled"');
+	$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED, 'MAIN_MENUFRONT_STANDARD', $dirstandard, empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '</tr>';
 
@@ -194,22 +194,14 @@ if ($action == 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
-	print $formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '<td>';
-	print $formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
+	$formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled="disabled"');
 	print '</td>';
 	print '</tr>';
 
 	print '</table>';
-
-	print '<br><center>';
-	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
-
-	print '</form>';
 }
 else
 {
@@ -264,7 +256,21 @@ else
 	print '</table>';
 }
 
-print '</div>';
+dol_fiche_end();
+
+
+if ($action == 'edit')
+{
+	print '<div class="center">';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; &nbsp; ';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
+}
+
+print '</form>';
+
+
 
 if ($action != 'edit')
 {

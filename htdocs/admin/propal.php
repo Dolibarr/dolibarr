@@ -163,6 +163,22 @@ if ($action == 'setdefaultduration')
 	}
 }
 
+if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
+{
+    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL",$value,'chaine',0,'',$conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
+
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
 if ($action == 'setModuleOptions')
 {
@@ -247,7 +263,7 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
-$head = propal_admin_prepare_head(null);
+$head = propal_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Proposals"), 0, 'propal');
 
@@ -328,18 +344,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$propal->type=0;
 						$nextval=$module->getNextValue($mysoc,$propal);
-						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-						{
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
-							if ($nextval)
-							{
-								$htmltooltip.=$nextval.'<br>';
-							}
-							else
-							{
-								$htmltooltip.=$langs->trans($module->error).'<br>';
-							}
-						}
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
+                                $htmltooltip.=$nextval.'<br>';
+                            } else {
+                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                            }
+                        }
 
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
@@ -581,6 +595,35 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
+
+if ($conf->banque->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
+    }
+    else
+    {
+        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+        }
+    }
+    print '</td></tr>';
+}
+else
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+}
 
 print '</table>';
 

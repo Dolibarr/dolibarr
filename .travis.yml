@@ -8,6 +8,9 @@ notifications:
     on_success: never # [always|never|change] default: change
     on_failure: change # [always|never|change] default: always
     
+addons:
+  postgresql: "9.3"
+
 services:
  - memcached # will start memcached
 
@@ -15,9 +18,15 @@ services:
 language: php
 php:
 # - "5.2" is not supported because pyrus to install PHP_Codesniffer is not available
- - "5.3"
- - "5.4"
- - "5.5" 
+ - 5.3
+ - 5.4
+ - 5.5 
+ - 5.6
+ - 7.0
+ 
+matrix:
+  allow_failures:
+    - php: 7.0
 
 env:
  - DB=mysql
@@ -32,10 +41,13 @@ before_script:
 # - echo Update composer
 # - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
  - echo PHPUnit version
+ - which phpunit
  - phpunit --version
  - echo Install phpcs then show installed rules
  - pyrus install pear/PHP_CodeSniffer
  - phpenv rehash
+ - which phpcs
+ - phpcs --version
  - phpcs -i
  - echo Create dir $(pwd)/htdocs/documents
  - sudo mkdir -p $(pwd)/htdocs/documents/admin/temp;
@@ -83,6 +95,8 @@ before_script:
  - sudo cat /etc/apache2/sites-available/default
  - sudo /etc/init.d/apache2 restart
  - wget http://localhost/
+ - sudo cat /etc/apache2/envvars
+ - sudo cat /var/log/apache2/error.log
  - cat index.html
 
 
@@ -97,13 +111,15 @@ script:
  - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
 # - cat upgrade360370.log
  - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
+ - php upgrade.php 3.7.0 3.8.0 >> upgrade.log
+ - php upgrade2.php 3.7.0 3.8.0 >> upgrade2.log
 # - cat upgrade2.log
  - cd ../..
  - date
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
  - date
 # - phpcs -p --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php 2>&1
- - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
+ - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/htdocs/conf/conf.php,/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
  - date
 
 after_script:

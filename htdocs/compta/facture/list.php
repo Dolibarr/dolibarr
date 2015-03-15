@@ -111,7 +111,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x"))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -187,13 +187,13 @@ if ($search_societe)
 {
     $sql .= natural_search('s.nom', $search_societe);
 }
-if ($search_montant_ht)
+if ($search_montant_ht != '')
 {
-    $sql.= ' AND f.total = \''.$db->escape(price2num(trim($search_montant_ht))).'\'';
+    $sql.= natural_search('f.total', $search_montant_ht, 1);
 }
-if ($search_montant_ttc)
+if ($search_montant_ttc != '')
 {
-    $sql.= ' AND f.total_ttc = \''.$db->escape(price2num(trim($search_montant_ttc))).'\'';
+    $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 }
 if ($search_status != '')
 {
@@ -263,8 +263,8 @@ if ($resql)
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
     if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
-    if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
-    if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
+    if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
+    if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
     print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     $i = 0;
@@ -323,9 +323,9 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre" align="left">&nbsp;</td>';
     print '<td class="liste_titre" align="left"><input class="flat" type="text" name="search_societe" value="'.$search_societe.'"></td>';
-    print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
+    print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
-    print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
+    print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

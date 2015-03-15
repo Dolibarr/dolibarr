@@ -36,12 +36,8 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($id > 0 || ! empty($ref))
-{
-    $object->fetch($id,$ref);
-    $object->fetch_thirdparty();
-    $id=$object->id;
-}
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Security check
 $socid=0;

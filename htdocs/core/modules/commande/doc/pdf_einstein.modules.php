@@ -154,6 +154,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("orders");
 		$outputlangs->load("deliveries");
 
+		$nblignes = count($object->lines);
+
 		if ($conf->commande->dir_output)
 		{
             $object->fetch_thirdparty();
@@ -194,8 +196,6 @@ class pdf_einstein extends ModelePDFCommandes
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-				$nblignes = count($object->lines);
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
@@ -264,6 +264,29 @@ class pdf_einstein extends ModelePDFCommandes
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
+				// Incoterm
+				$height_incoterms = 0;
+				if ($conf->incoterm->enabled)
+				{
+					$desc_incoterms = $object->getIncotermsForPDF();
+					if ($desc_incoterms)
+					{
+						$tab_top = 88;
+
+						$pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+						$nexY = $pdf->GetY();
+						$height_incoterms=$nexY-$tab_top;
+	
+						// Rect prend une longueur en 3eme param
+						$pdf->SetDrawColor(192,192,192);
+						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
+	
+						$tab_top = $nexY+6;
+						$height_incoterms += 4;
+					}
+				}
+				
 				// Affiche notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
@@ -279,7 +302,7 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				if ($notetoshow)
 				{
-					$tab_top = 88;
+					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -328,6 +351,7 @@ class pdf_einstein extends ModelePDFCommandes
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
+						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
@@ -511,11 +535,6 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->Output($file,'F');
 
 				// Add pdfgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
@@ -722,19 +741,20 @@ class pdf_einstein extends ModelePDFCommandes
         // If payment mode not forced or forced to VIR, show payment with BAN
         if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
         {
-	        if (! empty($conf->global->FACTURE_RIB_NUMBER))
-	        {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+        	if (! empty($object->fk_bank) || ! empty($conf->global->FACTURE_RIB_NUMBER))
+			{
+				$bankid=(empty($object->fk_bank)?$conf->global->FACTURE_RIB_NUMBER:$object->fk_bank);
+				$account = new Account($this->db);
+				$account->fetch($bankid);
 
-                $curx=$this->marge_gauche;
-                $cury=$posy;
+				$curx=$this->marge_gauche;
+				$cury=$posy;
 
-                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
+				$posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
 
-                $posy+=2;
-	        }
-		}
+				$posy+=2;
+			}
+        }
 
 		return $posy;
 	}
@@ -797,7 +817,7 @@ class pdf_einstein extends ModelePDFCommandes
 				//{
 					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
@@ -828,7 +848,7 @@ class pdf_einstein extends ModelePDFCommandes
 				//{
 					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
 					{
-						if (in_array((string) $localtax_type, array('1','3','5','7'))) continue;
+						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey!=0)    // On affiche pas taux 0
@@ -1188,7 +1208,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posy=42;

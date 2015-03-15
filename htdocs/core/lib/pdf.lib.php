@@ -5,6 +5,8 @@
  * Copyright (C) 2010-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
  * Copyright (C) 2010		Juanjo Menent       	<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
@@ -123,8 +125,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
 	else require_once FPDF_PATH.'fpdf.php';
 
-	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
-	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
+	// We need to instantiate tcpdi or fpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
+    if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
+	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
@@ -144,7 +147,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		*/
-		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 		// For TCPDF, we specify permission we want to block
 		$pdfrights = array('modify','copy');
@@ -155,7 +159,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	}
 	else
 	{
-		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 	}
 
@@ -312,7 +317,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if ($mode == 'source')
 	{
-		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
+		$withCountry = 0;
+		if (!empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) $withCountry = 1;
+
+		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany, $withCountry, "\n", $outputlangs))."\n";
 
 		if (empty($conf->global->MAIN_PDF_DISABLESOURCEDETAILS))
 		{
@@ -489,7 +497,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
  *  @param  Account		$account         		Bank account object
- *  @param  int			$onlynumber      		Output only number
+ *  @param  int			$onlynumber      		Output only number (bank+desk+key+number according to country, but without name of bank and domiciliation)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
@@ -510,10 +518,14 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$outputlangs->load("banks");
 
+	// Use correct name of bank id according to country
+	$bickey="BICNumber";
+	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
+
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
 
-	//$onlynumber=0; $usedetailedbban=0; // For tests
+	//$onlynumber=0; $usedetailedbban=1; // For tests
 	if ($usedetailedbban)
 	{
 		$savcurx=$curx;
@@ -526,27 +538,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
-		// Use correct name of bank id according to country
-		$ibankey="IBANNumber";
-		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-		if (! empty($account->iban))
-		{
-			$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
-			$ibanDisplay = "";
-
-			for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++){
-				$ibanDisplay .= $ibanDisplay_temp[$i];
-				if($i%4 == 3 && $i > 0){
-					$ibanDisplay .= " ";
-				}
-			}
-
-			$pdf->SetFont('','B',$default_font_size - 3);
-			$pdf->SetXY($curx, $cury);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
-			$cury+=3;
-		}
-
+		/*
 		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8);
 
 		if ($usedetailedbban == 1)
@@ -609,7 +601,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		}
 
 		$curx=$savcurx;
-		$cury+=10;
+		$cury+=9;
+		*/
 	}
 	else
 	{
@@ -622,16 +615,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
-
+		
 		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
-	// Use correct name of bank id according to country
-	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
-
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
-
+	
 	if (empty($onlynumber) && ! empty($account->domiciliation))
 	{
 		$pdf->SetXY($curx, $cury);
@@ -642,10 +631,41 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
 	}
+	
+	if (! empty($account->proprio))
+	{
+		$pdf->SetXY($curx, $cury);
+		$val=$outputlangs->transnoentities("BankAccountOwner").': ' . $outputlangs->convToOutputCharset($account->proprio);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$tmpy=$pdf->getStringHeight(100, $val);
+		$cury+=$tmpy;
+	}
+	
 	else if (! $usedetailedbban) $cury+=1;
+	
+	// Use correct name of bank id according to country
+	$ibankey="IBANNumber";
+	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+	if (! empty($account->iban))
+	{
+		$ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+		$ibanDisplay = "";
+
+		for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++)
+		{
+			$ibanDisplay .= $ibanDisplay_temp[$i];
+			if($i%4 == 3 && $i > 0)	$ibanDisplay .= " ";
+		}
+
+		$pdf->SetFont('','B',$default_font_size - 3);
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
+		$cury+=3;
+	}
 
 	if (! empty($account->bic))
 	{
+		$pdf->SetFont('','B',$default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 	}
@@ -1270,7 +1290,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  *
  *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
- *  @param  Tranlate	$outputlangs		Object langs for output
+ *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
  *  @return	void
  */
@@ -1441,6 +1461,31 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 		else
 		{
 			if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+		}
+	}
+}
+
+/**
+ * Return line percent
+ *
+ * @param Object $object Object
+ * @param int $i Current line number
+ * @param Translate $outputlangs Object langs for output
+ * @param int $hidedetails Hide details (0=no, 1=yes, 2=just special lines)
+ * @param HookManager $hookmanager Hook manager instance
+ * @return void
+ */
+function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
+{
+	if ($object->lines[$i]->special_code != 3) {
+		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
+			$special_code = $object->lines[$i]->special_code;
+			if (!empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+			$parameters = array('i' => $i, 'outputlangs' => $outputlangs, 'hidedetails' => $hidedetails, 'special_code' => $special_code);
+			$action = '';
+			return $hookmanager->executeHooks('pdf_getlineprogress', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+		} else {
+			if (empty($hidedetails) || $hidedetails > 1) return $object->lines[$i]->situation_percent . '%';
 		}
 	}
 }

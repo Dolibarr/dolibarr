@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - oscommerce
-OSCommerce=OS Commerce
-OSCommerceSetup=OS Commerce moduulin asetukset
-OSCommerceSetupSaved=OS Commerce asetukset tallennetaan
-OSCommerceServer=OS Commerce Server isännän / ip
-OSCommerceDatabaseName=OS Commerce tietokannan nimi
-OSCommercePrefix=OS Commerce taulukot etuliite
-OSCommerceUser=OS Commerce tietokanta sisäänkirjoittautumissivuksesi

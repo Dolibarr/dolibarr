@@ -324,6 +324,7 @@ class PaymentSalary extends CommonObject
 		$sql.= ", datep";
 		$sql.= ", datev";
 		$sql.= ", amount";
+		$sql.= ", salary";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
 		if ($this->note) $sql.= ", note";
@@ -338,7 +339,8 @@ class PaymentSalary extends CommonObject
 		$sql.= "'".$this->fk_user."'";
 		$sql.= ", '".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
-		$sql.= ", '".$this->amount."'";
+		$sql.= ", ".$this->amount;
+		$sql.= ", ".($this->salary > 0 ? $this->salary : "null");
 		$sql.= ", '".$this->type_payment."'";
 		$sql.= ", '".$this->num_payment."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
@@ -486,14 +488,14 @@ class PaymentSalary extends CommonObject
 		global $langs;
 
 		$result='';
+        $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='payment';
-		$label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;

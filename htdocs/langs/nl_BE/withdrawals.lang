@@ -2,8 +2,6 @@
 StandingOrdersArea=Permanente opdrachten gebied
 CustomersStandingOrdersArea=Klanten permanente opdrachten gebied
 NewStandingOrder=Nieuwe doorlopende opdracht
-Withdrawals=Intrekkingen
-Withdrawal=Intrekking
 WithdrawalsReceipts=Intrekking van aandelen
 WithdrawalReceipt=Intrekking ontvangst
 LastWithdrawalReceipts=Last %s intrekking van aandelen

@@ -148,9 +148,10 @@ class Ctypent // extends CommonObject
      *
      *  @param      int		$id    	Id object
      *  @param		string	$code	Code
+     *  @param		string	$label	Label
      *  @return     int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$code='')
+    function fetch($id,$code='',$label='')
     {
     	global $langs;
         $sql = "SELECT";
@@ -163,8 +164,8 @@ class Ctypent // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."c_typent as t";
         if ($id)   $sql.= " WHERE t.id = ".$id;
         elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+        elseif ($label) $sql.= " WHERE t.libelle = '".$this->db->escape($label)."'";
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

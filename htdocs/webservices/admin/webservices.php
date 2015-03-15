@@ -90,9 +90,9 @@ print '</tr>';
 
 print '</table>';
 
-print '<br><center>';
+print '<br><div class="center">';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
-print '</center>';
+print '</div>';
 
 print '</form>';
 

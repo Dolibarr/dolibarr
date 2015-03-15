@@ -58,10 +58,10 @@ print "
 
 <noframes>
 <body>
-	<br><center>
+	<br><div class=\"center\">
 	Sorry, your browser is too old or not correctly configured to view this area.<br>
 	Your browser must support frames.<br>
-	</center>
+	</div>
 </body>
 </noframes>
 

@@ -41,8 +41,6 @@ class Prospect extends Societe
      */
     function __construct($db)
     {
-        global $config;
-
         $this->db = $db;
 
         return 0;
@@ -56,7 +54,7 @@ class Prospect extends Societe
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array("customers" => 0,"prospects" => 0);
         $clause = "WHERE";

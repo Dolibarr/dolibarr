@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005      Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>  
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
@@ -47,6 +45,7 @@ if ($user->societe_id > 0)
 	accessforbidden();
 if (! $user->rights->accounting->ventilation->dispatch)
 	accessforbidden();
+
 
 $formventilation = new FormVentilation($db);
 
@@ -107,7 +106,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product
 $sql .= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 $sql .= " AND aa.rowid = l.fk_code_ventilation";
 if (strlen(trim($_GET["search_facture"]))) {
-	$sql .= " AND f.facnumber like '%" . $_GET["search_facture"] . "%'";
+	$sql .= " AND f.ref like '%" . $_GET["search_facture"] . "%'";
 }
 if (strlen(trim($_GET["search_ref"]))) {
 	$sql .= " AND p.ref like '%" . $_GET["search_ref"] . "%'";
@@ -218,7 +217,8 @@ if ($result) {
 	print $db->error();
 }
 
+
 print "</table></form>";
 
-$db->close();
 llxFooter();
+$db->close();

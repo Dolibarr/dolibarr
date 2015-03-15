@@ -49,7 +49,7 @@ class modUser extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";
-		$this->always_enabled = 1;	// Can't be disabled
+		$this->always_enabled = true;	// Can't be disabled
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -220,7 +220,7 @@ class modUser extends DolibarrModules
         }
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .=' WHERE u.entity IN (0,'.$conf->entity.')';
+		$this->export_sql_end[$r] .=' WHERE u.entity IN ('.getEntity('user',1).')';
 	}
 
 

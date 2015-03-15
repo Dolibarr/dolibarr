@@ -38,6 +38,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 session_cache_limiter(FALSE);
 
 require_once '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);
@@ -63,7 +64,7 @@ $theme='eldy';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Helvetica, Verdana, Arial, sans-serif';
 $img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -99,12 +100,12 @@ $colorbacktitle2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabcard1=($colred+15).','.($colgreen+16).','.($colblue+17);  // card
 $colorbacktabcard2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabactive=($colred-15).','.($colgreen-15).','.($colblue-15);
-$colorbacklineimpair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line impair
-$colorbacklineimpair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line impair
-$colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line impair
-$colorbacklinepair1='255,255,255';    // line pair
-$colorbacklinepair2='255,255,255';    // line pair
-$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
+$colorbacklineimpair1='255,255,255';    // line impair
+$colorbacklineimpair2='255,255,255';    // line impair
+$colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));	// line impair
+$colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
+$colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
+$colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='#f9f9f9';
 $colortext='40,40,40';
 $fontsize='12';
@@ -124,19 +125,15 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_BACKBODY='#f9f9f9;';
-    $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
-    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
-    $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
+    $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
+    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
+    $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
-	/*if ($dol_use_jmobile)
-	{
-    	$conf->global->THEME_ELDY_BACKTABCARD1='245,245,245';    // topmenu
-		$conf->global->THEME_ELDY_BACKTABCARD2='245,245,245';
-		$conf->global->THEME_ELDY_BACKTABACTIVE='245,245,245';
-	}*/
+    $conf->global->THEME_ELDY_FONT_SIZE1='12';
+    $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
@@ -166,6 +163,14 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 	$colorbacklineimpairhover='';
 	$colorbacklinepairhover='';
 }
+
+// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
+$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
+
+// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
+$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
@@ -263,7 +268,7 @@ input, textarea, select {
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
-	padding:2px;
+	padding:4px;
 	margin-left:1px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -356,6 +361,15 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
     -moz-box-shadow: none;
     cursor: auto;
 }
+.buttonRefused {
+	pointer-events: none;
+   	cursor: default;
+	opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
 form {
     padding:0px;
     margin:0px;
@@ -387,6 +401,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+textarea.centpercent {
+	width: 96%;
 }
 .center {
     text-align: center;
@@ -423,6 +440,9 @@ th .button {
 	background-color: #777;
 	border-radius: 10px;
 }
+.movable {
+	cursor: move;
+}
 
 .borderrightlight
 {
@@ -434,11 +454,19 @@ th .button {
 /* ============================================================================== */
 
 .hideobject { display: none; }
+.minwidth100 { min-width: 100px; }
+.minwidth200 { min-width: 200px; }
+.minwidth300 { min-width: 300px; }
+.maxwidth100 { max-width: 100px; }
+.maxwidth200 { max-width: 200px; }
+.maxwidth300 { max-width: 300px; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 .maxwidthonsmartphone { max-width: 100px; }
+.maxwidth100onsmartphone { max-width: 100px; }
 .maxwidth200onsmartphone { max-width: 200px; }
+.maxwidth300onsmartphone { max-width: 300px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -525,8 +553,8 @@ margin : 0px auto;
 
 <?php
 $minwidthtmenu=66;
-$heightmenu=52;
-$heightmenu2=40;
+$heightmenu=46;			/* height of top menu, part with image */
+$heightmenu2=46;        /* height of top menu, ârt with login  */
 ?>
 
 div#tmenu_tooltip {
@@ -697,14 +725,8 @@ div.mainmenu.bank {
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1) ?>);
 }
 
-div.mainmenu.bookmark {
-}
-
 div.mainmenu.cashdesk {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1) ?>);
-}
-
-div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
@@ -727,21 +749,12 @@ div.mainmenu.ftp {
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
 
-div.mainmenu.gravatar {
-}
-
-div.mainmenu.geopipmaxmind {
-}
-
 div.mainmenu.hrm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
 div.mainmenu.members {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
-}
-
-div.mainmenu.paypal {
 }
 
 div.mainmenu.products {
@@ -756,14 +769,6 @@ div.mainmenu.project {
 div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
-
-div.mainmenu.webservices {
-}
-
-div.mainmenu.google {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/globe.png',1) ?>);
-}
-
 
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -849,7 +854,7 @@ form#login {
 	vertical-align: middle;
 }
 .login_table_title {
-	max-width: 540px;
+	max-width: 530px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -861,9 +866,9 @@ form#login {
 	margin-right: 10px;
 	padding-left:6px;
 	padding-right:6px;
-	padding-top:12px;
+	padding-top:16px;
 	padding-bottom:12px;
-	max-width: 540px;
+	max-width: 560px;
 
 	background-color: #FFFFFF;
 
@@ -891,6 +896,8 @@ div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 245px;
 	padding-top: 10px;
+	padding-left: 16px;
+	padding-right: 16px;
 	text-align: center;
 	vertical-align: middle;
 }
@@ -964,6 +971,18 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 
+.span-icon-user {
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
+}
+.span-icon-password {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
+	background-repeat: no-repeat;
+}
+/*
+.span-icon-user input, .span-icon-password input {
+	margin-right: 30px;
+}
+*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -1839,7 +1858,7 @@ table.liste td {
 }
 */
 
-.impair:hover {
+.impair:hover, td.nohover {
 <?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
 <?php } else { ?>
@@ -1865,7 +1884,7 @@ table.liste td {
 	min-height: 18px; /* seems to not be used */
 }
 
-td.nohover, .pair:hover {
+.pair:hover {
 <?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>);
 <?php } else { ?>
@@ -1958,6 +1977,10 @@ input.liste_titre {
 	background: none;
 }
 
+.margintable td {
+	border: 0px !important;
+}
+
 /* Disable shadows */
 .noshadow {
 	-moz-box-shadow: 0px 0px 0px #DDD !important;
@@ -1975,18 +1998,6 @@ div.tabBar .noborder {
 /*
  *  Boxes
  */
-
-.tdboxstats {
-<?php if ($usecss3) { ?>
-    background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 120%) !important;
-    background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 120%) !important;
-    background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 120%) !important;
-    background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 120%) !important;
-    background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 120%) !important;
-<?php } else { ?>
-	background: #ffffff !important;
-<?php } ?>
-}
 
 .boxstats {
     <?php print "float: ".$left.";\n"; ?>
@@ -2430,6 +2441,11 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
+.cal_peruserviewname { max-width: 100px; height: 22px; }
+
+.topmenuimage {
+	background-size: 28px auto;
+}
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
@@ -2461,6 +2477,7 @@ li.cal_event       { border: none; list-style-type: none; }
 	       height:18px;
 	       cursor:pointer;
 	     }
+
 
 /* ============================================================================== */
 /*  jQuery - jeditable                                                            */
@@ -2650,7 +2667,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; padding: 2px; }
+.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -2916,6 +2933,41 @@ div.dolEventError h1, div.dolEventError h2 {
 	opacity: .35;
 	filter: Alpha(Opacity=35);
 	background-image: none;
+}
+
+/* ============================================================================== */
+/*  Select2                                                                       */
+/* ============================================================================== */
+
+.select2-choice,
+.select2-drop.select2-drop-above.select2-drop-active,
+.select2-container-active .select2-choice,
+.select2-container-active .select2-choices,
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices,
+.select2-container-multi.select2-container-active .select2-choices
+{
+	border: 1px solid #aaa;
+}
+.select2-disabled
+{
+	color: #888;
+}
+.select2-drop-active
+{
+	border: 1px solid #aaa;
+	border-top: none;
+}
+a span.select2-chosen
+{
+	font-weight: normal !important;
+}
+.select2-container .select2-choice {
+	background-image: none;
+}
+.select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
+{
+	background: #FFFFFF;
 }
 
 

@@ -191,10 +191,39 @@ class pdf_rouget extends ModelePdfExpedition
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				if (! empty($object->note_public) || (! empty($object->tracking_number) && ! empty($object->shipping_method_id)))
+				// Incoterm
+				$height_incoterms = 0;
+				if ($conf->incoterm->enabled)
 				{
-					$tab_top = 88;
+					$desc_incoterms = $object->getIncotermsForPDF();
+					if ($desc_incoterms)
+					{
+						$tab_top = 88;
+
+						$pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+						$nexY = $pdf->GetY();
+						$height_incoterms=$nexY-$tab_top;
+	
+						// Rect prend une longueur en 3eme param
+						$pdf->SetDrawColor(192,192,192);
+						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
+	
+						$tab_top = $nexY+6;
+						$height_incoterms += 4;
+					}
+				}
+
+				if (! empty($object->note_public) || ! empty($object->tracking_number))
+				{
+					$tab_top = 88 + $height_incoterms;
 					$tab_top_alt = $tab_top;
+
+					$pdf->SetFont('','B', $default_font_size - 2);
+					$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top-1, $outputlangs->transnoentities("TrackingNumber")." : " . $object->tracking_number, 0, 1, false, true, 'L');
+
+					$tab_top_alt = $pdf->GetY();
+					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (! empty($object->tracking_number))
@@ -206,17 +235,24 @@ class pdf_rouget extends ModelePdfExpedition
 							{
 								// Get code using getLabelFromKey
 								$code=$outputlangs->getLabelFromKey($this->db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
-								$label=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
-								$label.=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
+								$label='';
+								if ($object->tracking_url != $object->tracking_number) $label.=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
+								$label.=$outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));
+								//var_dump($object->tracking_url != $object->tracking_number);exit;
+								if ($object->tracking_url != $object->tracking_number)
+								{
+									$label.=" : ";
+									$label.=$object->tracking_url;
+								}
 								$pdf->SetFont('','B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 7, $this->posxdesc-1, $tab_top-1, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 
-								$tab_top_alt += 7;
+								$tab_top_alt = $pdf->GetY();
 							}
 						}
 					}
 
-					// Affiche notes
+					// Notes
 					if (! empty($object->note_public))
 					{
 						$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
@@ -531,7 +567,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_creation,"daytext",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true), '', 'R');
 
 		if (! empty($object->client->code_client))
 		{
@@ -587,7 +623,7 @@ class pdf_rouget extends ModelePdfExpedition
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->client);
 
 			// Show sender
 			$posx=$this->marge_gauche;

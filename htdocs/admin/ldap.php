@@ -239,7 +239,7 @@ print '</td><td>secret</td></tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

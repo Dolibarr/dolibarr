@@ -57,11 +57,6 @@ function product_prepare_head($object, $user)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("Photos");
-	$head[$h][2] = 'photos';
-	$h++;
-
 	// Show category tab
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
@@ -116,14 +111,19 @@ function product_prepare_head($object, $user)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
-	// Attachments
+	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Photos");
+	$head[$h][2] = 'photos';
+	$h++;
+
+    // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -147,10 +147,9 @@ function product_prepare_head($object, $user)
 /**
 *  Return array head with list of tabs to view object informations.
 *
-*  @param	Object	$object		Product
 *  @return	array   	        head array with tabs
 */
-function product_admin_prepare_head($object=null)
+function product_admin_prepare_head()
 {
 	global $langs, $conf, $user;
 
@@ -166,14 +165,14 @@ function product_admin_prepare_head($object=null)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'product_admin','remove');
 
 	return $head;
 }

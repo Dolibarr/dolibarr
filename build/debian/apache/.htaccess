@@ -1,7 +1,8 @@
+# File used to disable access into directory documents
 <IfVersion >= 2.3>
 Require all denied
 </IfVersion>
 <IfVersion < 2.3>
-Order deny,allow
-Deny from all
+Order deny, allow
+Denied from all
 </IfVersion>

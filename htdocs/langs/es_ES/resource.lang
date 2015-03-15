@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Recursos
+MenuResourceAdd=Nuevo recurso
+MenuResourcePlanning=Planificación de recursos
+DeleteResource=Eliminar recurso
+ConfirmDeleteResourceElement=¿Está seguro de querer eliminar el recurso de este elemento?
+NoResourceInDatabase=Sin recursos en la base de datos.
+NoResourceLinked=Sin recursos enlazados
+
+ResourcePageIndex=Listado de recursos
+ResourceSingular=Recurso
+ResourceCard=Ficha recurso
+AddResource=Crear un recurso
+ResourceFormLabel_ref=Nombre recurso
+ResourceType=Tipo de recurso
+ResourceFormLabel_description=Descripción recurso
+
+ResourcesLinkedToElement=Recursos enlazados a elemento
+
+ShowResourcePlanning=Ver planificación de recursos
+GotoDate=Ir a fecha
+
+ResourceElementPage=Elementos de recursos
+ResourceCreatedWithSuccess=Recurso creado correctamente
+RessourceLineSuccessfullyDeleted=Línea de recurso eliminada correctamente
+RessourceLineSuccessfullyUpdated=Línea de recurso actualizada correctamente
+ResourceLinkedWithSuccess=Recurso enlazado correctamente
+
+TitleResourceCard=Ficha recurso
+ConfirmDeleteResource=¿Está seguro de querer eliminar este recurso?
+RessourceSuccessfullyDeleted=Recurso eliminado correctamente
+DictionaryResourceType=Tipo de recursos
+
+SelectResource=Seleccionar recurso

@@ -35,3 +35,6 @@ MessageKO=Mesaj de pe pagina anulat schimbul de plată
 NewPayboxPaymentReceived=O nouă plată Paybox primită
 NewPayboxPaymentFailed=O plată nouă Paybox încercată dar eşuată
 PAYBOX_PAYONLINE_SENDEMAIL=Email pentru avertizare după o plată (realizată sau nu)
+PAYBOX_PBX_SITE=Valoare pentru PBX SITE
+PAYBOX_PBX_RANG=Valoare pentru PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valoare pentru PBX ID

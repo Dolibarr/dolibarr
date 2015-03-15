@@ -2,6 +2,7 @@
 /* Copyright (C) phpBSM
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -25,20 +26,22 @@
  *       \brief      File to manage popup date selector
  */
 
-if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// disabled
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
+if (! defined('NOLOGIN')) define('NOLOGIN',1);					// disabled
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL by the main.inc.php
 $langs->load("main");
+$langs->load("agenda");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
@@ -57,7 +60,7 @@ if (GETPOST('mode') && GETPOST('mode') == 'test')
 }
 else
 {
-	print '<title>Calendar</title>';
+	print '<title>'.$langs->trans("Calendar").'</title>';
 }
 
 // Define tradMonths javascript array (we define this in datapicker AND in parent page to avoid errors with IE8)
@@ -119,7 +122,7 @@ print '</body></html>'."\n";
  * 	Convert date to timestamp
  *
  * 	@param	string		$mysqldate		Date YYYMMDD
- *  @return	timestamp					Timestamp
+ *  @return	integer					Timestamp
  */
 function xyzToUnixTimestamp($mysqldate)
 {
@@ -183,37 +186,46 @@ function displayBox($selectedDate,$month,$year)
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;&gt;</td>
 	</tr>
 	<tr class="dpDayNames">
-		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortMonday") ?></td>
-		<td width="15%"><?php echo $langs->trans("ShortTuesday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortWednesday") ?></td>
-		<td width="15%"><?php echo $langs->trans("ShortThursday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortFriday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortSaturday") ?></td>
+	<?php
+	$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
+	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
+	for( $i=0; $i < 7; $i++ )
+	{
+		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";
+	}
+	?>
 	</tr>
 	<?php
-	//print "x ".$thedate." y";
+	//print "x ".$thedate." y";			// $thedate = first day of month
 	$firstdate=dol_getdate($thedate);
-	$mydate=$firstdate;
+	//var_dump($firstdateofweek);
+	$mydate=dol_get_first_day_week(1, $month, $year, true);	// mydate = cursor date
 
 	// Loop on each day of month
 	$stoploop=0; $day=1; $cols=0;
 	while (! $stoploop)
 	{
 		//print_r($mydate);
-		if($firstdate==$mydate)	// At first run
+		if ($mydate < $firstdate)	// At first run
 		{
 			echo "<TR class=\"dpWeek\">";
+			//echo $conf->global->MAIN_START_WEEK.' '.$firstdate["wday"].' '.$startday;
 			$cols=0;
-			for($i=0;$i< $mydate["wday"];$i++)
+			for ($i = 0; $i < 7; $i++)
 			{
+				$w = ($i + $startday) % 7;
+				if ($w == $firstdate["wday"])
+				{
+					$mydate = $firstdate;
+					break;
+				}
 				echo "<TD>&nbsp;</TD>";
 				$cols++;
 			}
 		}
 		else
 		{
-			if ($mydate["wday"]==0)
+			if ($mydate["wday"] == $startday)
 			{
 				echo "<TR class=\"dpWeek\">";
 				$cols=0;
@@ -237,7 +249,7 @@ function displayBox($selectedDate,$month,$year)
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 
-		if ($mydate["wday"]==6) echo "</TR>\n";
+		if (($mydate["wday"] + 1) % 7 == $startday) echo "</TR>\n";
 
 		//$thedate=strtotime("tomorrow",$thedate);
 		$day++;
@@ -277,4 +289,3 @@ function displayBox($selectedDate,$month,$year)
 </table>
 		<?php
 }//end function
-

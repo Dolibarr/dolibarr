@@ -37,6 +37,11 @@ class Fichinter extends CommonObject
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 
+	/**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'ref';
+
 	var $id;
 
 	var $socid;		// Id client
@@ -79,6 +84,9 @@ class Fichinter extends CommonObject
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='StatusInterInvoiced';
+		$this->statuts_logo[0]='statut0';
+		$this->statuts_logo[1]='statut4';
+		$this->statuts_logo[2]='statut6';
 	}
 
 
@@ -508,37 +516,23 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		if ($mode == 0)
-		{
 			return $langs->trans($this->statuts[$statut]);
-		}
+
 		if ($mode == 1)
-		{
 			return $langs->trans($this->statuts_short[$statut]);
-		}
+
 		if ($mode == 2)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
+
 		if ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
+
 		if ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
+
 		if ($mode == 5)
-		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-		}
+			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]);
+
 	}
 
 	/**
@@ -553,15 +547,17 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = '<u>' . $langs->trans("ShowIntervention") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='intervention';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
@@ -572,7 +568,7 @@ class Fichinter extends CommonObject
 	 *	Returns the next non used reference of intervention
 	 *	depending on the module numbering assets within FICHEINTER_ADDON
 	 *
-	 *	@param	    Societe		$soc		Object society
+	 *	@param	    Societe		$soc		Thirdparty object
 	 *	@return     string					Free reference for intervention
 	 */
 	function getNextNumRef($soc)
@@ -580,25 +576,33 @@ class Fichinter extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("interventions");
 
-		$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
-
 		if (! empty($conf->global->FICHEINTER_ADDON))
 		{
-			$file = $conf->global->FICHEINTER_ADDON.".php";
-			$classname = $conf->global->FICHEINTER_ADDON;
-			if (! file_exists($dir.$file))
-			{
-				$file='mod_'.$file;
-				$classname='mod_'.$classname;
+			$mybool = false;
+
+			$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
+			$classname = "mod_".$conf->global->FICHEINTER_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+			foreach ($dirmodels as $reldir) {
+
+				$dir = dol_buildpath($reldir."core/modules/fichinter/");
+
+				// Load file with numbering class (if found)
+				$mybool|=@include_once $dir.$file;
 			}
 
-			// Chargement de la classe de numerotation
-			require_once $dir.$file;
+			if (! $mybool)
+			{
+				dol_print_error('',"Failed to include file ".$file);
+				return '';
+			}
 
 			$obj = new $classname();
-
 			$numref = "";
-			$numref = $obj->getNumRef($soc,$this);
+			$numref = $obj->getNextValue($soc,$this);
 
 			if ( $numref != "")
 			{
@@ -612,6 +616,7 @@ class Fichinter extends CommonObject
 		}
 		else
 		{
+			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
 			return "";
 		}
@@ -884,10 +889,10 @@ class Fichinter extends CommonObject
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
-	 *  @param		array	$array_option			Array option
+	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option='')
+	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_options='')
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -903,8 +908,8 @@ class Fichinter extends CommonObject
 			$line->datei        = $date_intervention;
 			$line->duration     = $duration;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$line->array_options=$array_options;
 			}
 
 			$result=$line->insert($user);
@@ -946,7 +951,7 @@ class Fichinter extends CommonObject
 		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
 		$this->duree = 0;
-		$nbp = 20;
+		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{

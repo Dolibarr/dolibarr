@@ -50,7 +50,7 @@ class modDeplacement extends DolibarrModules
 		$this->description = "Gestion des notes de frais et deplacements";		// Si traduction Module75Desc non trouvee
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = 'dolibarr_deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -95,17 +95,17 @@ class modDeplacement extends DolibarrModules
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
 
-    	$this->rights[3][0] = 174;
-		$this->rights[3][1] = 'Lire toutes les notes de frais';
-		$this->rights[3][2] = 'd';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'readall';
+    	$this->rights[4][0] = 174;
+		$this->rights[4][1] = 'Lire toutes les notes de frais';
+		$this->rights[4][2] = 'd';
+		$this->rights[4][3] = 0;
+		$this->rights[4][4] = 'readall';
 
-		$this->rights[6][0] = 178;
-		$this->rights[6][1] = 'Exporter les notes de frais et deplacements';
-		$this->rights[6][2] = 'd';
-		$this->rights[6][3] = 0;
-		$this->rights[6][4] = 'export';
+		$this->rights[5][0] = 178;
+		$this->rights[5][1] = 'Exporter les notes de frais et deplacements';
+		$this->rights[5][2] = 'd';
+		$this->rights[5][3] = 0;
+		$this->rights[5][4] = 'export';
 
 		// Exports
 		$r=0;
@@ -124,7 +124,7 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r] .=', '.MAIN_DB_PREFIX.'deplacement as d';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('deplacement',1).')';
 	}
 
 

@@ -53,7 +53,7 @@ $search_email=GETPOST("search_email");
 $search_skype=GETPOST("search_skype");
 $search_priv=GETPOST("search_priv");
 $search_categ=GETPOST("search_categ",'int');
-$search_statu=GETPOST("search_status",'int');
+$search_status=GETPOST("search_status",'int');
 if ($search_status=='') $search_status=1; // always display activ customer first
 
 
@@ -96,9 +96,9 @@ else if ($type == "o")
 	$urlfiche="";
 }
 
-if (GETPOST('button_removefilter'))
+if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both tests are required to be compatible with all browsers
 {
-	$search_firstlast_only="";
+    $search_firstlast_only="";
     $search_lastname="";
     $search_firstname="";
     $search_societe="";
@@ -300,9 +300,9 @@ if ($result)
     print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("PostOrFunction"),$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
     if (! empty($conf->skype->enabled)) { print_liste_field_titre($langs->trans("Skype"),$_SERVER["PHP_SELF"],"p.skype", $begin, $param, '', $sortfield,$sortorder); }
@@ -356,8 +356,8 @@ if ($result)
     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    print '<input type="image" value="button_search" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '<input type="image" value="button_removefilter" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '<input type="image" name="button_search" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<input type="image" name="button_removefilter" class="liste_titre" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     print '</tr>';
 

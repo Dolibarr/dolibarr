@@ -59,7 +59,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans("Company"); ?></td>
+	<td><?php echo $langs->trans("ThirdParty"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['company']; ?></td>
 </tr>
 

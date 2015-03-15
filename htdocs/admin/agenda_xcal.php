@@ -136,9 +136,9 @@ print "</tr>";
 
 print '</table>';
 
-print '<br><center>';
+print '<br><div class="center">';
 print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
-print "</center>";
+print "</div>";
 
 print "</form>\n";
 
@@ -171,7 +171,7 @@ $message.='<br>';
 print $message;
 
 $message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
+//$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);

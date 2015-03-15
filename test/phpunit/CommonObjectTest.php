@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/CommonObjectTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -30,11 +30,10 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 
-if (empty($user->id))
-{
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+if (empty($user->id)) {
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -48,138 +47,140 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class CommonObjectTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return CommonObjectTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return CommonObjectTest
+     */
+    function __construct()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-    	print __METHOD__."\n";
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
     }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
+    }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return  void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return  void
+    */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
 
     /**
-     *	testFetchUser
+     *  testFetchUser
      *
-     *	@return	void
+     *  @return void
      */
     public function testFetchUser()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-		$localobject->fetch(1);
+        $localobject=new Commande($this->savdb);
+        $localobject->fetch(1);
 
-    	$result=$localobject->fetch_user(1);
+        $result=$localobject->fetch_user(1);
 
-		print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($localobject->user->id, 0);
-    	return $result;
+        print __METHOD__." result=".$result."\n";
+        $this->assertLessThan($localobject->user->id, 0);
+        return $result;
     }
 
     /**
-     *	testFetchProjet
+     *  testFetchProjet
      *
-     *	@return	void
+     *  @return void
      */
     public function testFetchProjet()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-		$localobject->fetch(1);
-    	$result=$localobject->fetch_projet();
+        $localobject=new Commande($this->savdb);
+        $localobject->fetch(1);
+        $result=$localobject->fetch_projet();
 
-		print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result,0);
-    	return $result;
+        print __METHOD__." result=".$result."\n";
+        $this->assertLessThanOrEqual($result,0);
+        return $result;
     }
 
     /**
-     *	testFetchThirdParty
+     *  testFetchThirdParty
      *
-     *	@return	void
+     *  @return void
      */
     public function testFetchThirdParty()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Commande($this->savdb);
-		$localobject->fetch(1);
+        $localobject=new Commande($this->savdb);
+        $localobject->fetch(1);
 
-    	$result=$localobject->fetch_thirdparty();
+        $result=$localobject->fetch_thirdparty();
 
-		print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result,0);
-    	return $result;
+        print __METHOD__." result=".$result."\n";
+        $this->assertLessThanOrEqual($result,0);
+        return $result;
     }
 }

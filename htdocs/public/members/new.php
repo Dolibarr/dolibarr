@@ -110,9 +110,9 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
     {
         $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
     }
-    print '<center>';
+    print '<div class="center">';
     print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
-    print '</center><br>';
+    print '</div><br>';
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
 }
@@ -250,6 +250,7 @@ if ($action == 'add')
         // Fill array 'array_options' with data from add form
         $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels,$adh);
+		if ($ret < 0) $error++;
 
         $result=$adh->create($user);
         if ($result > 0)
@@ -343,9 +344,9 @@ if ($action == 'added')
 
     // Si on a pas ete redirige
     print '<br>';
-    print '<center>';
+    print '<div class="center">';
     print $langs->trans("NewMemberbyWeb");
-    print '</center>';
+    print '</div>';
 
     llxFooterVierge();
     exit;
@@ -591,13 +592,13 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
 print "</table>\n";
 
 // Save
-print '<br><center>';
+print '<br><div class="center">';
 print '<input type="submit" value="'.$langs->trans("Save").'" id="submitsave" class="button">';
 if (! empty($backtopage))
 {
     print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button">';
 }
-print '</center>';
+print '</div>';
 
 print "<br></div></form>\n";
 print '</div>';

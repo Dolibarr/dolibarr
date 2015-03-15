@@ -80,6 +80,8 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -339,6 +341,26 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(7200,$result);
 
         return $result;
+    }
+
+    /**
+     * testDolGetFirstDayWeek
+     *
+     * @return int
+     */
+    public function testDolGetFirstDayWeek()
+    {
+    	global $conf;
+
+    	$day=3; $month=2; $year=2015;
+    	$conf->global->MAIN_START_WEEK = 1;	// start on monday
+   		$prev = dol_get_first_day_week($day, $month, $year);
+		$this->assertEquals(2, (int) $prev['first_day']);		// monday for month 2, year 2014 is the 2
+
+    	$day=3; $month=2; $year=2015;
+    	$conf->global->MAIN_START_WEEK = 0;	// start on sunday
+   		$prev = dol_get_first_day_week($day, $month, $year);
+		$this->assertEquals(1, (int) $prev['first_day']);		// sunday for month 2, year 2015 is the 1st
     }
 
 }

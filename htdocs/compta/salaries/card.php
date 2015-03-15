@@ -67,8 +67,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 
-	$sal->accountid=GETPOST("accountid");
-	$sal->fk_user=GETPOST("fk_user");
+	$sal->accountid=GETPOST("accountid","int");
+	$sal->fk_user=GETPOST("fk_user","int");
 	$sal->datev=$datev;
 	$sal->datep=$datep;
 	$sal->amount=price2num(GETPOST("amount"));
@@ -79,6 +79,11 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->type_payment=GETPOST("paymenttype");
 	$sal->num_payment=GETPOST("num_payment");
 	$sal->fk_user_creat=$user->id;
+
+	// Set user current salary as ref salaray for the payment
+	$fuser=new User($db);
+	$fuser->fetch(GETPOST("fk_user","int"));
+	$sal->salary=$fuser->salary;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
@@ -248,7 +253,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -274,8 +279,11 @@ if ($action == 'create')
 
 	print "<br>";
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -365,7 +373,7 @@ if ($id)
 	print "<div class=\"tabsAction\">\n";
 	if ($salpayment->rappro == 0)
 	{
-		if (! empty($user->rights->tax->charges->supprimer))
+		if (! empty($user->rights->salaries->delete))
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$salpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}

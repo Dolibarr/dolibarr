@@ -140,6 +140,7 @@ class Contact extends CommonObject
 		$sql.= ", statut";
 		$sql.= ", canvas";
 		$sql.= ", entity";
+		$sql.= ",ref_ext";
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
@@ -152,6 +153,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
         $sql.= " ".$conf->entity.",";
+	$sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
@@ -492,10 +494,12 @@ class Contact extends CommonObject
 	 *
 	 *  @param      int		$id          id du contact
 	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
+     *  @param      string  $ref_ext     External reference, not given by Dolibarr
+	 *  @return     int     		     -1 if KO, 0 if OK but not found, 1 if OK
 	 */
-	function fetch($id, $user=null)
+	function fetch($id, $user=0, $ref_ext='')
 	{
+		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 		global $langs;
 
 		$langs->load("companies");
@@ -517,7 +521,8 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		$sql.= " WHERE c.rowid = ". $id;
+		if ($id) $sql.= " WHERE c.rowid = ". $id;
+		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -560,7 +565,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        $this->skype			= $obj->skype;
+        		$this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -887,17 +892,19 @@ class Contact extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
+        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
+			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs),'contact').$lienfin.' ');
+        if ($withpicto) $result.=($lien.img_object($label, 'contact', 'class="classfortooltip"').$lienfin.' ');
 		$result.=$lien.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
 		return $result;
 	}
@@ -996,8 +1003,6 @@ class Contact extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs;
-
 		// Get first id of existing company and save it into $socid
 		$socid = 0;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe ORDER BY rowid LIMIT 1";

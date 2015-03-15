@@ -101,6 +101,7 @@ if ($action == 'add')
 
 			// Fill array 'array_options' with data from add form
       		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
       		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 			else $object->entity = $_POST["entity"];
@@ -178,11 +179,12 @@ if ($action == 'update')
         $object->oldcopy=dol_clone($object);
 
 		$object->name	= trim($_POST["group"]);
-		$object->nom	= $this->name;			// For backward compatibility
+		$object->nom	= $object->name;			// For backward compatibility
 		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
 
 		// Fill array 'array_options' with data from add form
       	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 		else $object->entity = $_POST["entity"];
@@ -264,7 +266,7 @@ if ($action == 'create')
 
     print "</table>\n";
 
-    print '<center><br><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></center>';
+    print '<br><div class="center"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></div>';
 
     print "</form>";
 }
@@ -536,7 +538,7 @@ else
 
             print "</table>\n";
 
-            print '<center><br><input class="button" value="'.$langs->trans("Save").'" type="submit"></center>';
+            print '<br><div class="center"><input class="button" value="'.$langs->trans("Save").'" type="submit"></div>';
 
             print '</form>';
 

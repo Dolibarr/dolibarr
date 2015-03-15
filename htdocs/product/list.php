@@ -87,12 +87,14 @@ else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
  * Actions
  */
 
-if (isset($_POST["button_removefilter_x"]))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$sref="";
 	$sbarcode="";
 	$snom="";
 	$search_categ=0;
+	$tosell="";
+	$tobuy="";
 }
 
 
@@ -127,6 +129,8 @@ else
 	{
 		$texte = $langs->trans("ProductsAndServices");
 	}
+    // Add what we are searching for
+    if (! empty($sall)) $texte.= " - ".$sall;
 
     $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
     $sql.= ' p.fk_product_type, p.tms as datem,';
@@ -379,7 +383,7 @@ else
 
     		print '<td class="liste_titre nowrap" align="right">';
     		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     		print '</td>';
     		print '</tr>';
 
@@ -416,6 +420,7 @@ else
     			print '<td class="nowrap">';
     			$product_static->id = $objp->rowid;
     			$product_static->ref = $objp->ref;
+                $product_static->label = $objp->label;
     			$product_static->type = $objp->fk_product_type;
     			print $product_static->getNomUrl(1,'',24);
     			print "</td>\n";
@@ -452,8 +457,11 @@ else
     			if (empty($conf->global->PRODUIT_MULTIPRICES))
     			{
     			    print '<td align="right">';
-        			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-        			else print price($objp->price).' '.$langs->trans("HT");
+    			    if ($objp->tosell)
+    			    {
+        				if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+        				else print price($objp->price).' '.$langs->trans("HT");
+    			    }
         			print '</td>';
     			}
 
@@ -461,7 +469,7 @@ else
     			if ($user->rights->fournisseur->lire)
     			{
         			print  '<td align="right">';
-        			if ($objp->minsellprice != '')
+    			    if ($objp->tobuy && $objp->minsellprice != '')
         			{
     					//print price($objp->minsellprice).' '.$langs->trans("HT");
     					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
@@ -507,7 +515,7 @@ else
                 $product_static->status     = $objp->tosell;
                 // Status (to sell)
                 print '<td align="center" nowrap="nowrap">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
                 } else {
                     print $product_static->LibStatut($objp->tosell,5,0);
@@ -516,7 +524,7 @@ else
 
                 // Status (to buy)
                 print '<td align="center" nowrap="nowrap">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer) {
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
                 } else {
                     print $product_static->LibStatut($objp->tobuy,5,1);

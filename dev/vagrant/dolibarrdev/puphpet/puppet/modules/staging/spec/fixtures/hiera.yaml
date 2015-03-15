@@ -1,7 +1,0 @@
----
-:backends: - puppet
-
-:hierarchy: - common
-
-:puppet:
-    :datasource: data

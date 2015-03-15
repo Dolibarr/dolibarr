@@ -469,7 +469,6 @@ function backup_tables($outputfile, $tables='*')
 
 	        $sql='SELECT * FROM '.$table;
 	        $result = $db->query($sql);
-	        $num_fields = $db->num_rows($result);
 	        while($row = $db->fetch_row($result))
 	        {
 	            // For each row of data we print a line of INSERT
@@ -480,12 +479,12 @@ function backup_tables($outputfile, $tables='*')
 	                if ($row[$j] == null and !is_string($row[$j])) {
 	                    // IMPORTANT: if the field is NULL we set it NULL
 	                    $row[$j] = 'NULL';
-	                } elseif(is_string($row[$j]) and $row[$j] == '') {
+	                } elseif(is_string($row[$j]) && $row[$j] == '') {
 	                    // if it's an empty string, we set it as an empty string
 	                    $row[$j] = "''";
-	                } elseif(is_numeric($row[$j]) and !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+	                } elseif(is_numeric($row[$j]) && !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 	                    // if it's a number, we return it as-is
-	                    $row[$j] = $row[$j];
+//	                    $row[$j] = $row[$j];
 	                } else { // else for all other cases we escape the value and put quotes around
 	                    $row[$j] = addslashes($row[$j]);
 	                    $row[$j] = preg_replace("#\n#", "\\n", $row[$j]);

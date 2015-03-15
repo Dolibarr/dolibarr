@@ -42,7 +42,7 @@ $tab=array();
 $tab = $_SESSION['poscart'];
 
 $tab_size=count($tab);
-if ($tab_size <= 0) print '<center>'.$langs->trans("NoArticle").'<center><br>';
+if ($tab_size <= 0) print '<div class="center">'.$langs->trans("NoArticle").'</div><br>';
 else
 {
     for ($i=0;$i < $tab_size;$i++)
@@ -67,8 +67,6 @@ else
     }
 }
 
-$obj_facturation->calculTotaux();
-$total_ttc = $obj_facturation->prixTotalTtc();
 echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price(price2num($total_ttc, 'MT'),0,$langs,0,0,-1,$conf->currency).'<br></p>'."\n");
 
 ?></div>

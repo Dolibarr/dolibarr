@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Доставчици
 Supplier=Снабдител
-AddSupplier=Добави доставчик
+AddSupplier=Create a supplier
 SupplierRemoved=Изтрити доставчик
 SuppliersInvoice=Фактура
 NewSupplier=Нов доставчик
@@ -40,5 +40,7 @@ AddSupplierInvoice=Създаване на фактура
 ListOfSupplierProductForSupplier=Списък на доставчици на стоки и цени <b>%s</b>
 NoneOrBatchFileNeverRan=Няма или не се изпълнява партида <b>%s</b> наскоро
 SentToSuppliers=Sent to suppliers
-ListOfSupplierOrders=List of supplier orders
-MenuOrdersSupplierToBill=Supplier orders to invoice
+ListOfSupplierOrders=Списък на нарежданията за доставчика
+MenuOrdersSupplierToBill=Поръчки на доставчика за фактуриране
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

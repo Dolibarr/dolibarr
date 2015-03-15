@@ -176,7 +176,10 @@ class Ldap
 
 			if (is_resource($this->connection))
 			{
+				// Execute the ldap_set_option here (after connect and before bind)
 				$this->setVersion();
+				ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
+
 
 				if ($this->serverType == "activedirectory")
 				{
@@ -798,7 +801,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int|false|array					<0 or false if KO, array if OK
 	 */
 	function getAttribute($dn,$filter)
 	{

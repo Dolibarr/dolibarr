@@ -416,12 +416,6 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 
 print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
-$helptext1=''; $helptext2='';
-$helptext1.=$langs->trans("ECMAreaDesc");
-$helptext1.=$langs->trans("ECMAreaDesc2");
-$helptext2.=$langs->trans("ECMAreaDesc");
-$helptext2.=$langs->trans("ECMAreaDesc2");
-
 /*
 print '<div class="hideonsmartphone">';
 print $langs->trans("ECMAreaDesc")."<br>";
@@ -670,7 +664,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$userstatic->lastname=$val['login_c'];
     			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
     			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
+    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
     			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
     			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';

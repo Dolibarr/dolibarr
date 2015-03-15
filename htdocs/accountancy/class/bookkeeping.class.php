@@ -27,7 +27,7 @@
 /**
  *	Class to manage accountancy book keeping
  */
-class BookKeeping
+class BookKeeping extends CommonObject
 {
 	var $db;
 	var $error;
@@ -221,12 +221,10 @@ class BookKeeping
 	 * Insert line into bookkeeping
 	 *
 	 * @param 	User	$user		User who inserted operation
-	 * @return			$result		Result
+	 * @return	int <0 KO >0 OK
 	 */
 	function create($user='')
 	{
-		global $conf, $user, $langs;
-
 		$this->piece_num = 0;
 
 		// first check if line not yet in bookkeeping
@@ -276,8 +274,9 @@ class BookKeeping
 				}
 
 				$now = dol_now();
-				if (empty($this->date_create))
-					$this->date_create = $now();
+				if (empty($this->date_create)) {
+					$this->date_create = $now;
+				}
 
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (doc_date, ";
 				$sql .= "doc_type, doc_ref,fk_doc,fk_docdet,code_tiers,numero_compte,label_compte,";
@@ -330,23 +329,19 @@ class BookKeeping
 		$sql .= " WHERE import_key = '" . $importkey . "'";
 
 		$resql = $this->db->query($sql);
-		if (! $resql) {
-			$error ++;
-			$this->errors[] = "Error " . $this->db->lasterror();
-		}
 
-		// Commit or rollback
-		if ($error) {
+		if (! $resql) {
+			$this->errors[] = "Error " . $this->db->lasterror();
 			foreach ( $this->errors as $errmsg ) {
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return - 1 * $error;
-		} else {
-			$this->db->commit();
-			return 1;
+			return - 1;
 		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
@@ -358,7 +353,6 @@ class BookKeeping
 	 */
 	function create_std($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -448,7 +442,7 @@ class BookKeeping
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
 
-			if (! $notrigger) {
+//			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -458,7 +452,7 @@ class BookKeeping
 				// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// // End call triggers
-			}
+//			}
 		}
 
 		// Commit or rollback
@@ -484,7 +478,6 @@ class BookKeeping
 	 */
 	function update($user = 0, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -553,8 +546,8 @@ class BookKeeping
 			$this->errors[] = "Error " . $this->db->lasterror();
 		}
 
-		if (! $error) {
-			if (! $notrigger) {
+//		if (! $error) {
+//			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -564,8 +557,8 @@ class BookKeeping
 				// $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// // End call triggers
-			}
-		}
+//			}
+//		}
 
 		// Commit or rollback
 		if ($error) {
@@ -590,21 +583,17 @@ class BookKeeping
 	 */
 	function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Call trigger
-				$result=$this->call_trigger('ACCOUNTING_NUMPIECE_DELETE',$user);
-				if ($result < 0) $error++;
-                // End call triggers
-			}
-		}
+//		if (! $notrigger)
+//		{
+//			// Call trigger
+//			$result=$this->call_trigger('ACCOUNTING_NUMPIECE_DELETE',$user);
+//			if ($result < 0) $error++;
+//            // End call triggers
+//		}
 
 		if (! $error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
@@ -648,10 +637,10 @@ class BookKeeping
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 
+		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 
-		dol_syslog(get_class($this) . "::export_bookkeping sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->linesexport = array ();
 

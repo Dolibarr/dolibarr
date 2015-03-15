@@ -153,11 +153,11 @@ function html_print_paypal_footer($fromcompany,$langs)
 	}
 
 	print '<br><br><hr>'."\n";
-	print '<center><font style="font-size: 10px;">'."\n";
+	print '<div class="center"><font style="font-size: 10px;">'."\n";
 	print $fromcompany->name.'<br>';
 	print $line1.'<br>';
 	print $line2;
-	print '</font></center>'."\n";
+	print '</font></div>'."\n";
 }
 
 /**

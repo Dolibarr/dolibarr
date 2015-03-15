@@ -133,9 +133,10 @@ class FormFile
                 if ($perm)
                 {
                 	$langs->load('other');
-                    $out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
-                    $out .= ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
-                    $out .= ')';
+                    //$out .= ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
+                    $out .= ' ';
+                    $out.=info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
+                    //$out .= ')';
                 }
             }
             else
@@ -270,7 +271,13 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        $printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
+
+        $printer=0;
+        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
+        {
+            $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
+        }
+
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
@@ -308,6 +315,15 @@ class FormFile
                 {
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
                     $modellist=ModelePDFPropales::liste_modeles($this->db);
+                }
+            }
+			else if ($modulepart == 'askpricesupplier')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/askpricesupplier/modules_askpricesupplier.php';
+                    $modellist=ModelePDFAskPriceSupplier::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'commande')
@@ -431,17 +447,17 @@ class FormFile
             {
                 $modellist='';
             }
-            else
+            else if ($modulepart != 'agenda')
             {
-                // For normalized standard modules
-                $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+            	// For normalized standard modules
+            	$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
                 {
-                    $res=include_once $file;
+                	$res=include_once $file;
                 }
                 // For normalized external modules
                 else
-              {
+				{
                 	$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 	$res=include_once $file;
                 }
@@ -451,7 +467,7 @@ class FormFile
                     $modellist=call_user_func($class.'::liste_modeles',$this->db);
                 }
                 else
-                {
+              {
                     dol_print_error($this->db,'Bad value for modulepart');
                     return -1;
                 }
@@ -592,8 +608,8 @@ class FormFile
 						$out.= '<td align="right">';
 						if ($delallowed)
 						{
-							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
-							$out.= ($param?'&'.$param:'');
+							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
+							$out.= ($param?'&amp;'.$param:'');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out.= '">'.img_picto($langs->trans("Delete"), 'delete.png').'</a>';
@@ -602,9 +618,9 @@ class FormFile
 						if ($printer)
 						{
 							//$out.= '<td align="right">';
-    	                    $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
-        	                $out.= ($param?'&'.$param:'');
-            	            $out.= '">'.img_picto($langs->trans("Print"),'printer.png').'</a>';
+                            $out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+                            $out.= ($param?'&amp;'.$param:'');
+                            $out.= '">'.img_picto($langs->trans("PrintFile", $relativepath),'printer.png').'</a>';
 						}
 						if ($morepicto)
 						{
@@ -663,10 +679,9 @@ class FormFile
     	if (! function_exists('dol_dir_list')) include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
-
     	$this->numoffiles=0;
 
-    	$file_list=dol_dir_list($filedir, 'files', 0, preg_quote($modulesubdir.'.pdf','/'), '\.meta$|\.png$');
+		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir).'.pdf','/'), '\.meta$|\.png$');
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -768,7 +783,7 @@ class FormFile
 
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-			$var=false;
+			$var=true;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -844,7 +859,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -915,6 +930,11 @@ class FormFile
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($this->db);
         }
+        else if ($modulepart == 'askpricesupplier')
+        {
+            include_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
+            $object_instance=new AskPriceSupplier($this->db);
+        }
         else if ($modulepart == 'order')
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -976,6 +996,7 @@ class FormFile
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
                 if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+				if ($modulepart == 'askpricesupplier') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
@@ -986,7 +1007,6 @@ class FormFile
                 if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
-
                 $found=0;
                 if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
                 {
@@ -995,7 +1015,19 @@ class FormFile
                 else
                 {
                     //print 'Fetch '.$id." - ".$ref.'<br>';
-                    $result=$object_instance->fetch($id,$ref);
+
+                    if ($id) {
+                        $result = $object_instance->fetch($id);
+                    } else {
+                        //fetchOneLike looks for objects with wildcards in its reference.
+                        //It is useful for those masks who get underscores instead of their actual symbols
+                        //fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
+                        //that's why we look only look fetchOneLike when fetch returns 0
+                        if (!$result = $object_instance->fetch('', $ref)) {
+                            $result = $object_instance->fetchOneLike($ref);
+                        }
+                    }
+
                     if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
                     if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
@@ -1032,7 +1064,7 @@ class FormFile
 
         if (count($filearray) == 0)
         {
-            print '<tr '.$bc[$var].'><td colspan="4">';
+            print '<tr '.$bc[false].'><td colspan="4">';
             if (empty($textifempty)) print $langs->trans("NoFileFound");
             else print $textifempty;
             print '</td></tr>';
@@ -1088,6 +1120,8 @@ class FormFile
         global $user, $conf, $langs, $user;
         global $bc;
         global $sortfield, $sortorder;
+
+        $langs->load("link");
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
         $link = new Link($this->db);
@@ -1150,7 +1184,7 @@ class FormFile
         $nboflinks = count($links);
         if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        $var = false;
+        $var = true;
         foreach ($links as $link)
         {
             $var =! $var;
@@ -1197,7 +1231,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[$var] . '><td colspan="5">';
+            print '<tr ' . $bc[false] . '><td colspan="5">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }

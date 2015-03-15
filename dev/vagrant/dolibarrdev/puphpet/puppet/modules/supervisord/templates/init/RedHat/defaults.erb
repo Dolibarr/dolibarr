@@ -1,8 +1,0 @@
-# this is sourced by the supervisord init script
-# written by jkoppe
-
-set -a 
-
-# should probably put both of these options as runtime arguments 
-OPTIONS="-c <%= @config_file %>"
-PIDFILE=<%= @run_path %><%= @pid_file %>

@@ -254,6 +254,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
+%_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
 %_datadir/dolibarr/htdocs/externalsite
 %_datadir/dolibarr/htdocs/fichinter
@@ -270,7 +271,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
-%_datadir/dolibarr/htdocs/printipp
+%_datadir/dolibarr/htdocs/printing
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
@@ -571,26 +572,4 @@ fi
 * Wed Oct 29 2014 Laurent Destailleur 3.7.0-0.3
 - Upstream release
 
-* Wed Sep 24 2014 Laurent Destailleur 3.6.1-0.3
-- Upstream release
 
-* Wed Jul 15 2014 Laurent Destailleur 3.6.0-0.3
-- Upstream release
-
-* Tue Jul 8 2014 Laurent Destailleur 3.5.5-0.3
-- Upstream release
-
-* Tue Jul 1 2014 Laurent Destailleur 3.5.4-0.3
-- Upstream release
-
-* Fri May 2 2014 Laurent Destailleur 3.5.3-0.3
-- Upstream release
-
-* Fri Feb 14 2014 Laurent Destailleur 3.5.2-0.3
-- Upstream release
-
-* Fri Feb 7 2014 Laurent Destailleur 3.5.1-0.3
-- Upstream release
-
-* Mon Dec 30 2013 Laurent Destailleur 3.5.0-0.3
-- Initial version (#723326)

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Līgumu sadaļa
 ListOfContracts=Līgumu sarakstu
-LastContracts=Pēdējās %s modificēts līgumus
+LastModifiedContracts=Last %s modified contracts
 AllContracts=Visi līgumi
 ContractCard=Līguma kartiņa
 ContractStatus=Līgums statuss
@@ -27,7 +27,7 @@ MenuRunningServices=Darbojošies pakalpojumi
 MenuExpiredServices=Beigušies pakalpojumi
 MenuClosedServices=Slēgtie pakalpojumi
 NewContract=Jaunu līgumu
-AddContract=Pievienot līgums
+AddContract=Izveidot līgmu
 SearchAContract=Meklēt līgumu
 DeleteAContract=Dzēst līgumu
 CloseAContract=Slēgt līgumu
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Saraksts darbojas līguma līniju
 ListOfRunningServices=Saraksts ar aktīvajiem pakalpojumiem
 NotActivatedServices=Neaktīvais pakalpojumi (starp apstiprinātiem līgumiem)
 BoardNotActivatedServices=Pakalpojumi aktivizēt starp apstiprinātiem līgumiem
-LastContracts=Pēdējās %s modificēts līgumus
+LastContracts=Pēdējie %s līgumi
 LastActivatedServices=Pēdējais %s aktivizētais pakalpojums
 LastModifiedServices=Pēdējais %s labotais pakalpojums
 EditServiceLine=Edit servisa līnija
@@ -91,6 +91,7 @@ ListOfServicesToExpire=Saraksts pakalpojumu beigsies
 NoteListOfYourExpiredServices=Šajā sarakstā ir tikai pakalpojumu līgumi par trešo pušu jums ir saistītas kā pārdošanas pārstāvis.
 StandardContractsTemplate=Standard contracts template
 ContactNameAndSignature=For %s, name and signature:
+OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Tirdzniecības pārstāvis, parakstot līgumu,

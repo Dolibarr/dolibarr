@@ -90,7 +90,8 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	if (empty($categorie->error))
 	{
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$categorie);
-		
+		if ($ret < 0) $error++;
+
 		if ($categorie->update($user) > 0)
 		{
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
@@ -163,8 +164,7 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 print '</table>';
 print '<br>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</center>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

@@ -57,7 +57,7 @@ $pos=$extrafields->attribute_pos[$attrname];
 $alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 
-if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param))
+if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
 	$param_chain = '';
 	foreach ($param['options'] as $key => $value)
@@ -68,7 +68,7 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 		}
 	}
 }
-elseif ($type== 'sellist')
+elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 {
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -89,7 +89,7 @@ elseif ($type== 'sellist')
 <tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <?php
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio')))
+if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($type == 'chkbxlst') || ($type == 'radio'))
 {
 ?>
 <tr id="value_choice">
@@ -121,4 +121,4 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 
 </form>
 
-<!-- END PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- END PHP TEMPLATE admin_extrafields_edit.tpl.php -->

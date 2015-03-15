@@ -50,6 +50,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
 
+	$langs->load("companies");
+
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -69,51 +71,28 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if ($canedit)
 	{
 		print '<tr>';
-		print '<td class="nowrap">';
-		//print $langs->trans("ActionsAskedBy");
-		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
-		//print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionsOwnedBy").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone">';
-		//print $langs->trans("User");
+		print '<td class="nowrap" style="padding-bottom: 2px;">';
+		print $langs->trans("ActionsToDoBy").' &nbsp; ';
+		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
-		if (! empty($conf->use_javascript_ajax))
-		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			print ajax_combobox('usertodo');
-		}
-		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' ';
-		else print '<br>';
-		print $langs->trans("Group").' &nbsp; ';
+		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("Group").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
-		if (! empty($conf->use_javascript_ajax))
-		{
-			print ajax_combobox('usergroup');
-		}
 		print '</td></tr>';
-
-		/*print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("or") . ' ' . $langs->trans("ActionsDoneBy");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		print $form->select_dolusers($filterd, 'userdone', 1, '', ! $canedit);
-		print '</td></tr>';*/
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 
 		print '<tr>';
-		print '<td class="nowrap">';
+		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Type");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0));
 		print '</td></tr>';
 
 		print '<tr>';
-		print '<td class="nowrap">';
+		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
@@ -121,9 +100,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		print '<tr>';
-		print '<td class="nowrap">';
+		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone">';
+		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		print $form->select_thirdparty($socid, 'socid');
 		print '</td></tr>';
 	}
@@ -134,10 +113,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		$formproject=new FormProjets($db);
 
 		print '<tr>';
-		print '<td class="nowrap">';
+		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone">';
-		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
 		print '</td></tr>';
 	}
 
@@ -145,18 +124,20 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Filter on hours
 		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("WorkingTimeRange").'</td>';
+		print '<td class="nowrap" style="padding-bottom: 2px;">'.$langs->trans("WorkingTimeRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23"> - ';
+		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		print ' '.$langs->trans("H");
+		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
 		print '</td></tr>';
 
 		// Filter on days
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("WorkingDaysRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7"> - ';
+		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</td></tr>';
 	}
@@ -170,7 +151,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '</div>';
 	else print '</td>';
 
-	if (! empty($conf->browser->phone)) print '<div class="fichehalfright" valign="middle">';
+	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table><tr><td align="center">';
@@ -446,7 +427,7 @@ function actions_prepare_head($object)
     $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if ($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
     $head[$h][2] = 'documents';
     $h++;
 

@@ -244,8 +244,6 @@ class EcmDirectory // extends CommonObject
 	 */
 	function changeNbOfFiles($sign)
 	{
-		global $conf, $langs;
-
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
@@ -320,7 +318,7 @@ class EcmDirectory // extends CommonObject
 	 * 	Delete object on database and/or on disk
 	 *
 	 *	@param	User	$user		User that delete
-	 *  @param	int		$mode		'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
+	 *  @param	string		$mode		'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function delete($user, $mode='all')
@@ -329,7 +327,6 @@ class EcmDirectory // extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
-		$result=0;
 
 		if ($mode != 'databaseonly') $relativepath=$this->getRelativePath(1);	// Ex: dir1/dir2/dir3
 
@@ -414,21 +411,22 @@ class EcmDirectory // extends CommonObject
 		global $langs;
 
 		$result='';
+        //$newref=str_replace('_',' ',$this->ref);
+        $newref=$this->ref;
+        $newlabel=$langs->trans("ShowECMSection").': '.$newref;
+        $linkclose='"'.($more?' '.$more:'').' title="'.dol_escape_htmltag($newlabel, 1).'" class="classfortooltip">';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'"'.($more?' '.$more:'').'>';
-		if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true"'.($more?' '.$more:'').'>';
-		if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false"'.($more?' '.$more:'').'>';
-		if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true"'.($more?' '.$more:'').'>';
-		$lienfin='</a>';
+        $lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.$linkclose;
+        if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+        if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
+        if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+        $lienfin='</a>';
 
 		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto='dir';
 
-		//$newref=str_replace('_',' ',$this->ref);
-		$newref=$this->ref;
-		$newlabel=$langs->trans("ShowECMSection").': '.$newref;
 
-		if ($withpicto) $result.=($lien.img_object($newlabel,$picto).$lienfin);
+        if ($withpicto) $result.=($lien.img_object($newlabel, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$lien.($max?dol_trunc($newref,$max,'middle'):$newref).$lienfin;
 		return $result;

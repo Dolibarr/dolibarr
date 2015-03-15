@@ -47,12 +47,11 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	$id=$object->id;
-	$ref=$object->ref;
-
 	// fetch optionals attributes and labels
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
@@ -133,8 +132,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else
 			{
-			    setEventMessage($task->error,'errors');
-			    setEventMessage($task->errors,'errors');
+			    setEventMessages($task->error,$task->errors,'errors');
 			}
 		}
 
@@ -150,6 +148,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
+			$id = $projectid;
 		}
 	}
 	else
@@ -168,9 +167,10 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
-*/
+ */
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -300,7 +300,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	$contactsofproject=$object->getListContactId('internal');
+	$contactsofproject=(! empty($object->id)?$object->getListContactId('internal'):'');
 	$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
 	print '</td></tr>';
 
@@ -417,7 +417,7 @@ else
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-	print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
+	print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';

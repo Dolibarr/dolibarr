@@ -120,6 +120,9 @@ if ($result) {
 	$i = 0;
 	print_barre_liste($langs->trans("ImportAccount"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+	print '<input type="hidden" name="action" value="import">';
+	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>' . $langs->trans("accountingaccount") . '</td>';
 	print '<td>' . $langs->trans("label") . '</td>';
@@ -131,9 +134,6 @@ if ($result) {
 	
 	$form = new Form($db);
 	$htmlacc = new FormVentilation($db);
-	
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
-	print '<input type="hidden" name="action" value="import">';
 	
 	$var = true;
 	while ( $i < min($num_lines, $limit) ) {

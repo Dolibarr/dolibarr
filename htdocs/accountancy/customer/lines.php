@@ -133,7 +133,7 @@ if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("/accountancy/customer/linges.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("/accountancy/customer/lines.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
@@ -220,5 +220,5 @@ if ($result) {
 
 print "</table></form>";
 
-$db->close();
 llxFooter();
+$db->close();

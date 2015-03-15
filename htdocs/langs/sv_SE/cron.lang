@@ -14,13 +14,12 @@ URLToLaunchCronJobs=URL för att kontrollera och starta cron-jobb om det behövs
 OrToLaunchASpecificJob=Eller för att kontrollera och starta ett specifikt arbete
 KeyForCronAccess=Säkerhetsnyckel för URL för att lansera cron-jobb
 FileToLaunchCronJobs=Kommandorad för att starta cron jobb
-CronExplainHowToRunUnix=På Unix-miljö bör du använda crontab för att köra kommandoraden varje minuter
-CronExplainHowToRunWin=På Microsoft (tm) Windows environement kan du använda schemalagd aktivitet verktyg för att köra kommandoraden varje minuter
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Schemalagda jobb
-CronListActive= Lista över aktiva jobb
-CronListInactive= Lista över handikappade jobb
-CronListActive= Lista över aktiva jobb
+CronListActive=Lista över aktiva / schemalagda jobb
+CronListInactive=Lista över handikappade jobb
 # Page list
 CronDateLastRun=Senaste körning
 CronLastOutput=Sista loppet utgång

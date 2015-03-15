@@ -78,21 +78,28 @@ $(document).ready(function () {
 
 <div id="login_left">
 
-<table class="left" summary="Login pass">
+<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+
+</div>
+
+
+
+<div id="login_right">
+
+<table class="left centpercent" summary="Login pass">
 <!-- Login -->
 <tr>
-<td valign="middle" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
-<td valign="middle" class="nowrap">
+<td valign="middle" class="nowrap center">
 <span class="span-icon-user">
-<input type="text" id="username" name="username" class="flat input-icon-user" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
+<input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
 </td>
 </tr>
 <!-- Password -->
-<tr><td valign="middle" class="loginfield nowrap"><strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong></td>
-<td valign="middle" class="nowrap">
+<tr>
+<td valign="middle" class="nowrap center">
 <span class="span-icon-password">
-<input id="password" name="password" class="flat input-icon-password" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
 </span>
 </td></tr>
 <?php
@@ -108,20 +115,24 @@ if (! empty($hookmanager->resArray['options'])) {
 ?>
 <?php
 	if ($captcha) {
-		// TODO: provide accessible captha variants
+		// Add a variable param to force not using cache (jmobile)
+		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
+		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
+		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+		// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><label for="securitycode"><b><?php echo $langs->trans('SecurityCode'); ?></b></label></td>
-	<td valign="top" class="nowrap none" align="left">
+	<tr>
+	<td valign="top" class="nowrap none center">
 
-	<table class="login_table_securitycode" style="width: 100px;"><tr>
+	<table class="login_table_securitycode centpercent"><tr>
 	<td>
 	<span class="span-icon-security">
-	<input id="securitycode" class="flat input-icon-security" type="text" size="6" maxlength="5" name="code" tabindex="4" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
+	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
 	</td></tr>
@@ -130,11 +141,10 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </div> <!-- end div left -->
 
-<div id="login_right">
 
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 
-</div>
+
+
 </div>
 
 <div id="login_line2" style="clear: both">
@@ -152,7 +162,7 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div align="center" style="margin-top: 4px;">';
+	echo '<div align="center" style="margin-top: 8px;">';
 	if ($forgetpasslink) {
 		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
 		echo $langs->trans('PasswordForgotten');
@@ -217,7 +227,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if ($main_home)
 {
 ?>
-	<div class="center" class="login_main_home" style="max-width: 80%">
+	<div class="center login_main_home" style="max-width: 80%">
 	<?php echo $main_home; ?>
 	</div><br>
 <?php

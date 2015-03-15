@@ -18,6 +18,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (1, '60', 'Entreprise Individuelle à Responsabilité Limitée (EIRL)', 1);
 
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_MODIFY','Intervention modified','Executed when a intervention is modified','ficheinter',19);
 --insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention delete','Executed when a intervention is delete','ficheinter',19);
@@ -90,7 +91,6 @@ ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT N
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime AFTER entity;
-ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
 
@@ -102,17 +102,24 @@ UPDATE llx_const SET name = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT' WHERE name = 'COMPT
 UPDATE llx_const SET name = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT' WHERE name = 'COMPTA_PRODUCT_SOLD_ACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_SERVICE_BUY_ACCOUNT' WHERE name = 'COMPTA_SERVICE_BUY_ACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT' WHERE name = 'COMPTA_SERVICE_SOLD_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_VAT_ACCOUNT' WHERE name = 'COMPTA_VAT_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_VAT_BUY_ACCOUNT' WHERE name = 'COMPTA_VAT_BUY_ACCOUNT';
 
 -- Compatibility with module Accounting Expert
-UPDATE llx_const SET name = 'ACCOUNTING_SEPARATORCSV' WHERE name = 'ACCOUNTINGEX_SEPARATORCSV';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_MODELCSV' WHERE name = 'ACCOUNTINGEX_MODELCSV';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_SEPARATORCSV' WHERE name = 'ACCOUNTINGEX_SEPARATORCSV';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_DATE' WHERE name = 'ACCOUNTINGEX_EXP_DATE';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_PIECE' WHERE name = 'ACCOUNTINGEX_EXP_PIECE';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT' WHERE name = 'ACCOUNTINGEX_EXP_GLOBAL_ACCOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_LABEL' WHERE name = 'ACCOUNTINGEX_EXP_LABEL';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_AMOUNT' WHERE name = 'ACCOUNTINGEX_EXP_AMOUNT';
+UPDATE llx_const SET name = 'ACCOUNTING_EXPORT_DEVISE' WHERE name = 'ACCOUNTINGEX_EXP_DEVISE';
 UPDATE llx_const SET name = 'ACCOUNTING_ACCOUNT_SUSPENSE' WHERE name = 'ACCOUNTINGEX_ACCOUNT_SUSPENSE';
 UPDATE llx_const SET name = 'ACCOUNTING_SELL_JOURNAL' WHERE name = 'ACCOUNTINGEX_SELL_JOURNAL';
 UPDATE llx_const SET name = 'ACCOUNTING_PURCHASE_JOURNAL' WHERE name = 'ACCOUNTINGEX_PURCHASE_JOURNAL';
 UPDATE llx_const SET name = 'ACCOUNTING_SOCIAL_JOURNAL' WHERE name = 'ACCOUNTINGEX_SOCIAL_JOURNAL';
-UPDATE llx_const SET name = 'ACCOUNTING_CASH_JOURNAL' WHERE name = 'ACCOUNTINGEX_CASH_JOURNAL';
 UPDATE llx_const SET name = 'ACCOUNTING_MISCELLANEOUS_JOURNAL' WHERE name = 'ACCOUNTINGEX_MISCELLANEOUS_JOURNAL';
 UPDATE llx_const SET name = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH' WHERE name = 'ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH';
-UPDATE llx_const SET name = 'ACCOUNTING_MODELCSV' WHERE name = 'ACCOUNTINGEX_MODELCSV';
 UPDATE llx_const SET name = 'ACCOUNTING_LENGTH_GACCOUNT' WHERE name = 'ACCOUNTINGEX_LENGTH_GACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_LENGTH_AACCOUNT' WHERE name = 'ACCOUNTINGEX_LENGTH_AACCOUNT';
 UPDATE llx_const SET name = 'ACCOUNTING_LIMIT_LIST_VENTILATION' WHERE name = 'ACCOUNTINGEX_LIMIT_LIST_VENTILATION';
@@ -127,6 +134,7 @@ DROP TABLE llx_compta_compte_generaux;
 -- Align size for accounting account
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
 ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
@@ -150,10 +158,13 @@ ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_da
 
 ALTER TABLE llx_actioncomm_resources CHANGE COLUMN transparent transparency smallint default 1;
 
+ALTER TABLE llx_actioncomm_resources DROP INDEX idx_actioncomm_resources_idx1;
+ALTER TABLE llx_actioncomm_resources ADD UNIQUE INDEX uk_actioncomm_resources(fk_actioncomm, element_type, fk_element);
+
 
 -- Localtaxes by thirds
-ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
-ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(20);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(20);
 ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
@@ -199,6 +210,8 @@ ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_produc
 DELETE from llx_product_price where fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
 
@@ -217,8 +230,8 @@ create table llx_accounting_fiscalyear
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
-ALTER TABLE llx_contrat ADD COLUMN ref_supplier varchar(30) after ref_ext;
+ALTER TABLE llx_contrat ADD COLUMN ref_supplier varchar(30) after ref;
+ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref_supplier;
 
 ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
@@ -1082,6 +1095,9 @@ ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
 
+ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
+ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
+  
 
 -- add extrafield on ficheinter lines
 CREATE TABLE llx_fichinterdet_extrafields
@@ -1133,7 +1149,19 @@ ALTER TABLE llx_facture_fourn MODIFY COLUMN ref VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_ext VARCHAR(255);
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref_supplier VARCHAR(255);
 
+UPDATE llx_facture_fourn SET ref = rowid WHERE ref IS NULL or ref = '';
+
+ALTER TABLE llx_facture_rec ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN tva_tx double(6,3);
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_contract_line integer NULL;
+
+ALTER TABLE llx_resource MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 
 -- This request make mysql drop (mysql bug, so we add it at end):
---ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
 
+-- this update change the old formated url on llx_bank_url
+UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
+
+-- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;

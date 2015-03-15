@@ -134,7 +134,7 @@ if ($id)
 		print '<table class="border" width="100%">';
 
 		print '<tr><td width="20%">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
-		print '<a href="card.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
+		print $bon->getNomUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut,1).'</td></tr>';
@@ -216,7 +216,7 @@ if ($id)
 		print '</table><br>';
 
 		//Confirm Button
-		print '<center><input type="submit" class="button" value='.$langs->trans("Confirm").'><center>';
+		print '<div class="center"><input type="submit" class="button" value='.$langs->trans("Confirm").'></div>';
 		print '</form>';
 	}
 

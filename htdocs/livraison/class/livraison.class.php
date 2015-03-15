@@ -60,6 +60,10 @@ class Livraison extends CommonObject
 	var $date_valid;
 	var $model_pdf;
 
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * Constructor
@@ -115,6 +119,7 @@ class Livraison extends CommonObject
 		$sql.= ", note_private";
 		$sql.= ", note_public";
 		$sql.= ", model_pdf";
+		$sql.= ", fk_incoterms, location_incoterms";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -127,6 +132,8 @@ class Livraison extends CommonObject
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql.= ")";
 
 		dol_syslog("Livraison::create", LOG_DEBUG);
@@ -265,8 +272,11 @@ class Livraison extends CommonObject
 		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
+        $sql.= ', l.fk_incoterms, l.location_incoterms';
+        $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
 		$sql.= " WHERE l.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -295,6 +305,10 @@ class Livraison extends CommonObject
 				$this->origin               = $obj->origin;		// May be 'shipping'
 				$this->origin_id            = $obj->origin_id;	// May be id of shipping
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -341,7 +355,8 @@ class Livraison extends CommonObject
 
 		$error = 0;
 
-		if ($user->rights->expedition->livraison->valider)
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
 		{
 			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
 			{
@@ -513,6 +528,10 @@ class Livraison extends CommonObject
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer			= $expedition->ref_customer;
+		
+		//Incoterms
+		$this->fk_incoterms		= $expedition->fk_incoterms;
+		$this->location_incoterms = $expedition->location_incoterms;
 
 		return $this->create($user);
 	}
@@ -660,15 +679,15 @@ class Livraison extends CommonObject
 
 		$result='';
 		$urlOption='';
+        $label=$langs->trans("ShowReceiving").': '.$this->ref;
 
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'">';
+        $lien = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$lienfin='</a>';
 
 		$picto='sending';
-		$label=$langs->trans("ShowReceiving").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;

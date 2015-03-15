@@ -88,9 +88,10 @@ if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
+	$entitytouseforuserdir = $object->entity;
+	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
+	$upload_dir = $conf->user->multidir_output[$entitytouseforuserdir] . "/" . $object->id ;
 }
-
 
 /*
  * Actions
@@ -159,8 +160,8 @@ if ($object->id)
 
 	print '</div>';
 
-	$modulepart = 'societe';
-	$permission = $user->rights->societe->creer;
+	$modulepart = 'user';
+	$permission = $user->rights->user->user->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

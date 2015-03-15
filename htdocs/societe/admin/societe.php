@@ -395,6 +395,7 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot,0);
@@ -488,6 +489,7 @@ print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot.'doc/',0);
@@ -711,7 +713,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$form->textwithpicto($langs->trans("UseSearchToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -726,7 +728,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT",$arrval,$conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -735,7 +737,7 @@ print '</tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$form->textwithpicto($langs->trans("UseSearchToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -750,7 +752,7 @@ else
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";

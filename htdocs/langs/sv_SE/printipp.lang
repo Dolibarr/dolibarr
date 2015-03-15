@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - printipp
+PrintIPPSetup=Inställning av direktutskrift modul
+PrintIPPDesc=Denna modul tillför en utskriftsknapp för att skicka dokument direkt till en skrivare. Det kräver ett Linux-system med CUPS installerade.
+PRINTIPP_ENABLED=Visa "Direktutskrift" -ikonen i dokumentlistor
+PRINTIPP_HOST=Skrivarserver
+PRINTIPP_PORT=Port
+PRINTIPP_USER=Inloggning
+PRINTIPP_PASSWORD=Lösenord
+NoPrinterFound=Inga skrivare hittades (kolla din CUPS inställningar)
+FileWasSentToPrinter=Filen %s har skickats till skrivaren
+NoDefaultPrinterDefined=Ingen standardskrivare definierad
+DefaultPrinter=Standardskrivare
+Printer=Skrivare
+CupsServer=CUPS-server

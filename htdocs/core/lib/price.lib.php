@@ -3,6 +3,8 @@
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +49,7 @@
  *		@param	int		$type						0/1=Product/service
  *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate function).
+ *		@param  float   $progress                   Situation invoices progress (value from 0 to 100, 100 by default)
  *		@return result[ 0=total_ht,
  *						 1=total_vat,
  *						 2=total_ttc,
@@ -64,7 +67,7 @@
  *						14=amount tax1 for total_ht_without_discount,
  *						15=amount tax2 for total_ht_without_discount]
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '',$localtaxes_array='')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '', $localtaxes_array='', $progress=100)
 {
 	global $conf,$mysoc,$db;
 
@@ -93,6 +96,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	$countryid=$seller->country_id;
 	if ($uselocaltax1_rate < 0) $uselocaltax1_rate=$seller->localtax1_assuj;
 	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
+
+	dol_syslog('Price.lib::calcul_price_total qty='.$qty.' pu='.$pu.' remise_percent_ligne='.$remise_percent_ligne.' txtva='.$txtva.' uselocaltax1_rate='.$uselocaltax1_rate.' uselocaltax2_rate='.$uselocaltax2_rate.' remise_percent_global='.$remise_percent_global.' price_base_type='.$ice_base_type.' type='.$type.' progress='.$progress);
 
 	// Now we search localtaxes information ourself (rates and types).
 	$localtax1_type=0;
@@ -128,7 +133,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		else dol_print_error($db);
 	}
 	// initialize total (may be HT or TTC depending on price_base_type)
-	$tot_sans_remise = $pu * $qty;
+	$tot_sans_remise = $pu * $qty * $progress / 100;
 	$tot_avec_remise_ligne = $tot_sans_remise       * (1 - ($remise_percent_ligne / 100));
 	$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ($remise_percent_global / 100));
 

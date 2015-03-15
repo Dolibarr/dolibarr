@@ -22,7 +22,7 @@
 /**
  * \file		htdocs/accountancy/supplier/list.php
  * \ingroup		Accounting Expert
- * \brief		Page de ventilation des lignes de facture
+ * \brief		Ventilation page from suppliers invoices
  */
 
 require '../../main.inc.php';
@@ -53,6 +53,22 @@ $formventilation = new FormVentilation($db);
 
 llxHeader('', $langs->trans("Ventilation"));
 
+print  '<script type="text/javascript">
+			$(function () {
+				$(\'#select-all\').click(function(event) {
+				    // Iterate each checkbox
+				    $(\':checkbox\').each(function() {
+				    	this.checked = true;
+				    });
+			    });
+			    $(\'#unselect-all\').click(function(event) {
+				    // Iterate each checkbox
+				    $(\':checkbox\').each(function() {
+				    	this.checked = false;
+				    });
+			    });
+			});
+			 </script>';
 /*
  * Action
  */
@@ -115,8 +131,8 @@ $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_buy = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
-$sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation = 0";
-$sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_sell IS NULL)";
+$sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
+$sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='')";
 
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = '" . $conf->entity . "'";
@@ -150,7 +166,7 @@ if ($result) {
 	print '<td align="right">' . $langs->trans("Amount") . '</td>';
 	print '<td align="right">' . $langs->trans("Compte") . '</td>';
 	print '<td align="center">' . $langs->trans("IntoAccount") . '</td>';
-	print '<td align="center">' . $langs->trans("Ventilate") . '</td>';
+	print '<td align="center">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
 	print "</tr>\n";
 
 	$facturefourn_static = new FactureFournisseur($db);
@@ -161,6 +177,23 @@ if ($result) {
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
+		
+		// product_type: 0 = service ? 1 = product
+		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
+		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
+		$code_buy_notset = '';
+		
+		if (empty($objp->code_buy)) {
+			$code_buy_notset = 'color:red';
+			if ($objp->type == 1) {
+				$objp->code_buy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+			} else {
+				$objp->code_buy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));					
+			}
+		}else {
+			$code_buy_notset = 'color:blue';
+		}
+		
 		print "<tr $bc[$var]>";
 
 		// Ref facture
@@ -191,7 +224,7 @@ if ($result) {
 		print price($objp->price);
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td align="center" style="' . $code_buy_notset . '">';
 		print $objp->code_buy;
 		print '</td>';
 

@@ -67,7 +67,7 @@ class Canvas
 	    $newaction = $action;
 	    if ($newaction == 'add')    $newaction='create';
 	    if ($newaction == 'update') $newaction='edit';
-	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user') $newaction='view';
+	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction='view';
 	    return $newaction;
 	}
 
