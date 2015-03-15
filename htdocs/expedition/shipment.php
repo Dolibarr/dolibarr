@@ -216,7 +216,7 @@ if ($id > 0 || ! empty($ref))
 		$absolute_creditnote=price2num($absolute_creditnote,'MT');
 		if ($absolute_discount)
 		{
-			if ($commande->statut > 0)
+			if ($commande->statut > Commande::STATUS_DRAFT)
 			{
 				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 			}
@@ -606,7 +606,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="tabsAction">';
 
             // Bouton expedier sans gestion des stocks
-            if (empty($conf->stock->enabled) && ($commande->statut > 0 && $commande->statut < 3))
+            if (empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 			{
 				if ($user->rights->expedition->creer)
 				{
@@ -626,7 +626,7 @@ if ($id > 0 || ! empty($ref))
 
 
         // Bouton expedier avec gestion des stocks
-        if (! empty($conf->stock->enabled) && ($commande->statut > 0 && $commande->statut < 3))
+        if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 		{
 			if ($user->rights->expedition->creer)
 			{

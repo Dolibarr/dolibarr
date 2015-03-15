@@ -147,16 +147,16 @@ if ($id > 0 || ! empty($ref))
         if ($absolute_discount > 0)
         {
             print '. ';
-            if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+            if ($object->statut > Facture::STATUS_DRAFT || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
-                if ($object->statut == 0)
+                if ($object->statut == Facture::STATUS_DRAFT)
                 {
                     print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                     print '. ';
                 }
                 else
                 {
-                    if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+                    if ($object->statut < Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
@@ -181,7 +181,7 @@ if ($id > 0 || ! empty($ref))
         {
             if ($absolute_creditnote > 0)    // If not linked will be added later
             {
-                if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
+                if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
                 else print '.';
             }
             else print '. ';
@@ -189,9 +189,9 @@ if ($id > 0 || ! empty($ref))
         if ($absolute_creditnote > 0)
         {
             // If validated, we show link "add credit note to payment"
-            if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+            if ($object->statut != Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
-                if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT)
+                if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
                 {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
                     print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
@@ -212,7 +212,7 @@ if ($id > 0 || ! empty($ref))
         if (! $absolute_discount && ! $absolute_creditnote)
         {
             print $langs->trans("CompanyHasNoAbsoluteDiscount");
-            if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
+            if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
             else print '. ';
         }
         /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)

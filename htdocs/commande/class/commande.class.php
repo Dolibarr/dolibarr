@@ -60,9 +60,38 @@ class Commande extends CommonOrder
     var $ref_int;
     var $contactid;
     var $fk_project;
-    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+	/**
+	 * Status of the commande. Check the following constants:
+	 * - STATUS_CANCELED
+	 * - STATUS_DRAFT
+	 * - STATUS_ACCEPTED
+	 * - STATUS_CLOSED
+	 * @var int
+	 */
+    var $statut;
     var $facturee;		// deprecated
     var $billed;		// billed or not
+
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Accepted/On process not managed for customer orders
+	 */
+	const STATUS_ACCEPTED = 2;
+	/**
+	 * Closed (Sent/Received, billed or not)
+	 */
+	const STATUS_CLOSED = 3;
 
     var $brouillon;
     var $cond_reglement_id;
@@ -194,7 +223,7 @@ class Commande extends CommonOrder
         $error=0;
 
         // Protection
-        if ($this->statut == 1)
+        if ($this->statut == self::STATUS_VALIDATED)
         {
             dol_syslog(get_class($this)."::valid no draft status", LOG_WARNING);
             return 0;
@@ -233,7 +262,7 @@ class Commande extends CommonOrder
         // Validate
         $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
         $sql.= " SET ref = '".$num."',";
-        $sql.= " fk_statut = 1,";
+        $sql.= " fk_statut = ".self::STATUS_VALIDATED.",";
         $sql.= " date_valid='".$this->db->idate($now)."',";
         $sql.= " fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
@@ -323,7 +352,7 @@ class Commande extends CommonOrder
         if (! $error)
         {
             $this->ref = $num;
-            $this->statut = 1;
+            $this->statut = self::STATUS_VALIDATED;
         }
 
         if (! $error)
@@ -352,7 +381,7 @@ class Commande extends CommonOrder
         $error=0;
 
         // Protection
-        if ($this->statut <= 0)
+        if ($this->statut <= self::STATUS_DRAFT)
         {
             return 0;
         }
@@ -367,7 +396,7 @@ class Commande extends CommonOrder
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-        $sql.= " SET fk_statut = 0";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
@@ -393,7 +422,7 @@ class Commande extends CommonOrder
 
                 if (!$error)
                 {
-                    $this->statut=0;
+                    $this->statut=self::STATUS_DRAFT;
                     $this->db->commit();
                     return $result;
                 }
@@ -405,7 +434,7 @@ class Commande extends CommonOrder
                 }
             }
 
-            $this->statut=0;
+            $this->statut=self::STATUS_DRAFT;
             $this->db->commit();
             return 1;
         }
@@ -430,7 +459,7 @@ class Commande extends CommonOrder
         global $conf,$langs;
         $error=0;
 
-        if ($this->statut != 3)
+        if ($this->statut != self::STATUS_CLOSED)
         {
         	dol_syslog(get_class($this)."::set_reopen order has not status closed", LOG_WARNING);
             return 0;
@@ -439,7 +468,7 @@ class Commande extends CommonOrder
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-        $sql.= ' SET fk_statut=1, facture=0';
+        $sql.= ' SET fk_statut='.self::STATUS_VALIDATED.', facture=0';
         $sql.= ' WHERE rowid = '.$this->id;
 
         dol_syslog(get_class($this)."::set_reopen", LOG_DEBUG);
@@ -460,7 +489,7 @@ class Commande extends CommonOrder
 
         if (! $error)
         {
-        	$this->statut = 1;
+        	$this->statut = self::STATUS_VALIDATED;
         	$this->billed = 0;
         	$this->facturee = 0; // deprecated
 
@@ -499,10 +528,10 @@ class Commande extends CommonOrder
             $now=dol_now();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-            $sql.= ' SET fk_statut = 3,';
+            $sql.= ' SET fk_statut = '.self::STATUS_CLOSED.',';
             $sql.= ' fk_user_cloture = '.$user->id.',';
             $sql.= " date_cloture = '".$this->db->idate($now)."'";
-            $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+            $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
 
             if ($this->db->query($sql))
             {
@@ -513,7 +542,7 @@ class Commande extends CommonOrder
 
                 if (! $error)
                 {
-                	$this->statut=3;
+                	$this->statut=self::STATUS_CLOSED;
 
                     $this->db->commit();
                     return 1;
@@ -550,9 +579,9 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-		$sql.= " SET fk_statut = -1";
+		$sql.= " SET fk_statut = ".self::STATUS_CANCELED;
 		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND fk_statut = 1";
+		$sql.= " AND fk_statut = ".self::STATUS_VALIDATED;
 
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -591,7 +620,7 @@ class Commande extends CommonOrder
 
 			if (! $error)
 			{
-				$this->statut=-1;
+				$this->statut=self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
 			}
@@ -906,7 +935,7 @@ class Commande extends CommonOrder
         }
 
         $this->id=0;
-        $this->statut=0;
+        $this->statut=self::STATUS_DRAFT;
 
         // Clear fields
         $this->user_author_id     = $user->id;
@@ -1151,7 +1180,7 @@ class Commande extends CommonOrder
         // Check parameters
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
@@ -1457,7 +1486,7 @@ class Commande extends CommonOrder
 
                 $this->lines				= array();
 
-                if ($this->statut == 0) $this->brouillon = 1;
+                if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
                 // Retreive all extrafield for invoice
                 // fetch optionals attributes and labels
@@ -1769,7 +1798,7 @@ class Commande extends CommonOrder
      *
      *	TODO  deprecated, move to Shipping class
      */
-    function livraison_array($filtre_statut=-1)
+    function livraison_array($filtre_statut=self::STATUS_CANCELED)
     {
         $delivery = new Livraison($this->db);
         $deliveryArray = $delivery->livraison_array($filtre_statut);
@@ -1784,7 +1813,7 @@ class Commande extends CommonOrder
      *
      *	TODO		FONCTION NON FINIE A FINIR
      */
-    function stock_array($filtre_statut=-1)
+    function stock_array($filtre_statut=self::STATUS_CANCELED)
     {
         $this->stocks = array();
 
@@ -1826,7 +1855,7 @@ class Commande extends CommonOrder
     {
         global $user;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
@@ -1909,7 +1938,7 @@ class Commande extends CommonOrder
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET remise_percent = '.$remise;
-            $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+            $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
 
             if ($this->db->query($sql))
             {
@@ -1943,7 +1972,7 @@ class Commande extends CommonOrder
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET remise_absolue = '.$remise;
-            $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+            $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
 
             dol_syslog(get_class($this)."::set_remise_absolue", LOG_DEBUG);
 
@@ -1975,7 +2004,7 @@ class Commande extends CommonOrder
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
             $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             dol_syslog(get_class($this)."::set_date",LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -2119,7 +2148,7 @@ class Commande extends CommonOrder
         	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         }
         if ($socid) $sql.= " AND s.rowid = ".$socid;
-        if ($draft) $sql.= " AND c.fk_statut = 0";
+        if ($draft) $sql.= " AND c.fk_statut = ".self::STATUS_DRAFT;
         if (is_object($excluser)) $sql.= " AND c.fk_user_author <> ".$excluser->id;
         $sql.= $this->db->order($sortfield,$sortorder);
         $sql.= $this->db->plimit($limit,$offset);
@@ -2170,7 +2199,7 @@ class Commande extends CommonOrder
     function availability($availability_id)
     {
         dol_syslog('Commande::availability('.$availability_id.')');
-        if ($this->statut >= 0)
+        if ($this->statut >= self::STATUS_DRAFT)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql .= ' SET fk_availability = '.$availability_id;
@@ -2204,7 +2233,7 @@ class Commande extends CommonOrder
     function demand_reason($demand_reason_id)
     {
         dol_syslog('Commande::demand_reason('.$demand_reason_id.')');
-        if ($this->statut >= 0)
+        if ($this->statut >= self::STATUS_DRAFT)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql .= ' SET fk_input_reason = '.$demand_reason_id;
@@ -2275,7 +2304,7 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
-		$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+		$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
 
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -2753,7 +2782,7 @@ class Commande extends CommonOrder
         }
         $sql.= $clause." c.entity = ".$conf->entity;
         //$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
-        $sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
+        $sql.= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_ACCEPTED.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);
@@ -2827,57 +2856,57 @@ class Commande extends CommonOrder
         //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {
-            if ($statut==-1) return $langs->trans('StatusOrderCanceled');
-            if ($statut==0) return $langs->trans('StatusOrderDraft');
-            if ($statut==1) return $langs->trans('StatusOrderValidated');
-            if ($statut==2) return $langs->trans('StatusOrderSentShort');
-            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBill');
-            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
+            if ($statut==self::STATUS_CANCELED-1) return $langs->trans('StatusOrderCanceled');
+            if ($statut==self::STATUS_DRAFT) return $langs->trans('StatusOrderDraft');
+            if ($statut==self::STATUS_VALIDATED) return $langs->trans('StatusOrderValidated');
+            if ($statut==self::STATUS_ACCEPTED) return $langs->trans('StatusOrderSentShort');
+            if ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBill');
+            if ($statut==self::STATUS_CLOSED && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
         }
         elseif ($mode == 1)
         {
-            if ($statut==-1) return $langs->trans('StatusOrderCanceledShort');
-            if ($statut==0) return $langs->trans('StatusOrderDraftShort');
-            if ($statut==1) return $langs->trans('StatusOrderValidatedShort');
-            if ($statut==2) return $langs->trans('StatusOrderSentShort');
-            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBillShort');
-            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
+            if ($statut==self::STATUS_CANCELED) return $langs->trans('StatusOrderCanceledShort');
+            if ($statut==self::STATUS_DRAFT) return $langs->trans('StatusOrderDraftShort');
+            if ($statut==self::STATUS_VALIDATED) return $langs->trans('StatusOrderValidatedShort');
+            if ($statut==self::STATUS_ACCEPTED) return $langs->trans('StatusOrderSentShort');
+            if ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBillShort');
+            if ($statut==self::STATUS_CLOSED && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed');
         }
         elseif ($mode == 2)
         {
-            if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceledShort');
-            if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraftShort');
-            if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidatedShort');
-            if ($statut==2) return img_picto($langs->trans('StatusOrderSent'),'statut3').' '.$langs->trans('StatusOrderSentShort');
-            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBillShort');
-            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessedShort');
+            if ($statut==self::STATUS_CANCELED) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceledShort');
+            if ($statut==self::STATUS_DRAFT) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraftShort');
+            if ($statut==self::STATUS_VALIDATED) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidatedShort');
+            if ($statut==self::STATUS_ACCEPTED) return img_picto($langs->trans('StatusOrderSent'),'statut3').' '.$langs->trans('StatusOrderSentShort');
+            if ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBillShort');
+            if ($statut==self::STATUS_CLOSED && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessedShort');
         }
         elseif ($mode == 3)
         {
-            if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
-            if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
-            if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
-            if ($statut==2) return img_picto($langs->trans('StatusOrderSentShort'),'statut3');
-            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7');
-            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+            if ($statut==self::STATUS_CANCELED) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
+            if ($statut==self::STATUS_DRAFT) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
+            if ($statut==self::STATUS_VALIDATED) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
+            if ($statut==self::STATUS_ACCEPTED) return img_picto($langs->trans('StatusOrderSentShort'),'statut3');
+            if ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7');
+            if ($statut==self::STATUS_CLOSED && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
         }
         elseif ($mode == 4)
         {
-            if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceled');
-            if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
-            if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidated');
-            if ($statut==2) return img_picto($langs->trans('StatusOrderSentShort'),'statut3').' '.$langs->trans('StatusOrderSent');
-            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBill');
-            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
+            if ($statut==self::STATUS_CANCELED) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceled');
+            if ($statut==self::STATUS_DRAFT) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
+            if ($statut==self::STATUS_VALIDATED) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidated');
+            if ($statut==self::STATUS_ACCEPTED) return img_picto($langs->trans('StatusOrderSentShort'),'statut3').' '.$langs->trans('StatusOrderSent');
+            if ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBill');
+            if ($statut==self::STATUS_CLOSED && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
         }
         elseif ($mode == 5)
         {
-            if ($statut==-1) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderCanceledShort').' </span>'.img_picto($langs->trans('StatusOrderCanceled'),'statut5');
-            if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDraftShort').' </span>'.img_picto($langs->trans('StatusOrderDraft'),'statut0');
-            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderValidatedShort').' </span>'.img_picto($langs->trans('StatusOrderValidated'),'statut1');
-            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderSentShort').' </span>'.img_picto($langs->trans('StatusOrderSent'),'statut3');
-            if ($statut==3 && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderToBillShort').' </span>'.img_picto($langs->trans('StatusOrderToBill'),'statut7');
-            if ($statut==3 && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderProcessedShort').' </span>'.img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+            if ($statut==self::STATUS_CANCELED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderCanceledShort').' </span>'.img_picto($langs->trans('StatusOrderCanceled'),'statut5');
+            if ($statut==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDraftShort').' </span>'.img_picto($langs->trans('StatusOrderDraft'),'statut0');
+            if ($statut==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderValidatedShort').' </span>'.img_picto($langs->trans('StatusOrderValidated'),'statut1');
+            if ($statut==self::STATUS_ACCEPTED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderSentShort').' </span>'.img_picto($langs->trans('StatusOrderSent'),'statut3');
+            if ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderToBillShort').' </span>'.img_picto($langs->trans('StatusOrderToBill'),'statut7');
+            if ($statut==self::STATUS_CLOSED && ($billed || ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderProcessedShort').' </span>'.img_picto($langs->trans('StatusOrderProcessed'),'statut6');
         }
     }
 

@@ -522,7 +522,7 @@ function createInvoice($authentication,$invoice)
         $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
         $newobject->note_private=$invoice['note_private'];
         $newobject->note_public=$invoice['note_public'];
-        $newobject->statut=0;	// We start with status draft
+        $newobject->statut= Facture::STATUS_DRAFT;	// We start with status draft
         $newobject->fk_project=$invoice['project_id'];
         $newobject->date_creation=$now;
         
