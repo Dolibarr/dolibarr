@@ -705,7 +705,7 @@ class Don extends CommonObject
      *
      *  @param  int     $withpicto      0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      *  @return string                  Chaine avec URL
-     *  @deprecated
+     *  @deprecated                     Use getHtmlLink with re-ordered parameters
      */
     function getNomUrl($withpicto=0)
     {
@@ -722,7 +722,7 @@ class Don extends CommonObject
      *  @param  string  $notooltip      1=Disable tooltip
      *  @return string                  String with URL
     */
-    function getHtmlLink($withpicto=0, $option='', $maxlen=24, $more, $notooltip=0)
+    function getHtmlLink($withpicto=0, $option='', $maxlen=24, $more='', $notooltip=0)
     {
         global $langs;
 

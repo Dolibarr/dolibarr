@@ -1781,7 +1781,7 @@ class User extends CommonObject
      *  @param  string  $notooltip      1=Disable tooltip
      *  @param  int     $maxlen         Max length of visible user name
      *  @return string                  String with URL
-     *  @deprecated
+     *  @deprecated                     Use getHtmlLink with re-ordered parameters
      */
     function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
     {
