@@ -25,7 +25,7 @@
  *
  * Usage:
  * cd htdocs/langs
- * ../../dev/translation/strip_language_file.php <primary_lang_dir> <secondary_lang_dir> [file.lang|all]
+ * ./dev/translation/strip_language_file.php <primary_lang_dir> <secondary_lang_dir> [file.lang|all]
  *
  * To rename all .delta files, you can do
  * for fic in `ls *.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done
@@ -66,7 +66,7 @@ if (empty($lPrimary) || empty($lSecondary) || empty($filesToProcess))
 {
 	$rc = 1;
 	$msg = '***** Script to clean language files *****'."\n";
-	$msg.= 'Usage: ../../dev/translation/strip_language_file.php xx_XX xx_YY [file.lang|all]'."\n";
+	$msg.= 'Usage: ./dev/translation/strip_language_file.php xx_XX xx_YY [file.lang|all]'."\n";
 	print $msg . "(rc=$rc).\n";
 	exit($rc);
 }
@@ -77,7 +77,7 @@ $aSecondary = array();
 // Define array $filesToProcess
 if ($filesToProcess == 'all')
 {
-	$dir = new DirectoryIterator($lPrimary);
+	$dir = new DirectoryIterator('htdocs/langs/'.$lPrimary);
 	while($dir->valid()) {
 		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./',$dir->getFilename())) {
 			$files[] =  $dir->getFilename();
@@ -94,8 +94,8 @@ else $filesToProcess=explode(',',$filesToProcess);
 // Loop on each file
 foreach($filesToProcess as $fileToProcess)
 {
-	$lPrimaryFile = $lPrimary.'/'.$fileToProcess;
-	$lSecondaryFile = $lSecondary.'/'.$fileToProcess;
+	$lPrimaryFile = 'htdocs/langs/'.$lPrimary.'/'.$fileToProcess;
+	$lSecondaryFile = 'htdocs/langs/'.$lSecondary.'/'.$fileToProcess;
 	$output = $lSecondaryFile . '.delta';
 
 	print "---- Process language file ".$lSecondaryFile."\n";
@@ -270,8 +270,8 @@ foreach($filesToProcess as $fileToProcess)
 
 	print "Output can be found at $output.\n";
 
-	print "To rename all .delta files, you can do\n";
-	print 'for fic in `ls *.delta`; do f=`echo $fic | sed -e \'s/\.delta//\'`; echo $f; mv $f.delta $f; done'."\n";
+	print "To rename all .delta files, you can do:\n";
+	print '> for fic in `ls htdocs/langs/'.$lSecondary.'/*.delta`; do f=`echo $fic | sed -e \'s/\.delta//\'`; echo $f; mv $f.delta $f; done'."\n";
 }
 
 

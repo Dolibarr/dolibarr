@@ -59,6 +59,7 @@ MenuOrdersToBill=Orders delivered
 MenuOrdersToBill2=Billable orders
 SearchOrder=Search order
 SearchACustomerOrder=Search a customer order
+SearchASupplierOrder=Search a supplier order
 ShipProduct=Ship product
 Discount=Discount
 CreateOrder=Create Order

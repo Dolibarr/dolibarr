@@ -1721,8 +1721,8 @@ class Adherent extends CommonObject
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param	User	$user   	Objet user
-     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+     *      @param	User	$user   		Objet user
+     *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
     function load_board($user)
     {

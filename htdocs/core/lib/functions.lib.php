@@ -1157,7 +1157,7 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	timestamp|string			Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -4540,7 +4540,7 @@ function utf8_check($str)
 
 
 /**
- *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
+ *      Return a string encoded into OS filesystem encoding. This function is used to define
  * 	    value to pass to filesystem PHP functions.
  *
  *      @param	string	$str        String to encode (UTF-8)
@@ -4950,7 +4950,7 @@ function dol_getmypid()
  * @param 	string 			$value 		The value to look for.
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
- * @param	string			$number		0=value is list of keywords, 1=value is a numeric test
+ * @param	string			$numeric	0=value is list of keywords, 1=value is a numeric test
  * @return 	string 			$res 		The statement to append to the SQL query
  */
 function natural_search($fields, $value, $numeric=0)

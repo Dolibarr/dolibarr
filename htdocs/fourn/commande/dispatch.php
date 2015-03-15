@@ -67,7 +67,10 @@ $mesg='';
  * Actions
  */
 
-if ($action == 'checkdispatchline')
+if ($action == 'checkdispatchline' &&
+	! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+)
 {
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result=$supplierorderdispatch->fetch($lineid);
@@ -81,7 +84,10 @@ if ($action == 'checkdispatchline')
 	}
 }
 
-if ($action == 'uncheckdispatchline')
+if ($action == 'uncheckdispatchline' &&
+	! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+)
 {
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result=$supplierorderdispatch->fetch($lineid);
@@ -630,15 +636,31 @@ if ($id > 0 || ! empty($ref))
 
 						// Add button to check/uncheck disaptching
 						print '<td align="center">';
-						$disabled='';
-						if ($commande->statut == 5) $disabled=1;
-						if (empty($objp->status)) 
+						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       					|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))
+							)
 						{
-							print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Check").'</a>';
+							if (empty($objp->status)) 
+							{
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Check").'</a>';
+							}
+							else
+							{
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Uncheck").'</a>';
+							}
 						}
-						else 
+						else
 						{
-							print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Uncheck").'</a>';
+							$disabled='';
+							if ($commande->statut == 5) $disabled=1;
+							if (empty($objp->status)) 
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Check").'</a>';
+							}
+							else 
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Uncheck").'</a>';
+							}
 						}
 						print '</td>';	
 					}

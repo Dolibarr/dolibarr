@@ -2243,7 +2243,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Cancel order
-				if ($object->statut == 1 && $user->rights->commande->annuler) {
+				if ($object->statut == 1 && 
+				    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->cloturer))
+			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->annuler)))
+				) 
+				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=cancel">' . $langs->trans('Cancel') . '</a></div>';
 				}
 

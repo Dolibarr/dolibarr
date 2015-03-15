@@ -1000,7 +1000,7 @@ class Categorie extends CommonObject
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
-	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
+	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
@@ -1295,11 +1295,9 @@ class Categorie extends CommonObject
 	 *
 	 *  @param      string	$sdir       Repertoire destination finale
 	 *  @param      string	$file		Nom du fichier uploade
-	 *  @param      int		$maxWidth   Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight  Hauteur maximum que dois faire la miniature (120 par defaut)
 	 *	@return		void
 	 */
-	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
+	function add_photo($sdir, $file)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1321,35 +1319,10 @@ class Categorie extends CommonObject
 			if (file_exists($originImage))
 			{
 				// Cree fichier en taille vignette
-				$this->add_thumb($originImage,$maxWidth,$maxHeight);
+				$this->add_thumb($originImage);
 			}
 		}
 	}
-
-	/**
-	 *  Build thumb
-	 *
-	 *  @param      string	$file           Chemin du fichier d'origine
-	 *	@return		void
-	 */
-	function add_thumb($file)
-	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
-
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
-
-		if (file_exists($file))
-		{
-			// Create small thumbs for company (Ratio is near 16/9)
-	        // Used on logon for example
-	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-	        // Create mini thumbs for company (Ratio is near 16/9)
-	        // Used on menu or for setup page for example
-	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-		}
-	}
-
 
 	/**
 	 *    Return tableau de toutes les photos de la categorie

@@ -86,13 +86,16 @@ $coldisplay=-1; // We remove first td
 	}
 
 	// Do not allow editing during a situation cycle
-	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+	if (empty($this->situation_cycle_ref) || $this->situation_counter == 1)
+	{
 		// editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows=ROWS_2;
 		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 		$enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
-		$doleditor=new DolEditor('product_desc',$line->description,'',164,'dolibarr_details','',false,true,$enable,$nbrows,'98%');
+		$toolbarname='dolibarr_details';
+		if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
+		$doleditor=new DolEditor('product_desc',$line->description,'',164,$toolbarname,'',false,true,$enable,$nbrows,'98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="desc" class="flat" name="desc" readonly="readonly" style="width: 200px; height:80px;">' . $line->description . '</textarea>';

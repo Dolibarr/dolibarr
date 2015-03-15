@@ -591,12 +591,9 @@ class pdf_aurore extends ModelePDFAskPriceSupplier
 		}
 		else
 		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","PROP_OUTPUTDIR");
+			$this->error=$langs->trans("ErrorConstantNotDefined","ASKSUPPLIERPICE_OUTPUTDIR");
 			return 0;
 		}
-
-		$this->error=$langs->trans("ErrorUnknown");
-		return 0;   // Erreur par defaut
 	}
 
 	/**

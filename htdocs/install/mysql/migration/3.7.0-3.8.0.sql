@@ -19,6 +19,9 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
+
 ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
 
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
@@ -159,7 +162,7 @@ CREATE TABLE llx_expensereport (
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
   fk_user_paid 		integer DEFAULT NULL,
-  fk_c_expensereport_statuts integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
+  fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
   note_public		text,
   note_private 		text,
@@ -363,3 +366,7 @@ INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('CIP', 'Carriage and
 INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DAT', 'Delivered At Terminal, marchandises (déchargées) livrées sur quai, dans un terminal maritime, fluvial, aérien, routier ou ferroviaire désigné (dédouanement import, et post-acheminement payés par l''acheteur)', 1);
 INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DAP', 'Delivered At Place, marchandises (non déchargées) mises à disposition de l''acheteur dans le pays d''importation au lieu précisé dans le contrat (déchargement, dédouanement import payé par l''acheteur)', 1);
 INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DDP', 'Delivered Duty Paid, marchandises (non déchargées) livrées à destination finale, dédouanement import et taxes à la charge du vendeur ; l''acheteur prend en charge uniquement le déchargement (si exclusion des taxes type TVA, le préciser clairement)', 1);
+
+-- Extrafields fk_object must be unique (1-1 relation)
+ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
+ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);

@@ -52,7 +52,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->rowid; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="line_<?php echo $line->rowid; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -183,7 +183,7 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->rowid.'#'.$line->rowid; ?>">
+		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->rowid.'#line_'.$line->rowid; ?>">
 		<?php echo img_edit(); ?>
 		</a>
 		<?php } ?>

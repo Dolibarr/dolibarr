@@ -1175,6 +1175,7 @@ else
             print '</td></tr>';
 
             // Stock
+            /*
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
@@ -1189,7 +1190,7 @@ else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
                 print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
-            }
+            }*/
 
             // Nature
             if($object->type!=1)
