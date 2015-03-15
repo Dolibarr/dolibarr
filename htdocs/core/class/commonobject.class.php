@@ -2662,7 +2662,6 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
-	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
