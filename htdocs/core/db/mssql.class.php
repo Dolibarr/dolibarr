@@ -237,10 +237,10 @@ class DoliDBMssql extends DoliDB
 
 	    $res=mssql_query('select @@TRANCOUNT');
 	    $this->transaction_opened=mssql_result($res, 0, 0);
-	    
+
 	    if ($this->transaction_opened == 0)
 		{
-		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTIONS ON' generate also a mess 
+		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTIONS ON' generate also a mess
 			$ret=mssql_query("SET IMPLICIT_TRANSACTIONS OFF;BEGIN TRANSACTION;",$this->db);
 			if ($ret)
 			{
@@ -264,7 +264,7 @@ class DoliDBMssql extends DoliDB
 	{
 	    $res=mssql_query('select @@TRANCOUNT');
 	    $this->transaction_opened=mssql_result($res, 0, 0);
-	    	     
+
 		if ($this->transaction_opened == 1)
 		{
 		    //return 1; //There is a mess with auto_commit and 'SET IMPLICIT_TRANSACTION ON' generate also a mess
@@ -296,7 +296,7 @@ class DoliDBMssql extends DoliDB
 	{
 	    $res=mssql_query('select @@TRANCOUNT');
 	    $this->transaction_opened=mssql_result($res, 0, 0);
-	     
+
 		if ($this->transaction_opened == 1)
 		{
 			$ret=mssql_query("ROLLBACK TRANSACTION",$this->db);
@@ -322,7 +322,7 @@ class DoliDBMssql extends DoliDB
 	function query($query,$usesavepoint=0,$type='auto')
 	{
 		$query = trim($query);
-		
+
 		if (preg_match('/^--/',$query)) return true;
 
 		// Conversion syntaxe MySql vers MSDE.
@@ -331,7 +331,7 @@ class DoliDBMssql extends DoliDB
 		$query = str_ireplace(", tms = tms", "", $query);
 
 		$query=preg_replace("/([. ,\t(])(percent|file|public)([. ,=\t)])/","$1[$2]$3",$query);
-		
+
 		if ($type=="auto" || $type='dml')
 		{
     		$query=preg_replace('/AUTO_INCREMENT/i','IDENTITY',$query);
@@ -339,7 +339,7 @@ class DoliDBMssql extends DoliDB
     		$query=preg_replace('/float\((.*)\)/','numeric($1)',$query);
     		$query=preg_replace('/([ \t])unsigned|IF NOT EXISTS[ \t]/i','$1',$query);
     		$query=preg_replace('/([ \t])(MEDIUM|TINY|LONG){0,1}TEXT([ \t,])/i',"$1VARCHAR(MAX)$3",$query);
-    		
+
     		$matches=array();
     		$original_query='';
     		if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+(?:(UNIQUE)|INDEX)\h+(?:INDEX)?\h*(\w+?)\h*\((.+)\)/is', $query,$matches))
@@ -360,7 +360,7 @@ class DoliDBMssql extends DoliDB
                     if ($query_comp)
                         $query.=" WHERE ".implode(" AND ",$query_comp);
                 }
-    		} 
+    		}
     		else
     		{
     		    if (preg_match('/ALTER TABLE\h+(\w+?)\h+ADD\h+PRIMARY\h+KEY\h+(\w+?)\h*\((.+)\)/is', $query, $matches))
@@ -369,7 +369,7 @@ class DoliDBMssql extends DoliDB
                     $query="ALTER TABLE [".$matches[1]."] ADD CONSTRAINT [".$matches[2]."] PRIMARY KEY CLUSTERED (".$matches[3].")";
     		    }
     		}
-    		
+
 		}
 
 		if ($type=="auto" || $type='ddl')
@@ -384,13 +384,13 @@ class DoliDBMssql extends DoliDB
     			// Supprimer l'instruction MySql
     			$query = str_ireplace(" limit ".$number, "", $query);
     		}
-    
+
     		$itemfound = stripos($query, " week(");
     		if ($itemfound !== false) {
     			// Recreer une requete sans instruction Mysql
     			$positionMySql = stripos($query, " week(");
     			$newquery = substr($query, 0, $positionMySql);
-    
+
     			// Recuperer la date passee en parametre
     			$extractvalue = stristr($query, " week(");
     			$extractvalue = substr($extractvalue, 6);
@@ -398,7 +398,7 @@ class DoliDBMssql extends DoliDB
     			// Conserver la fin de la requete
     			$endofquery = substr($extractvalue, $positionMySql);
     			$extractvalue = substr($extractvalue, 0, $positionMySql);
-    
+
     			// Remplacer l'instruction MySql en Sql Server
     			// Inserer la date en parametre et le reste de la requete
     			$query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
@@ -407,11 +407,11 @@ class DoliDBMssql extends DoliDB
     	   {
     	       //var_dump($query);
     	       //var_dump($matches);
-    	       if (stripos($query,'llx_c_departements') !== false) var_dump($query);
+    	       //if (stripos($query,'llx_c_departements') !== false) var_dump($query);
     	       $sql='SET IDENTITY_INSERT ['.trim($matches[1]).'] ON;';
     	       @mssql_query($sql, $this->db);
     	       $post_query='SET IDENTITY_INSERT ['.trim($matches[1]).'] OFF;';
-    	       
+
     	   }
 		}
 		//print "<!--".$query."-->";
@@ -427,7 +427,7 @@ class DoliDBMssql extends DoliDB
 		{
 			$ret = mssql_query($query, $this->db);
 		}
-				
+
 		if (!empty($post_query))
 		{
 		    @mssql_query($post_query, $this->db);
@@ -732,13 +732,13 @@ class DoliDBMssql extends DoliDB
         //TODO: Check if we need to force a charset
 		//$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
 		$ret=$this->query($sql);
-		    
+
 		$this->select_db($database);
 		$sql="CREATE USER [$owner] FOR LOGIN [$owner]";
 		mssql_query($sql,$this->db);
 		$sql="ALTER ROLE [db_owner] ADD MEMBER [$owner]";
 		mssql_query($sql,$this->db);
-				
+
 		$sql="ALTER DATABASE [$database] SET ANSI_NULL_DEFAULT ON;";
 	    @mssql_query($sql,$this->db);
 	    $sql="ALTER DATABASE [$database] SET ANSI_NULL ON;";
@@ -976,12 +976,12 @@ class DoliDBMssql extends DoliDB
         }
         $sql="SELECT name from sys.databases where name='".$dolibarr_main_db_name."'";
         $ressql=$this->query($sql);
-        if (! $ressql) 
+        if (! $ressql)
         {
             dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             return -1;
-        } 
-        else 
+        }
+        else
         {
             if ($num)
             {
@@ -1106,7 +1106,7 @@ class DoliDBMssql extends DoliDB
 
 		return array();
 	}
-	
+
 	/**
 	 *    Escape a field name according to escape's syntax
 	 *
@@ -1116,18 +1116,18 @@ class DoliDBMssql extends DoliDB
 	function EscapeFieldName($fieldname) {
 	    return "[".$fieldname."]";
 	}
-	
-	
+
+
 	/**
 	 * Get information on field
-	 * 
+	 *
 	 * @param      string  $table      Table name which contains fields
 	 * @param      mixed   $fields     String for one field or array of string for multiple field
 	 * @return boolean|multitype:object
 	 */
 	function GetFieldInformation($table,$fields) {
 	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
-	    if (is_array($fields)) 
+	    if (is_array($fields))
 	    {
 	        $where=" IN ('".implode("','",$fields)."')";
 	    }
@@ -1144,7 +1144,7 @@ class DoliDBMssql extends DoliDB
 	            $result[]=$obj;
 	        }
 	    }
-	    else 
+	    else
 	        return false;
 
 	    return $result;

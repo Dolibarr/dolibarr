@@ -69,10 +69,15 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 $cancelbutton = GETPOST('cancel');
 
+$object = new Client($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('commcard','globalcard'));
 
-$object = new Societe($db);
 
 /*
  * Actions
@@ -406,7 +411,7 @@ if ($id > 0)
 		// display amount and link to unpaid bill
 		$outstandigBills = $object->get_OutstandingBill();
 		if ($outstandigBills != 0)
-			print " / <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills).'</a>';
+			print " (".$langs->trans("CurrentOutstandingBill")." <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills, '', $langs, 0, 0, -1, $conf->currency).'</a>)';
 		print '</td>';
 		print '</tr>';
 	}
@@ -431,9 +436,9 @@ if ($id > 0)
 		print '</tr>';
 	}
 
-	// Level of prospect
 	if ($object->client == 2 || $object->client == 3)
 	{
+		// Level of prospect
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
@@ -459,7 +464,16 @@ if ($id > 0)
 		print '</td></tr>';
 	}
 
-	// Sales representative
+	// Other attributes
+	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields);
+	}
+
+    // Sales representative
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
     // Module Adherent

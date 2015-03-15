@@ -84,7 +84,7 @@ class modExpenseReport extends DolibarrModules
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->conflictwith = array("modDeplacement");
+		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,7);	// Minimum version of Dolibarr required by module
@@ -270,7 +270,7 @@ class modExpenseReport extends DolibarrModules
 									'titre'=>'ListToApprove',
 									'mainmenu'=>'hrm',
 									'leftmenu'=>'expensereport_detaillist_approve',
-									'url'=>'/expensereport/list.php?search_state=2',
+									'url'=>'/expensereport/list.php?search_status=2',
 									'langs'=>'trips',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
 									'enabled'=>'$conf->expensereport->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.

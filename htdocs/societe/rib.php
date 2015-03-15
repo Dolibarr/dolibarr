@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -191,6 +192,7 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
  */
 
 $form = new Form($db);
+$prelevement = new BonPrelevement($db);
 
 llxHeader();
 
@@ -336,11 +338,11 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print "<br>";
 
-    
+
     /*
      * List of bank accounts
      */
-    
+
     print_titre($langs->trans("AllRIB"));
 
     $rib_list = $soc->get_all_rib();
@@ -355,6 +357,10 @@ if ($socid && $action != 'edit' && $action != "create")
         print_liste_field_titre($langs->trans("RIB"));
         print_liste_field_titre($langs->trans("IBAN"));
         print_liste_field_titre($langs->trans("BIC"));
+        if (! empty($conf->prelevement->enabled))
+        {
+			print '<td>RUM</td>';
+        }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print '<td width="40"></td>';
         print '</tr>';
@@ -372,6 +378,12 @@ if ($socid && $action != 'edit' && $action != "create")
             print '<td>'.$rib->iban.'</td>';
             // BIC
             print '<td>'.$rib->bic.'</td>';
+
+            if (! empty($conf->prelevement->enabled))
+            {
+				print '<td>'.$prelevement->buildRumNumber($soc->code_client, $rib->datec, $rib->id).'</td>';
+            }
+
             // Default
             print '<td align="center" width="70">';
             if (!$rib->default_rib) {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -42,7 +42,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");    // To test if we can delete object
+    protected $childtables=array("askpricesupplier","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -359,6 +359,11 @@ class Societe extends CommonObject
 
     var $array_options;
 
+	// Incoterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
+
     /**
      * To contains a clone of this when we need to save old properties of object
      */
@@ -431,7 +436,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, commercial_name, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, commercial_name, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->commercial_name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
@@ -439,6 +444,8 @@ class Societe extends CommonObject
             $sql.= ", ".(! empty($this->ref_int) ? "'".$this->ref_int."'":"null");
             $sql.= ", ".(! empty($this->ref_ext) ? "'".$this->ref_ext."'":"null");
             $sql.= ", 0";
+			$sql.= ", ".(int) $this->fk_incoterms;
+			$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
             $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
 
             dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -739,6 +746,10 @@ class Societe extends CommonObject
         $this->webservices_url = $this->webservices_url?clean_url($this->webservices_url,0):'';
         $this->webservices_key = trim($this->webservices_key);
 
+        //Incoterms
+        $this->fk_incoterms = (int) $this->fk_incoterms;
+		$this->location_incoterms = trim($this->location_incoterms);
+
         $this->db->begin();
 
         // Check name is required and codes are ok or unique.
@@ -822,6 +833,10 @@ class Societe extends CommonObject
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
+
+			//Incoterms
+			$sql.= ", fk_incoterms = ".$this->fk_incoterms;
+			$sql.= ", location_incoterms = ".(! empty($this->location_incoterms)?"'".$this->db->escape($this->location_incoterms)."'":"null");
 
             if ($customer)
             {
@@ -962,7 +977,7 @@ class Societe extends CommonObject
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
-     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof.
+     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
@@ -985,13 +1000,14 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
-        $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
+        $sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', c.code as country_code, c.label as country';
         $sql .= ', d.code_departement as state_code, d.nom as state';
         $sql .= ', st.libelle as stcomm';
         $sql .= ', te.code as typent_code';
+		$sql .= ', i.libelle as libelle_incoterms';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -999,6 +1015,7 @@ class Societe extends CommonObject
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
         if ($rowid) $sql .= ' WHERE s.rowid = '.$rowid;
         if ($ref)   $sql .= " WHERE s.nom = '".$this->db->escape($ref)."' AND s.entity IN (".getEntity($this->element, 1).")";
         if ($ref_ext) $sql .= " WHERE s.ref_ext = '".$this->db->escape($ref_ext)."' AND s.entity IN (".getEntity($this->element, 1).")";
@@ -1017,7 +1034,7 @@ class Societe extends CommonObject
             {
                 $this->error='Fetch several records found for ref='.$ref;
                 dol_syslog($this->error, LOG_ERR);
-                $result = -1;
+                $result = -2;
             }
             if ($num)
             {
@@ -1128,6 +1145,11 @@ class Societe extends CommonObject
 
                 $this->import_key = $obj->import_key;
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+
                 $result = 1;
 
                 // Retreive all extrafield for thirdparty
@@ -1138,17 +1160,15 @@ class Societe extends CommonObject
                	$this->fetch_optionals($this->id,$extralabels);
             }
             else
-            {
-                $this->error='Fetch no third party found for id='.$rowid;
-                dol_syslog($this->error, LOG_ERR);
-                $result = -2;
+			{
+                $result = 0;
             }
 
             $this->db->free($resql);
         }
         else
-        {
-            $this->error=$this->db->error();
+		{
+            $this->error=$this->db->lasterror();
             $result = -3;
         }
 
@@ -1168,11 +1188,20 @@ class Societe extends CommonObject
      * 	@param		boolean		$case		Case sensitive (true/false)
      * 	@param		boolean		$similar	Add test if string inside name into database, or name into database inside string. Do not use this: Not compatible with other database.
      * 	@param		string		$clause		Clause for filters
-     * 	@return		array		Array of thirdparties object
+     * 	@return		array|int				<0 if KO, array of thirdparties object if OK
      */
     function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
     {
     	$thirdparties = array();
+
+    	dol_syslog("searchByName name=".$name." type=".$type." exact=".$exact);
+
+    	// Check parameter
+    	if (empty($name))
+    	{
+    		$this->errors[]='ErrorBadValueForParameter';
+    		return -1;
+    	}
 
     	// Generation requete recherche
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -1252,7 +1281,7 @@ class Societe extends CommonObject
     	}
     	else
     	{
-    		$this->error=$this->db->error().' sql='.$sql;
+    		$this->error=$this->db->lasterror();
     		return -1;
     	}
     }

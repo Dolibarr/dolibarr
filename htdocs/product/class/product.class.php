@@ -43,7 +43,7 @@ class Product extends CommonObject
 	public $element='product';
 	public $table_element='product';
 	public $fk_element='fk_product';
-	protected $childtables=array('propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
+	protected $childtables=array('askpricesupplierdet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -138,6 +138,8 @@ class Product extends CommonObject
 	var $stats_commande=array();
 	var $stats_contrat=array();
 	var $stats_facture=array();
+    var $stats_commande_fournisseur=array();
+
 	var $multilangs=array();
 
 	//! Taille de l'image
@@ -1250,14 +1252,14 @@ class Product extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					return -3;
 				}
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -2;
 		}
 	}
@@ -2650,19 +2652,20 @@ class Product extends CommonObject
 	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
 	 * 	Define value of this->res
 	 *
-	 *	@param		array	$prod			Products array
-	 *	@param		string	$compl_path		Directory path of parents to add before
-	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
-	 *	@param		int		$level			Init level
+	 *	@param		array		$prod			Products array
+	 *	@param		string		$compl_path		Directory path of parents to add before
+	 *	@param		int			$multiply		Because each sublevel must be multiplicated by parent nb
+	 *	@param		int			$level			Init level
+	 *  @param		int			$id_parent		Id parent
 	 *  @return 	void
 	 */
-	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1)
+	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1, $id_parent=0)
 	{
 		global $conf,$langs;
 
 		$product = new Product($this->db);
 		//var_dump($prod);
-		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (there is no mode sub_product) or an id of a sub_product
+		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (first call starting with root top) or an id of a sub_product
 		{
 			if (is_array($desc_pere))	// If desc_pere is an array, this means it's a child
 			{
@@ -2679,6 +2682,7 @@ class Product extends CommonObject
 				$this->load_stock();	// Load stock
 				$this->res[]= array(
 					'id'=>$id,					// Id product
+					'id_parent'=>$id_parent,
 					'ref'=>$this->ref,			// Ref product
 					'nb'=>$nb,					// Nb of units that compose parent product
 					'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
@@ -2696,7 +2700,7 @@ class Product extends CommonObject
 				if (is_array($desc_pere['childs']))
 				{
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1, $id);
 				}
 			}
 		}
@@ -2718,7 +2722,7 @@ class Product extends CommonObject
 			$this->res[]= array($desc_pere[1],$desc_pere[0]);
 			if(count($desc_pere) >1)
 			{
-				$this ->fetch_prods($desc_pere);
+				$this->fetch_prods($desc_pere);
 			}
 		}
 	}
@@ -2736,7 +2740,7 @@ class Product extends CommonObject
 		{
 			foreach($this->sousprods as $prod_name => $desc_product)
 			{
-				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply);
+				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply,1,$this->id);
 			}
 		}
 		//var_dump($this->res);
@@ -2751,13 +2755,11 @@ class Product extends CommonObject
 	function get_each_prod()
 	{
 		$this->res = array();
-		if(is_array($this -> sousprods))
+		if (is_array($this->sousprods))
 		{
-			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			foreach($this->sousprods as $nom_pere => $desc_pere)
 			{
-				if(count($desc_pere) >1)
-				$this ->fetch_prods($desc_pere);
-
+				if (count($desc_pere) >1) $this->fetch_prods($desc_pere);
 			}
 			sort($this->res);
 		}
@@ -2769,10 +2771,10 @@ class Product extends CommonObject
 	 *  Return all Father products fo current product
 	 *
 	 *  @return 	array prod
+	 *  @see		getParent
 	 */
 	function getFather()
 	{
-
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
@@ -2803,10 +2805,10 @@ class Product extends CommonObject
 	 *  Return all direct parent products fo current product
 	 *
 	 *  @return 	array prod
+	 *  @see		getFather
 	 */
 	function getParent()
 	{
-
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
@@ -2833,10 +2835,11 @@ class Product extends CommonObject
 	/**
 	 *  Return childs of product $id
 	 *
-	 * 	@param		int		$id			Id of product to search childs of
-	 *  @return     array       		Prod
+	 * 	@param		int		$id					Id of product to search childs of
+	 *  @param		int		$firstlevelonly		Return only direct child
+	 *  @return     array       				Prod
 	 */
-	function getChildsArbo($id)
+	function getChildsArbo($id, $firstlevelonly=0)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2861,10 +2864,13 @@ class Product extends CommonObject
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-				$listofchilds=$this->getChildsArbo($rec['id']);
-				foreach($listofchilds as $keyChild => $valueChild)
+				if (empty($firstlevelonly))
 				{
-					$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+					$listofchilds=$this->getChildsArbo($rec['id']);
+					foreach($listofchilds as $keyChild => $valueChild)
+					{
+						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+					}
 				}
 			}
 
@@ -2910,6 +2916,7 @@ class Product extends CommonObject
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $conf, $langs;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
         $newref=$this->ref;
@@ -2920,6 +2927,14 @@ class Product extends CommonObject
             $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
         if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
+
+        $tmptext='';
+		if ($this->weight) $tmptext.="<br>".$langs->trans("Weight").': '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+		if ($this->length) $tmptext.="<br>".$langs->trans("Length").': '.$this->length.' '.measuring_units_string($this->length_units,'length');
+		if ($this->surface) $tmptext.="<br>".$langs->trans("Surface").': '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+		if ($this->volume) $tmptext.="<br>".$langs->trans("Volume").': '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+        if ($tmptext) $label .= $tmptext;
+
         if (! empty($this->entity))
             $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
@@ -3186,7 +3201,9 @@ class Product extends CommonObject
 				}
 			}
 			$this->db->free($result);
-			$this->load_virtual_stock();
+
+			$this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
+
 			return 1;
 		}
 		else
@@ -3210,18 +3227,21 @@ class Product extends CommonObject
         $stock_sending_client=0;
         $stock_reception_fournisseur=0;
 
-        if (! empty($conf->commande->enabled)) {
+        if (! empty($conf->commande->enabled))
+        {
             $result=$this->load_stats_commande(0,'1,2');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
-        if (! empty($conf->expedition->enabled)) {
+        if (! empty($conf->expedition->enabled))
+        {
             $result=$this->load_stats_sending(0,'1,2');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
-        if (! empty($conf->fournisseur->enabled)) {
-            $result=$this->load_stats_commande_fournisseur(0,'3,4');
+        if (! empty($conf->fournisseur->enabled))
+        {
+            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
@@ -3257,11 +3277,9 @@ class Product extends CommonObject
 	 *
 	 *  @param  string	$sdir       Target directory
 	 *  @param  string	$file       Array of file info of file to upload: array('name'=>..., 'tmp_name'=>...)
-	 *  @param  int		$maxWidth   Largeur maximum que dois faire la miniature (160 by defaut)
-	 *  @param  int		$maxHeight  Hauteur maximum que dois faire la miniature (120 by defaut)
 	 *  @return	int					<0 if KO, >0 if OK
 	 */
-	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
+	function add_photo($sdir, $file)
 	{
 		global $conf;
 
@@ -3271,10 +3289,12 @@ class Product extends CommonObject
 
 		$dir = $sdir;
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
+		else $dir .= '/'.dol_sanitizeFileName($this->ref);
 
 		dol_mkdir($dir);
 
 		$dir_osencoded=$dir;
+
 		if (is_dir($dir_osencoded))
 		{
 			$originImage = $dir . '/' . $file['name'];
@@ -3285,31 +3305,12 @@ class Product extends CommonObject
 			if (file_exists(dol_osencode($originImage)))
 			{
 				// Cree fichier en taille vignette
-				$this->add_thumb($originImage,$maxWidth,$maxHeight);
+				$this->add_thumb($originImage);
 			}
 		}
 
 		if (is_numeric($result) && $result > 0) return 1;
 		else return -1;
-	}
-
-	/**
-	 *  Build thumb
-	 *
-	 *  @param  string	$file           Chemin du fichier d'origine
-	 *  @param  int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param  int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
-	 *  @return	void
-	 */
-	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
-	{
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
-
-		$file_osencoded=dol_osencode($file);
-		if (file_exists($file_osencoded))
-		{
-			vignette($file,$maxWidth,$maxHeight);
-		}
 	}
 
 	/**

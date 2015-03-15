@@ -116,7 +116,6 @@ ImageEditor=Editor de imagems
 YouReceiveMailBecauseOfNotification=Voce recebeu esta mensagem porque o seu endereco de e-mail foi adicionado a lista de alvos a ser informados de algums eventos no %s software de %s.
 YouReceiveMailBecauseOfNotification2=Este evento e o seguinte:
 ThisIsListOfModules=Esta e a lista de modulos pre-seleçionados pelo profilo demo escolhido (somente os modulos mais comums são visiveis nesta demo). Para uma demo mais pesoalizada editar aqui e presionar "Inicio".
-ClickHere=Clickque aqui
 UseAdvancedPerms=Use as permissões avançadas de algums modulos
 FileFormat=Arquivo formato
 SelectAColor=Escolha a cor

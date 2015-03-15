@@ -10,6 +10,7 @@
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
+	echo "Fix permissions of files"
 	echo "Usage: fixperms.sh (list|fix)"
 fi
 

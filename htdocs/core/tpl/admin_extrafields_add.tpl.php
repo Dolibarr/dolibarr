@@ -48,6 +48,7 @@
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
     		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'link') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
     		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();}
     		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
     		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
@@ -112,4 +113,4 @@
 
 </form>
 
-<!-- END PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- END PHP TEMPLATE admin_extrafields_add.tpl.php -->

@@ -95,6 +95,7 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	$tmp=0;
     	dol_print_error('','PHP version must be 5.3+');
     	/*
         // Method 2 (does not include daylight, not supported by adodb)
@@ -166,7 +167,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
+ *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30"", 'allhourmin': total delay hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration

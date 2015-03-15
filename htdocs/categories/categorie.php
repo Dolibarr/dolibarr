@@ -236,7 +236,9 @@ if ($socid)
 	$soc = new Societe($db);
 	$result = $soc->fetch($socid);
 
-	llxHeader("","",$langs->trans("Category"));
+	$title=$langs->trans("Category");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$soc->name." - ".$title;
+	llxHeader("",$title);
 
 	// Show tabs
 	$head = societe_prepare_head($soc);

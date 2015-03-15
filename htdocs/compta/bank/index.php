@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copytight (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +174,11 @@ foreach ($accounts as $key=>$type)
 		$total[$acc->currency_code] += $solde;
 	}
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+if (! $found)
+{
+	$var = !$var;
+	print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+}
 // Total
 foreach ($total as $key=>$solde)
 {

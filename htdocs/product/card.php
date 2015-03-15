@@ -262,8 +262,12 @@ if (empty($reshook))
 
             // Fill array 'array_options' with data from add form
         	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
-            $id = $object->create($user);
+			if (! $error)
+			{
+            	$id = $object->create($user);
+			}
 
             if ($id > 0)
             {
@@ -339,8 +343,9 @@ if (empty($reshook))
 
                 // Fill array 'array_options' with data from add form
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+				if ($ret < 0) $error++;
 
-                if ($object->check())
+                if (! $error && $object->check())
                 {
                     if ($object->update($object->id, $user) > 0)
                     {
@@ -1170,6 +1175,7 @@ else
             print '</td></tr>';
 
             // Stock
+            /*
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
@@ -1184,7 +1190,7 @@ else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
                 print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
-            }
+            }*/
 
             // Nature
             if($object->type!=1)

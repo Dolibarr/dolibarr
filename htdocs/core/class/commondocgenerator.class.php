@@ -208,7 +208,7 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param	Object 		$object        	contact
+	 * @param	Contact 		$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
@@ -444,7 +444,7 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   Object			$object             Main object to use as data source
+     * @param   Expedition			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
      * @param   array_key		$array_key	        Name of the key for return array
      * @return	array								Array of substitution

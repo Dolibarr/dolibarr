@@ -1,4 +1,4 @@
-# Dolibarr language file - es_MX - admin 
+# Dolibarr language file - Source file is en_US - admin
 Module30Name=Facturas y notas de crédito
 Module30Desc=Gestión de facturas y notas de crédito a clientes. Gestión facturas de proveedores
 BillsNumberingModule=Módulo de numeración de facturas y notas de crédito

@@ -46,6 +46,7 @@ $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
+if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
@@ -63,6 +64,10 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartycard','globalcard'));
+
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -77,8 +82,6 @@ if (! empty($canvas))
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 
 /*
@@ -194,9 +197,15 @@ if (empty($reshook))
         $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
         $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
 
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{
+			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
+			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
+		}
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
+		if ($ret < 0) $error++;
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -262,9 +271,9 @@ if (empty($reshook))
 	                		$action = (($action=='add'||$action=='create')?'create':'edit');
 						}
 					}
-	
+
 					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	
+
 					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 					{
 						$langs->load("errors");
@@ -521,6 +530,12 @@ if (empty($reshook))
     	$result = $object->set_parent(GETPOST('editparentcompany','int'));
     }
 
+    // Set incoterm
+    if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+    {
+    	$object->fetch($socid);
+    	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+    }
 
     // Actions to send emails
     $id=$socid;
@@ -1088,6 +1103,16 @@ else
             print '</td></tr>';
         }
 
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{
+			print '<tr>';
+			print '<td><label for="incoterm_id">'.$langs->trans("IncotermLabel").'</label></td>';
+	        print '<td colspan="3" class="maxwidthonsmartphone">';
+	        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
+			print '</td></tr>';
+		}
+
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1209,6 +1234,13 @@ else
                 // Webservices url/key
                 $object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
                 $object->webservices_key        = GETPOST('webservices_key', 'san_alpha');
+
+				//Incoterms
+				if (!empty($conf->incoterm->enabled))
+				{
+					$object->fk_incoterms			= GETPOST('incoterm_id', 'int');
+					$object->location_incoterms		= GETPOST('lcoation_incoterms', 'alpha');
+				}
 
                 //Local Taxes
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
@@ -1601,6 +1633,16 @@ else
                 print '<td><input type="text" name="webservices_key" id="webservices_key" size="32" value="'.$object->webservices_key.'"></td></tr>';
             }
 
+			// Incoterms
+			if (!empty($conf->incoterm->enabled))
+			{
+				print '<tr>';
+				print '<td><label for="incoterm_id">'.$langs->trans("IncotermLabel").'</label></td>';
+	            print '<td colspan="3" class="maxwidthonsmartphone">';
+	            print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
+				print '</td></tr>';
+			}
+
             // Logo
             print '<tr class="hideonsmartphone">';
             print '<td><label for="photoinput">'.$langs->trans("Logo").'</label></td>';
@@ -1983,6 +2025,29 @@ else
             print '</td></tr>';
         }
 
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{
+			print '<tr><td>';
+            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print $langs->trans('IncotermLabel');
+            print '<td><td align="right">';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+            else print '&nbsp;';
+            print '</td></tr></table>';
+            print '</td>';
+            print '<td colspan="3">';
+			if ($action != 'editincoterm')
+			{
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			}
+			else
+			{
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
+			}
+            print '</td></tr>';
+		}
+
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2138,6 +2203,11 @@ else
 			$formmail->fromid   = $user->id;
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
+			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID))
+			{
+				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
+			}
 			$formmail->withfrom=1;
 			$formmail->withtopic=1;
 			$liste=array();

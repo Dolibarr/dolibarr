@@ -73,7 +73,7 @@ $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-if ($id > 0 || ! empty($ref)) {
+if ($id > 0 || ! empty($ref) && $action!='add') {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
@@ -84,7 +84,7 @@ if ($id > 0 || ! empty($ref)) {
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
-// fetch optionals attributes lines and labels 
+// fetch optionals attributes lines and labels
 $extrafieldsline = new ExtraFields($db);
 $extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 
@@ -205,6 +205,13 @@ if ($action == 'add' && $user->rights->contrat->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		$action='create';
 		$error++;
+	}
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	if ($ret < 0) {
+		$error ++;
+		$action = 'create';
 	}
 
 	if (! $error)
@@ -356,10 +363,6 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	    }
 	    else
 	    {
-
-	    	// Fill array 'array_options' with data from add form
-	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-
 	        $result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -415,7 +418,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
     // Extrafields
     $extrafieldsline = new ExtraFields($db);
     $extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-    $array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+    $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
     // Unset extrafield
     if (is_array($extralabelsline)) {
     	// Get extra fields
@@ -537,7 +540,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $info_bits,
       			$fk_fournprice,
       			$pa_ht,
-            	$array_option
+            	$array_options
             );
         }
 
@@ -637,9 +640,9 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         // Extrafields
         $extrafieldsline = new ExtraFields($db);
         $extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-        $array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
-        $objectline->array_options=$array_option;
-        
+        $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+        $objectline->array_options=$array_options;
+
         // TODO verifier price_min si fk_product et multiprix
 
         $result=$objectline->update($user);
@@ -1118,7 +1121,7 @@ else
         	$ref = substr($object->ref, 1, 4);
         	if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
         	{
-        		$numref = $object->getNextNumRef($soc);
+        		$numref = $object->getNextNumRef($object->thirdparty);
         	}
         	else
         	{
@@ -1414,8 +1417,8 @@ else
                         print '</td>';
                         print '</tr>';
                     }
-                    
-                    
+
+
                     //Display lines extrafields
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
                     	print '<tr '.$bc[$var].'>';
@@ -1481,7 +1484,7 @@ else
                     print '<br>'.$langs->trans("DateEndPlanned").' ';
                     $form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
-                    
+
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
                     	print '<tr '.$bc[$var].'>';
                     	$line = new ContratLigne($db);
@@ -1489,7 +1492,7 @@ else
                     	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan));
                     	print '</tr>';
                     }
-                    
+
                     print '</tr>';
                 }
 

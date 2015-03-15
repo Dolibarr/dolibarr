@@ -86,12 +86,15 @@ if (! is_writable($conffile))
 
 
 // Check parameters
+$is_sqlite = false;
 if (empty($db_type))
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseType")).'</div>';
     $error++;
+} else {
+	$is_sqlite = ($db_type === 'sqlite' || $db_type === 'sqlite3' );
 }
-if (empty($db_host))
+if (empty($db_host) && ! $is_sqlite)
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Server")).'</div>';
     $error++;
@@ -101,7 +104,7 @@ if (empty($db_name))
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
     $error++;
 }
-if (empty($db_user))
+if (empty($db_user)  && ! $is_sqlite)
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
     $error++;
@@ -873,14 +876,17 @@ function write_conf_file($conffile)
 
         // Write params to overwrites default lib path
         fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_TCPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDF_PATH=''; }
-        fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
-        fputs($fp,"\n");
         if (empty($force_dolibarr_lib_FPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_FPDF_PATH=''; }
         fputs($fp, '$dolibarr_lib_FPDF_PATH=\''.$force_dolibarr_lib_FPDF_PATH.'\';');
         fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_TCPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDF_PATH=''; }
+        fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
+        fputs($fp,"\n");
         if (empty($force_dolibarr_lib_FPDI_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_FPDI_PATH=''; }
         fputs($fp, '$dolibarr_lib_FPDI_PATH=\''.$force_dolibarr_lib_FPDI_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_TCPDI_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH=''; }
+        fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
         fputs($fp,"\n");
         if (empty($force_dolibarr_lib_ADODB_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH=''; }
         fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');

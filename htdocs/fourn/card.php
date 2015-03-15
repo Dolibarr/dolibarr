@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $langs->load('suppliers');
@@ -50,9 +51,14 @@ if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('suppliercard','globalcard'));
+
 
 /*
  * Action
@@ -112,8 +118,8 @@ if ($id > 0 && empty($object->id))
 
 if ($object->id > 0)
 {
-	$title=$langs->trans("SupplierCard");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$title=$langs->trans("ThirdParty")." - ".$langs->trans('SupplierCard');
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('SupplierCard');
 	$help_url='';
 	llxHeader('',$title, $help_url);
 
@@ -257,7 +263,16 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
-    // Module Adherent
+	// Other attributes
+	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields);
+	}
+
+	// Module Adherent
     if (! empty($conf->adherent->enabled))
     {
         $langs->load("members");
@@ -503,6 +518,12 @@ if ($object->id > 0)
 	{
 		$langs->load("bills");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+	}
+
+	if ($conf->askpricesupplier->enabled && $user->rights->askpricesupplier->creer)
+	{
+		$langs->load("askpricesupplier");
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAskPriceSupplier").'</a>';
 	}
 
 	if ($user->rights->fournisseur->facture->creer)

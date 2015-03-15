@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
@@ -105,6 +105,16 @@ class Commande extends CommonOrder
     var $user_author_id;
 
     var $lines = array();
+
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
+    
+     /**
+     * ERR Not engouch stock
+     */
+    const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
 
     /**
@@ -672,6 +682,7 @@ class Commande extends CommonOrder
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", fk_shipping_method";
         $sql.= ", remise_absolue, remise_percent";
+		$sql.= ", fk_incoterms, location_incoterms";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
@@ -694,6 +705,8 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
         $sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ", ".($this->remise_percent>0?$this->remise_percent:0);
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -744,8 +757,11 @@ class Commande extends CommonOrder
                     );
                     if ($result < 0)
                     {
-                        $this->error=$this->db->lasterror();
-                        dol_print_error($this->db);
+                    	if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
+                    	{
+                        	$this->error=$this->db->lasterror();
+                        	dol_print_error($this->db);
+                    	}
                         $this->db->rollback();
                         return -1;
                     }
@@ -1092,8 +1108,8 @@ class Commande extends CommonOrder
      *	@param      int				$fk_remise_except	Id remise
      *	@param      string			$price_base_type	HT or TTC
      *	@param      float			$pu_ttc    		    Prix unitaire TTC
-     *	@param      int		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     *	@param      int		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int				$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int				$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1101,7 +1117,7 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
-	 *  @param		array			$array_option		extrafields array
+	 *  @param		array			$array_options		extrafields array
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1111,7 +1127,7 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0)
     {
     	global $mysoc, $conf, $langs;
 
@@ -1184,10 +1200,12 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -3;
+					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
 
@@ -1250,8 +1268,8 @@ class Commande extends CommonOrder
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$this->line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
 			}
 
             $result=$this->line->insert();
@@ -1389,6 +1407,8 @@ class Commande extends CommonOrder
         $sql.= ', c.fk_shipping_method';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
+        $sql.= ', c.fk_incoterms, c.location_incoterms';
+        $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1398,6 +1418,7 @@ class Commande extends CommonOrder
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_input_reason = ca.rowid)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
         if ($id)   	  $sql.= " AND c.rowid=".$id;
         if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
@@ -1452,6 +1473,11 @@ class Commande extends CommonOrder
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
                 $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
                 $this->fk_delivery_address	= $obj->fk_delivery_address;
+
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
@@ -2346,10 +2372,10 @@ class Commande extends CommonOrder
      *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
      *  @param		int				$special_code		Special code (also used by externals modules!)
-	 *  @param		array			$array_option		extrafields array
+	 *  @param		array			$array_options		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0)
     {
         global $conf, $mysoc;
 
@@ -2458,8 +2484,8 @@ class Commande extends CommonOrder
             $this->line->price=$price;
             $this->line->remise=$remise;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$this->line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$this->line->array_options=$array_options;
 			}
 
             $result=$this->line->update();
@@ -3516,7 +3542,7 @@ class OrderLine extends CommonOrderLine
 				}
 			}
 
-            if (! $notrigger)
+            if (! $error && ! $notrigger)
             {
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_INSERT',$user);
