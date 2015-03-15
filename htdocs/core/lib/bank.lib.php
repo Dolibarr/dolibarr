@@ -1,7 +1,7 @@
 <?php
-
 /* Copyright (C) 2006-2007	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 /**
  * \file       htdocs/core/lib/bank.lib.php
+ * \ingroup    bank
  * \brief      Ensemble de fonctions de base pour le module banque
- * \ingroup    banque
  */
 
 /**
@@ -40,13 +40,6 @@ function bank_prepare_head(Account $object)
     $head[$h][1] = $langs->trans("AccountCard");
     $head[$h][2] = 'bankname';
     $h++;
-
-    if ($object->type == 0 || $object->type == 1) {
-        $head[$h][0] = DOL_URL_ROOT . '/compta/bank/bankid_fr.php?id=' . $object->id;
-        $head[$h][1] = $langs->trans("RIB");
-        $head[$h][2] = 'bankid';
-        $h++;
-    }
 
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/account.php?id=" . $object->id;
     $head[$h][1] = $langs->trans("Transactions");

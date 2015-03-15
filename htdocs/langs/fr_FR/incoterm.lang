@@ -1,0 +1,7 @@
+Module210009Name=incoterm
+Module210009Desc=Ajouts pour incoterm
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Fonction
+IncotermSetupTitle2=État
+IncotermSetup=Configuration du module Incoterm
+IncotermFunctionDesc=Activer la fonction Incoterm (Société, Proposition comercial, Commande, Facture, Expédition, Livraison, Commande fournisseur)

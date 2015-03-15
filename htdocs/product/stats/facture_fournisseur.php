@@ -191,11 +191,13 @@ if ($id > 0 || ! empty($ref))
 
 				print_barre_liste($langs->trans("SuppliersInvoices"), $page, $_SERVER["PHP_SELF"], "&amp;id=$product->id", $sortfield, $sortorder, '', $num, $totalrecords, '');
 				print '<div class="liste_titre">';
-				print $langs->trans('Period') . '(' . $langs->trans("DateInvoice") . ') ';
+				print $langs->trans('Period') . ' (' . $langs->trans("DateInvoice") . ') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+				print '</div>';
 				print '</div>';
 				
 				$i = 0;

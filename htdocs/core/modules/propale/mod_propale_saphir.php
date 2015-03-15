@@ -123,7 +123,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		$date=$propal->datep;
 		$customercode=$objsoc->code_client;
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$customercode,$date);
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date);
 
 		return  $numFinal;
 	}

@@ -51,6 +51,7 @@ $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
+$search_total_ht=GETPOST('search_total_ht','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -79,6 +80,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_ref='';
     $search_ref_customer='';
     $search_company='';
+    $search_total_ht='';
     $orderyear='';
     $ordermonth='';
     $deliverymonth='';
@@ -95,6 +97,7 @@ $hookmanager->initHooks(array('orderlist'));
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hook
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 
 /*
  * View
@@ -198,7 +201,10 @@ if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 }
-
+if ($search_total_ht != '')
+{
+	$sql.= natural_search('c.total_ht', $search_total_ht, 1);
+}
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
 
 $nbtotalofrecords = 0;
@@ -252,7 +258,8 @@ if ($resql)
 	if ($search_ref_customer)	$param.='&search_ref_customer='.$search_ref_customer;
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
-
+	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
+	
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	$i = 0;
@@ -316,7 +323,9 @@ if ($resql)
     print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
     $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
+	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
@@ -328,7 +337,8 @@ if ($resql)
 
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
-    while ($i < min($num,$limit)) {
+    while ($i < min($num,$limit)) 
+    {
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print '<tr '.$bc[$var].'>';

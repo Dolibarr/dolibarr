@@ -14,8 +14,10 @@ For users:
   MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
 - Introduce option MAIN_HTML_TITLE to start to control format of html title content.
 - Add extrafields on bank account cards.
-- Added delay between mails in Newsletter module
-- [ task #1793 ] Create new permission to restrict commercial agent margin to logged user
+- Added delay between mails in Newsletter module.
+- [ task #1793 ] Create new permission to restrict commercial agent margin to logged user.
+- Add experimental module ask supplier price to request supplier quotation.
+- Add experimental module batch management.
 
 For translators:
 - Update language files.
@@ -24,6 +26,12 @@ For translators:
 For developers:
 - New: Function yn can show a visual checkbox.
 - New: Introduced select2 jquery plugin.
+
+WARNING: Following changes may create regression for some external modules, but was necessary to make
+Dolibarr better:
+- Removed hoo supplierorderdao into supplier order creation. This is a business event, so we must use the 
+  trigger ORDER_SUPPLIER_CREATE instead.
+
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
@@ -223,6 +231,7 @@ Dolibarr better:
 - Fix: [ bug #1825 ] External agenda: hide/show checkbox doesn't work
 - Fix: [ bug #1790 ] Email form behaves in an unexpected way when pressing Enter key
 - Fix: Bad SEPA xml file creation
+- Fix: [ bug #1892 ] PHP Fatal error when using USER_UPDATE_SESSION trigger and adding a supplier invoice payment
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.

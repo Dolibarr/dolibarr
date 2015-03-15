@@ -400,7 +400,7 @@ if ($id > 0)
 		// display amount and link to unpaid bill
 		$outstandigBills = $object->get_OutstandingBill();
 		if ($outstandigBills != 0)
-			print " / <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills).'</a>';
+			print " (".$langs->trans("CurrentOutstandingBill")." <a href='".DOL_URL_ROOT."/compta/facture/list.php?socid=".$object->id."&search_status=1'>".price($outstandigBills, '', $langs, 0, 0, -1, $conf->currency).'</a>)';
 		print '</td>';
 		print '</tr>';
 	}

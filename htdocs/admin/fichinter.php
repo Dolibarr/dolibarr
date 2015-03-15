@@ -221,7 +221,7 @@ else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
 {
 	$val = GETPOST('FICHINTER_PRINT_PRODUCTS','alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS",($val == 'on'),'bool',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS",($val == 'on' ? 1 : 0),'bool',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 

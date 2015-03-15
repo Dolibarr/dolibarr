@@ -93,6 +93,11 @@ class FactureFournisseur extends CommonInvoice
     var $fournisseur;	// deprecated
 	var $thirdparty;	// To store thirdparty
 
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
+	
     var $extraparams=array();
 
     /**
@@ -186,6 +191,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", note_public";
         $sql.= ", fk_user_author";
         $sql.= ", date_lim_reglement";
+		$sql.= ", fk_incoterms, location_incoterms";
         $sql.= ")";
         $sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -203,6 +209,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$user->id.",";
         $sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
+		$sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -369,11 +377,14 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.extraparams,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
-        $sql.= ' s.nom as socnom, s.rowid as socid';
+        $sql.= ' s.nom as socnom, s.rowid as socid,';
+        $sql.= ' t.fk_incoterms, t.location_incoterms,';
+        $sql.= " i.libelle as libelle_incoterms";
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id)";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
 
@@ -433,6 +444,11 @@ class FactureFournisseur extends CommonInvoice
                 $this->modelpdf			    = $obj->model_pdf;
                 $this->import_key			= $obj->import_key;
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+				
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->socid  = $obj->socid;
