@@ -494,9 +494,9 @@ class Task extends CommonObject
 
 
     /**
-     *	Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *	@param	int		$option			Sur quoi pointe le lien
      *  @param	int		$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      *	@return	string					Chaine avec URL
@@ -517,15 +517,15 @@ class Task extends CommonObject
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
+        $linkend='</a>';
 
         $picto='projecttask';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

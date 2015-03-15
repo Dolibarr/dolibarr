@@ -44,7 +44,7 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<center>
+<div align="center">
 <div class="login_vertical_align">
 
 
@@ -174,7 +174,7 @@ if (! empty($hookmanager->resArray['options'])) {
 
 
 </div>
-</center>	<!-- end of center -->
+</div>	<!-- end of center -->
 
 
 </body>
