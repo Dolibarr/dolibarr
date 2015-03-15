@@ -1771,21 +1771,37 @@ class User extends CommonObject
 		}
 	}
 
-	/**
-	 *  Return a link to the user card (with optionaly the picto)
-	 * 	Use this->id,this->lastname, this->firstname
-	 *
-	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
-	 *	@param	string	$option			On what the link point to
+    /**
+     *  Return a link to the user card (with optionaly the picto)
+     *  Use this->id,this->lastname, this->firstname
+     *
+     *  @param  int     $withpicto      Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
+     *  @param  string  $option         On what the link point to
      *  @param  boolean $infologin      Add connection info to the tooltip
-     *  @param	string	$notooltip		1=Disable tooltip
-     *  @param	int		$maxlen			Max length of visible user name
-	 *	@return	string					String with URL
-	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
-	{
-		global $langs, $conf, $db;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
+     *  @param  string  $notooltip      1=Disable tooltip
+     *  @param  int     $maxlen         Max length of visible user name
+     *  @return string                  String with URL
+     *  @deprecated                     Use getHtmlLink with re-ordered parameters
+     */
+    function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
+    {
+        return $this->getHtmlLink($withpicto, $option, $maxlen, '', $notooltip);
+    }
+
+    /**
+     *  Return a link to the user card (with optionaly the picto)
+     *  Use this->id,this->lastname, this->firstname
+     *
+     *  @param  int     $withpicto      Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
+     *  @param  string  $option         On what the link point to
+     *  @param  int     $maxlen         Max length of visible user name
+     *  @param  string  $more           More info in tooltip
+     *  @param  string  $notooltip      1=Disable tooltip
+     *  @return string                  String with URL
+    */
+    function getHtmlLink($withpicto=0, $option='', $maxlen=24, $more='', $notooltip=0)
+    {
+        global $langs, $conf, $db;
 
 
         $result = '';
@@ -1803,8 +1819,8 @@ class User extends CommonObject
         if (! empty($this->societe_id)) {
             $thirdpartystatic = new Societe($db);
             $thirdpartystatic->fetch($this->societe_id);
-            $companylink = ' ('.$thirdpartystatic->getNomUrl('','').')';
-            $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+            $companylink = ' ('.$thirdpartystatic->getNomUrl(0,'').')';
+            $company = ' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
         $label .= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
@@ -1817,29 +1833,12 @@ class User extends CommonObject
         $label.= '</div>';
 
         // Info Login
-        if ($infologin)
-        {
-            $label.= '<br>';
-            $label.= '<br><u>'.$langs->trans("Connection").'</u>';
-            $label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
-            if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
-            $label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
-            $label.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin,"dayhour");
-            $label.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin,"dayhour");
-            $label.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
-            $label.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
-            $s=picto_from_langcode($langs->getDefaultLang());
-            $label.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
-            $label.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
-            if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
-            if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
-        }
-
+        if ($more) $label.= $more;
 
         $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
         $lien.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
         $lien.= '>';
-		$lienfin='</a>';
+        $lienfin='</a>';
 
         if ($withpicto)
         {
