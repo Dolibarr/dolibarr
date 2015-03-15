@@ -35,6 +35,10 @@
  */
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+
+$usemargins=0;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal', 'askpricesupplier','commande'))) $usemargins=1;
+
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
@@ -119,7 +123,9 @@ if (empty($usemargins)) $usemargins=0;
 	}
 	?>
 	</td>
-
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><?php echo $line->ref_fourn; ?></td>
+	<?php } ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pu_ht); ?></td>

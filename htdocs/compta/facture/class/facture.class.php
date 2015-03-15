@@ -131,6 +131,11 @@ class Facture extends CommonInvoice
 	var $specimen;
 
 	var $fac_rec;
+	
+	//Incoterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * @var int Situation cycle reference number
@@ -245,6 +250,8 @@ class Facture extends CommonInvoice
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
+			$this->fk_incoterms		 = $_facrec->fk_incoterms;
+			$this->location_incoterms= $_facrec->location_incoterms;
 
 			// Clean parametres
 			if (! $this->type) $this->type = self::TYPE_STANDARD;
@@ -279,6 +286,7 @@ class Facture extends CommonInvoice
 		$sql.= ", fk_facture_source, fk_user_author, fk_projet";
 		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
 		$sql.= ", situation_cycle_ref, situation_counter, situation_final";
+		$sql.= ", fk_incoterms, location_incoterms";
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -304,6 +312,8 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->situation_cycle_ref?"'".$this->db->escape($this->situation_cycle_ref)."'":"null");
 		$sql.= ", ".($this->situation_counter?"'".$this->db->escape($this->situation_counter)."'":"null");
 		$sql.= ", ".($this->situation_final?$this->situation_final:0);
+		$sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql.=")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -925,9 +935,12 @@ class Facture extends CommonInvoice
 		$sql.= ', f.fk_account';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
+        $sql.= ', f.fk_incoterms, f.location_incoterms';
+        $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 		$sql.= ' WHERE f.entity = '.$conf->entity;
 		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
 		if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
@@ -987,6 +1000,11 @@ class Facture extends CommonInvoice
 				$this->situation_final      = $obj->situation_final;
 				$this->extraparams			= (array) json_decode($obj->extraparams, true);
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+				
 				if ($this->statut == 0)	$this->brouillon = 1;
 
 				// Retreive all extrafield for invoice
@@ -3231,6 +3249,8 @@ class Facture extends CommonInvoice
 		$this->note_public='This is a comment (public)';
 		$this->note_private='This is a comment (private)';
 		$this->note='This is a comment (private)';
+		$this->fk_incoterms=0;
+		$this->location_incoterms='';
 
 		if (empty($option) || $option != 'nolines')
 		{

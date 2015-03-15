@@ -147,7 +147,7 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Delete batch record attach to a shipment
 	 *
-	 * @param	object	$db				Database object
+	 * @param	DoliDB	$db				Database object
 	 * @param	int		$id_expedition	rowid of shipment
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
@@ -172,7 +172,7 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * Retrieve all batch number details link to a shipment line
 	 *
-	 * @param	object	$db					Database object
+	 * @param	DoliDB	$db					Database object
 	 * @param	int		$id_line_expdet		id of shipment line
 	 * @return	variant						-1 if KO, array of ExpeditionLineBatch if OK
 	 */

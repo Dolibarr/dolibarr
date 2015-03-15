@@ -615,12 +615,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
-
+		
 		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
-
+	
 	if (empty($onlynumber) && ! empty($account->domiciliation))
 	{
 		$pdf->SetXY($curx, $cury);
@@ -631,8 +631,18 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
 	}
+	
+	if (! empty($account->proprio))
+	{
+		$pdf->SetXY($curx, $cury);
+		$val=$outputlangs->transnoentities("BankAccountOwner").': ' . $outputlangs->convToOutputCharset($account->proprio);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$tmpy=$pdf->getStringHeight(100, $val);
+		$cury+=$tmpy;
+	}
+	
 	else if (! $usedetailedbban) $cury+=1;
-
+	
 	// Use correct name of bank id according to country
 	$ibankey="IBANNumber";
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";

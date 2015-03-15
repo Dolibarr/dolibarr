@@ -108,7 +108,7 @@ $db->close();
 /**
  * Function to get list of updated or modified files
  *
- * @param   object   $dir           SimpleXMLElement of files to test
+ * @param   SimpleXMLElement   $dir           SimpleXMLElement of files to test
  * @param   string   $path          Path of file
  * @return  array                   Array of filenames
  */

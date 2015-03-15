@@ -1330,17 +1330,23 @@ class Categorie extends CommonObject
 	 *  Build thumb
 	 *
 	 *  @param      string	$file           Chemin du fichier d'origine
-	 *  @param      int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
 	 *	@return		void
 	 */
-	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
+	function add_thumb($file)
 	{
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
 
 		if (file_exists($file))
 		{
-			vignette($file,$maxWidth,$maxHeight);
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
 		}
 	}
 

@@ -153,7 +153,7 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
 	else $sql .= natural_search('fac.ref', $search_ref);
 }
-if (search_ref_supplier)
+if ($search_ref_supplier)
 {
 	$sql .= natural_search('fac.ref_supplier', $search_ref_supplier);
 }
@@ -178,14 +178,14 @@ if ($search_company)
     $sql .= natural_search('s.nom', $search_company);
 }
 
-if ($search_amount_no_tax)
+if ($search_amount_no_tax != '')
 {
-	$sql .= " AND fac.total_ht = '".$db->escape(price2num($search_amount_no_tax))."'";
+	$sql .= natural_search('fac.total_ht', $search_amount_no_tax, 1);
 }
 
-if ($search_amount_all_tax)
+if ($search_amount_all_tax != '')
 {
-	$sql .= " AND fac.total_ttc = '".$db->escape(price2num($search_amount_all_tax))."'";
+	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
 }
 
 $nbtotalofrecords = 0;
@@ -270,9 +270,9 @@ if ($resql)
 		print '</td>';
 	}
 	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
+	print '<input class="flat" type="text" size="6" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
+	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
 	print $form->selectarray('filtre', $liststatus, $filter, 1);

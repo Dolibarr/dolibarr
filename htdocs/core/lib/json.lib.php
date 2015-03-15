@@ -269,7 +269,7 @@ function dol_json_decode($json, $assoc=false)
 /**
  * Return text according to type
  *
- * @param 	mixed	$val	Value to decode
+ * @param 	string	$val	Value to decode
  * @return	string			Formated value
  */
 function _unval($val)

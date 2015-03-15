@@ -80,21 +80,9 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
 $projectid=$id;	// For backward compatibility
 
-$project = new Project($db);
-if ($id > 0 || ! empty($ref))
-{
-    $ret=$project->fetch($id,$ref);
-    if ($ret > 0)
-    {
-		$projectid=$project->id;
-		$project->fetch_thirdparty();
-	}
-	else
-	{
-		setEventMessages($project->error, $project->errors, 'errors');
-		$action='';
-	}
-}
+$object = new Project($db);
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Security check
 $socid=0;
@@ -116,10 +104,10 @@ $formfile = new FormFile($db);
 $userstatic=new User($db);
 
 // To verify role of users
-$userAccess = $project->restrictedProjectArea($user);
+$userAccess = $object->restrictedProjectArea($user);
 
-$head=project_prepare_head($project);
-dol_fiche_head($head, 'element', $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+$head=project_prepare_head($object);
+dol_fiche_head($head, 'element', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
 
 print '<table class="border" width="100%">';
@@ -130,36 +118,36 @@ print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
-    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
-    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+    $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 }
-print $form->showrefnav($project, 'ref', $linkback, 1, 'ref', 'ref');
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 print '</td></tr>';
 
-print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if (! empty($project->thirdparty->id)) print $project->thirdparty->getNomUrl(1);
+if (! empty($object->thirdparty->id)) print $object->thirdparty->getNomUrl(1);
 else print '&nbsp;';
 print '</td></tr>';
 
 // Visibility
 print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-if ($project->public) print $langs->trans('SharedProject');
+if ($object->public) print $langs->trans('SharedProject');
 else print $langs->trans('PrivateProject');
 print '</td></tr>';
 
 // Statut
-print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 // Date start
 print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-print dol_print_date($project->date_start,'day');
+print dol_print_date($object->date_start,'day');
 print '</td></tr>';
 
 // Date end
 print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-print dol_print_date($project->date_end,'day');
+print dol_print_date($object->date_end,'day');
 print '</td></tr>';
 
 print '</table>';
@@ -263,18 +251,18 @@ if ($action=="addelement")
 {
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
-	$result=$project->update_element($tablename, $elementselectid);
+	$result=$object->update_element($tablename, $elementselectid);
 	if ($result<0) {
-		setEventMessage($project->error,'errors');
+		setEventMessage($object->error,'errors');
 	}
 }elseif ($action == "unlink") {
 
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 
-	$result = $project->remove_element($tablename, $elementselectid);
+	$result = $object->remove_element($tablename, $elementselectid);
 	if ($result < 0) {
-		setEventMessage($project->error, 'errors');
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -317,7 +305,7 @@ foreach ($listofreferent as $key => $value)
 
 		print_titre($langs->trans($title));
 
-		$selectList=$formproject->select_element($tablename,$project->thirdparty->id);
+		$selectList=$formproject->select_element($tablename,$object->thirdparty->id);
 		if (! $selectList || ($selectList<0))
 		{
 			setEventMessages($formproject->error,$formproject->errors,'errors');
@@ -352,7 +340,7 @@ foreach ($listofreferent as $key => $value)
 		else print '<td width="120"></td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
-		$elementarray = $project->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
 		if (is_array($elementarray) && count($elementarray)>0)
 		{
 			$var=true;
@@ -544,32 +532,32 @@ foreach ($listofreferent as $key => $value)
 		 */
 		print '<div class="tabsAction">';
 
-		if ($project->statut > 0)
+		if ($object->statut > 0)
 		{
-			if ($project->thirdparty->prospect || $project->thirdparty->client)
+			if ($object->thirdparty->prospect || $object->thirdparty->client)
 			{
 				if ($key == 'propal' && ! empty($conf->propal->enabled) && $user->rights->propale->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddProp").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddProp").'</a>';
 				}
 				if ($key == 'order' && ! empty($conf->commande->enabled) && $user->rights->commande->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
 				}
 				if ($key == 'invoice' && ! empty($conf->facture->enabled) && $user->rights->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
 				}
 			}
-			if ($project->thirdparty->fournisseur)
+			if ($object->thirdparty->fournisseur)
 			{
 				if ($key == 'order_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
 				}
 				if ($key == 'invoice_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
 				}
 			}
 		}
@@ -607,7 +595,7 @@ foreach ($listofreferent as $key => $value)
 	{
 		$element = new $classname($db);
 
-		$elementarray = $project->get_element_list($key, $tablename);
+		$elementarray = $object->get_element_list($key, $tablename);
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
 			$var=true;
