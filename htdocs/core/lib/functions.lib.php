@@ -4542,7 +4542,7 @@ function utf8_check($str)
 
 
 /**
- *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
+ *      Return a string encoded into OS filesystem encoding. This function is used to define
  * 	    value to pass to filesystem PHP functions.
  *
  *      @param	string	$str        String to encode (UTF-8)

@@ -363,7 +363,7 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 }
 .buttonRefused {
 	pointer-events: none;
-   	cursor: default;	
+   	cursor: default;
 	opacity: 0.4;
     filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
@@ -2949,7 +2949,10 @@ div.dolEventError h1, div.dolEventError h2 {
 {
 	border: 1px solid #aaa;
 }
-
+.select2-disabled
+{
+	color: #888;
+}
 .select2-drop-active
 {
 	border: 1px solid #aaa;

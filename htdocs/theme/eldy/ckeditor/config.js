@@ -76,7 +76,7 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Source','Maximize'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
-	    ['Font','FontSize'],
+	    ['Format','Font','FontSize'],
 	    ['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],

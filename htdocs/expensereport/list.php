@@ -21,12 +21,13 @@
 
 /**
  *	    \file       htdocs/expensereport/index.php
- *		\brief      Page liste des expensereports
+ *		\brief      list of expense reports
  */
 
 require "../main.inc.php";
-dol_include_once("/expensereport/class/expensereport.class.php");
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -39,7 +40,7 @@ $result = restrictedArea($user, 'expensereport','','');
 
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
-$search_state = GETPOST('search_state','int');
+$search_status = GETPOST('search_status','int');
 $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
 $month_end    = GETPOST("month_end","int");
@@ -49,7 +50,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 {
 	$search_ref="";
 	$search_user="";
-	$search_state="";
+	$search_status="";
 	$month_start="";
 	$year_start="";
 	$month_end="";
@@ -69,12 +70,11 @@ llxHeader('', $langs->trans("ListOfTrips"));
 $max_year = 5;
 $min_year = 5;
 
-$sortorder     = $_GET["sortorder"];
-$sortfield     = $_GET["sortfield"];
-$page          = $_GET["page"];
+$sortorder     = GETPOST("sortorder");
+$sortfield     = GETPOST("sortfield");
+$page          = GETPOST("page");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
-
 
 if ($page == -1) {
 	$page = 0 ;
@@ -85,79 +85,53 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_c_expensereport_statuts as status,";
+$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
-$sql.= " FROM ".MAIN_DB_PREFIX."expensereport d\n";
-$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid\n";
+$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 
-
-
-// WHERE
+// Where
 if(!empty($search_ref)){
-	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'\n";
+	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'";
 }else{
-	$sql.= " WHERE 1 = 1\n";
+	$sql.= " WHERE 1 = 1";
 }
-// DATE START
-if ($month_start > 0) {
-	if ($year_start > 0) {
-		if($month_end > 0) {
-			if($year_end > 0) {
-				$sql.= " AND date_format(d.date_debut, '%Y-%m') >= '$year_start-$month_start'";
-				$sql.= " AND date_format(d.date_fin, '%Y-%m') <= '$year_end-$month_end'";
-			} else {
-				$sql.= " AND date_format(d.date_debut, '%Y-%m') >= '$year_start-$month_start'";
-				$sql.= " AND date_format(d.date_fin, '%m') <= '$month_end'";
-			}
-		} else {
-			if($year_end > 0) {
-				$sql.= " AND date_format(d.date_debut, '%Y-%m') >= '$year_start-$month_start'";
-				$sql.= " AND date_format(d.date_fin, '%Y') <= '$year_end'";
-			} else {
-				$sql.= " AND date_format(d.date_debut, '%Y-%m') >= '$year_start-$month_start'";
-			}
-		}
-	} else {
-		$sql.= " AND date_format(d.date_debut, '%m') >= '$month_start'";
-	}
-} else {
-	if ($year_start > 0) {
-		if($month_end > 0) {
-			if($year_end > 0) {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-				$sql.= " AND date_format(d.date_fin, '%Y-%m') <= '$year_end-$month_end'";
-			} else {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-				$sql.= " AND date_format(d.date_fin, '%m') <= '$month_end'";
-			}
-		} else {
-			if($year_end > 0) {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-				$sql.= " AND date_format(d.date_fin, '%Y') <= '$year_end'";
-			} else {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-			}
-		}
-	} else {
-		if($month_end > 0) {
-			if($year_end > 0) {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-				$sql.= " AND date_format(d.date_fin, '%Y-%m') <= '$year_end-$month_end'";
-			} else {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-				$sql.= " AND date_format(d.date_fin, '%m') <= '$month_end'";
-			}
-		} else {
-			if($year_end > 0) {
-				$sql.= " AND date_format(d.date_debut, '%Y') >= '$year_start'";
-				$sql.= " AND date_format(d.date_fin, '%Y') <= '$year_end'";
-			}
-		}
-	}
+// Date Start
+if ($month_start > 0)
+{
+    if ($year_start > 0 && empty($day))
+    $sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,false))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,false))."'";
+    else if ($year_start > 0 && ! empty($day))
+    $sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_start, $day, $year_start))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_start, $day, $year_start))."'";
+    else
+    $sql.= " AND date_format(d.date_debut, '%m') = '".$month_start."'";
 }
-if (!empty($search_user) && $search_user > 0) $sql.= " AND d.fk_user_author = ".$search_user."\n";
-if($search_state != '') $sql.= " AND d.fk_c_expensereport_statuts = '$search_state'\n";
+else if ($year_start > 0)
+{
+	$sql.= " AND d.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,false))."' AND '".$db->idate(dol_get_last_day($year_start,12,false))."'";
+}
+// Date Start
+if ($month_end > 0)
+{
+    if ($year_end > 0 && empty($day))
+    $sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,false))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,false))."'";
+    else if ($year_end > 0 && ! empty($day))
+    $sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_end, $day, $year_end))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_end, $day, $year_end))."'";
+    else
+    $sql.= " AND date_format(d.date_fin, '%m') = '".$month_end."'";
+}
+else if ($year_end > 0)
+{
+	$sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,false))."' AND '".$db->idate(dol_get_last_day($year_end,12,false))."'";
+}
+// User
+if ($search_name)
+{
+    $sql .= natural_search('u.lastname', $search_name);
+}
+// Status
+if($search_status != '') $sql.= " AND d.fk_statut = '".$search_status."'";
 
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
@@ -219,17 +193,13 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 
-
 	print '<td class="liste_titre">&nbsp;</td>';
-
 	print '<td class="liste_titre">&nbsp;</td>';
-
-	print '<td class="liste_titre" align="right">';
-	print "</td>";
+	print '<td class="liste_titre">&nbsp;</td>';
 
 	// Status
 	print '<td class="liste_titre" align="right">';
-	select_expensereport_statut($search_state,'search_state');
+	select_expensereport_statut($search_status,'search_status');
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
@@ -257,10 +227,6 @@ if ($resql)
 			print '<td align="center">'.($objp->date_debut > 0 ? dol_print_date($objp->date_debut, 'day') : '').'</td>';
 			print '<td align="center">'.($objp->date_fin > 0 ? dol_print_date($objp->date_fin, 'day') : '').'</td>';
 			print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->id_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>';
-			/*print '<td align="right">'.price($objp->total_tva, '', $langs, 0, 'MT', 0, $conf->currency).'</td>';
-			print '<td align="right">'.price($objp->total_ht, '', $langs, 0, 'MT', 0, $conf->currency).'</td>';
-			print '<td align="right">'.price($objp->total_ttc, '', $langs, 0, 'MT', 0, $conf->currency).'</td>';
-			*/
 			print '<td align="right">'.price($objp->total_ht).'</td>';
 			print '<td align="right">'.price($objp->total_tva).'</td>';
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
@@ -281,11 +247,7 @@ if ($resql)
 
 		print '<tr class="liste_total">';
 		print '<td colspan="4">'.$langs->trans("Total").'</td>';
-		/*
-		print '<td style="text-align:right;">'.price($total_total_tva, '', $langs, 0, 'MT', 0, $conf->currency).'</td>';
-		print '<td style="text-align:right;">'.price($total_total_ht, '', $langs, 0, 'MT', 0, $conf->currency).'</td>';
-		print '<td style="text-align:right;">'.price($total_total_ttc, '', $langs, 0, 'MT', 0, $conf->currency).'</td>';
-		*/
+
 		print '<td style="text-align:right;">'.$total_total_ht.'</td>';
 		print '<td style="text-align:right;">'.$total_total_tva.'</td>';
 		print '<td style="text-align:right;">'.$total_total_ttc.'</td>';

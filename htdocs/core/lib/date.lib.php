@@ -95,6 +95,7 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	$tmp=0;
     	dol_print_error('','PHP version must be 5.3+');
     	/*
         // Method 2 (does not include daylight, not supported by adodb)

@@ -2140,9 +2140,9 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
+        if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
@@ -2804,12 +2804,7 @@ abstract class CommonObject
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($this->db);
-
-				$product_static->type=$line->fk_product_type;
-				$product_static->id=$line->fk_product;
-				$product_static->ref=$line->ref;
-                if (! empty($line->entity))
-                    $product_static->entity=$line->entity;
+				$product_static->fetch($line->fk_product);
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -2842,7 +2837,7 @@ abstract class CommonObject
 				}
 
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
-				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));
+				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -3463,6 +3458,31 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *  Build thumb
+	 *
+	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *	@return		void
+	 */
+	function add_thumb($file)
+	{
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
+
+		$file_osencoded=dol_osencode($file);
+		if (file_exists($file_osencoded))
+		{
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file_osencoded, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file_osencoded, $maxwidthmini, $maxheightmini, '_mini', $quality);
+		}
+	}
+
 
 	/* Functions common to commonobject and commonobjectline */
 
@@ -3629,6 +3649,7 @@ abstract class CommonObject
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
                	$attributeSize  = $extrafields->attribute_size[$attributeKey];
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	$attributeParam = $extrafields->attribute_param[$attributeKey];
                	switch ($attributeType)
                	{
                		case 'int':
@@ -3651,6 +3672,19 @@ abstract class CommonObject
             		case 'datetime':
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
+           		case 'link':
+				$param_list=array_keys($attributeParam ['options']);
+				// 0 : ObjectName
+				// 1 : classPath
+				$InfoFieldList = explode(":", $param_list[0]);
+				dol_include_once($InfoFieldList[1]);
+				$object = new $InfoFieldList[0]($this->db);
+				if ($value)
+				{
+					$object->fetch(0,$value);
+					$this->array_options[$key]=$object->id;
+				}
+				break;
                	}
             }
             $this->db->begin();

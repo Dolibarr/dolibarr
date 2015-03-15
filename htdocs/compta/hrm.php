@@ -196,7 +196,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, x.rowid, x.date_debut as date, x.tms as dm, x.total_ttc";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, x.rowid, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = x.fk_user_author";
@@ -218,7 +218,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("FeesAmount").'</td>';
+		print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
 		print '<td width="16">&nbsp;</td>';
 		print '</tr>';
@@ -239,9 +239,9 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				print '<tr '.$bc[$var].'>';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(1).'</td>';
-				print '<td align="right">'.$obj->total_ttc.'</td>';
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
-				//print '<td>'.$expensereportstatic->LibStatut($obj->fk_statut,3).'</td>';
+				print '<td>'.$expensereportstatic->LibStatut($obj->status,3).'</td>';
 				print '</tr>';
 				$var=!$var;
 				$i++;

@@ -266,7 +266,8 @@ class ChargeSociales extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
         $sql.= " SET libelle='".$this->db->escape($this->lib)."',";
         $sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
-        $sql.= " periode='".$this->db->idate($this->periode)."'";
+        $sql.= " periode='".$this->db->idate($this->periode)."',";
+        $sql.= " amount='".price2num($this->amount,'MT')."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);

@@ -156,7 +156,7 @@ class RejetPrelevement
 			}
 			else
 			{
-				$result=$pai->addPaymentToBank($user,'payment','(InvoiceRefused)',$bankaccount);
+				$result=$pai->addPaymentToBank($user,'payment','(InvoiceRefused)',$bankaccount,'','');
 				if ($result < 0)
 				{
 					dol_syslog("RejetPrelevement::Create AddPaymentToBan Error");
