@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -77,6 +78,7 @@ class pdf_baleine extends ModelePDFProjects
 		// Defini position des colonnes
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
+		$this->posxworkload=$this->marge_gauche+100;
 		$this->posxprogress=$this->marge_gauche+140;
 		$this->posxdatestart=$this->marge_gauche+150;
 		$this->posxdateend=$this->marge_gauche+170;
@@ -216,20 +218,22 @@ class pdf_baleine extends ModelePDFProjects
 					$progress=$object->lines[$i]->progress.'%';
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-
+					$planned_workload=convertSecondToTime($object->lines[$i]->planned_workload,'allhourmin');
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
 					$pdf->SetXY($this->posxref, $curY);
-					$pdf->MultiCell(60, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
+					$pdf->MultiCell($this->posxlabel-$this->posxref, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
 					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell(108, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->SetXY($this->posxworkload, $curY);
+					$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $planned_workload, 0, 'R');
 					$pdf->SetXY($this->posxprogress, $curY);
-					$pdf->MultiCell(16, 3, $progress, 0, 'L');
+					$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
 					$pdf->SetXY($this->posxdatestart, $curY);
-					$pdf->MultiCell(20, 3, $datestart, 0, 'L');
+					$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, $datestart, 0, 'C');
 					$pdf->SetXY($this->posxdateend, $curY);
-					$pdf->MultiCell(20, 3, $dateend, 0, 'L');
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxdateend, 3, $dateend, 0, 'C');
 
 
 					$pageposafter=$pdf->getPage();
@@ -362,8 +366,23 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size);
 
-		$pdf->SetXY($this->posxref-1, $tab_top+2);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Tasks"),'','L');
+		$pdf->SetXY($this->posxref, $tab_top+1);
+		$pdf->MultiCell($this->posxlabel-$this->posxref,3, $outputlangs->transnoentities("Tasks"),'','L');
+
+		$pdf->SetXY($this->posxlabel, $tab_top+1);
+		$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
+
+		$pdf->SetXY($this->posxworkload, $tab_top+1);
+		$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $outputlangs->transnoentities("PlannedWorkloadShort"), 0, 'R');
+
+		$pdf->SetXY($this->posxprogress, $tab_top+1);
+		$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, '%', 0, 'R');
+
+		$pdf->SetXY($this->posxdatestart, $tab_top+1);
+		$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, '', 0, 'C');
+
+		$pdf->SetXY($this->posxdateend, $tab_top+1);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
 
 	}
 

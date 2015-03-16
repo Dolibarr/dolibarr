@@ -1,6 +1,6 @@
 [main]
 host = https://www.transifex.com
-lang_map = uz: uz_UZ
+lang_map = uz: uz_UZ, sw: sw_SW
 
 [dolibarr.accountancy]
 file_filter = htdocs/langs/<lang>/accountancy.lang

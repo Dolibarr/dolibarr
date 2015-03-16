@@ -84,3 +84,4 @@ CronType_command=Терминална команда
 CronMenu=Крон (софтуер за изпънение на автоматични задачи)
 CronCannotLoadClass=Неможе да се зареди класа %s или обекта %s
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+TaskDisabled=Task disabled

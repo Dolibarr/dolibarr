@@ -84,3 +84,4 @@ CronType_command=Shell lệnh
 CronMenu=Cron
 CronCannotLoadClass=Không thể tải lớp% s hoặc đối tượng% s
 UseMenuModuleToolsToAddCronJobs=Đi vào menu "Trang chủ - module công cụ - danh sách công việc" để xem và chỉnh sửa các công việc theo lịch trình.
+TaskDisabled=Task disabled

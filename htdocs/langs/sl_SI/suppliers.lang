@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Dobavitelji
-Supplier=Dobavitelj
 AddSupplier=Ustvari dobavitelja
 SupplierRemoved=Dobavitelj odstranjen
 SuppliersInvoice=Računi dobavitelja
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Računi dobaviteljev in plačila
 ExportDataset_fournisseur_3=Naročila pri dobaviteljih in vrstice naročila
 ApproveThisOrder=Odobri to naročilo
 ConfirmApproveThisOrder=Ali zares želite odobriti to naročilo ?
-DenyingThisOrder=Zavrni to naročilo
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Ali zares želite zavrniti to naročilo?
 ConfirmCancelThisOrder=Ali zares želite preklicati to naročilo?
 AddCustomerOrder=Kreirajte naročilo kupca

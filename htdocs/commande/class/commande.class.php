@@ -110,7 +110,12 @@ class Commande extends CommonOrder
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
-    
+
+    // Pour board
+    var $nbtodo;
+    var $nbtodolate;
+
+
      /**
      * ERR Not engouch stock
      */
@@ -1476,7 +1481,7 @@ class Commande extends CommonOrder
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);

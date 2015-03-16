@@ -19,6 +19,7 @@ ServiceStatusLateShort=期限切れの
 ServiceStatusClosed=閉じ
 ServicesLegend=サービス伝説
 Contracts=契約
+ContractsAndLine=Contracts and line of contracts
 Contract=契約
 NoContracts=いいえ契約なし
 MenuServices=サービス

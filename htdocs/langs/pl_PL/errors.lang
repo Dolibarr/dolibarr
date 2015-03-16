@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Źródło i celów rachunków bankowych muszą by
 ErrorBadThirdPartyName=Zła wartość w trzeciej imię
 ErrorProdIdIsMandatory=%s jest obowiązkowy
 ErrorBadCustomerCodeSyntax=Bad składni kodu klienta
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Klient kod wymagane
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Klient kod już używane
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=JavaScript nie musi być wyłączona do tej pracy f
 ErrorPasswordsMustMatch=Zarówno wpisane hasło musi się zgadzać się
 ErrorContactEMail=Techniczny błąd. Proszę skontaktować się z administratorem, aby po <b>%s</b> email pl zapewnić <b>%s</b> kod błędu w wiadomości, a nawet lepsze, dodając kopię ekranu strony.
 ErrorWrongValueForField=Nieprawidłowa wartość dla <b>%s</b> numer pola (wartość <b>&quot;%s&quot;</b> nie pasuje regex <b>%s</b> zasady)
-ErrorFieldValueNotIn=Nieprawidłowa wartość dla <b>%s</b> liczba terenowych (value <b>'%s</b> &quot;nie wartość dostępna w <b>%s</b> terenowych <b>%s</b> deserowe)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Nieprawidłowa wartość dla <b>%s</b> liczba pól (wartość <b>'%s</b> &quot;nie jest <b>%s</b> istniejących ref)
 ErrorsOnXLines=Błędów na linii źródło <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Program antywirusowy nie był w stanie potwierdzić (plik może być zainfekowany przez wirusa)
@@ -160,6 +160,7 @@ ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
 ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified before being allowed to do this action
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

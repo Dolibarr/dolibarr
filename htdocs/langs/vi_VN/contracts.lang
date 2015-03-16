@@ -19,6 +19,7 @@ ServiceStatusLateShort=Hết hạn
 ServiceStatusClosed=Đóng
 ServicesLegend=Dịch vụ truyền thuyết
 Contracts=Hợp đồng
+ContractsAndLine=Contracts and line of contracts
 Contract=Hợp đồng
 NoContracts=Không có hợp đồng
 MenuServices=Dịch vụ
