@@ -30,7 +30,7 @@ require 'commands.php';
 /**
  * SendError
  *
- * @param	string	$number		Number
+ * @param	integer	$number		Number
  * @param	string	$text		Text
  * @return 	void
  */

@@ -27,7 +27,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Product	$object		Object related to tabs
  * @param	User	$user		Object user
  * @return  array				Array of tabs to show
  */
@@ -183,7 +183,7 @@ function product_admin_prepare_head()
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	void
+ * @return	integer
  */
 function show_stats_for_company($product,$socid)
 {
