@@ -1548,9 +1548,9 @@ class Adherent extends CommonObject
     }
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
+     *    	Return clicable name (with picto eventually)
      *
-     *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *		@param	int		$maxlen			length max libelle
      *		@param	string	$option			Page lien
      *		@return	string					Chaine avec URL
@@ -1568,25 +1568,25 @@ class Adherent extends CommonObject
 
         if ($option == 'card')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
+            $linkend='</a>';
         }
         if ($option == 'subscription')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.$linkclose;
+            $linkend='</a>';
         }
         if ($option == 'category')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3'.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3'.$linkclose;
+            $linkend='</a>';
         }
 
         $picto='user';
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
+        $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
         return $result;
     }
 

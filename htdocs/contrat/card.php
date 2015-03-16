@@ -1053,7 +1053,7 @@ if ($action == 'create')
 
     print "</table>\n";
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+    print '<br><div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
     if (is_object($objectsrc))
     {

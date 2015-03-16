@@ -1130,7 +1130,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@return		string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0)
@@ -1139,16 +1139,16 @@ class ExpenseReport extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+		$link = '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$this->id.'">';
+		$linkend='</a>';
 
 		$picto='trip';
 
 		$label=$langs->trans("Show").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto) $result.=($link.img_object($label,$picto).$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

@@ -2658,27 +2658,27 @@ class Propal extends CommonObject
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'compta') {  // deprecated
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'expedition') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'document') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
         }
-        $lienfin='</a>';
+        $linkend='</a>';
 
         $picto='propal';
 
 
         if ($withpicto)
-            $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$lien.$this->ref.$lienfin;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

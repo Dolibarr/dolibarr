@@ -2240,21 +2240,21 @@ class AskPriceSupplier extends CommonObject
         $label=$langs->trans("ShowAskpricesupplier").': '.$this->ref;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'document') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/document.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/document.php?id='.$this->id. $get_params .$linkclose;
         }
-        $lienfin='</a>';
+        $linkend='</a>';
 
         $picto='askpricesupplier';
 
 
         if ($withpicto)
-            $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$lien.$this->ref.$lienfin;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

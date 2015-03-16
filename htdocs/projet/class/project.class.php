@@ -810,9 +810,9 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Renvoie nom clicable (avec eventuellement le picto)
+     * 	Return clicable name (with picto eventually)
      *
-     * 	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     * 	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      * 	@param	string	$option			Variant ('', 'nolink')
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      * 	@return	string					Chaine avec URL
@@ -822,8 +822,8 @@ class Project extends CommonObject
         global $langs;
 
         $result = '';
-        $lien = '';
-        $lienfin = '';
+        $link = '';
+        $linkend = '';
         $label = '<u>' . $langs->trans("ShowProject") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -833,11 +833,11 @@ class Project extends CommonObject
 
         if ($option != 'nolink') {
             if (preg_match('/\.php$/',$option)) {
-                $lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
-                $lienfin = '</a>';
+                $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
+                $linkend = '</a>';
             } else {
-                $lien = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
-                $lienfin = '</a>';
+                $link = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
+                $linkend = '</a>';
             }
         }
 
@@ -845,9 +845,9 @@ class Project extends CommonObject
         if (!$this->public) $picto = 'project';
 
 
-        if ($withpicto) $result.=($lien . img_object($label, $picto, 'class="classfortooltip"') . $lienfin);
+        if ($withpicto) $result.=($link . img_object($label, $picto, 'class="classfortooltip"') . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien . $this->ref . $lienfin . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$link . $this->ref . $linkend . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 

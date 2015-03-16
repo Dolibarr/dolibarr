@@ -1513,9 +1513,9 @@ class FactureFournisseur extends CommonInvoice
 
 
     /**
-     *	Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable name (with picto eventually)
      *
-     *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *	@param		string	$option			Sur quoi pointe le lien
      * 	@param		int		$max			Max length of shown ref
      * 	@return		string					Chaine avec URL
@@ -1539,20 +1539,20 @@ class FactureFournisseur extends CommonInvoice
 
         if ($option == 'document')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
         }
         else
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
         }
 
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
 
-        if ($withpicto) $result.=($lien.img_object($label, 'bill', 'class="classfortooltip"').$lienfin.' ');
-        $result.=$lien.($max?dol_trunc($ref,$max):$ref).$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'bill', 'class="classfortooltip"').$linkend.' ');
+        $result.=$link.($max?dol_trunc($ref,$max):$ref).$linkend;
         return $result;
     }
 

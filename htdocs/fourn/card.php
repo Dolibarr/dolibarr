@@ -134,7 +134,6 @@ if ($object->id > 0)
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	$object->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 

@@ -254,9 +254,9 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
+	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0)
@@ -266,14 +266,14 @@ class Cotisation extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref.$lienfin;
+		$result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 
