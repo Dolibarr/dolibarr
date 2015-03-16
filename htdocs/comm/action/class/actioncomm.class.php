@@ -957,7 +957,7 @@ class ActionComm extends CommonObject
      *    	Return URL of event
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     * 		@param	int		$withpicto			0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     * 		@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only picto
      *		@param	int		$maxlength			Nombre de caracteres max dans libelle
      *		@param	string	$classname			Force style class on a link
      * 		@param	string	$option				''=Link to action,'birthday'=Link to contact
@@ -974,9 +974,9 @@ class ActionComm extends CommonObject
         $label = $this->label;
         if (empty($label)) $label=$this->libelle;   // For backward compatibility
         $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'" class="classfortooltip">';
-        if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
-        else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
-        $lienfin='</a>';
+        if ($option=='birthday') $link = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
+        else $link = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
+        $linkend='</a>';
         //print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
@@ -998,10 +998,10 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$lienfin;
+            $result.=$link.img_object($langs->trans("ShowAction").': '.$libelle, ($overwritepicto?$overwritepicto:'action'), 'class="classfortooltip"').$linkend;
         }
         if ($withpicto==1) $result.=' ';
-        $result.=$lien.$libelleshort.$lienfin;
+        $result.=$link.$libelleshort.$linkend;
         return $result;
     }
 

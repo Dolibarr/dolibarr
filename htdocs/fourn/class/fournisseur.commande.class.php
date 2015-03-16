@@ -547,9 +547,9 @@ class CommandeFournisseur extends CommonOrder
 
 
     /**
-     *	Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable name (with picto eventually)
      *
-     *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *	@param		string	$option			Sur quoi pointe le lien
      *	@return		string					Chaine avec URL
      */
@@ -570,14 +570,14 @@ class CommandeFournisseur extends CommonOrder
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
         $picto='order';
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.$this->ref.$lienfin;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

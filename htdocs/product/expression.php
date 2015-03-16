@@ -194,7 +194,7 @@ print '</td></tr>';
 print '</table>';
 
 //Buttons
-print '<center>';
+print '<div align="center">';
 print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
@@ -205,7 +205,7 @@ else
 {
 	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 }
-print '</center>';
+print '</div>';
 
 print '</form>';	
 

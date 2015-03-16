@@ -1265,7 +1265,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Return name and link of category (with picto)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
 	 * 	@param		int		$maxlength		Max length of text
 	 *	@return		string					Chaine avec URL
@@ -1277,15 +1277,15 @@ class Categorie extends CommonObject
 		$result='';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='category';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$lienfin;
+		if ($withpicto != 2) $result.=$link.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$linkend;
 		return $result;
 	}
 

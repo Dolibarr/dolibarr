@@ -2941,26 +2941,26 @@ class Product extends CommonObject
         $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
         if ($option == 'supplier') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         } else if ($option == 'stock') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         } else if ($option == 'composition') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         } else if ($option == 'category') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
         } else {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         }
 
 		if ($withpicto) {
-			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$lienfin.' ');
-			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$lienfin.' ');
+			if ($this->type == 0) $result.=($link.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$linkend.' ');
+			if ($this->type == 1) $result.=($link.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$linkend.' ');
 		}
-		$result.=$lien.$newref.$lienfin;
+		$result.=$link.$newref.$linkend;
 		return $result;
 	}
 

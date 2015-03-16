@@ -119,17 +119,17 @@ if ($resql)
         print "<a href=\"card.php?id=".$obj->bid."\">".img_object($langs->trans("ShowBookmark"),"bookmark").' '.$obj->bid."</a>";
         print '</td>';
 
-        $lieninterne=0;
+        $linkintern=0;
         $title=dol_trunc($obj->title,24);
-        $lien=dol_trunc($obj->url,24);
+        $link=dol_trunc($obj->url,24);
 
         // Title
         print "<td>";
         if ($obj->rowid)
         {
             // Lien interne societe
-            $lieninterne=1;
-            $lien="Dolibarr";
+            $linkintern=1;
+            $link="Dolibarr";
             if (! $obj->title)
             {
                 // For compatibility with old Dolibarr bookmarks
@@ -140,16 +140,16 @@ if ($resql)
             }
             $title=img_object($langs->trans("ShowCompany"),"company").' '.$obj->title;
         }
-        if ($lieninterne) print "<a href=\"".$obj->url."\">";
+        if ($linkintern) print "<a href=\"".$obj->url."\">";
         print $title;
-        if ($lieninterne) print "</a>";
+        if ($linkintern) print "</a>";
         print "</td>\n";
 
         // Url
         print "<td>";
-        if (! $lieninterne) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
-        print $lien;
-        if (! $lieninterne) print '</a>';
+        if (! $linkintern) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
+        print $link;
+        if (! $linkintern) print '</a>';
         print "</td>\n";
 
         // Target

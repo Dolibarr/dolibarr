@@ -1113,17 +1113,17 @@ class BonPrelevement extends CommonObject
         $result='';
         $label = $langs->trans("ShowWithdraw").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
         if ($option == 'xxx')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($label, 'payment', 'class="classfortooltip"').$lienfin.' ');
-        $result.=$lien.$this->ref.$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

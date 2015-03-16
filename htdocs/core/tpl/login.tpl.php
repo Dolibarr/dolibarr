@@ -46,7 +46,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<center>
+<div align="center">
 <div class="login_vertical_align">
 
 
@@ -290,7 +290,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 
 
 </div>
-</center>	<!-- end of center -->
+</div>	<!-- end of center -->
 
 
 </body>

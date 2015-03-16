@@ -1751,41 +1751,41 @@ class Societe extends CommonObject
 		}
 
         $result=''; $label='';
-        $lien=''; $lienfin='';
+        $link=''; $linkend='';
 
         $label.= '<div width="100%">';
 
         if ($option == 'customer' || $option == 'compta')
         {
            $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
-           $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+           $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
             $label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
             $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+            $link = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
             $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
+        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
         }
         else if ($option == 'category_supplier')
         {
             $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
+        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
 
         // By default
-        if (empty($lien))
+        if (empty($link))
         {
             $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
-            $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $link = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
         if (! empty($this->name))
@@ -1804,14 +1804,14 @@ class Societe extends CommonObject
         $label.= '</div>';
 
         // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
-        $lien.=($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
-        $lien.='>';
-        $lienfin='</a>';
+        $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $link.=($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $link.='>';
+        $linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$lienfin);
+        if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
+        $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }
