@@ -551,7 +551,7 @@ $sql.= " WHERE p.entity = ".$conf->entity;
 if (! empty($date_start) && ! empty($date_end))
 	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	
-$sql.= " GROUP BY u.rowid";
+$sql.= " GROUP BY u.rowid, p.label, p.datep, p.fk_user";
 $sql.= " ORDER BY u.firstname";
     
 dol_syslog("get payment salaries sql=".$sql);

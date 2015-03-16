@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
@@ -100,6 +100,11 @@ class Commande extends CommonOrder
     // Pour board
     var $nbtodo;
     var $nbtodolate;
+    
+     /**
+     * ERR Not engouch stock
+     */
+    const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
 
     /**
@@ -734,8 +739,11 @@ class Commande extends CommonOrder
                     );
                     if ($result < 0)
                     {
-                        $this->error=$this->db->lasterror();
-                        dol_print_error($this->db);
+                    	if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
+                    	{
+                        	$this->error=$this->db->lasterror();
+                        	dol_print_error($this->db);
+                    	}
                         $this->db->rollback();
                         return -1;
                     }
@@ -1169,10 +1177,12 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -3;
+					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
 
