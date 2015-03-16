@@ -777,15 +777,16 @@ class Commande extends CommonOrder
                 }
 
                 // update ref
-                if (empty($this->ref))
-                {
-                    $this->ref = '(PROV'.$this->id.')';
-                }
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->ref."' WHERE rowid=".$this->id;
+                $initialref='(PROV'.$this->id.')';
+                if (! empty($this->ref)) $initialref=$this->ref;
+
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
                 if ($this->db->query($sql))
                 {
                     if ($this->id)
                     {
+                    	$this->ref = $initialref;
+
                         // Add object linked
                         if (is_array($this->linked_objects) && ! empty($this->linked_objects))
                         {
@@ -803,7 +804,7 @@ class Commande extends CommonOrder
                         		{
                         			// On recupere les differents contact interne et externe
                         			$prop = new Propal($this->db);
-						$prop->fetch($origin_id);
+									$prop->fetch($origin_id);
 
                         			// We get ids of sales representatives of proposal
                         			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
