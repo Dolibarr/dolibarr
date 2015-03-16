@@ -634,8 +634,8 @@ class Commande extends CommonOrder
      *	Note that this->ref can be set or empty. If empty, we will use "(PROV)"
      *
      *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
-     *	@return 	int					<0 if KO, >0 if OK
+     *	@param		int	$notrigger	Disable all triggers
+     *	@return 	int			<0 if KO, >0 if OK
      */
     function create($user, $notrigger=0)
     {
@@ -643,22 +643,22 @@ class Commande extends CommonOrder
         $error=0;
 
         // Clean parameters
-        $this->brouillon = 1;		// On positionne en mode brouillon la commande
+        $this->brouillon = 1;		// set command as draft
 
         dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
     	if (! empty($this->ref))	// We check that ref is not already used
-		{
-			$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
-			if ($result > 0)
-			{
-				$this->error='ErrorRefAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
-				$this->db->rollback();
-				return -1;
-			}
-		}
+    	{
+    		$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
+    		if ($result > 0)
+    		{
+    			$this->error='ErrorRefAlreadyExists';
+    			dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+    			$this->db->rollback();
+    			return -1;
+    		}
+    	}
 
         $soc = new Societe($this->db);
         $result=$soc->fetch($this->socid);
@@ -687,7 +687,7 @@ class Commande extends CommonOrder
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", fk_shipping_method";
         $sql.= ", remise_absolue, remise_percent";
-		$sql.= ", fk_incoterms, location_incoterms";
+        $sql.= ", fk_incoterms, location_incoterms";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
@@ -727,7 +727,7 @@ class Commande extends CommonOrder
                 $num=count($this->lines);
 
                 /*
-                 *  Insertion du detail des produits dans la base
+                 *  Insert products details into db
                  */
                 for ($i=0;$i<$num;$i++)
                 {
@@ -758,7 +758,7 @@ class Commande extends CommonOrder
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
-						$this->lines[$i]->array_options
+		    	$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
@@ -776,14 +776,16 @@ class Commande extends CommonOrder
                     }
                 }
 
-                // Mise a jour ref
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+                // update ref
+                if (empty($this->ref))
+                {
+                    $this->ref = '(PROV'.$this->id.')';
+                }
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->ref."' WHERE rowid=".$this->id;
                 if ($this->db->query($sql))
                 {
                     if ($this->id)
                     {
-                        $this->ref="(PROV".$this->id.")";
-
                         // Add object linked
                         if (is_array($this->linked_objects) && ! empty($this->linked_objects))
                         {
@@ -801,7 +803,7 @@ class Commande extends CommonOrder
                         		{
                         			// On recupere les differents contact interne et externe
                         			$prop = new Propal($this->db);
-									$prop->fetch($origin_id);
+						$prop->fetch($origin_id);
 
                         			// We get ids of sales representatives of proposal
                         			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
