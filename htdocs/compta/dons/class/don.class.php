@@ -2,7 +2,8 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
 
 /**
  *   	\file       htdocs/compta/dons/class/don.class.php
- *		\ingroup    don
- *		\brief      Fichier de la classe des dons
+ *		\ingroup    Donation
+ *		\brief      File of class to manage donations
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
@@ -46,6 +47,8 @@ class Don extends CommonObject
     var $address;
     var $zip;
     var $town;
+    var $country_id;
+    var $country_code;
     var $country;
     var $email;
     var $public;
@@ -326,7 +329,8 @@ class Don extends CommonObject
         $sql.= ", address";
         $sql.= ", zip";
         $sql.= ", town";
-        $sql.= ", country";
+        // $sql.= ", country"; -- Deprecated
+        $sql.= ", fk_pays";
         $sql.= ", public";
         $sql.= ", fk_don_projet";
         $sql.= ", note_private";
@@ -348,7 +352,7 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->address)."'";
         $sql.= ", '".$this->db->escape($this->zip)."'";
         $sql.= ", '".$this->db->escape($this->town)."'";
-        $sql.= ", '".$this->db->escape($this->country)."'"; // TODO use country_id
+		$sql.= ", ".$this->country_id;
         $sql.= ", ".$this->public;
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
        	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
@@ -409,7 +413,7 @@ class Don extends CommonObject
         $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",zip='".$this->db->escape($this->zip)."'";
         $sql .= ",town='".$this->db->escape($this->town)."'";
-        $sql .= ",country='".$this->db->escape($this->country)."'"; // TODO use country_id
+        $sql .= ",fk_pays = ".$this->country_id;
         $sql .= ",public=".$this->public;
         $sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
@@ -493,12 +497,14 @@ class Don extends CommonObject
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-        $sql.= " 	d.country, d.public, d.amount, d.fk_paiement, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
-        $sql.= " 	d.phone_mobile, d.fk_don_projet,";
-        $sql.= " p.title as project_label";
+        $sql.= " d.fk_pays, d.public, d.amount, d.fk_paiement, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
+        $sql.= " d.phone_mobile, d.fk_don_projet,";
+        $sql.= " p.title as project_label,";
+        $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_paiement";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_pays = c.rowid";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -522,7 +528,9 @@ class Don extends CommonObject
                 $this->town           = $obj->town;
                 $this->zip            = $obj->zip;
                 $this->town           = $obj->town;
-                $this->country        = $obj->country;
+                $this->country_id    = $obj->country_id;
+                $this->country_code  = $obj->country_code;
+                $this->country       = $obj->country;
                 $this->email          = $obj->email;
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
@@ -547,10 +555,10 @@ class Don extends CommonObject
     }
 
     /**
-     *    Valide une promesse de don
+     *    Validate a promise of donation
      *
-     *    @param	int		$rowid   	id du don a modifier
-     *    @param  	int		$userid  	utilisateur qui valide la promesse
+     *    @param	int		$rowid   	id of donation
+     *    @param  	int		$userid  	User who validate the promise
      *    @return   int     			<0 if KO, >0 if OK
      */
     function valid_promesse($rowid, $userid)
@@ -644,9 +652,9 @@ class Don extends CommonObject
     }
 
     /**
-     *    Set donation sto status canceled
+     *    Set donation to status canceled
      *
-     *    @param	int		$rowid   	id du don a modifier
+     *    @param	int		$rowid   	id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
     function set_cancel($rowid)
@@ -673,7 +681,7 @@ class Don extends CommonObject
     }
 
     /**
-     *  Somme des dons
+     *  Sum of donations
      *
      *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
      *	@return	int				Summ of donations
@@ -724,5 +732,50 @@ class Don extends CommonObject
         if ($withpicto != 2) $result.=$lien.$this->id.$lienfin;
         return $result;
     }
+	
+	/**
+	 * Information on record
+	 *
+	 * @param	int		$id      Id of record
+	 * @return	void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
+		$sql.= ' d.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'don as d';
+		$sql.= ' WHERE d.rowid = '.$id;
+
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_modification = $vuser;
+				}
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 
 }

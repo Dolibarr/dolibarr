@@ -36,7 +36,8 @@ create table llx_don
   address         text,
   zip             varchar(30),
   town            varchar(50),
-  country         varchar(50),
+  country         varchar(50),					-- Deprecated - Replace with fk_pays
+  fk_pays		  integer        NOT NULL,
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),

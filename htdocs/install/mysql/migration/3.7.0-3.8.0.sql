@@ -370,3 +370,6 @@ INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DDP', 'Delivered Du
 -- Extrafields fk_object must be unique (1-1 relation)
 ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
+
+-- Module Donation
+ALTER TABLE llx_don ADD COLUMN fk_pays integer NOT NULL after country;
