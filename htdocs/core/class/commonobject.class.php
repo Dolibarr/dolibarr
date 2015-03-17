@@ -36,48 +36,48 @@
 abstract class CommonObject
 {
     /**
-     * @var db			Database handler (result of a new DoliDB)
+     * @var DoliDb		Database handler (result of a new DoliDB)
      */
 	public $db;
 
     /**
-     * @var error 		Error string
+     * @var string 		Error string
      * @deprecated		Use instead the array of error strings
      */
     public $error;
 
     /**
-     * @var errors		Array of error string
+     * @var string[]	Array of error strings
      */
     public $errors;
 
     /**
-     * @var context		Can be used to pass information when only object is provied to method
+     * @var string		Can be used to pass information when only object is provied to method
      */
     public $context=array();
 
     /**
-     * @var context		Contains canvas name if record is an alternative canvas record
+     * @var string		Contains canvas name if record is an alternative canvas record
      */
     public $canvas;
 
     /**
-     * @var import_key	Key value used to track if data is coming from import wizard
+     * @var string		Key value used to track if data is coming from import wizard
      */
     public $import_key;
 
     /**
-     * @var array_options	Contains data to manage extrafields
+     * @var mixed		Contains data to manage extrafields
      */
     public $array_options=array();
 
     /**
-     * @var linkedObjectsIds	Array of linked objects ids. Loaded by ->fetchObjectLinked
+     * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
      */
     public $linkedObjectsIds;
 
     /**
-     * @var linkedObjectsIds	Array of linked objects. Loaded by ->fetchObjectLinked
+     * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
      */
     public $linkedObjects;
 
