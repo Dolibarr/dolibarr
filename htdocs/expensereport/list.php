@@ -21,6 +21,7 @@
 
 /**
  *	    \file       htdocs/expensereport/index.php
+ *      \ingroup    expensereport
  *		\brief      list of expense reports
  */
 

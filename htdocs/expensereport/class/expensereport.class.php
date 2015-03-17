@@ -16,6 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *       \file       htdocs/expensereport/class/expensereport.class.php
+ *       \ingroup    expensereport
+ *       \brief      File to manage Expense Reports
+ */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 /**
@@ -1420,7 +1425,7 @@ class ExpenseReport extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
-	
+
 	/**
 	 * List of types
 	 *

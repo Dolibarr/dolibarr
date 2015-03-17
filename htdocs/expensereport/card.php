@@ -19,7 +19,8 @@
 
 /**
  *  \file       	htdocs/expensereport/card.php
- *  \brief      	Page for trip and expense card
+ *  \ingroup    	expensereport
+ *  \brief      	Page for trip and expense report card
  */
 
 $res=0;
@@ -1135,7 +1136,7 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
@@ -1155,7 +1156,7 @@ if ($action == 'create')
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
-	
+
 	print '<tbody>';
 	print '</table>';
 
@@ -1286,7 +1287,7 @@ else
 					print '</td></tr>';
 
 				}
-				
+
 				// Public note
 				print '<tr>';
 				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
@@ -1295,7 +1296,7 @@ else
 				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 				print $doleditor->Create(1);
 				print '</td></tr>';
-				
+
 				// Private note
 				if (empty($user->societe_id)) {
 					print '<tr>';
@@ -1306,7 +1307,7 @@ else
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}
-				
+
 				print '</table>';
 
 				dol_fiche_end();

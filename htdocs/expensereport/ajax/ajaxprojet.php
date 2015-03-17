@@ -20,6 +20,7 @@
 
 /**
  *       \file       htdocs/expensereport/ajax/ajaxprojet.php
+ *       \ingroup    expensereport
  *       \brief      File to return Ajax response on third parties request
  */
 
