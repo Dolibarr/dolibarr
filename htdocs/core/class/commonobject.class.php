@@ -52,11 +52,6 @@ abstract class CommonObject
     public $errors;
 
     /**
-     * @var string		Column name of the ref field.
-     */
-    protected $table_ref_field = '';
-
-    /**
      * @var context		Can be used to pass information when only object is provied to method
      */
     public $context=array();
@@ -85,6 +80,12 @@ abstract class CommonObject
      * @var linkedObjectsIds	Array of linked objects. Loaded by ->fetchObjectLinked
      */
     public $linkedObjects;
+
+    /**
+     * @var string		Column name of the ref field.
+     */
+    protected $table_ref_field = '';
+
 
 
     // Following var are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
