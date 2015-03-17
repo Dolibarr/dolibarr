@@ -35,45 +35,67 @@
  */
 abstract class CommonObject
 {
-    public $db;
+    /**
+     * @var db			Database handler (result of a new DoliDB)
+     */
+	public $db;
 
     /**
-     * @var error 	Error string
-     * @deprecated	Use instead the array of error strings
+     * @var error 		Error string
+     * @deprecated		Use instead the array of error strings
      */
     public $error;
 
     /**
-     * @var errors	Aray of error string
+     * @var errors		Array of error string
      */
     public $errors;
 
-    public $canvas;                // Contains canvas name if it is
-	public $context=array();		// Use to pass context information
+    /**
+     * @var string		Column name of the ref field.
+     */
+    protected $table_ref_field = '';
+
+    /**
+     * @var context		Can be used to pass information when only object is provied to method
+     */
+    public $context=array();
+
+    /**
+     * @var context		Contains canvas name if record is an alternative canvas record
+     */
+    public $canvas;
+
+    /**
+     * @var import_key	Key value used to track if data is coming from import wizard
+     */
+    public $import_key;
+
+    /**
+     * @var array_options	Contains data to manage extrafields
+     */
+    public $array_options=array();
+
+    /**
+     * @var linkedObjectsIds	Array of linked objects ids. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjectsIds;
+
+    /**
+     * @var linkedObjectsIds	Array of linked objects. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjects;
+
+
+    // Following var are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
     public $name;
     public $lastname;
     public $firstname;
     public $civility_id;
-    public $import_key;
-
-    public $array_options=array();
-
-    /**
-     * @var Societe
-     */
     public $thirdparty;
 
-    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
-    public $linkedObjects;		// Loaded by ->fetchObjectLinked
-
     // No constructor as it is an abstract class
-
-    /**
-     * Column name of the ref field.
-     * @var string
-     */
-    protected $table_ref_field = '';
 
 
     /**
