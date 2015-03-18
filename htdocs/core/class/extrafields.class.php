@@ -530,7 +530,7 @@ class ExtraFields
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$alwayseditable."',";
-			$sql.= " '".$param."'";
+			$sql.= " '".$param."',";
 			$sql.= " ".$list;
 			$sql.= ")";
 			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
@@ -1062,7 +1062,7 @@ class ExtraFields
 			$object = new $InfoFieldList[0]($this->db);
 			$object->fetch($value);
 			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
-		
+
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
