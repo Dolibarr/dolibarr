@@ -55,14 +55,14 @@ if ($action == 'add_payment')
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
 	if (! $_POST["paymenttype"] > 0)
 	{
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
 		$error++;
 	}
-	if ($datepaye == '')
+	if ($datepaid == '')
 	{
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
 		$error++;
@@ -100,7 +100,7 @@ if ($action == 'add_payment')
     		// Create a line of payments
     		$payment = new PaymentDonation($db);
     		$payment->chid         = $chid;
-    		$payment->datepaye     = $datepaye;
+    		$payment->datepaid     = $datepaid;
     		$payment->amounts      = $amounts;   // Tableau de montant
     		$payment->paymenttype  = $_POST["paymenttype"];
     		$payment->num_payment  = $_POST["num_payment"];
@@ -202,8 +202,8 @@ if (GETPOST("action") == 'create')
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
+	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
 	print '</tr>';
@@ -214,9 +214,9 @@ if (GETPOST("action") == 'create')
 	print '</tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$don->accountid, "accountid", 0, '',1);  // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$don->accountid, "accountid", 0, '',1);  // Show open bank account list
 	print '</td></tr>';
 
 	// Number

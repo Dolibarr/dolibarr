@@ -44,7 +44,7 @@ create table llx_don
   phone           varchar(24),
   phone_mobile    varchar(24),
   public          smallint DEFAULT 1 NOT NULL,   -- le don est-il public (0,1)
-  fk_don_projet   integer NULL,                  -- projet auquel est fait le don
+  fk_project      integer NULL,                  -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NULL,
   note_private    text,

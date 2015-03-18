@@ -375,6 +375,7 @@ ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
 ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
+ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_project integer NULL;
 
 create table llx_payment_donation
 (

@@ -32,7 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-if (! empty($conf->projet->enabled)) {
+if (! empty($conf->projet->enabled))
+{
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -99,7 +100,7 @@ if ($action == 'update')
         $object->email       = GETPOST("email");
 		$object->date        = $donation_date;
 		$object->public      = GETPOST("public");
-		$object->fk_project  = GETPOST("projectid");
+		$object->fk_project  = GETPOST("fk_project");
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
 
@@ -334,10 +335,9 @@ if ($action == 'create')
     	
     	$formproject=new FormProjets($db);
     	
-        // Si module projet actif
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $formproject->select_projects('',GETPOST("projectid"),"projectid");
-        print "</td></tr>\n";
+        $formproject->select_projects(-1, GETPOST("fk_project"),'fk_project', 0, 1, 0, 1);
+		print "</td></tr>\n";
     }
 
     // Other attributes
@@ -431,7 +431,7 @@ if (! empty($id) && $action == 'edit')
     	
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects(-1, (isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project), 'projectid');
+		$formproject->select_projects(-1, $object->fk_project,'fk_project', 0, 1, 0, 1);
         print '</td></tr>';
     }
 
@@ -523,7 +523,10 @@ if (! empty($id) && $action != 'edit')
     // Project
     if (! empty($conf->projet->enabled))
     {
-        print "<tr>".'<td>'.$langs->trans("Project").'</td><td>'.$object->projet.'</td></tr>';
+        print '<tr>';
+		print '<td>'.$langs->trans("Project").'</td>';
+		print '<td>'.$object->projet.'</td>';
+		print '</tr>';
     }
 
     // Other attributes
@@ -567,22 +570,6 @@ if (! empty($id) && $action != 'edit')
 		}
 	}
 
-	/*
-	// Classify paid
-			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0))
-				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
-			)
-			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
-			}
-			
-	// Emit payment
-	if ($object->statut == 1 && $object->paid == 0 && ((price2num($object->amount) > 0 && round($remaintopay) > 0)) && $user->rights->don->creer)
-	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/dons/payment.php?rowid='.$object->id.'&action=create">'.$langs->trans("DoPayment").'</a></div>';
-	}
-	*/
-
 	// Classify 'paid'
 	if ($object->statut == 1 && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
 	{
@@ -624,7 +611,6 @@ if (! empty($id) && $action != 'edit')
 	print '</tr></table>';
 
 }
-
 
 llxFooter();
 $db->close();

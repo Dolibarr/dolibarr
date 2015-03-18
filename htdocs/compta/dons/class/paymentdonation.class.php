@@ -33,6 +33,7 @@ class PaymentDonation extends CommonObject
 	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
 
 	var $id;
+	var $rowid;
 	var $ref;
 
 	var $fk_donation;
@@ -74,7 +75,7 @@ class PaymentDonation extends CommonObject
         $now=dol_now();
 
         // Validate parameters
-		if (! $this->datepaye)
+		if (! $this->datepaid)
 		{
 			$this->error='ErrorBadValueForParameterCreatePaymentDonation';
 			return -1;
@@ -110,7 +111,7 @@ class PaymentDonation extends CommonObject
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_donation (fk_donation, datec, datep, amount,";
 			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaye)."',";
+			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";
 			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql.= " 0)";
@@ -485,7 +486,7 @@ class PaymentDonation extends CommonObject
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
-                $this->datepaye,
+                $this->datepaid,
                 $this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $total,
@@ -496,7 +497,7 @@ class PaymentDonation extends CommonObject
                 $emetteur_banque
             );
 
-            // Mise a jour fk_bank dans llx_paiement.
+            // Update fk_bank in llx_paiement.
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
             if ($bank_line_id > 0)
             {
@@ -509,7 +510,7 @@ class PaymentDonation extends CommonObject
 
                 // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
                 $url='';
-                if ($mode == 'payment_sc') $url=DOL_URL_ROOT.'/compta/payment_sc/card.php?id=';
+                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/compta/dons/card.php?rowid=';
                 if ($url)
                 {
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
@@ -520,15 +521,15 @@ class PaymentDonation extends CommonObject
                     }
                 }
 
-                // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+                // Add link 'thirdparty' in bank_url between donation and bank transaction (for each donation concerned by payment)
                 $linkaddedforthirdparty=array();
                 foreach ($this->amounts as $key => $value)
                 {
-                    if ($mode == 'payment_sc')
+                    if ($mode == 'payment_donation')
                     {
-                        $socialcontrib = new ChargeSociales($this->db);
-                        $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        $don = new Don($this->db);
+                        $don->fetch($key);
+                        $result=$acc->add_url_line($bank_line_id, $don->rowid, DOL_URL_ROOT.'/compta/card.php?rowid=', $don->type_libelle.(($don->lib && $don->lib!=$don->type_libelle)?' ('.$don->lib.')':''),'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
