@@ -193,13 +193,13 @@ function project_timesheet_prepare_head($mode)
 		$h++;
 	}
 
-	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERACTION))
+	/*if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERACTION))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/peraction.php".($mode?'?mode='.$mode:'');
 		$head[$h][1] = $langs->trans("InputPerAction");
 		$head[$h][2] = 'inputperaction';
 		$h++;
-	}
+	}*/
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'project_timesheet');
 

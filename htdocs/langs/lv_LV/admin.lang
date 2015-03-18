@@ -8,9 +8,9 @@ VersionExperimental=Eksperimentāls
 VersionDevelopment=Attīstība
 VersionUnknown=Nezināms
 VersionRecommanded=Ieteicams
-FileCheck=Files Integrity
-FilesMissing=Missing Files
-FilesUpdated=Updated Files
+FileCheck=Failu veselums
+FilesMissing=Trūkstošie faili
+FilesUpdated=Atjaunotie faili
 FileCheckDolibarr=Check Dolibarr Files Integrity
 XmlNotFound=Xml File of Dolibarr Integrity Not Found
 SessionId=Sesijas ID
@@ -1436,7 +1436,7 @@ SendingsReceiptModel=Nosūtot saņemšanas modeli
 SendingsNumberingModules=Sendings numerācijas moduļus
 SendingsAbility=Support shipment sheets for customer deliveries
 NoNeedForDeliveryReceipts=Vairumā gadījumu, sendings ieņēmumi tiek izmantoti gan kā loksnes klientu piegādēm (produktu sarakstu, lai nosūtītu) un loksnes, kas tiek recevied un paraksta klientu. Tātad produkta piegādes kvītis ir dublēta iezīme, un reti aktivizēts.
-FreeLegalTextOnShippings=Free text on shipments
+FreeLegalTextOnShippings=Brīvais teksts piegādēs
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Produkti piegādes kvīts numerācija modulis
 DeliveryOrderModel=Produkti piegādes kvīts modelis
@@ -1553,7 +1553,7 @@ BankOrderESDesc=Spāņu displejs, lai
 ##### Multicompany #####
 MultiCompanySetup=Multi-kompānija modulis iestatīšana
 ##### Suppliers #####
-SuppliersSetup=Piegādātājs modulis uzstādīšana
+SuppliersSetup=Piegādātāja moduļa iestatījumi
 SuppliersCommandModel=Pilnīga veidni no piegādātāja secībā (logo. ..)
 SuppliersInvoiceModel=Pilnīga veidni no piegādātāja rēķina (logo. ..)
 SuppliersInvoiceNumberingModel=Piegādātāju rēķinu numerācijas modeļus

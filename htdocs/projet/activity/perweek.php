@@ -54,6 +54,29 @@ $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):date("d");
+$day = (int) $day;
+
+$startdayarray=dol_get_first_day_week($day, $month, $year);
+
+$prev = $startdayarray;
+$prev_year  = $prev['prev_year'];
+$prev_month = $prev['prev_month'];
+$prev_day   = $prev['prev_day'];
+$first_day  = $prev['first_day'];
+$first_month= $prev['first_month'];
+$first_year = $prev['first_year'];
+$week = $prev['week'];
+
+$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
+$next_year  = $next['year'];
+$next_month = $next['month'];
+$next_day   = $next['day'];
+
+// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
+$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
+$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+
+$usertoprocess=$user;
 
 
 /*
@@ -64,8 +87,55 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 {
     $task = new Task($db);
 
+    $timetoadd=$_POST['task'];
+	if (empty($timetoadd))
+	{
+	    setEventMessage($langs->trans("ErrorTimeSpentIsEmpty"), 'errors');
+    }
+	else
+	{
+		foreach($timetoadd as $taskid => $value)
+	    {
+			foreach($value as $key => $val)
+			{
+				$amountoadd=$timetoadd[$taskid][$key];
+		    	if (! empty($amountoadd))
+		        {
+		        	$tmpduration=explode(':',$amountoadd);
+		        	$newduration=0;
+					if (! empty($tmpduration[0])) $newduration+=($tmpduration[0] * 3600);
+					if (! empty($tmpduration[1])) $newduration+=($tmpduration[1] * 60);
+					if (! empty($tmpduration[2])) $newduration+=($tmpduration[2]);
 
+		        	if ($newduration > 0)
+		        	{
+		       	        $task->fetch($taskid);
+					    $task->progress = GETPOST($taskid . 'progress', 'int');
+				        $task->timespent_duration = $newduration;
+				        $task->timespent_fk_user = $usertoprocess->id;
+			        	$task->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
 
+						$result=$task->addTimeSpent($user);
+						if ($result < 0)
+						{
+							setEventMessages($task->error, $task->errors, 'errors');
+							$error++;
+							break;
+						}
+		        	}
+		        }
+			}
+	    }
+
+	   	if (! $error)
+	   	{
+	    	setEventMessage($langs->trans("RecordSaved"));
+
+	   	    // Redirect to avoid submit twice on back
+	       	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:''));
+	       	exit;
+	   	}
+	}
 }
 
 
@@ -82,8 +152,6 @@ $taskstatic = new Task($db);
 
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
-
-$usertoprocess=$user;
 
 //$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($usertoprocess,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
@@ -107,27 +175,6 @@ llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-
-$startdayarray=dol_get_first_day_week($day, $month, $year);
-
-$prev = $startdayarray;
-$prev_year  = $prev['prev_year'];
-$prev_month = $prev['prev_month'];
-$prev_day   = $prev['prev_day'];
-$first_day  = $prev['first_day'];
-$first_month= $prev['first_month'];
-$first_year = $prev['first_year'];
-$week = $prev['week'];
-
-$day = (int) $day;
-$next = dol_get_next_week($first_day, $week, $first_month, $first_year);
-$next_year  = $next['year'];
-$next_month = $next['month'];
-$next_day   = $next['day'];
-
-// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 $tmpday = $first_day;
 

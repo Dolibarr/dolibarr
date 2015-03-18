@@ -10,6 +10,7 @@ FormatDateShortJava=yyy/MM/dd
 FormatDateShortJavaInput=yyyy/MM/yy
 FormatDateShortJQuery=yy/mm/yy
 FormatDateShortJQueryInput=yy/mm/dd
+FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
