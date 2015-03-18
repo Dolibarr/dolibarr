@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load('projects');
 
@@ -127,6 +128,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
  */
 
 $form=new Form($db);
+$formother = new FormOther($db);
 $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
@@ -215,7 +217,7 @@ $restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJEC
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerTime($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 }
 else
 {
@@ -224,6 +226,10 @@ else
 print "</table>";
 
 dol_fiche_end();
+
+print '<div class="center">';
+print '<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print '</form>';
 

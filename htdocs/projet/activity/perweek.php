@@ -210,7 +210,7 @@ $restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJEC
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerDay($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 
 	print '<tr class="liste_total">
                 <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>

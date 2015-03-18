@@ -506,16 +506,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
  */
-function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
+function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
-
-	if (! is_object($formother))
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-		$formother = new FormOther($db);
-	}
 
 	$lastprojectid=0;
 
@@ -625,7 +619,7 @@ function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$
 				print '</td><td align="right">';
 				//$s.='&nbsp;&nbsp;&nbsp;';
 				$s=$form->select_duration($lines[$i]->id.'duration','',$disabledtask,'text',0,1);
-				$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
+				//$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
 				print $s;
 				print '</td>';
 
@@ -639,7 +633,7 @@ function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$
 
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) projectLinesPerTime($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+			if ($lines[$i]->id) projectLinesPerDay($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 			$level--;
 		}
 		else
@@ -668,16 +662,10 @@ function projectLinesPerTime(&$inc, $parent, $lines, &$level, &$projectsrole, &$
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
  */
-function projectLinesPerDay(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
-
-	if (! is_object($formother))
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-		$formother = new FormOther($db);
-	}
 
 	$lastprojectid=0;
 
@@ -805,7 +793,7 @@ function projectLinesPerDay(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$l
 
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) projectLinesPerDay($inc, $firstdaytoshow, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+			if ($lines[$i]->id) projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 			$level--;
 		}
 		else
