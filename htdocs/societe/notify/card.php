@@ -24,6 +24,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
@@ -173,33 +174,8 @@ if ($result > 0)
 
     print '<tr><td>'.$langs->trans("NbOfActiveNotifications").'</td>';
     print '<td colspan="3">';
-    $nb=0;
-    // List of per contact notifications
-    $sql = "SELECT COUNT(n.rowid) as nb";
-    $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-    $sql.= " WHERE fk_soc = ".$object->id;
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            $nb=$obj->nb;
-            $i++;
-        }
-    }
-    else {
-        dol_print_error($db);
-    }
-    // List of notifications enabled for fixed email
-    foreach($conf->global as $key => $val)
-    {
-    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-    	$listtmp=explode(',',$val);
-    	$nb+=count($listtmp);
-    }
+    $notify=new Notify($db);
+    $nb = $notify->countDefinedNotifications('', $object->id);
     print $nb;
     print '</td></tr>';
     print '</table>';
