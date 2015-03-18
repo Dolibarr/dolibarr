@@ -404,7 +404,7 @@ if (! empty($id) && $action == 'edit')
 	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
     print ' ';
 	print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
-    print '</tr>';
+	print '</tr>';
 
 	// Country
 	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
@@ -478,26 +478,101 @@ if (! empty($id) && $action != 'edit')
 	print '</tr>';
 
 	// Date
-	print '<tr><td width="25%">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td width="25%">'.$langs->trans("Date").'</td><td colspan="2">';
 	print dol_print_date($object->date,"day");
 	print "</td>";
 
-    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$langs,0,0,-1,$conf->currency).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">';
+	print price($object->amount,0,$langs,0,0,-1,$conf->currency);
+	print '</td></tr>';
 
-	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
+	print '<tr><td>'.$langs->trans("PublicDonation").'</td><td colspan="2">';
 	print yn($object->public);
-	print "</td></tr>\n";
+	print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td>'.$object->societe.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td>'.$object->lastname.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td>'.$object->firstname.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($object->address).'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($object->address).'</td>';
+	
+	$rowspan=6;
+	if (! empty($conf->projet->enabled)) $rowspan++;
+	print '<td rowspan="'.$rowspan.'" valign="top">';
+
+	/*
+	 * Payments
+	 */
+	$sql = "SELECT p.rowid, p.num_payment, datep as dp, p.amount,";
+	$sql.= "c.code as type_code,c.libelle as paiement_type";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
+	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+	$sql.= ", ".MAIN_DB_PREFIX."don as d";
+	$sql.= " WHERE d.rowid = '".$rowid."'";
+	$sql.= " AND p.fk_donation = d.rowid";
+	$sql.= " AND d.entity = ".$conf->entity;
+	$sql.= " AND p.fk_typepayment = c.id";
+	$sql.= " ORDER BY dp DESC";
+
+	//print $sql;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0; $total = 0;
+		print '<table class="nobordernopadding" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("RefPayment").'</td>';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td>'.$langs->trans("Type").'</td>';
+   		print '<td align="right">'.$langs->trans("Amount").'</td>';
+   		print '<td>&nbsp;</td>';
+   		print '</tr>';
+
+		$var=True;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+			$var=!$var;
+			print "<tr ".$bc[$var]."><td>";
+			print '<a href="'.DOL_URL_ROOT.'/compta/dons/payment.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+		        $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;				
+                               print "<td>".$labeltype.' '.$object->num_paiement."</td>\n";
+			print '<td align="right">'.price($object->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+			print "</tr>";
+			$totalpaid += $object->amount;
+			$i++;
+		}
+
+		if ($object->paid == 0)
+		{
+			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+
+			$remaintopay = $object->amount - $totalpaid;
+
+			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+			print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+		}
+		print "</table>";
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+	print "</td>";
+
+	print "</tr>";
 
 	// Zip / Town
-	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$object->zip.($object->zip && $object->town?' / ':'').$object->town.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+	print $object->zip.($object->zip && $object->town?' / ':'').$object->town.'</td></tr>';
 
+
+	
 	// Country
-	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	if (! empty($object->country_code))
 	{
 		$img=picto_from_langcode($object->country_code);
