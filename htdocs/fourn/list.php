@@ -104,7 +104,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.f
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key;
 // Add fields from hooks
 $parameters=array();
-$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$result=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef ON ef.fk_object = s.rowid";
@@ -136,7 +136,8 @@ if ($search_categ > 0)   $sql.= " AND cf.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cf.fk_categorie IS NULL";
 // Add where from hooks
 $parameters=array();
-$sql.=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$result=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
