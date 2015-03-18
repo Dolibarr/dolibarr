@@ -142,7 +142,6 @@ if ($action == 'add')
 		$object->societe     = GETPOST("societe");
 		$object->address     = GETPOST("address");
 		$object->amount      = price2num(GETPOST("amount"));
-		$object->town        = GETPOST("town");
         $object->zip         = GETPOST("zipcode");
         $object->town        = GETPOST("town");
         $object->country_id  = GETPOST('country_id', 'int');
@@ -196,7 +195,7 @@ if ($action == 'set_cancel')
 }
 if ($action == 'set_paid')
 {
-	if ($object->set_paye($id, $modepaiement) >= 0)
+	if ($object->set_paye($id, $modepayment) >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
@@ -260,7 +259,7 @@ $formcompany = new FormCompany($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation                                                                   */
+/* Donation card in create mode                                               */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,7 +352,7 @@ if ($action == 'create')
 
 /* ************************************************************ */
 /*                                                              */
-/* Fiche don en mode edition                                    */
+/* Donation card in edit mode                                   */
 /*                                                              */
 /* ************************************************************ */
 
@@ -417,10 +416,10 @@ if (! empty($id) && $action == 'edit')
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 
-    if ($object->modepaiementid) $selected = $object->modepaiementid;
+    if ($object->modepaymentid) $selected = $object->modepaymentid;
     else $selected = '';
 
-    $form->select_types_paiements($selected, 'modepaiement', 'CRDT', 0, 1);
+    $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
@@ -453,7 +452,7 @@ if (! empty($id) && $action == 'edit')
 
 /* ************************************************************ */
 /*                                                              */
-/* Fiche don en mode visu                                       */
+/* Donation card in view mode                                   */
 /*                                                              */
 /* ************************************************************ */
 if (! empty($id) && $action != 'edit')
@@ -503,8 +502,12 @@ if (! empty($id) && $action != 'edit')
 	{
 		$img=picto_from_langcode($object->country_code);
 		print ($img?$img.' ':'');
+		print $object->country;
 	}
-	print $object->country;
+	else
+	{
+		print $object->country_olddata;
+	}	
 	print '</td></tr>';
 
 	// EMail
@@ -512,7 +515,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	$form->form_modes_reglement(null, $object->modepaiementid,'none');
+	$form->form_modes_reglement(null, $object->modepaymentid,'none');
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
@@ -532,41 +535,63 @@ if (! empty($id) && $action != 'edit')
 
 	print "</div>";
 
-	// TODO Gerer action emettre paiement
-	$resteapayer = 0;
-
+	$remaintopay = $object->amount - $totalpaid;
 
 	/**
-	 * Barre d'actions
+	 * Actions buttons
 	 */
 	print '<div class="tabsAction">';
 
-	print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
+	print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 	if ($object->statut == 0)
 	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-    if (($object->statut == 0 || $object->statut == 1) && $resteapayer == 0 && $object->paye == 0)
+    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paye == 0)
     {
-        print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
+        print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }
 
-	// TODO Gerer action emettre paiement
-	if ($object->statut == 1 && $resteapayer > 0)
+	// Create payment
+	if ($object->statut == 1 && $object->paid == 0 && $user->rights->don->creer) 
 	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?rowid='.$object->id.'&action=create">'.$langs->trans("DoPayment")."</a></div>";
+		if ($remaintopay == 0) 
+		{
+			print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+		} 
+		else
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/dons/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+		}
 	}
 
-	if ($object->statut == 1 && $resteapayer == 0 && $object->paye == 0)
+	/*
+	// Classify paid
+			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0))
+				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
+			)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
+			}
+			
+	// Emit payment
+	if ($object->statut == 1 && $object->paid == 0 && ((price2num($object->amount) > 0 && round($remaintopay) > 0)) && $user->rights->don->creer)
 	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/dons/payment.php?rowid='.$object->id.'&action=create">'.$langs->trans("DoPayment").'</a></div>';
 	}
+	*/
 
+	// Classify 'paid'
+	if ($object->statut == 1 && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
+	{
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+	}
+	
 	if ($user->rights->don->supprimer)
 	{
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
 	}
 	else
 	{

@@ -372,4 +372,22 @@ ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
 
 -- Module Donation
-ALTER TABLE llx_don ADD COLUMN fk_pays integer NOT NULL after country;
+ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
+ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
+ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
+
+create table llx_payment_donation
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_donation     integer,
+  datec           datetime,           -- date de creation
+  tms             timestamp,
+  datep           datetime,           -- payment date
+  amount          real DEFAULT 0,
+  fk_typepayment  integer NOT NULL,
+  num_payment     varchar(50),
+  note            text,
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- creation user
+  fk_user_modif   integer             -- last modification user
+)ENGINE=innodb;

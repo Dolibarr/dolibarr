@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,15 +30,16 @@ create table llx_don
   datec           datetime,                     -- date de creation de l'enregistrement
   datedon         datetime,                     -- date du don/promesse
   amount          real DEFAULT 0,
-  fk_paiement     integer,
+  fk_payment      integer,
+  paid            smallint default 0 NOT NULL,
   firstname       varchar(50),
   lastname        varchar(50),
   societe         varchar(50),
   address         text,
   zip             varchar(30),
   town            varchar(50),
-  country         varchar(50),					-- Deprecated - Replace with fk_pays
-  fk_pays		  integer        NOT NULL,
+  country         varchar(50),					-- Deprecated - Replace with fk_country
+  fk_country	  integer        NOT NULL,
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),

@@ -322,7 +322,7 @@ class Don extends CommonObject
         $sql.= "datec";
         $sql.= ", entity";
         $sql.= ", amount";
-        $sql.= ", fk_paiement";
+        $sql.= ", fk_payment";
         $sql.= ", firstname";
         $sql.= ", lastname";
         $sql.= ", societe";
@@ -330,7 +330,7 @@ class Don extends CommonObject
         $sql.= ", zip";
         $sql.= ", town";
         // $sql.= ", country"; -- Deprecated
-        $sql.= ", fk_pays";
+        $sql.= ", fk_country";
         $sql.= ", public";
         $sql.= ", fk_don_projet";
         $sql.= ", note_private";
@@ -406,14 +406,14 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
-        $sql .= ",fk_paiement = ".($this->modepaiementid?$this->modepaiementid:"null");
+        $sql .= ",fk_payment = ".($this->modepaymentid?$this->modepaymentid:"null");
         $sql .= ",firstname = '".$this->db->escape($this->firstname)."'";
         $sql .= ",lastname='".$this->db->escape($this->lastname)."'";
         $sql .= ",societe='".$this->db->escape($this->societe)."'";
         $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",zip='".$this->db->escape($this->zip)."'";
         $sql .= ",town='".$this->db->escape($this->town)."'";
-        $sql .= ",fk_pays = ".$this->country_id;
+        $sql .= ",fk_country = ".$this->country_id;
         $sql .= ",public=".$this->public;
         $sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
@@ -497,14 +497,14 @@ class Don extends CommonObject
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-        $sql.= " d.fk_pays, d.public, d.amount, d.fk_paiement, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
+        $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_paiement";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_pays = c.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -528,17 +528,19 @@ class Don extends CommonObject
                 $this->town           = $obj->town;
                 $this->zip            = $obj->zip;
                 $this->town           = $obj->town;
-                $this->country_id    = $obj->country_id;
-                $this->country_code  = $obj->country_code;
-                $this->country       = $obj->country;
-                $this->email          = $obj->email;
+                $this->country_id     = $obj->country_id;
+                $this->country_code   = $obj->country_code;
+                $this->country        = $obj->country;
+                $this->country_olddata= $obj->country_olddata;
+				$this->email          = $obj->email;
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
                 $this->projet         = $obj->project_label;
                 $this->fk_project     = $obj->fk_don_projet;
                 $this->public         = $obj->public;
-                $this->modepaiementid = $obj->fk_paiement;
-                $this->modepaiement   = $obj->libelle;
+                $this->modepaymentid  = $obj->fk_payment;
+                $this->modepayment    = $obj->libelle;
+				$this->paid			  = $obj->paid;	
                 $this->amount         = $obj->amount;
                 $this->note_private	  = $obj->note_private;
                 $this->note_public	  = $obj->note_public;
@@ -597,7 +599,7 @@ class Don extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
         if ($modepaiement)
         {
-            $sql .= ", fk_paiement=$modepaiement";
+            $sql .= ", fk_payment=$modepayment";
         }
         $sql .=  " WHERE rowid = $rowid AND fk_statut = 1";
 
