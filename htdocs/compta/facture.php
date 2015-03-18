@@ -324,7 +324,7 @@ if (empty($reshook))
     {
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
     }
-	
+
 	// bank account
 	else if ($action == 'setbankaccount' && $user->rights->facture->creer)
 	{
@@ -2289,7 +2289,7 @@ if ($action == 'create')
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
 	}
-	
+
 	// Other attributes
 	$parameters = array('objectsrc' => $objectsrc,'colspan' => ' colspan="3"');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
@@ -2749,8 +2749,9 @@ if ($action == 'create')
 
 	if (! $formconfirm) {
 		$parameters = array('lineid' => $lineid);
-		$formconfirm = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by
-		                                                                                    // hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm
@@ -3389,10 +3390,10 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
-	{			
+	{
 		print '<tr><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('IncotermLabel');
@@ -3406,7 +3407,7 @@ if ($action == 'create')
 		{
 			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 		}
-		else 
+		else
 		{
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
