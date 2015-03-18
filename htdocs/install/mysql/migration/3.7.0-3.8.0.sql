@@ -27,6 +27,9 @@ ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
 
+ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
+ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
+
 
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
 

@@ -287,7 +287,7 @@ class Task extends CommonObject
         $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
         $sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
-        $sql.= " planned_workload=".(isset($this->planned_workload)?$this->planned_workload:"0").",";
+        $sql.= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '')?$this->planned_workload:"null").",";
         $sql.= " dateo=".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null').",";
         $sql.= " datee=".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null').",";
         $sql.= " progress=".$this->progress.",";
@@ -497,8 +497,8 @@ class Task extends CommonObject
      *	Return clicable name (with picto eventually)
      *
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param	int		$option			Sur quoi pointe le lien
-     *  @param	int		$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
+     *	@param	string	$option			'withproject' or ''
+     *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      *	@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$option='',$mode='task')

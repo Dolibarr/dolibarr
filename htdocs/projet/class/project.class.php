@@ -63,6 +63,9 @@ class Project extends CommonObject
 
     var $oldcopy;
 
+    var $weekWorkLoad;			// Used to store workload details of a projet
+    var $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
+
 
     /**
      *  Constructor
@@ -1442,23 +1445,29 @@ class Project extends CommonObject
 
 
 	/**
-	 * load time spent into this->weekWorkLoad for all day of a week and task id
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project
 	 *
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
-	 * @param 	int		$taskid			Task id
-	 * @param 	int		$userid			Time consumed per a particular user
+	 * @param 	int		$taskid			Filter on a task id
+	 * @param 	int		$userid			Time spent by a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
-	public function loadTimeSpent($datestart,$taskid,$userid=0)
+	public function loadTimeSpent($datestart,$taskid=0,$userid=0)
     {
         $error=0;
 
-        $sql = "SELECT ptt.rowid, ptt.task_duration, ptt.task_date";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt";
-        $sql.= " WHERE ptt.fk_task='".$taskid."'";
-        $sql.= " AND ptt.fk_user='".$userid."'";
-        $sql .= "AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-        $sql .= "AND (ptt.task_date < '".$this->db->idate($datestart + 7 * 24 * 3600)."' ";
+        if (empty($datestart)) dol_print_error('','Error datestart parameter is empty');
+
+        $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.fk_task";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+        $sql.= " WHERE ptt.fk_task = pt.rowid";
+        $sql.= " AND pt.fk_projet = ".$this->id;
+        $sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+        $sql.= " AND ptt.task_date <= '".$this->db->idate($datestart + (7 * 24 * 3600) - 1)."')";
+        if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
+        if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+
+        //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1470,10 +1479,8 @@ class Project extends CommonObject
                 {
                         $obj=$this->db->fetch_object($resql);
                         $day=$this->db->jdate($obj->task_date);
-                        //$day=(intval(date('w',strtotime($obj->task_date)))+1)%6;
-                        // if several tasktime in one day then only the last is used
                         $this->weekWorkLoad[$day] +=  $obj->task_duration;
-                        $this->taskTimeId[$day]= ($obj->rowid)?($obj->rowid):0;
+                        $this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
                         $i++;
                 }
                 $this->db->free($resql);
