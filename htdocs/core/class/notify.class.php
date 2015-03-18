@@ -423,7 +423,7 @@ class Notify
 				if ($mailfile->sendfile())
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
-					$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$actiondefid.", ".$object->socid.", null, '".$obj->type."', '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
+					$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$actiondefid.", ".$object->socid.", null, 'email', '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
 					if (! $this->db->query($sql))
 					{
 						dol_print_error($this->db);
