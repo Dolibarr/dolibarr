@@ -31,7 +31,8 @@ WARNING: Following changes may create regression for some external modules, but 
 Dolibarr better:
 - Removed hoo supplierorderdao into supplier order creation. This is a business event, so we must use the 
   trigger ORDER_SUPPLIER_CREATE instead.
-
+- printLeftBlock is now compliant with hook development rules. It is an "addreplace" hook so you must 
+return content by doing ->resprints='mycontent' and not by doing return 'mycontent'  
 
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
