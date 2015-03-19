@@ -1966,8 +1966,13 @@ elseif (! empty($object->id))
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
+
+		$object->fetch_projet();
 		// Tableau des substitutions
 		$formmail->substit['__ORDERREF__']=$object->ref;
+		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
