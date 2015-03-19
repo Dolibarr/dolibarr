@@ -42,7 +42,7 @@ if (! empty($conf->ficheinter->enabled))  require_once DOL_DOCUMENT_ROOT.'/fichi
 if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
