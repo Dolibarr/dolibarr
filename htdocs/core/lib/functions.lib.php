@@ -1633,14 +1633,14 @@ function dol_print_address($address, $htmlid, $mode, $id)
 /**
  *	Return true if email syntax is ok
  *
- *	@param	    string		$address    email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     			true if email syntax is OK, false if KO or empty string
+ *	@param	    string		$address    			email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
+ *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  */
-function isValidEmail($address)
+function isValidEmail($address, $acceptsupervisorkey=0)
 {
-	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
-		return true;
-	}
+	if ($acceptsupervisorkey && $address == '__SUPERVISOREMAIL__') return true;
+	if (filter_var($address, FILTER_VALIDATE_EMAIL)) return true;
 
 	return false;
 }

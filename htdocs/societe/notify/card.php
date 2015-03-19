@@ -264,18 +264,22 @@ if ($result > 0)
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
 		print '<tr '.$bc[$var].'><td>';
 		$listtmp=explode(',',$val);
+		$first=1;
 		foreach($listtmp as $keyemail => $valemail)
 		{
+			if (! $first) print ', ';
+			$first=0;
 			$valemail=trim($valemail);
     		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-			if (isValidEmail($valemail))
+			if (isValidEmail($valemail, 1))
 			{
-				print ' &lt;'.$valemail.'&gt;';
+				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
+				else print ' &lt;'.$valemail.'&gt;';
 			}
 			else
 			{
 				$langs->load("errors");
-				print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
+				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
 			}
 		}
 		print '</td>';
@@ -286,7 +290,7 @@ if ($result > 0)
 		print '<td>';
 		print $langs->trans("Email");
 		print '</td>';
-		print '<td align="right">'.$langs->trans("SeeModuleSetup").'</td>';
+		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
     }
 

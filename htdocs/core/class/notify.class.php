@@ -155,7 +155,7 @@ class Notify
      */
     function send($notifcode, $object)
     {
-        global $conf,$langs,$mysoc,$dolibarr_main_url_root;
+        global $user,$conf,$langs,$mysoc,$dolibarr_main_url_root;
 
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -373,120 +373,137 @@ class Notify
     			}
 
 		        $param='NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_'.$reg[1];
-		        //if (! empty($conf->global->$param))
-		        //{
-					$sendto = $conf->global->$param;
-					$notifcodedefid = dol_getIdFromCode($this->db, $notifcode, 'c_action_trigger', 'code', 'rowid');
-					if ($notifcodedefid <= 0) dol_print_error($this->db, 'Failed to get id from code');
 
-					$object_type = '';
-			        $link = '';
-	        		$num++;
+		        $sendto = $conf->global->$param;
+		        $notifcodedefid = dol_getIdFromCode($this->db, $notifcode, 'c_action_trigger', 'code', 'rowid');
+		        if ($notifcodedefid <= 0) dol_print_error($this->db, 'Failed to get id from code');
 
-					switch ($notifcode) {
-						case 'BILL_VALIDATE':
-							$link='/compta/facture.php?facid='.$object->id;
-							$dir_output = $conf->facture->dir_output;
-							$object_type = 'facture';
-							$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
-							break;
-						case 'ORDER_VALIDATE':
-							$link='/commande/card.php?id='.$object->id;
-							$dir_output = $conf->commande->dir_output;
-							$object_type = 'order';
-							$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
-							break;
-						case 'PROPAL_VALIDATE':
-							$link='/comm/propal.php?id='.$object->id;
-							$dir_output = $conf->propal->dir_output;
-							$object_type = 'propal';
-							$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
-							break;
-						case 'FICHINTER_VALIDATE':
-							$link='/fichinter/card.php?id='.$object->id;
-							$dir_output = $conf->facture->dir_output;
-							$object_type = 'ficheinter';
-							$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
-							break;
-						case 'ORDER_SUPPLIER_VALIDATE':
-							$link='/fourn/commande/card.php?id='.$object->id;
-							$dir_output = $conf->fournisseur->dir_output.'/commande/';
-							$object_type = 'order_supplier';
-							$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-							$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$object->ref,$user->getFullName($langs));
-							$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-							break;
-						case 'ORDER_SUPPLIER_APPROVE':
-							$link='/fourn/commande/card.php?id='.$object->id;
-							$dir_output = $conf->fournisseur->dir_output.'/commande/';
-							$object_type = 'order_supplier';
-							$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-							$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
-							$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-							break;
-						case 'ORDER_SUPPLIER_REFUSE':
-							$link='/fourn/commande/card.php?id='.$object->id;
-							$dir_output = $conf->fournisseur->dir_output.'/commande/';
-							$object_type = 'order_supplier';
-							$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-							$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
-							$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-							break;
-						case 'SHIPPING_VALIDATE':
-							$dir_output = $conf->expedition->dir_output.'/sending/';
-							$object_type = 'order_supplier';
-							$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
-							break;
-					}
-					$ref = dol_sanitizeFileName($object->ref);
-					$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
-					if (! dol_is_file($pdf_path))
-					{
-						// We can't add PDF as it is not generated yet.
-						$filepdf = '';
-					}
-					else
-					{
-						$filepdf = $pdf_path;
-					}
+		        $object_type = '';
+		        $link = '';
+		        $num++;
 
-					$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+		        switch ($notifcode) {
+		        	case 'BILL_VALIDATE':
+		        		$link='/compta/facture.php?facid='.$object->id;
+		        		$dir_output = $conf->facture->dir_output;
+		        		$object_type = 'facture';
+		        		$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
+		        		break;
+		        	case 'ORDER_VALIDATE':
+		        		$link='/commande/card.php?id='.$object->id;
+		        		$dir_output = $conf->commande->dir_output;
+		        		$object_type = 'order';
+		        		$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
+		        		break;
+		        	case 'PROPAL_VALIDATE':
+		        		$link='/comm/propal.php?id='.$object->id;
+		        		$dir_output = $conf->propal->dir_output;
+		        		$object_type = 'propal';
+		        		$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
+		        		break;
+		        	case 'FICHINTER_VALIDATE':
+		        		$link='/fichinter/card.php?id='.$object->id;
+		        		$dir_output = $conf->facture->dir_output;
+		        		$object_type = 'ficheinter';
+		        		$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
+		        		break;
+		        	case 'ORDER_SUPPLIER_VALIDATE':
+		        		$link='/fourn/commande/card.php?id='.$object->id;
+		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
+		        		$object_type = 'order_supplier';
+		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$object->ref,$user->getFullName($langs));
+		        		$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+		        		break;
+		        	case 'ORDER_SUPPLIER_APPROVE':
+		        		$link='/fourn/commande/card.php?id='.$object->id;
+		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
+		        		$object_type = 'order_supplier';
+		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
+		        		$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+		        		break;
+		        	case 'ORDER_SUPPLIER_REFUSE':
+		        		$link='/fourn/commande/card.php?id='.$object->id;
+		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
+		        		$object_type = 'order_supplier';
+		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
+		        		$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+		        		break;
+		        	case 'SHIPPING_VALIDATE':
+		        		$dir_output = $conf->expedition->dir_output.'/sending/';
+		        		$object_type = 'order_supplier';
+		        		$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
+		        		break;
+		        }
+		        $ref = dol_sanitizeFileName($object->ref);
+		        $pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+		        if (! dol_is_file($pdf_path))
+		        {
+		        	// We can't add PDF as it is not generated yet.
+		        	$filepdf = '';
+		        }
+		        else
+		        {
+		        	$filepdf = $pdf_path;
+		        }
 
-					$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
-					$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
-					$message.= "\n";
-					$message.= $mesg;
-					if ($link) $message=dol_concatdesc($message,$urlwithroot.$link);
+		        $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
-					$mailfile = new CMailFile(
-						$subject,
-						$sendto,
-						$replyto,
-						$message,
-						array($file),
-						array($mimefile),
-						array($filename[count($filename)-1]),
-						'',
-						'',
-						0,
-						-1
-					);
+		        $message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
+		        $message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+		        $message.= "\n";
+		        $message.= $mesg;
+		        if ($link) $message=dol_concatdesc($message,$urlwithroot.$link);
 
-					if ($mailfile->sendfile())
-					{
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
-						$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$object->socid.", null, 'email', '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
-						if (! $this->db->query($sql))
-						{
-							dol_print_error($this->db);
-						}
-					}
-					else
-					{
-						$error++;
-						$this->errors[]=$mailfile->error;
-					}
-		        //}
+		        // Replace keyword __SUPERVISOREMAIL__
+		        if (preg_match('/__SUPERVISOREMAIL__/', $sendto))
+		        {
+		        	$newval='';
+		        	if ($user->fk_user > 0)
+		        	{
+		        		$supervisoruser=new User($this->db);
+		        		$supervisoruser->fetch($user->fk_user);
+		        		if ($supervisoruser->email) $newval=trim(dolGetFirstLastname($supervisoruser->firstname, $supervisoruser->lastname).' <'.$supervisoruser->email.'>');
+		        	}
+		        	dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
+		        	$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
+		        	$sendto = preg_replace('/^[\s,]+/','',$sendto);	// Clean start of string
+		        	$sendto = preg_replace('/[\s,]+$/','',$sendto);	// Clean end of string
+		        }
+
+		        if ($sendto)
+		        {
+		        	$mailfile = new CMailFile(
+		        		$subject,
+		        		$sendto,
+		        		$replyto,
+		        		$message,
+		        		array($file),
+		        		array($mimefile),
+		        		array($filename[count($filename)-1]),
+		        		'',
+		        		'',
+		        		0,
+		        		-1
+		        	);
+
+		        	if ($mailfile->sendfile())
+		        	{
+		        		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
+		        		$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$object->socid.", null, 'email', '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
+		        		if (! $this->db->query($sql))
+		        		{
+		        			dol_print_error($this->db);
+		        		}
+		        	}
+		        	else
+		        	{
+		        		$error++;
+		        		$this->errors[]=$mailfile->error;
+		        	}
+		        }
     		}
         }
 

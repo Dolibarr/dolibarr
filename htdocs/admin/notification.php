@@ -232,10 +232,10 @@ foreach($listofnotifiedevents as $notifiedevent)
 		foreach($arrayemail as $key=>$valuedet)
 		{
 			$valuedet=trim($valuedet);
-			if (! empty($valuedet) && ! isValidEmail($valuedet)) $showwarning++;
+			if (! empty($valuedet) && ! isValidEmail($valuedet,1)) $showwarning++;
 		}
 	    if ((! empty($conf->global->$param)) && $showwarning) $s.=' '.img_warning($langs->trans("ErrorBadEMail"));
-	    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"),1,'help','',0,2);
+	    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
 		print '<br>';
     }
     // New entry input fields
