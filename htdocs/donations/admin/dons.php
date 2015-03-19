@@ -25,7 +25,7 @@
  */
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 
 $langs->load("admin");
 $langs->load("donations");

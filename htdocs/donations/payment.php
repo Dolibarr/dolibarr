@@ -16,14 +16,14 @@
  */
 
 /**
- *  \file       htdocs/compta/dons/payment.php
+ *  \file       htdocs/donations/payment.php
  *  \ingroup    Donation
  *  \brief      Page to add payment of a donation
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/paymentdonation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
@@ -50,7 +50,7 @@ if ($action == 'add_payment')
 
 	if ($_POST["cancel"])
 	{
-		$loc = DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$chid;
+		$loc = DOL_URL_ROOT.'/donations/card.php?rowid='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -129,7 +129,7 @@ if ($action == 'add_payment')
     	    if (! $error)
             {
                 $db->commit();
-                $loc = DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$chid;
+                $loc = DOL_URL_ROOT.'/donations/card.php?rowid='.$chid;
                 header('Location: '.$loc);
                 exit;
             }
@@ -180,7 +180,7 @@ if (GETPOST("action") == 'create')
 
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Donation").'</td>';
 
-	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/donations/card.php?rowid='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"2\">".dol_print_date($don->date,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td colspan=\"2\">".price($don->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 

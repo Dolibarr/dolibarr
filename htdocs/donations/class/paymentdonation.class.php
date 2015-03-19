@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file       htdocs/compta/dons/class/paymentdonation.class.php
+ *  \file       htdocs/donations/class/paymentdonation.class.php
  *  \ingroup    Donation
  *  \brief      File of class to manage payment of donations
  */
@@ -510,7 +510,7 @@ class PaymentDonation extends CommonObject
 
                 // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
                 $url='';
-                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/compta/dons/card.php?rowid=';
+                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/donations/card.php?rowid=';
                 if ($url)
                 {
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);

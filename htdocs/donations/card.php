@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/dons/card.php
+ *	    \file       htdocs/donations/card.php
  *		\ingroup    don
  *		\brief      Page of donation card
  */
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 if (! empty($conf->projet->enabled))
 {
@@ -466,7 +466,7 @@ if (! empty($id) && $action != 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/dons/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/donations/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     $nbrows=12;
     if (! empty($conf->projet->enabled)) $nbrows++;
@@ -534,7 +534,7 @@ if (! empty($id) && $action != 'edit')
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print "<tr ".$bc[$var]."><td>";
-			print '<a href="'.DOL_URL_ROOT.'/compta/dons/payment.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+			print '<a href="'.DOL_URL_ROOT.'/donations/payment.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		        $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;				
                                print "<td>".$labeltype.' '.$object->num_paiement."</td>\n";
@@ -641,7 +641,7 @@ if (! empty($id) && $action != 'edit')
 		} 
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/dons/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/donations/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
 	}
 

@@ -788,10 +788,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->don->enabled))
 			{
 				$langs->load("donations");
-				$newmenu->add("/compta/dons/index.php?leftmenu=donations&amp;mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire, '', $mainmenu, 'donations');
-				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/compta/dons/card.php?action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
-				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/compta/dons/list.php",$langs->trans("List"), 1, $user->rights->don->lire);
-				//if ($leftmenu=="donations") $newmenu->add("/compta/dons/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
+				$newmenu->add("/donations/index.php?leftmenu=donations&amp;mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire, '', $mainmenu, 'donations');
+				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/donations/card.php?action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
+				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/donations/list.php",$langs->trans("List"), 1, $user->rights->don->lire);
+				//if ($leftmenu=="donations") $newmenu->add("/donations/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 			}
 
 			// Taxes and social contributions

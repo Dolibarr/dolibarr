@@ -17,7 +17,7 @@
  */
 
 /**
- * 	    \file       htdocs/compta/dons/stats.php
+ * 	    \file       htdocs/donations/stats.php
  *      \ingroup    don
  *      \brief      Page des statistiques de dons
  */

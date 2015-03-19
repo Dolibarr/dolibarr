@@ -19,13 +19,13 @@
  */
 
 /**
- *	\file       htdocs/compta/dons/list.php
+ *	\file       htdocs/donations/list.php
  *	\ingroup    don
  *	\brief      Page de liste des dons
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");

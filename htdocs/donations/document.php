@@ -16,13 +16,13 @@
  */
 
 /**
- *  \file       htdocs/compta/dons/document.php
+ *  \file       htdocs/donations/document.php
  *  \ingroup    Donation
  *  \brief      Page of linked files into donations
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
@@ -96,7 +96,7 @@ if ($object->id)
 
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/dons/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/donations/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';

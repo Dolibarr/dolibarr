@@ -20,7 +20,7 @@
  */
 
 /**
- *   	\file       htdocs/compta/dons/class/don.class.php
+ *   	\file       htdocs/donations/class/don.class.php
  *		\ingroup    Donation
  *		\brief      File of class to manage donations
  */
@@ -723,7 +723,7 @@ class Don extends CommonObject
         $result='';
         $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/dons/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/donations/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
         $picto='generic';

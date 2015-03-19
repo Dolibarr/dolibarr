@@ -25,7 +25,7 @@
  *		\brief      File of class to manage donation document generation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 
 
 
