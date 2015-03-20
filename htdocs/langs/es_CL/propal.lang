@@ -1,3 +1,4 @@
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Cotizaciones
 Proposal=Cotización
 ProposalShort=Cotización
@@ -11,7 +12,6 @@ ProposalCard=Ficha cotización
 NewProp=Nueva cotización
 NewProposal=Nueva cotización
 NewPropal=Nueva cotización
-DeletePop=Eliminar cotización
 ValidateProp=Validar cotización
 AddProp=Crear cotización
 ConfirmDeleteProp=¿Está seguro de querer eliminar esta cotización?
@@ -22,7 +22,6 @@ AllPropals=Todas las cotizacioness
 LastProposals=Últimas cotizaciones
 SearchAProposal=Buscar una cotización
 ProposalsStatistics=Estadísticas de cotizaciones
-NumberOfUnitsProposals=Número de unidades en las cotizaciones en los últimos 12 meses
 NbOfProposals=Número cotizaciones
 ShowPropal=Ver cotización
 PropalStatusValidated=Validado (cotización abierta)
@@ -37,7 +36,6 @@ RefProposal=Ref. cotización
 SendPropalByMail=Enviar cotización por e-mail
 AssociatedDocuments=Documentos asociados a la cotizacion
 DatePropal=Fecha cotización
-ErrorPropalNotFound=Presupuesto %s inexistente
 Estimate=Cotización:
 EstimateShort=Cotización
 OtherPropals=Otras cotizaciones
@@ -51,11 +49,9 @@ ConfirmClonePropal=¿Está seguro de querer clonar la cotización <b>%s</b>?
 ConfirmReOpenProp=¿Está seguro de querer reabrir la cotización <b>%s</b> ?
 ProposalsAndProposalsLines=Cotizaciones a clientes y líneas de cotizaciones
 ProposalLine=Línea de cotización
-##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimiento cotización
 TypeContact_propal_external_BILLING=Contacto cliente de facturación cotización
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento cotización
-# Document models
 DocModelAzurDescription=Modelo de cotización completa (logo...)
 DocModelJauneDescription=Modelo de cotización Jaune
 DefaultModelPropalToBill=Modelo por defecto al cerrar una cotización (a facturar)

@@ -1657,7 +1657,7 @@ elseif (! empty($object->id))
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new	Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
@@ -1733,7 +1733,9 @@ elseif (! empty($object->id))
 
 	if (!$formconfirm) {
 		$parameters=array('lineid'=>$lineid);
-		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm

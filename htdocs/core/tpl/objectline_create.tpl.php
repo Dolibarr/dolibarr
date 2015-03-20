@@ -274,7 +274,7 @@ else {
 			$newline = new PropaleLigne($this->db);
 		}
 		elseif ($this->table_element_line=='askpricesupplierdet') {
-			$newline = new AskPriceSupplierLigne($this->db);
+			$newline = new AskPriceSupplierLine($this->db);
 		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);

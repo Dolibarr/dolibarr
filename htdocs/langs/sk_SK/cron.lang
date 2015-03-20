@@ -84,3 +84,4 @@ CronType_command=Shell príkaz
 CronMenu=Cron
 CronCannotLoadClass=Nemožno načítať triedu alebo objekt %s %s
 UseMenuModuleToolsToAddCronJobs=Choďte do menu &quot;Home - Moduly náradie - Zoznam úloh&quot; vidieť a upravovať naplánované úlohy.
+TaskDisabled=Task disabled

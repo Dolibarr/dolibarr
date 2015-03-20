@@ -1394,9 +1394,9 @@ div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 9px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-bottom: 8px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-bottom: 12px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;

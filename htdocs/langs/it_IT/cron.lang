@@ -84,3 +84,4 @@ CronType_command=Comando da shell
 CronMenu=Cron
 CronCannotLoadClass=Non posso caricare la classe %s o l'oggetto %s
 UseMenuModuleToolsToAddCronJobs=Andare nel menu "Home - Modules tools - Job list" per vedere e modificare le azioni pianificate.
+TaskDisabled=Task disabled

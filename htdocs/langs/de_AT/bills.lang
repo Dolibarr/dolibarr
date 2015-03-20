@@ -10,7 +10,6 @@ InvoiceProFormaAsk=Proforma Rechnung
 InvoiceProFormaDesc=<b>Proforma Rechnung</b> ist ein Bild eines echten Rechnung, hat aber keine Buchhaltung Wert.
 ConsumedBy=Consumed von
 CardBill=Rechnungskarte
-Abandoned=Abandoned
 CustomerBillsUnpaid=Kunden wegen eines nicht bezahlten Rechnungen
 NewRelativeDiscount=Neue relative Rabatt
 DescTaxAndDividendsArea=Dieser Bereich stellt eine Übersicht über alle Zahlungen, die für die Steuer-oder Sozialabgaben. Nur Datensätze mit der Bezahlung während der festgesetzten Jahr hier.

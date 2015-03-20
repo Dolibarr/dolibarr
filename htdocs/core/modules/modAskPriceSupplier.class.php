@@ -21,7 +21,7 @@
  */
 
 /**
- *	\defgroup   askpricesupplier     Module to request supplier price proposals
+ *	\defgroup   askpricesupplier     Module askpricesupplier
  *	\brief      Module to request supplier price proposals
  *	\file       htdocs/core/modules/modAskPriceSupplier.class.php
  *	\ingroup    askpricesupplier

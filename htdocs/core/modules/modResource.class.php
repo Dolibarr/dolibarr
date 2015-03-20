@@ -17,7 +17,7 @@
  */
 
 /**
- * 	\defgroup	resource	Resource module
+ * 	\defgroup	resource	Module resource
  * 	\brief		Resource module descriptor.
  * 	\file		core/modules/modResource.class.php
  * 	\ingroup	resource

@@ -1066,7 +1066,7 @@ class User extends CommonObject
 	/**
 	 *    Assign rights by default
 	 *
-	 *    @return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
+	 *    @return     integer erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
 	function set_default_rights()
 	{
@@ -1621,7 +1621,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	void
+	 *  @return	integer
 	 */
 	function update_clicktodial()
 	{
@@ -1777,8 +1777,8 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option			On what the link point to
-     *  @param  boolean $infologin      Add connection info to the tooltip
-     *  @param	string	$notooltip		1=Disable tooltip
+     *  @param  integer $infologin      Add connection info to the tooltip
+     *  @param	integer	$notooltip		1=Disable tooltip
      *  @param	int		$maxlen			Max length of visible user name
 	 *	@return	string					String with URL
 	 */

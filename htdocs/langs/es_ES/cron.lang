@@ -84,3 +84,4 @@ CronType_command=Comando Shell
 CronMenu=Programador
 CronCannotLoadClass=No se puede cargar la clase %s u objeto %s
 UseMenuModuleToolsToAddCronJobs=Ir a "Inicio - Utilidades módulos - Lista de tareas Cron" para ver y editar tareas programadas.
+TaskDisabled=Task disabled

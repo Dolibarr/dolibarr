@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ class Cotisation extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -140,7 +140,7 @@ class Cotisation extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -181,7 +181,7 @@ class Cotisation extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -217,7 +217,7 @@ class Cotisation extends CommonObject
 				$result=$member->fetch($this->fk_adherent);
 				$result=$member->update_end_date($user);
 
-				if ($accountline->rowid > 0)	// If we found bank account line (this means this->fk_bank defined)
+				if ($accountline->id > 0)						// If we found bank account line (this means this->fk_bank defined)
 				{
 					$result=$accountline->delete($user);		// Return false if refused because line is conciliated
 					if ($result > 0)

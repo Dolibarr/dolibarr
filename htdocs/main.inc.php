@@ -1410,6 +1410,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
@@ -1685,8 +1686,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    // Execute hook printLeftBlock
 	    $parameters=array();
-	    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
-	    print $leftblock;
+	    $reshook=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    print $hookmanager->resPrint;
 
 	    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
 	    else print '</div> <!-- end id-left -->';	// End div id="id-left"

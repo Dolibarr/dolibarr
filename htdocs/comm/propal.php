@@ -1671,7 +1671,7 @@ if ($action == 'create')
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid);
+			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid, $object);
 		}
 
 		if (! $error)
@@ -1680,9 +1680,9 @@ if ($action == 'create')
 
 	if (! $formconfirm) {
 		$parameters = array('lineid' => $lineid);
-		$formconfirm = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified
-			                                                                                         // by
-			                                                                                         // hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm

@@ -84,3 +84,4 @@ CronType_command=Εντολή Shell
 CronMenu=Μενού
 CronCannotLoadClass=Cannot load class %s or object %s
 UseMenuModuleToolsToAddCronJobs=Πηγαίνετε στο μενού "Home - Modules εργαλεία - Λίστα εργασιών" για να δείτε και να επεξεργαστείτε τις προγραμματισμένες εργασίες.
+TaskDisabled=Task disabled

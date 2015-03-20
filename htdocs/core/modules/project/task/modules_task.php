@@ -39,7 +39,7 @@ abstract class ModelePDFTask extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -145,7 +145,7 @@ abstract class ModeleNumRefTask
  *  Create an intervention document on disk using template defined into PROJECT_TASK_ADDON_PDF
  *
  *  @param	DoliDB		$db  			objet base de donnee
- *  @param	Object		$object			Object fichinter
+ *  @param	Task		$object			Object fichinter
  *  @param	string		$modele			force le modele a utiliser ('' par defaut)
  *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines

@@ -19,6 +19,7 @@ ServiceStatusLateShort=Utgångna
 ServiceStatusClosed=Stängt
 ServicesLegend=Tjänster legend
 Contracts=Kontrakt
+ContractsAndLine=Contracts and line of contracts
 Contract=Kontrakt
 NoContracts=Inga kontrakt
 MenuServices=Tjänster

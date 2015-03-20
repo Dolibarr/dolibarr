@@ -19,6 +19,7 @@ ServiceStatusLateShort=Beidzies
 ServiceStatusClosed=Slēgts
 ServicesLegend=Pakalpojumu apraksts
 Contracts=Līgumi
+ContractsAndLine=Contracts and line of contracts
 Contract=Līgums
 NoContracts=Nav līgumi
 MenuServices=Pakalpojumi

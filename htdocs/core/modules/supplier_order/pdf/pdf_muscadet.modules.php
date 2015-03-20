@@ -554,7 +554,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *  Show payments table
 	 *
 	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object			Object order
+	 *  @param  CommandeFournisseur		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
@@ -569,10 +569,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		PDF			$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		CommandeFournisseur		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @return	void
+	 *   @return	integer
 	 */
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -938,7 +938,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *  Show top header of page.
 	 *
 	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -1139,7 +1139,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 *   	Show footer of page. Need this->emetteur object
      *
 	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	CommandeFournisseur		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text

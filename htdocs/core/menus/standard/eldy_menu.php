@@ -112,7 +112,7 @@ class MenuManager
      *  Show menu
      *
      *	@param	string	$mode			'top', 'left', 'jmobile'
-     *  @return void
+     *  @return string
      */
     function showmenu($mode)
     {

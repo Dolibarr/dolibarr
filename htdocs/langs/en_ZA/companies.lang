@@ -1,9 +1,0 @@
-# Dolibarr language file - en_ZA - companies
-# This file contains only line that must differs from en_US
-VATIsUsed=VAT is used
-VATIsNotUsed=VAT is not used
-VATIntra=VAT number
-VATIntraShort=VAT number
-VATIntraVeryShort=VAT
-VATIntraSyntaxIsValid=Syntax is valid
-VATIntraValueIsValid=Value is valid

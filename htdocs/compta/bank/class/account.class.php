@@ -39,12 +39,12 @@ class Account extends CommonObject
     public $table_element='bank_account';
 
     /**
-     * //TODO: Discuss this. $rowid is preferred over $id
-     * @var
+     * @var	int		Use id instead of rowid
      * @deprecated
      */
     var $rowid;
     var $id;
+
     var $ref;
     var $label;
     //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne

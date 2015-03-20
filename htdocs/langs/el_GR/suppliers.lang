@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Προμηθευτές
-Supplier=Προμηθευτής
 AddSupplier=Δημιουργία προμηθευτή
 SupplierRemoved=Ο προμηθευτής αφαιρέθηκε
 SuppliersInvoice=Τιμολόγιο προμηθευτή
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Τιμολόγια και πληρωμές προμ�
 ExportDataset_fournisseur_3=Παραγγελίες σε προμηθευτές και σειρά γραμμών
 ApproveThisOrder=Έγκριση της παραγγελίας
 ConfirmApproveThisOrder=Είστε σίγουροι ότι θέλετε να εγκρίνετε την παραγγελία <b>%s</b> ;
-DenyingThisOrder=Άρνηση της παραγγελίας
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Είστε σίγουροι ότι θέλετε να αρνηθείτε την παραγγελία <b>%s</b> ;
 ConfirmCancelThisOrder=Είστε σίγουροι ότι θέλετε να ακυρώσετε την παραγγελία <b>%s</b> ;
 AddCustomerOrder=Δημιουργία παραγγελίας πελάτη

@@ -250,3 +250,7 @@ PriceExpressionEditorHelp3=En productos y servicios, y precios de proveedor est√
 PriceExpressionEditorHelp4=Solamente en los precios de productos y servicios: <b>#supplier_min_price#</b><br>In supplier prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
 PriceMode=Modo precio
 PriceNumeric=N√∫mero
+DefaultPrice=Default price
+ComposedProductIncDecStock=Increase/Decrease stock on parent change
+ComposedProduct=Sub-product
+MinSupplierPrice=Minimun supplier price

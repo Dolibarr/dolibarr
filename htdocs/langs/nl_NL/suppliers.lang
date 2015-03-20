@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Leveranciers
-Supplier=Leverancier
 AddSupplier=Create a supplier
 SupplierRemoved=Leverancier verwijderd
 SuppliersInvoice=Leveranciersfactuur
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Leveranciersfacturen en -betalingen
 ExportDataset_fournisseur_3=Leveranciersorders en orderlijnen
 ApproveThisOrder=Opdracht goedkeuren
 ConfirmApproveThisOrder=Weet u zeker dat u de Opdracht <b>%s</b> wilt goedkeuren?
-DenyingThisOrder=Opdracht weigeren
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Weet u zeker dat u deze Opdracht <b>%s</b> wilt weigeren?
 ConfirmCancelThisOrder=Weet u zeker dat u deze Opdracht <b>%s</b> wilt annuleren?
 AddCustomerOrder=Voeg afnemersopdracht toe

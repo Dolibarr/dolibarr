@@ -1633,14 +1633,14 @@ function dol_print_address($address, $htmlid, $mode, $id)
 /**
  *	Return true if email syntax is ok
  *
- *	@param	    string		$address    email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     			true if email syntax is OK, false if KO or empty string
+ *	@param	    string		$address    			email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
+ *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  */
-function isValidEmail($address)
+function isValidEmail($address, $acceptsupervisorkey=0)
 {
-	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
-		return true;
-	}
+	if ($acceptsupervisorkey && $address == '__SUPERVISOREMAIL__') return true;
+	if (filter_var($address, FILTER_VALIDATE_EMAIL)) return true;
 
 	return false;
 }
@@ -2116,7 +2116,7 @@ function img_edit_remove($titlealt = 'default', $other='')
  *	Show logo editer/modifier fiche
  *
  *	@param  string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  float	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -2133,7 +2133,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	Show logo view card
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  float	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -2446,7 +2446,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	Show information for admin users
  *
  *	@param	string	$text			Text info
- *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *	@return	string					String with info text
  */
@@ -2495,7 +2495,7 @@ function dol_print_error($db='',$error='')
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		$out.=$langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental or develop level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";
@@ -2866,7 +2866,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	int				$page				Number of page
  *	@param	string			$file				Lien
  *	@param	string			$options         	Autres parametres d'url a propager dans les liens ("" par defaut)
- *	@param	boolean|int		$nextpage	    	Do we show a next page button
+ *	@param	integer		$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML Content to show between arrows
  *	@return	void
  */
@@ -2923,7 +2923,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		Function used into PDF and HTML pages
  *
  *		@param	float		$amount			Amount to format
- *		@param	string		$form			Type of format, HTML or not (not by default)
+ *		@param	integer		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
@@ -3622,7 +3622,7 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
- *	@return float        				       	localtax, -1 si ne peut etre determine
+ *	@return integer        				       	localtax, -1 si ne peut etre determine
  *  @see get_default_tva, get_default_npr
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
@@ -3664,7 +3664,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
  *	Return yes or no in current language
  *
  *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	string	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
+ *	@param	integer	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
  *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  *	@return	string					HTML string
  */
@@ -3805,7 +3805,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	string	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
+ *	@param	integer	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -4183,7 +4183,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output format
  *    @param	Translate	$outputlangs   		Output language
- *    @param	string		$withparenthesis	1=Add parenthesis, 0=non parenthesis
+ *    @param	integer		$withparenthesis	1=Add parenthesis, 0=non parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $withparenthesis=1)
@@ -4845,7 +4845,7 @@ function printCommonFooter($zone='private')
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		if ($micro_start_time)
 		{
-			$micro_end_time=dol_microtime_float(true);
+			$micro_end_time=dol_microtime_float();
 			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		}
 		if (function_exists("memory_get_usage"))
@@ -4952,7 +4952,7 @@ function dol_getmypid()
  * @param 	string 			$value 		The value to look for.
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
- * @param	string			$numeric	0=value is list of keywords, 1=value is a numeric test
+ * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
  * @return 	string 			$res 		The statement to append to the SQL query
  */
 function natural_search($fields, $value, $numeric=0)

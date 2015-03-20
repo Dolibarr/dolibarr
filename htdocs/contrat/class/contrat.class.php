@@ -89,23 +89,7 @@ class Contrat extends CommonObject
 	var $product;
 
 	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var
-	 */
-	var $user_author;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var User
-	 */
-	public $user_creation;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var int
+	 * @var int		Id of user author of the contract
 	 */
 	public $fk_user_author;
 
@@ -117,38 +101,37 @@ class Contrat extends CommonObject
 	public $user_author_id;
 
 	/**
-	 * @var User
+	 * @var User 	Object user that create the contract. Set by the info method.
+	 */
+	public $user_creation;
+
+	/**
+	 * @var User 	Object user that close the contract. Set by the info method.
 	 */
 	public $user_cloture;
 
 	/**
-	 * Date of creation
-	 * @var int
+	 * @var int		Date of creation
 	 */
 	var $date_creation;
 
 	/**
-	 * Date of last modification
-	 * Not filled until you call ->info()
-	 * @var int
+	 * @var int		Date of last modification. Not filled until you call ->info()
 	 */
 	public $date_modification;
 
 	/**
-	 * Date of validation
-	 * @var int
+	 * @var int		Date of validation
 	 */
 	var $date_validation;
 
 	/**
-	 * Date when contract was signed
-	 * @var int
+	 * @var int		Date when contract was signed
 	 */
 	var $date_contrat;
 
 	/**
-	 * Date of contract closure
-	 * @var int
+	 * @var int		Date of contract closure
 	 * @deprecated we close contract lines, not a contract
 	 */
 	var $date_cloture;
@@ -157,21 +140,15 @@ class Contrat extends CommonObject
 	var $commercial_suivi_id;
 
 	/**
-	 * @deprecated Use note_private or note_public instead
-	 */
-	var $note;
-
-	/**
-	 * Private note
-	 * @var string
+	 * @var string	Private note
 	 */
 	var $note_private;
 
 	/**
-	 * Public note
-	 * @var string
+	 * @var string	Public note
 	 */
 	var $note_public;
+
 	var $modelpdf;
 
 	/**
@@ -184,8 +161,7 @@ class Contrat extends CommonObject
 	var $extraparams=array();
 
 	/**
-	 * Contract lines
-	 * @var ContratLigne[]
+	 * @var ContratLigne[]		Contract lines
 	 */
 	var $lines=array();
 
@@ -569,7 +545,6 @@ class Contrat extends CommonObject
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
 				$this->commercial_suivi_id		= $result["fk_commercial_suivi"];
 
-				$this->note						= $result["note_private"];	// deprecated
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
 				$this->modelpdf					= $result["model_pdf"];
@@ -726,7 +701,7 @@ class Contrat extends CommonObject
 				// Retreive all extrafield for propal
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
-				
+
 				$this->lines[]			= $line;
 
 				//dol_syslog("1 ".$line->desc);
@@ -822,13 +797,13 @@ class Contrat extends CommonObject
 				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
 
-				
+
 				// Retreive all extrafield for propal
 				// fetch optionals attributes and labels
-				
+
 				$line->fetch_optionals($line->id,$extralabelsline);
-			
-				
+
+
 				$this->lines[]        = $line;
 
 				$total_ttc+=$objp->total_ttc;

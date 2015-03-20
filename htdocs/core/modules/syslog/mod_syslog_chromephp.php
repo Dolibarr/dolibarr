@@ -114,7 +114,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	 * 	Output log content
 	 *
 	 *	@param	array	$content	Content to log
-	 * 	@return	void
+	 * 	@return	null|false
 	 */
 	public function export($content)
 	{

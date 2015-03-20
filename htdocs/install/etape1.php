@@ -776,7 +776,7 @@ function write_master_file($masterfile,$main_dir)
  *  Save configuration file. No particular permissions are set by installer.
  *
  *  @param  string		$conffile        Path to conf file to generate/update
- *  @return	void
+ *  @return	integer
  */
 function write_conf_file($conffile)
 {

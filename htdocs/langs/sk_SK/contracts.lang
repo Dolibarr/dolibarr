@@ -19,6 +19,7 @@ ServiceStatusLateShort=Vypršala
 ServiceStatusClosed=Zatvorené
 ServicesLegend=Služby legenda
 Contracts=Zmluvy
+ContractsAndLine=Contracts and line of contracts
 Contract=Zmluva
 NoContracts=Žiadne zmluvy
 MenuServices=Služby
