@@ -23,7 +23,7 @@
  *		\brief      Home page of donation module
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 
 $langs->load("donations");

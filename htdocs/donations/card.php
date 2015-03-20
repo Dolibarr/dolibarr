@@ -25,9 +25,9 @@
  *		\brief      Page of donation card
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/core/modules/dons/modules_don.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';

@@ -20,11 +20,11 @@
 
 /**
  *	\file       htdocs/donations/list.php
- *	\ingroup    don
- *	\brief      Page de liste des dons
+ *	\ingroup    donations
+ *	\brief      List of donations
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 

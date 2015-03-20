@@ -20,11 +20,11 @@
  */
 
 /**
- *	\file       htdocs/core/modules/dons/html_cerfafr.modules.php
+ *	\file       htdocs/donations/core/modules/dons/html_cerfafr.modules.php
  *	\ingroup    don
  *	\brief      Form of donation
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -132,7 +132,7 @@ class html_cerfafr extends ModeleDon
             	else $paymentmode = '';
 
 		        // Define contents
-		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
+		        $donmodel=DOL_DOCUMENT_ROOT ."/donations/core/modules/dons/html_cerfafr.html";
 		        $form = implode('', file($donmodel));
 		        $form = str_replace('__REF__',$don->id,$form);
 		        $form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);

@@ -17,12 +17,12 @@
 
 /**
  * 	\file       htdocs/donations/info.php
- * 	\ingroup    Donation
+ * 	\ingroup    donations
  * 	\brief      Page to show a donation information
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 

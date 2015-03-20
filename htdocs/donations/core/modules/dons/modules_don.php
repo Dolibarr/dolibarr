@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       htdocs/core/modules/dons/modules_don.php
- *		\ingroup    don
+ *	    \file       htdocs/donations/core/modules/dons/modules_don.php
+ *		\ingroup    donations
  *		\brief      File of class to manage donation document generation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -201,7 +201,7 @@ function don_create($db, $id, $message, $modele, $outputlangs, $hidedetails=0, $
     		$file = $prefix."_".preg_replace('/^html_/','',$modele).".modules.php";
 
     		// On verifie l'emplacement du modele
-    		$file=dol_buildpath($reldir."core/modules/dons/".$file,0);
+    		$file=dol_buildpath($reldir."donations/core/modules/dons/".$file,0);
     		if (file_exists($file))
     		{
     			$filefound=1;

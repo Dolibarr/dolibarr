@@ -19,10 +19,10 @@
  */
 
 /**
- *	\defgroup   don     Module donation
+ *	\defgroup   don     Module donations
  *	\brief      Module to manage the follow-up of the donations
- *	\file       htdocs/core/modules/modDon.class.php
- *	\ingroup    don
+ *	\file       htdocs/donations/core/modules/modDon.class.php
+ *	\ingroup    donations
  *	\brief      Description and activation file for module Donation
  */
 
