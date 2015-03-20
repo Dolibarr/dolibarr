@@ -91,13 +91,13 @@ before_script:
 script: 
  - cd htdocs/install
  - date
-# - php upgrade.php 3.4.0 3.5.0 > upgrade.log
-# - php upgrade2.php 3.4.0 3.5.0 > upgrade2.log
- - php upgrade.php 3.5.0 3.6.0 >> upgrade.log
- - php upgrade2.php 3.5.0 3.6.0 >> upgrade2.log
- - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
+# - php upgrade.php 3.4.0 3.5.0 ignoredbversion > upgrade.log
+# - php upgrade2.php 3.4.0 3.5.0 ignoredbversion > upgrade2.log
+ - php upgrade.php 3.5.0 3.6.0 ignoredbversion >> upgrade.log
+ - php upgrade2.php 3.5.0 3.6.0 ignoredbversion >> upgrade2.log
+ - php upgrade.php 3.6.0 3.7.0 ignoredbversion >> upgrade.log
 # - cat upgrade360370.log
- - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
+ - php upgrade2.php 3.6.0 3.7.0 ignoredbversion >> upgrade2.log
 # - cat upgrade2.log
  - cd ../..
  - date
