@@ -193,9 +193,9 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Test database version is not forbidden for migration
 		$dbversion_disallowed=array(
 			array('type'=>'mysql','version'=>array(5,5,40)),
-			array('type'=>'mysqli','version'=>array(5,5,40))
-			//,array('type'=>'mysql','version'=>array(5,5,41)),
-			//array('type'=>'mysqli','version'=>array(5,5,41))
+			array('type'=>'mysqli','version'=>array(5,5,40)),
+			array('type'=>'mysql','version'=>array(5,5,41)),
+			array('type'=>'mysqli','version'=>array(5,5,41))
 		);
 		$listofforbiddenversion='';
 		foreach ($dbversion_disallowed as $dbversion_totest)
