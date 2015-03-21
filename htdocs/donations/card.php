@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -48,6 +49,11 @@ $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
 
 $object = new Don($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 
 // Security check
@@ -103,6 +109,10 @@ if ($action == 'update')
 		$object->fk_project  = GETPOST("fk_project");
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
+		
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
 		if ($object->update($user) > 0)
 		{
@@ -151,7 +161,11 @@ if ($action == 'add')
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
 		$object->public      = GETPOST("public");
-		$object->fk_project  = GETPOST("projectid");
+		$object->fk_project  = GETPOST("fk_project");
+		
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
 		if ($object->create($user) > 0)
 		{
@@ -341,9 +355,13 @@ if ($action == 'create')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields,'edit');
+	}
+		
 	print "</table>\n";
 	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 	print "</form>\n";

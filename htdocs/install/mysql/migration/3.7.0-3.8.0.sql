@@ -380,6 +380,16 @@ ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
 ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
 ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_project integer NULL;
 
+create table llx_don_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_don_extrafields ADD INDEX idx_don_extrafields (fk_object);
+
 create table llx_payment_donation
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,

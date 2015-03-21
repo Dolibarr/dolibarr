@@ -25,6 +25,7 @@
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -178,9 +179,12 @@ $dir = DOL_DOCUMENT_ROOT.'/donations/core/modules/dons/';
 $form=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
+
+$head = donation_admin_prepare_head();
+
+dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'donation');
 
 /*
  *  Params
