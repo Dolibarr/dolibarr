@@ -376,7 +376,14 @@ if ($action == 'create')
 
 if (! empty($id) && $action == 'edit')
 {
-	$object->fetch($id);
+	$result=$object->fetch($id);
+	if ($result < 0) {
+		dol_print_error($db,$object->error); exit;
+	}
+	$result=$object->fetch_optionals($object->id,$extralabels);
+	if ($result < 0) {
+		dol_print_error($db); exit;
+	}
 
 	$head = donation_prepare_head($object);
 	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
@@ -454,9 +461,13 @@ if (! empty($id) && $action == 'edit')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields,'edit');
+	}
+	
 	print "</table>\n";
 
 	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
@@ -476,6 +487,13 @@ if (! empty($id) && $action == 'edit')
 if (! empty($id) && $action != 'edit')
 {
 	$result=$object->fetch($id);
+	if ($result < 0) {
+		dol_print_error($db,$object->error); exit;
+	}
+	$result=$object->fetch_optionals($object->id,$extralabels);
+	if ($result < 0) {
+		dol_print_error($db); exit;
+	}
 	
 	$head = donation_prepare_head($object);
 	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
@@ -587,8 +605,6 @@ if (! empty($id) && $action != 'edit')
 	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
 	print $object->zip.($object->zip && $object->town?' / ':'').$object->town.'</td></tr>';
 
-
-	
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	if (! empty($object->country_code))
@@ -623,8 +639,12 @@ if (! empty($id) && $action != 'edit')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields);
+	}
 
 	print "</table>\n";
 	print "</form>\n";

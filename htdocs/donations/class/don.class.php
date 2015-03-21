@@ -369,6 +369,24 @@ class Don extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+			// Actions on extra fields (by external module)
+			$hookmanager->initHooks(array('dondao'));
+            $parameters=array('id'=>$this->id);
+            $action='';
+            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook))
+            {
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	{
+            		$result=$this->insertExtraFields();
+            		if ($result < 0)
+            		{
+            			$error++;
+            		}
+            	}
+            }
+            else if ($reshook < 0) $error++;
+			
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
             // Call trigger
@@ -429,7 +447,25 @@ class Don extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            // Call trigger
+            // Actions on extra fields (by external module)
+			$hookmanager->initHooks(array('dondao'));
+            $parameters=array('id'=>$this->id);
+            $action='';
+            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook))
+            {
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	{
+            		$result=$this->insertExtraFields();
+            		if ($result < 0)
+            		{
+            			$error++;
+            		}
+            	}
+            }
+            else if ($reshook < 0) $error++;
+			
+			// Call trigger
             $result=$this->call_trigger('DON_UPDATE',$user);
             if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
@@ -463,6 +499,18 @@ class Don extends CommonObject
         {
             if ( $this->db->affected_rows($resql) )
             {
+				// Removed extrafields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->deleteExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+						$errorflag=-4;
+						dol_syslog(get_class($this)."::delete error ".$errorflag." ".$this->error, LOG_ERR);
+					}
+				}
+				
                 // Call trigger
                 $result=$this->call_trigger('DON_DELETE',$user);
                 if ($result < 0) { $error++; $this->db->rollback(); return -1; }
@@ -531,7 +579,7 @@ class Don extends CommonObject
                 $this->country_id     = $obj->country_id;
                 $this->country_code   = $obj->country_code;
                 $this->country        = $obj->country;
-                $this->country_olddata= $obj->country_olddata;
+                $this->country_olddata= $obj->country_olddata;	// deprecated
 				$this->email          = $obj->email;
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
@@ -545,6 +593,13 @@ class Don extends CommonObject
                 $this->note_private	  = $obj->note_private;
                 $this->note_public	  = $obj->note_public;
                 $this->commentaire    = $obj->note;	// deprecated
+				
+				// Retrieve all extrafield for thirdparty
+                // fetch optionals attributes and labels
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                $this->fetch_optionals($this->id,$extralabels);
             }
             return 1;
         }
