@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -153,6 +154,7 @@ $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
+$donstatic=new Don($db);
 $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 
@@ -704,6 +706,21 @@ if ($id > 0 || ! empty($ref))
 						}
 						$chargestatic->ref=$chargestatic->lib;
 						print $chargestatic->getNomUrl(1,16);
+					}
+					else if ($links[$key]['type']=='donation')
+					{
+						$donstatic->id=$links[$key]['url_id'];
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+						{
+							if ($reg[1]=='donation') $reg[1]='Donation';
+							$donstatic->lib=$langs->trans($reg[1]);
+						}
+						else
+						{
+							$donstatic->lib=$links[$key]['label'];
+						}
+						$donstatic->ref=$donstatic->lib;
+						print $donstatic->getNomUrl(1,16);
 					}
 					else if ($links[$key]['type']=='member')
 					{

@@ -21,7 +21,7 @@
  *  \brief      Page to add payment of a donation
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

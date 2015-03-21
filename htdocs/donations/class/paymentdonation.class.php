@@ -317,7 +317,7 @@ class PaymentDonation extends CommonObject
 	    if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_sc' AND url_id=".$this->id;
+            $sql.= " WHERE type='payment_donation' AND url_id=".$this->id;
 
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -382,7 +382,7 @@ class PaymentDonation extends CommonObject
 
 		$error=0;
 
-		$object=new PaymentSocialContribution($this->db);
+		$object=new PaymentDonation($this->db);
 
 		$object->context['createfromclone'] = 'createfromclone';
 
@@ -461,7 +461,7 @@ class PaymentDonation extends CommonObject
      *      All payment properties must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
-     *      @param  string	$mode               'payment_sc'
+     *      @param  string	$mode               'payment_donation'
      *      @param  string	$label              Label to use in bank record
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
@@ -482,7 +482,7 @@ class PaymentDonation extends CommonObject
             $acc->fetch($accountid);
 
             $total=$this->total;
-            if ($mode == 'payment_sc') $total=-$total;
+            if ($mode == 'payment_donation') $total=-$total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
@@ -508,9 +508,9 @@ class PaymentDonation extends CommonObject
                     dol_print_error($this->db);
                 }
 
-                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+                // Add link 'payment', 'payment_supplier', 'payment_donation' in bank_url between payment and bank transaction
                 $url='';
-                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/donations/card.php?rowid=';
+                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/donations/payment/card.php?rowid=';
                 if ($url)
                 {
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
@@ -529,7 +529,7 @@ class PaymentDonation extends CommonObject
                     {
                         $don = new Don($this->db);
                         $don->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $don->rowid, DOL_URL_ROOT.'/compta/card.php?rowid=', $don->type_libelle.(($don->lib && $don->lib!=$don->type_libelle)?' ('.$don->lib.')':''),'sc');
+                        $result=$acc->add_url_line($bank_line_id, $don->rowid, DOL_URL_ROOT.'/donations/card.php?rowid=', $don->type_libelle.(($don->lib && $don->lib!=$don->type_libelle)?' ('.$don->lib.')':''),'donation');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
@@ -593,7 +593,7 @@ class PaymentDonation extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/donations/payment/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
@@ -604,5 +604,3 @@ class PaymentDonation extends CommonObject
 		return $result;
 	}
 }
-
-

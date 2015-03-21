@@ -370,7 +370,7 @@ class Don extends CommonObject
         if ($result)
         {
 			// Actions on extra fields (by external module)
-			$hookmanager->initHooks(array('dondao'));
+			/*$hookmanager->initHooks(array('dondao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -386,6 +386,7 @@ class Don extends CommonObject
             	}
             }
             else if ($reshook < 0) $error++;
+			*/
 			
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 

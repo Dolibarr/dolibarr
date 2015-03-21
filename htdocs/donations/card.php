@@ -526,10 +526,10 @@ if (! empty($id) && $action != 'edit')
 	print yn($object->public);
 	print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($object->address).'</td>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($object->address).'</td>';
 	
 	$rowspan=6;
 	if (! empty($conf->projet->enabled)) $rowspan++;
@@ -543,7 +543,7 @@ if (! empty($id) && $action != 'edit')
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
 	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql.= ", ".MAIN_DB_PREFIX."don as d";
-	$sql.= " WHERE d.rowid = '".$rowid."'";
+	$sql.= " WHERE d.rowid = '".$id."'";
 	$sql.= " AND p.fk_donation = d.rowid";
 	$sql.= " AND d.entity = ".$conf->entity;
 	$sql.= " AND p.fk_typepayment = c.id";
@@ -570,25 +570,25 @@ if (! empty($id) && $action != 'edit')
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print "<tr ".$bc[$var]."><td>";
-			print '<a href="'.DOL_URL_ROOT.'/donations/payment.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+			print '<a href="'.DOL_URL_ROOT.'/donations/payment/card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		        $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;				
                                print "<td>".$labeltype.' '.$object->num_paiement."</td>\n";
-			print '<td align="right">'.price($object->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+			print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 			print "</tr>";
-			$totalpaid += $object->amount;
+			$totalpaid += $objp->amount;
 			$i++;
 		}
 
 		if ($object->paid == 0)
 		{
-			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaid)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 
 			$remaintopay = $object->amount - $totalpaid;
 
 			print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+			print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($remaintopay)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);
@@ -679,7 +679,7 @@ if (! empty($id) && $action != 'edit')
 		} 
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/donations/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/donations/payment/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
 	}
 
