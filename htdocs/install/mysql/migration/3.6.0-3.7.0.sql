@@ -1165,3 +1165,9 @@ UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
+
+
+-- Not into official 3.7 but must be into migration for 3.7 when migration is done by 3.8 code 
+ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
+ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
+
