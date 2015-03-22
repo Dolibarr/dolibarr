@@ -53,9 +53,9 @@ $coldisplay=-1; // We remove first td
 ?>
 <tr <?php echo $bc[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><?php $coldisplay+=(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))?2:1; ?>
-	<div id="line_<?php echo $line->id; ?>"></div>
+	<div id="line_<?php echo $line->rowid; ?>"></div>
 
-	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
+	<input type="hidden" name="lineid" value="<?php echo $line->rowid; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
 	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
