@@ -682,7 +682,7 @@ div.tmenuleft
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
 	height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
 	<?php } ?>
 }
 div.tmenucenter
