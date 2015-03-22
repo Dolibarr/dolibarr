@@ -24,6 +24,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
@@ -123,10 +124,14 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader();
-
 $object = new Societe($db);
 $result=$object->fetch($socid);
+
+$title=$langs->trans("ThirdParty").' - '.$langs->trans("Notification");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notification");
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
 
 if ($result > 0)
 {
@@ -169,24 +174,8 @@ if ($result > 0)
 
     print '<tr><td>'.$langs->trans("NbOfActiveNotifications").'</td>';
     print '<td colspan="3">';
-    $sql = "SELECT COUNT(n.rowid) as nb";
-    $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-    $sql.= " WHERE fk_soc = ".$object->id;
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            $nb=$obj->nb;
-            $i++;
-        }
-    }
-    else {
-        dol_print_error($db);
-    }
+    $notify=new Notify($db);
+    $nb = $notify->countDefinedNotifications('', $object->id);
     print $nb;
     print '</td></tr>';
     print '</table>';
@@ -273,16 +262,25 @@ if ($result > 0)
     foreach($conf->global as $key => $val)
     {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-    	//print $key.' - '.$val.' - '.$reg[1].'<br>';
-		print '<tr '.$bc[$var].'><td>'.$val;
-		if (isValidEmail($val))
+		print '<tr '.$bc[$var].'><td>';
+		$listtmp=explode(',',$val);
+		$first=1;
+		foreach($listtmp as $keyemail => $valemail)
 		{
-			print ' &lt;'.$val.'&gt;';
-		}
-		else
-		{
-			$langs->load("errors");
-			print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$val);
+			if (! $first) print ', ';
+			$first=0;
+			$valemail=trim($valemail);
+    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+			if (isValidEmail($valemail, 1))
+			{
+				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
+				else print ' &lt;'.$valemail.'&gt;';
+			}
+			else
+			{
+				$langs->load("errors");
+				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
+			}
 		}
 		print '</td>';
 		print '<td>';
@@ -292,7 +290,7 @@ if ($result > 0)
 		print '<td>';
 		print $langs->trans("Email");
 		print '</td>';
-		print '<td align="right">'.$langs->trans("SeeModuleSetup").'</td>';
+		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
     }
 

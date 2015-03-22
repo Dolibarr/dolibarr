@@ -779,8 +779,21 @@ if (empty($reshook))
 
 					$desc = dol_concatdesc($desc, $product_desc);
 
+					// Add dimensions into product description
+					/*if (empty($conf->global->MAIN_PRODUCT_DISABLE_AUTOADD_DIM))
+					{
+						$text='';
+						if ($prod->weight) $text.=($text?"\n":"").$outputlangs->trans("Weight").': '.$prod->weight.' '.$prod->weight_units;
+						if ($prod->length) $text.=($text?"\n":"").$outputlangs->trans("Length").': '.$prod->length.' '.$prod->length_units;
+						if ($prod->surface) $text.=($text?"\n":"").$outputlangs->trans("Surface").': '.$prod->surface.' '.$prod->surface_units;
+						if ($prod->volume) $text.=($text?"\n":"").$outputlangs->trans("Volume").': '.$prod->volume.' '.$prod->volume_units;
+
+						$desc = dol_concatdesc($desc, $text);
+					}*/
+
 					// Add custom code and origin country into description
-					if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
+					if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
+					{
 						$tmptxt = '(';
 						if (! empty($prod->customcode))
 							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
@@ -1658,7 +1671,7 @@ if ($action == 'create')
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid);
+			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid, $object);
 		}
 
 		if (! $error)
@@ -1667,9 +1680,9 @@ if ($action == 'create')
 
 	if (! $formconfirm) {
 		$parameters = array('lineid' => $lineid);
-		$formconfirm = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified
-			                                                                                         // by
-			                                                                                         // hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm

@@ -287,7 +287,7 @@ class Task extends CommonObject
         $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
         $sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
-        $sql.= " planned_workload=".(isset($this->planned_workload)?$this->planned_workload:"0").",";
+        $sql.= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '')?$this->planned_workload:"null").",";
         $sql.= " dateo=".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null').",";
         $sql.= " datee=".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null').",";
         $sql.= " progress=".$this->progress.",";
@@ -494,11 +494,11 @@ class Task extends CommonObject
 
 
     /**
-     *	Renvoie nom clicable (avec eventuellement le picto)
+     *	Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *	@param	int		$option			Sur quoi pointe le lien
-     *  @param	int		$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
+     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param	string	$option			'withproject' or ''
+     *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
      *	@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$option='',$mode='task')
@@ -517,15 +517,15 @@ class Task extends CommonObject
         }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'').$linkclose;
+        $linkend='</a>';
 
         $picto='projecttask';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
         return $result;
     }
 

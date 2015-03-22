@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -59,6 +60,7 @@ if (! $sortfield) $sortfield="nom";
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('supplierlist'));
+$extrafields = new ExtraFields($db);
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -72,6 +74,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_categ="";
 	$catid="";
 }
+
+$extrafields->fetch_name_optionals_label('thirdparty');
+
 
 /*
  * 	Actions
@@ -95,7 +100,14 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 $sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.datec, st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+// Add fields for extrafields
+foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from hooks
+$parameters=array();
+$result=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef ON ef.fk_object = s.rowid";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cf ON s.rowid = cf.fk_societe"; // We need this table joined to the select in order to filter by categ
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -122,6 +134,10 @@ if ($catid > 0)          $sql.= " AND cf.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cf.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cf.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cf.fk_categorie IS NULL";
+// Add where from hooks
+$parameters=array();
+$result=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -131,6 +147,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
+//print $sql;
 
 dol_syslog('fourn/list.php:', LOG_DEBUG);
 $resql = $db->query($sql);
@@ -170,11 +187,12 @@ if ($resql)
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="right"',$sortfield,$sortorder);
+
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
-
-    $parameters=array();
-    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -197,12 +215,13 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
 	print '</td>';
 
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
-	
-	$parameters=array();
-	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 
 	print '</tr>';
 
@@ -225,12 +244,13 @@ if ($resql)
 		print '<td>'.$obj->town.'</td>'."\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
-		print '<td align="right">';
-		print dol_print_date($db->jdate($obj->datec),'day').'</td>';
-		print '<td align="right">'.$thirdpartystatic->getLibStatut(3).'</td>';
+		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 
 		$parameters=array('obj' => $obj);
-		$formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
+		print '<td align="right">'.$thirdpartystatic->getLibStatut(3).'</td>';
 
 		print "</tr>\n";
 		$i++;
@@ -240,7 +260,8 @@ if ($resql)
 	$db->free($resql);
 
 	$parameters=array('sql' => $sql);
-	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 }
 else
 {

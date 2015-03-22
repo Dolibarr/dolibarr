@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
 Salary=حقوق
 Salaries=حقوق
 Employee=کارمند
@@ -6,3 +8,6 @@ NewSalaryPayment=پرداخت حقوق و دستمزد جدید
 SalaryPayment=پرداخت حقوق و دستمزد
 SalariesPayments=حقوق پرداخت
 ShowSalaryPayment=نمایش پرداخت حقوق و دستمزد
+THM=Average hourly price
+TJM=Average daily price
+CurrentSalary=Current salary

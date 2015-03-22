@@ -84,3 +84,4 @@ CronType_command=Comando Shell
 CronMenu=Cron
 CronCannotLoadClass=impossible carregar la classe %s de l'objecte %s
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
+TaskDisabled=Task disabled

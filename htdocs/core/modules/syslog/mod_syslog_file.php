@@ -7,6 +7,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_file extends LogHandler implements LogHandlerInterface
 {
+	var $code = 'file';
 
 	/**
 	 * 	Return name of logger

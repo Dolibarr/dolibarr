@@ -19,6 +19,7 @@ ServiceStatusLateShort=Истек
 ServiceStatusClosed=Закрытые
 ServicesLegend=Услуги легенда
 Contracts=Договоры
+ContractsAndLine=Contracts and line of contracts
 Contract=Договор
 NoContracts=Нет договоров
 MenuServices=Услуги

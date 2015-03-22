@@ -1657,7 +1657,7 @@ elseif (! empty($object->id))
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new	Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
@@ -1733,7 +1733,9 @@ elseif (! empty($object->id))
 
 	if (!$formconfirm) {
 		$parameters=array('lineid'=>$lineid);
-		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm
@@ -2277,8 +2279,13 @@ elseif (! empty($object->id))
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
+
+		$object->fetch_projet();
 		// Tableau des substitutions
 		$formmail->substit['__ORDERREF__']=$object->ref;
+		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';

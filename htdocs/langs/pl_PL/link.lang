@@ -1,8 +1,8 @@
-LinkANewFile=Link a new file/document
-LinkedFiles=Linked files and documents
-NoLinkFound=No registered links
-LinkComplete=The file has been linked successfully
-ErrorFileNotLinked=The file could not be linked
-LinkRemoved=The link %s has been removed
-ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
-ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+LinkANewFile=Podepnij nowy plik/dokument
+LinkedFiles=Podepnij plik i dokument
+NoLinkFound=Brak zarejestrowanych linków
+LinkComplete=Plik został podlinkowany poprawnie
+ErrorFileNotLinked=Plik nie mógł zostać podlinkowany
+LinkRemoved=Link %s został usunięty
+ErrorFailedToDeleteLink= Niemożna usunąc linku '<b>%s</b>'
+ErrorFailedToUpdateLink= Niemożna uaktualnić linku '<b>%s</b>'

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
@@ -110,6 +110,16 @@ class Commande extends CommonOrder
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
+
+    // Pour board
+    var $nbtodo;
+    var $nbtodolate;
+
+
+     /**
+     * ERR Not engouch stock
+     */
+    const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
 
     /**
@@ -624,8 +634,8 @@ class Commande extends CommonOrder
      *	Note that this->ref can be set or empty. If empty, we will use "(PROV)"
      *
      *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
-     *	@return 	int					<0 if KO, >0 if OK
+     *	@param		int	$notrigger	Disable all triggers
+     *	@return 	int			<0 if KO, >0 if OK
      */
     function create($user, $notrigger=0)
     {
@@ -633,22 +643,22 @@ class Commande extends CommonOrder
         $error=0;
 
         // Clean parameters
-        $this->brouillon = 1;		// On positionne en mode brouillon la commande
+        $this->brouillon = 1;		// set command as draft
 
         dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
     	if (! empty($this->ref))	// We check that ref is not already used
-		{
-			$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
-			if ($result > 0)
-			{
-				$this->error='ErrorRefAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
-				$this->db->rollback();
-				return -1;
-			}
-		}
+    	{
+    		$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
+    		if ($result > 0)
+    		{
+    			$this->error='ErrorRefAlreadyExists';
+    			dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+    			$this->db->rollback();
+    			return -1;
+    		}
+    	}
 
         $soc = new Societe($this->db);
         $result=$soc->fetch($this->socid);
@@ -677,7 +687,7 @@ class Commande extends CommonOrder
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", fk_shipping_method";
         $sql.= ", remise_absolue, remise_percent";
-		$sql.= ", fk_incoterms, location_incoterms";
+        $sql.= ", fk_incoterms, location_incoterms";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
@@ -717,7 +727,7 @@ class Commande extends CommonOrder
                 $num=count($this->lines);
 
                 /*
-                 *  Insertion du detail des produits dans la base
+                 *  Insert products details into db
                  */
                 for ($i=0;$i<$num;$i++)
                 {
@@ -748,12 +758,15 @@ class Commande extends CommonOrder
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
-						$this->lines[$i]->array_options
+		    	$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
-                        $this->error=$this->db->lasterror();
-                        dol_print_error($this->db);
+                    	if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
+                    	{
+                        	$this->error=$this->db->lasterror();
+                        	dol_print_error($this->db);
+                    	}
                         $this->db->rollback();
                         return -1;
                     }
@@ -763,13 +776,16 @@ class Commande extends CommonOrder
                     }
                 }
 
-                // Mise a jour ref
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+                // update ref
+                $initialref='(PROV'.$this->id.')';
+                if (! empty($this->ref)) $initialref=$this->ref;
+
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
                 if ($this->db->query($sql))
                 {
                     if ($this->id)
                     {
-                        $this->ref="(PROV".$this->id.")";
+                    	$this->ref = $initialref;
 
                         // Add object linked
                         if (is_array($this->linked_objects) && ! empty($this->linked_objects))
@@ -1192,10 +1208,12 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -3;
+					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
 
@@ -1466,7 +1484,7 @@ class Commande extends CommonOrder
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);

@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 /**
  * Class to manage fiscal year
  */
-class Fiscalyear
+class Fiscalyear extends CommonObject
 {
 	public $element='fiscalyear';
 	public $table_element='accounting_fiscalyear';

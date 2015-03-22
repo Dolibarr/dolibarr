@@ -62,7 +62,7 @@ class box_contacts extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc";
+			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc";
 			$sql.= ", s.nom as socname";
             $sql.= ", s.code_client";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
@@ -87,7 +87,8 @@ class box_contacts extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-                    $contactstatic->lastname=$objp->lastname;
+                    $contactstatic->id=$objp->id;
+					$contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
 

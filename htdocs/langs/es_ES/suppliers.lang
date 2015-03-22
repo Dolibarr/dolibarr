@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Proveedores
-Supplier=Proveedor
 AddSupplier=Crear un proveedor
 SupplierRemoved=Proveedor eliminado
 SuppliersInvoice=Factura proveedor
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Facturas proveedores y pagos
 ExportDataset_fournisseur_3=Pedidos de proveedores y líneas de pedido
 ApproveThisOrder=Aprobar este pedido
 ConfirmApproveThisOrder=¿Está seguro de querer aprobar el pedido a proveedor <b>%s</b>?
-DenyingThisOrder=Denegar este pedido
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=¿Está seguro de querer denegar el pedido a proveedor <b>%s</b>?
 ConfirmCancelThisOrder=¿Está seguro de querer cancelar el pedido a proveedor <b>%s</b>?
 AddCustomerOrder=Crear pedido de cliente

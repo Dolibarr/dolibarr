@@ -185,7 +185,7 @@ class AskPriceSupplier extends CommonObject
                 $price = $prod->price;
             }
 
-            $line = new AskPriceSupplierLigne($this->db);
+            $line = new AskPriceSupplierLine($this->db);
 
             $line->fk_product=$idproduct;
             $line->desc=$productdesc;
@@ -225,7 +225,7 @@ class AskPriceSupplier extends CommonObject
                 return -5;
             }
 
-            $askpricesupplierligne=new AskPriceSupplierLigne($this->db);
+            $askpricesupplierligne=new AskPriceSupplierLine($this->db);
             $askpricesupplierligne->fk_askpricesupplier=$this->id;
             $askpricesupplierligne->fk_remise_except=$remise->id;
             $askpricesupplierligne->desc=$remise->description;   	// Description ligne
@@ -376,7 +376,7 @@ class AskPriceSupplier extends CommonObject
             }
 
             // Insert line
-            $this->line=new AskPriceSupplierLigne($this->db);
+            $this->line=new AskPriceSupplierLine($this->db);
 
             $this->line->fk_askpricesupplier=$this->id;
             $this->line->label=$label;
@@ -525,10 +525,10 @@ class AskPriceSupplier extends CommonObject
             }
 
             // Update line
-            $this->line=new AskPriceSupplierLigne($this->db);
+            $this->line=new AskPriceSupplierLine($this->db);
 
             // Stock previous line records
-            $staticline=new AskPriceSupplierLigne($this->db);
+            $staticline=new AskPriceSupplierLine($this->db);
             $staticline->fetch($rowid);
             $this->line->oldline = $staticline;
 
@@ -621,7 +621,7 @@ class AskPriceSupplier extends CommonObject
     {
         if ($this->statut == 0)
         {
-            $line=new AskPriceSupplierLigne($this->db);
+            $line=new AskPriceSupplierLine($this->db);
 
             // For triggers
             $line->fetch($lineid);
@@ -1106,7 +1106,7 @@ class AskPriceSupplier extends CommonObject
                     {
                         $objp                   = $this->db->fetch_object($result);
 
-                        $line                   = new AskPriceSupplierLigne($this->db);
+                        $line                   = new AskPriceSupplierLine($this->db);
 
                         $line->rowid			= $objp->rowid;
                         $line->fk_askpricesupplier		= $objp->fk_askpricesupplier;
@@ -2088,7 +2088,7 @@ class AskPriceSupplier extends CommonObject
         $xnbp = 0;
         while ($xnbp < $nbp)
         {
-            $line=new AskPriceSupplierLigne($this->db);
+            $line=new AskPriceSupplierLine($this->db);
             $line->desc=$langs->trans("Description")." ".$xnbp;
             $line->qty=1;
             $line->subprice=100;
@@ -2240,21 +2240,21 @@ class AskPriceSupplier extends CommonObject
         $label=$langs->trans("ShowAskpricesupplier").': '.$this->ref;
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'document') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/document.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/askpricesupplier/document.php?id='.$this->id. $get_params .$linkclose;
         }
-        $lienfin='</a>';
+        $linkend='</a>';
 
         $picto='askpricesupplier';
 
 
         if ($withpicto)
-            $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$lien.$this->ref.$lienfin;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 
@@ -2287,7 +2287,7 @@ class AskPriceSupplier extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->lines[$i]					= new AskPriceSupplierLigne($this->db);
+                $this->lines[$i]					= new AskPriceSupplierLine($this->db);
                 $this->lines[$i]->id				= $obj->rowid; // for backward compatibility
                 $this->lines[$i]->rowid				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
@@ -2412,10 +2412,10 @@ class AskPriceSupplier extends CommonObject
 
 
 /**
- *	\class      AskPriceSupplierLigne
+ *	\class      AskPriceSupplierLine
  *	\brief      Class to manage askpricesupplier lines
  */
-class AskPriceSupplierLigne  extends CommonObject
+class AskPriceSupplierLine  extends CommonObject
 {
     var $db;
     var $error;
@@ -2689,7 +2689,7 @@ class AskPriceSupplierLigne  extends CommonObject
         $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."askpricesupplierdet WHERE rowid = ".$this->rowid;
-        dol_syslog("AskPriceSupplierLigne::delete", LOG_DEBUG);
+        dol_syslog("AskPriceSupplierLine::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
 
@@ -2852,7 +2852,7 @@ class AskPriceSupplierLigne  extends CommonObject
         $sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("AskPriceSupplierLigne::update_total", LOG_DEBUG);
+        dol_syslog("AskPriceSupplierLine::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)

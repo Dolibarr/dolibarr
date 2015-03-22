@@ -439,13 +439,15 @@ foreach ($dirmodels as $reldir)
     }
 }
 
-print '</table><br/>';
-print '<br>';
+print '</table><br>';
 
 /*
  * Other options
- *
  */
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_FREE_TEXT">';
 
 print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
@@ -455,16 +457,39 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="SUPPLIER_ORDER_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_ORDER_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+print '</table><br>';
+
 print '</form>';
 
-$db->close();
+
+
+/*
+ * Notifications
+ */
+
+print_titre($langs->trans("Notifications"));
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
+print '</td><td align="right">';
+print "</td></tr>\n";
+
+print '</table>';
+
+
 llxFooter();
+
+$db->close();

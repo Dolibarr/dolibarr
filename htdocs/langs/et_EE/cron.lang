@@ -84,3 +84,4 @@ CronType_command=Käsurea käsk
 CronMenu=Cro
 CronCannotLoadClass=Klassi %s või objekti %s laadimine ebaõnnestus
 UseMenuModuleToolsToAddCronJobs=Mine menüüsse "Kodu - Moodulite tööriistad - Tegevuste nimekiri" planeeritud tegevuste vaatamiseks ja muutmiseks.
+TaskDisabled=Task disabled

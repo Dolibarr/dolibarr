@@ -19,6 +19,7 @@ ServiceStatusLateShort=Scaduto
 ServiceStatusClosed=Chiuso
 ServicesLegend=Legenda servizi
 Contracts=Contratti
+ContractsAndLine=Contracts and line of contracts
 Contract=Contratto
 NoContracts=Nessun contratto
 MenuServices=Servizi

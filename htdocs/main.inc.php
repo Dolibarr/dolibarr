@@ -490,7 +490,8 @@ if (! defined('NOLOGIN'))
         if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
             // We show login page
-            dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
+			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." showing the login form and exit");
+        	dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
@@ -1410,6 +1411,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
@@ -1685,8 +1687,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    // Execute hook printLeftBlock
 	    $parameters=array();
-	    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
-	    print $leftblock;
+	    $reshook=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    print $hookmanager->resPrint;
 
 	    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
 	    else print '</div> <!-- end id-left -->';	// End div id="id-left"

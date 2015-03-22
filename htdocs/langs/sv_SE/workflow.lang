@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Arbetsflöde modul konfiguration
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
+WorkflowDesc=Denna modul ändrar beteendet av automatiska händelser i tillämpningar. Standardbeteende är att arbetsflöde öppnas (du gör saker i den ordning du vill). Automatiska händelser kan aktiveras för de händelser som önskas.
 ThereIsNoWorkflowToModify=Det finns ingen arbetsflöde du kan ändra för modul du har aktiverat.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Skapa en kundorder automatiskt efter en kommersiell förslag undertecknas
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kommersiell förslag undertecknas

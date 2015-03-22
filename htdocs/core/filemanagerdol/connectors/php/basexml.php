@@ -84,7 +84,7 @@ function CreateXmlFooter()
 /**
  * SendError
  *
- * @param 	unknown_type $number	Number
+ * @param 	integer $number	Number
  * @param 	unknown_type $text		Text
  * @return	void
  */

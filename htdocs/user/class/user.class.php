@@ -1066,7 +1066,7 @@ class User extends CommonObject
 	/**
 	 *    Assign rights by default
 	 *
-	 *    @return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
+	 *    @return     integer erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
 	function set_default_rights()
 	{
@@ -1621,7 +1621,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	void
+	 *  @return	integer
 	 */
 	function update_clicktodial()
 	{
@@ -1775,10 +1775,10 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
+	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option			On what the link point to
-     *  @param  boolean $infologin      Add connection info to the tooltip
-     *  @param	string	$notooltip		1=Disable tooltip
+     *  @param  integer $infologin      Add connection info to the tooltip
+     *  @param	integer	$notooltip		1=Disable tooltip
      *  @param	int		$maxlen			Max length of visible user name
 	 *	@return	string					String with URL
 	 */
@@ -1836,24 +1836,24 @@ class User extends CommonObject
         }
 
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
-        $lien.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
-        $lien.= '>';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $link.= '>';
+		$linkend='</a>';
 
         if ($withpicto)
         {
-            $result.=($lien.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$lienfin);
+            $result.=($link.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $lien . $this->getFullName($langs,'','',$maxlen) . $companylink . $lienfin;
+		$result.= $link . $this->getFullName($langs,'','',$maxlen) . $companylink . $linkend;
 		return $result;
 	}
 
 	/**
 	 *  Renvoie login clicable (avec eventuellement le picto)
 	 *
-	 *	@param	int		$withpicto		Inclut le picto dans le lien
+	 *	@param	int		$withpicto		Include picto into link
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *	@return	string					Chaine avec URL
 	 */
@@ -1863,17 +1863,17 @@ class User extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+		$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+		$linkend='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-			$lienfin='</a>';
+			$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+			$linkend='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin.' ');
-		$result.=$lien.$this->login.$lienfin;
+		if ($withpicto) $result.=($link.img_object($langs->trans("ShowUser"),'user').$linkend.' ');
+		$result.=$link.$this->login.$linkend;
 		return $result;
 	}
 

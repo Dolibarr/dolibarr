@@ -271,7 +271,11 @@ if ($action == 'export_csv')
 	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 
 	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment;filename=journal_ventes.csv');
+	if ($conf->global->EXPORT_PREFIX_SPEC)
+		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_ventes.csv";
+	else
+		$filename="journal_ventes.csv";
+	header('Content-Disposition: attachment;filename='.$filename);
 
 	$companystatic = new Client($db);
 

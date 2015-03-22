@@ -19,6 +19,7 @@ ServiceStatusLateShort=過期
 ServiceStatusClosed=關閉
 ServicesLegend=服務的傳說
 Contracts=合同
+ContractsAndLine=Contracts and line of contracts
 Contract=合同
 NoContracts=沒有合同
 MenuServices=服務

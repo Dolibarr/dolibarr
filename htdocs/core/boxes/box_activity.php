@@ -233,7 +233,7 @@ class box_activity extends ModeleBoxes
                         'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&amp;mainmenu=accountancy&amp;leftmenu=customers_bills",
                     );
                     $totalnb += $data[$j]->nb;
-                    $this->info_box_contents[$line][3] = array(    
+                    $this->info_box_contents[$line][3] = array(
                         'td' => 'align="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
@@ -342,7 +342,8 @@ class box_activity extends ModeleBoxes
         }
 
         // list the summary of the propals
-        if (! empty($conf->propal->enabled) && $user->rights->propal->lire) {
+        if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
+        {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $propalstatic=new Propal($db);
 
@@ -350,7 +351,8 @@ class box_activity extends ModeleBoxes
             $filename = '/boxactivity-propal'.$fileid;
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
-            if ($refresh) {
+            if ($refresh)
+            {
                 $sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
                 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
                 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -365,8 +367,8 @@ class box_activity extends ModeleBoxes
                 $sql.= " ORDER BY p.fk_statut DESC";
 
                 $result = $db->query($sql);
-
-                if ($result) {
+                if ($result)
+                {
                     $num = $db->num_rows($result) + $line;
                     $j=0;
                     while ($j < $num) {
@@ -380,12 +382,17 @@ class box_activity extends ModeleBoxes
                 } else {
                     dol_print_error($db);
                 }
-            } else {
+            }
+            else
+			{
                 $data = dol_readcachefile($cachedir, $filename);
             }
-            if (! empty($data)) {
+
+            if (! empty($data))
+            {
                 $j=0;
-                while ($line < count($data)) {
+                while ($line < count($data))
+                {
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
@@ -393,7 +400,6 @@ class box_activity extends ModeleBoxes
                         'logo' => 'object_propal'
                     );
 
-                    $objp = $db->fetch_object($result);
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),

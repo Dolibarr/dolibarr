@@ -6,6 +6,7 @@
  * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <forian.henry@open-concept.pro>
+ * Copyright (C) 2015	   Charles-Fr BENKE     <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +78,7 @@ class ExtraFields
 	'checkbox' => 'ExtrafieldCheckBox',
 	'radio' => 'ExtrafieldRadio',
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
+	'link' => 'ExtrafieldLink',
 	);
 
 	/**
@@ -187,6 +189,9 @@ class ExtraFields
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
 				$typedb='text';
 				$lengthdb='';
+			} elseif ($type=='link') {
+				$typedb='int';
+				$lengthdb='11';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -404,6 +409,9 @@ class ExtraFields
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
 				$typedb='text';
 				$lengthdb='';
+			} elseif ($type=='link') {
+				$typedb='int';
+				$lengthdb='11';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -522,7 +530,7 @@ class ExtraFields
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$alwayseditable."',";
-			$sql.= " '".$param."'";
+			$sql.= " '".$param."',";
 			$sql.= " ".$list;
 			$sql.= ")";
 			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
@@ -596,7 +604,7 @@ class ExtraFields
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 					$this->attribute_perms[$tab->name]=$tab->perms;
-					$this->attribute_perms[$tab->name]=$tab->list;
+					$this->attribute_list[$tab->name]=$tab->list;
 				}
 			}
 		}
@@ -1043,6 +1051,19 @@ class ExtraFields
 			}
 			$out .= '</select>';
 		}
+		elseif ($type == 'link')
+		{
+			$out='';
+			$param_list=array_keys($param['options']);
+			// 0 : ObjectName
+			// 1 : classPath
+			$InfoFieldList = explode(":", $param_list[0]);
+			dol_include_once($InfoFieldList[1]);
+			$object = new $InfoFieldList[0]($this->db);
+			$object->fetch($value);
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
+
+		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -1267,6 +1288,21 @@ class ExtraFields
 				}
 			} else
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
+		}
+		elseif ($type == 'link')
+		{
+			$out='';
+			$param_list=array_keys($params['options']);
+			// 0 : ObjectName
+			// 1 : classPath
+			$InfoFieldList = explode(":", $param_list[0]);
+			dol_include_once($InfoFieldList[1]);
+			$object = new $InfoFieldList[0]($this->db);
+			if ($value)
+			{
+				$object->fetch($value);
+				$value=$object->getNomUrl(3);
+			}
 		}
 		else
 		{

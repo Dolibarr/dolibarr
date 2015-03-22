@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  *
@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/product/stock/class/mouvementstock.class.php
  *	\ingroup    stock
- *	\brief      Fichier de la classe de gestion des mouvements de stocks
+ *	\brief      File of class to manage stock movement (input or output)
  */
 
 
@@ -32,6 +32,12 @@ class MouvementStock extends CommonObject
 {
     var $error;
     var $db;
+
+	var $product_id;
+	var $entrepot_id;
+	var $qty;
+	var $type;
+
 
     /**
 	 *  Constructor
@@ -49,10 +55,11 @@ class MouvementStock extends CommonObject
 	 *	@param		User	$user			User object
 	 *	@param		int		$fk_product		Id of product
 	 *	@param		int		$entrepot_id	Id of warehouse
-	 *	@param		int		$qty			Qty of movement (can be <0 or >0)
+	 *	@param		int		$qty			Qty of movement (can be <0 or >0 depending on parameter type)
 	 *	@param		int		$type			Direction of movement:
 	 *										0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
+	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$inventorycode	Inventory code
@@ -156,9 +163,9 @@ class MouvementStock extends CommonObject
 
 			// Define current values for qty and pmp
 			$oldqty=$product->stock_reel;
-			$oldqtywarehouse=0;
 			$oldpmp=$product->pmp;
-			$oldpmpwarehouse=0;
+			$oldqtywarehouse=0;
+			//$oldpmpwarehouse=0;
 
 			// Test if there is already a record for couple (warehouse / product)
 			$num = 0;
@@ -176,7 +183,7 @@ class MouvementStock extends CommonObject
 					{
 						$num = 1;
 						$oldqtywarehouse = $obj->reel;
-						$oldpmpwarehouse = $obj->pmp;
+						//$oldpmpwarehouse = $obj->pmp;
 						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
@@ -190,8 +197,7 @@ class MouvementStock extends CommonObject
 
 			// Calculate new PMP.
 			$newpmp=0;
-			$newpmpwarehouse=0;
-			/*
+			//$newpmpwarehouse=0;
 			if (! $error)
 			{
 				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
@@ -200,7 +206,7 @@ class MouvementStock extends CommonObject
 				{
 					// If we will change PMP for the warehouse we edit and the product, we must first check/clean that PMP is defined
 					// on every stock entry with old value (so global updated value will match recalculated value from product_stock)
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
+			/*		$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
 					$sql.= " WHERE pmp = 0 AND fk_product = ".$fk_product;
 					dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 					$resql=$this->db->query($sql);
@@ -209,18 +215,19 @@ class MouvementStock extends CommonObject
 						$this->error=$this->db->lasterror();
 						$error = -4;
 					}
-
+			*/
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 					else
 					{
-						$newpmp=$price; // For this product, PMP was not yet set. We will set it later.
+						$newpmp=$price; // For this product, PMP was not yet set. We set it to input price.
 					}
+			/*
 					$oldqtywarehousetouse=$oldqtywarehouse;
 					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
-
+			*/
 					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
 					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
 					//exit;
@@ -228,28 +235,31 @@ class MouvementStock extends CommonObject
 				else if ($type == 1 || $type == 2)
 				{
 					// After a stock decrease, we don't change value of PMP for product.
+					$newpmp = $oldpmp;
 				}
 				else
 				{
 					$newpmp = $oldpmp;
-					$newpmpwarehouse = $oldpmpwarehouse;
+					//$newpmpwarehouse = $oldpmpwarehouse;
 				}
 			}
-			*/
 
-			// Update denormalized value of stock in product_stock and product
+			// Update stock quantity
 			if (! $error)
 			{
 				if ($num > 0)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".$newpmpwarehouse.", reel = reel + ".$qty;
+					//$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".$newpmpwarehouse.", reel = reel + ".$qty;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
 					$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 				}
 				else
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
-					$sql.= " (pmp, reel, fk_entrepot, fk_product) VALUES ";
-					$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
+					//$sql.= " (pmp, reel, fk_entrepot, fk_product) VALUES ";
+					//$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
+					$sql.= " (reel, fk_entrepot, fk_product) VALUES ";
+					$sql.= " (".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}
 
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
@@ -274,6 +284,7 @@ class MouvementStock extends CommonObject
 				if ($result<0) $error++;
 			}
 
+			// Update PMP and denormalized value of stock qty at product level
 			if (! $error)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
@@ -480,7 +491,7 @@ class MouvementStock extends CommonObject
 	 * @param	int			$qty	Quantity of product with batch number
 	 * @return 	int   				<0 if KO, else return productbatch id
 	 */
-	function _create_batch($dluo, $qty )
+	function _create_batch($dluo, $qty)
 	{
 		$pdluo=new Productbatch($this->db);
 
@@ -505,7 +516,7 @@ class MouvementStock extends CommonObject
 			$result = -1;
 		}
 
-		//batch record found so we update it
+		// Batch record found so we update it
 		if ($result>0)
 		{
 			if ($pdluo->id >0)
@@ -545,8 +556,10 @@ class MouvementStock extends CommonObject
      * @param   int $origintype     origin type
      * @return  string              name url
      */
-	function get_origin($fk_origin, $origintype) {
-		switch ($origintype) {
+	function get_origin($fk_origin, $origintype)
+	{
+		switch ($origintype)
+		{
 			case 'commande':
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 				$origin = new Commande($this->db);
@@ -576,4 +589,22 @@ class MouvementStock extends CommonObject
 		$origin->fetch($fk_origin);
 		return $origin->getNomUrl(1);
 	}
+
+
+	/**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf,$mysoc;
+
+        // Initialize parameters
+        $this->id=0;
+
+        // There is no specific properties. All data into insert are provided as method parameter.
+    }
 }

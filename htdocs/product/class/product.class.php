@@ -138,6 +138,8 @@ class Product extends CommonObject
 	var $stats_commande=array();
 	var $stats_contrat=array();
 	var $stats_facture=array();
+    var $stats_commande_fournisseur=array();
+
 	var $multilangs=array();
 
 	//! Taille de l'image
@@ -671,7 +673,7 @@ class Product extends CommonObject
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= " WHERE rowid = " . $id;
 
-			dol_syslog(get_class($this)."update", LOG_DEBUG);
+			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -914,16 +916,16 @@ class Product extends CommonObject
 
 		foreach ($langs_available as $key => $value)
 		{
-			$sql = "SELECT rowid";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql.= " WHERE fk_product=".$this->id;
-			$sql.= " AND lang='".$key."'";
-
-			$result = $this->db->query($sql);
-
 			if ($key == $current_lang)
 			{
-				if ($this->db->num_rows($result)) // si aucune ligne dans la base
+				$sql = "SELECT rowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+				$sql.= " WHERE fk_product=".$this->id;
+				$sql.= " AND lang='".$key."'";
+
+				$result = $this->db->query($sql);
+
+				if ($this->db->num_rows($result)) // if there is already a description line for this language
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
 					$sql2.= " SET label='".$this->db->escape($this->libelle)."',";
@@ -945,9 +947,16 @@ class Product extends CommonObject
 					return -1;
 				}
 			}
-			else if (isset($this->multilangs["$key"]))
+			else if (isset($this->multilangs[$key]))
 			{
-				if ($this->db->num_rows($result)) // si aucune ligne dans la base
+				$sql = "SELECT rowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+				$sql.= " WHERE fk_product=".$this->id;
+				$sql.= " AND lang='".$key."'";
+
+				$result = $this->db->query($sql);
+
+				if ($this->db->num_rows($result)) // if there is already a description line for this language
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
 					$sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
@@ -971,6 +980,10 @@ class Product extends CommonObject
 					$this->error=$this->db->lasterror();
 					return -1;
 				}
+			}
+			else
+			{
+				// language is not current language and we didn't provide a multilang description for this language
 			}
 		}
 		return 1;
@@ -1192,7 +1205,7 @@ class Product extends CommonObject
 			{
                 if (!empty($obj->fk_supplier_price_expression))
                 {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
                     if ($price_result >= 0) {
@@ -1227,7 +1240,7 @@ class Product extends CommonObject
 					{
 		                if (!empty($obj->fk_supplier_price_expression))
 		                {
-							require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 		                	$priceparser = new PriceParser($this->db);
 		                    $price_result = $priceparser->parseProductSupplier($obj->fk_product, $obj->fk_supplier_price_expression, $obj->quantity, $obj->tva_tx);
 		                    if ($result >= 0) {
@@ -1683,7 +1696,7 @@ class Product extends CommonObject
 
                 if (!empty($this->fk_price_expression) && empty($ignore_expression))
                 {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 	$priceparser = new PriceParser($this->db);
                     $price_result = $priceparser->parseProduct($this);
                     if ($price_result >= 0)
@@ -2650,19 +2663,20 @@ class Product extends CommonObject
 	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
 	 * 	Define value of this->res
 	 *
-	 *	@param		array	$prod			Products array
-	 *	@param		string	$compl_path		Directory path of parents to add before
-	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
-	 *	@param		int		$level			Init level
+	 *	@param		array		$prod			Products array
+	 *	@param		string		$compl_path		Directory path of parents to add before
+	 *	@param		int			$multiply		Because each sublevel must be multiplicated by parent nb
+	 *	@param		int			$level			Init level
+	 *  @param		int			$id_parent		Id parent
 	 *  @return 	void
 	 */
-	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1)
+	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1, $id_parent=0)
 	{
 		global $conf,$langs;
 
 		$product = new Product($this->db);
 		//var_dump($prod);
-		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (there is no mode sub_product) or an id of a sub_product
+		foreach($prod as $id_product => $desc_pere)	// $id_product is 0 (first call starting with root top) or an id of a sub_product
 		{
 			if (is_array($desc_pere))	// If desc_pere is an array, this means it's a child
 			{
@@ -2679,6 +2693,7 @@ class Product extends CommonObject
 				$this->load_stock();	// Load stock
 				$this->res[]= array(
 					'id'=>$id,					// Id product
+					'id_parent'=>$id_parent,
 					'ref'=>$this->ref,			// Ref product
 					'nb'=>$nb,					// Nb of units that compose parent product
 					'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
@@ -2696,7 +2711,7 @@ class Product extends CommonObject
 				if (is_array($desc_pere['childs']))
 				{
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1, $id);
 				}
 			}
 		}
@@ -2718,7 +2733,7 @@ class Product extends CommonObject
 			$this->res[]= array($desc_pere[1],$desc_pere[0]);
 			if(count($desc_pere) >1)
 			{
-				$this ->fetch_prods($desc_pere);
+				$this->fetch_prods($desc_pere);
 			}
 		}
 	}
@@ -2736,7 +2751,7 @@ class Product extends CommonObject
 		{
 			foreach($this->sousprods as $prod_name => $desc_product)
 			{
-				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply);
+				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply,1,$this->id);
 			}
 		}
 		//var_dump($this->res);
@@ -2751,13 +2766,11 @@ class Product extends CommonObject
 	function get_each_prod()
 	{
 		$this->res = array();
-		if(is_array($this -> sousprods))
+		if (is_array($this->sousprods))
 		{
-			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			foreach($this->sousprods as $nom_pere => $desc_pere)
 			{
-				if(count($desc_pere) >1)
-				$this ->fetch_prods($desc_pere);
-
+				if (count($desc_pere) >1) $this->fetch_prods($desc_pere);
 			}
 			sort($this->res);
 		}
@@ -2769,10 +2782,10 @@ class Product extends CommonObject
 	 *  Return all Father products fo current product
 	 *
 	 *  @return 	array prod
+	 *  @see		getParent
 	 */
 	function getFather()
 	{
-
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
@@ -2803,10 +2816,10 @@ class Product extends CommonObject
 	 *  Return all direct parent products fo current product
 	 *
 	 *  @return 	array prod
+	 *  @see		getFather
 	 */
 	function getParent()
 	{
-
 		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
@@ -2833,10 +2846,11 @@ class Product extends CommonObject
 	/**
 	 *  Return childs of product $id
 	 *
-	 * 	@param		int		$id			Id of product to search childs of
-	 *  @return     array       		Prod
+	 * 	@param		int		$id					Id of product to search childs of
+	 *  @param		int		$firstlevelonly		Return only direct child
+	 *  @return     array       				Prod
 	 */
-	function getChildsArbo($id)
+	function getChildsArbo($id, $firstlevelonly=0)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2861,10 +2875,13 @@ class Product extends CommonObject
 				);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
-				$listofchilds=$this->getChildsArbo($rec['id']);
-				foreach($listofchilds as $keyChild => $valueChild)
+				if (empty($firstlevelonly))
 				{
-					$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+					$listofchilds=$this->getChildsArbo($rec['id']);
+					foreach($listofchilds as $keyChild => $valueChild)
+					{
+						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
+					}
 				}
 			}
 
@@ -2910,6 +2927,7 @@ class Product extends CommonObject
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
 		global $conf, $langs;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
         $newref=$this->ref;
@@ -2920,32 +2938,40 @@ class Product extends CommonObject
             $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
         if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('ProductLabel') . ':</b> ' . $this->label;
+
+        $tmptext='';
+		if ($this->weight) $tmptext.="<br>".$langs->trans("Weight").': '.$this->weight.' '.measuring_units_string($this->weight_units,"weight");
+		if ($this->length) $tmptext.="<br>".$langs->trans("Length").': '.$this->length.' '.measuring_units_string($this->length_units,'length');
+		if ($this->surface) $tmptext.="<br>".$langs->trans("Surface").': '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
+		if ($this->volume) $tmptext.="<br>".$langs->trans("Volume").': '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
+        if ($tmptext) $label .= $tmptext;
+
         if (! empty($this->entity))
             $label .= '<br>' . $this->show_photos($conf->product->multidir_output[$this->entity],1,1,0,0,0,80);
 
         $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
         if ($option == 'supplier') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         } else if ($option == 'stock') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         } else if ($option == 'composition') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         } else if ($option == 'category') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
         } else {
-            $lien = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         }
 
 		if ($withpicto) {
-			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$lienfin.' ');
-			if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$lienfin.' ');
+			if ($this->type == 0) $result.=($link.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$linkend.' ');
+			if ($this->type == 1) $result.=($link.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$linkend.' ');
 		}
-		$result.=$lien.$newref.$lienfin;
+		$result.=$link.$newref.$linkend;
 		return $result;
 	}
 
@@ -3296,31 +3322,6 @@ class Product extends CommonObject
 
 		if (is_numeric($result) && $result > 0) return 1;
 		else return -1;
-	}
-
-	/**
-	 *  Build thumb
-	 *
-	 *  @param  string	$file           Chemin du fichier d'origine
-	 *  @return	void
-	 */
-	function add_thumb($file)
-	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
-
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
-
-		$file_osencoded=dol_osencode($file);
-		if (file_exists($file_osencoded))
-		{
-			// Create small thumbs for company (Ratio is near 16/9)
-	        // Used on logon for example
-	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-	        // Create mini thumbs for company (Ratio is near 16/9)
-	        // Used on menu or for setup page for example
-	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-		}
 	}
 
 	/**

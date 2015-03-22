@@ -84,3 +84,4 @@ CronType_command=Apvalkalo komanda
 CronMenu=Cron
 CronCannotLoadClass=Nepavyko įkelti klasės %s arba objekto %s
 UseMenuModuleToolsToAddCronJobs=Eikite į meniu "Pagrindinis - Modulių įrankiai - Darbo sąrašas" norėdami peržiūrėti ir redaguoti numatytus darbus.
+TaskDisabled=Task disabled

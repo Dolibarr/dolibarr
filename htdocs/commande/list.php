@@ -259,7 +259,7 @@ if ($resql)
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
-	
+
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	$i = 0;
@@ -337,7 +337,7 @@ if ($resql)
 
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
-    while ($i < min($num,$limit)) 
+    while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
         $var=!$var;
@@ -368,7 +368,7 @@ if ($resql)
                     $nbprod++; // order contains real products
                     $generic_product->id = $generic_commande->lines[$lig]->fk_product;
                     if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
-                        $generic_product->load_stock(true);
+                        $generic_product->load_stock();
                         $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
                     } else {
                         $generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];

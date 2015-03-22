@@ -315,7 +315,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
+	 *	@param		integer	$port		Port of database server
 	 *	@return		resource			Database access handler
 	 *	@see		close
      */
@@ -530,7 +530,7 @@ class DoliDBSqlite3 extends DoliDB
     /**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
      */
     function fetch_row($resultset)
@@ -588,7 +588,7 @@ class DoliDBSqlite3 extends DoliDB
     /**
 	 *	Free last resultset used.
      *
-	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@param  integer	$resultset   Curseur de la requete voulue
 	 *	@return	void
      */
     function free($resultset=0)
@@ -709,7 +709,7 @@ class DoliDBSqlite3 extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return return          		XXX(field) or XXX('value') or field or 'value'
+     *  @return string          		XXX(field) or XXX('value') or field or 'value'
      */
     function encrypt($fieldorvalue, $withQuotes=0)
     {
@@ -1255,11 +1255,14 @@ class DoliDBSqlite3 extends DoliDB
      * @param	int		$arg_count		Arg count
      * @return	void
      */
-    private function addCustomFunction($name, $arg_count = -1) {
-        if ($this->db) {
-            $localname = __CLASS__ . '::' . 'db' . $name;
+    private function addCustomFunction($name, $arg_count = -1)
+    {
+        if ($this->db)
+        {
+        	$newname=preg_replace('/_/','',$name);
+            $localname = __CLASS__ . '::' . 'db' . $newname;
             $reflectClass = new ReflectionClass(__CLASS__);
-            $reflectFunction = $reflectClass->getMethod('db' . $name);
+            $reflectFunction = $reflectClass->getMethod('db' . $newname);
             if ($arg_count < 0) {
                 $arg_count = $reflectFunction->getNumberOfParameters();
             }
@@ -1274,7 +1277,7 @@ class DoliDBSqlite3 extends DoliDB
      * Cette fonction est l'equivalent de la fonction MONTH de MySql.
      *
      * @param 	string 		$date		Date
-     * @return 	integer
+     * @return 	string
      */
     public static function dbMONTH($date)
     {
@@ -1317,7 +1320,7 @@ class DoliDBSqlite3 extends DoliDB
      *  dbWEEKDAY
      *
      *  @param	int		$date			Date
-     *  @return	string
+     *  @return	double
      */
     public static function dbWEEKDAY($date) {
         $arr = date_parse($date);
@@ -1333,7 +1336,7 @@ class DoliDBSqlite3 extends DoliDB
      * @param 	string $format 	la chaine de formatage
      * @return 	string 			La date formatee.
      */
-    public static function dbdate_format($date, $format)
+    public static function dbdateformat($date, $format)
     {
         static $mysql_replacement;
         if (! isset($mysql_replacement)) {
@@ -1469,7 +1472,7 @@ class DoliDBSqlite3 extends DoliDB
      * week_mode
      *
      * @param 	string	$mode		Mode
-     * @return	string				Week format
+     * @return	integer				Week format
      */
     private static function week_mode($mode) {
         $week_format= ($mode & 7);

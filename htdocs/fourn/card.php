@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $langs->load('suppliers');
@@ -49,9 +51,14 @@ if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('suppliercard','globalcard'));
+
 
 /*
  * Action
@@ -111,8 +118,8 @@ if ($id > 0 && empty($object->id))
 
 if ($object->id > 0)
 {
-	$title=$langs->trans("SupplierCard");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$title=$langs->trans("ThirdParty")." - ".$langs->trans('SupplierCard');
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('SupplierCard');
 	$help_url='';
 	llxHeader('',$title, $help_url);
 
@@ -128,7 +135,6 @@ if ($object->id > 0)
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	$object->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
@@ -251,7 +257,16 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
-    // Module Adherent
+	// Other attributes
+	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields);
+	}
+
+	// Module Adherent
     if (! empty($conf->adherent->enabled))
     {
         $langs->load("members");
@@ -299,9 +314,50 @@ if ($object->id > 0)
 		$langs->load("products");
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
-		print '</a></td></tr></table>';
+		print '</a></td></tr>';
+
+		//Query from product/liste.php
+		$sql = 'SELECT p.rowid, p.ref, p.label, pfp.tms,';
+		$sql.= ' p.fk_product_type';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
+		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+		$sql.= ' AND pfp.fk_soc = '.$object->id;
+		$sql .= $db->order('pfp.tms', 'desc');
+		$sql.= $db->plimit($MAXLIST);
+
+		$query = $db->query($sql);
+
+		$return = array();
+
+		if ($db->num_rows($query)) {
+
+			$productstatic = new Product($db);
+
+			while ($objp = $db->fetch_object($query)) {
+
+				$var=!$var;
+
+				$productstatic->id = $objp->rowid;
+				$productstatic->ref = $objp->ref;
+				$productstatic->label = $objp->label;
+				$productstatic->type = $objp->fk_product_type;
+
+				print "<tr ".$bc[$var].">";
+				print '<td class="nowrap">';
+				print $productstatic->getNomUrl(1);
+				print '</td>';
+				print '<td align="center" width="80">';
+				print dol_trunc(dol_htmlentities($objp->label), 30);
+				print '</td>';
+				print '<td align="right" class="nowrap">'.dol_print_date($objp->tms).'</td>';
+				print '</tr>';
+			}
+		}
+
+		print '</table>';
 	}
 
 

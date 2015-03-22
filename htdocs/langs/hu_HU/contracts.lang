@@ -19,6 +19,7 @@ ServiceStatusLateShort=Lejárt
 ServiceStatusClosed=Lezárva
 ServicesLegend=Szolgáltatások magyarázat
 Contracts=Szerződések
+ContractsAndLine=Contracts and line of contracts
 Contract=Szerződés
 NoContracts=Nincs szerződés
 MenuServices=Szolgáltatás
