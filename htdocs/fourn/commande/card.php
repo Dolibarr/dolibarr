@@ -2015,7 +2015,7 @@ elseif (! empty($object->id))
 	// Show object lines
 	$inputalsopricewithtax=0;
 	if (! empty($object->lines))
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->commande->creer);
 
 	$num = count($object->lines);
 
