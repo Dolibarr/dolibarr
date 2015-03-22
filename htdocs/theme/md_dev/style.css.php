@@ -734,7 +734,7 @@ div.tmenuleft
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
 	height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
+	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat; */
 	<?php } ?>
 }
 div.tmenucenter
@@ -1512,6 +1512,13 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
+	/*border-bottom: none;
+	border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #D0D0D0;
+	border-top: 1px solid #D8D8D8;
+    */
+
+    /*
     -moz-border-radius:6px 6px 0px 0px;
 	-webkit-border-radius:6px 6px 0px 0px;
 	border-radius:6px 6px 0px 0px;
@@ -1519,11 +1526,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-
-	border-bottom: none;
-	border-right: 1px solid #CCCCCC;
-	border-left: 1px solid #D0D0D0;
-	border-top: 1px solid #D8D8D8;
 
 <?php if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
@@ -1533,10 +1535,23 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);*/
 <?php } ?>
+	*/
 	background-image: none !important;
 }
 
-.tabactive {
+.tabactive, a.tab#active {
+    border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #D0D0D0;
+	border-top: 1px solid #D8D8D8;
+
+	-moz-border-radius:6px 6px 0px 0px;
+	-webkit-border-radius:6px 6px 0px 0px;
+	border-radius:6px 6px 0px 0px;
+
+	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+
 <?php if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacktabcard2; ?>) !important;
 /*    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important;
@@ -1549,8 +1564,10 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 }
 a.tab:hover
 {
+	/*
 	background: rgba(<?php echo $colorbacktabcard1; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
-	color: #<?php echo $colortextbacktab; ?>;
+	color: #<?php echo $colortextbacktab; ?>;*/
+	text-decoration: underline;
 }
 a.tab:link, a.tab:visited
 {
