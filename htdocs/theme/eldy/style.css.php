@@ -840,9 +840,6 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
-	/* -moz-box-shadow:    inset 0 0 10px #000000;
-   	-webkit-box-shadow: inset 0 0 10px #000000;
-   	box-shadow:         inset 0 0 10px #000000; */
 }
 .login_vertical_align {
 	padding: 10px;
