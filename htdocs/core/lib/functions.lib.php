@@ -3927,7 +3927,9 @@ function dol_htmlcleanlastbr($stringtodecode)
  */
 function dol_html_entity_decode($a,$b,$c='UTF-8')
 {
-	return html_entity_decode($a,$b,$c);
+	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+	$ret=@html_entity_decode($a,$b,$c);
+	return $ret;
 }
 
 /**

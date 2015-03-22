@@ -2092,7 +2092,7 @@ else
 
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->facture->creer);
 
 		$num=count($object->lines);
 
