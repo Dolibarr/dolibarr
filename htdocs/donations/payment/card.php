@@ -121,7 +121,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/donations/payment/card.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/donations/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;

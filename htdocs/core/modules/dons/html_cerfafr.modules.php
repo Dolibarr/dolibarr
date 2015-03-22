@@ -24,7 +24,7 @@
  *	\ingroup    don
  *	\brief      Form of donation
  */
-require_once DOL_DOCUMENT_ROOT.'/donations/core/modules/dons/modules_don.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 

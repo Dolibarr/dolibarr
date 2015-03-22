@@ -17,7 +17,7 @@
 
 /**
  *  \file       htdocs/donations/document.php
- *  \ingroup    Donation
+ *  \ingroup    donations
  *  \brief      Page of linked files into donations
  */
 
@@ -25,7 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("other");

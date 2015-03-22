@@ -25,7 +25,7 @@
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -54,7 +54,8 @@ if ($action == 'specimen')
     $don->initAsSpecimen();
 
     // Search template files
-    $dir = DOL_DOCUMENT_ROOT . "/donations/core/modules/dons/";
+    $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
+    $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
     $file = $modele.".modules.php";
     if (file_exists($dir.$file))
     {

@@ -18,9 +18,9 @@
  */
 
 /**
- *	    \file       htdocs/donations/index.php
- *		\ingroup    don
- *		\brief      Home page of donation module
+ *  \file       htdocs/donations/index.php
+ *  \ingroup    donations
+ *  \brief      Home page of donation module
  */
 
 require '../main.inc.php';
