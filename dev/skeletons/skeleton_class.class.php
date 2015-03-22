@@ -43,7 +43,7 @@ class Skeleton_Class extends CommonObject
 	var $table_element='skeleton';		//!< Name of table without prefix where object is stored
 
 	var $lines=array();
-	
+
     var $id;
     var $prop1;
     var $prop2;
@@ -106,11 +106,11 @@ class Skeleton_Class extends CommonObject
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
+	            // want this action to call a trigger.
 
 	            //// Call triggers
 	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+	            //if ($result < 0) $error++;
 	            //// End call triggers
 			}
         }
@@ -118,11 +118,6 @@ class Skeleton_Class extends CommonObject
         // Commit or rollback
         if ($error)
 		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -197,7 +192,7 @@ class Skeleton_Class extends CommonObject
     	$sql.= " t.field2";
     	//...
     	$sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-    	
+
     	// Manage filter
     	$sqlwhere=array();
     	if (count($filter)>0) {
@@ -211,26 +206,26 @@ class Skeleton_Class extends CommonObject
     	$sql .= " ORDER BY " . $sortfield . " " . $sortorder . " " . $this->db->plimit($limit + 1, $offset);
 
     	$this->lines = array ();
-    	
+
     	dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
-    		
+
     		while ($obj = $this->db->fetch_object($resql))
     		{
     			$line=new Skeleton_ClassLine();
-    
+
     			$line->id    = $obj->rowid;
     			$line->prop1 = $obj->field1;
     			$line->prop2 = $obj->field2;
-    			
+
     			$this->line[]=$line;
     			//...
     		}
     		$this->db->free($resql);
-    
+
     		return $num;
     	}
     	else
@@ -435,7 +430,8 @@ class Skeleton_Class extends CommonObject
 
 }
 
-class Skeleton_ClassLine {
+class Skeleton_ClassLine
+{
 	var $id;
 	var $prop1;
 	var $prop2;
