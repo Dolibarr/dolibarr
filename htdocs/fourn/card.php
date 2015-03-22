@@ -305,6 +305,8 @@ if ($object->id > 0)
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
+	print '<br>';
+
 
 	/*
 	 * List of products
@@ -361,8 +363,6 @@ if ($object->id > 0)
 	}
 
 
-	print '<br>';
-
 	/*
 	 * Last orders
 	 */
@@ -370,8 +370,6 @@ if ($object->id > 0)
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
-
-
 		// TODO move to DAO class
 		// Check if there are supplier orders billable
 		$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
