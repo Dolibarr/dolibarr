@@ -415,3 +415,23 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_MODIFY','Task modified','Executed when a project task is modified','project',36);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_DELETE','Task deleted','Executed when a project task is deleted','project',37);
 
+
+create table llx_c_price_global_variable
+(
+	rowid					integer AUTO_INCREMENT PRIMARY KEY,
+	code					varchar(20) NOT NULL,
+	description		text DEFAULT NULL,
+	value					double(24,8) DEFAULT 0
+)ENGINE=innodb;
+
+create table llx_c_price_global_variable_updater
+(
+	rowid						integer AUTO_INCREMENT PRIMARY KEY,
+	type						integer NOT NULL,
+	description			text DEFAULT NULL,
+	parameters			text DEFAULT NULL,
+	fk_variable			integer NOT NULL,
+	update_interval	integer DEFAULT 0,
+	next_update			integer DEFAULT 0,
+	last_status			text DEFAULT NULL
+)ENGINE=innodb;
