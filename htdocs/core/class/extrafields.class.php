@@ -567,10 +567,12 @@ class ExtraFields
 	{
 		global $conf;
 
+		if ( empty($elementtype) ) return array();
+		
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		$array_name_label=array();
-
+		
 		// For avoid conflicts with external modules
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
