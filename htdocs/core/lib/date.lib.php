@@ -813,11 +813,12 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
  *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
+ *  @param	int			$short			1=Return short label
  *	@return array						Month string or array if selected < 0
  */
-function monthArray($outputlangs)
+function monthArray($outputlangs,$short=0)
 {
-    $montharray = array (
+	$montharray = array (
 	    1  => $outputlangs->trans("January"),
 	    2  => $outputlangs->trans("February"),
 	    3  => $outputlangs->trans("March"),
@@ -832,6 +833,24 @@ function monthArray($outputlangs)
 	    12 => $outputlangs->trans("December")
     );
 
-    return $montharray;
+	if (! empty($short))
+	{
+		$montharray = array (
+		    1  => $outputlangs->trans("Jan"),
+		    2  => $outputlangs->trans("Feb"),
+		    3  => $outputlangs->trans("Mar"),
+		    4  => $outputlangs->trans("Apr"),
+		    5  => $outputlangs->trans("May"),
+		    6  => $outputlangs->trans("Jun"),
+		    7  => $outputlangs->trans("Jul"),
+		    8  => $outputlangs->trans("Aug"),
+		    9  => $outputlangs->trans("Sep"),
+		    10 => $outputlangs->trans("Oct"),
+		    11 => $outputlangs->trans("Nov"),
+		    12 => $outputlangs->trans("Dec")
+			);
+	}
+
+	return $montharray;
 }
 

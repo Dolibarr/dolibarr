@@ -1793,13 +1793,13 @@ class User extends CommonObject
 
         $label = '<u>' . $langs->trans("User") . '</u>';
         $label.= '<div width="100%">';
-        $label .= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
+        $label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
         if (! empty($this->login))
-        $label .= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+        $label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
         if (! empty($this->email))
-        $label .= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
+        $label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
         if (! empty($this->admin))
-        $label .= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
+        $label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
         if (! empty($this->societe_id)) {
             $thirdpartystatic = new Societe($db);
             $thirdpartystatic->fetch($this->societe_id);
@@ -1807,11 +1807,10 @@ class User extends CommonObject
             $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
-        $label .= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+        $label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
         if (! empty($this->photo))
         {
-        	$label.= '</div><div style="padding: 10px">';
-        	//if (! is_object($form)) $form = new Form($db);
+        	$label.= '</div><div class="photointooltip" style="padding-top: 6px">';
             $label.= Form::showphoto('userphoto', $this, 80);
         }
         $label.= '</div>';

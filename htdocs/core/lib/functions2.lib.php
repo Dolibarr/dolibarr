@@ -1885,7 +1885,7 @@ function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
-	$tmp=preg_match('/^([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
+	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
 	if (! $tmp)
 	{
 		$tmp=explode(',',$stringcolor);
