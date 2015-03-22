@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
+/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,15 @@
  */
 
 /**
- *	\file       htdocs/product/class/priceparser.class.php
+ *	\file       htdocs/product/dynamic_price/class/price_parser.class.php
  *	\ingroup    product
  *	\brief      File of class to calculate prices using expression
  */
 require_once DOL_DOCUMENT_ROOT.'/includes/evalmath/evalmath.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/priceexpression.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable_updater.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 /**
@@ -30,17 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  */
 class PriceParser
 {
-    protected $db;
-    // Limit of expressions per price
-    public $limit = 100;
-    // The error that ocurred when parsing price
-    public $error;
-    // The expression that caused the error
-    public $error_expr;
-    //The special char
-    public $special_chr = "#";
-    //The separator char
-    public $separator_chr = ";";
+	protected $db;
+	// Limit of expressions per price
+	public $limit = 100;
+	// The error that occurred when parsing price
+	public $error;
+	// The expression that caused the error
+	public $error_expr;
+	//The special char
+	public $special_chr = "#";
+	//The separator char
+	public $separator_chr = ";";
 
 	/**
 	 *  Constructor
@@ -104,7 +106,7 @@ class PriceParser
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info);
 		}
-		else if (in_array($code, array(6))) //Errors which have 2 args
+		else if (in_array($code, array(6, 23))) //Errors which have 2 args
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		}
@@ -128,6 +130,7 @@ class PriceParser
 	 */
 	public function parseExpression($product, $expression, $values)
 	{
+		global $user;
 		//Accessible product values by expressions
 		$values = array_merge($values, array(
 			"tva_tx" => $product->tva_tx,
@@ -139,13 +142,31 @@ class PriceParser
 			"price_min" => $product->price_min,
 		));
 
-		//Retreive all extrafield for product and add it to values
+		//Retrieve all extrafield for product and add it to values
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('product', true);
 		$product->fetch_optionals($product->id, $extralabels);
 		foreach ($extrafields->attribute_label as $key=>$label)
 		{
-			$values['options_'.$key] = $product->array_options['options_'.$key];
+			$values["extrafield_".$key] = $product->array_options['options_'.$key];
+		}
+
+		//Process any pending updaters
+		$price_updaters = new PriceGlobalVariableUpdater($this->db);
+		foreach ($price_updaters->listPendingUpdaters() as $entry) {
+            //Schedule the next update by adding current timestamp (secs) + interval (mins)
+            $entry->update_next_update(dol_now() + ($entry->update_interval * 60), $user);
+            //Do processing
+			$res = $entry->process();
+            //Store any error or clear status if OK
+            $entry->update_status($res < 1?$entry->error:'', $user);
+		}
+
+		//Get all global values
+		$price_globals = new PriceGlobalVariable($this->db);
+		foreach ($price_globals->listGlobalVariables() as $entry)
+		{
+			$values["global_".$entry->code] = $entry->value;
 		}
 
 		//Check if empty
@@ -153,36 +174,32 @@ class PriceParser
 		if (empty($expression))
 		{
 			$this->error = array(20, null);
-			return -1;
+			return -2;
 		}
 
 		//Prepare the lib, parameters and values
 		$em = new EvalMath();
 		$em->suppress_errors = true; //Don't print errors on page
 		$this->error_expr = null;
-		$search = array();
-		$replace = array();
-		foreach ($values as $key => $value) {
-			if ($value !== null) {
-				$search[] = $this->special_chr.$key.$this->special_chr;
-				$replace[] = $value;
-			}
-		}
+		$last_result = null;
 
 		//Iterate over each expression splitted by $separator_chr
 		$expression = str_replace("\n", $this->separator_chr, $expression);
+		foreach ($values as $key => $value)
+		{
+			$expression = str_replace($this->special_chr.$key.$this->special_chr, "$value", $expression);
+		}
 		$expressions = explode($this->separator_chr, $expression);
-		$expressions = array_slice($expressions, 0, $limit);
+		$expressions = array_slice($expressions, 0, $this->limit);
 		foreach ($expressions as $expr) {
 			$expr = trim($expr);
 			if (!empty($expr))
 			{
-				$expr = str_ireplace($search, $replace, $expr);
 				$last_result = $em->evaluate($expr);
 				$this->error = $em->last_error_code;
 				if ($this->error !== null) { //$em->last_error is null if no error happened, so just check if error is not null
 					$this->error_expr = $expr;
-					return -2;
+					return -3;
 				}
 			}
 		}
@@ -190,15 +207,15 @@ class PriceParser
 		if (empty($vars["price"])) {
 			$vars["price"] = $last_result;
 		}
-		if ($vars["price"] === null)
+		if (!isset($vars["price"]))
 		{
 			$this->error = array(21, $expression);
-			return -3;
+			return -4;
 		}
 		if ($vars["price"] < 0)
 		{
 			$this->error = array(22, $expression);
-			return -4;
+			return -5;
 		}
 		return $vars["price"];
 	}
@@ -209,13 +226,13 @@ class PriceParser
 	 *	@param	Product				$product    	The Product object to get information
 	 *	@param	string 				$expression     The expression to parse
 	 *	@param	array 				$extra_values   Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductExpression($product, $expression, $extra_values = array())
 	{
 		//Get the supplier min
-        $productFournisseur = new ProductFournisseur($this->db);
-        $supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id);
+		$productFournisseur = new ProductFournisseur($this->db);
+		$supplier_min_price = $productFournisseur->find_min_price_product_fournisseur($product->id);
 
 		//Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
@@ -237,7 +254,7 @@ class PriceParser
 	 *
 	 *	@param	Product				$product    	The Product object to get information
 	 *	@param	array 				$extra_values   Any aditional values for expression
-     *  @return int 								> 0 if OK, < 1 if KO
+	 *  @return int 								> 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
 	{
@@ -261,7 +278,7 @@ class PriceParser
 	 *	@param	int					$quantity     	Supplier Min quantity
 	 *	@param	int					$tva_tx     	Supplier VAT rate
 	 *	@param	array 				$extra_values   Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplierExpression($product_id, $expression, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
@@ -285,7 +302,7 @@ class PriceParser
 	 *	@param	int					$quantity     	Min quantity
 	 *	@param	int					$tva_tx     	VAT rate
 	 *	@param	array 				$extra_values   Any aditional values for expression
-     *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplier($product_id, $expression_id, $quantity = null, $tva_tx = null, $extra_values = array())
 	{
