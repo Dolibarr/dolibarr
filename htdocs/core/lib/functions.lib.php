@@ -592,16 +592,17 @@ function dol_strtoupper($utf8_string)
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
- * 	@param  string		$message			Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *  @param  int			$level				Log level
- *                                  		0=Show nothing
- *											On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *											On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident				1=Increase ident of 1, -1=Decrease ident of 1
- *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename.
+ * 	@param  string		$message				Line to log.
+ *  @param  int			$level					Log level
+ *                                  			0=Show nothing
+ *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
+ *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
+ *  @param	string		$restricttologhandler	Output log only for this log handler
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='')
+function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='', $restricttologhandler='')
 {
 	global $conf, $user;
 
@@ -624,7 +625,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
-		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a HTML handler
+		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a log handler dedicated to HTML output
 		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
 		{
@@ -648,10 +649,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
 		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 		else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
-
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
+			if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
 			$loghandlerinstance->export($data,$suffixinfilename);
 		}
 		unset($data);

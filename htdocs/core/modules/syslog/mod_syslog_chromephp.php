@@ -7,6 +7,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 {
+	var $code = 'chromephp';
+
 	/**
 	 * 	Return name of logger
 	 *
@@ -111,7 +113,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * 	Output log content
+	 * 	Output log content. We also start output buffering at first log write.
 	 *
 	 *	@param	array	$content	Content to log
 	 * 	@return	null|false
