@@ -35,7 +35,7 @@ function loan_prepare_head($object)
     $h = 0;
     $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/loan/card.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/loan/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';
 	$h++;
@@ -49,13 +49,13 @@ function loan_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->loan->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-	$head[$h][0] = DOL_URL_ROOT.'/compta/loan/document.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
 	$head[$h][2] = 'documents';
 	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/compta/loan/info.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/loan/info.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;

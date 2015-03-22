@@ -16,16 +16,14 @@
  */
 
 /**
- *	    \file       htdocs/compta/loan/payment/card.php
+ *	    \file       htdocs/loan/payment/card.php
  *		\ingroup    loan
  *		\brief      Payment's card of loan
  */
 
-require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/paymentloan.class.php';
-// require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-// require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load('bills');
@@ -62,7 +60,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: ".DOL_URL_ROOT."/compta/loan/index.php");
+        header("Location: ".DOL_URL_ROOT."/loan/index.php");
         exit;
 	}
 	else
@@ -122,7 +120,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/loan/payment/card.php?id='.$_GET["id"];
+$head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
@@ -205,7 +203,7 @@ $sql.= ' WHERE pl.fk_loan = l.rowid';
 $sql.= ' AND l.entity = '.$conf->entity;
 $sql.= ' AND pl.rowid = '.$payment->id;
 
-dol_syslog("compta/loan/payment/card.php", LOG_DEBUG);
+dol_syslog("loan/payment/card.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

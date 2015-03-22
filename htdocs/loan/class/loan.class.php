@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/compta/loan/class/loan.class.php
+ *      \file       htdocs/loan/class/loan.class.php
  *		\ingroup    loan
  *		\brief      Class for loan module
  */
@@ -386,7 +386,7 @@ class Loan extends CommonObject
 
         $result='';
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$this->id.'">';
+        $link = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'">';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($langs->trans("ShowLoan").': '.$this->label,'bill').$linkend.' ');

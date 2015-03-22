@@ -16,13 +16,13 @@
  */
 
 /**
- *	\file       htdocs/compta/loan/info.php
+ *	\file       htdocs/loan/info.php
  *	\ingroup    loan
  *	\brief      Page with info about loan
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

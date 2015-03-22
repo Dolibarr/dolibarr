@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 
 $langs->load("loan");
 

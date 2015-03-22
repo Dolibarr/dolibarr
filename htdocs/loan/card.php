@@ -16,13 +16,13 @@
  */
 
 /**
- *      \file       htdocs/compta/loan/card.php
+ *      \file       htdocs/loan/card.php
  *		\ingroup    loan
  *		\brief      Loan card
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -416,7 +416,7 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/compta/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
 				print '<td align="right">'.price($objp->amount_insurance)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
@@ -457,25 +457,25 @@ if ($id > 0)
 			// Edit
 			if ($user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
 
 			// Emit payment
 			if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/payment/payment.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/payment/payment.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
 			// Classify 'paid'
 			if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
 			}
 
 			// Delete
 			if ($user->rights->loan->delete)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/loan/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 			}
 
 			print "</div>";

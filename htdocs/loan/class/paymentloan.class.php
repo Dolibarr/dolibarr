@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/compta/loan/class/paymentloan.class.php
+ *      \file       htdocs/loan/class/paymentloan.class.php
  *		\ingroup    facture
  *		\brief      File of class to manage payment of loans
  */
@@ -429,7 +429,7 @@ class PaymentLoan extends CommonObject
 
                 // Add link 'payment_loan' in bank_url between payment and bank transaction
                 $url='';
-                if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/compta/loan/payment/card.php?id=';
+                if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/loan/payment/card.php?id=';
                 if ($url)
                 {
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(payment)', $mode);
@@ -448,7 +448,7 @@ class PaymentLoan extends CommonObject
                     {
                         $loan = new Loan($this->db);
                         $loan->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $loan->id, DOL_URL_ROOT.'/compta/loan/card.php?id=', $loan->type_libelle.(($loan->lib && $loan->lib!=$loan->type_libelle)?' ('.$loan->lib.')':''),'loan');
+                        $result=$acc->add_url_line($bank_line_id, $loan->id, DOL_URL_ROOT.'/loan/card.php?id=', $loan->type_libelle.(($loan->lib && $loan->lib!=$loan->type_libelle)?' ('.$loan->lib.')':''),'loan');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }

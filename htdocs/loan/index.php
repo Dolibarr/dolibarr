@@ -16,13 +16,13 @@
  */
 
 /**
- *   	\file       htdocs/compta/loan/index.php
+ *   	\file       htdocs/loan/index.php
  *		\ingroup    loan
  *		\brief      Page to list all loans
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 $langs->load("loan");
 $langs->load("compta");

@@ -16,14 +16,14 @@
  */
 
 /**
- *	    \file       htdocs/compta/loan/payment.php
+ *	    \file       htdocs/loan/payment/payment.php
  *		\ingroup    Loan
  *		\brief      Page to add payment of a loan
  */
 
-require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/paymentloan.class.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
@@ -50,7 +50,7 @@ if ($action == 'add_payment')
 
 	if ($cancel)
 	{
-		$loc = DOL_URL_ROOT.'/compta/loan/card.php?id='.$chid;
+		$loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -132,7 +132,7 @@ if ($action == 'add_payment')
     	    if (! $error)
             {
                 $db->commit();
-                $loc = DOL_URL_ROOT.'/compta/loan/card.php?id='.$chid;
+                $loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
             }
@@ -183,7 +183,7 @@ if ($_GET["action"] == 'create')
 
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Loan").'</td>';
 
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="2">'.dol_print_date($loan->datestart,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
