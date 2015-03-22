@@ -121,10 +121,7 @@ if (! empty($errors)) {
 
 llxHeader();
 
-echo "<font size='-1' color='#000000'>This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan,
-	 based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.
-	 This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken
-	 into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br></font>";
+print $langs->trans('LoanCalcDesc');
 
 print '<form method="GET" name="information" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="form_complete" value="1">';
@@ -190,7 +187,7 @@ if ($form_complete && $monthly_payment)
 	print '<td align="right">Monthly Payment:</td>';
 	print '<td><b>' . number_format($monthly_payment, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</b><br><font>(Principal &amp; Interest ONLY)</font></td>';
 	print '</tr>';
-	
+
     if ($down_percent < 20)
 	{
         $pmi_per_month = 55 * ($financing_price / 100000);
@@ -216,11 +213,11 @@ if ($form_complete && $monthly_payment)
 	print '<td align="right">&nbsp;</td>';
 	print '<td>';
 	print '<br>';
-	
+
 	$assessed_price          = ($sale_price * .85);
 	$residential_yearly_tax  = ($assessed_price / 1000) * 14;
 	$residential_monthly_tax = $residential_yearly_tax / 12;
-                    
+
 	if ($pmi_per_month)
 	{
 		$pmi_text = "PMI and ";
@@ -304,8 +301,8 @@ if ($form_complete && $show_progress) {
 	print '</tr>';
 	print '</table>';
 	print '<br>';
-	
-	
+
+
 	// Set some base variables
 	$principal     = $financing_price;
 	$current_month = 1;
@@ -315,11 +312,11 @@ if ($form_complete && $show_progress) {
 	$power = -($month_term);
 	$denom = pow((1 + $monthly_interest_rate), $power);
 	$monthly_payment = $principal * ($monthly_interest_rate / (1 - $denom));
-        
-	print "<br><br><a name=\"amortization\"></a>Amortization For Monthly Payment: <b>" . number_format($monthly_payment, "2", ".", ",") . "</b> over " . $year_term . " years<br>\n");
-	
+
+	print "<br><br><a name=\"amortization\"></a>Amortization For Monthly Payment: <b>" . number_format($monthly_payment, "2", ".", ",") . "</b> over " . $year_term . " years<br>\n";
+
 	print '<table class="noborder" width="100%">';
-	
+
 	// This LEGEND will get reprinted every 12 months
 	$legend = '<tr class="liste_titre">';
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Month") . '</td>';
@@ -327,7 +324,7 @@ if ($form_complete && $show_progress) {
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Capital") . '</td>';
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Position") . '</td>';
 	$legend.= '</tr>';
-	
+
 	print $legend;
 
 	// Loop through and get the current month's payments for 
@@ -348,14 +345,14 @@ if ($form_complete && $show_progress) {
 		print '<td align="right">' . number_format($principal_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</td>';
 		print '<td align="right">' . number_format($remaining_balance, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</td>';
 		print '</tr>';
-    
+
 		($current_month % 12) ? $show_legend = FALSE : $show_legend = TRUE;
 
 		if ($show_legend) {
 			print '<tr>';
 			print '<td colspan="4"><b>' . $langs->trans("Totalsforyear") . ' ' . $current_year . '</td>';
 			print '</tr>';
-                
+
 			$total_spent_this_year = $this_year_interest_paid + $this_year_principal_paid;
 			print '<tr>';
 			print '<td>&nbsp;</td>';
@@ -369,11 +366,11 @@ if ($form_complete && $show_progress) {
 			print '<tr>';
 			print '<td colspan="4">&nbsp;<br></td>';
 			print '</tr>';
-    
+
 			$current_year++;
 			$this_year_interest_paid  = 0;
 			$this_year_principal_paid = 0;
-				
+
 			if (($current_month + 6) < $month_term)
 			{
 				echo $legend;

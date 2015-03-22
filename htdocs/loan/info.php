@@ -46,20 +46,25 @@ $result = restrictedArea($user, 'loan', $id, '','');
 $help_url='EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("",$langs->trans("Loan"),$help_url);
 
-$loan = new Loan($db);
-$loan->fetch($id);
-$loan->info($id);
+if ($id > 0) {
+	$loan = new Loan($db);
+	$loan->fetch($id);
+	$loan->info($id);
 
-$head = loan_prepare_head($loan);
+	$head = loan_prepare_head($loan);
 
-dol_fiche_head($head, 'info', $langs->trans("Loan"), 0, 'bill');
+	dol_fiche_head($head, 'info', $langs->trans("Loan"), 0, 'bill');
 
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($loan);
+	print '</td></tr></table>';
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($loan);
-print '</td></tr></table>';
-
-print '</div>';
+	print '</div>';
+}
+else
+{
+    // $id ?
+}
 
 llxFooter();
 

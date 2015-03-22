@@ -50,7 +50,8 @@ $search_label=GETPOST('search_label','alpha');
 $search_amount=GETPOST('search_amount','alpha');
 $filtre=GETPOST("filtre");
 
-if (GETPOST("button_removefilter"))
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref="";
 	$search_label="";
@@ -112,11 +113,11 @@ if ($resql)
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print '</tr>';
-	
+
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		$var = !$var;
 		print "<tr ".$bc[$var].">";
 
@@ -135,7 +136,7 @@ if ($resql)
 		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
         print "</tr>\n";
-		
+
 		$i++;
 	}
 
@@ -147,6 +148,6 @@ else
 {
     dol_print_error($db);
 }
-$db->close();
-
 llxFooter();
+
+$db->close();

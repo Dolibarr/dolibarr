@@ -133,7 +133,6 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), 0, 'payment');
 if ($action == 'delete')
 {
 	print $form->formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	
 }
 
 /*
@@ -142,8 +141,7 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	
+	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);	
 }
 
 
@@ -283,18 +281,15 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 }
 */
 
-if ($_GET['action'] == '')
+if (empty($action) && ! empty($user->rights->loan->delete))
 {
-	if ($user->rights->loan->delete)
+	if (! $disable_delete)
 	{
-		if (! $disable_delete)
-		{
-			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
-		}
+		print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 	}
 }
 

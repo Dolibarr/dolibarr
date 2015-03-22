@@ -69,7 +69,7 @@ class Loan extends CommonObject
      *  Load object in memory from database
      *
 	 *  @param	int		$id         id object
-     *  @return	void
+     *  @return int                 <0 error , >=0 no error
      */
     function fetch($id)
     {
@@ -146,8 +146,8 @@ class Loan extends CommonObject
 		if (($conf->accounting->enabled) && empty($this->account_capital) && empty($this->account_insurance) && empty($this->account_interest))
 		{
             $this->error="ErrorAccountingParameter";
-            return -2;			
-		}	
+            return -2;
+		}
 
         $this->db->begin();
 
@@ -304,8 +304,12 @@ class Loan extends CommonObject
         $sql.= " paid = 1";
         $sql.= " WHERE rowid = ".$this->id;
         $return = $this->db->query($sql);
-        if ($return) return 1;
-        else return -1;
+		if ($return) {
+			return 1;
+		} else {
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
     }
 
     /**
@@ -423,7 +427,8 @@ class Loan extends CommonObject
         }
         else
         {
-            return -1;
+            $this->error=$this->db->lasterror();
+			return -1;
         }
     }
 
@@ -464,12 +469,19 @@ class Loan extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				if (empty($obj->fk_user_modif)) $obj->tms = "";
 				$this->date_modification = $this->db->jdate($obj->tms);
+
+				return 1;
+			}
+			else
+			{
+				return 0;
 			}
 			$this->db->free($result);
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			return -1;
 		}
 	}
 }
