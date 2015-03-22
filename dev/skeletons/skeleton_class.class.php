@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +42,8 @@ class Skeleton_Class extends CommonObject
 	var $element='skeleton';			//!< Id that identify managed objects
 	var $table_element='skeleton';		//!< Name of table without prefix where object is stored
 
+	var $lines=array();
+	
     var $id;
     var $prop1;
     var $prop2;
@@ -173,6 +176,69 @@ class Skeleton_Class extends CommonObject
       	    $this->error="Error ".$this->db->lasterror();
             return -1;
         }
+    }
+
+    /**
+     *  Load object in memory from the database
+     *
+     * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @return int <0 if KO, >0 if OK
+     */
+    function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = array())
+    {
+    	global $langs;
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+    	$sql.= " t.field1,";
+    	$sql.= " t.field2";
+    	//...
+    	$sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
+    	
+    	// Manage filter
+    	$sqlwhere=array();
+    	if (count($filter)>0) {
+    		foreach ( $filter as $key => $value ) {
+    			//$sqlwhere []= ' AND '. $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+    		}
+    	}
+    	if (count($sqlwhere)>0) {
+    		$sql.= ' WHERE '.implode(' AND ', $sqlwhere);
+    	}
+    	$sql .= " ORDER BY " . $sortfield . " " . $sortorder . " " . $this->db->plimit($limit + 1, $offset);
+
+    	$this->lines = array ();
+    	
+    	dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		
+    		while ($obj = $this->db->fetch_object($resql))
+    		{
+    			$line=new Skeleton_ClassLine();
+    
+    			$line->id    = $obj->rowid;
+    			$line->prop1 = $obj->field1;
+    			$line->prop2 = $obj->field2;
+    			
+    			$this->line[]=$line;
+    			//...
+    		}
+    		$this->db->free($resql);
+    
+    		return $num;
+    	}
+    	else
+    	{
+    		$this->error="Error ".$this->db->lasterror();
+    		dol_syslog(get_class($this)."::fetchAll ".$this->error, LOG_ERR);
+    		return -1;
+    	}
     }
 
 
@@ -367,4 +433,10 @@ class Skeleton_Class extends CommonObject
 		$this->prop2='prop2';
 	}
 
+}
+
+class Skeleton_ClassLine {
+	var $id;
+	var $prop1;
+	var $prop2;
 }
