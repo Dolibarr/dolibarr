@@ -567,10 +567,12 @@ class ExtraFields
 	{
 		global $conf;
 
+		if ( empty($elementtype) ) return array();
+		
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		$array_name_label=array();
-
+		
 		// For avoid conflicts with external modules
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
@@ -1054,6 +1056,7 @@ class ExtraFields
 		elseif ($type == 'link')
 		{
 			$out='';
+			
 			$param_list=array_keys($param['options']);
 			// 0 : ObjectName
 			// 1 : classPath
@@ -1292,14 +1295,15 @@ class ExtraFields
 		elseif ($type == 'link')
 		{
 			$out='';
-			$param_list=array_keys($params['options']);
-			// 0 : ObjectName
-			// 1 : classPath
-			$InfoFieldList = explode(":", $param_list[0]);
-			dol_include_once($InfoFieldList[1]);
-			$object = new $InfoFieldList[0]($this->db);
+			// only if something to display (perf)
 			if ($value)
 			{
+				$param_list=array_keys($params['options']);
+				// 0 : ObjectName
+				// 1 : classPath
+				$InfoFieldList = explode(":", $param_list[0]);
+				dol_include_once($InfoFieldList[1]);
+				$object = new $InfoFieldList[0]($this->db);
 				$object->fetch($value);
 				$value=$object->getNomUrl(3);
 			}
