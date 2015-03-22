@@ -443,10 +443,12 @@ textarea.centpercent {
 .movable {
 	cursor: move;
 }
-
 .borderrightlight
 {
 	border-right: 1px solid #DDD;
+}
+#formuserfile_link {
+	margin-left: 1px;
 }
 
 /* ============================================================================== */
@@ -1906,7 +1908,12 @@ table.liste td {
 	color: #202020;
 }
 
-
+div.liste_titre .tagtd {
+	vertical-align: middle;
+}
+div.liste_titre {
+	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+}
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 26px !important;
@@ -2921,7 +2928,10 @@ div.dolEventError h1, div.dolEventError h2 {
 {
 	text-decoration: underline !important;
 }
-
+.paginate_button
+{
+	font-weight: normal !important;
+}
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */

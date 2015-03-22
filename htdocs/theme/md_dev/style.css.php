@@ -455,6 +455,10 @@ textarea.centpercent {
 {
 	border-right: 1px solid #DDD;
 }
+#formuserfile_link {
+	margin-left: 1px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1990,6 +1994,12 @@ table.liste td {
 }
 
 
+div.liste_titre .tagtd {
+	vertical-align: middle;
+}
+div.liste_titre {
+	min-height: 26px !important;
+}
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 26px !important;
@@ -3018,6 +3028,10 @@ div.dolEventError h1, div.dolEventError h2 {
 .paginate_enabled_previous:hover, .paginate_enabled_next:hover
 {
 	text-decoration: underline !important;
+}
+.paginate_button
+{
+	font-weight: normal !important;
 }
 
 /* For jquery plugin combobox */
