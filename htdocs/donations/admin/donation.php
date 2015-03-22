@@ -55,7 +55,6 @@ if ($action == 'specimen')
 
     // Search template files
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
-    $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
     $file = $modele.".modules.php";
     if (file_exists($dir.$file))
     {
@@ -176,7 +175,7 @@ else if ($action == 'setart885') {
  * View
  */
 
-$dir = DOL_DOCUMENT_ROOT.'/donations/core/modules/dons/';
+$dir = "../../core/modules/dons/";
 $form=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
