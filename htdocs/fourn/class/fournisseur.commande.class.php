@@ -260,7 +260,6 @@ class CommandeFournisseur extends CommonOrder
                     $line                 = new CommandeFournisseurLigne($this->db);
 
                     $line->id                  = $objp->rowid;
-                    $line->rowid               = $objp->rowid;
                     $line->desc                = $objp->description;
                     $line->description         = $objp->description;
                     $line->qty                 = $objp->qty;

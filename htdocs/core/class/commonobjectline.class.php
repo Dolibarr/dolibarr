@@ -31,13 +31,13 @@ abstract class CommonObjectLine extends CommonObject
 	/**
 	 * Id of the line
 	 * @var int
-	 * @deprecated Use $rowid
 	 */
 	public $id;
 
 	/**
 	 * Id of the line
 	 * @var int
+	 * @deprecated Try to use id property as possible
 	 */
 	public $rowid;
 
