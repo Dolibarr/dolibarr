@@ -319,6 +319,7 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 	display: inline-block;
 	padding: 4px 14px;
 	margin-bottom: 0;
+	margin-top: 0;
 	text-align: center;
 	cursor: pointer;
 	color: #333333;
@@ -1741,24 +1742,25 @@ table.noborder, table.formdoc, div.noborder {
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
-/*
+
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
 */
 	border-left-width: 1px;
-	border-left-color: #DDDDDD;
+	border-left-color: #CCC;
 	border-left-style: solid;
 
 	margin: 0px 0px 2px 0px;
 
-	-moz-box-shadow: 3px 3px 4px #ddd;
-	-webkit-box-shadow: 3px 3px 4px #ddd;
-	box-shadow: 3px 3px 4px #ddd;
+	-moz-box-shadow: 2px 2px 4px #CCC;
+	-webkit-box-shadow: 2px 2px 4px #CCC;
+	box-shadow: 2px 2px 4px #CCC;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -1802,25 +1804,26 @@ table.liste {
 
 	border-collapse: collapse;
 	border-top-color: #FEFEFE;
-/*
+
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
-    border-left-width: 1px;
-    border-left-color: #CCCCCC;
-    border-left-style: solid;
-*/
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
+*/
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
 
 	margin-bottom: 2px;
 	margin-top: 0px;
 
-    -moz-box-shadow: 0px 3px 4px #DDD;
-    -webkit-box-shadow: 0px 3px 4px #DDD;
-    box-shadow: 0px 3px 4px #DDD;
+    -moz-box-shadow: 0px 3px 4px #CCC;
+    -webkit-box-shadow: 0px 3px 4px #CC;
+    box-shadow: 0px 3px 4px #CCC;
 }
 table.liste td {
 	padding-right: 2px;
@@ -1982,6 +1985,7 @@ input.liste_titre {
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
+    padding: 4px;
 }
 
 
@@ -2039,7 +2043,7 @@ div.tabBar .noborder {
 }
 
 tr.box_titre {
-    height: 20px;
+    height: 26px;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
