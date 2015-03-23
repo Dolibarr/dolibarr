@@ -107,6 +107,9 @@ class Propal extends CommonObject
     var $products=array();
     var $extraparams=array();
 
+	/**
+	 * @var PropaleLigne[]
+	 */
     var $lines = array();
     var $line;
 
@@ -2801,9 +2804,6 @@ class Propal extends CommonObject
  */
 class PropaleLigne  extends CommonObject
 {
-    var $db;
-    var $error;
-
     public $element='propaldet';
     public $table_element='propaldet';
 
