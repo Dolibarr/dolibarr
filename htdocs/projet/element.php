@@ -94,6 +94,8 @@ $result = restrictedArea($user, 'projet', $projectid);
  *	View
  */
 
+$title=$langs->trans("ProjectReferers").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("ProjectReferers");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Referers"),$help_url);
 
