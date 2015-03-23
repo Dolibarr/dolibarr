@@ -128,7 +128,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php } ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ht)?price($line->pu_ht):price($line->subprice)); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pu_ht); ?></td>
 
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
@@ -179,7 +179,7 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
-	<?php if ($this->statut == 0  && ($user->rights->$element->creer || $permtoedit)) { ?>
+	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>
