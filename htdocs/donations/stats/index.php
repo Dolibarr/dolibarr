@@ -213,12 +213,12 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/donations/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$type='shipment_stats';
+$type='donation_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
