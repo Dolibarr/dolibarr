@@ -2567,7 +2567,7 @@ elseif (! empty($object->id))
 			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
 					{
 						$tmpbuttonlabel=$langs->trans('Validate');
-						if ($user->rights->fournisseur->commande->approuver) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
+						if ($user->rights->fournisseur->commande->approuver && empty($conf->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
 
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">';
 						print $tmpbuttonlabel;
