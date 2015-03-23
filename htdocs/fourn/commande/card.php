@@ -448,14 +448,12 @@ if (empty($reshook))
     	{
     		$price_base_type = 'HT';
     		$ht = price2num(GETPOST('price_ht'));
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end);
     	}
     	else
     	{
     		$ttc = price2num(GETPOST('price_ttc'));
     		$ht = $ttc / (1 + ($tva_tx / 100));
     		$price_base_type = 'HT';
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
     	}
 
    		if ($lineid)
