@@ -262,6 +262,7 @@ if ($result > 0)
     foreach($conf->global as $key => $val)
     {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+    	$var = ! $var;
 		print '<tr '.$bc[$var].'><td>';
 		$listtmp=explode(',',$val);
 		$first=1;

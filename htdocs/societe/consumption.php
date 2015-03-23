@@ -313,7 +313,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left">';
 print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 print '</td>';
-print '<td class="liste_titre">'; // date
+print '<td class="liste_titre nowrap">'; // date
 print $formother->select_month($month?$month:-1,'month',1);
 $formother->select_year($year?$year:-1,'year',1, 20, 1);
 print '</td>';

@@ -443,10 +443,12 @@ textarea.centpercent {
 .movable {
 	cursor: move;
 }
-
 .borderrightlight
 {
 	border-right: 1px solid #DDD;
+}
+#formuserfile_link {
+	margin-left: 1px;
 }
 
 /* ============================================================================== */
@@ -680,7 +682,7 @@ div.tmenuleft
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
 	height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
 	<?php } ?>
 }
 div.tmenucenter
@@ -840,9 +842,6 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
-	/* -moz-box-shadow:    inset 0 0 10px #000000;
-   	-webkit-box-shadow: inset 0 0 10px #000000;
-   	box-shadow:         inset 0 0 10px #000000; */
 }
 .login_vertical_align {
 	padding: 10px;
@@ -1742,24 +1741,24 @@ table.noborder, table.formdoc, div.noborder {
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
-
+/*
 	border-right-width: 1px;
 	border-right-color: #BBBBBB;
 	border-right-style: solid;
 
-	border-left-width: 1px;
-	border-left-color: #B0B0B0;
-	border-left-style: solid;
-
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
+*/
+	border-left-width: 1px;
+	border-left-color: #DDDDDD;
+	border-left-style: solid;
 
 	margin: 0px 0px 2px 0px;
 
-	-moz-box-shadow: 2px 2px 4px #DDD;
-	-webkit-box-shadow: 2px 2px 4px #DDD;
-	box-shadow: 2px 2px 4px #DDD;
+	-moz-box-shadow: 3px 3px 4px #ddd;
+	-webkit-box-shadow: 3px 3px 4px #ddd;
+	box-shadow: 3px 3px 4px #ddd;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -1776,7 +1775,7 @@ table.noborder tr, div.noborder form {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 20px;
+	height: 26px;
 }
 
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
@@ -1800,9 +1799,10 @@ table.nobordernopadding td {
 
 table.liste {
 	width: 100%;
+
 	border-collapse: collapse;
 	border-top-color: #FEFEFE;
-
+/*
 	border-right-width: 1px;
 	border-right-color: #BBBBBB;
 	border-right-style: solid;
@@ -1810,7 +1810,7 @@ table.liste {
     border-left-width: 1px;
     border-left-color: #CCCCCC;
     border-left-style: solid;
-
+*/
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
@@ -1818,9 +1818,9 @@ table.liste {
 	margin-bottom: 2px;
 	margin-top: 0px;
 
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -moz-box-shadow: 0px 3px 4px #DDD;
+    -webkit-box-shadow: 0px 3px 4px #DDD;
+    box-shadow: 0px 3px 4px #DDD;
 }
 table.liste td {
 	padding-right: 2px;
@@ -1894,6 +1894,7 @@ table.liste td {
 }
 
 .pair, .nohover .pair:hover, tr.pair td.nohover {
+/*
 <?php if ($usecss3) { ?>
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -1903,13 +1904,24 @@ table.liste td {
 <?php } else { ?>
 	background: #ffffff;
 <?php } ?>
+*/
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
+
+	background-color: #f9f9f9;
 }
-
-
+tr.pair td, tr.impair td {
+	padding: 4px;
+    border-bottom: 1px solid #ddd;
+}
+div.liste_titre .tagtd {
+	vertical-align: middle;
+}
+div.liste_titre {
+	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+}
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 26px !important;
@@ -2063,8 +2075,9 @@ tr.box_impair {
     font-family: <?php print $fontlist ?>;
 }
 
+
 tr.box_pair {
-<?php if ($usecss3) { ?>
+/*<?php if ($usecss3) { ?>
     background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
     background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
     background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -2073,7 +2086,15 @@ tr.box_pair {
 <?php } else { ?>
 	background: #ffffff;
 <?php } ?>
+*/
     font-family: <?php print $fontlist ?>;
+
+	background-color: #f9f9f9;
+}
+
+tr.box_pair td, tr.box_impair td {
+	padding: 4px;
+    border-bottom: 1px solid #ddd;
 }
 
 .formboxfilter {
@@ -2924,7 +2945,10 @@ div.dolEventError h1, div.dolEventError h2 {
 {
 	text-decoration: underline !important;
 }
-
+.paginate_button
+{
+	font-weight: normal !important;
+}
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */

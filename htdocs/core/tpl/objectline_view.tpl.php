@@ -203,12 +203,12 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-		<?php echo img_up(); ?>
+		<?php echo img_up('default',0,'imgupforline'); ?>
 		</a>
 		<?php } ?>
 		<?php if ($i < $num-1) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-		<?php echo img_down(); ?>
+		<?php echo img_down('default',0,'imgdownforline'); ?>
 		</a>
 		<?php } ?>
 	</td>

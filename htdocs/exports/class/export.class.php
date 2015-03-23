@@ -540,7 +540,10 @@ class Export
 		if ($resql)
 		{
 			//$this->array_export_label[$indice]
-			$filename="export_".$datatoexport;
+			if ($conf->global->EXPORT_PREFIX_SPEC)
+				$filename=$conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
+			else
+				$filename="export_".$datatoexport;
 			$filename.='.'.$objmodel->getDriverExtension();
 			$dirname=$conf->export->dir_temp.'/'.$user->id;
 

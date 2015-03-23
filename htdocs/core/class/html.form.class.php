@@ -1643,7 +1643,7 @@ class Form
         if ($result)
         {
             require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
             $num = $this->db->num_rows($result);
 
             $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -2024,7 +2024,7 @@ class Form
         $result=$this->db->query($sql);
         if ($result)
         {
-            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
             $num = $this->db->num_rows($result);
 
@@ -2193,7 +2193,7 @@ class Form
             }
             else
             {
-                require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 $form.= '<option value="0">&nbsp;</option>';
 
                 $i = 0;

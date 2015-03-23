@@ -29,7 +29,7 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
 $arrayofjs=array('/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)));					// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
-$titleofloginpage=$langs->trans('Login').' '.$title;	// title is defined by dol_loginfunction in security2.lib.php
+$titleofloginpage=$langs->trans('Login').' @ '.$title;	// title is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page.
 
 print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 ?>
@@ -48,7 +48,6 @@ $(document).ready(function () {
 
 <div align="center">
 <div class="login_vertical_align">
-
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
