@@ -101,7 +101,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 
 				if ($passok && ! empty($obj->entity) && (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
 				{
-					$ret=$mc->checkRight($obj->rowid, $entitytotest);
+					$ret=$mc->checkRight($obj->rowid, $entitytotest);	// The module multicompany check here user belong to at least one group into company. This is a bugged behaviour, so you must hack module to make thing working.
 					if ($ret < 0) $passok=false;
 				}
 
