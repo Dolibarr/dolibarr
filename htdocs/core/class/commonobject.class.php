@@ -2821,7 +2821,7 @@ abstract class CommonObject
 		if (! empty($line->date_end)) $type=1; // deprecated
 
 		// Ligne en mode visu
-		if ($action != 'editline' || $selected != $line->rowid)
+		if ($action != 'editline' || $selected != $line->id)
 		{
 			// Product
 			if ($line->fk_product > 0)
@@ -2879,7 +2879,7 @@ abstract class CommonObject
 		}
 
 		// Ligne en mode update
-		if ($this->statut == 0 && $action == 'editline' && $selected == $line->rowid)
+		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
 			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
