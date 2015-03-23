@@ -1393,7 +1393,7 @@ elseif (! empty($object->id))
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new	Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+				$text.=$notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid);
 			}
 
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
@@ -1428,8 +1428,16 @@ elseif (! empty($object->id))
 					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
 			);
 		}
+		$text=$langs->trans("ConfirmApproveThisOrder",$object->ref);
+		if (! empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+			$notify=new	Notify($db);
+			$text.='<br>';
+			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
+		}
 
-		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_approve", $formquestion, 1, 1, 240);
 
 	}
 
