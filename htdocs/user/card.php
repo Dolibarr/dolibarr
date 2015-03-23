@@ -213,7 +213,7 @@ if ($action == 'add' && $canadduser)
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-        // If multicompany is off, admin users must all be on entity 0.
+        // Set entity property
         $entity=GETPOST('entity','int');
         if (! empty($conf->multicompany->enabled))
         {

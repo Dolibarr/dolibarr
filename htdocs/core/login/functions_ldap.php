@@ -173,7 +173,11 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 							global $mc;
 
 							$ret=$mc->checkRight($user->id, $entitytotest);
-							if ($ret < 0) $login=false; // provoque l'echec de l'identification
+							if ($ret < 0)
+							{
+								dol_syslog("Failed to checkRight by module multicompany for user id = ".$user->id." into entity ".$entitytotest);
+								$login=false; // force error of authentication
+							}
 						}
 
 
