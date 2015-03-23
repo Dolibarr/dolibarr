@@ -93,13 +93,16 @@ class CommandeFournisseur extends CommonOrder
 	
     var $extraparams=array();
 
+	/**
+	 * @var CommandeFournisseurLigne[]
+	 */
+	public $lines = array();
 	//Ajout pour askpricesupplier
 	var $origin;
     var $origin_id;
     var $linked_objects=array();
-    var $lines = array();
 
-    /**
+	/**
      * 	Constructor
      *
      *  @param      DoliDB		$db      Database handler
@@ -110,7 +113,6 @@ class CommandeFournisseur extends CommonOrder
     	
         $this->db = $db;
         $this->products = array();
-        $this->lines = array();
 
         // List of language codes for status
         $this->statuts[0] = 'StatusOrderDraft';
@@ -258,14 +260,14 @@ class CommandeFournisseur extends CommonOrder
                     $line                 = new CommandeFournisseurLigne($this->db);
 
                     $line->id                  = $objp->rowid;
-                    $line->desc                = $objp->description;  // Description ligne
-                    $line->description         = $objp->description;  // Description ligne
+                    $line->desc                = $objp->description;
+                    $line->description         = $objp->description;
                     $line->qty                 = $objp->qty;
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->subprice            = $objp->subprice;	  // deprecated
-                    $line->pu_ht	           = $objp->subprice;	  // Unit price HT
+                    $line->subprice            = $objp->subprice;
+                    $line->pu_ht	           = $objp->subprice;
                     $line->remise_percent      = $objp->remise_percent;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
@@ -274,16 +276,16 @@ class CommandeFournisseur extends CommonOrder
                     $line->total_ttc           = $objp->total_ttc;
                     $line->product_type        = $objp->product_type;
 
-                    $line->fk_product          = $objp->fk_product;    // Id du produit
+                    $line->fk_product          = $objp->fk_product;
 
-                    $line->libelle             = $objp->product_label; // TODO deprecated
-                    $line->product_label       = $objp->product_label; // Label produit
-                    $line->product_desc        = $objp->product_desc;  // Description produit
+                    $line->libelle             = $objp->product_label;
+                    $line->product_label       = $objp->product_label;
+                    $line->product_desc        = $objp->product_desc;
 
-                    $line->ref                 = $objp->product_ref;     // TODO deprecated
-                    $line->product_ref         = $objp->product_ref;     // Internal reference
-                    $line->ref_fourn           = $objp->ref_supplier;    // TODO deprecated
-                    $line->ref_supplier        = $objp->ref_supplier;    // Reference supplier
+                    $line->ref                 = $objp->product_ref;
+                    $line->product_ref         = $objp->product_ref;
+                    $line->ref_fourn           = $objp->ref_supplier;
+                    $line->ref_supplier        = $objp->ref_supplier;
 
                     $line->date_start          = $this->db->jdate($objp->date_start);
                     $line->date_end            = $this->db->jdate($objp->date_end);
@@ -1621,7 +1623,6 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-    
     /**
 	 * Return array of dispathed lines waiting to be approved for this order
 	 * 
@@ -2326,6 +2327,18 @@ class CommandeFournisseur extends CommonOrder
 		if ($nb === 0) return $langs->trans('Undefined');
 		else return $nb.' '.$langs->trans('Days');
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->fournisseur->commande;
+	}
+
 }
 
 
@@ -2335,42 +2348,32 @@ class CommandeFournisseur extends CommonOrder
  */
 class CommandeFournisseurLigne extends CommonOrderLine
 {
-    var $db;
-    var $error;
-
 	public $element='commande_fournisseurdet';
 	public $table_element='commande_fournisseurdet';
+	
+	/**
+	 * Unit price without taxes
+	 * @var float
+	 */
+	public $pu_ht;
 
-    var $oldline;
-
-    // From llx_commandedet
-    var $qty;
-    var $tva_tx;
-    var $localtax1_tx;
-    var $localtax2_tx;
-    var $localtax1_type;
-    var $localtax2_type;
-    var $subprice;
-    var $remise_percent;
-    var $desc;          	// Description ligne
-    var $fk_product;		// Id of predefined product
-    var $product_type = 0;	// Type 0 = product, 1 = Service
-    var $total_ht;
-    var $total_tva;
-    var $total_localtax1;
-    var $total_localtax2;
-    var $total_ttc;
-    var $info_bits;
-    var $special_code;
-    var $date_start;
+	var $date_start;
     var $date_end;
 
-    // From llx_product
-    var $libelle;       // Label produit
-    var $product_desc;  // Description produit
-
     // From llx_product_fournisseur_price
-    var $ref_fourn;     // Ref supplier
+
+	/**
+	 * Supplier ref
+	 * @var string
+	 * @deprecated Use ref_supplier
+	 */
+	public $ref_fourn;
+
+	/**
+	 * Supplier reference
+	 * @var string
+	 */
+	public $ref_supplier;
 
 
     /**
@@ -2430,7 +2433,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
-			
+
             $this->db->free($result);
             return 1;
         }
