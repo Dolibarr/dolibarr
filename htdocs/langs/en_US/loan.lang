@@ -1,0 +1,28 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Loan
+Loans=Loans
+NewLoan=New Loan
+ShowLoan=Show Loan
+PaymentLoan=Loan payment
+Capital=Capital
+Insurance=Insurance
+Interest=Interest
+Nbterms=Number of terms
+LoanAccountancyCapitalCode=Accountancy code capital
+LoanAccountancyInsuranceCode=Accountancy code insurance
+LoanAccountancyInterestCode=Accountancy code interest
+LoanPayment=Loan payment
+ConfirmDeleteLoan=Confirm deleting this loan
+ConfirmPayLoan=Confirm classify paid this loan 
+ErrorLoanCapital=<font color=red>Loan amount</font> has to be numeric and greater than zero.
+ErrorLoanLength=<font color=red>Loan length</font> has to be numeric and greater than zero.
+ErrorLoanInterest=<font color=red>Annual interest</font> has to be numeric and greater than zero.
+# Calc
+Totalsforyear=Totals for year
+MonthlyPayment=Monthly Payment
+LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default
