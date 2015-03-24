@@ -345,12 +345,12 @@ if ($id > 0 || ! empty($ref))
 					print '<td align="right">';
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 					{
-						print $langs->trans("BuyingPriceMinShort").': ';
+						print $langs->trans("CostPriceMinShort").': ';
 				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
 				    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
 					}
 					print '</td>';
-					$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
+					$totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice + $product_fourn->fourn_charges), 'MT');
 					$total+=$totalline;
 					print '<td align="right">'.($notdefined?'':price($totalline,'','',0,0,-1,$conf->currency)).'</td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans("Stock").': '.$value['stock'].'</td>';	// Real stock
@@ -370,7 +370,7 @@ if ($id > 0 || ! empty($ref))
 				print '</tr>';
 			}
 			print '<tr>';
-			print '<td colspan="2">'.$langs->trans("TotalBuyingPriceMin").': ';
+			print '<td colspan="2">'.$langs->trans("TotalCostPriceMin").': ';
 			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			print '</td>';
 			print '<td align="right">'.($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency)).'</td>';
