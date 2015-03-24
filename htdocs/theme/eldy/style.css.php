@@ -1006,6 +1006,7 @@ div.vmenu, td.vmenu {
 }
 
 .menu_contenu { padding-top: 1px; }
+#menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
@@ -1393,10 +1394,10 @@ div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser 
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: 9px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     padding-left: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-bottom: 12px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'12'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
