@@ -2203,6 +2203,13 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
+.photointooltip {
+	-webkit-box-shadow: -1px -1px 5px #777;
+	-moz-box-shadow: -1px -1px 5px #777;
+	box-shadow: -1px -1px 5px #777;
+	margin-top: 6px;
+	float: left;
+}
 
 .logo_setup
 {
@@ -2323,6 +2330,7 @@ border-radius: 6px;
 #tiptip_content {
     background-color: rgb(252,248,246);
 	background-color: rgba(252,248,246,0.95);
+	line-height: 1.4em;
 }
 
 /* ============================================================================== */
