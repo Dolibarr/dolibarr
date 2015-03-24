@@ -125,9 +125,11 @@ if ($result)
     print '<td width="1%">&nbsp;</td>';
     print "</tr>\n";
 
-    //SearchBar
+    // SearchBar
+    $colspan=7;
+    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode)) $colspan++;
     print '<tr class="liste_titre">';
-    print '<td colspan="7">&nbsp;</td>';
+    print '<td colspan="'.$colspan.'">&nbsp;</td>';
 
 	// Status
     print '<td>';

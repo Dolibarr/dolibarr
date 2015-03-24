@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -45,6 +46,7 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("loan");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
 $ref = GETPOST('ref','alpha');
@@ -149,6 +151,7 @@ llxHeader();
 $societestatic=new Societe($db);
 $userstatic=new User($db);
 $chargestatic=new ChargeSociales($db);
+$loanstatic=new Loan($db);
 $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
@@ -608,6 +611,12 @@ if ($id > 0 || ! empty($ref))
 						$paymentsalstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentsalstatic->getNomUrl(2);
 					}
+					elseif ($links[$key]['type']=='payment_loan')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/compta/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
+					}
 					elseif ($links[$key]['type']=='banktransfert')
 					{
 						// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
@@ -721,6 +730,20 @@ if ($id > 0 || ! empty($ref))
 						}
 						$donstatic->ref=$donstatic->lib;
 						print $donstatic->getNomUrl(1,16);
+					else if ($links[$key]['type']=='loan')
+					{
+						$loanstatic->id=$links[$key]['url_id'];
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+						{
+							if ($reg[1]=='loan') $reg[1]='Loan';
+							$loanstatic->label=$langs->trans($reg[1]);
+						}
+						else
+						{
+							$loanstatic->label=$links[$key]['label'];
+						}
+						$loanstatic->ref=$loanstatic->label;
+						print $loanstatic->getLinkUrl(1,16);
 					}
 					else if ($links[$key]['type']=='member')
 					{

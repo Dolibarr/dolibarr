@@ -2,6 +2,13 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
+Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
+You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
+Upgrading to any other version or database system is abolutely required BEFORE trying to
+make a migration.
+
+
 ***** ChangeLog for 3.8 compared to 3.7.* *****
 For users:
 - New: Add Option to not change date on cloning project

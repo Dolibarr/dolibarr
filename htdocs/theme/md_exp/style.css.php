@@ -1516,13 +1516,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
-	/*border-bottom: none;
-	border-right: 1px solid #CCCCCC;
-	border-left: 1px solid #D0D0D0;
-	border-top: 1px solid #D8D8D8;
-    */
-
-    /*
     -moz-border-radius:6px 6px 0px 0px;
 	-webkit-border-radius:6px 6px 0px 0px;
 	border-radius:6px 6px 0px 0px;
@@ -1531,6 +1524,13 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 
+	/*border-bottom: none;
+	border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #D0D0D0;
+	border-top: 1px solid #D8D8D8;
+    */
+
+    /*
 <?php if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 	/*background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
@@ -1570,7 +1570,8 @@ a.tab:hover
 {
 	/*
 	background: rgba(<?php echo $colorbacktabcard1; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
-	color: #<?php echo $colortextbacktab; ?>;*/
+	color: #<?php echo $colortextbacktab; ?>;
+	*/
 	text-decoration: underline;
 }
 a.tab:link, a.tab:visited
@@ -1828,22 +1829,23 @@ table.noborder, table.formdoc, div.noborder {
 	border-spacing: 0px;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
-	border-left-width: 1px;
-	border-left-color: #B0B0B0;
-	border-left-style: solid;
-
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
+*/
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
 
 	margin: 0px 0px 2px 0px;
 
-	-moz-box-shadow: 2px 2px 4px #DDD;
-	-webkit-box-shadow: 2px 2px 4px #DDD;
-	box-shadow: 2px 2px 4px #DDD;
+	-moz-box-shadow: 2px 2px 4px #CCC;
+	-webkit-box-shadow: 2px 2px 4px #CCC;
+	box-shadow: 2px 2px 4px #CCC;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -1860,7 +1862,7 @@ table.noborder tr, div.noborder form {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 20px;
+	height: 26px;
 }
 
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
@@ -1888,23 +1890,24 @@ table.liste {
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
-    border-left-width: 1px;
-    border-left-color: #CCCCCC;
-    border-left-style: solid;
-
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
-
+*/
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
+	
 	margin-bottom: 2px;
 	margin-top: 0px;
 
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -moz-box-shadow: 0px 3px 4px #CCC;
+    -webkit-box-shadow: 0px 3px 4px #CC;
+    box-shadow: 0px 3px 4px #CCC;
 }
 table.liste td {
 	padding-right: 2px;
@@ -1978,6 +1981,7 @@ table.liste td {
 }
 
 .pair, .nohover .pair:hover, tr.pair td.nohover {
+/*
 <?php if ($usecss3) { ?>
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
@@ -1987,13 +1991,17 @@ table.liste td {
 <?php } else { ?>
 	background: #ffffff;
 <?php } ?>
+*/
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
+	background-color: #f9f9f9;
 }
-
-
+tr.pair td, tr.impair td {
+	padding: 4px;
+    border-bottom: 1px solid #ddd;
+}
 div.liste_titre .tagtd {
 	vertical-align: middle;
 }
@@ -2062,6 +2070,7 @@ input.liste_titre {
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
+    padding: 4px;
 }
 
 
@@ -2180,6 +2189,13 @@ tr.box_pair {
 	background: #ffffff;
 <?php } ?>
     font-family: <?php print $fontlist ?>;
+
+	background-color: #f9f9f9;
+}
+
+tr.box_pair td, tr.box_impair td {
+	padding: 4px;
+    border-bottom: 1px solid #ddd;
 }
 
 .formboxfilter {

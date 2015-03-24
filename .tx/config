@@ -182,6 +182,12 @@ source_file = htdocs/langs/en_US/link.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.loan]
+file_filter = htdocs/langs/<lang>/loan.lang
+source_file = htdocs/langs/en_US/loan.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.mailmanspip]
 file_filter = htdocs/langs/<lang>/mailmanspip.lang
 source_file = htdocs/langs/en_US/mailmanspip.lang

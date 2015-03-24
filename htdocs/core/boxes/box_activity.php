@@ -89,8 +89,11 @@ class box_activity extends ModeleBoxes
         // compute the year limit to show
         $tmpdate= dol_time_plus_duree(dol_now(), -1*$nbofyears, "y");
 
+        $cumuldata = array();
+
         // list the summary of the bills
-        if (! empty($conf->facture->enabled) && $user->rights->facture->lire) {
+        if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
+        {
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $facturestatic=new Facture($db);
 
@@ -130,9 +133,11 @@ class box_activity extends ModeleBoxes
             } else {
                 $data = dol_readcachefile($cachedir, $filename);
             }
+
+            $cumuldata=array_merge($cumuldata, $data);
             if (! empty($data)) {
                 $j=0;
-                while ($line < count($data)) {
+                while ($line < count($cumuldata)) {
                     $billurl="viewstatut=2&amp;paye=1&amp;year=".$data[$j]->annee;
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
@@ -193,7 +198,7 @@ class box_activity extends ModeleBoxes
 
                 $result = $db->query($sql);
                 if ($result) {
-                    $num = $db->num_rows($result) + $line;
+                    $num = $db->num_rows($result);
                     $j=0;
                     while ($j < $num) {
                         $data[$j]=$db->fetch_object($result);
@@ -209,10 +214,12 @@ class box_activity extends ModeleBoxes
             } else {
                 $data = dol_readcachefile($cachedir, $filename);
             }
+
+            $cumuldata=array_merge($cumuldata, $data);
             if (! empty($data)) {
                 $j=0;
 
-                while ($line < count($data)) {
+                while ($line < count($cumuldata)) {
                     $billurl="viewstatut=".$data[$j]->fk_statut."&amp;paye=0";
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
@@ -286,7 +293,7 @@ class box_activity extends ModeleBoxes
                 $result = $db->query($sql);
 
                 if ($result) {
-                    $num = $db->num_rows($result) + $line;
+                    $num = $db->num_rows($result);
                     $j=0;
                     while ($j < $num) {
                         $data[$j]=$db->fetch_object($result);
@@ -302,9 +309,11 @@ class box_activity extends ModeleBoxes
             } else {
                 $data = dol_readcachefile($cachedir, $filename);
             }
+
+            $cumuldata=array_merge($cumuldata, $data);
             if (! empty($data)) {
                 $j=0;
-                while ($line < count($data)) {
+                while ($line < count($cumuldata)) {
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/commande/list.php?mainmenu=commercial&amp;leftmenu=orders&amp;viewstatut=".$data[$j]->fk_statut,
@@ -369,7 +378,8 @@ class box_activity extends ModeleBoxes
                 $result = $db->query($sql);
                 if ($result)
                 {
-                    $num = $db->num_rows($result) + $line;
+                    $num = $db->num_rows($result);
+
                     $j=0;
                     while ($j < $num) {
                         $data[$j]=$db->fetch_object($result);
@@ -388,24 +398,25 @@ class box_activity extends ModeleBoxes
                 $data = dol_readcachefile($cachedir, $filename);
             }
 
+            $cumuldata=array_merge($cumuldata, $data);
             if (! empty($data))
             {
                 $j=0;
-                while ($line < count($data))
+                while ($line < count($cumuldata))
                 {
-                    $this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="left" width="16"',
                         'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;viewstatut=".$data[$j]->fk_statut,
                         'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
                         'logo' => 'object_propal'
                     );
 
-                    $this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][1] = array(
                         'td' => 'align="left"',
                         'text' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
                     );
 
-                    $this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][2] = array(
                         'td' => 'align="right"',
                         'text' => $data[$j]->nb,
                         'tooltip' => $langs->trans("Proposals")."&nbsp;".$propalstatic->LibStatut($data[$j]->fk_statut,0),
@@ -413,12 +424,12 @@ class box_activity extends ModeleBoxes
                     );
                     $totalnb += $data[$j]->nb;
 
-                    $this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][3] = array(
                         'td' => 'align="right"',
                         'text' => price($data[$j]->Mnttot,1,$langs,0,0,-1,$conf->currency),
                     );
                     $totalMnt += $data[$j]->Mnttot;
-                    $this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][4] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $propalstatic->LibStatut($data[$j]->fk_statut,3),
                     );
@@ -429,38 +440,24 @@ class box_activity extends ModeleBoxes
             }
         }
 
-        // Add the sum in the bottom of the boxes
-        $this->info_box_contents[$line][1] = array(
-            'td' => 'align="left" ',
-            'text' => $langs->trans("Total")."&nbsp;".$textHead,
-        );
-        $this->info_box_contents[$line][2] = array(
-            'td' => 'align="right" ',
-            'text' => $totalnb,
-        );
-        $this->info_box_contents[$line][3] = array(
-            'td' => 'align="right" ',
-            'text' => price($totalMnt,1,$langs,0,0,-1,$conf->currency)
-        );
-        $this->info_box_contents[$line][4] = array(
-            'td' => 'align="right" ',
-            'text' => "",
-        );
-        $this->info_box_contents[$line][5] = array(
-            'td' => 'align="right"',
-            'text' => "",
-        );
+		// Add the sum in the bottom of the boxes
+		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total"');
+		$this->info_box_contents[$line][1] = array('td' => 'align="left" class="liste_total" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$line][2] = array('td' => 'align="right" class="liste_total" ', 'text' => $totalnb);
+		$this->info_box_contents[$line][3] = array('td' => 'align="right" class="liste_total" ', 'text' => '');
+		$this->info_box_contents[$line][4] = array('td' => 'align="right" class="liste_total" ', 'text' => "");
     }
 
-    /**
-     *  Method to show box
-     *
-     *  @param  array   $head       Array with properties of box title
-     *  @param  array   $contents   Array with properties of box lines
-     *  @return void
-     */
-    function showBox($head = null, $contents = null)
-    {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
-    }
+
+	/**
+	 *	Method to show box
+	 *
+	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$contents   Array with properties of box lines
+	 *	@return	void
+	 */
+	function showBox($head = null, $contents = null)
+	{
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 }
