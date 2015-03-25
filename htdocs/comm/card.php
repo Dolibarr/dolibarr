@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->expedition->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
@@ -44,6 +46,7 @@ if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichin
 $langs->load("companies");
 if (! empty($conf->contrat->enabled))  $langs->load("contracts");
 if (! empty($conf->commande->enabled)) $langs->load("orders");
+if (! empty($conf->expedition->enabled)) $langs->load("sendings");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 if (! empty($conf->projet->enabled))  $langs->load("projects");
 if (! empty($conf->ficheinter->enabled)) $langs->load("interventions");
@@ -660,6 +663,73 @@ if ($id > 0)
 			dol_print_error($db);
 		}
 	}
+
+    /*
+     *   Last sendings
+     */
+    if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
+        $sendingstatic = new Expedition($db);
+
+        $sql = 'SELECT e.rowid as id';
+        $sql.= ', e.ref';
+        $sql.= ', e.date_creation';
+        $sql.= ', e.fk_statut as statut';
+        $sql.= ', s.nom';
+        $sql.= ', s.rowid as socid';
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
+        $sql.= " WHERE e.fk_soc = s.rowid AND s.rowid = ".$object->id;
+        $sql.= " AND e.entity = ".$conf->entity;
+        $sql.= ' GROUP BY e.rowid';
+        $sql.= ', e.ref';
+        $sql.= ', e.date_creation';
+        $sql.= ', e.fk_statut';
+        $sql.= ', s.nom';
+        $sql.= ', s.rowid';
+        $sql.= " ORDER BY e.date_creation DESC";
+
+        $resql = $db->query($sql);
+        if ($resql) {
+            $var = true;
+            $num = $db->num_rows($resql);
+            $i = 0;
+            if ($num > 0) {
+                print '<table class="noborder" width="100%">';
+
+                $tableaushown=1;
+                print '<tr class="liste_titre">';
+                print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
+                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+                print '</tr></table></td>';
+                print '</tr>';
+            }
+
+            while ($i < $num && $i < $MAXLIST) {
+                $objp = $db->fetch_object($resql);
+                $var = ! $var;
+                print "<tr " . $bc[$var] . ">";
+                print '<td class="nowrap">';
+                $sendingstatic->id = $objp->id;
+                $sendingstatic->ref = $objp->ref;
+                print $sendingstatic->getNomUrl(1);
+                print '</td>';
+                if ($objp->date_creation > 0) {
+                    print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
+                } else {
+                    print '<td align="right"><b>!!!</b></td>';
+                }
+
+                print '<td align="right" class="nowrap" width="100" >' . $sendingstatic->LibStatut($objp->statut, 5) . '</td>';
+                print "</tr>\n";
+                $i++;
+            }
+            $db->free($resql);
+
+            if ($num > 0)
+                print "</table>";
+        } else {
+            dol_print_error($db);
+        }
+    }
 
 	/*
 	 * Last linked contracts
