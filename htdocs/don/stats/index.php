@@ -18,14 +18,14 @@
  */
 
 /**
- *  \file       htdocs/donations/stats/index.php
+ *  \file       htdocs/don/stats/index.php
  *  \ingroup    donations
  *  \brief      Page with donations statistics
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/class/donationstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/dontats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
@@ -213,7 +213,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/donations/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/don/stats/index.php?mode='.$mode;
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;

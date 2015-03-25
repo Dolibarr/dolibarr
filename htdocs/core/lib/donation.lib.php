@@ -34,7 +34,7 @@ function donation_admin_prepare_head()
 	$h = 0;
 	$head = array ();
 
-	$head[$h][0] = DOL_URL_ROOT . '/donations/admin/donation.php';
+	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h ++;
@@ -45,7 +45,7 @@ function donation_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation_admin');
 	
-	$head[$h][0] = DOL_URL_ROOT . '/donations/admin/donation_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
 	$h++;
@@ -68,7 +68,7 @@ function donation_prepare_head($object)
 	$h = 0;
 	$head = array ();
 
-	$head[$h][0] = DOL_URL_ROOT . '/donations/card.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/don/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h ++;
@@ -79,12 +79,12 @@ function donation_prepare_head($object)
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation');
 	
-	$head[$h][0] = DOL_URL_ROOT . '/donations/document.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/don/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/donations/info.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/don/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

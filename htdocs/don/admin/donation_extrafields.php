@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/donations/admin/donation_extrafields.php
+ *      \file       htdocs/don/admin/donation_extrafields.php
  *		\ingroup    donations
  *		\brief      Page to setup extra fields of donations
  */

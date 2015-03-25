@@ -20,7 +20,7 @@
  */
 
 /**
- *   	\file       htdocs/donations/class/don.class.php
+ *   	\file       htdocs/don/class/don.class.php
  *		\ingroup    Donation
  *		\brief      File of class to manage donations
  */
@@ -369,24 +369,22 @@ class Don extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-			// Actions on extra fields (by external module)
-			/*$hookmanager->initHooks(array('dondao'));
-            $parameters=array('id'=>$this->id);
-            $action='';
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
-            {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
-            }
-            else if ($reshook < 0) $error++;
-			*/
+			// Actions on extra fields (by external module or standard code)
+			$hookmanager->initHooks(array('donationdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
 			
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
@@ -448,23 +446,22 @@ class Don extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            // Actions on extra fields (by external module)
-			$hookmanager->initHooks(array('dondao'));
-            $parameters=array('id'=>$this->id);
-            $action='';
-            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook))
-            {
-            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            	{
-            		$result=$this->insertExtraFields();
-            		if ($result < 0)
-            		{
-            			$error++;
-            		}
-            	}
-            }
-            else if ($reshook < 0) $error++;
+			// Actions on extra fields (by external module or standard code)
+			$hookmanager->initHooks(array('donationdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
 			
 			// Call trigger
             $result=$this->call_trigger('DON_UPDATE',$user);
@@ -500,15 +497,14 @@ class Don extends CommonObject
         {
             if ( $this->db->affected_rows($resql) )
             {
-				// Removed extrafields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				// Remove extrafields
+				if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 				{
 					$result=$this->deleteExtraFields();
 					if ($result < 0)
 					{
 						$error++;
-						$errorflag=-4;
-						dol_syslog(get_class($this)."::delete error ".$errorflag." ".$this->error, LOG_ERR);
+						dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 					}
 				}
 				
@@ -779,7 +775,7 @@ class Don extends CommonObject
         $result='';
         $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/donations/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/don/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
         $picto='generic';

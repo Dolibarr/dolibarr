@@ -180,7 +180,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/contrat
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
-%_datadir/dolibarr/htdocs/donations
+%_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport

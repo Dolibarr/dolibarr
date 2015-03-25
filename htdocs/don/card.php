@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file       htdocs/donations/card.php
+ *  \file       htdocs/don/card.php
  *  \ingroup    donations
  *  \brief      Page of donation card
  */
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
@@ -111,7 +111,7 @@ if ($action == 'update')
 		$object->note_public = GETPOST("note_public");
 		
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
 		if ($object->update($user) > 0)
@@ -164,7 +164,7 @@ if ($action == 'add')
 		$object->fk_project  = GETPOST("fk_project");
 		
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
 		if ($object->create($user) > 0)
@@ -355,13 +355,13 @@ if ($action == 'create')
     }
 
     // Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields,'edit');
-	}
-		
+    $parameters=array('colspan' => 3);
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    {
+		print $object->showOptionals($extrafields,'edit',$parameters);
+    }
+	
 	print "</table>\n";
 	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 	print "</form>\n";
@@ -461,13 +461,13 @@ if (! empty($id) && $action == 'edit')
     }
 
     // Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields,'edit');
-	}
-	
+    $parameters=array('colspan' => ' colspan="2"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    {
+      	print $object->showOptionals($extrafields,'edit');
+    }
+
 	print "</table>\n";
 
 	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
@@ -502,7 +502,7 @@ if (! empty($id) && $action != 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/donations/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     $nbrows=12;
     if (! empty($conf->projet->enabled)) $nbrows++;
@@ -570,7 +570,7 @@ if (! empty($id) && $action != 'edit')
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print "<tr ".$bc[$var]."><td>";
-			print '<a href="'.DOL_URL_ROOT.'/donations/payment/card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		        $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;				
                                print "<td>".$labeltype.' '.$object->num_paiement."</td>\n";
@@ -639,12 +639,12 @@ if (! empty($id) && $action != 'edit')
     }
 
     // Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields);
-	}
+    $parameters=array('colspan' => ' colspan="2"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    {
+       	print $object->showOptionals($extrafields);
+    }
 
 	print "</table>\n";
 	print "</form>\n";
@@ -679,7 +679,7 @@ if (! empty($id) && $action != 'edit')
 		} 
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/donations/payment/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
 	}
 

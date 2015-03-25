@@ -19,14 +19,14 @@
  */
 
 /**
- *      \file       htdocs/donations/admin/dons.php
+ *      \file       htdocs/don/admin/dons.php
  *		\ingroup    donations
  *		\brief      Page to setup the donation module
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");

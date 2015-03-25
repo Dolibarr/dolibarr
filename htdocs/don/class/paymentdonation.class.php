@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file       htdocs/donations/class/paymentdonation.class.php
+ *  \file       htdocs/don/class/paymentdonation.class.php
  *  \ingroup    Donation
  *  \brief      File of class to manage payment of donations
  */
@@ -510,7 +510,7 @@ class PaymentDonation extends CommonObject
 
                 // Add link 'payment', 'payment_supplier', 'payment_donation' in bank_url between payment and bank transaction
                 $url='';
-                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/donations/payment/card.php?rowid=';
+                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/don/payment/card.php?rowid=';
                 if ($url)
                 {
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
@@ -529,7 +529,7 @@ class PaymentDonation extends CommonObject
                     {
                         $don = new Don($this->db);
                         $don->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $don->rowid, DOL_URL_ROOT.'/donations/card.php?rowid=', $don->type_libelle.(($don->lib && $don->lib!=$don->type_libelle)?' ('.$don->lib.')':''),'donation');
+                        $result=$acc->add_url_line($bank_line_id, $don->rowid, DOL_URL_ROOT.'/don/card.php?rowid=', $don->type_libelle.(($don->lib && $don->lib!=$don->type_libelle)?' ('.$don->lib.')':''),'donation');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
@@ -593,7 +593,7 @@ class PaymentDonation extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/donations/payment/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');

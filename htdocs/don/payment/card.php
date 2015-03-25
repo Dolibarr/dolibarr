@@ -16,14 +16,14 @@
  */
 
 /**
- *	    \file       htdocs/donations/payment/card.php
+ *	    \file       htdocs/don/payment/card.php
  *		\ingroup    donations
  *		\brief      Tab payment of a donation
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/donations/class/paymentdonation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -61,7 +61,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: ".DOL_URL_ROOT."/donations/index.php");
+        header("Location: ".DOL_URL_ROOT."/don/index.php");
         exit;
 	}
 	else
@@ -121,7 +121,7 @@ $form = new Form($db);
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/donations/payment/card.php?id='.$id;
+$head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
