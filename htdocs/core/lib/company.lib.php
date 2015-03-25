@@ -471,7 +471,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         print_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
         print "\n".'<table class="noborder" width=100%>';
 
-        $sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
+        $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
         $sql .= " WHERE p.fk_soc = ".$object->id;
         $sql .= " ORDER BY p.dateo DESC";
@@ -483,23 +483,24 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td align="right">'.$langs->trans("Status").'</td>';
             print '</tr>';
 
             if ($num > 0)
             {
                 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-                $projectstatic = new Project($db);
+                $projecttmp = new Project($db);
 
                 $i=0;
                 $var=false;
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
-                    $projectstatic->fetch($obj->rowid);
+                    $projecttmp->fetch($obj->id);
 
                     // To verify role of users
-                    $userAccess = $projectstatic->restrictedProjectArea($user);
+                    $userAccess = $projecttmp->restrictedProjectArea($user);
 
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
@@ -507,13 +508,15 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                         print "<tr ".$bc[$var].">";
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
                         print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
                         // Date end
                         print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+                        // Status
+                        print '<td align="right">'.$projecttmp->getLibStatut(5).'</td>';
 
                         print '</tr>';
                     }

@@ -1391,6 +1391,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (empty($conf->dol_hide_topmenu))
     {
+    	print '<div class="side-nav-vert"><div id="id-top">';
+
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
@@ -1431,8 +1433,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    print '<div class="login_block">'."\n";
 
-	    $toprightmenu.='<div class="login_block_user">';
 	    // Add login user link
+	    $toprightmenu.='<div class="login_block_user">';
 	    //$toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'login_block_elem2',2);	// This include div class="login"
         $toprightmenu.= $user->getNomurl(0, '', true, 0, 11);
 		$toprightmenu.='</div>';
@@ -1466,6 +1468,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    print $toprightmenu;
 
 	    print "</div>\n";
+		print '</div></div>';
 
 	    unset($form);
     }
