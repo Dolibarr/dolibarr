@@ -347,6 +347,7 @@ Status=Status
 Favorite=Favorite
 ShortInfo=Info.
 Ref=Ref.
+ExternalRef=Ref. extern
 RefSupplier=Ref. supplier
 RefPayment=Ref. payment
 CommercialProposalsShort=Commercial proposals
