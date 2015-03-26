@@ -307,11 +307,11 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre" align="right">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="orderday" value="'.$orderday.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="ordermonth" value="'.$ordermonth.'">';
     $formother->select_year($orderyear?$orderyear:-1,'orderyear',1, 20, 5);
-	print '</td><td class="liste_titre">';
+	print '</td><td class="liste_titre" align="right">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="deliveryday" value="'.$deliveryday.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
     $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
