@@ -53,7 +53,7 @@ if (! empty($conf->propal->enabled))   	    $langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 if (! empty($conf->expensereport->enabled)) $langs->load("trips");
-if (! empty($conf->expensereport->enabled)) $langs->load("donations");
+if (! empty($conf->don->enabled))			$langs->load("donations");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');

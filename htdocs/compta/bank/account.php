@@ -730,6 +730,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						$donstatic->ref=$donstatic->lib;
 						print $donstatic->getNomUrl(1,16);
+					}
 					else if ($links[$key]['type']=='loan')
 					{
 						$loanstatic->id=$links[$key]['url_id'];
