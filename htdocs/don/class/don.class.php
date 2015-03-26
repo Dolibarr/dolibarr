@@ -34,8 +34,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
-    public $element='don';
-    public $table_element='don';
+    public $element='don'; 					// Id that identify managed objects
+    public $table_element='don';			// Name of table without prefix where object is stored
+	public $fk_element = 'fk_don';
+	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
     var $ref;
@@ -299,22 +301,25 @@ class Don extends CommonObject
     /**
      * Create donation record into database
      *
-     * @param	User	$user		Objet utilisateur qui cree le don
-     * @return  int  		        Id don cree si ok, <0 si ko
+     * @param	User	$user		User who created the donation
+     * @param	int		$notrigger	Disable triggers
+     * @return  int  		        <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
     function create($user)
     {
-        global $conf;
-
+        global $conf, $langs;
+		
+		$error = 0;
+		$ret = 0;
+        $now=dol_now();
+		
         // Clean parameters
         $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->zip);
         $this->town=($this->town>0?$this->town:$this->town);
         $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
         $this->country=($this->country?$this->country:$this->country);
-
-        $now=dol_now();
 
         $this->db->begin();
 
@@ -365,41 +370,54 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
-        dol_syslog("Don::create", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('donationdao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
-			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
-				}
-			}
-			else if ($reshook < 0) $error++;
-			
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+			$ret = $this->id;
 
-            // Call trigger
-            $result=$this->call_trigger('DON_CREATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
+            if (!$notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('DON_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+		else
+        {
+            $this->error = $this->db->lasterror();
+            $this->errno = $this->db->lasterrno();
+            $error++;
+        }
+		
+		// Update extrafield
+        if (!$error) {
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
+        }
+		
+		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        {
+            $res = $this->setValid($user);
+            if ($res < 0) $error++;
+        }
 
+        if (!$error)
+        {
             $this->db->commit();
-            return $this->id;
+            return $ret;
         }
         else
         {
             $this->db->rollback();
-            dol_print_error($this->db);
             return -1;
         }
     }
@@ -410,8 +428,12 @@ class Don extends CommonObject
      *  @param 		User	$user   Objet utilisateur qui met a jour le don
      *  @return     int      		>0 if OK, <0 if KO
      */
-    function update($user)
+    function update($user, $notrigger=0)
     {
+        global $langs, $conf;
+
+		$error=0;
+		
         // Clean parameters
         $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->zip);
@@ -440,91 +462,126 @@ class Don extends CommonObject
         $sql .= ",phone='".$this->phone."'";
         $sql .= ",phone_mobile='".$this->phone_mobile."'";
         $sql .= ",fk_statut=".$this->statut;
-        $sql .= " WHERE rowid = $this->id";
+        $sql .= " WHERE rowid = '".$this->id."'";
 
-        dol_syslog("Don::update", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('donationdao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
-			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
-				}
-			}
-			else if ($reshook < 0) $error++;
-			
-			// Call trigger
-            $result=$this->call_trigger('DON_UPDATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
-
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->db->rollback();
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
-
-    /**
-     *    Delete a donation
-     *
-     *    @param  	int		$rowid     	Id of donation to delete
-     *    @return	int					<0 if KO, >0 if OK
-     */
-    function delete($rowid)
-    {
-
-        $this->db->begin();
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
-
+        dol_syslog(get_class($this)."::Update", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ( $this->db->affected_rows($resql) )
+            if (!$notrigger)
             {
-				// Remove extrafields
-				if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
-				{
-					$result=$this->deleteExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-						dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-					}
-				}
-				
-                // Call trigger
-                $result=$this->call_trigger('DON_DELETE',$user);
-                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+				// Call trigger
+                $result=$this->call_trigger('DON_MODIFY',$user);
+                if ($result < 0) { $error++; }
                 // End call triggers
+            }
 
+            // Update extrafield
+            if (!$error)
+			{
+              	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+               	{
+               		$result=$this->insertExtraFields();
+               		if ($result < 0)
+               		{
+               			$error++;
+               		}
+               	}
+            }
+
+			if (! $error )
+            {
                 $this->db->commit();
-                return 1;
+                $result = 1;
             }
             else
             {
                 $this->db->rollback();
-                return -1;
+                $result = -1;
             }
         }
         else
+		{
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->error;
+            $this->db->rollback();
+            dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
+            $result = -2;
+        }
+		return $result;
+	}
+
+    /**
+     *    Delete a donation from database
+     *
+     *    @param       User		$user            User
+     *    @param       int		$notrigger       Disable triggers
+     *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
+     */
+    function delete($user, $notrigger=0)
+    {
+		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+		
+		$error = 0;
+        
+		$this->db->begin();
+		
+        // Delete donation
+        if (! $error)
         {
-            dol_print_error($this->db);
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don";
+	        $sql.= " WHERE rowid=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
+        }
+
+        if (! $error)
+        {
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don_extrafields";
+	        $sql.= " WHERE fk_object=" . $this->id;
+
+	        $resql = $this->db->query($sql);
+	        if (! $resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
+        }
+
+		if (! $error)
+        {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('DON_DELETE',$user);
+
+                if ($result < 0) {
+                    $error++;
+                }
+                // End call triggers
+            }
+        }
+
+    	if (! $error)
+    	{
+            $this->db->commit();
+            return 1;
+        }
+        else
+       {
+        	foreach ( $this->errors as $errmsg )
+        	{
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+            dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
+            $this->db->rollback();
             return -1;
         }
     }
@@ -536,7 +593,7 @@ class Don extends CommonObject
      *      @param      string	$ref        Ref of donation to load
      *      @return     int      			<0 if KO, >0 if OK
      */
-    function fetch($rowid,$ref='')
+    function fetch($id,$ref='')
     {
         global $conf;
 
@@ -550,7 +607,15 @@ class Don extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_project";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
-        $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
+		if (! empty($id))
+        {
+        	$sql.= " WHERE d.rowid=".$id;
+        }
+        else if (! empty($ref))
+        {
+        	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
+        }
+        $sql.= " AND d.entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -615,10 +680,10 @@ class Don extends CommonObject
      *    @param  	int		$userid  	User who validate the promise
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function valid_promesse($rowid, $userid)
+    function valid_promesse($id, $userid)
     {
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -646,7 +711,7 @@ class Don extends CommonObject
      *    @param    int		$modepaiement   	mode de paiement
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paye($rowid, $modepaiement='')
+    function set_paid($id, $modepaiement='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
         if ($modepaiement)
@@ -674,46 +739,15 @@ class Don extends CommonObject
         }
     }
 
-
-    /**
-     *    Classe le don comme encaisse
-     *
-     *    @param	int		$rowid   	id du don a modifier
-     *    @return   int     			<0 if KO, >0 if OK
-     */
-    function set_encaisse($rowid)
-    {
-
-        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ( $this->db->affected_rows($resql) )
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        else
-        {
-            dol_print_error($this->db);
-            return -1;
-        }
-    }
-
     /**
      *    Set donation to status canceled
      *
      *    @param	int		$rowid   	id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function set_cancel($rowid)
+    function set_cancel($id)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$rowid;
+        $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
 
         $resql=$this->db->query($sql);
         if ($resql)

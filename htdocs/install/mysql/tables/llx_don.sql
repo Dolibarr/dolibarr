@@ -26,7 +26,7 @@ create table llx_don
   ref             varchar(30) DEFAULT NULL,     -- Ref donation (TODO change to NOT NULL)
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   tms             timestamp,
-  fk_statut       smallint NOT NULL DEFAULT 0,  -- etat du don promesse/valid
+  fk_statut       smallint NOT NULL DEFAULT 0,  -- Status of donation promise or validate
   datec           datetime,                     -- date de creation de l'enregistrement
   datedon         datetime,                     -- date du don/promesse
   amount          real DEFAULT 0,
@@ -43,8 +43,8 @@ create table llx_don
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),
-  public          smallint DEFAULT 1 NOT NULL,   -- le don est-il public (0,1)
-  fk_project      integer NULL,                  -- projet auquel est fait le don
+  public          smallint DEFAULT 1 NOT NULL,   -- Donation is public ? (0,1)
+  fk_project      integer NULL,                  -- Donation is given for a project ?
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NULL,
   note_private    text,

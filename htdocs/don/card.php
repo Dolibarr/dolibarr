@@ -47,25 +47,25 @@ $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
+$donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-
-$donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-
 // Security check
 $result = restrictedArea($user, 'don', $id);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('doncard','globalcard'));
 
-
 /*
  * Actions
  */
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'update')
 {
@@ -174,17 +174,21 @@ if ($action == 'add')
 		}
 	}
 }
-
-if ($action == 'delete')
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer)
 {
-	$object->delete($id);
-	header("Location: list.php");
-	exit;
-}
-if ($action == 'commentaire')
-{
-	$object->fetch($id);
-	$object->update_note(GETPOST("commentaire"));
+    $object->fetch($id);
+    $result=$object->delete($user);
+    if ($result > 0)
+    {
+        header("Location: index.php");
+        exit;
+    }
+    else
+    {
+        dol_syslog($object->error,LOG_DEBUG);
+        setEventMessage($object->error,'errors');
+        setEventMessage($object->errors,'errors');
+    }
 }
 if ($action == 'valid_promesse')
 {
@@ -486,6 +490,13 @@ if (! empty($id) && $action == 'edit')
 /* ************************************************************ */
 if (! empty($id) && $action != 'edit')
 {
+	// Confirmation delete
+    if ($action == 'delete')
+    {
+        $text=$langs->trans("ConfirmDeleteADonation");
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteADonation"),$text,"confirm_delete",'','',1);
+    }
+	
 	$result=$object->fetch($id);
 	if ($result < 0) {
 		dol_print_error($db,$object->error); exit;
@@ -689,6 +700,7 @@ if (! empty($id) && $action != 'edit')
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 	}
 	
+	// Delete
 	if ($user->rights->don->supprimer)
 	{
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
