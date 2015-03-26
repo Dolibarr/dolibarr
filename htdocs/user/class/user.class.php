@@ -1808,12 +1808,13 @@ class User extends CommonObject
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
         $label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+        $label.='</div>';
         if (! empty($this->photo))
         {
-        	$label.= '</div><div class="photointooltip" style="padding-top: 6px">';
+        	$label.= '<div class="photointooltip">';
             $label.= Form::showphoto('userphoto', $this, 80);
+        	$label.= '</div><div style="clear: both;"></div>';
         }
-        $label.= '</div>';
 
         // Info Login
         if ($infologin)

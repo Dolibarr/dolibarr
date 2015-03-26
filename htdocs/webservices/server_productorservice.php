@@ -379,43 +379,43 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	if (! empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description =  $product->multilangs[$langs->defaultlang]["description"];
             	if (! empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note =  $product->multilangs[$langs->defaultlang]["note"];
 
-		$productorservice_result_fields = array(
-		    'id' => $product->id,
-	   	    'ref' => $product->ref,
-	   	    'ref_ext' => $product->ref_ext,
-	    	    'label' => $product->label,
-	    	    'description' => $product->description,
-	    	    'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
-	    	    'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
-	            'note' => $product->note,
-	            'status_tosell' => $product->status,
-	            'status_tobuy' => $product->status_buy,
-		    'type' => $product->type,
-		    'barcode' => $product->barcode,
-		    'barcode_type' => $product->barcode_type,
-		    'country_id' => $product->country_id>0?$product->country_id:'',
-		    'country_code' => $product->country_code,
-		    'custom_code' => $product->customcode,
+            	$productorservice_result_fields = array(
+	            	'id' => $product->id,
+	            	'ref' => $product->ref,
+	            	'ref_ext' => $product->ref_ext,
+	            	'label' => $product->label,
+	            	'description' => $product->description,
+	            	'date_creation' => dol_print_date($product->date_creation,'dayhourrfc'),
+	            	'date_modification' => dol_print_date($product->date_modification,'dayhourrfc'),
+	            	'note' => $product->note,
+	            	'status_tosell' => $product->status,
+	            	'status_tobuy' => $product->status_buy,
+	            	'type' => $product->type,
+	            	'barcode' => $product->barcode,
+	            	'barcode_type' => $product->barcode_type,
+	            	'country_id' => $product->country_id>0?$product->country_id:'',
+	            	'country_code' => $product->country_code,
+	            	'custom_code' => $product->customcode,
 
-	            'price_net' => $product->price,
-	            'price' => $product->price_ttc,
-	            'price_min_net' => $product->price_min,
-	            'price_min' => $product->price_min_ttc,
-	            'price_base_type' => $product->price_base_type,
-		    'vat_rate' => $product->tva_tx,
-		    //! French VAT NPR
-		    'vat_npr' => $product->tva_npr,
-		    //! Spanish local taxes
-		    'localtax1_tx' => $product->localtax1_tx,
-		    'localtax2_tx' => $product->localtax2_tx,
+	            	'price_net' => $product->price,
+	            	'price' => $product->price_ttc,
+	            	'price_min_net' => $product->price_min,
+	            	'price_min' => $product->price_min_ttc,
+	            	'price_base_type' => $product->price_base_type,
+	            	'vat_rate' => $product->tva_tx,
+	            	//! French VAT NPR
+	            	'vat_npr' => $product->tva_npr,
+	            	//! Spanish local taxes
+	            	'localtax1_tx' => $product->localtax1_tx,
+	            	'localtax2_tx' => $product->localtax2_tx,
 
-		    'stock_real' => $product->stock_reel,
-		    'stock_alert' => $product->seuil_stock_alerte,
-		    'pmp' => $product->pmp,
-		    'import_key' => $product->import_key,
-		    'dir' => $pdir,
-		    'images' => $product->liste_photos($dir,$nbmax=10)
-                );
+	            	'stock_real' => $product->stock_reel,
+	            	'stock_alert' => $product->seuil_stock_alerte,
+	            	'pmp' => $product->pmp,
+	            	'import_key' => $product->import_key,
+	            	'dir' => $pdir,
+	            	'images' => $product->liste_photos($dir,$nbmax=10)
+            	);
 
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
@@ -515,11 +515,11 @@ function createProductOrService($authentication,$product)
         $newobject->price_base_type=$product['price_base_type'];
         $newobject->date_creation=$now;
 
-	if ($product['barcode']) 
-	{
-		$newobject->barcode = $product['barcode'];
-		$newobject->barcode_type = $product['barcode_type'];
-	}
+		if ($product['barcode'])
+		{
+			$newobject->barcode = $product['barcode'];
+			$newobject->barcode_type = $product['barcode_type'];
+		}
 
         $newobject->stock_reel=$product['stock_real'];
         $newobject->pmp=$product['pmp'];
@@ -547,12 +547,12 @@ function createProductOrService($authentication,$product)
         //var_dump($product['lines'][0]['type']);
 
         $extrafields=new ExtraFields($db);
-	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
-		$key='options_'.$key;
-		$newobject->array_options[$key]=$product[$key];
-	}
+		$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$key='options_'.$key;
+			$newobject->array_options[$key]=$product[$key];
+		}
 
         $db->begin();
 
@@ -622,7 +622,7 @@ function updateProductOrService($authentication,$product)
     {
         $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
     }
-  
+
     if (! $error)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -645,7 +645,7 @@ function updateProductOrService($authentication,$product)
         $newobject->price_base_type=$product['price_base_type'];
         $newobject->date_creation=$now;
 
-        if ($product['barcode']) 
+        if ($product['barcode'])
         {
                 $newobject->barcode = $product['barcode'];
                 $newobject->barcode_type = $product['barcode_type'];
@@ -676,13 +676,13 @@ function updateProductOrService($authentication,$product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
-	$extrafields=new ExtraFields($db);
-	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
-		$key='options_'.$key;
-		$newobject->array_options[$key]=$product[$key];
-	}
+		$extrafields=new ExtraFields($db);
+		$extralabels=$extrafields->fetch_name_optionals_label('product',true);
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$key='options_'.$key;
+			$newobject->array_options[$key]=$product[$key];
+		}
 
         $db->begin();
 

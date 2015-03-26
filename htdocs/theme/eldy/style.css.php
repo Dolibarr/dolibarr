@@ -319,6 +319,7 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 	display: inline-block;
 	padding: 4px 14px;
 	margin-bottom: 0;
+	margin-top: 0;
 	text-align: center;
 	cursor: pointer;
 	color: #333333;
@@ -1005,6 +1006,7 @@ div.vmenu, td.vmenu {
 }
 
 .menu_contenu { padding-top: 1px; }
+#menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
@@ -1392,10 +1394,10 @@ div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser 
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: 9px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     padding-left: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
-    padding-bottom: 12px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'12'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
@@ -1741,24 +1743,25 @@ table.noborder, table.formdoc, div.noborder {
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
-/*
+
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
 */
 	border-left-width: 1px;
-	border-left-color: #DDDDDD;
+	border-left-color: #CCC;
 	border-left-style: solid;
 
 	margin: 0px 0px 2px 0px;
 
-	-moz-box-shadow: 3px 3px 4px #ddd;
-	-webkit-box-shadow: 3px 3px 4px #ddd;
-	box-shadow: 3px 3px 4px #ddd;
+	-moz-box-shadow: 2px 2px 4px #CCC;
+	-webkit-box-shadow: 2px 2px 4px #CCC;
+	box-shadow: 2px 2px 4px #CCC;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -1802,25 +1805,26 @@ table.liste {
 
 	border-collapse: collapse;
 	border-top-color: #FEFEFE;
-/*
+
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
-    border-left-width: 1px;
-    border-left-color: #CCCCCC;
-    border-left-style: solid;
-*/
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
+*/
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
 
 	margin-bottom: 2px;
 	margin-top: 0px;
 
-    -moz-box-shadow: 0px 3px 4px #DDD;
-    -webkit-box-shadow: 0px 3px 4px #DDD;
-    box-shadow: 0px 3px 4px #DDD;
+    -moz-box-shadow: 0px 3px 4px #CCC;
+    -webkit-box-shadow: 0px 3px 4px #CC;
+    box-shadow: 0px 3px 4px #CCC;
 }
 table.liste td {
 	padding-right: 2px;
@@ -1982,6 +1986,7 @@ input.liste_titre {
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
+    padding: 4px;
 }
 
 
@@ -2039,7 +2044,7 @@ div.tabBar .noborder {
 }
 
 tr.box_titre {
-    height: 20px;
+    height: 26px;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
@@ -2198,6 +2203,13 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
+.photointooltip {
+	-webkit-box-shadow: -1px -1px 5px #777;
+	-moz-box-shadow: -1px -1px 5px #777;
+	box-shadow: -1px -1px 5px #777;
+	margin-top: 6px;
+	float: left;
+}
 
 .logo_setup
 {
@@ -2318,6 +2330,7 @@ border-radius: 6px;
 #tiptip_content {
     background-color: rgb(252,248,246);
 	background-color: rgba(252,248,246,0.95);
+	line-height: 1.4em;
 }
 
 /* ============================================================================== */

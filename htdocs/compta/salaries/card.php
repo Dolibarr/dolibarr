@@ -211,7 +211,7 @@ if ($action == 'create')
 		$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
 	}
 
-	print "<form name='add' action=\"card.php\" method=\"post\">\n";
+	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 

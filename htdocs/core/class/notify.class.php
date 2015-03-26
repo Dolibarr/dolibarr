@@ -91,7 +91,8 @@ class Notify
 		$error=0;
         $num=0;
 
-        $valueforthreshold = $object->total_ht;
+        $valueforthreshold = 0;
+        if (is_object($object)) $valueforthreshold = $object->total_ht;
 
         if (! $error)
         {
@@ -103,8 +104,11 @@ class Notify
 	        $sql.= " WHERE n.fk_contact = c.rowid";
 	        $sql.= " AND a.rowid = n.fk_action";
 	        $sql.= " AND n.fk_soc = s.rowid";
-	        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-	        else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+	        if ($notifcode)
+	        {
+		        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+		        else $sql.= " AND a.code = '".$notifcode."'";			// New usage
+	        }
 	        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 
@@ -125,16 +129,21 @@ class Notify
 
 		if (! $error)
 		{
+
 		    // List of notifications enabled for fixed email
 		    foreach($conf->global as $key => $val)
 		    {
-		    	if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
+		    	if ($notifcode)
+		    	{
+		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
+		    	}
+		    	else
+		    	{
+		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
+		    	}
 
     			$threshold = (float) $reg[1];
-    			if ($valueforthreshold <= $threshold)
-    			{
-    				continue;
-    			}
+    			if ($valueforthreshold < $threshold) continue;
 
 		    	$tmpemail=explode(',',$val);
 		    	$num+=count($tmpemail);

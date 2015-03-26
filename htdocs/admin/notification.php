@@ -240,7 +240,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     }
     // New entry input fields
     $s='<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
-    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"),1,'help','',0,2);
+    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
     print '</td>';
 
     print '<td>';
