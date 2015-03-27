@@ -5010,3 +5010,16 @@ function natural_search($fields, $value, $numeric=0)
     return $res;
 }
 
+/**
+ * Removes empty entries from an array
+ *
+ * @param array $array Array to check
+ * @return array Array without empty entries
+ */
+function dol_array_clean(array $array)
+{
+	return array_filter($array, function ($var) {
+		$filter = trim($var);
+		return !empty($filter);
+	});
+}

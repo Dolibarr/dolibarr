@@ -518,7 +518,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
-		print '<td classe="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+		print '<td classe="somme"><input type="image" name="ajoutcases" src="'.img_picto('', 'add', '', false, 1).'"></td>'."\n";
 	}
 
 	print '</tr>'."\n";

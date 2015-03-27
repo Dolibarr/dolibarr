@@ -142,7 +142,7 @@ print '</table>'."\n";
 
 //ajout de cases supplementaires
 print '<table><tr>'."\n";
-print '<td>'. $langs->trans("5MoreChoices") .'</td><td><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+print '<td>'. $langs->trans("5MoreChoices") .'</td><td><input type="image" name="ajoutcases" src="'.img_picto('', 'add', '', false, 1).'"></td>'."\n";
 print '</tr></table>'."\n";
 print'<br>'."\n";
 

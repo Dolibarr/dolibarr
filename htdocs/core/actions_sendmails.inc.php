@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,45 +88,45 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 	if ($result > 0)
 	{
-		if (trim($_POST['sendto']))
-		{
-			// Recipient is provided into free text
-			$sendto = trim($_POST['sendto']);
-			$sendtoid = 0;
-		}
-		elseif ($_POST['receiver'] != '-1')
-		{
-			// Recipient was provided from combo list
-			if ($_POST['receiver'] == 'thirdparty') // Id of third party
-			{
-				$sendto = $thirdparty->email;
-				$sendtoid = 0;
+		// Recipient provided into free text
+		$sendto = dol_array_clean(GETPOST('sendto', 'array'));
+		// Recipient provided from combo list
+		$sendtoid = dol_array_clean(GETPOST('receiver', 'array'));
+		// CC provided from free text
+		$sendtocc = dol_array_clean(GETPOST('sendtocc', 'array'));
+		//CC provided from combo list
+		$sendtoccid = dol_array_clean(GETPOST('receivercc', 'array'));
+
+		foreach ($sendtoid as $index => &$id) {
+			if ($id == '-1') {
+				continue;
 			}
-			else	// Id du contact
-			{
-				$sendto = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
-				$sendtoid = $_POST['receiver'];
-			}
-		}
-		if (trim($_POST['sendtocc']))
-		{
-			$sendtocc = trim($_POST['sendtocc']);
-		}
-		elseif ($_POST['receivercc'] != '-1')
-		{
-			// Recipient was provided from combo list
-			if ($_POST['receivercc'] == 'thirdparty')	// Id of third party
-			{
-				$sendtocc = $thirdparty->email;
-			}
-			else	// Id du contact
-			{
-				$sendtocc = $thirdparty->contact_get_property((int) $_POST['receivercc'],'email');
+
+			// Id of third party
+			if ($id == 'thirdparty') {
+				$sendto[] = $thirdparty->email;
+				$id = 0;
+			} else {
+				// Id of contact
+				$sendto[] = $thirdparty->contact_get_property((int) $_POST['receiver'],'email');
 			}
 		}
 
-		if (dol_strlen($sendto))
-		{
+		foreach ($sendtoccid as $selectcc) {
+			if ($selectcc == '-1') {
+				continue;
+			}
+
+			// Id of third party
+			if ($selectcc == 'thirdparty') {
+				$sendtocc[] = $thirdparty->email;
+			} else {
+				// Id du contact
+				$sendtocc[] = $thirdparty->contact_get_property((int)$selectcc, 'email');
+			}
+		}
+
+		if ($sendto) {
 			$langs->load("commercial");
 
 			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';

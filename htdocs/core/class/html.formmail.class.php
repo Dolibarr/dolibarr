@@ -243,6 +243,18 @@ class FormMail
         {
         	$out='';
 
+	        /**
+	         * Inputs triggered by multi-input script
+	         * Format:
+	         * array(
+	         *  'selector_button', => JQuery selector of the button to catch
+	         *  'selector_content', => JQuery where the inputs are
+	         *  'skeleton => Mock HTML input to append in contentid when buttonid is clicked
+	         * );
+	         *
+	         */
+	        $js_inputs = array();
+
         	// Define list of attached files
         	$listofpaths=array();
         	$listofnames=array();
@@ -265,6 +277,36 @@ class FormMail
         	// Get message template
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs);
 
+	        /**
+	         * Used to render inputs with appropiate values giving an email/thirdparty
+	         * @param bool $cond_free Condition to show freemail input
+	         * @param bool $cond_socid Condition to show selectmail input
+	         * @param string $inputid Freemail input id
+	         * @param string $selectid Selectmail input id
+	         * @param array $thirdparties Thirdparties array for the selectmail input
+	         * @param string $email Default
+	         * @param int $thirdparty
+	         * @return string
+	         */
+	        $show_input = function($cond_free, $cond_socid, $inputid, $selectid, $thirdparties = null, $email = null, $thirdparty = null) use ($form, $langs) {
+
+		        $return = '';
+
+		        if ($cond_free) {
+			        $return = '<input size="'.($email ? "60" : "30").'" id="'.$inputid.'" name="'.$inputid.'[]" value="'.(string)$email.'" />';
+		        }
+
+		        if ($cond_socid && $cond_free) {
+			        $return .= " ".$langs->trans("or")." ";
+		        }
+
+		        if ($cond_socid) {
+
+			        $return .= $form->selectarray($selectid."[]", $thirdparties, $thirdparty, 1);
+		        }
+
+		        return $return;
+	        };
 
         	$out.= "\n<!-- Debut form mail -->\n";
         	if ($this->withform == 1)
@@ -374,7 +416,7 @@ class FormMail
         		$out.= '<tr><td width="180">';
         		if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		else $out.= $langs->trans("MailTo");
-        		$out.= '</td><td>';
+        		$out.= '</td><td id="tocontent">';
         		if ($this->withtoreadonly)
         		{
         			if (! empty($this->toname) && ! empty($this->tomail))
@@ -410,29 +452,74 @@ class FormMail
         		}
         		else
         		{
-        			if (! empty($this->withtofree))
-        			{
-        				$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
-        			}
-        			if (! empty($this->withto) && is_array($this->withto))
-        			{
-        				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $this->withto, GETPOST("receiver"), 1);
-        			}
-        			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
-        			{
-        				$liste=array();
-        				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtosocid);
-        				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-        				{
-        					$liste[$key]=$value;
-        				}
-        				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
-        			}
-        		}
-        		$out.= "</td></tr>\n";
+					//Condition for freemail input to display
+					$input_condition = !empty($this->withtofree);
+					//Condition for selectmail input to display
+					$select_condition = isset($this->withtosocid) && $this->withtosocid > 0;
+
+			        // Removed empty entries from $_POST['receiver']
+			        $array_receiver = dol_array_clean(GETPOST('receiver', 'array'));
+			        // Removed empty entries from $_POST['sendto']
+			        $array_sendto = dol_array_clean(GETPOST('sendto', 'array'));
+
+					//Thirdparties available to choose
+					$liste = null;
+
+					if ($select_condition) {
+						$soc = new Societe($this->db);
+						$soc->fetch($this->withtosocid);
+						foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
+							$liste[$key] = $value;
+						}
+
+						foreach ($array_receiver as $receiver) {
+							$out .= $show_input(
+									$input_condition,
+									$select_condition,
+									'sendto',
+									'receiver',
+									$liste,
+									null,
+									$receiver
+								).'<br>';
+						}
+					}
+
+					//If the user is allowed to enter a new Recipient
+					if ($input_condition) {
+
+						foreach ($array_sendto as $sendto) {
+							$out .= $show_input(
+									$input_condition,
+									$select_condition,
+									'sendto',
+									'receiver',
+									$liste,
+									$sendto
+								).'<br>';
+						}
+
+					}
+
+					//Mock "Recipient" input for JS rendering
+					$skeleton_inputto = $show_input(
+							$input_condition,
+							$select_condition,
+							'sendto',
+							'receiver',
+							$liste
+						).' '.img_picto('Add', 'add', 'id="addmoreto"');
+
+					$out .= $skeleton_inputto;
+
+					//Enable multi-input for Recipient
+					$js_inputs[] = array(
+						'selector_content' => '#tocontent',
+						'selector_button' => '#addmoreto',
+						'skeleton' => $skeleton_inputto
+					);
+				}
+				$out.= "</td></tr>\n";
         	}
 
         	// CC
@@ -440,20 +527,62 @@ class FormMail
         	{
         		$out.= '<tr><td width="180">';
         		$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-        		$out.= '</td><td>';
+        		$out.= '</td><td valign="middle" id="cccontent">';
         		if ($this->withtoccreadonly)
         		{
         			$out.= (! is_array($this->withtocc) && ! is_numeric($this->withtocc))?$this->withtocc:"";
         		}
-        		else
-        		{
-        			$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
-        			if (! empty($this->withtocc) && is_array($this->withtocc))
-        			{
-        				$out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1);
-        			}
+			else
+				{
+					//Condition for selectmail input to display
+					$select_condition = ! empty($this->withtocc) && is_array($this->withtocc);
+
+					// Removed empty entries from $_POST['receiver']
+					$array_receivercc = dol_array_clean(GETPOST('receivercc', 'array'));
+					// Removed empty entries from $_POST['sendto']
+					$array_sendtocc = dol_array_clean(GETPOST('sendtocc', 'array'));
+
+					//Mock "CC" input for JS rendering
+					$skeleton_inputcc = $show_input(
+						true,
+						$select_condition,
+						'sendtocc',
+						'receivercc',
+						$this->withtocc
+					).' '.img_picto('Add', 'add', 'id="addmorecc"');
+
+					foreach ($array_sendtocc as $sendtocc) {
+						$out .= $show_input(
+							true,
+							$select_condition,
+							'sendtocc',
+							'receivercc',
+							$this->withtocc,
+							$sendtocc
+						).'<br>';
+					}
+					foreach ($array_receivercc as $receivercc) {
+						$out .= $show_input(
+							true,
+							$select_condition,
+							'sendtocc',
+							'receivercc',
+							$this->withtocc,
+							null,
+							$receivercc
+						).'<br>';
+			        }
+
+			        $out .= $skeleton_inputcc;
+
+			        //Enable multi-input for CC
+			        $js_inputs[] = array(
+				        'selector_content' => '#cccontent',
+				        'selector_button' => '#addmorecc',
+				        'skeleton' => $skeleton_inputcc
+			        );
         		}
+
         		$out.= "</td></tr>\n";
         	}
 
@@ -672,6 +801,20 @@ class FormMail
         	}
 
         	$out.= '</table>'."\n";
+
+	        $out .= '<script type="text/javascript">
+
+			var inputs = '.json_encode($js_inputs).';
+
+			$.each(inputs, function(i, element) {
+			console.log(element.selector_button);
+				$(element.selector_content).delegate(element.selector_button, "click", function() {
+					$(element.selector_button).remove();
+					$(element.selector_content).append("<br>" + element.skeleton);
+				});
+			});
+
+</script>';
 
         	if ($this->withform == 1) $out.= '</form>'."\n";
         	$out.= "<!-- Fin form mail -->\n";
