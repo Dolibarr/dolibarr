@@ -167,8 +167,11 @@ print '<tr><td valign="top">'.$langs->trans('Capital').'</td><td colspan="3">'.p
 print '<tr><td valign="top">'.$langs->trans('Insurance').'</td><td colspan="3">'.price($payment->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 print '<tr><td valign="top">'.$langs->trans('Interest').'</td><td colspan="3">'.price($payment->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-// Note
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($payment->note).'</td></tr>';
+// Note Private
+print '<tr><td valign="top">'.$langs->trans('NotePrivate').'</td><td colspan="3">'.nl2br($payment->note_private).'</td></tr>';
+
+// Note Public
+print '<tr><td valign="top">'.$langs->trans('NotePublic').'</td><td colspan="3">'.nl2br($payment->note_public).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))

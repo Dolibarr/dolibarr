@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014		Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,8 @@ class Loan extends CommonObject
     var $capital;
 	var $nbterm;
 	var $rate;
-	var $note;
+    var $note_private;
+    var $note_public;
 	var $paid;
 	var $account_capital;
 	var $account_insurance;
@@ -73,7 +75,7 @@ class Loan extends CommonObject
      */
     function fetch($id)
     {
-        $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note,";
+        $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
 		$sql.= " l.paid";
         $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
         $sql.= " WHERE l.rowid = ".$id;
@@ -93,9 +95,10 @@ class Loan extends CommonObject
                 $this->label          = $obj->label;
                 $this->capital        = $obj->capital;
 				$this->nbterm		  = $obj->nbterm;
-				$this->rate	          = $obj->rate;
-				$this->note       	  = $obj->note;
-				$this->paid       	  = $obj->paid;
+				$this->rate           = $obj->rate;
+                $this->note_private   = $obj->note_private;
+                $this->note_public    = $obj->note_public;
+				$this->paid           = $obj->paid;
 
                 return 1;
             }
@@ -129,7 +132,8 @@ class Loan extends CommonObject
 
         // clean parameters
         $newcapital=price2num($this->capital,'MT');
-		if (isset($this->note)) $this->note = trim($this->note);
+        if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+        if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
 		if (isset($this->account_insurance)) $this->account_insurance = trim($this->account_insurance);
 		if (isset($this->account_interest)) $this->account_interest = trim($this->account_interest);
@@ -151,7 +155,7 @@ class Loan extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public";
 		$sql.= " ,accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity";
 		$sql.= " ,datec, fk_user_author)";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."',";
@@ -161,7 +165,8 @@ class Loan extends CommonObject
 		$sql.= " '".$this->db->idate($this->dateend)."',";
         $sql.= " '".$this->db->escape($this->nbterm)."',";
 		$sql.= " '".$this->db->escape($this->rate)."',";
-		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " '".$this->db->escape($this->note_private)."',";
+		$sql.= " '".$this->db->escape($this->note_public)."',";
 		$sql.= " '".$this->db->escape($this->account_capital)."',";
 		$sql.= " '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " '".$this->db->escape($this->account_interest)."',";

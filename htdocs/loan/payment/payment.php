@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014		Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,8 @@ if ($action == 'add_payment')
 			$payment->amount_interest	= $_POST["amount_interest"];
 			$payment->paymenttype		= $_POST["paymenttype"];
     		$payment->num_payment		= $_POST["num_payment"];
-    		$payment->note				= $_POST["note"];
+    		$payment->note_private      = GETPOST('note_private');
+    		$payment->note_public       = GETPOST('public');
 
     		if (! $error)
     		{
@@ -236,10 +238,14 @@ if ($_GET["action"] == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top">'.$langs->trans("NotePrivate").'</td>';
+	print '<td valign="top" colspan="2"><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
+	print '<tr>';
+	print '<td valign="top">'.$langs->trans("NotePublic").'</td>';
+	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '</tr>';
 	print '</table>';
 
 	print '<br>';
@@ -296,7 +302,7 @@ if ($_GET["action"] == 'create')
 		{
 			print '-';
 		}
-		print '<br>';		
+		print '<br>';
 		if ($sumpaid < $objp->capital)
 		{
 			$namea = "amount_insurance_".$objp->id;
@@ -306,7 +312,7 @@ if ($_GET["action"] == 'create')
 		{
 			print '-';
 		}
-		print '<br>';		
+		print '<br>';
 		if ($sumpaid < $objp->capital)
 		{
 			$namei = "amount_interest_".$objp->id;
