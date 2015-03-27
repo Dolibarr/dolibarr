@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -613,7 +613,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					elseif ($links[$key]['type']=='payment_loan')
 					{
-						print '<a href="'.DOL_URL_ROOT.'/compta/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
 						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 						print '</a>';
 					}
