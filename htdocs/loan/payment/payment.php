@@ -109,7 +109,7 @@ if ($action == 'add_payment')
 			$payment->paymenttype		= $_POST["paymenttype"];
     		$payment->num_payment		= $_POST["num_payment"];
     		$payment->note_private      = GETPOST('note_private');
-    		$payment->note_public       = GETPOST('public');
+    		$payment->note_public       = GETPOST('note_public');
 
     		if (! $error)
     		{

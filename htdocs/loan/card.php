@@ -370,6 +370,12 @@ if ($id > 0)
 		// Rate
 		print '<tr><td>'.$langs->trans("Rate").'</td><td>'.$object->rate.' %</td></tr>';
 
+        // Note Private
+        print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($object->note_private).'</td></tr>';
+
+        // Note Public
+        print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($object->note_public).'</td></tr>';
+
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
