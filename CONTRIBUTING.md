@@ -40,16 +40,29 @@ Please don't edit the ChangeLog file. A project manager will update it from your
 Use clear commit messages with the following structure:
 
 <pre>
-KEYWORD Short description
+KEYWORD Short description (may be the bug number #456)
 
 Long description (Can span accross multiple lines).
 </pre>
 
 Where KEYWORD is one of:
 
-- "FIXED:" for bug fixes. In upper case to appear into ChangeLog. (May be followed by the bug number i.e: #456)
-- "NEW:" for new features. In upper case to appear into ChangeLog. (May be followed by the task number i.e: #123)
+- "Fixed" for bug fixes (May be followed by the bug number i.e: #456)
+- "Closed" for a commit to close a feature request issue (May be followed by the bug number i.e: #456)
 - void, don't put a keyword if the commit is not introducing feature or closing a bug.
+
+### Pull Requests
+When submitting a pull request, use following syntax:
+
+<pre>
+KEYWORD Short description (may be the bug number #456)
+</pre>
+
+Where KEYWORD is one of:
+
+- "FIXED" or "Fixed" for bug fixes. In upper case to appear into ChangeLog. (May be followed by the bug number i.e: #456)
+- "NEW" or "New" for new features. In upper case to appear into ChangeLog. (May be followed by the task number i.e: #123)
+
 
 ### Resources
 [Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)
