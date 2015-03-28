@@ -61,6 +61,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
+		setEventMessage($langs->trans('LoanDeleted'));
 		header("Location: index.php");
 		exit;
 	}
@@ -129,7 +130,7 @@ else if ($action == 'update' && $user->rights->loan->write)
 	if (! $cancel)
 	{
 		$result = $object->fetch($id);
-			
+
 		if ($object->fetch($id))
 		{
 			$object->label		= GETPOST("label");
@@ -475,25 +476,25 @@ if ($id > 0)
 			// Edit
 			if ($user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
 
 			// Emit payment
 			if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/payment/payment.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
 			}
 
 			// Classify 'paid'
 			if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a>';
 			}
 
 			// Delete
 			if ($user->rights->loan->delete)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
 
 			print "</div>";

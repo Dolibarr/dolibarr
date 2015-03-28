@@ -31,7 +31,7 @@ $langs->load("banks");
 $langs->load("bills");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid', int);
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 

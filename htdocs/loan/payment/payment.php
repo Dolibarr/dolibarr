@@ -56,21 +56,21 @@ if ($action == 'add_payment')
 		exit;
 	}
 
-	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	if (! $_POST["paymenttype"] > 0)
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), 'errors');
 		$error++;
 	}
 	if ($datepaid == '')
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), 'errors');
 		$error++;
 	}
     if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
     {
-        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), 'errors');
         $error++;
     }
 
@@ -90,8 +90,8 @@ if ($action == 'add_payment')
 
         if (count($amounts) <= 0)
         {
+            setEventMessage($langs->trans('ErrorNoPaymentDefined'), 'errors');
             $error++;
-            $errmsg='ErrorNoPaymentDefined';
         }
 
         if (! $error)
@@ -103,11 +103,11 @@ if ($action == 'add_payment')
     		$payment->chid				= $chid;
     		$payment->datepaid			= $datepaid;
     		$payment->amounts			= $amounts;   // Tableau de montant
-			$payment->amount_capital	= $_POST["amount_capital"];
-			$payment->amount_insurance	= $_POST["amount_insurance"];
-			$payment->amount_interest	= $_POST["amount_interest"];
-			$payment->paymenttype		= $_POST["paymenttype"];
-    		$payment->num_payment		= $_POST["num_payment"];
+			$payment->amount_capital	= GETPOST('amount_capital');
+			$payment->amount_insurance	= GETPOST('amount_insurance');
+			$payment->amount_interest	= GETPOST('amount_interest');
+			$payment->paymenttype		= GETPOST('paymenttype');
+    		$payment->num_payment		= GETPOST('num_payment');
     		$payment->note_private      = GETPOST('note_private');
     		$payment->note_public       = GETPOST('note_public');
 
@@ -116,17 +116,17 @@ if ($action == 'add_payment')
     		    $paymentid = $payment->create($user);
                 if ($paymentid < 0)
                 {
-                    $errmsg=$payment->error;
+                    setEventMessage($payment->error, 'errors');
                     $error++;
                 }
     		}
 
             if (! $error)
             {
-                $result=$payment->addPaymentToBank($user,'payment_loan','(LoanPayment)',$_POST['accountid'],'','');
+                $result=$payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
                 if (! $result > 0)
                 {
-                    $errmsg=$payment->error;
+                    setEventMessage($payment->error, 'errors');
                     $error++;
                 }
             }

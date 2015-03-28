@@ -119,7 +119,7 @@ class PaymentLoan extends CommonObject
 			$sql.= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -130,6 +130,7 @@ class PaymentLoan extends CommonObject
 			}
 			else
 			{
+                $this->error=$this->db->lasterror();
 				$error++;
 			}
 
