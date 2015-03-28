@@ -43,7 +43,7 @@ $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
-$search_ref=GETPOST('search_ref','alpha');
+$search_ref=GETPOST('search_ref','alpha')!=''?GETPOST('search_ref','alpha'):GETPOST('sref','alpha');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_company=GETPOST('search_company','alpha');
 $sall=GETPOST('sall');
