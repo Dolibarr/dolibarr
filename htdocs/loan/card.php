@@ -52,6 +52,14 @@ if ($action == 'confirm_paid' && $confirm == 'yes')
 {
 	$object->fetch($id);
 	$result = $object->set_paid($user);
+    if ($result > 0)
+    {
+        setEventMessage($langs->trans('LoanPaid'));
+    }
+    else
+    {
+        setEventMessage($loan->error, 'errors');
+    }
 }
 
 // Delete loan
