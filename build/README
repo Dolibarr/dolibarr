@@ -28,9 +28,6 @@ Note: Prerequisites to build autoexe DoliWamp package:
   recommanded), open file build/exe/doliwamp.iss and click on button "Compile".
   The .exe file will be build into directory build.
 
-- To build a translaction package, launch the script
-> perl makepack-dolibarrlang.pl
-
 - To build a theme package, launch the script
 > perl makepack-dolibarrtheme.pl
 
