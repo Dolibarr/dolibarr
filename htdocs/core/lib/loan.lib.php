@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,35 +33,45 @@ function loan_prepare_head($object)
 {
     global $langs, $conf;
 
-    $h = 0;
+    $tab = 0;
     $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/loan/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'card';
-	$h++;
+	$head[$tab][0] = DOL_URL_ROOT.'/loan/card.php?id='.$object->id;
+	$head[$tab][1] = $langs->trans('Card');
+	$head[$tab][2] = 'card';
+	$tab++;
+
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+        $nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
+        $head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
+        $head[$tab][1] = $langs->trans("Notes");
+        if($nbNote > 0) $head[$tab][1].= ' <span class="badge">'.$nbNote.'</span>';
+        $head[$tab][2] = 'note';
+        $tab++;
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'loan');
+    complete_head_from_modules($conf, $langs, $object, $head, $tab,'loan');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->loan->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
-	$head[$h][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
-	$head[$h][2] = 'documents';
-	$h++;
+	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
+	$head[$tab][1] = $langs->trans("Documents");
+	if($nbFiles > 0) $head[$tab][1].= ' ('.$nbFiles.')';
+	$head[$tab][2] = 'documents';
+	$tab++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/loan/info.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;
+    $head[$tab][0] = DOL_URL_ROOT.'/loan/info.php?id='.$object->id;
+    $head[$tab][1] = $langs->trans("Info");
+    $head[$tab][2] = 'info';
+    $tab++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'loan','remove');
+    complete_head_from_modules($conf,$langs,$object,$head,$tab,'loan','remove');
 
     return $head;
 }

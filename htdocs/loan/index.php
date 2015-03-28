@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014       Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ $langs->load("banks");
 $langs->load("bills");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid', int);
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 
@@ -117,12 +118,15 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
+        $loan_static->id = $obj->rowid;
+        $loan_static->ref = $obj->rowid;
+        $loan_static->label = $obj->label;
 
 		$var = !$var;
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowLoan"),"label").' '.$obj->rowid.'</a></td>';
+		print '<td>'.$loan_static->getLinkUrl(1, 42).'</td>';
 
 		// Label
 		print '<td>'.dol_trunc($obj->label,42).'</td>';
