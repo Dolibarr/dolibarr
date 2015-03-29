@@ -86,24 +86,18 @@ class PaymentLoan extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
-		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital);
-		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance);
-		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest);
+		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital?$this->amount_capital:0);
+		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance?$this->amount_insurance:0);
+		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest?$this->amount_interest:0);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
-		if (isset($this->note_private))     $this->note = trim($this->note_private);
-		if (isset($this->note_public))      $this->note = trim($this->note_public);
+		if (isset($this->note_private))     $this->note_private = trim($this->note_private);
+		if (isset($this->note_public))      $this->note_public = trim($this->note_public);
 		if (isset($this->fk_bank))			$this->fk_bank = trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat = trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif = trim($this->fk_user_modif);
 
-        $totalamount = 0;
-        foreach ($this->amounts as $key => $value)  // How payment is dispatch
-        {
-            $newvalue = price2num($value,'MT');
-            $this->amounts[$key] = $newvalue;
-            $totalamount += $newvalue;
-        }
+        $totalamount = $this->amount_capital + $this->amount_insurance + $this->amount_interest;
         $totalamount = price2num($totalamount);
 
         // Check parameters
@@ -118,7 +112,9 @@ class PaymentLoan extends CommonObject
 			$sql.= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
 			$sql.= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
-			$sql.= " ".$totalamount.",";
+			$sql.= " ".$this->amount_capital.",";
+			$sql.= " ".$this->amount_insurance.",";
+			$sql.= " ".$this->amount_interest.",";
 			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql.= " 0)";
 
@@ -145,7 +141,7 @@ class PaymentLoan extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -190,8 +186,8 @@ class PaymentLoan extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = $obj->rowid;
+				$this->id = $obj->rowid;
+				$this->ref = $obj->rowid;
 
 				$this->fk_loan = $obj->fk_loan;
 				$this->datec = $this->db->jdate($obj->datec);
@@ -449,16 +445,11 @@ class PaymentLoan extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                $linkaddedforthirdparty=array();
-                foreach ($this->amounts as $key => $value)
+                //$linkaddedforthirdparty=array();
+                if ($mode == 'payment_loan')
                 {
-                    if ($mode == 'payment_loan')
-                    {
-                        $loan = new Loan($this->db);
-                        $loan->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $loan->id, DOL_URL_ROOT.'/loan/card.php?id=', $loan->type_libelle.(($loan->lib && $loan->lib!=$loan->type_libelle)?' ('.$loan->lib.')':''),'loan');
-                        if ($result <= 0) dol_print_error($this->db);
-                    }
+                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/loan/card.php?id=', $this->type_libelle.(($this->label && $this->label!=$this->type_libelle)?' ('.$this->label.')':''),'loan');
+                    if ($result <= 0) dol_print_error($this->db);
                 }
             }
             else
@@ -509,7 +500,7 @@ class PaymentLoan extends CommonObject
 	 * 	@param	int		$maxlen			Max length label
 	 *	@return	string					Chaine with URL
 	 */
-	function getNameUrl($withpicto=0,$maxlen=0)
+	function getNomUrl($withpicto=0,$maxlen=0)
 	{
 		global $langs;
 

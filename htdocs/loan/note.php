@@ -40,7 +40,7 @@ $result = restrictedArea($user, 'loan', $id, '&loan');
 $object = new Loan($db);
 if ($id > 0) $object->fetch($id);
 
-$permissionnote=$user->rights->loan->read;  // Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->loan->write;  // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -88,6 +88,7 @@ if ($id > 0)
     print '<br>';
 
     $colwidth='25';
+    $permission = $user->rights->loan->write;  // Used by the include of notes.tpl.php
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 
