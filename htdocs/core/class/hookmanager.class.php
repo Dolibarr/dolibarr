@@ -184,7 +184,7 @@ class HookManager
                     		}*/
                     	}
 
-                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (isset($actionclassinstance->results) && is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     }
                     // Generic hooks that return a string or array (printSearchForm, printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
