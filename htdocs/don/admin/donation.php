@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
+$langs->load("accountancy");
 $langs->load('other');
 
 if (!$user->admin) accessforbidden();
@@ -114,7 +115,25 @@ else if ($action == 'del')
 	}
 }
 
-// Option
+// Options
+if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
+{
+	$account = GETPOST('DONATION_ACCOUNTINGACCOUNT');	// No alpha here, we want exact string
+
+    $res = dolibarr_set_const($db, "DONATION_ACCOUNTINGACCOUNT",$account,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
+
 if ($action == 'set_DONATION_MESSAGE')
 {
 	$freemessage = GETPOST('DONATION_MESSAGE');	// No alpha here, we want exact string
@@ -191,24 +210,42 @@ dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
  */
 print_titre($langs->trans("Options"));
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>';
-print '<td width="80">&nbsp;</td>';
+print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
+//print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=true;
 
-$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
 
-print '<tr '.$bc[$var].'><td>';
+$var=! $var;
+print '<tr '.$bc[$var].'>';
+
+print '<td width="50%">';
+$label = $langs->trans(AccountAccounting);
+print '<label for="'.$langs->trans(AccountAccounting).'">' . $label . '</label></td>';
+print '<td>';
+print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
+
+$var=! $var;
+print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").'<br>';
 print '<textarea name="DONATION_MESSAGE" class="flat" cols="120">'.$conf->global->DONATION_MESSAGE.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
+
 print "</table>\n";
 print '</form>';
 
