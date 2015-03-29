@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,16 +42,18 @@ if (! empty($conf->ficheinter->enabled))  require_once DOL_DOCUMENT_ROOT.'/fichi
 if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
 $langs->load("suppliers");
-if (! empty($conf->facture->enabled))  	 $langs->load("bills");
-if (! empty($conf->commande->enabled)) 	 $langs->load("orders");
-if (! empty($conf->propal->enabled))   	 $langs->load("propal");
-if (! empty($conf->ficheinter->enabled))	 $langs->load("interventions");
-if (! empty($conf->deplacement->enabled))	 $langs->load("trips");
+if (! empty($conf->facture->enabled))  	    $langs->load("bills");
+if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
+if (! empty($conf->propal->enabled))   	    $langs->load("propal");
+if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
+if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 if (! empty($conf->expensereport->enabled)) $langs->load("trips");
+if (! empty($conf->don->enabled))			$langs->load("donations");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -246,7 +249,15 @@ $listofreferent=array(
 	'table'=>'actioncomm',
 	'datefieldname'=>'datep',
 	'disableamount'=>1,
-	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
+	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire),
+'donation'=>array(
+	'name'=>"Donation",
+	'title'=>"ListDonationsAssociatedProject",
+	'class'=>'Don',
+	'table'=>'don',
+	'datefieldname'=>'date',
+	'disableamount'=>1,
+	'test'=>$conf->don->enabled && $user->rights->don->lire),
 );
 
 if ($action=="addelement")

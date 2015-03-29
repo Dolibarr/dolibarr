@@ -18,13 +18,13 @@
  */
 
 /**
- *	    \file       htdocs/compta/dons/index.php
- *		\ingroup    don
- *		\brief      Home page of donation module
+ *  \file       htdocs/don/index.php
+ *  \ingroup    donations
+ *  \brief      Home page of donation module
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 $langs->load("donations");
 

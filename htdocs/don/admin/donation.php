@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,15 @@
  */
 
 /**
- *      \file       htdocs/admin/dons.php
- *		\ingroup    dons
- *		\brief      Page d'administration/configuration du module Dons
+ *      \file       htdocs/don/admin/dons.php
+ *		\ingroup    donations
+ *		\brief      Page to setup the donation module
  */
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
@@ -173,13 +175,16 @@ else if ($action == 'setart885') {
  * View
  */
 
-$dir = "../core/modules/dons/";
+$dir = "../../core/modules/dons/";
 $form=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
-
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
+
+$head = donation_admin_prepare_head();
+
+dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
 
 /*
  *  Params
@@ -191,7 +196,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=true;
@@ -210,7 +215,7 @@ print '</form>';
 /*
  *  French params
  */
-if ($conf->global->MAIN_LANG_DEFAULT == "fr_FR")
+if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
 	print_titre($langs->trans("FrenchOptions"));

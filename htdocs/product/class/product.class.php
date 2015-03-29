@@ -1563,7 +1563,7 @@ class Product extends CommonObject
 				$this->db->free($resql);
 
 
-				// Retreive all extrafield for thirdparty
+				// Retrieve all extrafield for thirdparty
 				// fetch optionals attributes and labels
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 				$extrafields=new ExtraFields($this->db);

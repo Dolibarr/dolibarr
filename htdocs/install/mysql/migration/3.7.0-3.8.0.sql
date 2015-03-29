@@ -419,6 +419,37 @@ INSERT INTO llx_c_incoterms (code, libelle, active) VALUES ('DDP', 'Delivered Du
 ALTER TABLE llx_societe_extrafields DROP INDEX idx_societe_extrafields;
 ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_object);
 
+-- Module Donation
+ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
+ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
+ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
+ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_project integer NULL;
+
+create table llx_don_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_don_extrafields ADD INDEX idx_don_extrafields (fk_object);
+
+create table llx_payment_donation
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_donation     integer,
+  datec           datetime,           -- date de creation
+  tms             timestamp,
+  datep           datetime,           -- payment date
+  amount          real DEFAULT 0,
+  fk_typepayment  integer NOT NULL,
+  num_payment     varchar(50),
+  note            text,
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- creation user
+  fk_user_modif   integer             -- last modification user
+)ENGINE=innodb;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILL_VALIDATE','Customer invoice validated','Executed when a customer invoice is approved','facture',6);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_APPROVE','Supplier order request approved','Executed when a supplier order is approved','order_supplier',12);
@@ -459,7 +490,6 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_CREATE','Task created','Executed when a project task is created','project',35);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_MODIFY','Task modified','Executed when a project task is modified','project',36);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_DELETE','Task deleted','Executed when a project task is deleted','project',37);
-
 
 create table llx_c_price_global_variable
 (
