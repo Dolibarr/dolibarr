@@ -184,7 +184,7 @@ print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'donation');
+dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
 
 /*
  *  Params
@@ -215,7 +215,8 @@ print '</form>';
 /*
  *  French params
  */
-if (preg_match('/fr/i',$outputlangs->defaultlang))
+print $outputlangs->defaultlang;
+if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
 	print_titre($langs->trans("FrenchOptions"));

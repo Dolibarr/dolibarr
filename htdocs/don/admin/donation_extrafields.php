@@ -66,7 +66,7 @@ print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Donations"), 0, 'donation');
+dol_fiche_head($head, 'attributes', $langs->trans("Donations"), 0, 'payment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
