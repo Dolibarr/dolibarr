@@ -215,7 +215,6 @@ print '</form>';
 /*
  *  French params
  */
-print $outputlangs->defaultlang;
 if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 {
 	print '<br>';
