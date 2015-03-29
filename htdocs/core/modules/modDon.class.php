@@ -104,6 +104,13 @@ class modDon  extends DolibarrModules
 				"Message affiché sur le récépissé de versements ou dons",
 				"0"
 		);
+		$this->const[5] = array (
+				"DONATION_ACCOUNTINGACCOUNT",
+				"chaine",
+				"7581",
+				"Compte comptable de remise des versements ou dons",
+				"0"
+		);
 
 		// Boxes
 		$this->boxes = array();
