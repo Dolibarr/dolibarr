@@ -2685,10 +2685,9 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
-	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
 		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
 
@@ -2781,7 +2780,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline,$permtoedit);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
 
 			$i++;
@@ -2793,7 +2792,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string		$action				GET/POST action
-	 *	@param	array	    $line		       	Selected object line to output
+	 *	@param CommonObjectLine $line		       	Selected object line to output
 	 *	@param  string	    $var               	Is it a an odd line (true)
 	 *	@param  int		    $num               	Number of line (0)
 	 *	@param  int		    $i					I
@@ -2802,13 +2801,14 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
-	 *  @param	int			$permtoedit			Permission to edit
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form,$bc,$bcdd, $object_rights;
+
+		$object_rights = $this->getRights();
 
 		$element=$this->element;
 
@@ -3882,5 +3882,17 @@ abstract class CommonObject
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->{$this->element};
+	}
+
 
 }

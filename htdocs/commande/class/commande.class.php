@@ -104,7 +104,10 @@ class Commande extends CommonOrder
 
     var $user_author_id;
 
-    var $lines = array();
+	/**
+	 * @var OrderLine[]
+	 */
+	var $lines = array();
 
 	//Incorterms
 	var $fk_incoterms;
@@ -1635,12 +1638,12 @@ class Commande extends CommonOrder
 
                 $line = new OrderLine($this->db);
 
-                $line->rowid            = $objp->rowid;				// \deprecated
+                $line->rowid            = $objp->rowid;
                 $line->id               = $objp->rowid;
                 $line->fk_commande      = $objp->fk_commande;
-                $line->commande_id      = $objp->fk_commande;			// \deprecated
+                $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
-                $line->desc             = $objp->description;  		// Description ligne
+                $line->desc             = $objp->description;
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
@@ -1666,11 +1669,11 @@ class Commande extends CommonOrder
                 $line->special_code		= $objp->special_code;
                 $line->fk_parent_line	= $objp->fk_parent_line;
 
-                $line->ref				= $objp->product_ref;		// TODO deprecated
+                $line->ref				= $objp->product_ref;
                 $line->product_ref		= $objp->product_ref;
-                $line->libelle			= $objp->product_label;		// TODO deprecated
+                $line->libelle			= $objp->product_label;
                 $line->product_label	= $objp->product_label;
-                $line->product_desc     = $objp->product_desc; 		// Description produit
+                $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
@@ -3261,56 +3264,44 @@ class Commande extends CommonOrder
  */
 class OrderLine extends CommonOrderLine
 {
-    var $db;
-    var $error;
-
 	public $element='commandedet';
 	public $table_element='commandedet';
 
     var $oldline;
 
+	/**
+	 * Id of parent order
+	 * @var int
+	 */
+	public $fk_commande;
+
+	/**
+	 * Id of parent order
+	 * @var int
+	 * @deprecated Use fk_commande
+	 */
+	public $commande_id;
+
     // From llx_commandedet
-    var $rowid;
     var $fk_parent_line;
     var $fk_facture;
     var $label;
-    var $desc;          	// Description ligne
-    var $fk_product;		// Id produit predefini
-    var $product_type = 0;	// Type 0 = product, 1 = Service
-
-    var $qty;				// Quantity (example 2)
-    var $tva_tx;			// VAT Rate for product/service (example 19.6)
-    var $localtax1_tx; 		// Local tax 1
-    var $localtax2_tx; 		// Local tax 2
-    var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-    var $subprice;      	// U.P. HT (example 100)
-    var $remise_percent;	// % for line discount (example 20%)
     var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;
+
+	/**
+	 * Buy price without taxes
+	 * @var float
+	 */
 	var $pa_ht;
     var $marge_tx;
     var $marque_tx;
-    var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-						    // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
-    var $special_code = 0;
-    var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-    var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
-    var $total_localtax1;   // Total local tax 1 for the line
-    var $total_localtax2;   // Total local tax 2 for the line
-    var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    // Ne plus utiliser
-    var $remise;
-    var $price;
-
-    // From llx_product
-    var $ref;				// deprecated
-    var $libelle;			// deprecated
-    var $product_ref;
-    var $product_label; 	// Label produit
-    var $product_desc;  	// Description produit
+	/**
+	 * @deprecated
+	 */
+	var $remise;
 
     // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
     // Start and end date of the line
