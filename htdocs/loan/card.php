@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014		Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,14 @@ if ($action == 'confirm_paid' && $confirm == 'yes')
 {
 	$object->fetch($id);
 	$result = $object->set_paid($user);
+    if ($result > 0)
+    {
+        setEventMessage($langs->trans('LoanPaid'));
+    }
+    else
+    {
+        setEventMessage($loan->error, 'errors');
+    }
 }
 
 // Delete loan
@@ -60,6 +69,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
+		setEventMessage($langs->trans('LoanDeleted'));
 		header("Location: index.php");
 		exit;
 	}
@@ -101,10 +111,12 @@ if ($action == 'add' && $user->rights->loan->write)
 			$object->dateend	= $dateend;
 			$object->nbterm		= $_POST["nbterm"];
 			$object->rate		= $_POST["rate"];
-			
+			$object->note_private = GETPOST('note_private');
+			$object->note_public = GETPOST('note_public');
+
 			$object->account_capital	= $_POST["accountancy_account_capital"];
 			$object->account_insurance	= $_POST["accountancy_account_insurance"];
-			$object->account_interest	= $_POST["accountancy_account_interest"];		
+			$object->account_interest	= $_POST["accountancy_account_interest"];
 
 			$id=$object->create($user);
 			if ($id <= 0)
@@ -126,7 +138,7 @@ else if ($action == 'update' && $user->rights->loan->write)
 	if (! $cancel)
 	{
 		$result = $object->fetch($id);
-			
+
 		if ($object->fetch($id))
 		{
 			$object->label		= GETPOST("label");
@@ -135,7 +147,7 @@ else if ($action == 'update' && $user->rights->loan->write)
 			$object->nbterm		= GETPOST("nbterm");
 			$object->rate		= GETPOST("rate");
 		}
-			
+
         $result = $object->update($user);
 
         if ($result > 0)
@@ -180,7 +192,7 @@ if ($action == 'create')
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
-	
+
 	// Label
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
 
@@ -197,7 +209,7 @@ if ($action == 'create')
 		print $langs->trans("NoBankAccountDefined");
 		print '</td></tr>';
 	}
-	
+
     // Capital
     print '<tr><td class="fieldrequired">'.$langs->trans("Capital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
 
@@ -206,35 +218,44 @@ if ($action == 'create')
     print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
     print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1);
     print '</td></tr>';
-	
+
 	// Date End
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
     print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1);
     print '</td></tr>';
-	
+
 	// Number of terms
 	print '<tr><td class="fieldrequired">'.$langs->trans("Nbterms").'</td><td><input name="nbterm" size="5" value="' . GETPOST('nbterm') . '"></td></tr>';
-			
+
 	// Rate
     print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . GETPOST("rate") . '"> %</td></tr>';
 
-	// Note
+    // Note Private
     print '<tr>';
-    print '<td class="border" valign="top">'.$langs->trans('Note').'</td>';
+    print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note', GETPOST('note', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
     print $doleditor->Create(1);
 
     print '</td></tr>';
+
+    // Note Public
+    print '<tr>';
+    print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
+    print '<td valign="top" colspan="2">';
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    print $doleditor->Create(1);
+    print '</td></tr>';
+
 	print '</table>';
-	
+
 	print '<br>';
 
 	// Accountancy
 	print '<table class="border" width="100%">';
-	
+
 	if ($conf->accounting->enabled)
 	{
 		print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
@@ -265,7 +286,7 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-	
+
     print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
     print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
@@ -322,7 +343,7 @@ if ($id > 0)
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td></tr>';
 		}
-		
+
 		// Capital
 		print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
@@ -351,12 +372,18 @@ if ($id > 0)
 			print dol_print_date($object->dateend,"day");
 		}
 		print "</td></tr>";
-		
+
 		// Nbterms
 		print '<tr><td>'.$langs->trans("Nbterms").'</td><td>'.$object->nbterm.'</td></tr>';
-		
+
 		// Rate
 		print '<tr><td>'.$langs->trans("Rate").'</td><td>'.$object->rate.' %</td></tr>';
+
+        // Note Private
+        print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($object->note_private).'</td></tr>';
+
+        // Note Public
+        print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
@@ -446,7 +473,7 @@ if ($id > 0)
 		}
 		print "</td></tr>";
 		print "</table>";
-		
+
 		/*
 		 *   Buttons actions
 		 */
@@ -457,25 +484,25 @@ if ($id > 0)
 			// Edit
 			if ($user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
 
 			// Emit payment
 			if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/payment/payment.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a>';
 			}
 
 			// Classify 'paid'
 			if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a>';
 			}
 
 			// Delete
 			if ($user->rights->loan->delete)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/loan/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 			}
 
 			print "</div>";

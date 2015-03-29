@@ -3,28 +3,30 @@ How to contribute to Dolibarr
 
 Bug reports and feature requests
 --------------------------------
-Issues are tracked at [Doliforge](https://doliforge.org/projects/dolibarr)
+** NEW **
 
-*You need to create an account before being able to use the "Bugs & Tasks" feature.*
+Issues are now managed on [GitHub](https://github.com/Dolibarr/dolibarr/Issues).
 
-1. Use the search engine to check if nobody's already reported your problem.
-2. Choose the right section. (Bugs or Task and Feature Request).
-3. Report with as much detail as possible (Use screenshots or even screencasts whenever possible).
+1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
+2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
+3. Report with as much detail as possible ([Use screenshots or even screencasts whenever possible](https://help.github.com/articles/issue-attachments)).
 
-Code
-----
+We're still figuring out how to migrate old issues to GitHub. In the meantime, they are still available at [Doliforge](https://doliforge.org/projects/dolibarr).
+
+<a name=code></a>Code
+---------------------
 
 ### Basic workflow
 
-1. Fork the [GitHub repository](https://github.com/Dolibarr/dolibarr).
+1. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
 2. Clone your fork.
-3. Choose a branch(See the Branches section below).
+3. Choose a branch(See the [Branches](#branches) section below).
 4. Commit and push your changes.
-5. Make a pull request.
+5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
-### Branches
+### <a name=branches></a>Branches
 
-Unless you're fixing a bug, all pull request should be made against the *develop* branch.
+Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
 If you're fixing a bug, it is preferred that you cook your fix and pull request it
 against the oldest version affected that's still supported.
@@ -69,7 +71,7 @@ Where KEYWORD is one of:
 
 Translations
 ------------
-en_US and delta languages (i.e: fr_XX) are maintained in the repository. See Code section above.
+The source language (en_US) is maintained in the repository. See the [Code](#code) section above.
 
 All other translations are managed online at [Transifex](https://www.transifex.com/projects/p/dolibarr).
 

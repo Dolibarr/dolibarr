@@ -56,13 +56,13 @@ if (isset($_REQUEST['form_complete'])) {
     $show_progress                   = (isset($_REQUEST['show_progress'])) ? $_REQUEST['show_progress'] : false;
     $form_complete                   = $_REQUEST['form_complete'];
 }
-   
+
 // This function does the actual mortgage calculations
 // by plotting a PVIFA (Present Value Interest Factor of Annuity)
 // table...
 function get_interest_factor($year_term, $monthly_interest_rate) {
     global $base_rate;
-   
+
     $factor      = 0;
     $base_rate   = 1 + $monthly_interest_rate;
     $denominator = $base_rate;
@@ -71,7 +71,7 @@ function get_interest_factor($year_term, $monthly_interest_rate) {
         $denominator *= $base_rate;
     }
     return $factor;
-}        
+}
 
 // If the form is complete, we'll start the math
 if ($form_complete) {
@@ -109,18 +109,19 @@ if ($form_complete) {
     if (!$down_percent)            { $down_percent            = $default_down_percent;            }
     if (!$show_progress)           { $show_progress           = $default_show_progress;           }
 }
-    
+
 if (! empty($errors)) {
     setEventMessages('', $errors, 'errors');
     $form_complete   = false;
 }
-	
+
 /*
  *	View
  */
 
 llxHeader();
 
+print_fiche_titre($langs->trans("LoanCalc"));
 print $langs->trans('LoanCalcDesc');
 
 print '<form method="GET" name="information" action="'.$_SERVER['PHP_SELF'].'">';
@@ -131,33 +132,33 @@ print '<table cellpadding="2" cellspacing="0" border="0" width="100%">';
 //print '<td align="smalltext" width="100%"><img src="/images/clear.gif" width="250" height="1" border="0" alt=""></td>';
 //print '</tr>';
 print '<tr bgcolor="#cccccc">';
-print '<td align="center" colspan="2"><b>Purchase &amp; Financing Information</b></td>';
+print '<td align="center" colspan="2"><b>'.$langs->trans('PurchaseFinanceInfo').'</b></td>';
 print '</tr>';
 print '<tr bgcolor="#eeeeee">';
-print '<td align="right">Sale Price of Home:</td>';
+print '<td align="right">'.$langs->trans('SalePriceOfAsset').':</td>';
 print '<td><input type="text" size="10" name="sale_price" value="'.$sale_price.'"> '.$langs->trans("Currency".$conf->currency).'</td>';print '</tr>';
 print '<tr bgcolor="#eeeeee">';
-print '<td align="right">Percentage Down:</td>';
+print '<td align="right">'.$langs->trans('PercentageDown').':</td>';
 print '<td><input type="text" size="5" name="down_percent" value="'.$down_percent.'">%</td>';
 print '</tr>';
 print '<tr bgcolor="#eeeeee">';
-print '<td align="right">Length of Mortgage:</td>';
+print '<td align="right">'.$langs->trans('LengthOfMortgage').':</td>';
 print '<td><input type="text" size="3" name="year_term" value="'.$year_term.'">years</td>';
 print '</tr>';
 print '<tr bgcolor="#eeeeee">';
-print '<td align="right">Annual Interest Rate:</td>';
+print '<td align="right">'.$langs->trans('AnnualInterestRate').':</td>';
 print '<td><input type="text" size="5" name="annual_interest_percent" value="'.$annual_interest_percent.'">%</td>';
 print '</tr>';
 print '<tr bgcolor="#eeeeee">';
-print '<td align="right">Explain Calculations:</td>';
+print '<td align="right">'.$langs->trans('ExplainCalculations').':</td>';
 
 if (! empty($show_progress))
 {
-	print '<td><input type="checkbox" name="show_progress" value="1" checked>Show me the calculations and amortization</td>';
+	print '<td><input type="checkbox" name="show_progress" value="1" checked>'.$langs->trans('ShowMeCalculationsAndAmortization').'</td>';
 }
 else
 {
-	print '<td><input type="checkbox" name="show_progress" value="1">Show me the calculations and amortization</td>';
+	print '<td><input type="checkbox" name="show_progress" value="1">'.$langs->trans('ShowMeCalculationsAndAmortization').'</td>';
 }
 
 print '</tr>';
@@ -173,18 +174,18 @@ if ($form_complete && $monthly_payment)
 	print '<br>';
 	print '<table cellpadding="2" cellspacing="0" border="0" width="100%">';
 	print '<tr valign="top">';
-	print '<td align="center" colspan="2" bgcolor="#000000"><font color="#ffffff"><b>Mortgage Payment Information</b></font></td>';
+	print '<td align="center" colspan="2" bgcolor="#000000"><font color="#ffffff"><b>'.$langs->trans('MortgagePaymentInformation').'</b></font></td>';
 	print '</tr>';
 	print '<tr valign="top" bgcolor="#eeeeee">';
-	print '<td align="right">Down Payment:</td>';
+	print '<td align="right">'.$langs->trans('DownPayment').':</td>';
 	print '<td><b>' . number_format($down_payment, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</b></td>';
 	print '</tr>';
 	print '<tr valign="top" bgcolor="#eeeeee">';
-	print '<td align="right">Amount Financed:</td>';
+	print '<td align="right">'.$langs->trans('AmountFinanced').':</td>';
 	print '<td><b>' . number_format($financing_price, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</b></td>';
 	print '</tr>';
 	print '<tr valign="top" bgcolor="#cccccc">';
-	print '<td align="right">Monthly Payment:</td>';
+	print '<td align="right">'.$langs->trans('MonthlyPayment').':</td>';
 	print '<td><b>' . number_format($monthly_payment, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</b><br><font>(Principal &amp; Interest ONLY)</font></td>';
 	print '</tr>';
 
@@ -203,7 +204,7 @@ if ($form_complete && $monthly_payment)
 		print '</td>';
 		print '</tr>';
 		print '<tr valign="top" bgcolor="#FFFF99">';
-		print '<td align="right">Monthly Payment:</td>';
+		print '<td align="right">'.$langs->trans('MonthlyPayment').':</td>';
 		print '<td><b>' . number_format(($monthly_payment + $pmi_per_month), "2", ".", ",") . $langs->trans("Currency".$conf->currency) . '</b><br><font>';
 		print '(Principal &amp; Interest, and PMI)</td>';
 		print '</tr>';
@@ -243,7 +244,7 @@ if ($form_complete && $monthly_payment)
 print '</table>';
 print '</form>';
 
-// This prints the calculation progress and 
+// This prints the calculation progress and
 // the instructions of HOW everything is figured
 // out
 if ($form_complete && $show_progress) {
@@ -254,49 +255,46 @@ if ($form_complete && $show_progress) {
 	print '<tr valign="top">';
 	print '<td><b>'. $step++ .'</b></td>';
 	print '<td>';
-	echo 'The <b>down payment</b>
-         = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)<br><br>
-         ' . number_format($down_payment,"2",".",",") . ' ' . $langs->trans("Currency".$conf->currency) . ' = '.number_format($sale_price,"2",".",",") . ' ' . $langs->trans("Currency".$conf->currency) . ' X 
-         ('.$down_percent.' / 100)';
+	print $langs->trans('DownPaymentDesc').'<br><br>';
+    print number_format($down_payment,"2",".",",") . ' ' . $langs->trans("Currency".$conf->currency) . ' = ';
+    print number_format($sale_price,"2",".",",") . ' ' . $langs->trans("Currency".$conf->currency) . ' X (' . $down_percent . ' / 100)';
 	print '</td>';
 	print '</tr>';
 	print '<tr valign="top">';
 	print '<td><b>' . $step++ . '</b></td>';
 	print '<td>';
-	print 'The <b>interest rate</b> = The annual interest percentage divided by 100<br><br>';
+	print $langs->trans('InterestRateDesc') . '<br><br>';
 	print $annual_interest_rate . ' = ' . $annual_interest_percent . '% / 100';
 	print '</td>';
 	print '</tr>';
 	print '<tr valign="top" bgcolor="#cccccc">';
 	print '<td colspan="2">';
-	print 'The <b>monthly factor</b> = The result of the following formula:';
+	print $langs->trans('MonthlyFactorDesc') . ':';
 	print '</td>';
 	print '</tr>';
 	print '<tr valign="top">';
 	print '<td><b>' . $step++ . '</b></td>';
 	print '<td>';
-	print 'The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)<br><br>';
+	print $langs->trans('MonthlyInterestRateDesc') . '<br><br>';
 	print $monthly_interest_rate . ' = ' . $annual_interest_rate . ' / 12';
 	print '</td>';
 	print '</tr>';
 	print '<tr valign="top">';
 	print '<td><b>' . $step++ . '</b></td>';
 	print '<td>';
-	print 'The <b>month term</b> of the loan in months = The number of years you\'ve taken the loan out for times 12<br><br>';
-	print $month_term . ' Months = ' . $year_term . ' Years X 12';
+	print $langs->trans('MonthTermDesc') . '<br><br>';
+	print $month_term . ' '. $langs->trans('Months') . ' = ' . $year_term . ' '. $langs->trans('Years') . ' X 12';
 	print '</td>';
 	print '</tr>';
 	print '<tr valign="top">';
 	print '<td><b>' . $step++ . '</b></td>';
 	print '<td>';
-	print 'The montly payment is figured out using the following formula:<br>';
-	print 'Monthly Payment = ' . number_format($financing_price, "2", "", "") . ' * '; 
+	print $langs->trans('MonthlyPaymentDesc') . ':<br>';
 	print $langs->trans('MonthlyPayment').' = ' . number_format($financing_price, "2", "", "") . ' * ';
 	print '(1 - ((1 + ' . number_format($monthly_interest_rate, "4", "", "") . ')';
 	print '<sup>-(' . $month_term . ')</sup>)))';
 	print '<br><br>';
-	print 'The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank\'s interest,';
-	print 'and how much goes into paying off the principal of your loan.';
+	print $langs->trans('AmortizationPaymentDesc');
 	print '</td>';
 	print '</tr>';
 	print '</table>';
@@ -313,7 +311,7 @@ if ($form_complete && $show_progress) {
 	$denom = pow((1 + $monthly_interest_rate), $power);
 	$monthly_payment = $principal * ($monthly_interest_rate / (1 - $denom));
 
-	print "<br><br><a name=\"amortization\"></a>Amortization For Monthly Payment: <b>" . number_format($monthly_payment, "2", ".", ",") . "</b> over " . $year_term . " years<br>\n";
+	print '<br><br><a name="amortization"></a>'.$langs->trans('AmortizationMonthlyPaymentOverYears', number_format($monthly_payment, "2", ".", ","), $year_term)."<br>\n";
 
 	print '<table class="noborder" width="100%">';
 
@@ -327,17 +325,17 @@ if ($form_complete && $show_progress) {
 
 	print $legend;
 
-	// Loop through and get the current month's payments for 
-	// the length of the loan 
+	// Loop through and get the current month's payments for
+	// the length of the loan
 	while ($current_month <= $month_term)
-	{        
+	{
 		$interest_paid     = $principal * $monthly_interest_rate;
 		$principal_paid    = $monthly_payment - $interest_paid;
 		$remaining_balance = $principal - $principal_paid;
- 
+
 		$this_year_interest_paid  = $this_year_interest_paid + $interest_paid;
 		$this_year_principal_paid = $this_year_principal_paid + $principal_paid;
-		
+
 		$var = !$var;
 		print "<tr ".$bc[$var].">";
 		print '<td align="right">' . $current_month . '</td>';
@@ -357,9 +355,9 @@ if ($form_complete && $show_progress) {
 			print '<tr>';
 			print '<td>&nbsp;</td>';
 			print '<td colspan="3">';
-			print 'You will spend ' . number_format($total_spent_this_year, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . ' on your house in year ' . $current_year . '<br>';
-			print number_format($this_year_interest_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . ' will go towards INTEREST<br>';
-			print number_format($this_year_principal_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . ' will go towards PRINCIPAL<br>';
+			print $langs->trans('YouWillSpend', number_format($total_spent_this_year, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency), $current_year) . '<br>';
+			print $langs->trans('GoToInterest', number_format($this_year_interest_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency)) . '<br>';
+			print $langs->trans('GoToPrincipal', number_format($this_year_principal_paid, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency)) . '<br>';
 			print '</td>';
 			print '</tr>';
 

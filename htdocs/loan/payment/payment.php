@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014		Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,21 +56,21 @@ if ($action == 'add_payment')
 		exit;
 	}
 
-	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 	if (! $_POST["paymenttype"] > 0)
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), 'errors');
 		$error++;
 	}
 	if ($datepaid == '')
 	{
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), 'errors');
 		$error++;
 	}
     if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
     {
-        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit"));
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), 'errors');
         $error++;
     }
 
@@ -89,8 +90,8 @@ if ($action == 'add_payment')
 
         if (count($amounts) <= 0)
         {
+            setEventMessage($langs->trans('ErrorNoPaymentDefined'), 'errors');
             $error++;
-            $errmsg='ErrorNoPaymentDefined';
         }
 
         if (! $error)
@@ -102,29 +103,30 @@ if ($action == 'add_payment')
     		$payment->chid				= $chid;
     		$payment->datepaid			= $datepaid;
     		$payment->amounts			= $amounts;   // Tableau de montant
-			$payment->amount_capital	= $_POST["amount_capital"];
-			$payment->amount_insurance	= $_POST["amount_insurance"];
-			$payment->amount_interest	= $_POST["amount_interest"];
-			$payment->paymenttype		= $_POST["paymenttype"];
-    		$payment->num_payment		= $_POST["num_payment"];
-    		$payment->note				= $_POST["note"];
+			$payment->amount_capital	= GETPOST('amount_capital');
+			$payment->amount_insurance	= GETPOST('amount_insurance');
+			$payment->amount_interest	= GETPOST('amount_interest');
+			$payment->paymenttype		= GETPOST('paymenttype');
+    		$payment->num_payment		= GETPOST('num_payment');
+    		$payment->note_private      = GETPOST('note_private');
+    		$payment->note_public       = GETPOST('note_public');
 
     		if (! $error)
     		{
     		    $paymentid = $payment->create($user);
                 if ($paymentid < 0)
                 {
-                    $errmsg=$payment->error;
+                    setEventMessage($payment->error, 'errors');
                     $error++;
                 }
     		}
 
             if (! $error)
             {
-                $result=$payment->addPaymentToBank($user,'payment_loan','(LoanPayment)',$_POST['accountid'],'','');
+                $result=$payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
                 if (! $result > 0)
                 {
-                    $errmsg=$payment->error;
+                    setEventMessage($payment->error, 'errors');
                     $error++;
                 }
             }
@@ -167,11 +169,6 @@ if ($_GET["action"] == 'create')
 
 	print_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
-
-	if ($mesg)
-	{
-		print "<div class=\"error\">$mesg</div>";
-	}
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -236,10 +233,14 @@ if ($_GET["action"] == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top">'.$langs->trans("NotePrivate").'</td>';
+	print '<td valign="top" colspan="2"><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
+	print '<tr>';
+	print '<td valign="top">'.$langs->trans("NotePublic").'</td>';
+	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '</tr>';
 	print '</table>';
 
 	print '<br>';
@@ -296,7 +297,7 @@ if ($_GET["action"] == 'create')
 		{
 			print '-';
 		}
-		print '<br>';		
+		print '<br>';
 		if ($sumpaid < $objp->capital)
 		{
 			$namea = "amount_insurance_".$objp->id;
@@ -306,7 +307,7 @@ if ($_GET["action"] == 'create')
 		{
 			print '-';
 		}
-		print '<br>';		
+		print '<br>';
 		if ($sumpaid < $objp->capital)
 		{
 			$namei = "amount_interest_".$objp->id;

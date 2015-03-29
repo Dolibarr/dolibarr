@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2014		Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+-- Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -32,7 +33,8 @@ create table llx_loan
   nbterm						real,
   rate							double  NOT NULL,
   
-  note							text,
+  note_private                  text,
+  note_public                   text,
   
   capital_position				real     default 0,		-- If not a new loan, just have the position of capital
   date_position					date,
