@@ -343,7 +343,7 @@ if ($id > 0 || $ref)
 			if (! empty($conf->commande->enabled))
 			{
 				if ($found) print '<br>'; else $found=1;
-				print $langs->trans("CustomersOrdersRunning").': '.($product->stats_commande['qty']-$product->stats_sendings['qty']);
+				print $langs->trans("CustomersOrdersRunning").': '.($product->stats_commande['qty']-$product->stats_expedition['qty']);
 				$result=$product->load_stats_commande(0,'0');
 				if ($result < 0) dol_print_error($db,$product->error);
 				print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';

@@ -248,7 +248,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);
 		print '</td></tr>';
 	}
 
@@ -365,7 +365,7 @@ if ($id)
 	print "<div class=\"tabsAction\">\n";
 	if ($salpayment->rappro == 0)
 	{
-		if (! empty($user->rights->tax->charges->supprimer))
+		if (! empty($user->rights->salaries->delete))
 		{
 			print '<a class="butActionDelete" href="fiche.php?id='.$salpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
