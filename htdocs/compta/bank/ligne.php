@@ -33,6 +33,7 @@ $langs->load("categories");
 $langs->load("compta");
 $langs->load("bills");
 if (! empty($conf->adherent->enabled)) $langs->load("members");
+if (! empty($conf->loan->enabled)) $langs->load("loan");
 
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
@@ -343,6 +344,18 @@ if ($result)
                     print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowPaymentSalary'),'payment').' ';
                     print $langs->trans("SalaryPayment");
+                    print '</a>';
+                }
+                else if ($links[$key]['type']=='payment_loan') {
+                    print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowLoanPayment'),'payment').' ';
+                    print $langs->trans("PaymentLoan");
+                    print '</a>';
+                }
+                else if ($links[$key]['type']=='loan') {
+                    print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowLoan'),'bill').' ';
+                    print $langs->trans("Loan");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='member') {
