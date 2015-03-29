@@ -306,7 +306,7 @@ class Don extends CommonObject
      * @return  int  		        <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
-    function create($user)
+    function create($user, $notrigger)
     {
         global $conf, $langs;
 		
@@ -426,6 +426,7 @@ class Don extends CommonObject
      *  Update a donation record
      *
      *  @param 		User	$user   Objet utilisateur qui met a jour le don
+     *  @param      int		$notrigger	Disable triggers
      *  @return     int      		>0 if OK, <0 if KO
      */
     function update($user, $notrigger=0)
@@ -589,11 +590,11 @@ class Don extends CommonObject
     /**
      *      Load donation from database
      *
-     *      @param      int		$rowid      Id of donation to load
+     *      @param      int		$id      Id of donation to load
      *      @param      string	$ref        Ref of donation to load
      *      @return     int      			<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='')
     {
         global $conf;
 
@@ -676,7 +677,7 @@ class Don extends CommonObject
     /**
      *    Validate a promise of donation
      *
-     *    @param	int		$rowid   	id of donation
+     *    @param	int		$id   	id of donation
      *    @param  	int		$userid  	User who validate the promise
      *    @return   int     			<0 if KO, >0 if OK
      */
@@ -707,7 +708,7 @@ class Don extends CommonObject
     /**
      *    Classe le don comme paye, le don a ete recu
      *
-     *    @param	int		$rowid           	id du don a modifier
+     *    @param	int		$id           	    id du don a modifier
      *    @param    int		$modepaiement   	mode de paiement
      *    @return   int      					<0 if KO, >0 if OK
      */
@@ -742,7 +743,7 @@ class Don extends CommonObject
     /**
      *    Set donation to status canceled
      *
-     *    @param	int		$rowid   	id of donation
+     *    @param	int		$id   	    id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
     function set_cancel($id)
