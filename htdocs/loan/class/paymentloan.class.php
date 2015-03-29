@@ -445,16 +445,11 @@ class PaymentLoan extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                $linkaddedforthirdparty=array();
-                foreach ($this->amounts as $key => $value)
+                //$linkaddedforthirdparty=array();
+                if ($mode == 'payment_loan')
                 {
-                    if ($mode == 'payment_loan')
-                    {
-                        $loan = new Loan($this->db);
-                        $loan->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $loan->id, DOL_URL_ROOT.'/loan/card.php?id=', $loan->type_libelle.(($loan->lib && $loan->lib!=$loan->type_libelle)?' ('.$loan->lib.')':''),'loan');
-                        if ($result <= 0) dol_print_error($this->db);
-                    }
+                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/loan/card.php?id=', $this->type_libelle.(($this->label && $this->label!=$this->type_libelle)?' ('.$this->label.')':''),'loan');
+                    if ($result <= 0) dol_print_error($this->db);
                 }
             }
             else
