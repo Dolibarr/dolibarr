@@ -450,7 +450,8 @@ if ($id > 0 || $ref)
         }
 
         // Number of supplier order running
-        if (! empty($conf->fournisseur->enabled)) {
+        if (! empty($conf->fournisseur->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_commande_fournisseur(0,'3,4');
             print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
@@ -460,7 +461,8 @@ if ($id > 0 || $ref)
         }
 
 	    // Number of product from supplier order already received (partial receipt)
-        if (! empty($conf->fournisseur->enabled)) {
+        if (! empty($conf->fournisseur->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$product->stats_reception['qty'];
         }
