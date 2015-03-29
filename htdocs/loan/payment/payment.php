@@ -32,7 +32,6 @@ $langs->load("loan");
 
 $chid=GETPOST('id','int');
 $action=GETPOST('action');
-$amounts = array();
 $cancel=GETPOST('cancel','alpha');
 
 // Security check
@@ -58,7 +57,7 @@ if ($action == 'add_payment')
 
 	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-	if (! $_POST["paymenttype"] > 0)
+	if (! GETPOST('paymenttype', 'int') > 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode")), 'errors');
 		$error++;
@@ -68,7 +67,7 @@ if ($action == 'add_payment')
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Date")), 'errors');
 		$error++;
 	}
-    if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
+    if (! empty($conf->banque->enabled) && ! GETPOST('accountid', 'int') > 0)
     {
         setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToCredit")), 'errors');
         $error++;
@@ -78,17 +77,8 @@ if ($action == 'add_payment')
 	{
 		$paymentid = 0;
 
-		// Read possible payments
-		foreach ($_POST as $key => $value)
-		{
-			if (substr($key,0,7) == 'amount_')
-			{
-				$other_chid = substr($key,7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
-			}
-		}
-
-        if (count($amounts) <= 0)
+        $amount = GETPOST('amount_capital') + GETPOST('amount_insurance') + GETPOST('amount_interest');
+        if ($amount == 0)
         {
             setEventMessage($langs->trans('ErrorNoPaymentDefined'), 'errors');
             $error++;
@@ -102,7 +92,6 @@ if ($action == 'add_payment')
     		$payment = new PaymentLoan($db);
     		$payment->chid				= $chid;
     		$payment->datepaid			= $datepaid;
-    		$payment->amounts			= $amounts;   // Tableau de montant
 			$payment->amount_capital	= GETPOST('amount_capital');
 			$payment->amount_insurance	= GETPOST('amount_insurance');
 			$payment->amount_interest	= GETPOST('amount_interest');
@@ -123,7 +112,7 @@ if ($action == 'add_payment')
 
             if (! $error)
             {
-                $result=$payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
+                $result = $payment->addPaymentToBank($user, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
                 if (! $result > 0)
                 {
                     setEventMessage($payment->error, 'errors');
@@ -185,9 +174,9 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
-	$sql = "SELECT sum(p.amount) as total";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
-	$sql.= " WHERE p.fk_loan = ".$chid;
+	$sql = "SELECT SUM(amount_capital + amount_insurance + amount_interest) as total";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan";
+	$sql.= " WHERE fk_loan = ".$chid;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -195,23 +184,23 @@ if ($_GET["action"] == 'create')
 		$sumpaid = $obj->total;
 		$db->free();
 	}
-	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '</tr>';
 
 	print '</table>';
-	
+
 	print '<br>';
-	
+
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">'.$langs->trans("Payment").'</td>';
 	print '</tr>';
 
 	print '<tr><td  width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	$form->select_date($datepayment,'','','','',"add_payment",1,1);
+	$form->select_date($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
@@ -227,7 +216,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// Number
-	print '<tr><td>'.$langs->trans('Number');
+	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
@@ -245,12 +234,6 @@ if ($_GET["action"] == 'create')
 
 	print '<br>';
 
-	/*
- 	 * Other loan unpaid
-	 */
-	$num = 1;
-	$i = 0;
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
@@ -261,83 +244,57 @@ if ($_GET["action"] == 'create')
 	print "</tr>\n";
 
 	$var=True;
-	$total=0;
-	$totalrecu=0;
 
-	while ($i < $num)
+
+	print "<tr ".$bc[$var].">";
+
+	if ($loan->datestart > 0)
 	{
-		$objp = $loan;
-
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
-
-		if ($objp->datestart > 0)
-		{
-			print '<td align="left" valign="center">'.dol_print_date($objp->datestart,'day').'</td>';
-		}
-		else
-		{
-			print '<td align="center" valign="center"><b>!!!</b></td>';
-		}
-
-		print '<td align="right" valign="center">'.price($objp->capital)."</td>";
-
-		print '<td align="right" valign="center">'.price($sumpaid)."</td>";
-
-		print '<td align="right" valign="center">'.price($objp->capital - $sumpaid)."</td>";
-
-		print '<td align="right">';
-		if ($sumpaid < $objp->capital)
-		{
-			$namec = "amount_capital_".$objp->id;
-			print $langs->trans("Capital") .': <input type="text" size="8" name="'.$namec.'">';
-		}
-		else
-		{
-			print '-';
-		}
-		print '<br>';
-		if ($sumpaid < $objp->capital)
-		{
-			$namea = "amount_insurance_".$objp->id;
-			print $langs->trans("Insurance") .': <input type="text" size="8" name="'.$namea.'">';
-		}
-		else
-		{
-			print '-';
-		}
-		print '<br>';
-		if ($sumpaid < $objp->capital)
-		{
-			$namei = "amount_interest_".$objp->id;
-			print $langs->trans("Interest") .': <input type="text" size="8" name="'.$namei.'">';
-		}
-		else
-		{
-			print '-';
-		}
-		print "</td>";
-
-		print "</tr>\n";
-		$total+=$objp->total;
-		$total_ttc+=$objp->total_ttc;
-		$totalrecu+=$objp->am;
-		$i++;
+		print '<td align="left" valign="center">'.dol_print_date($loan->datestart,'day').'</td>';
 	}
-	if ($i > 1)
+	else
 	{
-		// Print total
-		print "<tr ".$bc[!$var].">";
-		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
-		print '<td align="right"><b>"'.price($total_ttc).'"</b></td>';
-		print '<td align="right"><b>"'.price($totalrecu).'"</b></td>';
-		print '<td align="right"><b>"'.price($total_ttc - $totalrecu).'"</b></td>';
-		print '<td align="center">&nbsp;</td>';
-		print "</tr>\n";
+		print '<td align="center" valign="center"><b>!!!</b></td>';
 	}
 
-	print "</table>";
+	print '<td align="right" valign="center">'.price($loan->capital)."</td>";
+
+	print '<td align="right" valign="center">'.price($sumpaid)."</td>";
+
+	print '<td align="right" valign="center">'.price($loan->capital - $sumpaid)."</td>";
+
+	print '<td align="right">';
+	if ($sumpaid < $loan->capital)
+	{
+		print $langs->trans("Capital") .': <input type="text" size="8" name="amount_capital">';
+	}
+	else
+	{
+		print '-';
+	}
+	print '<br>';
+	if ($sumpaid < $loan->capital)
+	{
+		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance">';
+	}
+	else
+	{
+		print '-';
+	}
+	print '<br>';
+	if ($sumpaid < $loan->capital)
+	{
+		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest">';
+	}
+	else
+	{
+		print '-';
+	}
+	print "</td>";
+
+	print "</tr>\n";
+
+	print '</table>';
 
 	print '<br><center>';
 
