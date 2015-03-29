@@ -718,7 +718,7 @@ class Don extends CommonObject
         {
             $sql .= ", fk_payment=$modepayment";
         }
-        $sql .=  " WHERE rowid = $rowid AND fk_statut = 1";
+        $sql .=  " WHERE rowid = $id AND fk_statut = 1";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -809,7 +809,7 @@ class Don extends CommonObject
         $result='';
         $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/don/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
         $picto='generic';

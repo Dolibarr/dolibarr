@@ -78,11 +78,6 @@ function donation_prepare_head($object)
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation');
-	
-	$head[$h][0] = DOL_URL_ROOT . '/don/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Documents");
-	$head[$h][2] = 'documents';
-	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT . '/don/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");

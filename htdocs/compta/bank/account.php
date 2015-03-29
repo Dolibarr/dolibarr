@@ -47,6 +47,7 @@ $langs->load("categories");
 $langs->load("bills");
 $langs->load("companies");
 $langs->load("loan");
+$langs->load("donations");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
 $ref = GETPOST('ref','alpha');
@@ -617,6 +618,12 @@ if ($id > 0 || ! empty($ref))
 						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 						print '</a>';
 					}
+					elseif ($links[$key]['type']=='payment_donation')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
+					}
 					elseif ($links[$key]['type']=='banktransfert')
 					{
 						// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
@@ -715,21 +722,6 @@ if ($id > 0 || ! empty($ref))
 						}
 						$chargestatic->ref=$chargestatic->lib;
 						print $chargestatic->getNomUrl(1,16);
-					}
-					else if ($links[$key]['type']=='donation')
-					{
-						$donstatic->id=$links[$key]['url_id'];
-						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
-						{
-							if ($reg[1]=='donation') $reg[1]='Donation';
-							$donstatic->lib=$langs->trans($reg[1]);
-						}
-						else
-						{
-							$donstatic->lib=$links[$key]['label'];
-						}
-						$donstatic->ref=$donstatic->lib;
-						print $donstatic->getNomUrl(1,16);
 					}
 					else if ($links[$key]['type']=='loan')
 					{

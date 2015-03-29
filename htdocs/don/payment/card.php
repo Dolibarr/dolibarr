@@ -126,7 +126,7 @@ $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentDonation"), 0, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), 0, 'payment');
 
 /*
  * Confirmation de la suppression du paiement
@@ -151,19 +151,19 @@ if ($action == 'valide')
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td>';
+print '<tr><td valign="top" width="20%">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($payment,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date
-print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($payment->datep,'day').'</td></tr>';
 
 // Mode
 print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$payment->type_code).'</td></tr>';
 
 // Number
-print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_paiement.'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
 
 // Amount
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($payment->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
@@ -196,7 +196,7 @@ print '</table>';
  */
 
 $disable_delete = 0;
-$sql = 'SELECT d.rowid as did, d.libelle, d.paid, d.amount as d_amount, pd.amount, pd.libelle as d_type';
+$sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
 $sql.= ' WHERE pd.fk_donation = d.rowid';
 $sql.= ' AND d.entity = '.$conf->entity;
@@ -213,9 +213,7 @@ if ($resql)
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Donation').'</td>';
-    print '<td>'.$langs->trans('Type').'</td>';
-	print '<td>'.$langs->trans('Label').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+    print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
 	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
@@ -235,13 +233,6 @@ if ($resql)
 			$don->fetch($objp->did);
 			print $don->getNomUrl(1);
 			print "</td>\n";
-			// Type
-            print '<td>';
-            print $don->type_libelle;
-            /*print $don->type;*/
-            print "</td>\n";
-			// Label
-			print '<td>'.$objp->libelle.'</td>';
 			// Expected to pay
 			print '<td align="right">'.price($objp->d_amount).'</td>';
 			// Status

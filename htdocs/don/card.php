@@ -214,20 +214,9 @@ if ($action == 'set_cancel')
 }
 if ($action == 'set_paid')
 {
-	if ($object->set_paye($id, $modepayment) >= 0)
+	if ($object->set_paid($id, $modepayment) >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
-	}
-    else {
-	    setEventMessage($object->error, 'errors');
-    }
-}
-if ($action == 'set_encaisse')
-{
-	if ($object->set_encaisse($id) >= 0)
-	{
-        header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else {
@@ -398,6 +387,7 @@ if (! empty($id) && $action == 'edit')
 
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
+	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
@@ -408,13 +398,22 @@ if (! empty($id) && $action == 'edit')
     $nbrows=12;
     if (! empty($conf->projet->enabled)) $nbrows++;
 
-    // Date
+	// Date
 	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$form->select_date($object->date,'','','','',"update");
 	print '</td>';
 
 	// Amount
-    print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$object->amount.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	if ($object->statut == 0)
+	{
+		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$object->amount.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	}
+	else
+	{
+		print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">';
+		print price($object->amount,0,$langs,0,0,-1,$conf->currency);
+		print '</td></tr>';
+	}
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
 	print $form->selectyesno("public",1,1);
@@ -549,7 +548,7 @@ if (! empty($id) && $action != 'edit')
 	/*
 	 * Payments
 	 */
-	$sql = "SELECT p.rowid, p.num_payment, datep as dp, p.amount,";
+	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
 	$sql.= "c.code as type_code,c.libelle as paiement_type";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
 	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
@@ -558,7 +557,7 @@ if (! empty($id) && $action != 'edit')
 	$sql.= " AND p.fk_donation = d.rowid";
 	$sql.= " AND d.entity = ".$conf->entity;
 	$sql.= " AND p.fk_typepayment = c.id";
-	$sql.= " ORDER BY dp DESC";
+	$sql.= " ORDER BY dp";
 
 	//print $sql;
 	$resql = $db->query($sql);
@@ -581,7 +580,7 @@ if (! empty($id) && $action != 'edit')
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print "<tr ".$bc[$var]."><td>";
-			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		        $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;				
                                print "<td>".$labeltype.' '.$object->num_paiement."</td>\n";

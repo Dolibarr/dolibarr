@@ -82,14 +82,14 @@ class PaymentDonation extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_donation)) $this->fk_donation=trim($this->fk_donation);
-		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
-		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_donation)) 		$this->fk_donation=trim($this->fk_donation);
+		if (isset($this->amount))			$this->amount=trim($this->amount);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
+		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
+		if (isset($this->note))				$this->note=trim($this->note);
+		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
+		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
+		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -183,23 +183,23 @@ class PaymentDonation extends CommonObject
 				$this->id    = $obj->rowid;
 				$this->ref   = $obj->rowid;
 
-				$this->fk_donation = $obj->fk_donation;
-				$this->datec = $this->db->jdate($obj->datec);
-				$this->tms = $this->db->jdate($obj->tms);
-				$this->datep = $this->db->jdate($obj->datep);
-				$this->amount = $obj->amount;
-				$this->fk_typepayment = $obj->fk_typepayment;
-				$this->num_payment = $obj->num_payment;
-				$this->note = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
-				$this->fk_user_creat = $obj->fk_user_creat;
-				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->fk_donation		= $obj->fk_donation;
+				$this->datec			= $this->db->jdate($obj->datec);
+				$this->tms				= $this->db->jdate($obj->tms);
+				$this->datep			= $this->db->jdate($obj->datep);
+				$this->amount			= $obj->amount;
+				$this->fk_typepayment	= $obj->fk_typepayment;
+				$this->num_payment		= $obj->num_payment;
+				$this->note				= $obj->note;
+				$this->fk_bank			= $obj->fk_bank;
+				$this->fk_user_creat	= $obj->fk_user_creat;
+				$this->fk_user_modif	= $obj->fk_user_modif;
 
-				$this->type_code = $obj->type_code;
-				$this->type_libelle = $obj->type_libelle;
+				$this->type_code		= $obj->type_code;
+				$this->type_libelle		= $obj->type_libelle;
 
-				$this->bank_account   = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
+				$this->bank_account		= $obj->fk_account;
+				$this->bank_line		= $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -227,14 +227,14 @@ class PaymentDonation extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_donation)) $this->fk_donation=trim($this->fk_donation);
-		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
-		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_donation))		$this->fk_donation=trim($this->fk_donation);
+		if (isset($this->amount))			$this->amount=trim($this->amount);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
+		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
+		if (isset($this->note))				$this->note=trim($this->note);
+		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
+		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
+		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
 
 
 
@@ -482,14 +482,14 @@ class PaymentDonation extends CommonObject
             $acc->fetch($accountid);
 
             $total=$this->total;
-            if ($mode == 'payment_donation') $total=-$total;
+            if ($mode == 'payment_donation') $amount=$total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
                 $this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
-                $total,
+                $amount,
                 $this->num_payment,
                 '',
                 $user,
@@ -520,19 +520,6 @@ class PaymentDonation extends CommonObject
                         dol_print_error($this->db);
                     }
                 }
-
-                // Add link 'thirdparty' in bank_url between donation and bank transaction (for each donation concerned by payment)
-                $linkaddedforthirdparty=array();
-                foreach ($this->amounts as $key => $value)
-                {
-                    if ($mode == 'payment_donation')
-                    {
-                        $don = new Don($this->db);
-                        $don->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $don->rowid, DOL_URL_ROOT.'/don/card.php?rowid=', $don->type_libelle.(($don->lib && $don->lib!=$don->type_libelle)?' ('.$don->lib.')':''),'donation');
-                        if ($result <= 0) dol_print_error($this->db);
-                    }
-                }
             }
             else
             {
@@ -553,7 +540,7 @@ class PaymentDonation extends CommonObject
 
 
 	/**
-	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
+	 *  Update link between the donation payment and the generated line in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -593,7 +580,7 @@ class PaymentDonation extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
