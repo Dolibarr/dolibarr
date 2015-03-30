@@ -61,7 +61,7 @@ class Commande extends CommonOrder
     var $contactid;
     var $fk_project;
 	/**
-	 * Status of the commande. Check the following constants:
+	 * Status of the order. Check the following constants:
 	 * - STATUS_CANCELED
 	 * - STATUS_DRAFT
 	 * - STATUS_ACCEPTED
@@ -2893,7 +2893,7 @@ class Commande extends CommonOrder
         //print 'x'.$statut.'-'.$billed;
         if ($mode == 0)
         {
-            if ($statut==self::STATUS_CANCELED-1) return $langs->trans('StatusOrderCanceled');
+            if ($statut==self::STATUS_CANCELED) return $langs->trans('StatusOrderCanceled');
             if ($statut==self::STATUS_DRAFT) return $langs->trans('StatusOrderDraft');
             if ($statut==self::STATUS_VALIDATED) return $langs->trans('StatusOrderValidated');
             if ($statut==self::STATUS_ACCEPTED) return $langs->trans('StatusOrderSentShort');
