@@ -74,11 +74,11 @@ class ExtraFields
 	'mail'=>'ExtrafieldMail',
 	'select' => 'ExtrafieldSelect',
 	'sellist' => 'ExtrafieldSelectList',
-	'separate' => 'ExtrafieldSeparator',
-	'checkbox' => 'ExtrafieldCheckBox',
 	'radio' => 'ExtrafieldRadio',
+	'checkbox' => 'ExtrafieldCheckBox',
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 	'link' => 'ExtrafieldLink',
+	'separate' => 'ExtrafieldSeparator',
 	);
 
 	/**

@@ -391,7 +391,7 @@ class PaymentLoan extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
-    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
         global $conf;
 
@@ -448,7 +448,7 @@ class PaymentLoan extends CommonObject
                 //$linkaddedforthirdparty=array();
                 if ($mode == 'payment_loan')
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/loan/card.php?id=', $this->type_libelle.(($this->label && $this->label!=$this->type_libelle)?' ('.$this->label.')':''),'loan');
+                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
                     if ($result <= 0) dol_print_error($this->db);
                 }
             }
