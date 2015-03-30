@@ -41,6 +41,9 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
+$loan = new Loan($db);
+$loan->fetch($chid);
+
 /*
  * Actions
  */
@@ -92,6 +95,7 @@ if ($action == 'add_payment')
     		$payment = new PaymentLoan($db);
     		$payment->chid				= $chid;
     		$payment->datepaid			= $datepaid;
+            $payment->label             = $loan->label;
 			$payment->amount_capital	= GETPOST('amount_capital');
 			$payment->amount_insurance	= GETPOST('amount_insurance');
 			$payment->amount_interest	= GETPOST('amount_interest');
@@ -150,10 +154,6 @@ $form=new Form($db);
 // Form to create loan's payment
 if ($_GET["action"] == 'create')
 {
-
-	$loan = new Loan($db);
-	$loan->fetch($chid);
-
 	$total = $loan->capital;
 
 	print_fiche_titre($langs->trans("DoPayment"));

@@ -4,6 +4,7 @@ Loans=Loans
 NewLoan=New Loan
 ShowLoan=Show Loan
 PaymentLoan=Loan payment
+ShowLoanPayment=Show Loan Payment
 Capital=Capital
 Insurance=Insurance
 Interest=Interest
