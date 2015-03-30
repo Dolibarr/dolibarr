@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +386,7 @@ if ($id > 0 || $ref)
 	{
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
+		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
 		dol_htmloutput_events();

@@ -170,7 +170,7 @@ $formadmin=new FormAdmin($db);
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
-$picto=($product->type==1?'service':'product');
+$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 dol_fiche_head($head, 'translation', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';

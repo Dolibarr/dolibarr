@@ -461,7 +461,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
     if ($action == 'confirm_delete' && $confirm == 'yes')
     {
-        if (($object->type == 0 && $user->rights->produit->supprimer) || ($object->type == 1 && $user->rights->service->supprimer))
+        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
         {
             $result = $object->delete($object->id);
         }
@@ -768,8 +768,8 @@ if (GETPOST("cancel") == $langs->trans("Cancel"))
  */
 
 $helpurl='';
-if (GETPOST("type") == '0' || ($object->type == '0')) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == '1')) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
 if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
 else $title = $langs->trans('ProductServiceCard');
@@ -1193,7 +1193,7 @@ else
             }*/
 
             // Nature
-            if($object->type!=1)
+            if($object->type!= Product::TYPE_SERVICE)
             {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
@@ -1308,7 +1308,7 @@ else
 		{
             $head=product_prepare_head($object, $user);
             $titre=$langs->trans("CardProduct".$object->type);
-            $picto=($object->type==1?'service':'product');
+            $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
@@ -1331,7 +1331,7 @@ else
             $nblignes=7;
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
             if ($showbarcode) $nblignes+=2;
-            if ($object->type!=1) $nblignes++;
+            if ($object->type!= Product::TYPE_SERVICE) $nblignes++;
             if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) $nblignes+=2;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
@@ -1464,7 +1464,7 @@ else
             print '</td></tr>';
 
             // Nature
-            if($object->type!=1)
+            if($object->type!= Product::TYPE_SERVICE)
             {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
@@ -1628,8 +1628,8 @@ if (empty($reshook))
 	    }
 	    $object_is_used = $object->isObjectUsed($object->id);
 
-	    if (($object->type == 0 && $user->rights->produit->supprimer)
-	    || ($object->type == 1 && $user->rights->service->supprimer))
+	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
+	    || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
 	    {
 	        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
 	        {

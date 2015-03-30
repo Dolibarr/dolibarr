@@ -117,7 +117,7 @@ class MouvementStock extends CommonObject
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
-		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
+		if ($product->type != Product::TYPE_SERVICE || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
