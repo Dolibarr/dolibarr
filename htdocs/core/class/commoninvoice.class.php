@@ -400,5 +400,100 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
  */
 abstract class CommonInvoiceLine extends CommonObjectLine
 {
+	/**
+	 * Quantity
+	 * @var int
+	 */
+	public $qty;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
+	public $subprice;
+
+	/**
+	 * Type of the product. 0 for product 1 for service
+	 * @var int
+	 */
+	public $product_type = 0;
+
+	/**
+	 * Id of corresponding product
+	 * @var int
+	 */
+	public $fk_product;
+
+	/**
+	 * VAT %
+	 * @var float
+	 */
+	public $tva_tx;
+
+	/**
+	 * Local tax 1 %
+	 * @var float
+	 */
+	public $localtax1_tx;
+
+	/**
+	 * Local tax 2 %
+	 * @var float
+	 */
+	public $localtax2_tx;
+
+	/**
+	 * Percent of discount
+	 * @var float
+	 */
+	public $remise_percent;
+
+	/**
+	 * Total amount before taxes
+	 * @var float
+	 */
+	public $total_ht;
+
+	/**
+	 * Total VAT amount
+	 * @var float
+	 */
+	public $total_tva;
+
+	/**
+	 * Total local tax 1 amount
+	 * @var float
+	 */
+	public $total_localtax1;
+
+	/**
+	 * Total local tax 2 amount
+	 * @var float
+	 */
+	public $total_localtax2;
+
+	/**
+	 * Total amount with taxes
+	 * @var float
+	 */
+	public $total_ttc;
+
+	/**
+	 * Liste d'options cumulables:
+	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
+	public $info_bits = 0;
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db		Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 }
 

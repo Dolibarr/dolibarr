@@ -592,16 +592,17 @@ function dol_strtoupper($utf8_string)
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
- * 	@param  string		$message			Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *  @param  int			$level				Log level
- *                                  		0=Show nothing
- *											On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *											On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident				1=Increase ident of 1, -1=Decrease ident of 1
- *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename.
+ * 	@param  string		$message				Line to log.
+ *  @param  int			$level					Log level
+ *                                  			0=Show nothing
+ *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
+ *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
+ *  @param	string		$restricttologhandler	Output log only for this log handler
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='')
+function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='', $restricttologhandler='')
 {
 	global $conf, $user;
 
@@ -624,7 +625,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
-		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a HTML handler
+		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a log handler dedicated to HTML output
 		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
 		{
@@ -648,10 +649,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
 		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 		else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
-
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
+			if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
 			$loghandlerinstance->export($data,$suffixinfilename);
 		}
 		unset($data);
@@ -1157,7 +1158,7 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$year			Year
  *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	timestamp|string			Date as a timestamp, '' or false if error
+ *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -1633,14 +1634,14 @@ function dol_print_address($address, $htmlid, $mode, $id)
 /**
  *	Return true if email syntax is ok
  *
- *	@param	    string		$address    email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- *	@return     boolean     			true if email syntax is OK, false if KO or empty string
+ *	@param	    string		$address    			email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
+ *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  */
-function isValidEmail($address)
+function isValidEmail($address, $acceptsupervisorkey=0)
 {
-	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
-		return true;
-	}
+	if ($acceptsupervisorkey && $address == '__SUPERVISOREMAIL__') return true;
+	if (filter_var($address, FILTER_VALIDATE_EMAIL)) return true;
 
 	return false;
 }
@@ -2116,7 +2117,7 @@ function img_edit_remove($titlealt = 'default', $other='')
  *	Show logo editer/modifier fiche
  *
  *	@param  string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  float	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -2133,7 +2134,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	Show logo view card
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  float	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -2279,15 +2280,16 @@ function img_previous($titlealt = 'default')
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected   Selected
+ *  @param	string	$moreclass	Add more CSS classes
  *	@return string      		Return img tag
  */
-function img_down($titlealt = 'default', $selected = 0)
+function img_down($titlealt = 'default', $selected = 0, $moreclass='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Down');
 
-	return img_picto($titlealt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown"');
+	return img_picto($titlealt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown'.($moreclass?" ".$moreclass:"").'"');
 }
 
 /**
@@ -2295,15 +2297,16 @@ function img_down($titlealt = 'default', $selected = 0)
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
+ *  @param	string	$moreclass	Add more CSS classes
  *	@return string      		Return img tag
  */
-function img_up($titlealt = 'default', $selected = 0)
+function img_up($titlealt = 'default', $selected = 0, $moreclass='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Up');
 
-	return img_picto($titlealt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup"');
+	return img_picto($titlealt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup'.($moreclass?" ".$moreclass:"").'"');
 }
 
 /**
@@ -2446,7 +2449,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	Show information for admin users
  *
  *	@param	string	$text			Text info
- *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *	@return	string					String with info text
  */
@@ -2495,7 +2498,7 @@ function dol_print_error($db='',$error='')
 	if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
 	{
 		$out.=$langs->trans("DolibarrHasDetectedError").".<br>\n";
-		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $out.="You use an experimental or develop level of features, so please do NOT report any bugs, except if problem is confirmed moving option MAIN_FEATURES_LEVEL back to 0.<br>\n";
 		$out.=$langs->trans("InformationToHelpDiagnose").":<br>\n";
 
 		$out.="<b>".$langs->trans("Date").":</b> ".dol_print_date(time(),'dayhourlog')."<br>\n";
@@ -2621,7 +2624,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		 0=To use with standard table forat, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	int		$thead		 0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
@@ -2866,7 +2869,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	int				$page				Number of page
  *	@param	string			$file				Lien
  *	@param	string			$options         	Autres parametres d'url a propager dans les liens ("" par defaut)
- *	@param	boolean|int		$nextpage	    	Do we show a next page button
+ *	@param	integer		$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML Content to show between arrows
  *	@return	void
  */
@@ -2923,7 +2926,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		Function used into PDF and HTML pages
  *
  *		@param	float		$amount			Amount to format
- *		@param	string		$form			Type of format, HTML or not (not by default)
+ *		@param	integer		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
@@ -3622,7 +3625,7 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
- *	@return float        				       	localtax, -1 si ne peut etre determine
+ *	@return integer        				       	localtax, -1 si ne peut etre determine
  *  @see get_default_tva, get_default_npr
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
@@ -3664,7 +3667,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
  *	Return yes or no in current language
  *
  *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	string	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
+ *	@param	integer	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
  *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  *	@return	string					HTML string
  */
@@ -3805,7 +3808,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	string	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
+ *	@param	integer	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -4181,7 +4184,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
  *    @param    int			$date_end      		End date
  *    @param    string		$format        		Output format
  *    @param	Translate	$outputlangs   		Output language
- *    @param	string		$withparenthesis	1=Add parenthesis, 0=non parenthesis
+ *    @param	integer		$withparenthesis	1=Add parenthesis, 0=non parenthesis
  *    @return	string							String
  */
 function get_date_range($date_start,$date_end,$format = '',$outputlangs='', $withparenthesis=1)
@@ -4540,7 +4543,7 @@ function utf8_check($str)
 
 
 /**
- *      Return an UTF-8 string encoded into OS filesystem encoding. This function is used to define
+ *      Return a string encoded into OS filesystem encoding. This function is used to define
  * 	    value to pass to filesystem PHP functions.
  *
  *      @param	string	$str        String to encode (UTF-8)
@@ -4843,7 +4846,7 @@ function printCommonFooter($zone='private')
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		if ($micro_start_time)
 		{
-			$micro_end_time=dol_microtime_float(true);
+			$micro_end_time=dol_microtime_float();
 			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		}
 		if (function_exists("memory_get_usage"))
@@ -4944,34 +4947,64 @@ function dol_getmypid()
 
 
 /**
- * Natural search
+ * Generate natural SQL search string
  *
- * @param 	mixed 	$fields 	String or array of strings filled with the fields names in the SQL query
- * @param 	string 	$value 		The value to look for (example: "keyword1 keyword2")
- * @return 	string 	$res 		The statement to append to the SQL query
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of fields in the SQL query
+ * @param 	string 			$value 		The value to look for.
+ *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
+ *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
+ * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
+ * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value)
+function natural_search($fields, $value, $numeric=0)
 {
-    global $db;
+    global $db,$langs;
+
+    if ($numeric)
+    {
+    	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
+    }
     $crits = explode(' ', $value);
     $res = '';
     if (! is_array($fields)) $fields = array($fields);
 
-    $end = count($fields);
+    $nboffields = count($fields);
     $end2 = count($crits);
     $j = 0;
-    foreach ($crits as $crit) {
-        $i = 0;
-        foreach ($fields as $field) {
-            if ( $i > 0 && $i < $end) $res .= " OR ";
-            $res .= $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+    foreach ($crits as $crit)
+    {
+        $i = 0; $i2 = 0;
+        $newres = '';
+        foreach ($fields as $field)
+        {
+            if ($numeric)
+            {
+            	$operator='=';
+            	$newcrit = preg_replace('/([<>=]+)/','',trim($crit));
+
+            	preg_match('/([<>=]+)/',trim($crit), $reg);
+            	if ($reg[1])
+            	{
+            		$operator = $reg[1];
+            	}
+            	if ($newcrit != '')
+            	{
+            		$newres .= ($i2 > 0 ? ' OR ' : '') . $field . ' '.$operator.' '.price2num($newcrit);
+            		$i2++;	// a criteria was added to string
+            	}
+            }
+            else
+            {
+            	$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
+            	$i2++;	// a criteria was added to string
+            }
             $i++;
         }
-        if ($end > 1) $res .= ')';
-        if ($j < $end2 - 1) $res .= " AND ";
-        if ($end > 1 && $j < $end2 - 1) $res .= '(';
+        if ($newres) $res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') .$newres . ($i2 > 1 ? ')' : '');
         $j++;
     }
-    return " AND " . ($end > 1? '(' : '') . $res;
+    $res = " AND (" . $res . ")";
+    //print 'xx'.$res.'yy';
+    return $res;
 }
 

@@ -86,12 +86,15 @@ if (! is_writable($conffile))
 
 
 // Check parameters
+$is_sqlite = false;
 if (empty($db_type))
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseType")).'</div>';
     $error++;
+} else {
+	$is_sqlite = ($db_type === 'sqlite' || $db_type === 'sqlite3' );
 }
-if (empty($db_host))
+if (empty($db_host) && ! $is_sqlite)
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Server")).'</div>';
     $error++;
@@ -101,7 +104,7 @@ if (empty($db_name))
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
     $error++;
 }
-if (empty($db_user))
+if (empty($db_user)  && ! $is_sqlite)
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
     $error++;
@@ -773,7 +776,7 @@ function write_master_file($masterfile,$main_dir)
  *  Save configuration file. No particular permissions are set by installer.
  *
  *  @param  string		$conffile        Path to conf file to generate/update
- *  @return	void
+ *  @return	integer
  */
 function write_conf_file($conffile)
 {

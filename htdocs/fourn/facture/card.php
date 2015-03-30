@@ -52,6 +52,7 @@ $langs->load('suppliers');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('banks');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
@@ -353,6 +354,8 @@ if (empty($reshook))
 	        $object->mode_reglement_id = GETPOST('mode_reglement_id');
 	        $object->fk_account        = GETPOST('fk_account', 'int');
 	        $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
+			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+	        $object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 			// Auto calculation of date due if not filled by user
 			if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
@@ -1462,6 +1465,16 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
+	// Incoterms
+	if (!empty($conf->incoterm->enabled))
+	{
+		print '<tr>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
+        print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
+		print '</td></tr>';
+	}
+
     // Bank Account
     print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
     $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
@@ -1651,7 +1664,7 @@ else
             	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
             	$notify=new Notify($db);
             	$text.='<br>';
-            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid);
+            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid, $object);
             }*/
             $formquestion=array();
 
@@ -1703,7 +1716,9 @@ else
 
         if (!$formconfirm) {
 			$parameters=array('lineid'=>$lineid);
-			$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -2007,6 +2022,29 @@ else
             print '</tr>';
         }
 
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{
+			print '<tr><td>';
+	        print '<table width="100%" class="nobordernopadding"><tr><td>';
+	        print $langs->trans('IncotermLabel');
+	        print '<td><td align="right">';
+	        if ($user->rights->fournisseur->facture->creer) print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        else print '&nbsp;';
+	        print '</td></tr></table>';
+	        print '</td>';
+	        print '<td colspan="3">';
+			if ($action != 'editincoterm')
+			{
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			}
+			else
+			{
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+			}
+	        print '</td></tr>';
+		}
+
         // Other attributes
         $cols = 4;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -2054,7 +2092,7 @@ else
 
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->facture->creer);
+			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
 
 		$num=count($object->lines);
 

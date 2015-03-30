@@ -250,3 +250,7 @@ PriceExpressionEditorHelp3=Tako za proizvode/storitve, kot za nabavne cene, so n
 PriceExpressionEditorHelp4=Samo za cene proizvodov/storitev: <b>#supplier_min_price#</b><br>Samo za nabavne cene: <b>#supplier_quantity# in #supplier_tva_tx#</b>
 PriceMode=Način cene
 PriceNumeric=Številka
+DefaultPrice=Default price
+ComposedProductIncDecStock=Increase/Decrease stock on parent change
+ComposedProduct=Sub-product
+MinSupplierPrice=Minimun supplier price

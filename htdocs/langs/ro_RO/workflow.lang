@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configurare Modul Flux de Lucru
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
+WorkflowDesc=Acest modul vă permite modificarea comportamentului acțiunilor automate în aplicaţie. În mod implicit, fluxul de lucru este deschis (puteţi face ce doriţi în ordinea dorită). Puteți activa acțiunile automate de care sunteti interesat
 ThereIsNoWorkflowToModify=Nu există nici un flux de lucru  modificabil pentru modulele  activate.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crează o comandă client automat, după ce o ofertă comercială este semnată
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crează o factură client automat, după ce o ofertă comercială este semnată

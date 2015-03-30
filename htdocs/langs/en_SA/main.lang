@@ -1,4 +1,4 @@
-# Dolibarr language file - en_SA - main
+# Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
@@ -10,10 +10,12 @@ FormatDateShortJava=dd/MM/yyyy
 FormatDateShortJavaInput=dd/MM/yyyy
 FormatDateShortJQuery=dd/mm/yy
 FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
 FormatHourShort=%I:%M %p
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %I:%M %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y, %I:%M %p
 FormatDateHourText=%d %B %Y, %I:%M %p

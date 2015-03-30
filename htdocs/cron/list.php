@@ -100,7 +100,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	if ($result < 0) {
 		setEventMessage($object->error,'errors');
 	}
-	else 
+	else
 	{
 		$res = $object->reprogram_jobs($user->login);
 		if ($res > 0)
@@ -314,11 +314,11 @@ print "\n<div class=\"tabsAction\">\n";
 
 if (! $user->rights->cron->create)
 {
-	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("New").'</a>';
+	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
 }
 else
 {
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("New").'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
 
 print '</div>';

@@ -311,7 +311,7 @@ print '</tr>'."\n";
 // Do not include sections without management permission
 //
 
-require DOL_DOCUMENT_ROOT.'/core/class/WorkboardResponse.class.php';
+require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
@@ -407,10 +407,11 @@ $var=true;
 
 //Remove any invalid response
 //load_board can return an integer if failed or WorkboardResponse if OK
-$valid_dashboardlines = array_filter($dashboardlines, function ($board) {
-	return $board instanceof WorkboardResponse;
-});
-
+$valid_dashboardlines=array();
+foreach($dashboardlines as $tmp)
+{
+	if ($tmp instanceof WorkboardResponse) $valid_dashboardlines[] = $tmp;
+}
 $rowspan = count($valid_dashboardlines);
 
 foreach($valid_dashboardlines as $board)

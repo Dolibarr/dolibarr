@@ -84,3 +84,4 @@ CronType_command=Shell command
 CronMenu=Cron
 CronCannotLoadClass=Cannot load class %s or object %s
 UseMenuModuleToolsToAddCronJobs=Aceda a "Home - Ferramentas dos Módulos" para visualizar e editar as tarefas agendadas.
+TaskDisabled=Task disabled

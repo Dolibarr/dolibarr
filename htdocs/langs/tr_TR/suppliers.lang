@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Tedarikçiler
-Supplier=Tedarikçi
 AddSupplier=Bir tedarikçi oluştur
 SupplierRemoved=Tedarikçi kaldırıldı
 SuppliersInvoice=Tedarikçi faturası
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Tedarikçi faturaları ve ödemeleri
 ExportDataset_fournisseur_3=Tedarikçi siparişleri ve sipariş satırları
 ApproveThisOrder=Bu siparişi onayla
 ConfirmApproveThisOrder=<b>%s</b> siparişini onaylamak istediğinizden emin misiniz?
-DenyingThisOrder=Bu siparişi reddet
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=<b>%s</b> siparişini reddetmek istediğinizden emin misiniz?
 ConfirmCancelThisOrder=<b>%s</b> siparişini iptal etmek istediğinizden emin misiniz?
 AddCustomerOrder=Müşteri siparişi oluştur

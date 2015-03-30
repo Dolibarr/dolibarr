@@ -56,16 +56,16 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  *	View
  */
 
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty"),$help_url);
-
 $object = new Societe($db);
 $object->fetch($socid);
 $object->info($socid);
 
-/*
- * Affichage onglets
- */
+$title=$langs->trans("ThirdParty");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Info");
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
+
+
 $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("ThirdParty"),0,'company');

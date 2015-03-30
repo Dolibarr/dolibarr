@@ -23,6 +23,7 @@ create table llx_payment_salary
   fk_user         integer NOT NULL,
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
+  salary          real,						  -- salary of user when payment was done
   amount          real NOT NULL DEFAULT 0,
   fk_typepayment  integer NOT NULL,
   num_payment     varchar(50),

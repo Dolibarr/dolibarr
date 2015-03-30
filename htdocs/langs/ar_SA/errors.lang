@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=المصدر والأهداف يجب أن تكو�
 ErrorBadThirdPartyName=سوء قيمة اسم طرف ثالث
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=سوء تركيب الزبون مدونة
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=رمز العميل المطلوبة
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=الشفرة المستخدمة بالفعل العملاء
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لج
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
 ErrorContactEMail=وقع خطأ فني. من فضلك، اتصل بمسؤول إلى البريد الإلكتروني بعد <b>%s</b> EN توفير <b>%s</b> رمز الخطأ في رسالتك، أو حتى أفضل من خلال إضافة نسخة شاشة من هذه الصفحة.
 ErrorWrongValueForField=قيمة خاطئة لعدد <b>%s</b> الحقل (قيمة <b>'%s'</b> لا يتطابق <b>%s</b> حكم [رجإكس])
-ErrorFieldValueNotIn=قيمة خاطئة <b>ل%s</b> عدد حقل <b>('%s</b> &quot;قيمة ليست قيمة المتاحة في مجال <b>%s %s</b> الجدول)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=قيمة خاطئة <b>ل%s</b> عدد حقل <b>('%s</b> &quot;قيمة ليست المرجع <b>%s</b> موجود)
 ErrorsOnXLines=الأخطاء على خطوط مصدر <b>%s</b>
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
@@ -160,6 +160,7 @@ ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
 ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified before being allowed to do this action
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

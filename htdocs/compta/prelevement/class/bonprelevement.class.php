@@ -1113,17 +1113,17 @@ class BonPrelevement extends CommonObject
         $result='';
         $label = $langs->trans("ShowWithdraw").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
         if ($option == 'xxx')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($label, 'payment', 'class="classfortooltip"').$lienfin.' ');
-        $result.=$lien.$this->ref.$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 
@@ -1294,7 +1294,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures, $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $ListOfFactures, $obj->idfac, $obj->iban, $obj->bic, $this->db->jdate($obj->datec), $obj->drum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}
@@ -1497,6 +1497,20 @@ class BonPrelevement extends CommonObject
 
 
     /**
+     * Build RUM number for a customer bank account
+     *
+     * @param	string		$row_code_client	Customer code (soc.code_client)
+     * @param	int			$row_datec			Creation date of bank account (rib.datec)
+     * @param	string		$row_drum			Id of customer bank account (rib.rowid)
+     * @return 	string		RUM number
+     */
+    static function buildRumNumber($row_code_client, $row_datec, $row_drum)
+    {
+		$pre = ($row_datec > 1359673200) ? 'Rum' : '++R';
+		return $pre.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+    }
+
+    /**
      *	Write recipient of request (customer)
      *
      *	@param	string		$row_code_client	soc.code_client as code,
@@ -1514,7 +1528,7 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_iban			rib.iban_prefix AS iban,
      *	@param	string		$row_bic			rib.bic AS bic,
      *	@param	string		$row_datec			rib.datec,
-     *	@param	string		$row_drum			rib.rowid AS drum
+     *	@param	string		$row_drum			rib.rowid used to generate rum
      *	@return	string							Return string with SEPA part DrctDbtTxInf
      */
     function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_facnumber, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
@@ -1524,10 +1538,11 @@ class BonPrelevement extends CommonObject
 
 		// Define value for RUM
 		// Example:  RUMCustomerCode-CustomerBankAccountId-01424448606	(note: Date is date of creation of CustomerBankAccountId)
-		$Date_Rum = strtotime($row_datec);
+		$Rum = $this->buildRumNumber($row_code_client, $row_datec, $row_drum);
+
+		// Define date of RUM signature
 		$DtOfSgntr = dol_print_date($row_datec, '%Y-%m-%d');
-		$pre = ($date_Rum > 1359673200) ? 'Rum' : '++R';
-		$Rum = $pre.$row_code_client.$row_drum.'-0'.date('U', $Date_Rum);
+
 		$XML_DEBITOR ='';
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;

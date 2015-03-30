@@ -151,8 +151,9 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][1] = 'Annuler les commandes clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'annuler';
-
+		$this->rights[$r][4] = 'order_advance';
+		$this->rights[$r][5] = 'annuler';
+		
 		$r++;
 		$this->rights[$r][0] = 89;
 		$this->rights[$r][1] = 'Supprimer les commandes clients';

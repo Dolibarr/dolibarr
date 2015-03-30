@@ -24,6 +24,7 @@
 
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/geturl.lib.php';
 
 $langs->load("admin");
 $langs->load("other");
@@ -105,7 +106,41 @@ llxHeader('',$langs->trans("Upgrade"),$wikihelp);
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
 
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
-print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';
+
+$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+//var_dump($result['content']);
+$sfurl = simplexml_load_string($result['content']);
+if ($sfurl)
+{
+    $title=$sfurl->channel[0]->item[0]->title;
+
+	function word_limiter($text, $limit = 30, $chars = '0123456789.')
+	{
+	    if (strlen( $text ) > $limit)
+	    {
+	        $words = str_word_count($text, 2, $chars);
+	        $words = array_reverse($words, TRUE);
+	        foreach($words as $length => $word) {
+	            if ($length + strlen( $word ) >= $limit)
+	            {
+	                array_shift($words);
+	            } else {
+	                break;
+	            }
+	        }
+	        $words = array_reverse($words);
+	        $text = implode(" ", $words) . '';
+	    }
+	    return $text;
+	}
+
+	$str = $title;
+	print $langs->trans("LastStableVersion").' : <b>'. word_limiter( $str ).'</b><br>';
+}
+else
+{
+    print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+}
 print '<br>';
 
 print $langs->trans("Upgrade").'<br>';

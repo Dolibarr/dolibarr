@@ -107,6 +107,9 @@ class Propal extends CommonObject
     var $products=array();
     var $extraparams=array();
 
+	/**
+	 * @var PropaleLigne[]
+	 */
     var $lines = array();
     var $line;
 
@@ -117,6 +120,11 @@ class Propal extends CommonObject
     var $labelstatut_short=array();
 
     var $specimen;
+	
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
 
 
     /**
@@ -748,6 +756,8 @@ class Propal extends CommonObject
         $sql.= ", fk_availability";
         $sql.= ", fk_input_reason";
         $sql.= ", fk_projet";
+        $sql.= ", fk_incoterms";
+        $sql.= ", location_incoterms";
         $sql.= ", entity";
         $sql.= ") ";
         $sql.= " VALUES (";
@@ -775,6 +785,8 @@ class Propal extends CommonObject
         $sql.= ", ".$this->availability_id;
         $sql.= ", ".$this->demand_reason_id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -1095,6 +1107,8 @@ class Propal extends CommonObject
         $sql.= ", p.fk_mode_reglement";
         $sql.= ', p.fk_account';
         $sql.= ", p.fk_shipping_method";
+        $sql.= ", p.fk_incoterms, p.location_incoterms";
+        $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
         $sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
@@ -1105,6 +1119,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
         if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1172,6 +1187,11 @@ class Propal extends CommonObject
                 $this->user_valid_id  = $obj->fk_user_valid;
                 $this->user_close_id  = $obj->fk_user_cloture;
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;									
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+				
                 if ($obj->fk_statut == 0)
                 {
                     $this->brouillon = 1;
@@ -1203,6 +1223,11 @@ class Propal extends CommonObject
                 $result = $this->db->query($sql);
                 if ($result)
                 {
+                	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+                	$extrafieldsline=new ExtraFields($this->db);
+                	$line = new PropaleLigne($this->db);
+                	$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
+                	
                     $num = $this->db->num_rows($result);
                     $i = 0;
 
@@ -1212,7 +1237,8 @@ class Propal extends CommonObject
 
                         $line                   = new PropaleLigne($this->db);
 
-                        $line->rowid			= $objp->rowid;
+                        $line->rowid			= $objp->rowid; //Deprecated
+                        $line->id				= $objp->rowid;
                         $line->fk_propal		= $objp->fk_propal;
                         $line->fk_parent_line	= $objp->fk_parent_line;
                         $line->product_type     = $objp->product_type;
@@ -1253,6 +1279,8 @@ class Propal extends CommonObject
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
 
+                        $line->fetch_optionals($line->id,$extralabelsline);
+                        
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
                         //print "xx $i ".$this->lines[$i]->fk_product;
@@ -1266,12 +1294,6 @@ class Propal extends CommonObject
                     return -1;
                 }
 
-                // Retreive all extrafield for propal
-                // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
 
                 return 1;
             }
@@ -2639,27 +2661,27 @@ class Propal extends CommonObject
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'compta') {  // deprecated
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'expedition') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'document') {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params .$linkclose;
         }
-        $lienfin='</a>';
+        $linkend='</a>';
 
         $picto='propal';
 
 
         if ($withpicto)
-            $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
-        $result.=$lien.$this->ref.$lienfin;
+        $result.=$link.$this->ref.$linkend;
         return $result;
     }
 
@@ -2782,9 +2804,6 @@ class Propal extends CommonObject
  */
 class PropaleLigne  extends CommonObject
 {
-    var $db;
-    var $error;
-
     public $element='propaldet';
     public $table_element='propaldet';
 

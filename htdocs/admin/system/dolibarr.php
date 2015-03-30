@@ -179,7 +179,7 @@ $c=getServerTimeZoneInt('summer');
 $daylight=(is_numeric($c) && is_numeric($b))?round($c-$b):'unknown';
 //print $a." ".$b." ".$c." ".$daylight;
 $val=($a>=0?'+':'').$a;
-$val.=' ('.($a==='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
+$val.=' ('.($a=='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
 $val.=' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
 $val.=' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight==='unknown'?'unknown':($a==$c?yn($daylight):yn(0).($daylight?'  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')':'')));
 print $form->textwithtooltip($val,$txt,2,1,img_info(''));

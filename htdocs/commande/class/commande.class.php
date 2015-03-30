@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
@@ -133,7 +133,25 @@ class Commande extends CommonOrder
 
     var $user_author_id;
 
-    var $lines = array();
+	/**
+	 * @var OrderLine[]
+	 */
+	var $lines = array();
+
+	//Incorterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
+
+    // Pour board
+    var $nbtodo;
+    var $nbtodolate;
+
+
+     /**
+     * ERR Not engouch stock
+     */
+    const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
 
     /**
@@ -648,8 +666,8 @@ class Commande extends CommonOrder
      *	Note that this->ref can be set or empty. If empty, we will use "(PROV)"
      *
      *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
-     *	@return 	int					<0 if KO, >0 if OK
+     *	@param		int	$notrigger	Disable all triggers
+     *	@return 	int			<0 if KO, >0 if OK
      */
     function create($user, $notrigger=0)
     {
@@ -657,22 +675,22 @@ class Commande extends CommonOrder
         $error=0;
 
         // Clean parameters
-        $this->brouillon = 1;		// On positionne en mode brouillon la commande
+        $this->brouillon = 1;		// set command as draft
 
         dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
     	if (! empty($this->ref))	// We check that ref is not already used
-		{
-			$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
-			if ($result > 0)
-			{
-				$this->error='ErrorRefAlreadyExists';
-				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
-				$this->db->rollback();
-				return -1;
-			}
-		}
+    	{
+    		$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
+    		if ($result > 0)
+    		{
+    			$this->error='ErrorRefAlreadyExists';
+    			dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+    			$this->db->rollback();
+    			return -1;
+    		}
+    	}
 
         $soc = new Societe($this->db);
         $result=$soc->fetch($this->socid);
@@ -701,6 +719,7 @@ class Commande extends CommonOrder
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", fk_shipping_method";
         $sql.= ", remise_absolue, remise_percent";
+        $sql.= ", fk_incoterms, location_incoterms";
         $sql.= ", entity";
         $sql.= ")";
         $sql.= " VALUES ('(PROV)',".$this->socid.", '".$this->db->idate($now)."', ".$user->id;
@@ -723,6 +742,8 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
         $sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ", ".($this->remise_percent>0?$this->remise_percent:0);
+        $sql.= ", ".(int) $this->fk_incoterms;
+        $sql.= ", '".$this->db->escape($this->location_incoterms)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -738,7 +759,7 @@ class Commande extends CommonOrder
                 $num=count($this->lines);
 
                 /*
-                 *  Insertion du detail des produits dans la base
+                 *  Insert products details into db
                  */
                 for ($i=0;$i<$num;$i++)
                 {
@@ -769,12 +790,15 @@ class Commande extends CommonOrder
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
-						$this->lines[$i]->array_options
+		    	$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
-                        $this->error=$this->db->lasterror();
-                        dol_print_error($this->db);
+                    	if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
+                    	{
+                        	$this->error=$this->db->lasterror();
+                        	dol_print_error($this->db);
+                    	}
                         $this->db->rollback();
                         return -1;
                     }
@@ -784,13 +808,16 @@ class Commande extends CommonOrder
                     }
                 }
 
-                // Mise a jour ref
-                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+                // update ref
+                $initialref='(PROV'.$this->id.')';
+                if (! empty($this->ref)) $initialref=$this->ref;
+
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
                 if ($this->db->query($sql))
                 {
                     if ($this->id)
                     {
-                        $this->ref="(PROV".$this->id.")";
+                    	$this->ref = $initialref;
 
                         // Add object linked
                         if (is_array($this->linked_objects) && ! empty($this->linked_objects))
@@ -1213,10 +1240,12 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -3;
+					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
 
@@ -1418,6 +1447,8 @@ class Commande extends CommonOrder
         $sql.= ', c.fk_shipping_method';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
+        $sql.= ', c.fk_incoterms, c.location_incoterms';
+        $sql.= ", i.libelle as libelle_incoterms";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1427,6 +1458,7 @@ class Commande extends CommonOrder
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_input_reason = ca.rowid)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
         if ($id)   	  $sql.= " AND c.rowid=".$id;
         if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
@@ -1481,6 +1513,11 @@ class Commande extends CommonOrder
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
                 $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
                 $this->fk_delivery_address	= $obj->fk_delivery_address;
+
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;
+				$this->libelle_incoterms = $obj->libelle_incoterms;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
@@ -1630,12 +1667,12 @@ class Commande extends CommonOrder
 
                 $line = new OrderLine($this->db);
 
-                $line->rowid            = $objp->rowid;				// \deprecated
+                $line->rowid            = $objp->rowid;
                 $line->id               = $objp->rowid;
                 $line->fk_commande      = $objp->fk_commande;
-                $line->commande_id      = $objp->fk_commande;			// \deprecated
+                $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
-                $line->desc             = $objp->description;  		// Description ligne
+                $line->desc             = $objp->description;
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
@@ -1661,11 +1698,11 @@ class Commande extends CommonOrder
                 $line->special_code		= $objp->special_code;
                 $line->fk_parent_line	= $objp->fk_parent_line;
 
-                $line->ref				= $objp->product_ref;		// TODO deprecated
+                $line->ref				= $objp->product_ref;
                 $line->product_ref		= $objp->product_ref;
-                $line->libelle			= $objp->product_label;		// TODO deprecated
+                $line->libelle			= $objp->product_label;
                 $line->product_label	= $objp->product_label;
-                $line->product_desc     = $objp->product_desc; 		// Description produit
+                $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
@@ -3256,56 +3293,44 @@ class Commande extends CommonOrder
  */
 class OrderLine extends CommonOrderLine
 {
-    var $db;
-    var $error;
-
 	public $element='commandedet';
 	public $table_element='commandedet';
 
     var $oldline;
 
+	/**
+	 * Id of parent order
+	 * @var int
+	 */
+	public $fk_commande;
+
+	/**
+	 * Id of parent order
+	 * @var int
+	 * @deprecated Use fk_commande
+	 */
+	public $commande_id;
+
     // From llx_commandedet
-    var $rowid;
     var $fk_parent_line;
     var $fk_facture;
     var $label;
-    var $desc;          	// Description ligne
-    var $fk_product;		// Id produit predefini
-    var $product_type = 0;	// Type 0 = product, 1 = Service
-
-    var $qty;				// Quantity (example 2)
-    var $tva_tx;			// VAT Rate for product/service (example 19.6)
-    var $localtax1_tx; 		// Local tax 1
-    var $localtax2_tx; 		// Local tax 2
-    var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-    var $subprice;      	// U.P. HT (example 100)
-    var $remise_percent;	// % for line discount (example 20%)
     var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;
+
+	/**
+	 * Buy price without taxes
+	 * @var float
+	 */
 	var $pa_ht;
     var $marge_tx;
     var $marque_tx;
-    var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-						    // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
-    var $special_code = 0;
-    var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-    var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
-    var $total_localtax1;   // Total local tax 1 for the line
-    var $total_localtax2;   // Total local tax 2 for the line
-    var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    // Ne plus utiliser
-    var $remise;
-    var $price;
-
-    // From llx_product
-    var $ref;				// deprecated
-    var $libelle;			// deprecated
-    var $product_ref;
-    var $product_label; 	// Label produit
-    var $product_desc;  	// Description produit
+	/**
+	 * @deprecated
+	 */
+	var $remise;
 
     // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
     // Start and end date of the line

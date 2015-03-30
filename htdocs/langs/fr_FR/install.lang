@@ -156,6 +156,7 @@ LastStepDesc=<strong>Dernière étape</strong>: Définissez ici l'identifiant et
 ActivateModule=Activation du module %s
 ShowEditTechnicalParameters=Cliquer ici pour afficher/éditer les paramètres techniques (mode expert)
 WarningUpgrade=Attention :\nAvez-vous fait une sauvegarde de la base de données en premier ?\nA cause de problèmes dans le système de base de données (Par exemple mysql version 5.5.40), beaucoup de données ou de tables peuvent être perdu pendant le processus de migration, il est donc très recommandé d'avoir une sauvegarde complète de votre base de données avant de commencer le processus de migration.\n\nCliquez OK pour commencer le processus de migration
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade
@@ -207,7 +208,7 @@ MigrationProjectTaskTime=Mise à jour du temps consommé en secondes
 MigrationActioncommElement=Mise à jour des données des actions des éléments
 MigrationPaymentMode=Migration des modes de paiement
 MigrationCategorieAssociation=Migration des categories
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Migration des évènements pour ajouter les propriétaires dans la table des utilisateurs assignés
 
 ShowNotAvailableOptions=Afficher les choix non disponibles
 HideNotAvailableOptions=Cacher les choix non disponibles

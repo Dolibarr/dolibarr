@@ -402,7 +402,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="center">'.$langs->trans("KeepToShip").'</td>';
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td align="center">'.$langs->trans("Stock").'</td>';
+				print '<td align="center">'.$langs->trans("RealStock").'</td>';
 			}
 			else
 			{

@@ -21,12 +21,13 @@
 
 /**
  *  \file       htdocs/expensereport/index.php
+ *  \ingroup    expensereport
  *  \brief      Page list of expenses
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-dol_include_once("/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -111,8 +112,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
-//$listoftype=$tripandexpense_static->listOfTypes();
-$listoftype=$label;
+$listoftype=$tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
     $dataseries[]=array('label'=>$label,'data'=>(isset($somme[$code])?(int) $somme[$code]:0));
@@ -143,7 +143,7 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_c_expensereport_statuts as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
@@ -187,8 +187,8 @@ if ($result)
             print '<tr '.$bc[$var].'>';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
-            print '<td align="right">'.$obj->total_ht.'</td>';
-            print '<td align="right">'.$obj->total_ttc.'</td>';
+            print '<td align="right">'.price($obj->total_ht).'</td>';
+            print '<td align="right">'.price($obj->total_ttc).'</td>';
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td align="right">';
             //print $obj->libelle;

@@ -108,5 +108,5 @@ ExtraFieldsCategories=ویژگی های مکمل
 CategoriesSetup=شاخه ها راه اندازی
 CategorieRecursiv=پیوند با گروه پدر و مادر به طور خودکار
 CategorieRecursivHelp=اگر فعال شود، محصول نیز به دسته پدر و مادر مرتبط است که با اضافه کردن به زیرشاخه
-AddProductServiceIntoCategory=Add the following product/service
-ShowCategory=Show category
+AddProductServiceIntoCategory=افزودن پیگیری محصول/سرویس
+ShowCategory=نمایش دسته

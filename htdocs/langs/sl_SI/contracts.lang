@@ -19,6 +19,7 @@ ServiceStatusLateShort=Potekla
 ServiceStatusClosed=Zaključena
 ServicesLegend=Legenda storitev
 Contracts=Pogodbe
+ContractsAndLine=Contracts and line of contracts
 Contract=Pogodba
 NoContracts=Ni pogodb
 MenuServices=Storitve

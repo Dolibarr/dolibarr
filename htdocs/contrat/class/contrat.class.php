@@ -89,23 +89,7 @@ class Contrat extends CommonObject
 	var $product;
 
 	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var
-	 */
-	var $user_author;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var User
-	 */
-	public $user_creation;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var int
+	 * @var int		Id of user author of the contract
 	 */
 	public $fk_user_author;
 
@@ -117,38 +101,37 @@ class Contrat extends CommonObject
 	public $user_author_id;
 
 	/**
-	 * @var User
+	 * @var User 	Object user that create the contract. Set by the info method.
+	 */
+	public $user_creation;
+
+	/**
+	 * @var User 	Object user that close the contract. Set by the info method.
 	 */
 	public $user_cloture;
 
 	/**
-	 * Date of creation
-	 * @var int
+	 * @var int		Date of creation
 	 */
 	var $date_creation;
 
 	/**
-	 * Date of last modification
-	 * Not filled until you call ->info()
-	 * @var int
+	 * @var int		Date of last modification. Not filled until you call ->info()
 	 */
 	public $date_modification;
 
 	/**
-	 * Date of validation
-	 * @var int
+	 * @var int		Date of validation
 	 */
 	var $date_validation;
 
 	/**
-	 * Date when contract was signed
-	 * @var int
+	 * @var int		Date when contract was signed
 	 */
 	var $date_contrat;
 
 	/**
-	 * Date of contract closure
-	 * @var int
+	 * @var int		Date of contract closure
 	 * @deprecated we close contract lines, not a contract
 	 */
 	var $date_cloture;
@@ -157,21 +140,15 @@ class Contrat extends CommonObject
 	var $commercial_suivi_id;
 
 	/**
-	 * @deprecated Use note_private or note_public instead
-	 */
-	var $note;
-
-	/**
-	 * Private note
-	 * @var string
+	 * @var string	Private note
 	 */
 	var $note_private;
 
 	/**
-	 * Public note
-	 * @var string
+	 * @var string	Public note
 	 */
 	var $note_public;
+
 	var $modelpdf;
 
 	/**
@@ -184,8 +161,7 @@ class Contrat extends CommonObject
 	var $extraparams=array();
 
 	/**
-	 * Contract lines
-	 * @var ContratLigne[]
+	 * @var ContratLigne[]		Contract lines
 	 */
 	var $lines=array();
 
@@ -569,7 +545,6 @@ class Contrat extends CommonObject
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
 				$this->commercial_suivi_id		= $result["fk_commercial_suivi"];
 
-				$this->note						= $result["note_private"];	// deprecated
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
 				$this->modelpdf					= $result["model_pdf"];
@@ -639,6 +614,11 @@ class Contrat extends CommonObject
 		$total_ht=0;
 
 		$now=dol_now();
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline=new ExtraFields($this->db);
+		$line = new ContratLigne($this->db);
+		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
 
 		$this->lines=array();
 
@@ -717,6 +697,10 @@ class Contrat extends CommonObject
 				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
+
+				// Retreive all extrafield for propal
+				// fetch optionals attributes and labels
+				$line->fetch_optionals($line->id,$extralabelsline);
 
 				$this->lines[]			= $line;
 
@@ -812,6 +796,13 @@ class Contrat extends CommonObject
 				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
 				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
+
+
+				// Retreive all extrafield for propal
+				// fetch optionals attributes and labels
+
+				$line->fetch_optionals($line->id,$extralabelsline);
+
 
 				$this->lines[]        = $line;
 
@@ -1726,9 +1717,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int		$maxlength		Max length of ref
 	 *	@return	string					Chaine avec URL
 	 */
@@ -1739,15 +1730,15 @@ class Contrat extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContract").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='contract';
 
 
-		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$lienfin;
+		if ($withpicto != 2) $result.=$link.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$linkend;
 		return $result;
 	}
 
@@ -2274,9 +2265,9 @@ class ContratLigne extends CommonObject
 	}
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlength		Max length
 	 *  @return	string					Chaine avec URL
  	 */
@@ -2287,15 +2278,15 @@ class ContratLigne extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='contract';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->label.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->label.$linkend;
 		return $result;
 	}
 

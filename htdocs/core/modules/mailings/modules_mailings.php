@@ -62,7 +62,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
     /**
 	 *	Return number of records for email selector
      *
-     *  @return     string      Example
+     *  @return     integer      Example
      */
     function getNbOfRecords()
     {

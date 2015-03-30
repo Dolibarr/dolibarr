@@ -35,6 +35,10 @@
  */
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins;
+
+$usemargins=0;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal', 'askpricesupplier','commande'))) $usemargins=1;
+
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
@@ -48,7 +52,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><?php $coldisplay++; ?><div id="row-<?php echo $line->id; ?>"></div>
+	<td><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
@@ -119,10 +123,12 @@ if (empty($usemargins)) $usemargins=0;
 	}
 	?>
 	</td>
-
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><?php echo $line->ref_fourn; ?></td>
+	<?php } ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ht)?price($line->pu_ht):price($line->subprice)); ?></td>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pu_ht); ?></td>
 
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
@@ -173,11 +179,11 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
-	<?php if ($this->statut == 0  && ($user->rights->$element->creer || $permtoedit)) { ?>
+	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>
 	<td align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2) { ?>
 		<?php } else { ?>
-		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#'.$line->id; ?>">
+		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php echo img_edit(); ?>
 		</a>
 		<?php } ?>
@@ -197,12 +203,12 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="center" class="tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-		<?php echo img_up(); ?>
+		<?php echo img_up('default',0,'imgupforline'); ?>
 		</a>
 		<?php } ?>
 		<?php if ($i < $num-1) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-		<?php echo img_down(); ?>
+		<?php echo img_down('default',0,'imgdownforline'); ?>
 		</a>
 		<?php } ?>
 	</td>

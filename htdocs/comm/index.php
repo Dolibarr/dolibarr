@@ -103,6 +103,21 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	print "</table></form><br>\n";
 }
 
+// Search supplier order
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+{
+	$var=false;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/commande/list.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover" width="100%">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierOrder").'</td></tr>';
+	print '<tr '.$bc[$var].'><td>';
+	print '<label for="search_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" class="flat" name="search_ref" id="search_ref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap"><label for="search_all">'.$langs->trans("Other").'</label>:</td><td><input type="text" class="flat" name="search_all" id="search_all" size="18"></td>';
+	print '</tr>';
+	print "</table></form><br>\n";
+}
+
 // Search contract
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {

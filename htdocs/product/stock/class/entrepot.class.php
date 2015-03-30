@@ -518,11 +518,11 @@ class Entrepot extends CommonObject
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
-        $lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($label, 'stock', 'class="classfortooltip"').$lienfin.' ');
-		$result.=$lien.$this->libelle.$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'stock', 'class="classfortooltip"').$linkend.' ');
+		$result.=$link.$this->libelle.$linkend;
 		return $result;
 	}
 
