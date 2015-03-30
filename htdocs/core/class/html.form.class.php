@@ -3872,7 +3872,7 @@ class Form
                 {
                     $prodstatic=new Product($this->db);
                     $prodstatic->fetch($idprod);
-                    if ($prodstatic->type == 1)   // We know product is a service
+                    if ($prodstatic->type == Product::TYPE_SERVICE)   // We know product is a service
                     {
                         $code_country.=",'".$societe_acheteuse->country_code."'";
                     }

@@ -260,7 +260,7 @@ class FactureRec extends Facture
 				$this->rang					  = $obj->rang;
 				$this->special_code			  = $obj->special_code;
 
-				if ($this->statut == 0)	$this->brouillon = 1;
+				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
 				/*
 				 * Lines

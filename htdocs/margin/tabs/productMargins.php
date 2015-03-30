@@ -79,7 +79,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$head=product_prepare_head($object, $user);
 		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type==1?'service':'product');
+		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'margin', $titre, 0, $picto);
 
 		print '<table class="border" width="100%">';

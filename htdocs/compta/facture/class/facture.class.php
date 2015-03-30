@@ -95,10 +95,15 @@ class Facture extends CommonInvoice
 	var $note;
 	var $note_private;
 	var $note_public;
-	//! 0=draft,
-	//! 1=validated (need to be paid),
-	//! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
-	//! 3=classified abandoned and no payment done (close_code='badcustomer','abandon' or 'replaced')
+
+	/**
+	 * Check constants for more info:
+	 * - STATUS_DRAFT
+	 * - STATUS_VALIDATED
+	 * - STATUS_PAID
+	 * - STATUS_ABANDONED
+	 * @var int
+	 */
 	var $statut;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
@@ -181,6 +186,39 @@ class Facture extends CommonInvoice
 	 * Situation invoice
 	 */
 	const TYPE_SITUATION = 5;
+
+	/**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated (need to be paid)
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Classified paid.
+	 * If paid partially, $this->close_code can be:
+	 * - CLOSECODE_DISCOUNTVAT
+	 * - CLOSECODE_BADDEBT
+	 * If paid completelly, this->close_code will be null
+	 */
+	const STATUS_CLOSED = 2;
+
+	/**
+	 * Classified abandoned and no payment done.
+	 * $this->close_code can be:
+	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_ABANDONED
+	 * - CLOSECODE_REPLACED
+	 */
+	const STATUS_ABANDONED = 3;
+
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
+	const CLOSECODE_BADDEBT = 'badcustomer';
+	const CLOSECODE_ABANDONED = 'abandon';
+	const CLOSECODE_REPLACED = 'replaced';
 
 	/**
 	 * 	Constructor
@@ -680,7 +718,7 @@ class Facture extends CommonInvoice
 		}
 
 		$this->id=0;
-		$this->statut=0;
+		$this->statut= self::STATUS_DRAFT;
 
 		// Clear fields
 		$this->date               = dol_now();	// Date of invoice is set to current date when cloning. // TODO Best is to ask date into confirm box
@@ -1005,7 +1043,7 @@ class Facture extends CommonInvoice
 				$this->location_incoterms = $obj->location_incoterms;									
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 				
-				if ($this->statut == 0)	$this->brouillon = 1;
+				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
 				// Retreive all extrafield for invoice
 				// fetch optionals attributes and labels
@@ -1542,7 +1580,7 @@ class Facture extends CommonInvoice
 
 			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-			$sql.= ' fk_statut=2';
+			$sql.= ' fk_statut='.self::STATUS_CLOSED;
 			if (! $close_code) $sql.= ', paye=1';
 			if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
@@ -1597,7 +1635,7 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
+		$sql.= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
@@ -1650,7 +1688,7 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-		$sql.= ' fk_statut=3';
+		$sql.= ' fk_statut='.self::STATUS_ABANDONED;
 		if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
 		if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
 		$sql.= ' WHERE rowid = '.$this->id;
@@ -1801,7 +1839,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql.= " SET facnumber='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+			$sql.= " SET facnumber='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
 				$sql.= ", datef='".$this->db->idate($this->date)."'";
@@ -1902,7 +1940,7 @@ class Facture extends CommonInvoice
 			{
 				$this->ref = $num;
 				$this->facnumber=$num;
-				$this->statut=1;
+				$this->statut= self::STATUS_VALIDATED;
 				$this->brouillon=0;
 				$this->date_validation=$now;
 				$i = 0;
@@ -1946,7 +1984,7 @@ class Facture extends CommonInvoice
 
 		$error=0;
 
-		if ($this->statut == 0)
+		if ($this->statut == self::STATUS_DRAFT)
 		{
 			dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
 			return 0;
@@ -1955,7 +1993,7 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-		$sql.= " SET fk_statut = 0";
+		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
@@ -1986,7 +2024,7 @@ class Facture extends CommonInvoice
 			{
 				$old_statut=$this->statut;
 				$this->brouillon = 1;
-				$this->statut = 0;
+				$this->statut = self::STATUS_DRAFT;
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_UNVALIDATE',$user);
 	            if ($result < 0)
@@ -2478,7 +2516,7 @@ class Facture extends CommonInvoice
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_percent = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
-			$sql.= ' AND fk_statut = 0';
+			$sql.= ' AND fk_statut = '.self::STATUS_DRAFT;
 
 			if ($this->db->query($sql))
 			{
@@ -2513,7 +2551,7 @@ class Facture extends CommonInvoice
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
-			$sql.= ' AND fk_statut = 0';
+			$sql.= ' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(get_class($this)."::set_remise_absolue", LOG_DEBUG);
 
@@ -2813,7 +2851,7 @@ class Facture extends CommonInvoice
 				return $last;
 			}
 		}
-		else if ($this->statut == 0 && $facref == 'PROV') // Si facture brouillon et provisoire
+		else if ($this->statut == self::STATUS_DRAFT && $facref == 'PROV') // Si facture brouillon et provisoire
 		{
 			return 1;
 		}
@@ -2853,7 +2891,7 @@ class Facture extends CommonInvoice
 			$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		}
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
-		if ($draft) $sql.= " AND f.fk_statut = 0";
+		if ($draft) $sql.= " AND f.fk_statut = ".self::STATUS_DRAFT;
 		if (is_object($excluser)) $sql.= " AND f.fk_user_author <> ".$excluser->id;
 		$sql.= $this->db->order($sortfield,$sortorder);
 		$sql.= $this->db->plimit($limit,$offset);
@@ -2914,7 +2952,7 @@ class Facture extends CommonInvoice
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
-		$sql.= " WHERE (f.fk_statut = 1 OR (f.fk_statut = 3 AND f.close_code = 'abandon'))";
+		$sql.= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.paye = 0";					// Pas classee payee completement
 		$sql.= " AND pf.fk_paiement IS NULL";		// Aucun paiement deja fait
@@ -2962,7 +3000,7 @@ class Facture extends CommonInvoice
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";
 		$sql.= " WHERE f.entity = ".$conf->entity;
-		$sql.= " AND f.fk_statut in (1,2)";
+		$sql.= " AND f.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 		//  $sql.= " WHERE f.fk_statut >= 1";
 		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
@@ -2978,8 +3016,8 @@ class Facture extends CommonInvoice
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$qualified=0;
-				if ($obj->fk_statut == 1) $qualified=1;
-				if ($obj->fk_statut == 2) $qualified=1;
+				if ($obj->fk_statut == self::STATUS_VALIDATED) $qualified=1;
+				if ($obj->fk_statut == self::STATUS_CLOSED) $qualified=1;
 				if ($qualified)
 				{
 					//$ref=$obj->facnumber;
@@ -3010,7 +3048,7 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
-		if ($this->statut > 0 && $this->paye == 0)
+		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0)
 		{
 	        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 	        $bac = new CompanyBankAccount($this->db);
@@ -3143,7 +3181,7 @@ class Facture extends CommonInvoice
 		}
 		$sql.= $clause." f.paye=0";
 		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= " AND f.fk_statut = 1";
+		$sql.= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		if ($user->societe_id) $sql.= " AND f.fk_soc = ".$user->societe_id;
 
 		$resql=$this->db->query($sql);

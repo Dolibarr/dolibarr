@@ -93,7 +93,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$head = product_prepare_head($product, $user);
 		$titre = $langs->trans("CardProduct" . $product->type);
-		$picto = ($product->type == 1 ? 'service' : 'product');
+		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
 		
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
