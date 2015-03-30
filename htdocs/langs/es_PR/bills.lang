@@ -1,9 +1,7 @@
-# Dolibarr language file - es_PR - bills
+# Dolibarr language file - Source file is en_US - bills
 ErrorVATIntraNotConfigured=Número de IVU intracomunitario aún no configurado
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factura. Acepto perder el IVU de este descuento
 AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IVU)
 IntracommunityVATNumber=Número de IVU intracomunitario
 VATIsNotUsedForInvoice=* IVU no aplicable  art-293B del CGI
-PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVU, incluido también el número de IVU Intracomunitario
 PDFCrabeDescription=Modelo de factura completo (IVU,  método de pago a mostrar, logotipo...)
-PDFOursinDescription=Modelo de factura completo (IVU, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)

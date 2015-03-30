@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-OrdersArea=Área de Pedidos de Clientes
 OrderId=ID Pedido
 OrderLine=Linha de Comando
 OrderToProcess=Pedido a se processar
@@ -58,7 +57,6 @@ PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=O modelo simplificado do pedido
 PDFProformaDescription=A proforma fatura completa (logomarca...)
 OrderByEMail=E-mail
-OrderByWWW=Online
 CreateInvoiceForThisCustomer=Faturar pedidos
 NoOrdersToInvoice=Nenhum pedido faturavel
 CloseProcessedOrdersAutomatically=Clasificar "processados" os pedidos selecionados.

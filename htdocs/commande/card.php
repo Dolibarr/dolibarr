@@ -253,7 +253,7 @@ if (empty($reshook))
 			$object->contactid = GETPOST('contactid');
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
-			
+
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (! empty($origin) && ! empty($originid))
 			{
@@ -523,7 +523,7 @@ if (empty($reshook))
     {
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
     }
-	
+
 	// bank account
 	else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
 	    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -1600,7 +1600,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
-				$text .= $notify->confirmMessage('ORDER_VALIDATE', $object->socid);
+				$text .= $notify->confirmMessage('ORDER_VALIDATE', $object->socid, $object);
 			}
 
 			$qualified_for_stock_change=0;
@@ -1726,8 +1726,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		if (! $formconfirm) {
 			$parameters = array('lineid' => $lineid);
-			$formconfirm = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified
-			                                                                                    // by hook
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -1988,10 +1989,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</td>';
 			print '</tr>';
 		}
-		
+
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
-		{			
+		{
 			print '<tr><td>';
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
@@ -2005,13 +2006,13 @@ if ($action == 'create' && $user->rights->commande->creer)
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
-			else 
+			else
 			{
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 			}
 	        print '</td></tr>';
 		}
-	
+
 		// Other attributes
 		$cols = 3;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -2044,7 +2045,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Total HT
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-		print '<td align="right">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
+		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
 
 		// Margin Infos
 		if (! empty($conf->margin->enabled)) {
@@ -2056,23 +2057,23 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		print '</tr>';
 
-		// Total TVA
-		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		// Total VAT
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 
 		// Amount Local Taxes
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td align="right">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+			print '<td>' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 		// Localtax2 IRPF
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td align="right">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+			print '<td>' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 		}
 
 		// Total TTC
-		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td align="right">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 
 		// Statut
 		print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';
@@ -2243,10 +2244,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Cancel order
-				if ($object->statut == 1 && 
+				if ($object->statut == 1 &&
 				    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->cloturer))
 			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->annuler)))
-				) 
+				)
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=cancel">' . $langs->trans('Cancel') . '</a></div>';
 				}

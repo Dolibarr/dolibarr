@@ -5,6 +5,7 @@
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +71,7 @@ $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
+$search_status=GETPOST('search_status','alpha');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
@@ -186,6 +188,11 @@ if ($search_amount_no_tax != '')
 if ($search_amount_all_tax != '')
 {
 	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
+}
+
+if ($search_status != '')
+{
+	$sql.= " AND fac.fk_statut = '".$db->escape($search_status)."'";
 }
 
 $nbtotalofrecords = 0;

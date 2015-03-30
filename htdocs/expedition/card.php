@@ -602,7 +602,7 @@ if ($action == 'create')
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
 			}
-			
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
@@ -934,7 +934,7 @@ else if ($id || $ref)
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
+				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid, $object);
 			}
 
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
@@ -1193,7 +1193,7 @@ else if ($id || $ref)
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
-		{			
+		{
 			print '<tr><td>';
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
@@ -1207,7 +1207,7 @@ else if ($id || $ref)
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
-			else 
+			else
 			{
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 			}

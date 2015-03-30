@@ -177,8 +177,10 @@ $formother=new FormOther($db);
 $taskstatic = new Task($db);
 $userstatic=new User($db);
 
+$title=$langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Tasks"),$help_url);
+llxHeader("",$title,$help_url);
 
 if ($id > 0 || ! empty($ref))
 {

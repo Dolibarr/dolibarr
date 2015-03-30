@@ -83,7 +83,6 @@ if (! empty($dolibarr_strict_mode))
 }
 else
 {
-	if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
 	error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
 }
 

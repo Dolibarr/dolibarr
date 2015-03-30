@@ -135,7 +135,6 @@ if ($object->id > 0)
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	$object->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
@@ -311,6 +310,8 @@ if ($object->id > 0)
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
+	print '<br>';
+
 
 	/*
 	 * List of products
@@ -320,13 +321,52 @@ if ($object->id > 0)
 		$langs->load("products");
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
-		print '</a></td></tr></table>';
+		print '</a></td></tr>';
+
+		//Query from product/liste.php
+		$sql = 'SELECT p.rowid, p.ref, p.label, pfp.tms,';
+		$sql.= ' p.fk_product_type';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
+		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+		$sql.= ' AND pfp.fk_soc = '.$object->id;
+		$sql .= $db->order('pfp.tms', 'desc');
+		$sql.= $db->plimit($MAXLIST);
+
+		$query = $db->query($sql);
+
+		$return = array();
+
+		if ($db->num_rows($query)) {
+
+			$productstatic = new Product($db);
+
+			while ($objp = $db->fetch_object($query)) {
+
+				$var=!$var;
+
+				$productstatic->id = $objp->rowid;
+				$productstatic->ref = $objp->ref;
+				$productstatic->label = $objp->label;
+				$productstatic->type = $objp->fk_product_type;
+
+				print "<tr ".$bc[$var].">";
+				print '<td class="nowrap">';
+				print $productstatic->getNomUrl(1);
+				print '</td>';
+				print '<td align="center">';
+				print dol_trunc(dol_htmlentities($objp->label), 30);
+				print '</td>';
+				print '<td align="right" class="nowrap">'.dol_print_date($objp->tms).'</td>';
+				print '</tr>';
+			}
+		}
+
+		print '</table>';
 	}
 
-
-	print '<br>';
 
 	/*
 	 * Last orders
@@ -335,8 +375,6 @@ if ($object->id > 0)
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
-
-
 		// TODO move to DAO class
 		// Check if there are supplier orders billable
 		$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';

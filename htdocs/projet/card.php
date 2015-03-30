@@ -371,9 +371,11 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $userstatic = new User($db);
 
-
+$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name;
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Projects"),$help_url);
+
+llxHeader("",$title,$help_url);
 
 
 if ($action == 'create' && $user->rights->projet->creer)

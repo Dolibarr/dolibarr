@@ -84,3 +84,4 @@ CronType_command=فرمان شل
 CronMenu=cron را
 CronCannotLoadClass=آیا می توانم کلاس٪ s ​​را بار نیست و یا شی از٪ s
 UseMenuModuleToolsToAddCronJobs=برو به منوی "صفحه اصلی - ماژول ابزار - فهرست فرصت های شغلی" برای دیدن و ویرایش کار برنامه ریزی شده.
+TaskDisabled=Task disabled

@@ -10,7 +10,6 @@ ECMSectionManual=Manuele directorie
 ECMSectionAuto=Automatische directorie
 ECMSectionsManual=Manuale directories
 ECMSectionsAuto=Automatische directories
-ECMSections=Directories
 ECMNewSection=Nieuwe directorie
 ECMAddSection=Maak manueel een directorie aan
 ECMCreationDate=Aanmaakdatum

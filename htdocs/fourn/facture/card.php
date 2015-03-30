@@ -1664,7 +1664,7 @@ else
             	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
             	$notify=new Notify($db);
             	$text.='<br>';
-            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid);
+            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid, $object);
             }*/
             $formquestion=array();
 
@@ -1716,7 +1716,9 @@ else
 
         if (!$formconfirm) {
 			$parameters=array('lineid'=>$lineid);
-			$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -2090,7 +2092,7 @@ else
 
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->facture->creer);
+			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
 
 		$num=count($object->lines);
 

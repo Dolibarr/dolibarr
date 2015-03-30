@@ -1,0 +1,7 @@
+Module210009Name=Incoterm
+Module210009Desc=Add features to manage Incoterm
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Feature
+IncotermSetupTitle2=Status
+IncotermSetup=Setup of module Incoterm
+IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)

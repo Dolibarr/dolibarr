@@ -19,7 +19,7 @@
 
 /**
  * 	\file       htdocs/expensereport/info.php
- * 	\ingroup    trip
+ * 	\ingroup    expensereport
  * 	\brief      Page to show a trip information
  */
 

@@ -250,3 +250,7 @@ PriceExpressionEditorHelp3=Ürün/hizmet ve tedarikçi fiyatlarının her ikisin
 PriceExpressionEditorHelp4=Ürün/hizmet fiyatında yalnızca: <b>#supplier_min_price#</b><br>In supplier prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
 PriceMode=Fiyat biçimi
 PriceNumeric=Sayı
+DefaultPrice=Default price
+ComposedProductIncDecStock=Increase/Decrease stock on parent change
+ComposedProduct=Sub-product
+MinSupplierPrice=Minimun supplier price

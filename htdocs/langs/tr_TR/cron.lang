@@ -84,3 +84,4 @@ CronType_command=Kabuk komutu
 CronMenu=Kron
 CronCannotLoadClass=%s sınıfı ya da %s nesnesi yüklenemiyor
 UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Modül araçları - İş listesi" menüsüne gidin.
+TaskDisabled=Task disabled

@@ -120,7 +120,7 @@ function bank_admin_prepare_head($object)
  *      Check SWIFT informations for a bank account
  *
  *      @param  Account     $account    A bank account
- *      @return int                     True if informations are valid, false otherwise
+ *      @return boolean                     True if informations are valid, false otherwise
  */
 function checkSwiftForAccount($account)
 {
@@ -137,7 +137,7 @@ function checkSwiftForAccount($account)
  *      Check IBAN number informations for a bank account
  *
  *      @param  Account     $account    A bank account
- *      @return int                     True if informations are valid, false otherwise
+ *      @return boolean                     True if informations are valid, false otherwise
  */
 function checkIbanForAccount($account)
 {
@@ -156,7 +156,7 @@ function checkIbanForAccount($account)
  * 		Check account number informations for a bank account
  *
  * 		@param	Account		$account    A bank account
- * 		@return int           			True if informations are valid, false otherwise
+ * 		@return boolean           			True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {

@@ -386,6 +386,12 @@ function dolibarr_del_const($db, $name, $entity=1)
 {
     global $conf;
 
+    if (empty($name))
+    {
+    	dol_print_error('','Error call dolibar_del_const with parameter name empty');
+    	return -1;
+    }
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     $sql.= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
     if (is_numeric($name)) $sql.= " OR rowid = '".$db->escape($name)."'";
@@ -438,7 +444,7 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 
 /**
- *	Insert a parameter (key,value) into database.
+ *	Insert a parameter (key,value) into database (delete old key then insert it again).
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant

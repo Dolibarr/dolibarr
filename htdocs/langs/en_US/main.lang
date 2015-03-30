@@ -352,6 +352,7 @@ Status=Status
 Favorite=Favorite
 ShortInfo=Info.
 Ref=Ref.
+ExternalRef=Ref. extern
 RefSupplier=Ref. supplier
 RefPayment=Ref. payment
 CommercialProposalsShort=Commercial proposals
@@ -694,6 +695,7 @@ AddBox=Add box
 SelectElementAndClickRefresh=Select an element and click Refresh
 PrintFile=Print File %s
 ShowTransaction=Show transaction
+GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into Home - Setup - Display to hide.
 # Week day
 Monday=Monday
 Tuesday=Tuesday

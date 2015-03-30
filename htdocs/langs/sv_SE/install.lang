@@ -155,7 +155,8 @@ MigrationFinished=Migration färdiga
 LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
 ActivateModule=Aktivera modul %s
 ShowEditTechnicalParameters=Klicka här för att visa / redigera avancerade parametrar (expertläge)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Varning:\nHar du säkerhetskopierat databasen?\nDet är starkt rekommenderat att säkerhetskopiera databasen. På grund av fel i databassystemen (t.ex. mysql version 5.5.40) kan tabeller gå förlorade. Det är därför rekommenderat att ta en full dump av databasen innan migreringen påbörjas.\n\nKlicka OK för att starta migreringen...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade
@@ -207,7 +208,7 @@ MigrationProjectTaskTime=Uppdatera tid i sekunder
 MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
 MigrationCategorieAssociation=Migreringskategorier
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Överföring av händelser för att lägga till händelseägaren i uppdragslista
 
 ShowNotAvailableOptions=Visa ej tillgängliga val
 HideNotAvailableOptions=Dölj ej tillgängliga val

@@ -35,45 +35,68 @@
  */
 abstract class CommonObject
 {
-    public $db;
+    /**
+     * @var DoliDb		Database handler (result of a new DoliDB)
+     */
+	public $db;
 
     /**
-     * @var error 	Error string
-     * @deprecated	Use instead the array of error strings
+     * @var string 		Error string
+     * @deprecated		Use instead the array of error strings
      */
     public $error;
 
     /**
-     * @var errors	Aray of error string
+     * @var string[]	Array of error strings
      */
     public $errors;
 
-    public $canvas;                // Contains canvas name if it is
-	public $context=array();		// Use to pass context information
+    /**
+     * @var string		Can be used to pass information when only object is provied to method
+     */
+    public $context=array();
+
+    /**
+     * @var string		Contains canvas name if record is an alternative canvas record
+     */
+    public $canvas;
+
+    /**
+     * @var string		Key value used to track if data is coming from import wizard
+     */
+    public $import_key;
+
+    /**
+     * @var mixed		Contains data to manage extrafields
+     */
+    public $array_options=array();
+
+    /**
+     * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjectsIds;
+
+    /**
+     * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjects;
+
+    /**
+     * @var string		Column name of the ref field.
+     */
+    protected $table_ref_field = '';
+
+
+
+    // Following var are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
     public $name;
     public $lastname;
     public $firstname;
     public $civility_id;
-    public $import_key;
-
-    public $array_options=array();
-
-    /**
-     * @var Societe
-     */
     public $thirdparty;
 
-    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
-    public $linkedObjects;		// Loaded by ->fetchObjectLinked
-
     // No constructor as it is an abstract class
-
-    /**
-     * Column name of the ref field.
-     * @var string
-     */
-    protected $table_ref_field = '';
 
 
     /**
@@ -2662,10 +2685,9 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
-	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
 		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
 
@@ -2758,7 +2780,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline,$permtoedit);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
 
 			$i++;
@@ -2770,7 +2792,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string		$action				GET/POST action
-	 *	@param	array	    $line		       	Selected object line to output
+	 *	@param CommonObjectLine $line		       	Selected object line to output
 	 *	@param  string	    $var               	Is it a an odd line (true)
 	 *	@param  int		    $num               	Number of line (0)
 	 *	@param  int		    $i					I
@@ -2779,13 +2801,14 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
-	 *  @param	int			$permtoedit			Permission to edit
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form,$bc,$bcdd, $object_rights;
+
+		$object_rights = $this->getRights();
 
 		$element=$this->element;
 
@@ -3859,5 +3882,17 @@ abstract class CommonObject
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->{$this->element};
+	}
+
 
 }

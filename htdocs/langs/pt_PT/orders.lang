@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
-OrdersArea=Area de Pedidos de clientes
+OrdersArea=Área de Pedidos de Clientes
 SuppliersOrdersArea=Área de Pedidos a Fornecedores
 OrderCard=Ficha Pedido
 OrderId=Id da Encomenda
@@ -42,6 +42,7 @@ StatusOrderCanceled=Anulado
 StatusOrderDraft=Rascunho (a Confirmar)
 StatusOrderValidated=Validado
 StatusOrderOnProcess=Ordered - Standby reception
+StatusOrderOnProcessWithValidation=Ordered - Standby reception or validation
 StatusOrderProcessed=Processado
 StatusOrderToBill=A Facturar
 StatusOrderToBill2=A facturar
@@ -58,6 +59,7 @@ MenuOrdersToBill=Pedidos por Facturar
 MenuOrdersToBill2=Billable orders
 SearchOrder=Procurar um Pedido
 SearchACustomerOrder=Search a customer order
+SearchASupplierOrder=Search a supplier order
 ShipProduct=Enviar Produto
 Discount=Desconto
 CreateOrder=Criar Pedido

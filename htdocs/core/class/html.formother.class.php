@@ -782,7 +782,7 @@ class FormOther
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        $montharray = monthArray($langs);	// Get array
+        $montharray = monthArray($langs, 1);	// Get array
 
         $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)

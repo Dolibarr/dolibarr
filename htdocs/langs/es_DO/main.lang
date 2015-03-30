@@ -1,9 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
-# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -14,6 +10,7 @@ FormatDateShortJava=dd/MM/yyyy
 FormatDateShortJavaInput=dd/MM/yyyy
 FormatDateShortJQuery=dd/mm/yy
 FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y

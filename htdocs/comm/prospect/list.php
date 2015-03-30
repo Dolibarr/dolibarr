@@ -406,7 +406,8 @@ if ($resql)
     print "</td></tr>\n";
 
 	$parameters=array();
-	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</tr>\n";
 

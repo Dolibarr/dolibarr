@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Доставчици
-Supplier=Снабдител
 AddSupplier=Create a supplier
 SupplierRemoved=Изтрити доставчик
 SuppliersInvoice=Фактура
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Фактури и наредби
 ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Одобряване на поръчката
 ConfirmApproveThisOrder=Сигурен ли сте, че искате да одобри <b>%s Поръчката?</b>
-DenyingThisOrder=Да откаже поръчката
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Сигурен ли сте, че искате да откаже доставчик <b>%s</b> за?
 ConfirmCancelThisOrder=Сигурен ли сте, че искате да отмените доставчика на <b>%s</b> за?
 AddCustomerOrder=Създаване на заявка на клиента

@@ -319,6 +319,7 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 	display: inline-block;
 	padding: 4px 14px;
 	margin-bottom: 0;
+	margin-top: 0;
 	text-align: center;
 	cursor: pointer;
 	color: #333333;
@@ -443,10 +444,12 @@ textarea.centpercent {
 .movable {
 	cursor: move;
 }
-
 .borderrightlight
 {
 	border-right: 1px solid #DDD;
+}
+#formuserfile_link {
+	margin-left: 1px;
 }
 
 /* ============================================================================== */
@@ -680,7 +683,7 @@ div.tmenuleft
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
 	height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
 	<?php } ?>
 }
 div.tmenucenter
@@ -840,9 +843,6 @@ foreach($mainmenuusedarray as $val)
 .bodylogin
 {
 	background: #f0f0f0;
-	/* -moz-box-shadow:    inset 0 0 10px #000000;
-   	-webkit-box-shadow: inset 0 0 10px #000000;
-   	box-shadow:         inset 0 0 10px #000000; */
 }
 .login_vertical_align {
 	padding: 10px;
@@ -948,7 +948,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other { padding-top: 3px; }
+div.login_block_other { padding-top: 3px; text-align: right; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
@@ -1006,6 +1006,7 @@ div.vmenu, td.vmenu {
 }
 
 .menu_contenu { padding-top: 1px; }
+#menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
@@ -1393,10 +1394,10 @@ div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser 
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: 9px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
-    padding-bottom: 8px;
+    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'12'); ?>px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
@@ -1744,22 +1745,23 @@ table.noborder, table.formdoc, div.noborder {
 	border-spacing: 0px;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
-	border-left-width: 1px;
-	border-left-color: #B0B0B0;
-	border-left-style: solid;
-
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
+*/
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
 
 	margin: 0px 0px 2px 0px;
 
-	-moz-box-shadow: 2px 2px 4px #DDD;
-	-webkit-box-shadow: 2px 2px 4px #DDD;
-	box-shadow: 2px 2px 4px #DDD;
+	-moz-box-shadow: 2px 2px 4px #CCC;
+	-webkit-box-shadow: 2px 2px 4px #CCC;
+	box-shadow: 2px 2px 4px #CCC;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -1776,7 +1778,7 @@ table.noborder tr, div.noborder form {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 20px;
+	height: 26px;
 }
 
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
@@ -1800,27 +1802,29 @@ table.nobordernopadding td {
 
 table.liste {
 	width: 100%;
+
 	border-collapse: collapse;
 	border-top-color: #FEFEFE;
 
 	border-right-width: 1px;
-	border-right-color: #BBBBBB;
+	border-right-color: #CCC;
 	border-right-style: solid;
 
-    border-left-width: 1px;
-    border-left-color: #CCCCCC;
-    border-left-style: solid;
-
+/*
 	border-bottom-width: 1px;
 	border-bottom-color: #BBBBBB;
 	border-bottom-style: solid;
+*/
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
 
 	margin-bottom: 2px;
 	margin-top: 0px;
 
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -moz-box-shadow: 0px 3px 4px #CCC;
+    -webkit-box-shadow: 0px 3px 4px #CC;
+    box-shadow: 0px 3px 4px #CCC;
 }
 table.liste td {
 	padding-right: 2px;
@@ -1894,6 +1898,7 @@ table.liste td {
 }
 
 .pair, .nohover .pair:hover, tr.pair td.nohover {
+/*
 <?php if ($usecss3) { ?>
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -1903,13 +1908,24 @@ table.liste td {
 <?php } else { ?>
 	background: #ffffff;
 <?php } ?>
+*/
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
+
+	background-color: #f9f9f9;
 }
-
-
+tr.pair td, tr.impair td {
+	padding: 4px;
+    border-bottom: 1px solid #ddd;
+}
+div.liste_titre .tagtd {
+	vertical-align: middle;
+}
+div.liste_titre {
+	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+}
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 26px !important;
@@ -1970,6 +1986,7 @@ input.liste_titre {
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
+    padding: 4px;
 }
 
 
@@ -2027,7 +2044,7 @@ div.tabBar .noborder {
 }
 
 tr.box_titre {
-    height: 20px;
+    height: 26px;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
@@ -2063,8 +2080,9 @@ tr.box_impair {
     font-family: <?php print $fontlist ?>;
 }
 
+
 tr.box_pair {
-<?php if ($usecss3) { ?>
+/*<?php if ($usecss3) { ?>
     background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
     background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
     background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -2073,7 +2091,15 @@ tr.box_pair {
 <?php } else { ?>
 	background: #ffffff;
 <?php } ?>
+*/
     font-family: <?php print $fontlist ?>;
+
+	background-color: #f9f9f9;
+}
+
+tr.box_pair td, tr.box_impair td {
+	padding: 4px;
+    border-bottom: 1px solid #ddd;
 }
 
 .formboxfilter {
@@ -2176,6 +2202,13 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 .photowithmargin {
 	margin-bottom: 2px;
 	margin-top: 2px;
+}
+.photointooltip {
+	-webkit-box-shadow: -1px -1px 5px #777;
+	-moz-box-shadow: -1px -1px 5px #777;
+	box-shadow: -1px -1px 5px #777;
+	margin-top: 6px;
+	float: left;
 }
 
 .logo_setup
@@ -2297,6 +2330,7 @@ border-radius: 6px;
 #tiptip_content {
     background-color: rgb(252,248,246);
 	background-color: rgba(252,248,246,0.95);
+	line-height: 1.4em;
 }
 
 /* ============================================================================== */
@@ -2924,7 +2958,10 @@ div.dolEventError h1, div.dolEventError h2 {
 {
 	text-decoration: underline !important;
 }
-
+.paginate_button
+{
+	font-weight: normal !important;
+}
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */

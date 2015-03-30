@@ -550,7 +550,11 @@ class FormFile
 
             // Execute hooks
             $parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
-            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
+            if (is_object($hookmanager))
+            {
+            	$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
+            	$out.= $hookmanager->resPrint;
+            }
         }
 
         // Get list of files

@@ -379,16 +379,6 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
 		}
 
-		if (! empty($conf->productbatch->enabled))
-		{
-			$this->global->STOCK_CALCULATE_ON_BILL=0;
-			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
-			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
-			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
-			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
-			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
-		}
-
 		// conf->currency
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
@@ -448,6 +438,9 @@ class Conf
 		// Default pdf use dash between lines
 		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;
 
+		// Set default value to MAIN_SHOW_LOGO
+		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
+
 		// Default max file size for upload
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
 
@@ -455,8 +448,8 @@ class Conf
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,askpricesupplier,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Enable select2
-		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)) $conf->global->MAIN_USE_JQUERY_MULTISELECT='select2';
-		
+		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT)) $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';
+
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;
         if (empty($this->global->MAIN_USE_RESPONSE_TIMEOUT)) $this->global->MAIN_USE_RESPONSE_TIMEOUT=30;

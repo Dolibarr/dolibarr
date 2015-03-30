@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=Faktura
 Bills=Faktury
-BillsCustomers=Customers invoices
-BillsCustomer=Customers invoice
-BillsSuppliers=Suppliers invoices
-BillsCustomersUnpaid=Unpaid customers invoices
+BillsCustomers=Faktury klientów
+BillsCustomer=Faktura klientów
+BillsSuppliers=Faktury dostawców
+BillsCustomersUnpaid=Niezapłacone faktury klientów
 BillsCustomersUnpaidForCompany=Należne wpłaty klientów faktur dla %s
 BillsSuppliersUnpaid=Należne wpłaty dostawców faktur
 BillsSuppliersUnpaidForCompany=Nieodpłatnej dostawcy faktury za %s
@@ -74,8 +74,9 @@ PaymentsAlreadyDone=Płatności już
 PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Zasady płatności
 PaymentMode=Typ płatności
-PaymentConditions=Termin płatności
-PaymentConditionsShort=Termin płatności
+PaymentTerm=Payment term
+PaymentConditions=Payment terms
+PaymentConditionsShort=Payment terms
 PaymentAmount=Kwota płatności
 ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Płatności wyższe niż upomnienie do zapłaty

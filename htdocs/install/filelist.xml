@@ -5893,7 +5893,7 @@
 <md5file name="index.html">d41d8cd98f00b204e9800998ecf8427e</md5file>
 <md5file name="cron_run_jobs.php">8ea20800d43bbdfdb20363355521c20c</md5file>
 </dir>
-<dir name="/public/donations" >
+<dir name="/public/don" >
 <md5file name="therm.php">9029f09e1592da49626e9fb5b6399e1e</md5file>
 <md5file name="donateurs_code.php">d71afb404b4f1946d241bc44ab27df8b</md5file>
 <md5file name="index.php">823e0c612e7de62db2d41adf37214bea</md5file>

@@ -1,5 +1,7 @@
-# Dolibarr language file - en_ZA - main
-# This file contains only line that must differs from en_US file
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%Y/%m/%d
@@ -8,33 +10,12 @@ FormatDateShortJava=yyy/MM/dd
 FormatDateShortJavaInput=yyyy/MM/yy
 FormatDateShortJQuery=yy/mm/yy
 FormatDateShortJQueryInput=yy/mm/dd
+FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
-UnitPrice=Unit price
-UnitPriceHT=Unit price (without VAT)
-UnitPriceTTC=Unit price
-PriceU=U.P.
-PriceUHT=U.P. (net)
-PriceUTTC=U.P.
-PriceUHTShort=P.U. excl VAT
-PriceUTTCShort=P.U. incl VAT
-AmountHT=Amount (excl VAT)
-AmountTTC=Amount (incl VAT)
-AmountVAT=Amount VAT
-PriceQtyHT=Price for this quantity excl VAT
-PriceQtyMinHT=Price quantity min. excl VAT
-PriceQtyTTC=Price for this quantity incl VAT
-PriceQtyMinTTC=Price quantity min. incl VAT
-TotalHT=Total (excl VAT)
-TotalTTC=Total (incl VAT)
-TotalTTCToYourCredit=Total (incl VAT) to your credit
-TotalVAT=Total VAT
-IncludedVAT=Included VAT
-HT=excl VAT
-TTC=Incl VAT
-VAT=VAT
-VATRate=VAT Rate

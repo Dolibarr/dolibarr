@@ -17,14 +17,13 @@
  */
 
 /**
- * 		\defgroup   Indicateurs
- *      \brief      Module indicateurs
- *					Such a file must be copied into htdocs/includes/module directory.
+ * 		\defgroup   expensereport	Module expensereport
+ *      \brief      Module to manage expense report. Replace old module Deplacement.
  */
 
 /**
- *      \file       htdocs/indicateurs/core/modules/modExpenseReport.class.php
- *      \ingroup    indicateur
+ *      \file       htdocs/core/modules/modExpenseReport.class.php
+ *      \ingroup    expensereport
  *      \brief      Description and activation file for module ExpenseReport
  */
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");

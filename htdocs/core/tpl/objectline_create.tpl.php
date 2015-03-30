@@ -274,7 +274,7 @@ else {
 			$newline = new PropaleLigne($this->db);
 		}
 		elseif ($this->table_element_line=='askpricesupplierdet') {
-			$newline = new AskPriceSupplierLigne($this->db);
+			$newline = new AskPriceSupplierLine($this->db);
 		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
@@ -286,7 +286,7 @@ else {
 			$newline = new CommandeFournisseurLigne($this->db);
 		}
 		elseif ($this->table_element_line=='facture_fourn_det') {
-			$newline = new FactureFournisseurLigne($this->db);
+			$newline = new SupplierInvoiceLine($this->db);
 		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));

@@ -21,11 +21,11 @@
 
 /**
  *	    \file       htdocs/core/modules/dons/modules_don.php
- *		\ingroup    don
+ *		\ingroup    donations
  *		\brief      File of class to manage donation document generation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 
 
