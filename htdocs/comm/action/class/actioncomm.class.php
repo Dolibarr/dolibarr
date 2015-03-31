@@ -971,7 +971,7 @@ class ActionComm extends CommonObject
         $result='';
         $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
         if (! empty($this->ref))
-            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
+            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
         if (! empty($this->label))
             $tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $this->label;
         $label = $this->label;
