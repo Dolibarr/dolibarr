@@ -4061,7 +4061,7 @@ function dol_textishtml($msg)
 //		return false;
 //	}
 
-	if (preg_match('/<[a-zA-Z]+(.*)>/', $msg)) {
+	if (preg_match('/<[a-zA-Z]+( .*)>/', $msg)) {
 		return true;
 	}
 
