@@ -60,6 +60,7 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
 
 
 
+
 /*
  * View
  */
