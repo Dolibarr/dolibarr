@@ -4045,11 +4045,10 @@ function dol_microtime_float()
  *	Return if a text is a html content
  *
  *	@param	string	$msg		Content to check
- *	@param	int		$option		0=Full detection, 1=Fast check
- *	@return	boolean				true/false
+ *	@return	boolean				True if an HTML string. False if opposite
  *	@see	dol_concatdesc
  */
-function dol_textishtml($msg,$option=0)
+function dol_textishtml($msg)
 {
 	//http://stackoverflow.com/questions/5732758/detect-html-tags-in-a-string
 	if ($msg == strip_tags($msg)) {
