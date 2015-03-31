@@ -233,7 +233,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				$newfiletmp=$objectref.'_'.$newfiletmp;
+				$newfiletmp=$objectref;  //.'_'.$newfiletmp; no suffix
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
