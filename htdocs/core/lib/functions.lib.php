@@ -4050,12 +4050,22 @@ function dol_microtime_float()
  */
 function dol_textishtml($msg)
 {
-	//http://stackoverflow.com/questions/5732758/detect-html-tags-in-a-string
-	if ($msg == strip_tags($msg)) {
-		return false;
+	/**
+	 * Commented because of bug #64430 https://bugs.php.net/bug.php?id=64430
+	 * Non-HTML tags are treated as valid HTML tags
+	 *
+	 * From: http://stackoverflow.com/questions/5732758/detect-html-tags-in-a-string
+	 */
+	//
+//	if ($msg == strip_tags($msg)) {
+//		return false;
+//	}
+
+	if (preg_match('/<[a-zA-Z]+(.*)>/', $msg)) {
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 /**
