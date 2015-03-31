@@ -31,8 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("other");
 $langs->load("companies");
-$langs->load("compta");
-$langs->load("bills");
 $langs->load("contact");
 
 $id = GETPOST('id','int');

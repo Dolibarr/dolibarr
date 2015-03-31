@@ -45,7 +45,7 @@ function contact_prepare_head(Contact $object)
 	{
 		$langs->load("ldap");
 
-		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
+		$head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("LDAPCard");
 		$head[$tab][2] = 'ldap';
 		$tab++;
