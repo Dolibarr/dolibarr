@@ -3872,6 +3872,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
 {
 	$newstring=$stringtoencode;
+
 	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
 	{
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
@@ -4050,26 +4051,12 @@ function dol_microtime_float()
  */
 function dol_textishtml($msg,$option=0)
 {
-	if ($option == 1)
-	{
-		if (preg_match('/<html/i',$msg))				return true;
-		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<br/i',$msg))				return true;
+	//http://stackoverflow.com/questions/5732758/detect-html-tags-in-a-string
+	if ($msg == strip_tags($msg)) {
 		return false;
 	}
-	else
-	{
-		if (preg_match('/<html/i',$msg))				return true;
-		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<(b|em|i)>/i',$msg))		return true;
-		elseif (preg_match('/<(br|div|font|img|li|span|strong|table)>/i',$msg)) 	  return true;
-		elseif (preg_match('/<(br|div|font|img|li|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
-		elseif (preg_match('/<(br|div|font|img|li|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
-		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
-		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
-		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
-		return false;
-	}
+
+	return true;
 }
 
 /**
