@@ -4867,8 +4867,9 @@ function printCommonFooter($zone='private')
 		print '</script>'."\n";
 
 		// Add Xdebug coverage of code
-		if (defined('XDEBUGCOVERAGE')) {
-			var_dump(xdebug_get_code_coverage());
+		if (defined('XDEBUGCOVERAGE'))
+		{
+			print_r(xdebug_get_code_coverage());
 		}
 	}
 
