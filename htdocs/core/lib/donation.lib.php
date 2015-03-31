@@ -27,7 +27,7 @@
  *	@param	Donation	$object		Donation
  *	@return	array					Array of tabs to show
  */
-function donation_admin_prepare_head()
+function donation_admin_prepare_head($object)
 {
 	global $langs, $conf;
 

@@ -1216,7 +1216,7 @@ class pdf_crabe extends ModelePDFFactures
 			}
 
 			// Escompte
-			if ($object->close_code == 'discount_vat')
+			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
 			{
 				$index++;
 				$pdf->SetFillColor(255,255,255);

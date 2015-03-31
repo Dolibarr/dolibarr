@@ -33,7 +33,7 @@ $langs->load('banks');
 $langs->load('companies');
 
 // Security check
-$id=GETPOST("id");
+$id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST("action");
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -129,7 +129,7 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), 0, 'payment');
 
 /*
- * Confirmation de la suppression du paiement
+ * Confirm deleting of the payment
  */
 if ($action == 'delete')
 {
@@ -138,7 +138,7 @@ if ($action == 'delete')
 }
 
 /*
- * Confirmation de la validation du paiement
+ * Confirm validation of the payment
  */
 if ($action == 'valide')
 {
@@ -192,7 +192,7 @@ print '</table>';
 
 
 /*
- * List of donations payed
+ * List of donations paid
  */
 
 $disable_delete = 0;
@@ -262,7 +262,7 @@ print '</div>';
 
 
 /*
- * Boutons Actions
+ * Actions buttons
  */
 print '<div class="tabsAction">';
 

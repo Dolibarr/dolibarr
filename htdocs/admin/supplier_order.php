@@ -165,13 +165,24 @@ else if ($action == 'addcat')
     $fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-else if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
+else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
-
-    $res = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-
-    if (! $res > 0) $error++;
+	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL');
+	$doubleapprovalgroup = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') > 0 ? GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') : '';
+	
+    $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL",$doubleapproval,'chaine',0,'',$conf->entity);
+    if (isset($_POST["SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP"]))
+    {
+    	$res3 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP",$doubleapprovalgroup,'chaine',0,'',$conf->entity);
+    }
+    else
+    {
+    	$res3=1;
+    }
+    
+    if (! $res1 > 0 || ! $res2 > 0 || ! $res3 > 0) $error++;
 
 	if (! $error)
 	{
@@ -188,11 +199,11 @@ else if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
  * View
  */
 
+$form=new Form($db);
+
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader("","");
-
-$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
@@ -447,7 +458,7 @@ print '</table><br>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
 print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
@@ -456,6 +467,17 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
+
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+{
+	print '<tr '.$bc[$var].'><td>';
+	print $langs->trans("UseDoubleApproval").'</td><td>';
+	print $form->selectyesno('SUPPLIER_ORDER_DOUBLE_APPROVAL', $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL);
+	print '<br>'.$form->select_dolgroups($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP,'SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP', 1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td></tr>\n";
+}
 
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';

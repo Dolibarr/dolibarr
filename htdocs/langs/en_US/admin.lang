@@ -389,6 +389,7 @@ ExtrafieldSeparator=Separator
 ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio button
 ExtrafieldCheckBoxFromList= Checkbox from table
+ExtrafieldLink=Link to an object
 ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...

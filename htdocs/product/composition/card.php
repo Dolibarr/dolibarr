@@ -176,7 +176,7 @@ llxHeader("","",$langs->trans("CardProduct".$object->type));
 
 $head=product_prepare_head($object, $user);
 $titre=$langs->trans("CardProduct".$object->type);
-$picto=($object->type==1?'service':'product');
+$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
 
 
@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Nature
-		if($object->type!=1)
+		if($object->type!=Product::TYPE_SERVICE)
 		{
 			print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
 			print $object->getLibFinished();
@@ -474,7 +474,7 @@ if ($id > 0 || ! empty($ref))
 						// check if a product is not already a parent product of this one
 						$prod_arbo=new Product($db);
 						$prod_arbo->id=$objp->rowid;
-						if ($prod_arbo->type==2 || $prod_arbo->type==3)
+						if ($prod_arbo->type==Product::TYPE_ASSEMBLYKIT || $prod_arbo->type== Product::TYPE_STOCKKIT)
 						{
 							$is_pere=0;
 							$prod_arbo->get_sousproduits_arbo();

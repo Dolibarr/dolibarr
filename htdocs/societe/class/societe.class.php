@@ -241,7 +241,6 @@ class Societe extends CommonObject
 
     var $specimen;
 
-
     /**
      * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
      * @var int

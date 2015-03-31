@@ -15,6 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * The following vars must be defined
+ * $type2label
+ * $form
+ * $conf, $lang, 
+ */
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_add.tpl.php -->
@@ -47,13 +55,13 @@
     		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'link') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
-    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'chkbxlst') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide(); jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();}
+    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+    		else if (type == 'link') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();;jQuery("#helpchkbxlst").hide();jQuery("#helplink").show();}
+    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+    		else if (type == 'chkbxlst') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();jQuery("#helplink").hide();}
+    		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields('<?php echo GETPOST('type'); ?>');
@@ -66,7 +74,6 @@
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
-<input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->
@@ -90,7 +97,7 @@
 <td>
 <table class="nobordernopadding">
 <tr><td>
-	<textarea name="param" id="param" cols="80" rwos="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
+	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
 </td><td id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></td>
 <td><span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
 <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span></td></tr>

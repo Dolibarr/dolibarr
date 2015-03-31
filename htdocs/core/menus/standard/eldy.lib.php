@@ -196,9 +196,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	}
 
 	// HRM
-	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled)),
-	'perms'=>(! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire)),
-	'module'=>'holiday|deplacement');
+	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
+	'perms'=>(! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
+	'module'=>'holiday|deplacement|expensereport');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{

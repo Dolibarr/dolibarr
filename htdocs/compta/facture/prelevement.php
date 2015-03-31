@@ -229,15 +229,15 @@ if ($object->id > 0)
 	print '. ';
 	if ($absolute_discount > 0)
 	{
-		if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+		if ($object->statut > Facture::STATUS_DRAFT || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
 		{
-			if ($object->statut == 0)
+			if ($object->statut == Facture::STATUS_DRAFT)
 			{
 				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency)).'. ';
 			}
 			else
 			{
-				if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+				if ($object->statut < Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
 				{
 					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 					print '<br>'.$text.'.<br>';
@@ -261,9 +261,9 @@ if ($object->id > 0)
 	if ($absolute_creditnote > 0)
 	{
 		// If validated, we show link "add credit note to payment"
-		if ($object->statut != 1 || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_CREDIT_NOTE)
+		if ($object->statut != Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_CREDIT_NOTE)
 		{
-			if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT)
+			if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
 			{
 				$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
 				print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
@@ -350,7 +350,7 @@ if ($object->id > 0)
 		else
 		{
 			print dol_print_date($object->date_lim_reglement,'daytext');
-			if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! isset($object->am)) print img_warning($langs->trans('Late'));
+			if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == Facture::STATUS_VALIDATED && ! isset($object->am)) print img_warning($langs->trans('Late'));
 		}
 	}
 	else
@@ -473,7 +473,7 @@ if ($object->id > 0)
 	print "\n<div class=\"tabsAction\">\n";
 
 	// Add a withdraw request
-	if ($object->statut > 0 && $object->paye == 0 && $num == 0)
+	if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 	{
 		if ($user->rights->prelevement->bons->creer)
 		{
@@ -488,7 +488,7 @@ if ($object->id > 0)
 	{
 		if ($num == 0)
 		{
-			if ($object->statut > 0) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			if ($object->statut > Facture::STATUS_DRAFT) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 			else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 		}
 		else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';

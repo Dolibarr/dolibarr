@@ -61,8 +61,12 @@ class Product extends CommonObject
 	var $libelle;            // TODO deprecated
 	var $label;
 	var $description;
-	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
-	var $type;
+
+	/**
+	 * Check TYPE constants
+	 * @var int
+	 */
+	var $type = self::TYPE_PRODUCT;
 	//! Selling price
 	var $price;				// Price net
 	var $price_ttc;			// Price with tax
@@ -172,6 +176,23 @@ class Product extends CommonObject
     var $fk_price_expression;
 
 	/**
+	 * Regular product
+	 */
+	const TYPE_PRODUCT = 0;
+	/**
+	 * Service
+	 */
+	const TYPE_SERVICE = 1;
+	/**
+	 * Advanced feature: assembly kit
+	 */
+	const TYPE_ASSEMBLYKIT = 2;
+	/**
+	 * Advanced feature: stock kit
+	 */
+	const TYPE_STOCKKIT = 3;
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
@@ -233,7 +254,6 @@ class Product extends CommonObject
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
-		if (empty($this->type)) $this->type=0;
 		$this->price_ttc=price2num($this->price_ttc);
 		$this->price=price2num($this->price);
 		$this->price_min_ttc=price2num($this->price_min_ttc);
@@ -795,7 +815,7 @@ class Product extends CommonObject
 			$this->error = "Object must be fetched before calling delete";
 			return -1;
 		}
-		if (($this->type == 0 && empty($user->rights->produit->supprimer)) || ($this->type == 1 && empty($user->rights->service->supprimer)))
+		if (($this->type == Product::TYPE_PRODUCT && empty($user->rights->produit->supprimer)) || ($this->type == Product::TYPE_SERVICE && empty($user->rights->service->supprimer)))
 		{
 			$this->error = "ErrorForbidden";
 			return 0;
@@ -2932,8 +2952,8 @@ class Product extends CommonObject
 		$result='';
         $newref=$this->ref;
         if ($maxlength) $newref=dol_trunc($newref,$maxlength,'middle');
-        if ($this->type == 0) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
-        if ($this->type == 1) $label = '<u>' . $langs->trans("ShowService") . '</u>';
+        if ($this->type == Product::TYPE_PRODUCT) $label = '<u>' . $langs->trans("ShowProduct") . '</u>';
+        if ($this->type == Product::TYPE_SERVICE) $label = '<u>' . $langs->trans("ShowService") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('ProductRef') . ':</b> ' . $this->ref;
         if (! empty($this->label))
@@ -2968,8 +2988,8 @@ class Product extends CommonObject
         }
 
 		if ($withpicto) {
-			if ($this->type == 0) $result.=($link.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$linkend.' ');
-			if ($this->type == 1) $result.=($link.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$linkend.' ');
+			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$linkend.' ');
+			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$linkend.' ');
 		}
 		$result.=$link.$newref.$linkend;
 		return $result;
@@ -3666,7 +3686,7 @@ class Product extends CommonObject
      */
 	function isproduct()
 	{
-		return ($this->type != 1 ? true : false);
+		return ($this->type != Product::TYPE_PRODUCT ? true : false);
 	}
 
     /**
@@ -3676,7 +3696,7 @@ class Product extends CommonObject
      */
 	function isservice()
 	{
-		return ($this->type == 1 ? true : false);
+		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
 
     /**
@@ -3733,7 +3753,6 @@ class Product extends CommonObject
         $this->tosell=1;
         $this->tobuy=1;
 		$this->tobatch=0;
-        $this->type=0;
         $this->note='This is a comment (private)';
 
         $this->barcode=-1;	// Create barcode automatically

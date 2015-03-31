@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
  *	\file       htdocs/compta/bank/ligne.php
- *	\ingroup    compta
+ *	\ingroup    bank
  *	\brief      Page to edit a bank transaction record
  */
 
@@ -33,6 +34,8 @@ $langs->load("categories");
 $langs->load("compta");
 $langs->load("bills");
 if (! empty($conf->adherent->enabled)) $langs->load("members");
+if (! empty($conf->don->enabled)) $langs->load("donations");
+if (! empty($conf->loan->enabled)) $langs->load("loan");
 
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
@@ -345,10 +348,28 @@ if ($result)
                     print $langs->trans("SalaryPayment");
                     print '</a>';
                 }
+                else if ($links[$key]['type']=='payment_loan') {
+                    print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowLoanPayment'),'payment').' ';
+                    print $langs->trans("PaymentLoan");
+                    print '</a>';
+                }
+                else if ($links[$key]['type']=='loan') {
+                    print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowLoan'),'bill').' ';
+                    print $langs->trans("Loan");
+                    print '</a>';
+                }
                 else if ($links[$key]['type']=='member') {
                     print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowMember'),'user').' ';
                     print $links[$key]['label'];
+                    print '</a>';
+                }
+				else if ($links[$key]['type']=='payment_donation') {
+                    print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowDonation'),'payment').' ';
+                    print $langs->trans("DonationPayment");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='banktransfert') {

@@ -95,7 +95,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 			if ($result > 0)	// Invoice was found
 			{
-				if ($object->statut != 1)
+				if ($object->statut != Facture::STATUS_VALIDATED)
 				{
 					continue; // Payment done or started or canceled
 				}
