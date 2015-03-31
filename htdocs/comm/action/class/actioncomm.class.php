@@ -970,7 +970,10 @@ class ActionComm extends CommonObject
 
         $result='';
         $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
-        $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
+        if (! empty($this->ref))
+            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
+        if (! empty($this->label))
+            $tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $this->label;
         $label = $this->label;
         if (empty($label)) $label=$this->libelle;   // For backward compatibility
         $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'" class="classfortooltip">';
