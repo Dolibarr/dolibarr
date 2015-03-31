@@ -976,9 +976,9 @@ class ActionComm extends CommonObject
             $tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $this->label;
         $label = $this->label;
         if (empty($label)) $label=$this->libelle;   // For backward compatibility
-        $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'" class="classfortooltip">';
-        if ($option=='birthday') $link = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
-        else $link = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
+        $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'">';
+        if ($option=='birthday') $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
+        else $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
         $linkend='</a>';
         //print 'rrr'.$this->libelle.'-'.$withpicto;
 
