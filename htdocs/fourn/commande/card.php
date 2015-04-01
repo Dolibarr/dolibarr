@@ -200,14 +200,29 @@ if (empty($reshook))
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
 	        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
 
+	        $db->begin();
+
 	        $result = $object->setStatus($user, $newstatus);
 	        if ($result > 0)
 	        {
+	        	if ($newstatus == 0)
+	        	{
+		        	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+	        		$sql.= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
+	        		$sql.= ' WHERE rowid = '.$object->id;
+
+	        		$resql=$db->query($sql);
+	        	}
+
+        		$db->commit();
+
 	            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            exit;
 	        }
 	        else
-	        {
+			{
+				$db->rollback();
+
 	        	setEventMessage($object->error, 'errors');
 	        }
 	    }
@@ -570,6 +585,7 @@ if (empty($reshook))
 		}
 	}
 
+	// Validate
 	if ($action == 'confirm_valid' && $confirm == 'yes' &&
 	    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
 	    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
@@ -605,11 +621,11 @@ if (empty($reshook))
 	    // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
 	    if ($user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
 	    {
-	        $action='confirm_approve';
+	        $action='confirm_approve';	// can make standard or first level approval also if permission is set
 	    }
 	}
 
-	if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
+	if (($action == 'confirm_approve' || $action == 'confirm_approve2') && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 	{
 	    $idwarehouse=GETPOST('idwarehouse', 'int');
 
@@ -624,7 +640,7 @@ if (empty($reshook))
 		}
 
 	    // Check parameters
-	    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change)
+	    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change)	// warning name of option should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
 	    {
 	        if (! $idwarehouse || $idwarehouse == -1)
 	        {
@@ -636,7 +652,7 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	        $result	= $object->approve($user, $idwarehouse);
+	        $result	= $object->approve($user, $idwarehouse, ($action=='confirm_approve2'?1:0));
 	        if ($result > 0)
 	        {
 	            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1663,9 +1679,9 @@ elseif (! empty($object->id))
 	}
 
 	/*
-	 * Confirmation de l'approbation
+	 * Confirm approval
 	 */
-	if ($action	== 'approve')
+	if ($action	== 'approve' || $action	== 'approve2')
 	{
         $qualified_for_stock_change=0;
 	    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -1699,7 +1715,7 @@ elseif (! empty($object->id))
 			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_approve", $formquestion, 1, 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
 	/*
@@ -2589,13 +2605,51 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->approuver)
 					{
-						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+						if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && ! empty($object->user_approve_id))
+						{
+							print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
+						}
+						else
+						{
+							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("ApproveOrder").'</a>';
+					}
+				}
+
+				// Second approval (if option SUPPLIER_ORDER_DOUBLE_APPROVAL is set)
+				if ($object->statut == 1)
+				{
+					if ($user->rights->fournisseur->commande->approve2)
+					{
+						if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && ! empty($object->user_approve_id2))
+						{
+							print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SecondApprovalAlreadyDone")).'">'.$langs->trans("Approve2Order").'</a>';
+						}
+						else
+						{
+							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve2">'.$langs->trans("Approve2Order").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Approve2Order").'</a>';
+					}
+				}
+
+				// Refuse
+				if ($object->statut == 1)
+				{
+					if ($user->rights->fournisseur->commande->approuver || $user->rights->fournisseur->commande->approve2)
+					{
 						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 					}
 					else
 					{
-						print '<a class="butActionRefused" href="#">'.$langs->trans("ApproveOrder").'</a>';
-						print '<a class="butActionRefused" href="#">'.$langs->trans("RefuseOrder").'</a>';
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("RefuseOrder").'</a>';
 					}
 				}
 
@@ -2625,7 +2679,7 @@ elseif (! empty($object->id))
 				}
 
 				// Create bill
-				if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
+				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
 				{
 					if ($user->rights->fournisseur->facture->creer)
 					{
@@ -2645,6 +2699,12 @@ elseif (! empty($object->id))
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=webservice&amp;mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
 				}
 
+				// Clone
+				if ($user->rights->fournisseur->commande->creer)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
+				}
+
 				// Cancel
 				if ($object->statut == 2)
 				{
@@ -2652,12 +2712,6 @@ elseif (! empty($object->id))
 					{
 						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 					}
-				}
-
-				// Clone
-				if ($user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Delete
@@ -2696,23 +2750,17 @@ elseif (! empty($object->id))
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
-        // List of actions on element
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-        $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
-
-
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
 			/*
 			 * Commander (action=commande)
 			 */
-			print '<br>';
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
+			print_fiche_titre($langs->trans("ToOrder"),'','');
 			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
+			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 			print $form->select_date($date_com,'','','','',"commande");
@@ -2726,6 +2774,7 @@ elseif (! empty($object->id))
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("ToOrder").'"></td></tr>';
 			print '</table>';
 			print '</form>';
+			print "<br>";
 		}
 
 		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
@@ -2733,12 +2782,12 @@ elseif (! empty($object->id))
 			/*
 			 * Receptionner (action=livraison)
 			 */
-			print '<br>';
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
+			print_fiche_titre($langs->trans("Receive"),'','');
 			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
+			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
 			print $form->select_date('','','','','',"commande");
 			print "</td></tr>\n";
@@ -2758,7 +2807,14 @@ elseif (! empty($object->id))
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
 			print "</table>\n";
 			print "</form>\n";
+			print "<br>";
 		}
+
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+        $formactions=new FormActions($db);
+        $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
+
 
 		// List of actions on element
 		/* Hidden because" available into "Log" tab

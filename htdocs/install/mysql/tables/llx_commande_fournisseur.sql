@@ -36,11 +36,13 @@ create table llx_commande_fournisseur
   date_creation			datetime,                      -- date de creation 
   date_valid			datetime,                      -- date de validation
   date_approve			datetime,                      -- date de approve
+  date_approve2			datetime,                      -- date de approve 2 (when double approving is accivated)
   date_commande			date,                          -- date de la commande
   fk_user_author		integer,                       -- user making creation
   fk_user_modif         integer,                       -- user making last change
   fk_user_valid			integer,                       -- user validating
   fk_user_approve		integer,                       -- user approving
+  fk_user_approve2		integer,                       -- user approving 2 (when double approving is accivated)
   source				smallint NOT NULL,			-- not used, except by setting this to 42 for orders coming for replenishment and 0 in other case ?
   fk_statut				smallint  default 0,
   amount_ht				real      default 0,

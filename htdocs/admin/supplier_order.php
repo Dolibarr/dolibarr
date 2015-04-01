@@ -169,29 +169,57 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL');
-	$doubleapprovalgroup = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') > 0 ? GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') : '';
-	
+	//$doubleapprovalgroup = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') > 0 ? GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') : '';
+
     $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
     $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL",$doubleapproval,'chaine',0,'',$conf->entity);
-    if (isset($_POST["SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP"]))
+    /*if (isset($_POST["SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP"]))
     {
     	$res3 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP",$doubleapprovalgroup,'chaine',0,'',$conf->entity);
     }
     else
     {
     	$res3=1;
-    }
-    
-    if (! $res1 > 0 || ! $res2 > 0 || ! $res3 > 0) $error++;
+    }*/
 
-	if (! $error)
-	{
-		setEventMessage($langs->trans("SetupSaved"));
-	}
-	else
-	{
-		setEventMessage($langs->trans("Error"),'errors');
-	}
+    // TODO We add/delete permission until permission can have a condition on a global var
+    $r_id = 1190;
+    $entity = $conf->entity;
+    $r_desc='Permission for second approval';
+    $r_modul='fournisseur';
+    $r_type='w';
+    $r_perms='commande';
+    $r_subperms='approve2';
+    $r_def=0;
+
+    if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+    {
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+    	$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+    	$sql.= " VALUES ";
+    	$sql.= "(".$r_id.",".$entity.",'".$db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+
+    	$resqlinsert=$db->query($sql,1);
+    	if (! $resqlinsert)
+    	{
+    		if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+    		{
+    			setEventMessage($db->lasterror(),'errors');
+    			$error++;
+    		}
+    	}
+    }
+    else
+    {
+    	$sql = "DELETE FROM	".MAIN_DB_PREFIX."rights_def";
+    	$sql.= " WHERE id = ".$r_id;
+       	$resqldelete=$db->query($sql,1);
+    	if (! $resqldelete)
+    	{
+   			setEventMessage($db->lasterror(),'errors');
+   			$error++;
+    	}
+    }
 }
 
 
@@ -467,16 +495,25 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-
+$var=false;
 if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 {
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("UseDoubleApproval").'</td><td>';
-	print $form->selectyesno('SUPPLIER_ORDER_DOUBLE_APPROVAL', $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL);
-	print '<br>'.$form->select_dolgroups($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP,'SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP', 1);
+	print $langs->trans("UseDoubleApproval").'<br>';
+	print $langs->trans("IfSetToYesDontForgetPermission");
+	print '</td><td>';
+	print $form->selectyesno('SUPPLIER_ORDER_DOUBLE_APPROVAL', $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL, 1);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
+	$var=!$var;
+	/*print '<tr '.$bc[$var].'><td>';
+	print $langs->trans("GroupOfUserForSecondApproval").'</td><td>';
+	print $form->select_dolgroups($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP,'SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP', 1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td></tr>\n";
+	$var=!$var;*/
 }
 
 print '<tr '.$bc[$var].'><td colspan="2">';

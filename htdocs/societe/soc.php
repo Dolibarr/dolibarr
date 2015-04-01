@@ -1587,8 +1587,9 @@ else
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
+            // Juridical type
             print '<tr><td><label for="legal_form">'.$langs->trans('JuridicalStatus').'</label></td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code);
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code,'',0);
             print '</td></tr>';
 
             // Capital
