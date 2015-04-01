@@ -99,7 +99,7 @@ $entitytolang = array(
     'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
 	'expensereport'=> 'ExpenseReport',
-	'expensereport_line'=> 'ExpenseReportLine',
+	'expensereport_line'=> 'ExpenseReportLine'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();

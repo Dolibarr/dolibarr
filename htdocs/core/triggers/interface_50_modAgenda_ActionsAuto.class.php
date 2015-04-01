@@ -182,7 +182,40 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-        elseif ($action == 'ORDER_SENTBYMAIL')
+		elseif ($action == 'ORDER_CLOSE')
+        {
+            $langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderDeliveredInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("OrderDeliveredInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_CLASSIFY_BILLED')
+        {
+            $langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderBilledInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("OrderBilledInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_CANCEL')
+        {
+            $langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCanceledInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("OrderCanceledInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SENTBYMAIL')
         {
             $langs->load("orders");
 

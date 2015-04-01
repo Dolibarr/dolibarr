@@ -205,6 +205,8 @@ class Notify
 			return 0;
 		}
 
+		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
+		$newref=(empty($object->newref)?$object->ref:$object->newref);
 
 		// Check notification per third party
 		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
@@ -249,19 +251,19 @@ class Notify
 								$link='/compta/facture.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
-								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
+								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 								break;
 							case 'ORDER_VALIDATE':
 								$link='/commande/card.php?id='.$object->id;
 								$dir_output = $conf->commande->dir_output;
 								$object_type = 'order';
-								$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
+								$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
 								break;
 							case 'PROPAL_VALIDATE':
 								$link='/comm/propal.php?id='.$object->id;
 								$dir_output = $conf->propal->dir_output;
 								$object_type = 'propal';
-								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
+								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
@@ -282,7 +284,7 @@ class Notify
 								$dir_output = $conf->fournisseur->dir_output.'/commande/';
 								$object_type = 'order_supplier';
 								$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
+								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
 								$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_REFUSE':
@@ -290,16 +292,16 @@ class Notify
 								$dir_output = $conf->fournisseur->dir_output.'/commande/';
 								$object_type = 'order_supplier';
 								$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
+								$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$newref,$user->getFullName($langs));
 								$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'SHIPPING_VALIDATE':
 								$dir_output = $conf->expedition->dir_output.'/sending/';
 								$object_type = 'order_supplier';
-								$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
+								$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
 								break;
 						}
-                    	$ref = dol_sanitizeFileName($object->ref);
+                    	$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
 						if (! dol_is_file($pdf_path))
 						{
@@ -391,72 +393,80 @@ class Notify
 		        $link = '';
 		        $num++;
 
-		        switch ($notifcode) {
-		        	case 'BILL_VALIDATE':
-		        		$link='/compta/facture.php?facid='.$object->id;
-		        		$dir_output = $conf->facture->dir_output;
-		        		$object_type = 'facture';
-		        		$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$object->ref);
-		        		break;
-		        	case 'ORDER_VALIDATE':
-		        		$link='/commande/card.php?id='.$object->id;
-		        		$dir_output = $conf->commande->dir_output;
-		        		$object_type = 'order';
-		        		$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$object->ref);
-		        		break;
-		        	case 'PROPAL_VALIDATE':
-		        		$link='/comm/propal.php?id='.$object->id;
-		        		$dir_output = $conf->propal->dir_output;
-		        		$object_type = 'propal';
-		        		$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$object->ref);
-		        		break;
-		        	case 'FICHINTER_VALIDATE':
-		        		$link='/fichinter/card.php?id='.$object->id;
-		        		$dir_output = $conf->facture->dir_output;
-		        		$object_type = 'ficheinter';
-		        		$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
-		        		break;
+				switch ($notifcode) {
+					case 'BILL_VALIDATE':
+						$link='/compta/facture.php?facid='.$object->id;
+						$dir_output = $conf->facture->dir_output;
+						$object_type = 'facture';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
+						break;
+					case 'ORDER_VALIDATE':
+						$link='/commande/card.php?id='.$object->id;
+						$dir_output = $conf->commande->dir_output;
+						$object_type = 'order';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
+						break;
+					case 'PROPAL_VALIDATE':
+						$link='/comm/propal.php?id='.$object->id;
+						$dir_output = $conf->propal->dir_output;
+						$object_type = 'propal';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
+						break;
+					case 'FICHINTER_VALIDATE':
+						$link='/fichinter/card.php?id='.$object->id;
+						$dir_output = $conf->facture->dir_output;
+						$object_type = 'ficheinter';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$newref);
+						break;
 		        	case 'ORDER_SUPPLIER_VALIDATE':
 		        		$link='/fourn/commande/card.php?id='.$object->id;
 		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
 		        		$object_type = 'order_supplier';
 		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$object->ref,$user->getFullName($langs));
+		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy",$newref,$user->getFullName($langs));
 		        		$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 		        		break;
-		        	case 'ORDER_SUPPLIER_APPROVE':
-		        		$link='/fourn/commande/card.php?id='.$object->id;
-		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
-		        		$object_type = 'order_supplier';
-		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$object->ref,$user->getFullName($langs));
-		        		$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-		        		break;
-		        	case 'ORDER_SUPPLIER_REFUSE':
-		        		$link='/fourn/commande/card.php?id='.$object->id;
-		        		$dir_output = $conf->fournisseur->dir_output.'/commande/';
-		        		$object_type = 'order_supplier';
-		        		$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-		        		$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$object->ref,$user->getFullName($langs));
-		        		$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
-		        		break;
-		        	case 'SHIPPING_VALIDATE':
-		        		$dir_output = $conf->expedition->dir_output.'/sending/';
-		        		$object_type = 'order_supplier';
-		        		$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
-		        		break;
-		        }
-		        $ref = dol_sanitizeFileName($object->ref);
-		        $pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
-		        if (! dol_is_file($pdf_path))
-		        {
-		        	// We can't add PDF as it is not generated yet.
-		        	$filepdf = '';
-		        }
-		        else
-		        {
-		        	$filepdf = $pdf_path;
-		        }
+					case 'ORDER_SUPPLIER_APPROVE':
+						$link='/fourn/commande/card.php?id='.$object->id;
+						$dir_output = $conf->fournisseur->dir_output.'/commande/';
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
+						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+						break;
+					case 'ORDER_SUPPLIER_APPROVE2':
+						$link='/fourn/commande/card.php?id='.$object->id;
+						$dir_output = $conf->fournisseur->dir_output.'/commande/';
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy",$newref,$user->getFullName($langs));
+						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+						break;
+					case 'ORDER_SUPPLIER_REFUSE':
+						$link='/fourn/commande/card.php?id='.$object->id;
+						$dir_output = $conf->fournisseur->dir_output.'/commande/';
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+						$mesg.= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy",$newref,$user->getFullName($langs));
+						$mesg.= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+						break;
+					case 'SHIPPING_VALIDATE':
+						$dir_output = $conf->expedition->dir_output.'/sending/';
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$newref);
+						break;
+				}
+				$ref = dol_sanitizeFileName($newref);
+				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+				if (! dol_is_file($pdf_path))
+				{
+					// We can't add PDF as it is not generated yet.
+					$filepdf = '';
+				}
+				else
+				{
+					$filepdf = $pdf_path;
+				}
 
 		        $subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 

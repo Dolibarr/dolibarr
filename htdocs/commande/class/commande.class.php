@@ -60,6 +60,7 @@ class Commande extends CommonOrder
     var $ref_int;
     var $contactid;
     var $fk_project;
+
 	/**
 	 * Status of the order. Check the following constants:
 	 * - STATUS_CANCELED
@@ -68,7 +69,7 @@ class Commande extends CommonOrder
 	 * - STATUS_CLOSED
 	 * @var int
 	 */
-    var $statut;
+    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Delivered=Sent/Received, billed or not)
     var $facturee;		// deprecated
     var $billed;		// billed or not
 
@@ -147,8 +148,7 @@ class Commande extends CommonOrder
     var $nbtodo;
     var $nbtodolate;
 
-
-     /**
+    /**
      * ERR Not engouch stock
      */
     const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
@@ -338,7 +338,7 @@ class Commande extends CommonOrder
             // Rename directory if dir was a temporary ref
             if (preg_match('/^[\(]?PROV/i', $this->ref))
             {
-            	// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+            	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
                 // in order not to lose the attachments
                 $oldref = dol_sanitizeFileName($this->ref);
                 $newref = dol_sanitizeFileName($num);
@@ -477,7 +477,7 @@ class Commande extends CommonOrder
         global $conf,$langs;
         $error=0;
 
-        if ($this->statut != self::STATUS_CLOSED)
+        if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED)
         {
         	dol_syslog(get_class($this)."::set_reopen order has not status closed", LOG_WARNING);
             return 0;
@@ -501,7 +501,7 @@ class Commande extends CommonOrder
         else
         {
             $error++;
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             dol_print_error($this->db);
         }
 
