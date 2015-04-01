@@ -109,7 +109,7 @@ class Commande extends CommonOrder
     // Pour board
     var $nbtodo;
     var $nbtodolate;
-    
+
      /**
      * ERR Not engouch stock
      */
@@ -299,7 +299,7 @@ class Commande extends CommonOrder
             // Rename directory if dir was a temporary ref
             if (preg_match('/^[\(]?PROV/i', $this->ref))
             {
-            	// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+            	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
                 // in order not to lose the attachments
                 $oldref = dol_sanitizeFileName($this->ref);
                 $newref = dol_sanitizeFileName($num);
