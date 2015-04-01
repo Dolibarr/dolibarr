@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/dev/initdata/generate-societe.php
+ *      \file       dev/initdata/generate-societe.php
  *		\brief      Script de generation de donnees aleatoires pour les societes
  */
 
