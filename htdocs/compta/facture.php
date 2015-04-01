@@ -3612,6 +3612,7 @@ if ($action == 'create')
 				} else {
 					if ($resteapayer == 0) {
 						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPaymentRejected') . '</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPayment') . '</a></div>';
 					}
