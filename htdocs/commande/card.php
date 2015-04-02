@@ -138,8 +138,10 @@ if (empty($reshook))
 	}
 
 	// Reopen a closed order
-	else if ($action == 'reopen' && $user->rights->commande->creer) {
-		if ($object->statut == 3) {
+	else if ($action == 'reopen' && $user->rights->commande->creer)
+	{
+		if ($object->statut == -1 || $object->statut == 3)
+		{
 			$result = $object->set_reopen($user);
 			if ($result > 0)
 			{
@@ -2181,7 +2183,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 				}
 
 				// Reopen a closed order
-				if ($object->statut == 3 && $user->rights->commande->creer) {
+				if (($object->statut == 3 || $object->statut == -1) && $user->rights->commande->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
 				}
 

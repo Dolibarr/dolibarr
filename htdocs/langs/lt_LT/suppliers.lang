@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Tiekėjai
-AddSupplier=Create a supplier
+AddSupplier=Sukurti tiekėją
 SupplierRemoved=Tiekėjas pašalintas
 SuppliersInvoice=Tiekėjo sąskaita-faktūra
 NewSupplier=Naujas tiekėjas
@@ -39,7 +39,8 @@ AddSupplierInvoice=Sukurti tiekėjo sąskaitą-faktūrą
 ListOfSupplierProductForSupplier=Produktų ir kainų sąrašas tiekėjui <b>%s</b>
 NoneOrBatchFileNeverRan=Nėra arba grupinis <b>%s</b> neseniai neįvyko
 SentToSuppliers=Nusiųsta tiekėjams
-ListOfSupplierOrders=List of supplier orders
-MenuOrdersSupplierToBill=Supplier orders to invoice
-NbDaysToDelivery=Delivery delay in days
-DescNbDaysToDelivery=The biggest delay is display among order product list
+ListOfSupplierOrders=Tiekėjo užsakymų sąrašas
+MenuOrdersSupplierToBill=Tiekėjo užsakymai sąskaitoms
+NbDaysToDelivery=Pristatymo vėlavimas dienomis
+DescNbDaysToDelivery=Didžiausias vėlavimas rodomas
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

@@ -1,13 +1,13 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
+Accounting=Apskaita
+Globalparameters=Bendrieji parametrai
 Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
+Fiscalyear=Fiskaliniai metai
+Menuaccount=Apskaitos sąskaitos
 Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+MenuTools=Įrankiai
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals

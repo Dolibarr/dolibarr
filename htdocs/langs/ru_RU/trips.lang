@@ -1,126 +1,126 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
+ExpenseReport=Отчёт о затратах
+ExpenseReports=Отчёты о затратах
+Trip=Отчёт о затратах
+Trips=Отчёты о затратах
+TripsAndExpenses=Отчёты о затратах
+TripsAndExpensesStatistics=Статистика отчётов о затратах
+TripCard=Карточка отчётов о затратах
+AddTrip=Создать отчёт о затратах
+ListOfTrips=Список отчёта о затратах
 ListOfFees=Список сборов
-NewTrip=New expense report
+NewTrip=Новый отчёт о затртатах
 CompanyVisited=Посещенная организация
 Kilometers=Километры
 FeesKilometersOrAmout=Сумма или километры
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
+DeleteTrip=Удалить отчёт о затратах
+ConfirmDeleteTrip=Вы точно хотите удалить этот отчёт о затратах?
+ListTripsAndExpenses=Список отчётов о затратах
+ListToApprove=Ждёт утверждения
+ExpensesArea=Поле отчётов о затратах
+SearchATripAndExpense=Поиск отчёта о затратах
 ClassifyRefunded=Classify 'Refunded'
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ExpenseReportWaitingForApproval=Новый отчёт о затратах направлен на утверждение
+ExpenseReportWaitingForApprovalMessage=Новый отчёт отчёт о затратах отправлен и ждёт утверждения. \nОт пользователя %s\nЗа период %s\nНажмите для проверки: %s
+TripId=ID отчёта о затратах
+AnyOtherInThisListCanValidate=Кого уведомлять для подтверждения.
+TripSociete=Информация о компании
+TripSalarie=Информация о пользователе
+TripNDF=Информация о отчёте о затратах
+DeleteLine=Удалить строку из отчёта о затратах
+ConfirmDeleteLine=Вы точно хотите удалить эту строку?
+PDFStandardExpenseReports=Шаблон отчёта о затратах для создания документа в формате PDF
+ExpenseReportLine=Строка отчёта о затратах
 TF_OTHER=Другое
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Транспортировка
 TF_LUNCH=Обед
-TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
-TF_TAXI=Taxi
+TF_METRO=Метро
+TF_TRAIN=Поезд
+TF_BUS=Автобус
+TF_CAR=Машина
+TF_PEAGE=Троллейбус
+TF_ESSENCE=Топливо
+TF_HOTEL=Хостел
+TF_TAXI=Такси
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Вы должны задекларировать другой отчёт о затратах в этом временном диапазоне. 
+ListTripsAndExpenses=Список отчётов о затратах
+AucuneNDF=Нет отчётов о затратах по этому критерию
+AucuneLigne=Нет задекларированных отчётов о затратах
+AddLine=Добавить строку
+AddLineMini=Добавить
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Дата начала периода
+Date_FIN=Дата конца периода
+ModePaiement=Режим оплаты
+Note=Примечание
+Project=Проект
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Уведомить пользователя о опробации
+VALIDOR=Утверждено
+AUTHOR=Записано
+AUTHORPAIEMENT=Оплачено
+REFUSEUR=Отклонено
+CANCEL_USER=Отменено
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Причина
+MOTIF_CANCEL=Причина
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Дата отклонения
+DATE_SAVE=Дата проверки
+DATE_VALIDE=Дата проверки
+DateApprove=Дата утверждения
+DATE_CANCEL=Дата отмены
+DATE_PAIEMENT=Дата платежа
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+Deny=Отменить
+TO_PAID=Оплатить
+BROUILLONNER=Открыть заново
+SendToValid=Отправить запрос на утверждение
+ModifyInfoGen=Редактировать
+ValidateAndSubmit=Проверить и отправить запрос на утверждение
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=Вы не можете утвердить этот отчёт о затратах
+NOT_AUTHOR=Вы не автор этого отчёта о затратах. Операция отменена.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Отклонить отчёт о затратах
+ConfirmRefuseTrip=Вы точно хотите отклонить этот отчёт о затратах?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Одобрить отчёт о затратах
+ConfirmValideTrip=Вы точно хотите одобрить отчёт о затратах?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Оплатить отчёт о затратах
+ConfirmPaidTrip=Вы точно хотите изменит статус этого отчёта о затратах на "Оплачен"?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Отменить отчёт о затратах
+ConfirmCancelTrip=Вы точно хотите отменить отчёт о затратах?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Вернуть отчёту о затратах статус "Черновик"
+ConfirmBrouillonnerTrip=Вы точно хотите изменить статус этого отчёта о затратах на "Черновик"?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Проверить отчёт о завтратах
+ConfirmSaveTrip=Вы точно хотите проверить данный отчёт о затратах?
 
-Synchro_Compta=NDF <-> Compte
+Synchro_Compta=NDF <-> Учётная запись
 
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
+TripSynch=Синхронизация: Расходы <-> текущий счёт
+TripToSynch=Примечание: оплата должна быть включена в расчёт
+AucuneTripToSynch=Состояние отчёта о затратах не  "Оплачен".
+ViewAccountSynch=Посмотреть аккаунт
 
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
+ConfirmNdfToAccount=Вы уверены, что хотите включить этот отчет о расходах в текущем счете?
+ndfToAccount=Отчет о расходах - Интеграция
 
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
+ConfirmAccountToNdf=Вы уверены, что хотите удалить этот отчет о расходах текущего счета?
+AccountToNdf=Оценка затрат - вывод
 
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
+LINE_NOT_ADDED=Номер строки добавил:
+NO_PROJECT=Ни один проект не выбран.
+NO_DATE=Ни одна дата не выбрана. 
+NO_PRICE=Цена не указана.
 
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
+TripForValid=Подтвердивший
+TripForPaid=Плательщик
+TripPaid=Плательщик
 
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Нет отчёта о затратах за этот период.

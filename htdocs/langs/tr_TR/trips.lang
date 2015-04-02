@@ -1,126 +1,126 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
+ExpenseReport=Gider raporu
+ExpenseReports=Gider raporları
+Trip=Gider raporu
+Trips=Gider raporları
+TripsAndExpenses=Giderler raporları
+TripsAndExpensesStatistics=Gider raporları istatistkleri
+TripCard=Gider raporu kartı
+AddTrip=Gider raporu oluştur
+ListOfTrips=Gider raporu listesi
 ListOfFees=Ücretler listesi
-NewTrip=New expense report
+NewTrip=Yeni gider raporu
 CompanyVisited=Ziyaret edilen firma/kuruluş
 Kilometers=Kilometre
 FeesKilometersOrAmout=Tutar ya da kilometre
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
+DeleteTrip=Gider raporu sil
+ConfirmDeleteTrip=Bu gider raporunu silmek istediğinizden emin misiniz?
+ListTripsAndExpenses=Giderler raporları listesi
+ListToApprove=Onay bekliyor
+ExpensesArea=Gider raporları alanı
+SearchATripAndExpense=Bir gider raporu ara
 ClassifyRefunded=Sınıflandırma 'İade edildi'
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ExpenseReportWaitingForApproval=Onay için yeni bir gider raporu sunulmuştur
+ExpenseReportWaitingForApprovalMessage=Yeni bir gider raporu sunulmuş olup onay için beklemektedir.\n- Kullanıcı: %s\n- Dönem: %s\nDoğrulamak için buraya tıklayın: %s
+TripId=Gider raporu kimliği
+AnyOtherInThisListCanValidate=Doğrulama için bilgilendirilecek kişi
+TripSociete=Firma bilgisi
+TripSalarie=Kullanıcı bilgisi
+TripNDF=Gider raporu bilgileri
+DeleteLine=Gider raporundan bir satır sil
+ConfirmDeleteLine=Bu satırı silmek istediğinizden emin misiniz?
+PDFStandardExpenseReports=Bu gider raporu için PDF belgesi oluşturulacak standart şablon
+ExpenseReportLine=Gider rapor satırı
 TF_OTHER=Diğer
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Nakliye
 TF_LUNCH=Öğle yemeği
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
+TF_TRAIN=Tren
+TF_BUS=Otobüs
+TF_CAR=Araba
+TF_PEAGE=Geçiş parası
+TF_ESSENCE=Yakıt
 TF_HOTEL=Hostel
-TF_TAXI=Taxi
+TF_TAXI=Taksi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Benzer bir tarih aralığı için başka bir gider raporu bildirdiniz.
+ListTripsAndExpenses=Giderler raporları listesi
+AucuneNDF=Bu kriter uyan hiç gider raporu bulunamadı
+AucuneLigne=Bildirilen hiç gider raporu yok
+AddLine=Satır ekle
+AddLineMini=Ekle
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Dönem tarihi başı
+Date_FIN=Dönem tarihi sonu
+ModePaiement=Ödeme biçimi
+Note=Not
+Project=Proje
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Onama için bilgilendirilecek kullanıcı
+VALIDOR=Onaylayan
+AUTHOR=Kaydeden
+AUTHORPAIEMENT=Ödeyen
+REFUSEUR=Reddeden
+CANCEL_USER=İptal eden
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Neden
+MOTIF_CANCEL=Neden
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Ret tarihi
+DATE_SAVE=Onay tarihi
+DATE_VALIDE=Onay tarihi
+DateApprove=Onaylama tarihi
+DATE_CANCEL=İptal etme tarihi
+DATE_PAIEMENT=Ödeme tarihi
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+Deny=Ret
+TO_PAID=Öde
+BROUILLONNER=Yeniden aç
+SendToValid=Onay için gönder
+ModifyInfoGen=Düzenle
+ValidateAndSubmit=Doğrula ve onay için gönder
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=Bu gider raporunu onaylama yetiniz yok
+NOT_AUTHOR=Bu gider raporunu yazan siz değilsiniz. İşlem iptal edildi.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Bir gider raporu reddet
+ConfirmRefuseTrip=Bu gider raporunu reddetmek istediğinizden emin misiniz?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Gider raporunu onayla
+ConfirmValideTrip=Bu gider raporunu onaylamak istediğinizden emin misiniz?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Bir gider raporu öde
+ConfirmPaidTrip=Bu gider raporunun durumunu "Ödendi" olarak değiştirmek istediğinizden emin misiniz?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Bir gider raporu iptal et
+ConfirmCancelTrip=Bu gider raporunu iptal etmek istediğinizden emin misiniz?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Gider raporun geri "Taslak" durumuna döndür
+ConfirmBrouillonnerTrip=Bu gider raporunu "Taslak" durumuna döndürmek istediğinizden emin misiniz?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Gider raporunu doğrula
+ConfirmSaveTrip=Bu gider raporunu doğrulamak istediğinizden emin misiniz?
 
-Synchro_Compta=NDF <-> Compte
+Synchro_Compta=NDF <-> Hesap
 
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
+TripSynch=Senkronizasyon: Gider Raporu <-> Cari Hesap
+TripToSynch=Hesaba işlenecek gider raporu
+AucuneTripToSynch="Ödendi" durumunda hiç gider raporu yok
+ViewAccountSynch=Hesabı incele
 
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
+ConfirmNdfToAccount=Bu gider raporunu geçerli hesaba işlemek istediğinizden emin misiniz?
+ndfToAccount=Gider raporu - Entegrasyon
 
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
+ConfirmAccountToNdf=Bu gider raporunu geçerli hesaptan silmek istediğinizden emin misini?
+AccountToNdf=Gider Raporu - Para çekme
 
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
+LINE_NOT_ADDED=Hiç satır eklenmedi:
+NO_PROJECT=Hiçbir proje seçilmemiştir.
+NO_DATE=Hiçbir tarih seçilmemiştir.
+NO_PRICE=Hiçbir fiyat belirtilmiştir.
 
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
+TripForValid=Doğrulanacak
+TripForPaid=Ödenecek
+TripPaid=Ödendi
 
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Bu dönem için dışaaktarılacak gider raporu yok.
