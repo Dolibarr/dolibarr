@@ -1970,11 +1970,12 @@ elseif (! empty($object->id))
 	$cols = 3;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-	// Ligne de	3 colonnes
+	// Total
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	print '<td colspan="2">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
+	// Total VAT
 	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="2">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
@@ -1992,6 +1993,7 @@ elseif (! empty($object->id))
 		print '</tr>';
 	}
 
+	// Total TTC
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="2">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
