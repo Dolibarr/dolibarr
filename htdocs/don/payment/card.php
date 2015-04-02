@@ -202,7 +202,7 @@ $sql.= ' WHERE pd.fk_donation = d.rowid';
 $sql.= ' AND d.entity = '.$conf->entity;
 $sql.= ' AND pd.rowid = '.$id;
 
-dol_syslog("donations/payment/card.php", LOG_DEBUG);
+dol_syslog("don/payment/card.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
