@@ -111,8 +111,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
@@ -223,8 +227,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
