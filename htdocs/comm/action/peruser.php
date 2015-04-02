@@ -907,9 +907,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					$newcolor = ''; //init
 					if (empty($event->fulldayevent))
 					{
-						$a = dol_mktime((int) $h,0,0,$month,$day,$year,false,false);
-						$b = dol_mktime((int) $h,30,0,$month,$day,$year,false,false);
-						$c = dol_mktime((int) $h+1,0,0,$month,$day,$year,false,false);
+						$a = dol_mktime((int) $h,0,0,$month,$day,$year,false,0);
+						$b = dol_mktime((int) $h,30,0,$month,$day,$year,false,0);
+						$c = dol_mktime((int) $h+1,0,0,$month,$day,$year,false,0);
 
 						$dateendtouse=$event->date_end_in_calendar;
 						if ($dateendtouse==$event->date_start_in_calendar) $dateendtouse++;

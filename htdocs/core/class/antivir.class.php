@@ -40,7 +40,6 @@ class AntiVir
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
-	 *	@return AntiVir
 	 */
 	function __construct($db)
 	{

@@ -386,6 +386,12 @@ function dolibarr_del_const($db, $name, $entity=1)
 {
     global $conf;
 
+    if (empty($name))
+    {
+    	dol_print_error('','Error call dolibar_del_const with parameter name empty');
+    	return -1;
+    }
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     $sql.= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
     if (is_numeric($name)) $sql.= " OR rowid = '".$db->escape($name)."'";
@@ -438,7 +444,7 @@ function dolibarr_get_const($db, $name, $entity=1)
 
 
 /**
- *	Insert a parameter (key,value) into database.
+ *	Insert a parameter (key,value) into database (delete old key then insert it again).
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
@@ -516,11 +522,6 @@ function security_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
-    $head[$h][1] = $langs->trans("ExternalAccess");
-    $head[$h][2] = 'proxy';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
     $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'misc';
@@ -529,6 +530,16 @@ function security_prepare_head()
     $head[$h][0] = DOL_URL_ROOT."/admin/security.php";
     $head[$h][1] = $langs->trans("Passwords");
     $head[$h][2] = 'passwords';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
+    $head[$h][1] = $langs->trans("Files");
+    $head[$h][2] = 'file';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/proxy.php";
+    $head[$h][1] = $langs->trans("ExternalAccess");
+    $head[$h][2] = 'proxy';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/events.php";

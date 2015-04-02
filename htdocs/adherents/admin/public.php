@@ -203,9 +203,9 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 
 print '</table>';
 
-print '<center>';
-print '<br><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</center>';
+print '<br><div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</div>';
 
 print '</form>';
 

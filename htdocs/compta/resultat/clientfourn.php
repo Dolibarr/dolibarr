@@ -2,6 +2,8 @@
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014 Raphaël Dourseanud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
@@ -166,9 +168,9 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " WHERE f.fk_soc = s.rowid";
     $sql.= " AND f.fk_statut IN (1,2)";
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
-    	$sql.= " AND f.type IN (0,1,2)";
+    	$sql.= " AND f.type IN (0,1,2,5)";
 	else
-		$sql.= " AND f.type IN (0,1,2,3)";
+		$sql.= " AND f.type IN (0,1,2,3,5)";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
@@ -649,7 +651,7 @@ if ($conf->donation->enabled)
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
+				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 				if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
 				print '<td align="right">'.price($obj->amount).'</td>';
@@ -692,9 +694,9 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql.= " WHERE f.fk_statut IN (1,2)";
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
-    	$sql.= " AND f.type IN (0,1,2)";
+    	$sql.= " AND f.type IN (0,1,2,5)";
 	else
-		$sql.= " AND f.type IN (0,1,2,3)";
+		$sql.= " AND f.type IN (0,1,2,3,5)";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
     $sql.= " AND f.entity = ".$conf->entity;

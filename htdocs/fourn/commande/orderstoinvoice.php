@@ -389,7 +389,7 @@ if ($action == 'create' && empty($mesgs)) {
 	}
 
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '" /></center>';
+	print '<br><div class="center"><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '" /></div>';
 	print "</form>\n";
 
 	print '</td></tr>';
@@ -558,7 +558,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 			print '<td align="right" class="nowrap">' . $generic_commande->LibStatut($objp->fk_statut, 5) . '</td>';
 
 			// Checkbox
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input class="flat checkformerge" type="checkbox" name="orders_to_invoice[]" value="' . $objp->rowid . '">';
 			print '</td>';
 
@@ -573,13 +573,14 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 		/*
 		 * Boutons actions
 		*/
-		print '<center>';
-		print '<div align="right">';
+		print '<div class="center">';
+		print '<div class="right">';
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';
 		// print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
 		print '<input type="submit" class="butAction" value="' . $langs->trans("GenerateBill") . '">';
+		print '</div>';
 		print '</div>';
 		print '</form>';
 		$db->free($resql);

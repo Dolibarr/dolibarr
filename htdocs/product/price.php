@@ -7,6 +7,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_expression.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
@@ -43,6 +46,7 @@ $langs->load("bills");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
+$eid = GETPOST('eid', 'int');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -60,11 +64,7 @@ $error=0;
  * Actions
  */
 
-if ($action == 'update_price' && GETPOST("cancel"))
-{
-
-	$action='';
-}
+if (GETPOST("cancel")) $action='';
 
 if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit->creer || $user->rights->service->creer))
 {
@@ -72,6 +72,7 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 
 	$error=0;
 	$maxpricesupplier = $object->min_recommended_price();
+	$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
 
 	// MultiPrix
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -114,9 +115,34 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 		$action='edit_price';
 	}
 
+	if ($newprice < $newprice_min && ! empty($object->fk_price_expression)) {
+		$newprice = $newprice_min; //Set price same as min, the user will not see the
+	}
+
 	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0) {
-		$action = '';
-		setEventMessage($langs->trans("RecordSaved"));
+		if ($object->fk_price_expression != 0) {
+			//Check the expression validity by parsing it
+			$priceparser = new PriceParser($db);
+			$price_result = $priceparser->parseProduct($object);
+			if ($price_result < 0) { //Expression is not valid
+				$error++;
+				$action='edit_price';
+				setEventMessage($priceparser->translatedError(), 'errors');
+			}
+		}
+		if (empty($error) && ! empty($conf->dynamicprices->enabled)) {
+			$ret=$object->setPriceExpression($object->fk_price_expression);
+			if ($ret < 0)
+			{
+				$error++;
+				$action='edit_price';
+				setEventMessage($object->error, 'errors');
+			}
+		}
+		if (empty($error)) {
+			$action = '';
+			setEventMessage($langs->trans("RecordSaved"));
+		}
 	} else {
 		$action = 'edit_price';
 		setEventMessage($object->error, 'errors');
@@ -321,7 +347,7 @@ llxHeader("", "", $langs->trans("CardProduct" . $object->type));
 
 $head = product_prepare_head($object, $user);
 $titre = $langs->trans("CardProduct" . $object->type);
-$picto = ($object->type == 1 ? 'service' : 'product');
+$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 dol_fiche_head($head, 'price', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';
@@ -610,13 +636,15 @@ print "</table>\n";
 
 print "</div>\n";
 
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Barre d'action                                                             */
 /*                                                                            */
 /* ************************************************************************** */
 
-if (! $action || $action == 'delete') {
+if (! $action || $action == 'delete')
+{
 	print "\n" . '<div class="tabsAction">' . "\n";
 
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
@@ -629,10 +657,12 @@ if (! $action || $action == 'delete') {
 /*
  * Edition du prix
  */
-if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
+{
 	print_fiche_titre($langs->trans("NewPrice"), '', '');
 
-	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (empty($conf->global->PRODUIT_MULTIPRICES))
+	{
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
@@ -653,15 +683,51 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '</td>';
 		print '</tr>';
 
+ 		//Only show price mode and expression selector if module is enabled
+		if (! empty($conf->dynamicprices->enabled)) {
+			// Price mode selector
+			print '<tr><td>'.$langs->trans("PriceMode").'</td><td>';
+			$price_expression = new PriceExpression($db);
+			$price_expression_list = array(0 => $langs->trans("PriceNumeric")); //Put the numeric mode as first option
+			foreach ($price_expression->list_price_expression() as $entry) {
+				$price_expression_list[$entry->id] = $entry->title;
+			}
+			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
+			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
+			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
+			print '</td></tr>';
+			// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
+			print '<script type="text/javascript">
+				jQuery(document).ready(run);
+				function run() {
+					jQuery("#expression_editor").click(on_click);
+					jQuery("#eid").change(on_change);
+					on_change();
+				}
+				function on_click() {
+					window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=price&eid=" + $("#eid").attr("value");
+				}
+				function on_change() {
+					if ($("#eid").attr("value") == 0) {
+						jQuery("#price_numeric").show();
+					} else {
+						jQuery("#price_numeric").hide();
+					}
+				}
+			</script>';
+		}
+
 		// Price
-		print '<tr><td width="20%">';
+		$product = new Product($db);
+		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
+		print '<tr id="price_numeric"><td width="20%">';
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
-			print '<input name="price" size="10" value="' . price($object->price_ttc) . '">';
+			print '<input name="price" size="10" value="' . price($product->price_ttc) . '">';
 		} else {
-			print '<input name="price" size="10" value="' . price($object->price) . '">';
+			print '<input name="price" size="10" value="' . price($product->price) . '">';
 		}
 		print '</td></tr>';
 
@@ -682,12 +748,18 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
-	} else {
-		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
+	}
+	else
+	{
+		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
+		{
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
@@ -742,7 +814,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 // Liste des evolutions du prix
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.recuperableonly,";
 $sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
-$sql .= " p.date_price as dp, u.rowid as user_id, u.login";
+$sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product_price as p,";
 $sql .= " " . MAIN_DB_PREFIX . "user as u";
 $sql .= " WHERE fk_product = " . $object->id;
@@ -754,10 +826,12 @@ $sql .= " ORDER BY p.date_price DESC, p.price_level ASC";
 // $sql .= $db->plimit();
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
 	$num = $db->num_rows($result);
 
-	if (! $num) {
+	if (! $num)
+	{
 		$db->free($result);
 
 		// Il doit au moins y avoir la ligne de prix initial.
@@ -768,8 +842,11 @@ if ($result) {
 		$num = $db->num_rows($result);
 	}
 
-	if ($num > 0) {
+	if ($num > 0)
+	{
 		print '<br>';
+
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_fiche_titre($langs->trans("DefaultPrice"),'','');
 
 		print '<table class="noborder" width="100%">';
 
@@ -787,6 +864,9 @@ if ($result) {
 		print '<td align="right">' . $langs->trans("VAT") . '</td>';
 		print '<td align="right">' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("TTC") . '</td>';
+		if (! empty($conf->dynamicprices->enabled)) {
+			print '<td align="right">' . $langs->trans("PriceExpressionSelected") . '</td>';
+		}
 		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
 		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
@@ -796,7 +876,8 @@ if ($result) {
 
 		$var = True;
 		$i = 0;
-		while ($i < $num) {
+		while ($i < $num)
+		{
 			$objp = $db->fetch_object($result);
 			$var = ! $var;
 			print "<tr $bc[$var]>";
@@ -816,8 +897,25 @@ if ($result) {
 
 			print '<td align="center">' . $langs->trans($objp->price_base_type) . "</td>";
 			print '<td align="right">' . vatrate($objp->tva_tx, true, $objp->recuperableonly) . "</td>";
-			print '<td align="right">' . price($objp->price) . "</td>";
-			print '<td align="right">' . price($objp->price_ttc) . "</td>";
+
+			//Price
+			if (! empty($objp->fk_price_expression) && ! empty($conf->dynamicprices->enabled))
+			{
+				$price_expression = new PriceExpression($db);
+				$res = $price_expression->fetch($objp->fk_price_expression);
+				$title = $price_expression->title;
+				print '<td align="right"></td>';
+				print '<td align="right"></td>';
+				print '<td align="right">' . $title . "</td>";
+			}
+			else
+			{
+				print '<td align="right">' . price($objp->price) . "</td>";
+				print '<td align="right">' . price($objp->price_ttc) . "</td>";
+				if (! empty($conf->dynamicprices->enabled)) { //Only if module is enabled
+					print '<td align="right"></td>';
+				}
+			}
 			print '<td align="right">' . price($objp->price_min) . '</td>';
 			print '<td align="right">' . price($objp->price_min_ttc) . '</td>';
 
@@ -847,7 +945,9 @@ if ($result) {
 	dol_print_error($db);
 }
 
-if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+
+if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+{
 
 	$prodcustprice = new Productcustomerprice($db);
 
@@ -873,8 +973,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$filter ['soc.nom'] = $search_soc;
 	}
 
-	if ($action == 'add_customer_price') {
-
+	if ($action == 'add_customer_price')
+	{
 		// Create mode
 		$maxpricesupplier = $object->min_recommended_price();
 
@@ -944,12 +1044,16 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
-	} elseif ($action == 'edit_customer_price') {
-
+	}
+	elseif ($action == 'edit_customer_price')
+	{
 		// Edit mode
 		$maxpricesupplier = $object->min_recommended_price();
 
@@ -1026,11 +1130,16 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
-	} elseif ($action == 'showlog_customer_price') {
+	}
+	elseif ($action == 'showlog_customer_price')
+	{
 
 		$filter = array('t.fk_product' => $object->id,'t.fk_soc' => GETPOST('socid', 'int'));
 
@@ -1103,8 +1212,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n" . '<div class="tabsAction">' . "\n";
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Ok") . '</a></div>';
 		print "\n</div><br>\n";
-	} else {
-
+	}
+	else
+	{
 		// View mode
 
 		// Count total nb of records
@@ -1120,42 +1230,42 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		$option = '&search_soc=' . $search_soc . '&id=' . $object->id;
 
-		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		print '<input type="hidden" name="id" value="' . $object->id . '">';
+
+		print '<table class="noborder" width="100%">';
+
+		print '<tr class="liste_titre">';
+		print '<td>' . $langs->trans("ThirdParty") . '</td>';
+		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
+		print '<td align="right">' . $langs->trans("VAT") . '</td>';
+		print '<td align="right">' . $langs->trans("HT") . '</td>';
+		print '<td align="right">' . $langs->trans("TTC") . '</td>';
+		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+
+		print '<tr class="liste_titre">';
+		print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
+		print '<td colspan="8">&nbsp;</td>';
+		// Print the search button
+		print '<td class="liste_titre" align="right">';
+		print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+		print '</td>';
+		print '</tr>';
 
 		if (count($prodcustprice->lines) > 0) {
-
-			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
-			print '<input type="hidden" name="id" value="' . $object->id . '">';
-
-			print '<table class="noborder" width="100%">';
-
-			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans("ThirdParty") . '</td>';
-			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
-			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-			print '<td align="right">' . $langs->trans("VAT") . '</td>';
-			print '<td align="right">' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
-
-			print '<tr class="liste_titre">';
-			print '<td><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
-			print '<td colspan="8">&nbsp;</td>';
-			// Print the search button
-			print '<td class="liste_titre" align="right">';
-			print '<input class="liste_titre" name="button_search" type="image" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-			print '</td>';
-			print '</tr>';
 
 			$var = True;
 
 			foreach ($prodcustprice->lines as $line) {
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
@@ -1195,12 +1305,15 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				print "</tr>\n";
 			}
-			print "</table>";
-
-			print "</form>";
 		} else {
-			print $langs->trans('None');
+			$colspan=9;
+			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
+			print '<td colspan="'.$colspan.'">'.$langs->trans('None').'</td>';
 		}
+
+		print "</table>";
+
+		print "</form>";
 
 		/* ************************************************************************** */
 		/*                                                                            */

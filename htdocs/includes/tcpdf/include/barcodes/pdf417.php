@@ -636,7 +636,7 @@ class PDF417 {
 			// add macro section
 			$codewords = array_merge($codewords, $macrocw);
 		}
-		// Symbol Lenght Descriptor (number of data codewords including Symbol Lenght Descriptor and pad codewords)
+		// Symbol Length Descriptor (number of data codewords including Symbol Length Descriptor and pad codewords)
 		$sld = $size - $errsize;
 		// add symbol length description
 		array_unshift($codewords, $sld);
@@ -772,7 +772,7 @@ class PDF417 {
 
 	/**
 	 * Returns the error correction codewords
-	 * @param $cw (array) array of codewords including Symbol Lenght Descriptor and pad
+	 * @param $cw (array) array of codewords including Symbol Length Descriptor and pad
 	 * @param $ecl (int) error correction level 0-8
 	 * @return array of error correction codewords
 	 * @protected

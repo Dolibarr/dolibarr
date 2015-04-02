@@ -133,7 +133,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$dir = $conf->ficheinter->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
-						
+
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
@@ -274,7 +274,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 						// Description of product line
 						$curX = $this->posxdesc-1;
-						
+
 						// Description of product line
 						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
 						if ($objectligne->duration > 0)
@@ -387,7 +387,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				
+
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -657,7 +657,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	void
+	 *      @return	integer
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{

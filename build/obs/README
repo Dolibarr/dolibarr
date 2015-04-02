@@ -14,7 +14,7 @@ https://build.opensuse.org
 Packaging rules: http://en.opensuse.org/Portal:Packaging
 
 Add attributes:
-OBS:Screenshots         URL of screenshot
+OBS:Screenshots         URL of screenshot http://www.dolibarr.org/images/dolibarr_screenshot1.png
 OBS:QualityCategory     Development|Testing|Stable|Private
 OBS:Maintained          1
 

@@ -63,7 +63,7 @@ print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
 $useragent=$_SERVER['HTTP_USER_AGENT'];
 if (! empty($useragent))
 {
-    $tmp=getBrowserInfo();
+    $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
     $browserversion=$tmp['browserversion'];
     $browsername=$tmp['browsername'];
     if ($browsername == 'ie' && $browserversion < 7) print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
@@ -380,22 +380,14 @@ else
 			$allowupgrade=false;
 		}
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
-		$migrationscript=array( //array('from'=>'2.0.0', 'to'=>'2.1.0'),
-								//array('from'=>'2.1.0', 'to'=>'2.2.0'),
-								//array('from'=>'2.2.0', 'to'=>'2.4.0'),
-								//array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								//array('from'=>'2.5.0', 'to'=>'2.6.0'),
-								array('from'=>'2.6.0', 'to'=>'2.7.0'),
-								array('from'=>'2.7.0', 'to'=>'2.8.0'),
-								array('from'=>'2.8.0', 'to'=>'2.9.0'),
-								array('from'=>'2.9.0', 'to'=>'3.0.0'),
-								array('from'=>'3.0.0', 'to'=>'3.1.0'),
+		$migrationscript=array(	array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
 								array('from'=>'3.3.0', 'to'=>'3.4.0'),
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
 								array('from'=>'3.5.0', 'to'=>'3.6.0'),
-								array('from'=>'3.6.0', 'to'=>'3.7.0')
+								array('from'=>'3.6.0', 'to'=>'3.7.0'),
+								array('from'=>'3.7.0', 'to'=>'3.8.0')
 		);
 
 		$count=0;

@@ -46,18 +46,25 @@ class Project extends CommonObject
     var $id;
     var $ref;
     var $description;
-    var $statut;
     var $title;
     var $date_start;
     var $date_end;
+    var $date_close;
     var $socid;
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
+	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
     var $note_private;
     var $note_public;
+    var $budget_amount;
+
     var $statuts_short;
     var $statuts;			// 0=draft, 1=opened, 2=closed
+
     var $oldcopy;
+
+    var $weekWorkLoad;			// Used to store workload details of a projet
+    var $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
 
 
     /**
@@ -110,6 +117,7 @@ class Project extends CommonObject
         $sql.= ", datec";
         $sql.= ", dateo";
         $sql.= ", datee";
+        $sql.= ", budget_amount";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -122,6 +130,7 @@ class Project extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
+        $sql.= ", " . ($this->budget_amount != ''?price2num($this->budget_amount):'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -147,7 +156,7 @@ class Project extends CommonObject
             $error++;
         }
 
-        //Update extrafield
+        // Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
@@ -208,6 +217,9 @@ class Project extends CommonObject
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
             $sql.= ", dateo=" . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
             $sql.= ", datee=" . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
+            $sql.= ", date_close=" . ($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
+            $sql.= ", fk_user_close=" . ($this->fk_user_close > 0 ? $this->fk_user_close : "null");
+            $sql.= ", budget_amount = " . ($this->budget_amount > 0 ? $this->budget_amount : "null");
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::Update", LOG_DEBUG);
@@ -293,8 +305,8 @@ class Project extends CommonObject
     {
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT rowid, ref, title, description, public, datec";
-        $sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public,model_pdf";
+        $sql = "SELECT rowid, ref, title, description, public, datec, budget_amount,";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_close, fk_statut, note_private, note_public, model_pdf";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -325,12 +337,15 @@ class Project extends CommonObject
                 $this->datem = $this->db->jdate($obj->tms);  // TODO deprecated
                 $this->date_start = $this->db->jdate($obj->dateo);
                 $this->date_end = $this->db->jdate($obj->datee);
+                $this->date_close = $this->db->jdate($obj->date_close);
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->socid = $obj->fk_soc;
                 $this->user_author_id = $obj->fk_user_creat;
+                $this->user_close_id = $obj->fk_user_close;
                 $this->public = $obj->public;
                 $this->statut = $obj->fk_statut;
+                $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
 
                 $this->db->free($resql);
@@ -398,7 +413,7 @@ class Project extends CommonObject
      * 	@param		string		$datefieldname	name of table associated of the type
      *  @param		string		$dates			Start date (at 00:00:00)
      *  @param		string		$datee			End date (at 23:00:00)
-     * 	@return		mixed						List of orders linked to project, < 0 or string if error
+     * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
     {
@@ -411,6 +426,10 @@ class Project extends CommonObject
         else
 		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
+		}
+    	if ($type == 'expensereport')
+		{
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
 		}
 		if ($dates > 0)
 		{
@@ -482,6 +501,23 @@ class Project extends CommonObject
                 $this->db->rollback();
                 return 0;
             }
+        }
+
+        // Set fk_projet into elements to null
+        $listoftables=array(
+        		'facture'=>'fk_projet','propal'=>'fk_projet','commande'=>'fk_projet','facture_fourn'=>'fk_projet','commande_fournisseur'=>'fk_projet',
+        		'expensereport_det'=>'fk_projet','contrat'=>'fk_projet','fichinter'=>'fk_projet','don'=>'fk_project'
+        		);
+        foreach($listoftables as $key => $value)
+        {
+   	        $sql = "UPDATE " . MAIN_DB_PREFIX . $key . " SET ".$value." = NULL where ".$value." = ". $this->id;
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        	break;
+	        }
         }
 
         // Delete tasks
@@ -655,12 +691,14 @@ class Project extends CommonObject
     /**
      * 		Close a project
      *
-     * 		@param		User	$user		User that validate
+     * 		@param		User	$user		User that close project
      * 		@return		int					<0 if KO, >0 if OK
      */
     function setClose($user)
     {
         global $langs, $conf;
+
+        $now = dol_now();
 
 		$error=0;
 
@@ -669,7 +707,7 @@ class Project extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet";
-            $sql.= " SET fk_statut = 2";
+            $sql.= " SET fk_statut = 2, fk_user_close = ".$user->id.", date_close = '".$this->db->idate($now)."'";
             $sql.= " WHERE rowid = " . $this->id;
             $sql.= " AND entity = " . $conf->entity;
             $sql.= " AND fk_statut = 1";
@@ -775,9 +813,9 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Renvoie nom clicable (avec eventuellement le picto)
+     * 	Return clicable name (with picto eventually)
      *
-     * 	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     * 	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      * 	@param	string	$option			Variant ('', 'nolink')
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      * 	@return	string					Chaine avec URL
@@ -787,31 +825,32 @@ class Project extends CommonObject
         global $langs;
 
         $result = '';
-        $lien = '';
-        $lienfin = '';
+        $link = '';
+        $linkend = '';
+        $label = '<u>' . $langs->trans("ShowProject") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        if (! empty($this->title))
+            $label .= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->title;
+        $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        if ($option != 'nolink')
-        {
-        	if (preg_match('/\.php$/',$option))
-        	{
-            	$lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . '">';
-            	$lienfin = '</a>';
-        	}
-        	else
-        	{
-            	$lien = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . '">';
-            	$lienfin = '</a>';
-        	}
+        if ($option != 'nolink') {
+            if (preg_match('/\.php$/',$option)) {
+                $link = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . $linkclose;
+                $linkend = '</a>';
+            } else {
+                $link = '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $this->id . $linkclose;
+                $linkend = '</a>';
+            }
         }
 
         $picto = 'projectpub';
         if (!$this->public) $picto = 'project';
 
-        $label = $langs->trans("ShowProject") . ': ' . $this->ref . ($this->title ? ' - ' . $this->title : '');
 
-        if ($withpicto) $result.=($lien . img_object($label, $picto) . $lienfin);
+        if ($withpicto) $result.=($link . img_object($label, $picto, 'class="classfortooltip"') . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien . $this->ref . $lienfin . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$link . $this->ref . $linkend . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
@@ -837,6 +876,8 @@ class Project extends CommonObject
         $this->date_m = $now;
         $this->date_start = $now;
         $this->note_public = 'SPECIMEN';
+        $this->budget_amount = 10000;
+
         /*
         $nbp = rand(1, 9);
         $xnbp = 0;
@@ -888,13 +929,6 @@ class Project extends CommonObject
                         if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
                         if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
                     }
-                    // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
-                    /*if ($source == 'external' && preg_match('/PROJECT/', $userRole[$nblinks]['code']) && $user->contact_id == $userRole[$nblinks]['id'])
-                    {
-                        if ($mode == 'read'   && $user->rights->projet->lire)      $userAccess++;
-                        if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
-                        if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
-                    }*/
                     $nblinks++;
                 }
             }
@@ -940,11 +974,9 @@ class Project extends CommonObject
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ( p.public = 1";
-            //$sql.= " OR p.fk_user_creat = ".$user->id;
             $sql.= " OR ( ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
             $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
-            //$sql.= " OR (ctc.source = 'external' AND ec.fk_socpeople = ".($user->contact_id?$user->contact_id:0).")"; // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
             $sql.= " )";
             $sql.= " ))";
         }
@@ -954,7 +986,6 @@ class Project extends CommonObject
             $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
             $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
-            //$sql.= " OR (ctc.source = 'external' AND ec.fk_socpeople = ".($user->contact_id?$user->contact_id:0).")"; // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
             $sql.= " )";
         }
         if ($mode == 2)
@@ -1002,16 +1033,17 @@ class Project extends CommonObject
 	  *	@param	bool	$clone_project_file		clone file of project
 	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
       *	@param	bool	$clone_note		clone note of project
-      *	@param	bool	$notrigger		no trigger flag
+      * @param	bool	$move_date		move task date on clone
+      *	@param	integer	$notrigger		no trigger flag
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$notrigger=0)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0)
 	{
 		global $user,$langs,$conf;
 
 		$error=0;
 
-		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note);
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_project_file=".$clone_project_file." clone_note=".$clone_note." move_date=".$move_date,LOG_DEBUG);
 
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
@@ -1029,11 +1061,13 @@ class Project extends CommonObject
 		$orign_project_ref=$clone_project->ref;
 
 		$clone_project->id=0;
-        $clone_project->date_start = $now;
-        if (!(empty($clone_project->date_end)))
-        {
-        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
-        }
+		if ($move_date) {
+	        $clone_project->date_start = $now;
+	        if (!(empty($clone_project->date_end)))
+	        {
+	        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+	        }
+		}
 
         $clone_project->datec = $now;
 
@@ -1185,7 +1219,7 @@ class Project extends CommonObject
 
 			    foreach ($tasksarray as $tasktoclone)
 			    {
-					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,$clone_task_file,true,false);
+					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,$move_date,true,false,$clone_task_file,true,false);
 					if ($result_clone <= 0)
 				    {
 				    	$this->error.=$result_clone->error;
@@ -1408,6 +1442,57 @@ class Project extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
+
+
+	/**
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project
+	 *
+	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
+	 * @param 	int		$taskid			Filter on a task id
+	 * @param 	int		$userid			Time spent by a particular user
+	 * @return 	int						<0 if OK, >0 if KO
+	 */
+	public function loadTimeSpent($datestart,$taskid=0,$userid=0)
+    {
+        $error=0;
+
+        if (empty($datestart)) dol_print_error('','Error datestart parameter is empty');
+
+        $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.fk_task";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
+        $sql.= " WHERE ptt.fk_task = pt.rowid";
+        $sql.= " AND pt.fk_projet = ".$this->id;
+        $sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
+        $sql.= " AND ptt.task_date <= '".$this->db->idate($datestart + (7 * 24 * 3600) - 1)."')";
+        if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
+        if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
+
+        //print $sql;
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+
+                $num = $this->db->num_rows($resql);
+                $i = 0;
+                // Loop on each record found, so each couple (project id, task id)
+                 while ($i < $num)
+                {
+                        $obj=$this->db->fetch_object($resql);
+                        $day=$this->db->jdate($obj->task_date);
+                        $this->weekWorkLoad[$day] +=  $obj->task_duration;
+                        $this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+                        $i++;
+                }
+                $this->db->free($resql);
+                return 1;
+         }
+        else
+        {
+                $this->error="Error ".$this->db->lasterror();
+                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+                return -1;
+        }
+    }
 
 }
 

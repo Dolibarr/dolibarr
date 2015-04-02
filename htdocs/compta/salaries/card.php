@@ -67,8 +67,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 
-	$sal->accountid=GETPOST("accountid");
-	$sal->fk_user=GETPOST("fk_user");
+	$sal->accountid=GETPOST("accountid","int");
+	$sal->fk_user=GETPOST("fk_user","int");
 	$sal->datev=$datev;
 	$sal->datep=$datep;
 	$sal->amount=price2num(GETPOST("amount"));
@@ -79,6 +79,11 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->type_payment=GETPOST("paymenttype");
 	$sal->num_payment=GETPOST("num_payment");
 	$sal->fk_user_creat=$user->id;
+
+	// Set user current salary as ref salaray for the payment
+	$fuser=new User($db);
+	$fuser->fetch(GETPOST("fk_user","int"));
+	$sal->salary=$fuser->salary;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
@@ -206,7 +211,7 @@ if ($action == 'create')
 		$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
 	}
 
-	print "<form name='add' action=\"card.php\" method=\"post\">\n";
+	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -274,8 +279,11 @@ if ($action == 'create')
 
 	print "<br>";
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }

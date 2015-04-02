@@ -116,7 +116,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	 * 	Output log content. We also start output buffering at first log write.
 	 *
 	 *	@param	array	$content	Content to log
-	 * 	@return	void
+	 * 	@return	null|false
 	 */
 	public function export($content)
 	{

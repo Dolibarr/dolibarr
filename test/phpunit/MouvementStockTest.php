@@ -157,7 +157,6 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
 		$warehouse2id=$warehouse2->create($user);
 
 		$localobject=new MouvementStock($this->savdb);
-    	//$localobject->initAsSpecimen();
 
     	// Do a list of movement into warehouse 1
 

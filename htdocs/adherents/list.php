@@ -233,7 +233,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters fields
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
@@ -264,7 +264,6 @@ if ($resql)
 	print '</td>';
 
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
@@ -366,6 +365,7 @@ if ($resql)
 	}
 
 	print "</table>\n";
+	print '</form>';
 
 	if ($num > $conf->liste_limit)
 	{

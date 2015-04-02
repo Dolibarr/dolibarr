@@ -42,6 +42,7 @@ class Productbatch extends CommonObject
 	var $batch='';
 	var $qty;
 	var $import_key;
+	public $warehouseid;
 
 
 
@@ -86,12 +87,11 @@ class Productbatch extends CommonObject
 		$sql.= "import_key";
 		$sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->fk_product_stock)?'NULL':$this->fk_product_stock).",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':$this->db->idate($this->sellby)).",";
-		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':$this->db->idate($this->eatby)).",";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
+		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->qty)?'NULL':$this->qty).",";
 		$sql.= " ".(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'")."";
-
 
 		$sql.= ")";
 
@@ -121,11 +121,6 @@ class Productbatch extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -155,10 +150,11 @@ class Productbatch extends CommonObject
 		$sql.= " t.eatby,";
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
-		$sql.= " t.import_key";
-
+		$sql.= " t.import_key,";
+		$sql.= " w.fk_entrepot";
 
         $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock=w.rowid";
         $sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -177,6 +173,7 @@ class Productbatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
 				$this->import_key = $obj->import_key;
+				$this->warehouseid= $obj->fk_entrepot;
 			}
 			$this->db->free($resql);
 

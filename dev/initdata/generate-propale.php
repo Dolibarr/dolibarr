@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/dev/generate-propale.php
+ *	    \file       dev/initdata/generate-propale.php
  *		\brief      Script de generation de donnees aleatoires pour les propales
  */
 
@@ -103,7 +103,8 @@ if ($resql)
 	}
 }
 
-$user->rights->propale->valider=1;
+$user->rights->propal->creer=1;
+$user->rights->propal->propal_advance->validate=1;
 
 
 if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))

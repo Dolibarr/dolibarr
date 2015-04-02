@@ -68,7 +68,7 @@ class ActionsCardProduct
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param	string	$action    Type of action
-	 *    @param	string	$id			Id of object
+	 *    @param	integer	$id			Id of object
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
@@ -143,7 +143,7 @@ class ActionsCardProduct
             $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
-    		$picto=($this->object->type==1?'service':'product');
+    		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
     		$this->tpl['showhead']=dol_get_fiche_head($head, 'card', $titre, 0, $picto);
             $this->tpl['showend']=dol_get_fiche_end();
 

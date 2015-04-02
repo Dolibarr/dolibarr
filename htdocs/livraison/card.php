@@ -43,6 +43,7 @@ $langs->load("sendings");
 $langs->load("bills");
 $langs->load('deliveries');
 $langs->load('orders');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
@@ -80,7 +81,8 @@ if ($action == 'add')
 	$object->date_livraison   = time();
 	$object->note             = $_POST["note"];
 	$object->commande_id      = $_POST["commande_id"];
-
+	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+	
 	if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 	{
 		$expedition->entrepot_id     = $_POST["entrepot_id"];
@@ -119,7 +121,10 @@ if ($action == 'add')
 	}
 }
 
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->livraison->valider)
+else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
+    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
+)
 {
 	$result = $object->valid($user);
 
@@ -168,6 +173,12 @@ if ($action == 'setdate_livraison' && $user->rights->expedition->livraison->cree
     {
         $mesg='<div class="error">'.$object->error.'</div>';
     }
+}
+
+// Set incoterm
+elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+{
+	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
 /*
@@ -575,6 +586,29 @@ else
 			}
 			print '</td>';
 			print '</tr>';
+
+			// Incoterms
+			if (!empty($conf->incoterm->enabled))
+			{			
+				print '<tr><td>';
+		        print '<table width="100%" class="nobordernopadding"><tr><td>';
+		        print $langs->trans('IncotermLabel');
+		        print '<td><td align="right">';
+		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livaison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        else print '&nbsp;';
+		        print '</td></tr></table>';
+		        print '</td>';
+		        print '<td colspan="3">';
+				if ($action != 'editincoterm')
+				{
+					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				}
+				else 
+				{
+					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+				}
+		        print '</td></tr>';
+			}
 
 			// Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';

@@ -93,9 +93,10 @@ if ($conf->salaries->enabled)
 
 		print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
-		$sql = "SELECT s.rowid, s.amount, s.label, s.datev as dm";
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-		$sql.= " WHERE s.entity = ".$conf->entity;
+		$sql = "SELECT s.rowid, s.amount, s.label, s.datev as dm, s.salary, u.salary as current_salary";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE s.entity IN (".getEntity('user',1).")";
+		$sql.= " AND u.rowid = s.fk_user";
 		if ($year > 0)
 		{
 			// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
@@ -132,11 +133,11 @@ if ($conf->salaries->enabled)
 
 		        print "<td>".$obj->label."</td>\n";
 
-		        print '<td align="right">'.price($obj->amount)."</td>";
+		        print '<td align="right">'.($obj->salary?price($obj->salary):'')."</td>";
 
 		        // Ref payment
-				    $sal_static->id=$obj->rowid;
-			    	$sal_static->ref=$obj->rowid;
+				$sal_static->id=$obj->rowid;
+			    $sal_static->ref=$obj->rowid;
 		        print '<td align="left">'.$sal_static->getNomUrl(1)."</td>\n";
 
 		        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
@@ -146,7 +147,7 @@ if ($conf->salaries->enabled)
 		        $i++;
 		    }
 		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-		    print '<td align="right">'.price($total)."</td>";
+		    print '<td align="right">'."</td>";
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="right">'.price($total)."</td>";

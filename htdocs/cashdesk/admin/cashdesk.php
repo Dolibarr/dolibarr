@@ -172,7 +172,7 @@ if (! empty($conf->service->enabled))
 print '</table>';
 print '<br>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

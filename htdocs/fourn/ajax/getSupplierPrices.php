@@ -17,7 +17,7 @@
 
 /**
  *	\file       /htdocs/fourn/ajax/getSupplierPrices.php
- *	\brief      File to return Ajax response on get supplier prices
+ *	\brief      File to return an Ajax response to get a supplier prices
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -28,6 +28,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 $idprod=GETPOST('idprod','int');
 
@@ -43,12 +44,15 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-if (! empty($idprod))
+if ($idprod > 0)
 {
+	$producttmp=new ProductFournisseur($db);
+	$producttmp->fetch($idprod);
+
 	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
 	$sql.= " pfp.ref_fourn,";
 	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
-	$sql.= " s.nom as name";
+	$sql.= " pfp.fk_supplier_price_expression, pfp.tva_tx, s.nom as name";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pfp.fk_soc";
@@ -66,10 +70,23 @@ if (! empty($idprod))
 
 		if ($num)
 		{
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 			$i = 0;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($result);
+
+                if (!empty($objp->fk_supplier_price_expression)) {
+                    $priceparser = new PriceParser($db);
+                    $price_result = $priceparser->parseProductSupplier($idprod, $objp->fk_supplier_price_expression, $objp->quantity, $objp->tva_tx);
+                    if ($price_result >= 0) {
+                        $objp->fprice = $price_result;
+                        if ($objp->quantity >= 1)
+                        {
+                            $objp->unitprice = $objp->fprice / $objp->quantity;
+                        }
+                    }
+                }
 
 				$price = $objp->fprice * (1 - $objp->remise_percent / 100);
 				$unitprice = $objp->unitprice * (1 - $objp->remise_percent / 100);
@@ -98,6 +115,7 @@ if (! empty($idprod))
 				if ($objp->duration) $label .= " - ".$objp->duration;
 
 				$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
+				if ($objp->ref_fourn) $label.=' ('.$objp->ref_fourn.')';
 
 				$prices[] = array("id" => $objp->idprodfournprice, "price" => price($price,0,'',0), "label" => $label, "title" => $title);
 				$i++;
@@ -106,6 +124,10 @@ if (! empty($idprod))
 			$db->free($result);
 		}
 	}
+
+	// Add price for pmp
+	$price=$producttmp->pmp;
+	$prices[] = array("id" => 'pmpprice', "price" => $price, "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));
 }
 
 echo json_encode($prices);

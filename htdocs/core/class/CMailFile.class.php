@@ -36,12 +36,12 @@
  */
 class CMailFile
 {
-	var $subject;      // Topic:       Subject of email
-	var $addr_from;    // From:        Label of sender (name but can contains an email inside <>)
-	                   // Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	                   //              Use it with an email from a sending host from is a SPF protected domain and sending host is not this domain.
-	                   // Return-Path: Email where to send bounds.
-	var $errors_to;    // Errors-To:   Email where to send errors.
+	var $subject;      	// Topic:       Subject of email
+	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@mydomain.com>' or 'John Doe <myemail@mydomain.com>' or '<myemail+trackingid@mydomain.com>')
+	                   	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
+	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, use for Sender an email of the protected domain.
+	                   	// Return-Path: Email where to send bounds.
+	var $errors_to;		// Errors-To:	Email where to send errors.
 	var $addr_to;
 	var $addr_cc;
 	var $addr_bcc;
@@ -85,8 +85,8 @@ class CMailFile
 	 *	CMailFile
 	 *
 	 *	@param 	string	$subject             Topic/Subject of mail
-	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Nom firstname <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	@param 	string	$from                Sender email      (RFC 2822: "Nom firstname <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
+	 *	@param 	string	$from                Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
 	 *	@param 	string	$msg                 Message
 	 *	@param 	array	$filename_list       List of files to attach (full path of filename on file system)
 	 *	@param 	array	$mimetype_list       List of MIME type of attached files
@@ -98,9 +98,7 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email errors
 	 *	@param	string	$css                 Css option
 	 */
-	function __construct($subject,$to,$from,$msg,
-	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='')
+	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='')
 	{
 		global $conf;
 
@@ -1023,9 +1021,9 @@ class CMailFile
 	}
 
 	/**
-	 * Return an address for SMTP protocol
+	 * Return a formatted address string for SMTP protocol
 	 *
-	 * @param	string		$address		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param	string		$address		Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
 	 * @param	int			$format			0=auto, 1=emails with <>, 2=emails without <>, 3=auto + label between "
 	 * @param	int			$encode			1=Encode name to RFC2822
 	 * @return	string						If format 0: '<john@doe.com>' or 'John Doe <john@doe.com>' or '=?UTF-8?B?Sm9obiBEb2U=?= <john@doe.com>'

@@ -226,7 +226,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
 	print '</form>';
 }
@@ -435,7 +435,8 @@ else
 					print "<tr ".$bc[$var].">";
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-					$productstatic->ref=$objp->ref;
+                    $productstatic->ref = $objp->ref;
+                    $productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
@@ -466,14 +467,14 @@ else
 
                     if ($user->rights->stock->mouvement->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
-						print img_picto($langs->trans("StockMovement"),'uparrow.png').' '.$langs->trans("StockMovement");
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print img_picto($langs->trans("StockMovement"),'uparrow.png','class="hideonsmartphone"').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
@@ -558,8 +559,11 @@ else
 
 			print '</table>';
 
-			print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+			print '<br><div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
 			print '</form>';
 

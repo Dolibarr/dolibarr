@@ -919,7 +919,7 @@ else
 		print "</table>\n";
 		print '<br>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></center>';
+		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></div>';
 
 		print "</form>\n";
 
@@ -1168,11 +1168,11 @@ else
 
 		print '</table>';
 
-		print '<br><center>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; &nbsp; ';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center';
+		print '</div>';
 
 		print '</form>';
 

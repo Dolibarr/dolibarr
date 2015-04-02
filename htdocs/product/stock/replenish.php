@@ -148,22 +148,59 @@ if ($action == 'order' && isset($_POST['valid']))
         foreach ($suppliers as $supplier)
         {
             $order = new CommandeFournisseur($db);
-            $order->socid = $suppliersid[$i];
-            //trick to know which orders have been generated this way
-            $order->source = 42;
-            foreach ($supplier['lines'] as $line) {
-                $order->lines[] = $line;
+            // Check if an order for the supplier exists
+            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " WHERE fk_soc = ".$suppliersid[$i];
+            $sql.= " AND source = 42 AND fk_statut = 0";
+            $sql.= " ORDER BY date_creation DESC";
+            $resql = $db->query($sql);
+            if($resql && $db->num_rows($resql) > 0) {
+                $obj = $db->fetch_object($resql);
+                $order->fetch($obj->rowid);
+                foreach ($supplier['lines'] as $line) {
+                    $result = $order->addline(
+                        $line->desc,
+                        $line->subprice,
+                        $line->qty,
+                        $line->tva_tx,
+                        $line->localtax1_tx,
+                        $line->localtax2_tx,
+                        $line->fk_product,
+                        0,
+                        $line->ref_fourn,
+                        $line->remise_percent,
+                        'HT',
+                        0,
+                        $line->info_bits
+                    );
+                }
+                if ($result < 0) {
+                    $fail++;
+                    $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+                    $msg .= $order->error;
+                    setEventMessage($msg, 'errors');
+                } else {
+                    $id = $result;
+                }
+            } else {
+                $order->socid = $suppliersid[$i];
+                $order->fetch_thirdparty();
+                //trick to know which orders have been generated this way
+                $order->source = 42;
+                foreach ($supplier['lines'] as $line) {
+                    $order->lines[] = $line;
+                }
+                $order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+                $order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+                $id = $order->create($user);
+                if ($id < 0) {
+                    $fail++;
+                    $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+                    $msg .= $order->error;
+                    setEventMessage($msg, 'errors');
+                }
+                $i++;
             }
-            $order->cond_reglement_id = 0;
-            $order->mode_reglement_id = 0;
-            $id = $order->create($user);
-            if ($id < 0) {
-                $fail++;
-                $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
-                $msg .= $order->error;
-                setEventMessage($msg, 'errors');
-            }
-            $i++;
         }
 
         if (! $fail && $id)

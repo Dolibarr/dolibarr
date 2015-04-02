@@ -165,22 +165,61 @@ else if ($action == 'addcat')
     $fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-else if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
+else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
+	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL');
+	//$doubleapprovalgroup = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') > 0 ? GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') : '';
 
-    $res = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+    $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL",$doubleapproval,'chaine',0,'',$conf->entity);
+    /*if (isset($_POST["SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP"]))
+    {
+    	$res3 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP",$doubleapprovalgroup,'chaine',0,'',$conf->entity);
+    }
+    else
+    {
+    	$res3=1;
+    }*/
 
-    if (! $res > 0) $error++;
+    // TODO We add/delete permission until permission can have a condition on a global var
+    $r_id = 1190;
+    $entity = $conf->entity;
+    $r_desc=$langs->trans("Permission1190");
+    $r_modul='fournisseur';
+    $r_type='w';
+    $r_perms='commande';
+    $r_subperms='approve2';
+    $r_def=0;
 
-	if (! $error)
-	{
-		setEventMessage($langs->trans("SetupSaved"));
-	}
-	else
-	{
-		setEventMessage($langs->trans("Error"),'errors');
-	}
+    if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+    {
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+    	$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+    	$sql.= " VALUES ";
+    	$sql.= "(".$r_id.",".$entity.",'".$db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+
+    	$resqlinsert=$db->query($sql,1);
+    	if (! $resqlinsert)
+    	{
+    		if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+    		{
+    			setEventMessage($db->lasterror(),'errors');
+    			$error++;
+    		}
+    	}
+    }
+    else
+    {
+    	$sql = "DELETE FROM	".MAIN_DB_PREFIX."rights_def";
+    	$sql.= " WHERE id = ".$r_id;
+       	$resqldelete=$db->query($sql,1);
+    	if (! $resqldelete)
+    	{
+   			setEventMessage($db->lasterror(),'errors');
+   			$error++;
+    	}
+    }
 }
 
 
@@ -188,11 +227,11 @@ else if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
  * View
  */
 
+$form=new Form($db);
+
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader("","");
-
-$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
@@ -279,15 +318,13 @@ foreach ($dirmodels as $reldir)
                         $htmltooltip='';
                         $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                         $nextval=$module->getNextValue($mysoc,$commande);
-                        if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                        {
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
-                            if ($nextval)
-                            {
+                            if ($nextval) {
+                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                    $nextval = $langs->trans($nextval);
                                 $htmltooltip.=$nextval.'<br>';
-                            }
-                            else
-                            {
+                            } else {
                                 $htmltooltip.=$langs->trans($module->error).'<br>';
                             }
                         }
@@ -441,13 +478,15 @@ foreach ($dirmodels as $reldir)
     }
 }
 
-print '</table><br/>';
-print '<br>';
+print '</table><br>';
 
 /*
  * Other options
- *
  */
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
 print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
@@ -456,17 +495,60 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
+$var=false;
+if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+{
+	print '<tr '.$bc[$var].'><td>';
+	print $langs->trans("UseDoubleApproval").'<br>';
+	print $langs->trans("IfSetToYesDontForgetPermission");
+	print '</td><td>';
+	print $form->selectyesno('SUPPLIER_ORDER_DOUBLE_APPROVAL', $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL, 1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td></tr>\n";
+	$var=!$var;
+	/*print '<tr '.$bc[$var].'><td>';
+	print $langs->trans("GroupOfUserForSecondApproval").'</td><td>';
+	print $form->select_dolgroups($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP,'SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP', 1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td></tr>\n";
+	$var=!$var;*/
+}
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';
 print '<textarea name="SUPPLIER_ORDER_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_ORDER_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+print '</table><br>';
+
 print '</form>';
 
-$db->close();
+
+
+/*
+ * Notifications
+ */
+
+print_titre($langs->trans("Notifications"));
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
+print '</td><td align="right">';
+print "</td></tr>\n";
+
+print '</table>';
+
+
 llxFooter();
+
+$db->close();

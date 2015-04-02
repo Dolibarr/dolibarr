@@ -95,6 +95,7 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	$tmp=0;
     	dol_print_error('','PHP version must be 5.3+');
     	/*
         // Method 2 (does not include daylight, not supported by adodb)
@@ -166,7 +167,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
+ *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30"", 'allhourmin': total delay hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
@@ -812,11 +813,12 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
  *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
+ *  @param	int			$short			1=Return short label
  *	@return array						Month string or array if selected < 0
  */
-function monthArray($outputlangs)
+function monthArray($outputlangs,$short=0)
 {
-    $montharray = array (
+	$montharray = array (
 	    1  => $outputlangs->trans("January"),
 	    2  => $outputlangs->trans("February"),
 	    3  => $outputlangs->trans("March"),
@@ -831,6 +833,24 @@ function monthArray($outputlangs)
 	    12 => $outputlangs->trans("December")
     );
 
-    return $montharray;
+	if (! empty($short))
+	{
+		$montharray = array (
+		    1  => $outputlangs->trans("Jan"),
+		    2  => $outputlangs->trans("Feb"),
+		    3  => $outputlangs->trans("Mar"),
+		    4  => $outputlangs->trans("Apr"),
+		    5  => $outputlangs->trans("May"),
+		    6  => $outputlangs->trans("Jun"),
+		    7  => $outputlangs->trans("Jul"),
+		    8  => $outputlangs->trans("Aug"),
+		    9  => $outputlangs->trans("Sep"),
+		    10 => $outputlangs->trans("Oct"),
+		    11 => $outputlangs->trans("Nov"),
+		    12 => $outputlangs->trans("Dec")
+			);
+	}
+
+	return $montharray;
 }
 

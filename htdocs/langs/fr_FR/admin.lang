@@ -269,6 +269,7 @@ MAIN_MAIL_EMAIL_FROM=Adresse email de l'émetteur pour l'envoi d'emails automati
 MAIN_MAIL_ERRORS_TO=Adresse email utilisée pour les retours d'erreurs des emails envoyés
 MAIN_MAIL_AUTOCOPY_TO= Envoyer systématiquement une copie cachée des emails envoyés à
 MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Envoyer systématiquement une copie cachée des propositions envoyées par email à
+MAIN_MAIL_AUTOCOPY_ASKPRICESUPPLIER_TO= Envoyer systématiquement une copie cachée des demandes de prix envoyées par email à
 MAIN_MAIL_AUTOCOPY_ORDER_TO= Envoyer systématiquement une copie cachée des commandes envoyées par emails à
 MAIN_MAIL_AUTOCOPY_INVOICE_TO= Envoyer systématiquement une copie cachée des factures envoyées par email à
 MAIN_DISABLE_ALL_MAILS=Désactiver globalement tout envoi d'emails (pour mode test ou démos)
@@ -394,7 +395,7 @@ ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur<br><br> pa
 ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpsellist=La liste vient d'une table<br>Syntaxe: <br>nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : <br>c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
-ExtrafieldParamHelpchkbxlst=La liste vient d'une table<br>Syntaxe: nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
+ExtrafieldParamHelpchkbxlst=Les cases à cocher viennent d'une table<br>Syntaxe: <br>nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : <br>c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 WarningUsingFPDF=Attention : votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalités (Unicode, transparence des images, langues cyrilliques, arabes ou asiatiques...), aussi vous pouvez rencontrer des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir une prise en charge complète de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">bibliothèque TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>
 LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la tva n'est pas appliquée sur la taxe locale)<br>2 : taxe locale sur les produits et services avant tva (la tva est appliquée sur le montant + la taxe locale)<br>3 : taxe locale uniquement sur les produits hors tva (la tva n'est pas appliquée sur la taxe locale)<br>4 : taxe locale uniquement sur les produits avant tva (la tva est appliquée sur le montant + la taxe locale)<br>5 : taxe locale uniquement sur les services hors tva (la tva n'est pas appliquée sur la taxe locale)<br>6 : taxe locale uniquement sur les service avant tva (la tva est appliquée sur le montant + la taxe locale)
@@ -495,8 +496,8 @@ Module500Name=Dépenses spéciales (taxes, charges, dividendes)
 Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
 Module510Name=Salaires
 Module510Desc=Gestion des paiements des salaires des employés
-Module520Name=Loan
-Module520Desc=Management of loans
+Module520Name=Emprunts
+Module520Desc=Suivi des emprunts
 Module600Name=Notifications
 Module600Desc=Envoi de notifications Email sur certains événements métiers Dolibarr, aux contacts de tiers (configuration réalisé sur chaque tiers)
 Module700Name=Dons
@@ -717,11 +718,10 @@ Permission510=Consulter les salaires
 Permission512=Créer/modifier les salaires
 Permission514=Supprimer les salaires
 Permission517=Exporter les salaires
-Permission520=Read Loans
-Permission522=Create/modify loans
-Permission524=Delete loans
-Permission525=Access loan calculator
-Permission527=Export loans
+Permission520=Consulter les emprunts
+Permission522=Créer/modifier les emprunts
+Permission524=Supprimer les emprunts
+Permission527=Exporter les emprunts
 Permission531=Consulter les services
 Permission532=Créer/modifier les services
 Permission534=Supprimer les services

@@ -41,8 +41,8 @@ class modContrat extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
-		
+		global $conf, $langs;
+
 		$this->db = $db;
 		$this->numero = 54;
 
@@ -118,10 +118,12 @@ class modContrat extends DolibarrModules
 
 		// Exports
 		//--------
+		$langs->load("contracts");
+		
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ContractAndServices';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r]=$langs->trans('ContractsAndLine');	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='contract';
 		$this->export_permission[$r]=array(array("contrat","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',
@@ -160,9 +162,9 @@ class modContrat extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contrat as co,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contratdet as cod';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';	
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE co.fk_soc = s.rowid and co.rowid = cod.fk_contrat';
-		$this->export_sql_end[$r] .=' AND co.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract',1).')';
 	}
 
 

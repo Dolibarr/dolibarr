@@ -31,21 +31,23 @@
  */
 function ecm_prepare_dasboard_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $form;
 	global $helptext1, $helptext2;
 
 	$h = 0;
 	$head = array();
+    $helptext =$langs->trans("ECMAreaDesc").'<br>';
+    $helptext.=$langs->trans("ECMAreaDesc2");
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
-	$head[$h][1] = $langs->trans("ECMSectionsManual").img_help(1,$helptext1);
+	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 	$head[$h][2] = 'index';
 	$h++;
 
 	if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
-		$head[$h][1] = $langs->trans("ECMSectionsAuto").img_help(1,$helptext2);
+		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
 		$h++;
 	}

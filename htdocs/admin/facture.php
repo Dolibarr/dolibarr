@@ -171,7 +171,7 @@ else if ($action == 'setdoc')
 		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->FACTURE_ADDON_PDF = $value;
 	}
-	
+
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -341,7 +341,7 @@ foreach ($dirmodels as $reldir)
                     // Check if there is a filter on country
                     preg_match('/\-(.*)_(.*)$/',$classname,$reg);
                     if (! empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
-                    
+
                     $classname = preg_replace('/\-.*$/','',$classname);
                     if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
                     {
@@ -393,61 +393,53 @@ foreach ($dirmodels as $reldir)
                             $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
                             $facture->type=0;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForInvoices").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
                                     $htmltooltip.=$nextval.'<br>';
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
                             // Example for remplacement
                             $facture->type=1;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
-                            	$htmltooltip.=$langs->trans("NextValueForReplacements").': ';
-                            	if ($nextval)
-                            	{
-                            		$htmltooltip.=$nextval.'<br>';
-                            	}
-                            	else
-                            	{
-                            		$htmltooltip.=$langs->trans($module->error).'<br>';
-                            	}
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                                $htmltooltip.=$langs->trans("NextValueForReplacements").': ';
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
+                                    $htmltooltip.=$nextval.'<br>';
+                                } else {
+                                    $htmltooltip.=$langs->trans($module->error).'<br>';
+                                }
                             }
-                            
+
                             // Example for credit invoice
                             $facture->type=2;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForCreditNotes").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
                                     $htmltooltip.=$nextval.'<br>';
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error).'<br>';
                                 }
                             }
                             // Example for deposit invoice
                             $facture->type=3;
                             $nextval=$module->getNextValue($mysoc,$facture);
-                            if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                            {
+                            if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                                 $htmltooltip.=$langs->trans("NextValueForDeposit").': ';
-                                if ($nextval)
-                                {
+                                if ($nextval) {
+                                    if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                        $nextval = $langs->trans($nextval);
                                     $htmltooltip.=$nextval;
-                                }
-                                else
-                                {
+                                } else {
                                     $htmltooltip.=$langs->trans($module->error);
                                 }
                             }
@@ -638,7 +630,6 @@ print '</table>';
 
 /*
  *  Modes de reglement
- *
  */
 print '<br>';
 print_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"));
@@ -819,7 +810,27 @@ print '</tr>'."\n";
 print "</table>\n";
 
 
-//dol_fiche_end();
+/*
+ * Notifications
+ */
+print '<br>';
+print_titre($langs->trans("Notifications"));
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
+print '</td><td align="right">';
+print "</td></tr>\n";
+
+print '</table>';
+
+dol_fiche_end();
+
 
 llxFooter();
 

@@ -29,9 +29,12 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  */
 class Client extends Societe
 {
-    var $nb;
-
-    /**
+    var $db;
+	
+    var $next_prev_filter="te.client in (1,2,3)";	// Used to add a filter in Form::showrefnav method
+	
+	
+	/**
      *  Constructor
      *
      *  @param	DoliDB	$db		Database handler

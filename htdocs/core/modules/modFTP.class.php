@@ -17,7 +17,7 @@
  */
 
 /**
- * 		\defgroup   ftp		Module FTP
+ * 		\defgroup   ftp		Module ftp
  * 		\brief      Module for FTP client module
  *      \file       htdocs/core/modules/modFTP.class.php
  *      \ingroup    ftp

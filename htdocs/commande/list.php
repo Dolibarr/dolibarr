@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,6 +52,7 @@ $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
+$search_total_ht=GETPOST('search_total_ht','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -79,6 +81,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_ref='';
     $search_ref_customer='';
     $search_company='';
+    $search_total_ht='';
     $orderyear='';
     $ordermonth='';
     $deliverymonth='';
@@ -96,6 +99,7 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hook
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 /*
  * View
  */
@@ -110,7 +114,7 @@ $companystatic = new Societe($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 llxHeader('',$langs->trans("Orders"),$help_url);
 
-$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom as name, s.rowid as socid, s.client, s.code_client, c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -198,7 +202,10 @@ if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 }
-
+if ($search_total_ht != '')
+{
+	$sql.= natural_search('c.total_ht', $search_total_ht, 1);
+}
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
 
 $nbtotalofrecords = 0;
@@ -252,6 +259,7 @@ if ($resql)
 	if ($search_ref_customer)	$param.='&search_ref_customer='.$search_ref_customer;
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
+	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
@@ -316,7 +324,9 @@ if ($resql)
     print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
     $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
+	print '</td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
@@ -328,7 +338,8 @@ if ($resql)
 
     $generic_commande = new Commande($db);
     $generic_product = new Product($db);
-    while ($i < min($num,$limit)) {
+    while ($i < min($num,$limit))
+    {
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -336,6 +347,10 @@ if ($resql)
 
         $generic_commande->id=$objp->rowid;
         $generic_commande->ref=$objp->ref;
+        $generic_commande->ref_client = $objp->ref_client;
+        $generic_commande->total_ht = $objp->total_ht;
+        $generic_commande->total_tva = $objp->total_tva;
+        $generic_commande->total_ttc = $objp->total_ttc;
         $generic_commande->lines=array();
         $generic_commande->getLinesArray();
 
@@ -354,7 +369,7 @@ if ($resql)
                     $nbprod++; // order contains real products
                     $generic_product->id = $generic_commande->lines[$lig]->fk_product;
                     if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
-                        $generic_product->load_stock(true);
+                        $generic_product->load_stock();
                         $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
                     } else {
                         $generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
@@ -441,6 +456,7 @@ if ($resql)
 
 		// Company
 		$companystatic->id=$objp->socid;
+        $companystatic->code_client = $objp->code_client;
 		$companystatic->name=$objp->name;
 		$companystatic->client=$objp->client;
 		print '<td>';

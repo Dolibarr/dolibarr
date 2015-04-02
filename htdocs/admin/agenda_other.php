@@ -157,7 +157,7 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-print '<center><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></center>';
+print '<div class="center"><input class="button" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
 

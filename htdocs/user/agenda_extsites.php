@@ -176,7 +176,7 @@ print '</table>';
 
 dol_fiche_end();
 
-print '<div align="center">';
+print '<div class="center">';
 print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
 print "</div>";
 

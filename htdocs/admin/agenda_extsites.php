@@ -220,9 +220,9 @@ while ($i <= $MAXAGENDA)
 print '</table>';
 print '<br>';
 
-print '<center>';
-print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
-print "</center>";
+print '<div class="center">';
+print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print "</form>\n";
 

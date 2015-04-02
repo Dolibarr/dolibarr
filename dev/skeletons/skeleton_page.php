@@ -282,7 +282,7 @@ if ($action == 'create')
 
 	print '<br>';
 
-	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print '</form>';
 
@@ -304,7 +304,7 @@ if (($id || $ref) && $action == 'edit')
 
 	print '<br>';
 
-	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></center>';
+	print '<div class="center"><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></div>';
 
 	print '</form>';
 

@@ -50,8 +50,7 @@ if ($action == 'addconst')
     dolibarr_set_const($db, "MAIN_BOXES_MAXLINES",$_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
 }
 
-if ($action == 'add')
-{
+if ($action == 'add') {
     $error=0;
     $db->begin();
     if (isset($_POST['boxid']) && is_array($_POST['boxid']))
@@ -368,7 +367,6 @@ foreach($boxtoadd as $box)
     print '<td class="center">';
     print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
-    //print '<input type="checkbox" class="flat" name="boxid['.$box->box_id.'][active]">'."\n";
     print '</td>';
 
     print '</tr>'."\n";

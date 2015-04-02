@@ -102,7 +102,7 @@ if ($object->id)
 {
 	$head=product_prepare_head($object, $user);
 	$titre=$langs->trans("CardProduct".$object->type);
-	$picto=($object->type==1?'service':'product');
+	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -146,7 +146,7 @@ if ($object->id)
     print '</div>';
 
     $modulepart = 'produit';
-    $permission = (($object->type == 0 && $user->rights->produit->creer) || ($object->type == 1 && $user->rights->service->creer));
+    $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

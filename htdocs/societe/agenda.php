@@ -69,7 +69,10 @@ if ($socid)
 
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
-	llxHeader("",$langs->trans("Agenda"),'');
+
+	$title=$langs->trans("Agenda");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	llxHeader('',$title);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);

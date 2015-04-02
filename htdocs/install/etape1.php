@@ -86,12 +86,15 @@ if (! is_writable($conffile))
 
 
 // Check parameters
+$is_sqlite = false;
 if (empty($db_type))
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseType")).'</div>';
     $error++;
+} else {
+	$is_sqlite = ($db_type === 'sqlite' || $db_type === 'sqlite3' );
 }
-if (empty($db_host))
+if (empty($db_host) && ! $is_sqlite)
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Server")).'</div>';
     $error++;
@@ -101,7 +104,7 @@ if (empty($db_name))
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
     $error++;
 }
-if (empty($db_user))
+if (empty($db_user)  && ! $is_sqlite)
 {
     print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
     $error++;
@@ -175,7 +178,7 @@ if (! $error)
                 }
                 else
                 {
-                    $databasefortest='mssql';
+                    $databasefortest='master';
                 }
             }
             //print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
@@ -486,7 +489,7 @@ if (! $error && $db->connected && $action == "set")
             }
             else if ($conf->db->type == 'mssql')
             {
-                $databasefortest='mssql';
+                $databasefortest='master';
             }
 
             // Creation handler de base, verification du support et connexion
@@ -773,7 +776,7 @@ function write_master_file($masterfile,$main_dir)
  *  Save configuration file. No particular permissions are set by installer.
  *
  *  @param  string		$conffile        Path to conf file to generate/update
- *  @return	void
+ *  @return	integer
  */
 function write_conf_file($conffile)
 {
@@ -873,14 +876,17 @@ function write_conf_file($conffile)
 
         // Write params to overwrites default lib path
         fputs($fp,"\n");
-        if (empty($force_dolibarr_lib_TCPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDF_PATH=''; }
-        fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
-        fputs($fp,"\n");
         if (empty($force_dolibarr_lib_FPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_FPDF_PATH=''; }
         fputs($fp, '$dolibarr_lib_FPDF_PATH=\''.$force_dolibarr_lib_FPDF_PATH.'\';');
         fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_TCPDF_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDF_PATH=''; }
+        fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
+        fputs($fp,"\n");
         if (empty($force_dolibarr_lib_FPDI_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_FPDI_PATH=''; }
         fputs($fp, '$dolibarr_lib_FPDI_PATH=\''.$force_dolibarr_lib_FPDI_PATH.'\';');
+        fputs($fp,"\n");
+        if (empty($force_dolibarr_lib_TCPDI_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH=''; }
+        fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
         fputs($fp,"\n");
         if (empty($force_dolibarr_lib_ADODB_PATH)) { fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH=''; }
         fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');

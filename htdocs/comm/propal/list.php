@@ -154,7 +154,7 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
 if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
 {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
@@ -182,9 +182,9 @@ if ($search_author)
 {
 	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
 }
-if ($search_montant_ht)
+if ($search_montant_ht != '')
 {
-	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+	$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 }
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
@@ -316,12 +316,12 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 	// Amount
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
 	// Author
 	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+	print '<input class="flat" size="6" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$formpropal->selectProposalStatus($viewstatut,1);
@@ -437,14 +437,14 @@ if ($result)
 				if($num<$limit){
 					$var=!$var;
 					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
-					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
 					print '</tr>';
 				}
 				else
 				{
 					$var=!$var;
 					print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
-					print '<td colspan="6" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '<td colspan="6" align="right">'.price($total).'</td><td colspan="3"></td>';
 					print '</tr>';
 				}
 

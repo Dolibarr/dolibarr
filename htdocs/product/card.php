@@ -461,7 +461,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
     if ($action == 'confirm_delete' && $confirm == 'yes')
     {
-        if (($object->type == 0 && $user->rights->produit->supprimer) || ($object->type == 1 && $user->rights->service->supprimer))
+        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
         {
             $result = $object->delete($object->id);
         }
@@ -768,8 +768,8 @@ if (GETPOST("cancel") == $langs->trans("Cancel"))
  */
 
 $helpurl='';
-if (GETPOST("type") == '0' || ($object->type == '0')) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == '1')) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
 if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
 else $title = $langs->trans('ProductServiceCard');
@@ -1058,7 +1058,7 @@ else
             print '<br>';
         //}
 
-        print '<center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
         print '</form>';
     }
@@ -1175,6 +1175,7 @@ else
             print '</td></tr>';
 
             // Stock
+            /*
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
@@ -1189,10 +1190,10 @@ else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
                 print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
-            }
+            }*/
 
             // Nature
-            if($object->type!=1)
+            if($object->type!= Product::TYPE_SERVICE)
             {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
@@ -1294,8 +1295,11 @@ else
                 print '<br>';
             //}
 
-            print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+            print '<div class="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
             print '</form>';
         }
@@ -1304,7 +1308,7 @@ else
 		{
             $head=product_prepare_head($object, $user);
             $titre=$langs->trans("CardProduct".$object->type);
-            $picto=($object->type==1?'service':'product');
+            $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
@@ -1327,7 +1331,7 @@ else
             $nblignes=7;
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
             if ($showbarcode) $nblignes+=2;
-            if ($object->type!=1) $nblignes++;
+            if ($object->type!= Product::TYPE_SERVICE) $nblignes++;
             if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) $nblignes+=2;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
@@ -1460,7 +1464,7 @@ else
             print '</td></tr>';
 
             // Nature
-            if($object->type!=1)
+            if($object->type!= Product::TYPE_SERVICE)
             {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
@@ -1549,7 +1553,9 @@ else
             }
 
             // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
+            print '<!-- show Note --> '."\n";
+            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
+            print '<!-- End show Note --> '."\n";
 
             print "</table>\n";
 
@@ -1622,8 +1628,8 @@ if (empty($reshook))
 	    }
 	    $object_is_used = $object->isObjectUsed($object->id);
 
-	    if (($object->type == 0 && $user->rights->produit->supprimer)
-	    || ($object->type == 1 && $user->rights->service->supprimer))
+	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
+	    || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
 	    {
 	        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
 	        {

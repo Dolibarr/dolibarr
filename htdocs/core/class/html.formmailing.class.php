@@ -48,7 +48,7 @@ class FormMailing  extends Form
 	 * 
 	 * @param string $selectedid the selected id
 	 * @param string $htmlname name of controm
-	 * @param number $show_empty show empty option
+	 * @param integer $show_empty show empty option
 	 * @return string HTML select
 	 */
 	public function selectDestinariesStatus($selectedid='',$htmlname='dest_status', $show_empty=0) {

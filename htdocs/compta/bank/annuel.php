@@ -137,7 +137,7 @@ $head=bank_prepare_head($acct);
 dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$acct->label;
-$lien=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
 
 print '<table class="border" width="100%">';
 
@@ -191,7 +191,7 @@ print '<br>';
 // Affiche tableau
 print '<table class="notopnoleftnoright" width="100%">';
 
-print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$lien.'</td></tr>';
+print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$link.'</td></tr>';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -496,11 +496,11 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<div class="fichecenter"><div class="fichehalfleft"><center>';
+	print '<div class="fichecenter"><div class="fichehalfleft"><div class="center">';
 	print $show1;
-	print '</center></div><div class="fichehalfright"><div class="ficheaddleft"><center>';
+	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div class="center">';
 	print $show2;
-	print '</center></div></div></div>';
+	print '</div></div></div></div>';
 	print '<div style="clear:both"></div>';
 }
 

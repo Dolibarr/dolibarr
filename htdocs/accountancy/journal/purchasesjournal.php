@@ -240,7 +240,7 @@ if ($action == 'writebookkeeping') {
  * View
  */
 
-$companystatic = new Societe($db);
+$companystatic = new Fournisseur($db);
 
 // Export
 if ($action == 'export_csv')
@@ -249,7 +249,11 @@ if ($action == 'export_csv')
 	$purchase_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 
 	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment;filename=journal_achats.csv');
+	if ($conf->global->EXPORT_PREFIX_SPEC)
+		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_achats.csv";
+	else
+		$filename="journal_achats.csv";
+	header('Content-Disposition: attachment;filename='.$filename);
 
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
@@ -408,7 +412,6 @@ if ($action == 'export_csv')
 	$r = '';
 
 	$invoicestatic = new FactureFournisseur($db);
-	$companystatic = new Fournisseur($db);
 
 	foreach ( $tabfac as $key => $val ) {
 		$invoicestatic->id = $key;

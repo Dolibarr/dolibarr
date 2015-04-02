@@ -139,3 +139,5 @@ ListOfNotificationsDone=List all email notifications sent
 MailSendSetupIs=Configuration of email sending has been setup to '%s'. This mode can't be used to send mass emailing.
 MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Setup - EMails%s to change parameter <strong>'%s'</strong> to use mode '%s'. With this mode, you can enter setup of the SMTP server provided by your Internet Service Provider and use Mass emailing feature.
 MailSendSetupIs3=If you have any questions on how to setup your SMTP server, you can ask to %s.
+YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor) 
+NbOfTargetedContacts=Current number of targeted contact emails
