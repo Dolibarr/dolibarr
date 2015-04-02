@@ -42,9 +42,9 @@ Please don't edit the ChangeLog file. A project manager will update it from your
 Use clear commit messages with the following structure:
 
 <pre>
-FIXED|Fixed #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
+FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
 or
-CLOSED|Closed #456 Short description (where #456 is number feature request, if it exists. In upper case to appear into ChangeLog)
+CLOSE|Close #456 Short description (where #456 is number feature request, if it exists. In upper case to appear into ChangeLog)
 or
 NEW|New Short description (In upper case to appear into ChangeLog)
 or
