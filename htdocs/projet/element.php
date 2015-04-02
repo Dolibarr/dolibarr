@@ -623,13 +623,8 @@ foreach ($listofreferent as $key => $value)
 				$total_ht = $total_ht + $element->total_ht;
 				$total_ttc = $total_ttc + $element->total_ttc;
 			}
-
-			print '<tr >';
-			print '<td align="left" >'.$name.'</td>';
-			print '<td align="right">'.$i.'</td>';
-			print '<td align="right">'.price($total_ht).'</td>';
-			print '<td align="right">'.price($total_ttc).'</td>';
-			print '</tr>';
+			
+			// Calculate margin
 			if ($margin=="add")
 			{
 				$margin_ht+= $total_ht;
@@ -640,8 +635,21 @@ foreach ($listofreferent as $key => $value)
 				$margin_ht-= $total_ht;
 				$margin_ttc-= $total_ttc;
 			}
-		}
+			
+			// Show $total_ht & $total_ttc -- add a minus when necessary
+			if ($margin!="add")
+			{
+				$total_ht = -$total_ht;
+				$total_ttc = -$total_ttc;
+			}
 
+			print '<tr >';
+			print '<td align="left" >'.$name.'</td>';
+			print '<td align="right">'.$i.'</td>';
+			print '<td align="right">'.price($total_ht).'</td>';
+			print '<td align="right">'.price($total_ttc).'</td>';
+			print '</tr>';
+		}
 	}
 }
 // and the margin amount total
