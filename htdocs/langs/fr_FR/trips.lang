@@ -32,49 +32,49 @@ ConfirmDeleteLine=Are you sure you want to delete this line ?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
 TF_OTHER=Autre
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Transport
 TF_LUNCH=Repas
-TF_METRO=Metro
+TF_METRO=Métro
 TF_TRAIN=Train
 TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
+TF_CAR=Voiture
+TF_PEAGE=Péage
+TF_ESSENCE=Carburant
+TF_HOTEL=Hôtel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 ListTripsAndExpenses=Liste des notes de frais
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
+AucuneNDF=Pas de note de frais trouvées avec ces critères
+AucuneLigne=Aucune note de frais déclarée
 AddLine=Ajout nouvelle ligne
-AddLineMini=Add
+AddLineMini=Ajouter
 
 Date_DEBUT=Date début
 Date_FIN=Date fin
 ModePaiement=Mode de paiement
 Note=Note
-Project=Project
+Project=Projet
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Utilisateur à informer pour approbation
+VALIDOR=Approuvé par
+AUTHOR=Enregistré par
+AUTHORPAIEMENT=Payé par
+REFUSEUR=Refusé par
+CANCEL_USER=Annulé par
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Motif
+MOTIF_CANCEL=Motif
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
+DATE_REFUS=Date refus
+DATE_SAVE=Date validation
+DATE_VALIDE=Date validation
+DateApprove=Date approbation
+DATE_CANCEL=Date annulation
 DATE_PAIEMENT=Payment date
 
-Deny=Deny
-TO_PAID=Pay
+Deny=Refuser
+TO_PAID=Payer
 BROUILLONNER=Reopen
 SendToValid=Sent to approve
 ModifyInfoGen=Edit
@@ -86,13 +86,13 @@ NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 RefuseTrip=Deny an expense report
 ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Approuver note de frais
+ConfirmValideTrip=Êtes-vous sûr de vouloir approuver cette note de frais ?
 
-PaidTrip=Pay an expense report
+PaidTrip=Payer note de frais
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
-CancelTrip=Cancel an expense report
+CancelTrip=Annuler note de frais
 ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
 BrouillonnerTrip=Move back expense report to status "Draft"n
@@ -123,4 +123,4 @@ TripForValid=à Valider
 TripForPaid=à Payer
 TripPaid=Payée
 
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Pas de note de frais à exporter dans cette période

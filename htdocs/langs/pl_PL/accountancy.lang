@@ -1,160 +1,160 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Accounting=Księgowość
+Globalparameters=Parametry globalne
+Chartofaccounts=Plan kont
+Fiscalyear=Lat podatkowych
+Menuaccount=Konta księgowe
+Menuthirdpartyaccount=Rachunki Thirdparty
+MenuTools=Narzędzia
 
-ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
-Export=Export
-Modelcsv=Model of export
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
-BackToChartofaccounts=Return chart of accounts
-Back=Return
+ConfigAccountingExpert=Konfiguracja modułu eksperta księgowego
+Journaux=Czasopisma
+JournalFinancial=Czasopisma finansowe
+Exports=Eksportuje
+Export=Eksport
+Modelcsv=Model eksportu
+OptionsDeactivatedForThisExportModel=Dla tego modelu eksportowego, opcje są wyłączone
+Selectmodelcsv=Wybierz model eksportu
+Modelcsv_normal=Klasyczne eksport
+Modelcsv_CEGID=Eksport do Cegid Expert
+BackToChartofaccounts=Powrót planu kont
+Back=Powrót
 
-Definechartofaccounts=Define a chart of accounts
-Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
-Ventilation=Breakdown
-ToDispatch=To dispatch
-Dispatched=Dispatched
+Definechartofaccounts=Definiowanie planu kont
+Selectchartofaccounts=Wybierz plan kont
+Validate=Uprawomocnić
+Addanaccount=Dodaj konto księgowe
+AccountAccounting=Konto księgowe
+Ventilation=Awaria
+ToDispatch=Wysyłką
+Dispatched=Wywoływane
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
-TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-ByMonth=By Month
-NewAccount=New accounting account
-Update=Update
-List=List
-Create=Create
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+CustomersVentilation=Podział klientów
+SuppliersVentilation=Dostawcy Breakdown
+TradeMargin=Marża handlowa
+Reports=Raporty
+ByCustomerInvoice=Fakturami klientów
+ByMonth=Przez miesiąc
+NewAccount=Nowe konto księgowe
+Update=Aktualizacja
+List=Lista
+Create=Utworzyć
+UpdateAccount=Modyfikacja konta księgowego
+UpdateMvts=Modyfikacja ruch
+WriteBookKeeping=Konta rekord w księdze głównej
+Bookkeeping=Księga główna
+AccountBalanceByMonth=Stan konta na miesiąc
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
-Line=Line
+AccountingVentilation=Rachunkowości podział
+AccountingVentilationSupplier=Dostawca rachunkowości podział
+AccountingVentilationCustomer=Podział klientów rachunkowości
+Line=Linia
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Razem HT dostawca kupna
+InvoiceLines=Linie faktury być wentylowane
+InvoiceLinesDone=Wentylowanych linie faktury
+IntoAccount=W rachunku rachunkowości
 
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
+Ventilate=Wietrzyć
+VentilationAuto=Automatyczny podział
 
-Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+Processing=Przetwarzanie
+EndProcessing=Koniec obróbki
+AnyLineVentilate=Wszelkie linie do wentylacji
+SelectedLines=Wybrane linie
+Lineofinvoice=Linia faktury
+VentilatedinAccount=Wentylowane z powodzeniem na koncie księgowym
+NotVentilatedinAccount=Nie wentylowane na koncie księgowym
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Separator kolumna w pliku eksportu
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Ilość elementów jest podział przedstawiony przez strony (maksymalna zalecana: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Rozpocząć sortowanie stron rozpadu "Has to podział" przez ostatnich elementów
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Rozpocznij sortowanie stron rozpadu "Breakdown" przez ostatnich elementów
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Długość rozliczania rachunków przedstawiono w Dolibarr
+AccountLengthDesc=Funkcja pozwala udawać długość koncie księgowym zastępując obowiązuje przez cyfrę zero. Funkcja ta dotyka tylko wyświetlacz, to nie zmienia kont księgowych zarejestrowanych w Dolibarr. Na wywóz, funkcja ta jest konieczna, aby być zgodne z określonym oprogramowaniem.
+ACCOUNTING_LENGTH_GACCOUNT=Długość ogólnych rachunków
+ACCOUNTING_LENGTH_AACCOUNT=Długość z rachunków osób trzecich
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Sprzedam czasopisma
+ACCOUNTING_PURCHASE_JOURNAL=Zakup czasopisma
+ACCOUNTING_BANK_JOURNAL=Czasopismo Banku
+ACCOUNTING_CASH_JOURNAL=Czasopismo Gotówka
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Inne czasopisma
+ACCOUNTING_SOCIAL_JOURNAL=Czasopismo Społecznego
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto transferu
+ACCOUNTING_ACCOUNT_SUSPENSE=Konto czekać
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Rachunkowość konto domyślnie dla zakupionych produktów (jeśli nie jest określony w ulotce)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Rachunkowość konto domyślnie dla sprzedawanych produktów (jeśli nie określono w ulotce)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Rachunkowość konto domyślnie dla zakupionych usług (jeśli nie określona w arkuszu usług)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Rachunkowość konto domyślnie dla sprzedanych usług (jeśli nie określona w arkuszu usług)
 
-Doctype=Type of document
-Docdate=Date
-Docref=Reference
-Numerocompte=Account
+Doctype=Rodzaj dokumentu
+Docdate=Data
+Docref=Odniesienie
+Numerocompte=Konto
 Code_tiers=Thirdparty
-Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
+Labelcompte=Konto Wytwórnia
+Debit=Debet
+Credit=Kredyt
+Amount=Ilość
 Sens=Sens
-Codejournal=Journal
+Codejournal=Czasopismo
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Usuń zapisy w księdze głównej
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+SellsJournal=Sprzedaje w czasopiśmie
+PurchasesJournal=Zakupy czasopisma
+DescSellsJournal=Sprzedaje w czasopiśmie
+DescPurchasesJournal=Zakupy czasopisma
+BankJournal=Czasopismo Banku
+DescBankJournal=Czasopismo Banku w tym wszystkich rodzajów płatności innych niż gotówka
+CashJournal=Czasopismo Gotówka
+DescCashJournal=Czasopismo pieniężnych w tym rodzaju płatności gotówką
 
-CashPayment=Cash Payment
+CashPayment=Płatność gotówką
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Zapłata faktury dostawcy
+CustomerInvoicePayment=Zapłata faktury klienta
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Thirdparty konto
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=Nowy ruch
+NumMvts=Ilość ruchów
+ListeMvts=Lista przemieszczania
+ErrorDebitCredit=Debetowych i kredytowych nie może mieć wartość w tym samym czasie
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Lista thirdparty konto
+DescThirdPartyReport=Skonsultuj się tutaj listę thirdparty klientów i dostawców oraz ich kont księgowych
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Lista kont księgowych
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
-Active=Statement
+Pcgversion=Wersja planu
+Pcgtype=Klasa konta
+Pcgsubtype=W ramach klasy uwagę
+Accountparent=Korzeń konta
+Active=Oświadczenie
 
-NewFiscalYear=New fiscal year
+NewFiscalYear=Nowy rok podatkowy
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Skonsultuj się tutaj rocznego rozliczenia przebicia faktur klientów
+TotalVente=Razem HT obroty
+TotalMarge=Marża całkowita sprzedaż
+DescVentilDoneCustomer=Skonsultuj się tutaj listę linii faktur klientów i ich rachunek rachunkowości
+DescVentilTodoCustomer=Wyraź swoje wiersze faktury klienta z kontem rachunkowości
+ChangeAccount=Zmienianie konta księgowego dla wierszy wybranych przez konto:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Skonsultuj się tutaj rocznego rozliczenia przebicia faktur dostawców
+DescVentilTodoSupplier=Wyraź swoje wiersze dostawcę faktury z kontem rachunkowości
+DescVentilDoneSupplier=Skonsultuj się tutaj listę linii dostawcy faktur i ich koncie księgowym
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Weryfikacja Automatycznie
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąć to konto księgowe, ponieważ jest używany
 
-FicheVentilation=Breakdown card
+FicheVentilation=Karta Podział

@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Listi yfir reikninga birgis í tengslum vi
 ListContractAssociatedProject=Listi yfir samninga í tengslum við verkefnið
 ListFichinterAssociatedProject=Listi yfir inngrip í tengslum við verkefnið
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Listi yfir aðgerðir í tengslum við verkefnið
 ActivityOnProjectThisWeek=Afþreying á verkefni í þessari viku
 ActivityOnProjectThisMonth=Afþreying á verkefni í þessum mánuði

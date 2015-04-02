@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Totaal van de twee nieuwe korting moet geli
 ConfirmRemoveDiscount=Weet u zeker dat u van deze korting wilt verwijderen?
 RelatedBill=Gerelateerde factuur
 RelatedBills=Gerelateerde facturen
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

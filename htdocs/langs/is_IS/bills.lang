@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Samtals tvö ný afsláttur verður jafn up
 ConfirmRemoveDiscount=Ertu viss um að þú viljir fjarlægja þetta afslætti?
 RelatedBill=Svipaðir Reikningar
 RelatedBills=Svipaðir reikningum
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

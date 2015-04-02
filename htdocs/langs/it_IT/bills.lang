@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Il totale di due nuovi sconti deve essere p
 ConfirmRemoveDiscount=Vuoi davvero eliminare questo sconto?
 RelatedBill=Fattura correlata
 RelatedBills=Fatture correlate
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Ultima fattura correlata
 WarningBillExist=Attenzione, una o più fatture già esistenti
 

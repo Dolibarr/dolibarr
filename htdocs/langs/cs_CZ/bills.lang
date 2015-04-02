@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Celkem dva nové slevy musí být roven pů
 ConfirmRemoveDiscount=Jste si jisti, že chcete odstranit tuto slevu?
 RelatedBill=Související faktura
 RelatedBills=Související faktury
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

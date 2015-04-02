@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Lista över leverantörens fakturor i samb
 ListContractAssociatedProject=Förteckning över avtal i samband med projektet
 ListFichinterAssociatedProject=Lista över åtgärder i samband med projektet
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Förteckning över åtgärder i samband med projektet
 ActivityOnProjectThisWeek=Aktivitet på projekt den här veckan
 ActivityOnProjectThisMonth=Aktivitet på projekt denna månad

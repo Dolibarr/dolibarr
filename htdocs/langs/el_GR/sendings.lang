@@ -2,6 +2,7 @@
 RefSending=Ref. αποστολή
 Sending=Αποστολή
 Sendings=Αποστολές
+AllSendings=All Shipments
 Shipment=Αποστολή
 Shipments=Αποστολές
 ShowSending=Προβολή αποστολής
@@ -23,7 +24,7 @@ QtyOrdered=Ποσότητα παραγγελιών
 QtyShipped=Ποσότητα που αποστέλλεται
 QtyToShip=Ποσότητα προς αποστολή
 QtyReceived=Ποσότητα παραλαβής
-KeepToShip=Remain to ship
+KeepToShip=Αναμένει για αποστολή
 OtherSendingsForSameOrder=Άλλες αποστολές για αυτό το σκοπό
 DateSending=Ημερομηνία αποστολή της παραγγελίας
 DateSendingShort=Ημερομηνία αποστολή της παραγγελίας

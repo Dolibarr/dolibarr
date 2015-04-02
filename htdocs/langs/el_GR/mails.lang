@@ -139,3 +139,5 @@ ListOfNotificationsDone=Λίστα όλων των ειδοποιήσεων ηλ
 MailSendSetupIs=Διαμόρφωση αποστολή email έχει ρυθμιστεί σε '%s'. Αυτή η λειτουργία δεν μπορεί να χρησιμοποιηθεί για να σταλθούν μαζικά μηνύματα ηλεκτρονικού ταχυδρομείου.
 MailSendSetupIs2=Θα πρέπει πρώτα να πάτε, με έναν λογαριασμό διαχειριστή, στο μενού %s Αρχική - Ρύθμιση - Emails %s για να αλλάξετε την παράμετρο <strong>'%s'</strong> για να χρησιμοποιήσετε τη λειτουργία '%s'. Με αυτόν τον τρόπο, μπορείτε να μεταβείτε στις ρυθμίσεις του διακομιστή SMTP παρέχεται από τον Internet Service Provider και να χρησιμοποιήσετε τη Μαζική αποστολή ηλεκτρονικού ταχυδρομείου.
 MailSendSetupIs3=Αν έχετε οποιαδήποτε απορία σχετικά με το πώς να ρυθμίσετε το διακομιστή SMTP σας, μπορείτε να ζητήσετε στο %s.
+YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
+NbOfTargetedContacts=Τρέχων αριθμός των στοχευμένων ηλεκτρονικών μηνυμάτων της επαφής

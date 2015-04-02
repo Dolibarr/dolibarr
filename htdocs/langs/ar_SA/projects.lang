@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبط
 ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
 ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
 ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
 ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر

@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Ukupno za dva nova popusta mora biti jednak
 ConfirmRemoveDiscount=Jeste li sigurni da želite ukloniti ovaj popust?
 RelatedBill=Povezana faktura
 RelatedBills=Povezane fakture
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

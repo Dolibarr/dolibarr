@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Le javascript ne doit pas être désactivé pour qu
 ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre
 ErrorContactEMail=Une erreur technique est apparue. Merci de contacter l'administrateur à l'email suivant <b>%s</b> en lui indiquant le code erreur <b>%s</b> dans votre message ou mieux en fournissant une copie d'écran de cette page.
 ErrorWrongValueForField=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' ne respecte pas la règle <b>%s</b>)
-ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeure présente dans le champ <b>%s</b> de la table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeur présente dans le champ <b>%s</b> de la table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une référence existante comme <b>%s</b>)
 ErrorsOnXLines=Erreurs sur <b>%s</b> enregistrement(s) source
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
@@ -161,6 +161,12 @@ ErrorPriceExpressionUnknown=Erreur inconnue '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
 ErrorTryToMakeMoveOnProductRequiringBatchData=Erreur, vous essayez de faire un mouvement sans lot/numéro de série, sur un produit qui exige un lot/numéro de série.
 ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

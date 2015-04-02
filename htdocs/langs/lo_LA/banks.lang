@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - banks
-Bank=Bank
-Banks=Banks
-MenuBankCash=Bank/Cash
-MenuSetupBank=Bank/Cash setup
-BankName=Bank name
-FinancialAccount=Account
-FinancialAccounts=Accounts
-BankAccount=Bank account
+Bank=ທະນາຄານ
+Banks=ທະນາຄານ
+MenuBankCash=ທະນາຄານ/ເງິນສົດ
+MenuSetupBank=ທະນາຄານ/ຕັ້ງຄ່າເງິນສົດ
+BankName=ຊື່ທະນາຄານ
+FinancialAccount=ບັນຊີ
+FinancialAccounts=ບັນຊີ
+BankAccount=ບັນຊີທະນາຄານ
 BankAccounts=Bank accounts
 ShowAccount=Show Account
 AccountRef=Financial account ref

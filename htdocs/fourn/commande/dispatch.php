@@ -130,10 +130,10 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 					$error++;
 				}
-				
+
 				if (! $error)
 				{
-					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'));
+					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -155,6 +155,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1]."_".$reg[2].'month'], $_POST['dluo_'.$reg[1]."_".$reg[2].'day'], $_POST['dluo_'.$reg[1]."_".$reg[2].'year']);
 			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1]."_".$reg[2].'month'], $_POST['dlc_'.$reg[1]."_".$reg[2].'day'], $_POST['dlc_'.$reg[1]."_".$reg[2].'year']);
 
+            $fk_commandefourndet = "fk_commandefourndet_".$reg[1]."_".$reg[2];
 			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
 				if (! (GETPOST($ent,'int') > 0))
@@ -172,10 +173,10 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
 					$error++;
 				}
-				
+
 				if (! $error)
 				{
-					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'));
+					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -191,7 +192,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	{
 		global $conf, $langs, $user;
         // Call trigger
-        $result=$commande->call_trigger('ORDER_SUPPLIER_DISPATCH',$user);
+        $result = $commande->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
         // End call triggers
 
 		if ($result < 0)
@@ -597,7 +598,7 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
-					
+
 					print "<tr ".$bc[$var].">";
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
@@ -640,7 +641,7 @@ if ($id > 0 || ! empty($ref))
        					|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))
 							)
 						{
-							if (empty($objp->status)) 
+							if (empty($objp->status))
 							{
 								print '<a class="button buttonRefused" href="#">'.$langs->trans("Check").'</a>';
 							}
@@ -653,18 +654,18 @@ if ($id > 0 || ! empty($ref))
 						{
 							$disabled='';
 							if ($commande->statut == 5) $disabled=1;
-							if (empty($objp->status)) 
+							if (empty($objp->status))
 							{
 								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Check").'</a>';
 							}
-							else 
+							else
 							{
 								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Uncheck").'</a>';
 							}
 						}
-						print '</td>';	
+						print '</td>';
 					}
-					
+
 					print "</tr>\n";
 
 					$i++;

@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=List of supplier's invoices associated wit
 ListContractAssociatedProject=List of contracts associated with the project
 ListFichinterAssociatedProject=List of interventions associated with the project
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=List of events associated with the project
 ActivityOnProjectThisWeek=Activity on project this week
 ActivityOnProjectThisMonth=Activity on project this month

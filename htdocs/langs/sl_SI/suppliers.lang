@@ -43,3 +43,4 @@ ListOfSupplierOrders=Seznam naročil dobaviitelja
 MenuOrdersSupplierToBill=Zaračunavanje naročil dobavitelja
 NbDaysToDelivery=Zakasnitev dobave v dnevih
 DescNbDaysToDelivery=Največja zakasnitev je prikazana med seznami naročenih proizvodov
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

@@ -1,34 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Tài nguyên
+MenuResourceAdd=Tạo tài nguyên
+MenuResourcePlanning=Tài nguyên đang kế hoạch
+DeleteResource=Xóa tài nguyên
+ConfirmDeleteResourceElement=Xác nhận xóa tài nguyên này
+NoResourceInDatabase=Chưa có tài nguyên trong cơ sở dữ liệu
+NoResourceLinked=Chưa có tài nguyên được liên kết
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Danh sách tài nguyên
+ResourceSingular=Tài nguyên
+ResourceCard=Thẻ tài nguyên
+AddResource=Tạo tài nguyên
+ResourceFormLabel_ref=Tên tài nguyên
+ResourceType=Loại tài nguyên
+ResourceFormLabel_description=Mô tả tài nguyên
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Tài nguyên được liên kết tới các thành phần
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Hiển thị tài nguyên đang kế hoạch
+GotoDate=Đến ngày
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Các tài nguyên thành tố
+ResourceCreatedWithSuccess=Đã tạo tài nguyên thành công
+RessourceLineSuccessfullyDeleted=Đầu mối tài nguyên đã được xóa thành công
+RessourceLineSuccessfullyUpdated=Đầu mối tài nguyên đã được cập nhật thành công
+ResourceLinkedWithSuccess=Liên kết tài nguyên thành công
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Thẻ tài nguyên
+ConfirmDeleteResource=Xác nhận xóa tài nguyên này
+RessourceSuccessfullyDeleted=Đã xóa tài nguyên thành công
+DictionaryResourceType=Loại tài nguyên
 
-SelectResource=Select resource
+SelectResource=Chọn tài nguyên

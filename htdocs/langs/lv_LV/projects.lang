@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Saraksts no piegādātāja rēķinus saist
 ListContractAssociatedProject=Līgumu sarakstu kas saistīti ar projektu
 ListFichinterAssociatedProject=Saraksts iejaukšanās saistīts ar projektu
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Saraksts ar notikumiem, kas saistīti ar projektu
 ActivityOnProjectThisWeek=Aktivitāte projektu šonedēļ
 ActivityOnProjectThisMonth=Aktivitāte projektu šomēnes
