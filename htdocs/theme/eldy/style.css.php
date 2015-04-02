@@ -1917,7 +1917,7 @@ table.liste td {
 	background-color: #f9f9f9;
 }
 tr.pair td, tr.impair td {
-	padding: 4px;
+	padding: 2px;
     border-bottom: 1px solid #ddd;
 }
 div.liste_titre .tagtd {

@@ -69,7 +69,6 @@ MOTIF_CANCEL=Reason
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
 DATE_VALIDE=Validation date
-DateApprove=Approving date
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 
