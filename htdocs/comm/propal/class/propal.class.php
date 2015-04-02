@@ -2415,7 +2415,7 @@ class Propal extends CommonObject
             }
 
 	        $response = new WorkboardResponse();
-	        $response->warning_delay = $delay_warning;
+	        $response->warning_delay = $delay_warning/60/60/24;
 	        $response->label = $label;
 	        $response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut;
 	        $response->img = img_object($langs->trans("Propals"),"propal");
