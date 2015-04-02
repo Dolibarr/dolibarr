@@ -95,6 +95,7 @@ class box_actions extends ModeleBoxes
 					$late = '';
 					$objp = $db->fetch_object($result);
 					$datelimite = $db->jdate($objp->dp);
+                    $actionstatic->id = $objp->id;
                     $actionstatic->label = $objp->label;
                     $actionstatic->type_label = $objp->type_label;
                     $actionstatic->code = $objp->code;
@@ -108,7 +109,6 @@ class box_actions extends ModeleBoxes
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label = empty($objp->label)?$objp->type_label:$objp->label;
 
-                    $tooltip = $langs->trans('Action'.$objp->code).': '.$label;
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $actionstatic->getNomUrl(1),
