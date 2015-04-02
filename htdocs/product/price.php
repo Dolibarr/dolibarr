@@ -51,11 +51,13 @@ $eid = GETPOST('eid', 'int');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id)
-	$socid = $user->societe_id;
+if ($user->societe_id) $socid = $user->societe_id;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $object = new Product($db);
+
+// Clean param
+if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) $conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 
 $error=0;
 
@@ -119,7 +121,8 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 		$newprice = $newprice_min; //Set price same as min, the user will not see the
 	}
 
-	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0) {
+	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
+	{
 		if ($object->fk_price_expression != 0) {
 			//Check the expression validity by parsing it
 			$priceparser = new PriceParser($db);
@@ -130,7 +133,8 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 				setEventMessage($priceparser->translatedError(), 'errors');
 			}
 		}
-		if (empty($error) && ! empty($conf->dynamicprices->enabled)) {
+		if (empty($error) && ! empty($conf->dynamicprices->enabled))
+		{
 			$ret=$object->setPriceExpression($object->fk_price_expression);
 			if ($ret < 0)
 			{
@@ -139,7 +143,8 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 				setEventMessage($object->error, 'errors');
 			}
 		}
-		if (empty($error)) {
+		if (empty($error))
+		{
 			$action = '';
 			setEventMessage($langs->trans("RecordSaved"));
 		}
@@ -147,7 +152,10 @@ if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit-
 		$action = 'edit_price';
 		setEventMessage($object->error, 'errors');
 	}
-} else if ($action == 'delete' && $user->rights->produit->supprimer) {
+}
+
+if ($action == 'delete' && $user->rights->produit->supprimer)
+{
 	$result = $object->log_price_delete($user, $_GET ["lineid"]);
 	if ($result < 0) {
 		setEventMessage($object->error, 'errors');
