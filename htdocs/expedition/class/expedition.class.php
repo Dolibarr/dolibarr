@@ -245,7 +245,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create ", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -255,7 +255,7 @@ class Expedition extends CommonObject
 			$sql.= " SET ref = '(PROV".$this->id.")'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create ", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				// Insertion des lignes
@@ -364,7 +364,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$qty;
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create_line ", LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			$error++;
@@ -429,7 +429,7 @@ class Expedition extends CommonObject
         if ($ref_ext) $sql.= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND e.ref_int='".$this->db->escape($ref_int)."'";
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch ");
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -576,7 +576,7 @@ class Expedition extends CommonObject
 		$sql.= ", fk_user_valid = ".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::valid update expedition sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::valid update expedition ", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
@@ -599,7 +599,7 @@ class Expedition extends CommonObject
 			$sql.= " WHERE ed.fk_expedition = ".$this->id;
 			$sql.= " AND cd.rowid = ed.fk_origin_line";
 
-			dol_syslog(get_class($this)."::valid select details sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::valid select details ", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
