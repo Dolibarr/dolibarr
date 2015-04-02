@@ -185,7 +185,7 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
     // TODO We add/delete permission until permission can have a condition on a global var
     $r_id = 1190;
     $entity = $conf->entity;
-    $r_desc='Permission for second approval';
+    $r_desc=$langs->trans("Permission1190");
     $r_modul='fournisseur';
     $r_type='w';
     $r_perms='commande';
