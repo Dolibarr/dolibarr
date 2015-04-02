@@ -254,9 +254,10 @@ $listofreferent=array(
 	'name'=>"Donation",
 	'title'=>"ListDonationsAssociatedProject",
 	'class'=>'Don',
+	'margin'=>'add',
 	'table'=>'don',
 	'datefieldname'=>'date',
-	'disableamount'=>1,
+	'disableamount'=>0,
 	'test'=>$conf->don->enabled && $user->rights->don->lire),
 );
 
@@ -344,7 +345,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
 		// Thirdparty or user
 		print '<td>';
-		if ($tablename == 'expensereport_det') print $langs->trans("User");
+		if ($tablename == 'expensereport_det' || 'don') print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
@@ -462,14 +463,25 @@ foreach ($listofreferent as $key => $value)
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1,'',48);
                 }
+				else if ($tablename == 'don')
+                {
+                	$tmpuser2=new User($db);
+                	$tmpuser2->fetch($don->fk_user_author);
+                	print $tmpuser2->getNomUrl(1,'',48);
+                }
 				print '</td>';
 
                 // Amount without tax
 				if (empty($value['disableamount']))
 				{
+					if ($tablename == 'don') $total_ht_by_line=$element->amount;
+					else
+					{
+						$total_ht_by_line=$element->total_ht;
+					}
 					print '<td align="right">';
 					if (! $qualifiedfortotal) print '<strike>';
-					print (isset($element->total_ht)?price($element->total_ht):'&nbsp;');
+					print (isset($total_ht_by_line)?price($total_ht_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
 					print '</td>';
 				}
@@ -478,9 +490,14 @@ foreach ($listofreferent as $key => $value)
                 // Amount inc tax
 				if (empty($value['disableamount']))
 				{
+					if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+					else
+					{
+						$total_ttc_by_line=$element->total_ttc;
+					}
 					print '<td align="right">';
 					if (! $qualifiedfortotal) print '<strike>';
-					print (isset($element->total_ttc)?price($element->total_ttc):'&nbsp;');
+					print (isset($total_ttc_by_line)?price($total_ttc_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
 					print '</td>';
 				}
@@ -496,11 +513,11 @@ foreach ($listofreferent as $key => $value)
 
 				if ($qualifiedfortotal)
 				{
-					$total_ht = $total_ht + $element->total_ht;
-					$total_ttc = $total_ttc + $element->total_ttc;
+					$total_ht = $total_ht + $total_ht_by_line;
+					$total_ttc = $total_ttc + $total_ttc_by_line;
 
-					$total_ht_by_third += $element->total_ht;
-					$total_ttc_by_third += $element->total_ttc;
+					$total_ht_by_third += $total_ht_by_line;
+					$total_ttc_by_third += $total_ttc_by_line;
 				}
 
 				if (canApplySubtotalOn($tablename))
@@ -619,9 +636,21 @@ foreach ($listofreferent as $key => $value)
 			{
 				$element->fetch($elementarray[$i]);
 				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
+				if ($tablename == 'don') $total_ht_by_line=$element->amount;
+				else
+				{
+					$total_ht_by_line=$element->total_ht;
+				}
 
-				$total_ht = $total_ht + $element->total_ht;
-				$total_ttc = $total_ttc + $element->total_ttc;
+				$total_ht = $total_ht + $total_ht_by_line;
+				
+				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+				else
+				{
+					$total_ttc_by_line=$element->total_ttc;
+				}
+
+				$total_ttc = $total_ttc + $total_ttc_by_line;
 			}
 
 			print '<tr >';

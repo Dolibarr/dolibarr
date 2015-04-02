@@ -73,7 +73,7 @@ $sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql.= " ON p.rowid = d.fk_project WHERE 1 = 1";
+$sql.= " ON p.rowid = d.fk_projet WHERE 1 = 1";
 if ($statut >= 0)
 {
 	$sql .= " AND d.fk_statut = ".$statut;
@@ -125,7 +125,7 @@ if ($resql)
 	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_project","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
 	}
 	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","&page=$page&statut=$statut","",'align="right"',$sortfield,$sortorder);
