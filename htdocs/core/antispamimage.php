@@ -49,7 +49,8 @@ for($i = 0; $i < $length; $i++)
 
 
 $sessionkey='dol_antispam_value';
-$_SESSION[$sessionkey]=$string;
+$captcha_secret = 'Y0uR StR0ng Pa33w0r4 KEyPHrAs3';
+$_SESSION[$sessionkey]=md5($captcha_secret.strtolower($string));
 
 $img = imagecreate(80,32);
 if (empty($img))
