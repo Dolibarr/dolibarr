@@ -156,7 +156,7 @@ LastStepDesc=<strong>Ostatni krok:</strong> Zdefiniuj tutaj nazwę i hasło, kt�
 ActivateModule=Aktywuj moduł %s
 ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane parametry (tryb ekspert)
 WarningUpgrade=Uwaga:\nPamiętaj o zrobieniu kopi zapasowej bazy!\nWysoko rekomendowane: dla przykładu,  podczas wystąpienia błędu w bazie danych systemu (dla przykładu w wersji 5.5.40 mySQL), niektóre dane lub tabele mogą zostać stracone podczas tego procesu. Rekomendowane jest by zrobic kopię swojej bazy przed migracją.\n\nNaciśnij OK by zacząć migrację...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+ErrorDatabaseVersionForbiddenForMigration=Twoja wersja bazy danych% s. Ma krytycznej utraty danych podejmowania błąd jeśli się zmianę struktury na bazie danych, tak jak jest to wymagane przez proces migracji. Na jego powodu migracji nie zostaną dopuszczone do aktualizacji bazy danych do wyższej wersji stałej (lista znanych wersji podsłuch:% s)
 
 #########
 # upgrade

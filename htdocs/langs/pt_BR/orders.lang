@@ -1,14 +1,21 @@
 # Dolibarr language file - Source file is en_US - orders
+OrdersArea=Área de Pedidos de Clientes
 OrderId=ID Pedido
 OrderLine=Linha de Comando
 OrderToProcess=Pedido a se processar
 CustomerOrder=Pedido de Cliente
-OrdersToBill=Pedidos por Faturar
+CustomersOrders=Pedidos de clientes
+OrdersToValid=Pedidos de Clientes a Confirmar
+OrdersToBill=Pedidos de Clientes Entregues
+OrdersInProcess=Pedidos de Clientes em Processo
+OrdersToProcess=Pedidos de Clientes à processar
 SuppliersOrdersToProcess=Pedidos de fornecedor a se processar
 StatusOrderSentShort=Em processo
 StatusOrderSent=Envio em processo
+StatusOrderOnProcessShort=Pedido
 StatusOrderToBillShort=Entregue
 StatusOrderToBill2Short=A se faturar
+StatusOrderOnProcess=Pedido - Aguardando Recebimento
 StatusOrderToBill=A Faturar
 StatusOrderToBill2=A Faturar
 ShippingExist=Existe envio
