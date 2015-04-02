@@ -180,7 +180,8 @@ if (empty($reshook))
 	// Set project
 	if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
 	{
-	    $object->setProject($projectid);
+	    $result=$object->setProject($projectid);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
@@ -223,7 +224,7 @@ if (empty($reshook))
 			{
 				$db->rollback();
 
-	        	setEventMessage($object->error, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -448,7 +449,7 @@ if (empty($reshook))
 	    }
 	    else
 		{
-	    	setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -619,7 +620,7 @@ if (empty($reshook))
 	    }
 
 	    // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-	    if ($user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
+	    if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
 	    {
 	        $action='confirm_approve';	// can make standard or first level approval also if permission is set
 	    }
@@ -670,8 +671,8 @@ if (empty($reshook))
 	            exit;
 	        }
 	        else
-	        {
-	            setEventMessage($object->error, 'errors');
+			{
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -686,7 +687,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -703,7 +704,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -718,7 +719,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -741,7 +742,7 @@ if (empty($reshook))
 				}
 				else
 				{
-					setEventMessage($object->error, 'errors');
+		            setEventMessages($object->error, $object->errors, 'errors');
 					$action='';
 				}
 			}
@@ -786,7 +787,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
