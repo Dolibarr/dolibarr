@@ -709,13 +709,13 @@ class Don extends CommonObject
      *    Classify the donation as paid, the donation was received
      *
      *    @param	int		$id           	    id of donation
-     *    @param    int		$modepayment   	    mode de payment
+     *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id, $modepaiement='')
+    function set_paid($id, $modepayment='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
-        if ($modepaiement)
+        if ($modepayment)
         {
             $sql .= ", fk_payment=$modepayment";
         }
