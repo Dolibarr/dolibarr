@@ -164,8 +164,6 @@
         <severity>0</severity>
 	</rule>
     
-    <rule ref="Generic.VersionControl.SubversionProperties" />
-
 	<!-- Disallow usage of tab -->
 	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
