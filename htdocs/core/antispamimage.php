@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 define('NOLOGIN',1);
 
 if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER',1);
-if (! defined('NOREQUIREDB'))     define('NOREQUIREDB',1);
+//if (! defined('NOREQUIREDB'))     define('NOREQUIREDB',1); // disabled we need $conf
 if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN',1);
 if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC',1);
@@ -49,7 +50,9 @@ for($i = 0; $i < $length; $i++)
 
 
 $sessionkey='dol_antispam_value';
-$_SESSION[$sessionkey]=$string;
+// if you change default value you need also to change in main.inc.php
+$captcha_secret = (! empty($conf->global->MAIN_SECURITY_CAPTCHA_KEY)?$conf->global->MAIN_SECURITY_CAPTCHA_KEY:'Y0uR StR0ng Pa33w0r4 KEyPHrAs3');
+$_SESSION[$sessionkey]=md5($captcha_secret.strtolower($string));
 
 $img = imagecreate(80,32);
 if (empty($img))

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,8 @@ else if ($action == 'updateform')
 {
 	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity);
     $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
-	if ($res1 && $res2) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+    $res3=dolibarr_set_const($db, "MAIN_SECURITY_CAPTCHA_KEY", $_POST["MAIN_SECURITY_CAPTCHA_KEY"],'chaine',0,'',$conf->entity);
+    if ($res1 && $res2 && $res3) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
 
@@ -143,6 +145,17 @@ else
     print $desc;
 }
 print '</td></tr>';
+
+// Captcha crypt key
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td  colspan="2">'.$langs->trans("CaptchaCryptKey").'</td>';
+print '<td><input type="text" class="flat" id="MAIN_SECURITY_CAPTCHA_KEY" name="MAIN_SECURITY_CAPTCHA_KEY" value="'. (GETPOST('MAIN_SECURITY_CAPTCHA_KEY')?GETPOST('MAIN_SECURITY_CAPTCHA_KEY'):(! empty($conf->global->MAIN_SECURITY_CAPTCHA_KEY)?$conf->global->MAIN_SECURITY_CAPTCHA_KEY:'')) . '" size="40">';
+if (! empty($conf->use_javascript_ajax))
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+print '</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
 
 // Enable advanced perms
 $var=!$var;
@@ -211,6 +224,23 @@ dol_fiche_end();
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
+
+if (! empty($conf->use_javascript_ajax))
+{
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
+            $("#generate_token").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                    action: \'getrandompassword\',
+                    generic: true
+                },
+                function(token) {
+                    $("#MAIN_SECURITY_CAPTCHA_KEY").val(token);
+                });
+            });
+    });';
+    print '</script>';
+}
 
 
 llxFooter();
