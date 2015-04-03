@@ -477,15 +477,19 @@ function dol_filemtime($pathoffile)
  *
  * @param	string	$srcfile			Source file (can't be a directory)
  * @param	string	$destfile			Destination file (can't be a directory)
- * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
+ * @see		dolCopyr
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
 	global $conf;
 
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+
+	if (empty($srcfile) || empty($destfile)) return -1;
+
 	$destexists=dol_is_file($destfile);
 	if (! $overwriteifexists && $destexists) return 0;
 
@@ -524,11 +528,76 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
+ * Copy a dir to another dir.
+ *
+ * @param	string	$srcfile			Source file (a directory)
+ * @param	string	$destfile			Destination file (a directory)
+ * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
+ * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
+ * @return	int							<0 if error, 0 if nothing done (dest dir already exists and overwriteifexists=0), >0 if OK
+ * @see		dol_copy
+ */
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists)
+{
+	global $conf;
+
+	$result=0;
+
+	dol_syslog("files.lib.php::dolCopyr srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
+
+	if (empty($srcfile) || empty($destfile)) return -1;
+
+	$destexists=dol_is_dir($destfile);
+	if (! $overwriteifexists && $destexists) return 0;
+
+	$srcfile=dol_osencode($srcfile);
+	$destfile=dol_osencode($destfile);
+
+    // recursive function to copy
+    // all subdirectories and contents:
+	if (is_dir($srcfile))
+	{
+        $dir_handle=opendir($srcfile);
+        while ($file=readdir($dir_handle))
+        {
+            if ($file!="." && $file!="..")
+            {
+                if (is_dir($srcfile."/".$file))
+                {
+                    if (!is_dir($destfile."/".$file))
+                    {
+                    	umask(0);
+						$dirmaskdec=octdec($newmask);
+						if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+						$dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+                    	dol_mkdir($destfile."/".$file, '', decoct($dirmaskdec));
+                    }
+                    $result=dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                }
+                else
+				{
+                    $result=dol_copy($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists);
+                }
+                if ($result < 0) break;
+            }
+        }
+        closedir($dir_handle);
+    }
+    else
+	{
+        $result=dol_copy($srcfile, $destfile, $newmask, $overwriteifexists);
+    }
+
+    return $result;
+}
+
+
+/**
  * Move a file into another name.
  * This function differs from dol_move_uploaded_file, because it can be called in any context.
  *
- * @param	string  $srcfile            Source file (can't be a directory)
- * @param   string	$destfile           Destination file (can't be a directory)
+ * @param	string  $srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string	$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
  * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
