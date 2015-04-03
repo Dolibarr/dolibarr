@@ -59,3 +59,4 @@ ListOfAskPriceSupplier=Liste des demandes de prix fournisseurs
 AskpricesupplierDescRefFourn=Référence fournisseur à saisir après réponse pour la convertion
 CloseAs=Clôturer au statut
 AskpricesupplierErrorRefCheck=Une ou plusieurs référence fournisseurs sont manquantes.
+SelectSupplier=Sélectionner un fournisseur
