@@ -477,6 +477,12 @@ if ($object->fetch($id))
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
 	}
 
+	if ($conf->askpricesupplier->enabled && $user->rights->askpricesupplier->creer)
+	{
+		$langs->load("askpricesupplier");
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAskPriceSupplier").'</a>';
+	}
+	
 	if ($user->rights->fournisseur->facture->creer)
 	{
 		if (! empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';

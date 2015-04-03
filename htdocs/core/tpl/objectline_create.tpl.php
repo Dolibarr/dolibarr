@@ -29,7 +29,7 @@
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','askpricesupplier','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -41,7 +41,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -50,6 +50,9 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><span id="title_fourn_ref"><?php echo img_picto($langs->trans('AskpricesupplierDescRefFourn'), 'info', 'class="linkobject"').'&nbsp;'.$langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
+	<?php } ?>
 	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
@@ -190,6 +193,10 @@ else {
 	$doleditor->Create();
 	?>
 	</td>
+	
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+	<?php } ?>
 
 	<td align="right"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
@@ -255,6 +262,9 @@ else {
 		elseif ($this->table_element_line=='propaldet') {
 			$newline = new PropaleLigne($this->db);
 		}
+		elseif ($this->table_element_line=='askpricesupplierdet') {
+			$newline = new AskPriceSupplierLine($this->db);
+		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
 		}
@@ -271,7 +281,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+	if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 
 	if (! empty($usemargins))
 	{

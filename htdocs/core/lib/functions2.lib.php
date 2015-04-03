@@ -1534,6 +1534,9 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 	if ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
+	if ($objecttype == 'askpricesupplier')  {
+		$classpath = 'comm/askpricesupplier/class';
+	}
 	if ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
@@ -1764,6 +1767,9 @@ function getElementProperties($element_type)
     }
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
+    }
+	if ($element_type == 'askpricesupplier')  {
+        $classpath = 'comm/askpricesupplier/class';
     }
     if ($element_type == 'shipping') {
         $classpath = 'expedition/class';

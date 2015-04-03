@@ -88,6 +88,10 @@ class CommandeFournisseur extends CommonOrder
 
     var $extraparams=array();
 
+	//Ajout pour askpricesupplier
+	var $origin;
+    var $origin_id;
+    var $linked_objects=array();
 
     /**
      * 	Constructor
@@ -1631,6 +1635,40 @@ class CommandeFournisseur extends CommonOrder
             if ($resql)
             {
                 $this->date_livraison = $date_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                return -1;
+            }
+        }
+        else
+        {
+            return -2;
+        }
+    }
+
+	/**
+     *	Set the id projet
+     *
+     *	@param      User			$user        		Objet utilisateur qui modifie
+     *	@param      int				$id_projet    	 	Date de livraison
+     *	@return     int         						<0 si ko, >0 si ok
+     */
+    function set_id_projet($user, $id_projet)
+    {
+        if ($user->rights->fournisseur->commande->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " SET fk_projet = ".($id_projet > 0 ? (int) $id_projet : 'null');
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::set_id_projet", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $this->fk_projet = $id_projet;
                 return 1;
             }
             else
