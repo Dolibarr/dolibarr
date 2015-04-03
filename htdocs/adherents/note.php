@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/adherents/note.php
  *      \ingroup    member
- *      \brief      Tabe for note of a member
+ *      \brief      Tab for note of a member
 */
 
 require '../main.inc.php';
@@ -54,7 +54,7 @@ if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		setEventMessage($object->error, 'errors');
@@ -82,7 +82,7 @@ if ($id)
 
 	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
 
-	print "<form method=\"post\" action=\"note.php\">";
+	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     print '<table class="border" width="100%">';
@@ -129,7 +129,7 @@ if ($id)
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
-    // Note
+    // Private note
     print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
 	print '<td valign="top" colspan="3">';
 	if ($action == 'edit' && $user->rights->adherent->creer)
@@ -137,12 +137,12 @@ if ($id)
 	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note',$object->note,'',280,'dolibarr_notes','',true,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
+        $doleditor=new DolEditor('note_private',$object->note_private,'',280,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
         $doleditor->Create();
 	}
 	else
 	{
-		print nl2br($object->note);
+		print dol_htmlentitiesbr($object->note_private);
 	}
 	print "</td></tr>";
 
@@ -150,7 +150,7 @@ if ($id)
 	{
 		print '<tr><td colspan="4" align="center">';
 		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp; &nbsp;';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 	}
