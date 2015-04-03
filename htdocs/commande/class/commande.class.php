@@ -790,7 +790,7 @@ class Commande extends CommonOrder
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
-		    	$this->lines[$i]->array_options
+                    	$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
@@ -862,28 +862,25 @@ class Commande extends CommonOrder
 
                     if (! $error)
                     {
-                    	$action='create';
+                    	//$action='create';
 
 	                    // Actions on extra fields (by external module or standard code)
 	                    // FIXME le hook fait double emploi avec le trigger !!
-	                    $hookmanager->initHooks(array('orderdao'));
+	                    /*$hookmanager->initHooks(array('orderdao'));
 	                    $parameters=array('socid'=>$this->id);
 	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 	                    if (empty($reshook))
 	                    {
 	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-	                    	{
+	                    	{*/
 	                    		$result=$this->insertExtraFields();
-	                    		if ($result < 0)
-	                    		{
-	                    			$error++;
-	                    		}
-	                    	}
+	                    		if ($result < 0) $error++;
+	                    /*	}
 	                    }
-	                    else if ($reshook < 0) $error++;
+	                    else if ($reshook < 0) $error++;*/
                     }
 
-                    if (! $notrigger)
+                    if (! $error && ! $notrigger)
                     {
 			            // Call trigger
 			            $result=$this->call_trigger('ORDER_CREATE',$user);
@@ -891,29 +888,27 @@ class Commande extends CommonOrder
 			            // End call triggers
                     }
 
-	                if (!$error) {
+	                if (! $error)
+	                {
 		                $this->db->commit();
 		                return $this->id;
 	                }
-
-	                foreach($this->errors as $errmsg)
-	                {
-		                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-		                $this->error.=($this->error?', '.$errmsg:$errmsg);
-	                }
-	                $this->db->rollback();
-	                return -1*$error;
-
+	                else
+					{
+	                	$this->db->rollback();
+	                	return -1*$error;
+					}
                 }
                 else
-                {
+				{
+					$this->error=$this->db->lasterror();
                     $this->db->rollback();
                     return -1;
                 }
             }
         }
         else
-        {
+		{
             dol_print_error($this->db);
             $this->db->rollback();
             return -1;

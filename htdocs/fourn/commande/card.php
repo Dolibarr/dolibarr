@@ -918,22 +918,20 @@ if (empty($reshook))
 					}
 
 					$object_id = $object->create($user);
-
 					if ($object_id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
-						$srcobject->fetch($object->origin_id);
-
-						$object->set_date_livraison($user, $srcobject->date_livraison);
-						$object->set_id_projet($user, $srcobject->fk_project);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
+							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$object->set_id_projet($user, $srcobject->fk_project);
+
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
 							{
@@ -1010,11 +1008,11 @@ if (empty($reshook))
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							setEventMessage($srcobject->error, 'errors');
+			        		setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 							$error ++;
 						}
 					} else {
-						setEventMessage($object->error, 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
 				}
@@ -1024,7 +1022,7 @@ if (empty($reshook))
 		        	if ($id < 0)
 		        	{
 		        		$error++;
-			        	setEventMessage($langs->trans($object->error), 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 		        	}
 				}
 	        }

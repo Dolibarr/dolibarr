@@ -1066,6 +1066,12 @@ class CommandeFournisseur extends CommonOrder
                         }
                     }
 
+	                if (! $error)
+                    {
+                    	$result=$this->insertExtraFields();
+	                    if ($result < 0) $error++;
+                    }
+
 					if (! $error && ! $notrigger)
 	                {
 						// Call trigger
