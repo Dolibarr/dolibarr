@@ -1261,19 +1261,40 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
  */
 function dol_uncompress($inputfile,$outputdir)
 {
-    global $conf;
+    global $conf, $langs;
 
     if (defined('ODTPHP_PATHTOPCLZIP'))
     {
+    	dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".constant('ODTPHP_PATHTOPCLZIP').", so we use Pclzip to unzip into ".$outputdir);
         include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
         $archive = new PclZip($inputfile);
-        if ($archive->extract(PCLZIP_OPT_PATH, $outputdir) == 0) return array('error'=>$archive->errorInfo(true));
-        else return array();
+        $result=$archive->extract(PCLZIP_OPT_PATH, $outputdir);
+        //var_dump($result);
+        if (! is_array($result) && $result <= 0) return array('error'=>$archive->errorInfo(true));
+        else
+		{
+			$ok=1; $errmsg='';
+			// Loop on each file to check result for unzipping file
+			foreach($result as $key => $val)
+			{
+				if ($val['status'] == 'path_creation_fail')
+				{
+					$langs->load("errors");
+					$ok=0;
+					$errmsg=$langs->trans("ErrorFailToCreateDir", $val['filename']);
+					break;
+				}
+			}
+
+			if ($ok) return array();
+			else return array('error'=>$errmsg);
+		}
     }
 
     if (class_exists('ZipArchive'))
     {
-        $zip = new ZipArchive;
+    	dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
+    	$zip = new ZipArchive;
         $res = $zip->open($inputfile);
         if ($res === TRUE)
         {
