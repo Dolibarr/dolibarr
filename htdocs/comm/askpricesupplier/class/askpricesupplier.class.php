@@ -1600,10 +1600,10 @@ class AskPriceSupplier extends CommonObject
 			if ($product->subprice <= 0)
 				continue;
 
-			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
-			$res = $productsupplier->fetch($idProductFourn);
+			$idProductFourn = $this->find_min_price_product_fournisseur($product->fk_product, $product->qty, $this->socid);
+			$res = $productsupplier->fetch_product_fournisseur_price($idProductFourn);
 
-			if ($productsupplier->id) {
+			if ($res > 0) {
 				if ($productsupplier->fourn_qty == $product->qty) {
 					$this->updatePriceFournisseur($productsupplier->product_fourn_price_id, $product, $user);
 				} else {
@@ -1614,6 +1614,48 @@ class AskPriceSupplier extends CommonObject
 			}
 		}
 	}
+
+	/**
+     * 	Fonction de base dans la class ProductFournisseur
+     *
+     *  @param	int		$prodid	    Product id
+     *  @param	int		$qty		Minimum quantity
+     *  @param	int		$fk_soc		Id supplier
+     *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
+     */
+    function find_min_price_product_fournisseur($prodid, $qty=0, $fk_soc)
+    {
+        if (empty($prodid) || empty($fk_soc))
+        {
+        	dol_syslog("Warning function find_min_price_product_fournisseur were called with prodid empty. May be a bug.", LOG_WARNING);
+        	return 0;
+        }
+
+        $sql = "SELECT rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+        $sql.= " WHERE entity IN (".getEntity('societe', 1).")";
+        $sql.= " AND fk_product = ".(int) $prodid;
+        $sql.= " AND fk_soc = ".(int) $fk_soc;
+        if ($qty > 0) $sql.= " AND quantity <= ".$qty;
+        $sql.= " ORDER BY unitprice";
+        $sql.= $this->db->plimit(1);
+
+        dol_syslog(get_class($this)."::find_min_price_product_fournisseur", LOG_DEBUG);
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $record = $this->db->fetch_array($resql);
+            $this->db->free($resql);
+            return $record['rowid'];
+        }
+        else
+		{
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+
 
 	/**
      *	Upate ProductFournisseur
