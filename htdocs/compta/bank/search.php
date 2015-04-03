@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -128,7 +128,7 @@ if (! empty($type))
 {
 	$sql.= " AND b.fk_type = '".$db->escape($type)."' ";
 }
-//Search period criteria
+// Search period criteria
 if (dol_strlen($search_dt_start)>0) {
 	$sql .= " AND b.dateo >= '" . $db->idate($search_dt_start) . "'";
 }

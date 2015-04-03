@@ -19,11 +19,11 @@
 
 /**
  *       \file       htdocs/expensereport/class/expensereportstats.class.php
- *       \ingroup    factures
+ *       \ingroup    expensereport
  *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
  */
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-dol_include_once('/expensereport/class/expensereport.class.php');
+include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 /**
  *  Classe permettant la gestion des stats des expensereports et notes de frais
@@ -59,7 +59,7 @@ class ExpenseReportStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field='total_ht';
 
-		$this->where = " fk_c_expensereport_statuts > 0 and date_valid > '2000-01-01'";
+		$this->where = " fk_statut > 0 and date_valid > '2000-01-01'";
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)
 		{

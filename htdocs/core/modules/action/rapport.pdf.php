@@ -303,7 +303,7 @@ class CommActionRapport
 	 * 	@param	PDF			$pdf     		Object PDF
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 * 	@param	int			$pagenb			Page nb
-	 *  @return	void
+	 *  @return	integer
 	 */
 	function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{

@@ -2,6 +2,7 @@
 RefSending=Referentie verzending
 Sending=Verzending
 Sendings=Verzendingen
+AllSendings=All Shipments
 Shipment=Verzending
 Shipments=Verzendingen
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Aantal besteld
 QtyShipped=Aantal verzonden
 QtyToShip=Aantal te verzenden
 QtyReceived=Aantal ontvangen
-KeepToShip=Houd verzendklaar
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Andere verzendingen voor deze opdracht
 DateSending=Datum versturing opdracht
 DateSendingShort=Datum versturing opdracht

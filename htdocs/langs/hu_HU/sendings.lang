@@ -2,6 +2,7 @@
 RefSending=Szállítási Ref.
 Sending=Szállítás
 Sendings=Szállítások
+AllSendings=All Shipments
 Shipment=Szállítás
 Shipments=Szállítások
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Rendelt mennyiség
 QtyShipped=Kiszállított mennyiség
 QtyToShip=Szállítandó mennyiség
 QtyReceived=Átvett mennyiség
-KeepToShip=Szállításra félretenni
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Más szállítások ehhez a megrendeléshez
 DateSending=Date sending order
 DateSendingShort=Küldési dátum sorrend

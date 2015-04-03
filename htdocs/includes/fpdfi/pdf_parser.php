@@ -199,7 +199,14 @@ class pdf_parser
 
         // Read xref-Data
         $this->_xref = array();
-        $this->_readXref($this->_xref, $this->_findXref());
+        try {
+	        $this->_readXref($this->_xref, $this->_findXref());
+        }
+        catch(Exception $e)
+        {
+        	print $e->getMessage();
+        	exit;
+        }
 
         // Check for Encryption
         $this->getEncryption();

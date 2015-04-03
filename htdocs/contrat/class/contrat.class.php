@@ -90,23 +90,7 @@ class Contrat extends CommonObject
 	var $product;
 
 	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var
-	 */
-	var $user_author;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var User
-	 */
-	public $user_creation;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var int
+	 * @var int		Id of user author of the contract
 	 */
 	public $fk_user_author;
 
@@ -118,38 +102,37 @@ class Contrat extends CommonObject
 	public $user_author_id;
 
 	/**
-	 * @var User
+	 * @var User 	Object user that create the contract. Set by the info method.
+	 */
+	public $user_creation;
+
+	/**
+	 * @var User 	Object user that close the contract. Set by the info method.
 	 */
 	public $user_cloture;
 
 	/**
-	 * Date of creation
-	 * @var int
+	 * @var int		Date of creation
 	 */
 	var $date_creation;
 
 	/**
-	 * Date of last modification
-	 * Not filled until you call ->info()
-	 * @var int
+	 * @var int		Date of last modification. Not filled until you call ->info()
 	 */
 	public $date_modification;
 
 	/**
-	 * Date of validation
-	 * @var int
+	 * @var int		Date of validation
 	 */
 	var $date_validation;
 
 	/**
-	 * Date when contract was signed
-	 * @var int
+	 * @var int		Date when contract was signed
 	 */
 	var $date_contrat;
 
 	/**
-	 * Date of contract closure
-	 * @var int
+	 * @var int		Date of contract closure
 	 * @deprecated we close contract lines, not a contract
 	 */
 	var $date_cloture;
@@ -158,21 +141,15 @@ class Contrat extends CommonObject
 	var $commercial_suivi_id;
 
 	/**
-	 * @deprecated Use note_private or note_public instead
-	 */
-	var $note;
-
-	/**
-	 * Private note
-	 * @var string
+	 * @var string	Private note
 	 */
 	var $note_private;
 
 	/**
-	 * Public note
-	 * @var string
+	 * @var string	Public note
 	 */
 	var $note_public;
+
 	var $modelpdf;
 
 	/**
@@ -185,8 +162,7 @@ class Contrat extends CommonObject
 	var $extraparams=array();
 
 	/**
-	 * Contract lines
-	 * @var ContratLigne[]
+	 * @var ContratLigne[]		Contract lines
 	 */
 	var $lines=array();
 
@@ -570,7 +546,6 @@ class Contrat extends CommonObject
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
 				$this->commercial_suivi_id		= $result["fk_commercial_suivi"];
 
-				$this->note						= $result["note_private"];	// deprecated
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
 				$this->modelpdf					= $result["model_pdf"];
@@ -640,6 +615,11 @@ class Contrat extends CommonObject
 		$total_ht=0;
 
 		$now=dol_now();
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline=new ExtraFields($this->db);
+		$line = new ContratLigne($this->db);
+		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
 
 		$this->lines=array();
 
@@ -720,6 +700,10 @@ class Contrat extends CommonObject
 				$line->date_debut_reel   = $this->db->jdate($objp->date_ouverture);
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
+
+				// Retreive all extrafield for propal
+				// fetch optionals attributes and labels
+				$line->fetch_optionals($line->id,$extralabelsline);
 
 				$this->lines[]			= $line;
 
@@ -817,6 +801,13 @@ class Contrat extends CommonObject
 				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
 				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
+
+
+				// Retreive all extrafield for propal
+				// fetch optionals attributes and labels
+
+				$line->fetch_optionals($line->id,$extralabelsline);
+
 
 				$this->lines[]        = $line;
 
@@ -1244,11 +1235,11 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
-	 *  @param	array		$array_option		extrafields array
+	 *  @param	array		$array_options		extrafields array
 	 * @param int $fk_unit Id of the unit to use. Null to use the default one
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_option=0, $fk_unit = null)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null)
 	{
 		global $user, $langs, $conf, $mysoc;
 
@@ -1359,11 +1350,11 @@ class Contrat extends CommonObject
 				$result=$this->update_statut($user);
 				if ($result > 0)
 				{
-					
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_option) && count($array_option)>0) // For avoid conflicts if trigger used
+
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 					{
 						$contractline = new ContratLigne($this->db);
-						$contractline->array_options=$array_option;
+						$contractline->array_options=$array_options;
 						$contractline->id= $this->db->last_insert_id(MAIN_DB_PREFIX.$contractline->table_element);
 						$result=$contractline->insertExtraFields();
 						if ($result < 0)
@@ -1372,7 +1363,7 @@ class Contrat extends CommonObject
 							$error++;
 						}
 					}
-					
+
 					if (empty($error)) {
 					    // Call trigger
 					    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
@@ -1382,7 +1373,7 @@ class Contrat extends CommonObject
 					        return -1;
 					    }
 					    // End call triggers
-	
+
 						$this->db->commit();
 						return 1;
 					}
@@ -1426,11 +1417,11 @@ class Contrat extends CommonObject
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
-	 *  @param	array		$array_option		extrafields array
+	 *  @param	array		$array_options		extrafields array
 	 * @param int $fk_unit Id of the unit to use. Null to use the default one
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_option=0, $fk_unit = null)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null)
 	{
 		global $user, $conf, $langs, $mysoc;
 
@@ -1531,8 +1522,8 @@ class Contrat extends CommonObject
 			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
-				
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_option) && count($array_option)>0) // For avoid conflicts if trigger used
+
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
 					$contractline->array_options=$array_option;
@@ -1544,7 +1535,7 @@ class Contrat extends CommonObject
 						$error++;
 					}
 				}
-				
+
 				if (empty($error)) {
 			        // Call trigger
 			        $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
@@ -1554,7 +1545,7 @@ class Contrat extends CommonObject
 			            return -3;
 			        }
 			        // End call triggers
-	
+
 					$this->db->commit();
 					return 1;
 				}
@@ -1608,7 +1599,7 @@ class Contrat extends CommonObject
 				$this->error="Error ".$this->db->lasterror();
 				$error++;
 			}
-			
+
 			if (empty($error)) {
 				// Remove extrafields
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -1737,9 +1728,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int		$maxlength		Max length of ref
 	 *	@return	string					Chaine avec URL
 	 */
@@ -1750,15 +1741,15 @@ class Contrat extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContract").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='contract';
 
 
-		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$lienfin;
+		if ($withpicto != 2) $result.=$link.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$linkend;
 		return $result;
 	}
 
@@ -2285,9 +2276,9 @@ class ContratLigne extends CommonObjectLine
 	}
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlength		Max length
 	 *  @return	string					Chaine avec URL
  	 */
@@ -2298,15 +2289,15 @@ class ContratLigne extends CommonObjectLine
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='contract';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->label.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->label.$linkend;
 		return $result;
 	}
 
@@ -2536,10 +2527,10 @@ class ContratLigne extends CommonObjectLine
 			$error++;
 			//return -1;
 		}
-		
+
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
 		{
-					
+
 			$result=$this->insertExtraFields();
 			if ($result < 0)
 			{

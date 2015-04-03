@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ $langs->load("stocks");
 $langs->load("sendings");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-
+$backtopage=GETPOST('backtopage');
 $action=GETPOST("action");
 $cancel=GETPOST('cancel');
 
@@ -160,8 +161,16 @@ if ($action == "correct_stock" && ! $cancel)
 
 			if ($result > 0)
 			{
-	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
-				exit;
+				if ($backtopage)
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+	            	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
+					exit;
+				}
 			}
 			else
 			{
@@ -292,8 +301,17 @@ if ($action == "transfert_stock" && ! $cancel)
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
 				$db->commit();
-				header("Location: product.php?id=".$product->id);
-				exit;
+
+				if ($backtopage)
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+					header("Location: product.php?id=".$product->id);
+					exit;
+				}
 			}
 			else
 			{
@@ -368,7 +386,7 @@ if ($id > 0 || $ref)
 	{
 		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
+		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
 		dol_htmloutput_events();
@@ -523,7 +541,8 @@ if ($id > 0 || $ref)
         }
 
         // Number of supplier order running
-        if (! empty($conf->fournisseur->enabled)) {
+        if (! empty($conf->fournisseur->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_commande_fournisseur(0,'3,4');
             print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
@@ -533,7 +552,8 @@ if ($id > 0 || $ref)
         }
 
 	    // Number of product from supplier order already received (partial receipt)
-        if (! empty($conf->fournisseur->enabled)) {
+        if (! empty($conf->fournisseur->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$product->stats_reception['qty'];
         }
@@ -594,6 +614,7 @@ if ($id > 0 || $ref)
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<table class="border" width="100%">';
 
 		// Warehouse
@@ -681,6 +702,7 @@ if ($id > 0 || $ref)
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if ($pdluoid)
 		{
 		    print '<input type="hidden" name="pdluoid" value="'.$pdluoid.'">';

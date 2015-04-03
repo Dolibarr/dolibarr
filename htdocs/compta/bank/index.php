@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copytight (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,8 +111,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
@@ -174,7 +178,11 @@ foreach ($accounts as $key=>$type)
 		$total[$acc->currency_code] += $solde;
 	}
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+if (! $found)
+{
+	$var = !$var;
+	print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+}
 // Total
 foreach ($total as $key=>$solde)
 {
@@ -219,8 +227,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';

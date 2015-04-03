@@ -2,6 +2,7 @@
 RefSending=Saadetise viide
 Sending=Saadetis
 Sendings=Saadetised
+AllSendings=All Shipments
 Shipment=Saadetis
 Shipments=Saadetised
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Tellitud kogus
 QtyShipped=Saadetud kogus
 QtyToShip=Kogus saata
 QtyReceived=Saabunud kogus
-KeepToShip=Jätkuvalt saata
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Tellimusega seotud teised saadetised
 DateSending=Tellimuse saatmise kuupäev
 DateSendingShort=Tellimuse saatmise kuupäev

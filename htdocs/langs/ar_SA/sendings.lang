@@ -2,6 +2,7 @@
 RefSending=المرجع. إرسال
 Sending=إرسال
 Sendings=الإرسال
+AllSendings=All Shipments
 Shipment=إرسال
 Shipments=شحنات
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=الكمية أمرت
 QtyShipped=الكمية المشحونة
 QtyToShip=لشحن الكمية
 QtyReceived=الكمية الواردة
-KeepToShip=إبقاء لشحن
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=الإرسال الأخرى لهذا النظام
 DateSending=وحتى الآن من أجل إرسال
 DateSendingShort=وحتى الآن من أجل إرسال

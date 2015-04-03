@@ -23,9 +23,9 @@
 create table llx_commandedet
 (
   rowid							integer AUTO_INCREMENT PRIMARY KEY,
-  fk_commande					integer	NOT NULL,
-  fk_parent_line				integer	NULL,
-  fk_product					integer	NULL,
+  fk_commande					integer NOT NULL,
+  fk_parent_line				integer NULL,
+  fk_product					integer	 NULL,
   label							varchar(255) DEFAULT NULL,
   description					text,
   tva_tx						double(6,3),	                 -- vat rate
@@ -52,7 +52,7 @@ create table llx_commandedet
   buy_price_ht					double(24,8) DEFAULT 0,          -- buying price
   fk_product_fournisseur_price	integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
-  special_code					integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
+  special_code					integer      DEFAULT 0,      -- code pour les lignes speciales
   rang							integer      DEFAULT 0,
   fk_unit            integer      DEFAULT NULL,           -- lien vers table des unités
   import_key					varchar(14)

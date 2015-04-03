@@ -19,6 +19,7 @@ ServiceStatusLateShort=Süresi dolmuş
 ServiceStatusClosed=Kapalı
 ServicesLegend=Hizmetler göstergesi
 Contracts=Sözleşmeler
+ContractsAndLine=Sözleşmeler ve satırları
 Contract=Sözleşme
 NoContracts=Sözleşme yok
 MenuServices=Hizmetler

@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -44,6 +46,8 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("loan");
+$langs->load("donations");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
 $ref = GETPOST('ref','alpha');
@@ -73,6 +77,16 @@ if ($negpage)
 }
 
 $object = new Account($db);
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$paiementtype="";
+	$req_nb="";
+	$thirdparty="";
+	$req_desc="";
+    $req_debit="";
+	$req_credit="";
+}
 
 /*
  * Action
@@ -148,11 +162,13 @@ llxHeader();
 $societestatic=new Societe($db);
 $userstatic=new User($db);
 $chargestatic=new ChargeSociales($db);
+$loanstatic=new Loan($db);
 $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
+$donstatic=new Don($db);
 $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 
@@ -440,7 +456,10 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$req_debit.'" size="4"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
-	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
 	print "</tr>\n";
 
 
@@ -606,6 +625,18 @@ if ($id > 0 || ! empty($ref))
 						$paymentsalstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentsalstatic->getNomUrl(2);
 					}
+					elseif ($links[$key]['type']=='payment_loan')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
+					}
+					elseif ($links[$key]['type']=='payment_donation')
+					{
+						print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+						print '</a>';
+					}
 					elseif ($links[$key]['type']=='banktransfert')
 					{
 						// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
@@ -704,6 +735,21 @@ if ($id > 0 || ! empty($ref))
 						}
 						$chargestatic->ref=$chargestatic->lib;
 						print $chargestatic->getNomUrl(1,16);
+					}
+					else if ($links[$key]['type']=='loan')
+					{
+						$loanstatic->id=$links[$key]['url_id'];
+						if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+						{
+							if ($reg[1]=='loan') $reg[1]='Loan';
+							$loanstatic->label=$langs->trans($reg[1]);
+						}
+						else
+						{
+							$loanstatic->label=$links[$key]['label'];
+						}
+						$loanstatic->ref=$loanstatic->label;
+						print $loanstatic->getLinkUrl(1,16);
 					}
 					else if ($links[$key]['type']=='member')
 					{

@@ -2,6 +2,7 @@
 RefSending=Ref. afsendelse
 Sending=Sender
 Sendings=Sendings
+AllSendings=All Shipments
 Shipment=Sender
 Shipments=Forsendelser
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Qty bestilt
 QtyShipped=Qty afsendt
 QtyToShip=Qty til skibet
 QtyReceived=Antal modtagne
-KeepToShip=Hold til skib
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Andre sendings for denne ordre
 DateSending=Dato for afsendelse orden
 DateSendingShort=Dato for afsendelse orden

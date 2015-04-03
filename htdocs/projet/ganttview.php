@@ -38,12 +38,8 @@ $mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
-if ($id > 0 || ! empty($ref))
-{
-    $object->fetch($id,$ref);
-    $object->fetch_thirdparty();
-    $id=$object->id;
-}
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Security check
 $socid=0;
@@ -81,8 +77,10 @@ if (! empty($conf->use_javascript_ajax))
 	);
 }
 
+$title=$langs->trans("Project").' - '.$langs->trans("Gantt").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Gantt");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Tasks"),$help_url,'',0,0,$arrayofjs,$arrayofcss);
+llxHeader("",$title,$help_url,'',0,0,$arrayofjs,$arrayofcss);
 
 if ($id > 0 || ! empty($ref))
 {

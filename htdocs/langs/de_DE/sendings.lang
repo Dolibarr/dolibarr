@@ -2,6 +2,7 @@
 RefSending=Versand Nr.
 Sending=Sendung
 Sendings=Sendungen
+AllSendings=All Shipments
 Shipment=Sendung
 Shipments=Lieferungen
 ShowSending=Zeige Sendung
@@ -23,7 +24,7 @@ QtyOrdered=Bestellmenge
 QtyShipped=Liefermenge
 QtyToShip=Versandmenge
 QtyReceived=Erhaltene Menge
-KeepToShip=Für Versand behalten
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Weitere Sendungen zu dieser Bestellung
 DateSending=Datum des Versands
 DateSendingShort=Versanddatum

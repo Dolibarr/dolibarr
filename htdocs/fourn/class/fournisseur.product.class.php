@@ -27,7 +27,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 
 /**
@@ -159,7 +159,7 @@ class ProductFournisseur extends Product
      */
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0)
     {
-        global $conf;
+        global $conf, $langs;
 
         // Clean parameter
         if (empty($qty)) $qty=0;
@@ -485,13 +485,19 @@ class ProductFournisseur extends Product
     /**
      *  Load properties for minimum price
      *
-     *  @param  int     $prodid     Product id
-     *  @param  int     $qty        Minimum quantity
-     *  @return int                 <0 if KO, >0 if OK
+     *  @param	int		$prodid	    Product id
+     *  @param	int		$qty		Minimum quantity
+     *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
     function find_min_price_product_fournisseur($prodid, $qty=0)
     {
         global $conf;
+
+        if (empty($prodid))
+        {
+        	dol_syslog("Warning function find_min_price_product_fournisseur were called with prodid empty. May be a bug.", LOG_WARNING);
+        	return 0;
+        }
 
         $this->product_fourn_price_id = '';
         $this->product_fourn_id       = '';
@@ -582,7 +588,7 @@ class ProductFournisseur extends Product
             return 1;
         }
         else
-        {
+		{
             $this->error=$this->db->error();
             return -1;
         }

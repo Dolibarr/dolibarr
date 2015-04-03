@@ -1,18 +1,10 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Recursos
-MenuResourceAdd=Novo recurso
 MenuResourcePlanning=Planejamento de recurso
 DeleteResource=Remover recurso
 ConfirmDeleteResourceElement=Confirmar remoção do recurso para este elemento
-NoResourceInDatabase=Nenhum recurso na base de dados
 NoResourceLinked=Nenhum recurso vinculado
-ResourcePageIndex=Lista de recursos
-ResourceSingular=Recurso
 ResourceCard=Cartao recursos
 AddResource=Criar recurso
-ResourceFormLabel_ref=Nome do recurso
-ResourceType=Tipo de recurso
-ResourceFormLabel_description=Descrição do recurso
 ResourcesLinkedToElement=Recursos vinculados ao elemento
 ShowResourcePlanning=Mostrar planejamento do recurso
 GotoDate=Ir para data
@@ -23,5 +15,4 @@ TitleResourceCard=Cartao recurso
 ConfirmDeleteResource=Confirme para remover este recurso
 RessourceSuccessfullyDeleted=Recurso removido com sucesso
 DictionaryResourceType=Tipo de recurso
-DictionaryEMailTemplates=Modelos de Emails
 SelectResource=Selecionar recurso

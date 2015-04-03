@@ -22,6 +22,10 @@
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=vcal&exportkey=cle
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=ical&type=event&exportkey=cle
  * 				http://127.0.0.1/dolibarr/public/agenda/agendaexport.php?format=rss&exportkey=cle
+ *              Other parameters into url are:
+ *              &notolderthan=99
+ *              &year=2015
+ *              &id=..., &idfrom=..., &idto=...
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -55,23 +59,26 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 // Security check
 if (empty($conf->agenda->enabled)) accessforbidden('',1,1,1);
 
+// Not older than
+if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;	// default limit
+
 // Define format, type and filter
 $format='ical';
 $type='event';
 if (! empty($_GET["format"])) $format=$_GET["format"];
 if (! empty($_GET["type"]))   $type=$_GET["type"];
+
 $filters=array();
-if (! empty($_GET["year"])) 	$filters['year']=$_GET["year"];
-if (! empty($_GET["id"]))       $filters['id']=$_GET["id"];
-if (! empty($_GET["idfrom"]))   $filters['idfrom']=$_GET["idfrom"];
-if (! empty($_GET["idto"]))     $filters['idto']=$_GET["idto"];
-if (! empty($_GET["project"]))  $filters['project']=$_GET["project"];
-if (! empty($_GET["login"]))    $filters['login']=$_GET["login"];
-if (! empty($_GET["logina"]))   $filters['logina']=$_GET["logina"];
-if (! empty($_GET["logint"]))   $filters['logint']=$_GET["logint"];
-// Not older than
-if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;
-$filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
+if (! empty($_GET["year"])) 	     $filters['year']=$_GET["year"];
+if (! empty($_GET["id"]))           $filters['id']=$_GET["id"];
+if (! empty($_GET["idfrom"]))       $filters['idfrom']=$_GET["idfrom"];
+if (! empty($_GET["idto"]))         $filters['idto']=$_GET["idto"];
+if (! empty($_GET["project"]))      $filters['project']=$_GET["project"];
+if (! empty($_GET["login"]))        $filters['login']=$_GET["login"];
+if (! empty($_GET["logina"]))       $filters['logina']=$_GET["logina"];
+if (! empty($_GET["logint"]))       $filters['logint']=$_GET["logint"];
+if (GETPOST("notolderthan")) $filters['notolderthan']=GETPOST("notolderthan","int");
+else $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))

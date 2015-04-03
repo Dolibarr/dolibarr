@@ -371,6 +371,21 @@ function dol_print_object_info($object)
     }
 }
 
+
+/**
+ *	Return an email formatted to include a tracking id
+ *  For example  myemail@mydomain.com becom myemail+trackingid@mydomain.com
+ *
+ *	@param	string	$email       	Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
+ *	@return boolean     			True if domain email is OK, False if KO
+ */
+function dolAddEmailTrackId($email, $trackingid)
+{
+	$tmp=explode('@',$email);
+	return $tmp[0].'+'.$trackingid.'@'.(isset($tmp[1])?$tmp[1]:'');
+}
+
 /**
  *	Return true if email has a domain name that can't be resolved
  *
@@ -1534,6 +1549,9 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 	if ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
+	if ($objecttype == 'askpricesupplier')  {
+		$classpath = 'comm/askpricesupplier/class';
+	}
 	if ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
@@ -1765,6 +1783,9 @@ function getElementProperties($element_type)
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
     }
+    if ($element_type == 'askpricesupplier')  {
+        $classpath = 'comm/askpricesupplier/class';
+    }
     if ($element_type == 'shipping') {
         $classpath = 'expedition/class';
         $subelement = 'expedition';
@@ -1864,7 +1885,7 @@ function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
-	$tmp=preg_match('/^([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
+	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/',$stringcolor,$reg);
 	if (! $tmp)
 	{
 		$tmp=explode(',',$stringcolor);

@@ -44,6 +44,8 @@ if ($page < 0) $page = 0;
 if (! $sortfield) $sortfield="c";
 if (! $sortorder) $sortorder="DESC";
 
+$conf->liste_limit = 3;
+
 if ($page == -1) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -57,36 +59,28 @@ $staticproduct=new Product($db);
  */
 
 $helpurl='';
-if ($type == 0)
+if ($type == '0')
 {
     $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    //$title=$langs->trans("StatisticsOfProducts");
+    $title=$langs->trans("Statistics");
 }
-else if ($type == 1)
+else if ($type == '1')
 {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    $title=$langs->trans("StatisticsOfServices");
+    $title=$langs->trans("Statistics");
 }
 
 llxHeader('','',$helpurl);
 
-//On n'affiche le lien page suivante que s'il y a une page suivante ...
-$sql = "SELECT count(*) as c";
-$sql.= " FROM ".MAIN_DB_PREFIX."product";
-$sql.= ' WHERE entity IN ('.getEntity('product', 1).')';
-if ($type !== '') {
-	$sql.= " AND fk_product_type = ".$type;
-}
+print_fiche_titre($title, $mesg);
 
-$result=$db->query($sql);
-if ($result)
-{
-    $obj = $db->fetch_object($result);
-    $num = $obj->c;
-}
 
 $param = '';
 $title = $langs->trans("ListProductServiceByPopularity");
-if ($type !== '') {
-	$param = '&amp;type='.$type;
+if ($type != '') {
+	$param = '&type='.$type;
 
 	if ($type == 1) {
 		$title = $langs->trans("ListServiceByPopularity");
@@ -95,17 +89,17 @@ if ($type !== '') {
 	}
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,"","","",$num);
+$h=0;
+$head = array();
+$head[$h][0] = $_SERVER['PHP_SELF'];
+$head[$h][1] = $title;
+$head[$h][2] = 'product';
+$h++;
+
+dol_fiche_head($head,'product',$langs->trans("Statistics"));
 
 
-print '<table class="noborder" width="100%">';
 
-print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.type', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('NbOfProposals'), $_SERVER["PHP_SELF"], 'c', '', '', 'align="right"', $sortfield, $sortorder);
-print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";
 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd";
@@ -116,14 +110,33 @@ if ($type !== '') {
 	$sql.= " AND fk_product_type = ".$type;
 }
 $sql.= " GROUP BY (p.rowid)";
+
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
+
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $result=$db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num, $totalnboflines, '');
+
+	print '<table class="noborder" width="100%">';
+
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.type', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans('NbOfProposals'), $_SERVER["PHP_SELF"], 'c', '', '', 'align="right"', $sortfield, $sortorder);
+	print "</tr>\n";
+
 
 	$var=True;
 	while ($i < $num)
@@ -155,8 +168,8 @@ if ($result)
 		print " ";
 		print $objp->ref.'</a></td>';
 		print '<td>';
-		if ($objp->type==1) print $langs->trans("ShowService");
-		else print $langs->trans("ShowProduct");
+		if ($objp->type==1) print $langs->trans("Service");
+		else print $langs->trans("Product");
 		print '</td>';
 		print '<td>'.$objp->label.'</td>';
 		print '<td align="right">'.$objp->c.'</td>';
@@ -165,9 +178,12 @@ if ($result)
 	}
 
 	$db->free();
+
+	print "</table>";
 }
 
-print "</table>";
+
+dol_fiche_end();
 
 
 llxFooter();

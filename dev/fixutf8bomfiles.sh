@@ -12,6 +12,7 @@
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
+    echo "Detect and fix bad UTF8 encoded files (UTF8 must not use BOM char)"
 	echo "Usage: fixutf8bomfiles.sh (list|fix) [addincludes]"
 fi
 

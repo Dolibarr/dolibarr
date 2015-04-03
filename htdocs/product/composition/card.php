@@ -50,13 +50,13 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-$product = new Product($db);
-$productid=0;
+$object = new Product($db);
+$objectid=0;
 if ($id > 0 || ! empty($ref))
 {
-	$result = $product->fetch($id,$ref);
-	$productid=$product->id;
-	$id=$product->id;
+	$result = $object->fetch($id,$ref);
+	$objectid=$object->id;
+	$id=$object->id;
 }
 
 
@@ -74,7 +74,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	{
 		if ($_POST["prod_qty_".$i] > 0)
 		{
-			if ($product->add_sousproduit($id, $_POST["prod_id_".$i], $_POST["prod_qty_".$i], $_POST["prod_incdec_".$i]) > 0)
+			if ($object->add_sousproduit($id, $_POST["prod_id_".$i], $_POST["prod_qty_".$i], $_POST["prod_incdec_".$i]) > 0)
 			{
 				//var_dump($id.' - '.$_POST["prod_id_".$i].' - '.$_POST["prod_qty_".$i]);exit;
 				$action = 'edit';
@@ -83,16 +83,16 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 			{
 				$error++;
 				$action = 're-edit';
-				if ($product->error == "isFatherOfThis") {
+				if ($object->error == "isFatherOfThis") {
 					setEventMessage($langs->trans("ErrorAssociationIsFatherOfThis"), 'errors');
 				} else {
-					setEventMessage($product->error, 'errors');
+					setEventMessage($object->error, 'errors');
 				}
 			}
 		}
 		else
 		{
-			if ($product->del_sousproduit($id, $_POST["prod_id_".$i]) > 0)
+			if ($object->del_sousproduit($id, $_POST["prod_id_".$i]) > 0)
 			{
 				$action = 'edit';
 			}
@@ -100,13 +100,13 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 			{
 				$error++;
 				$action = 're-edit';
-				setEventMessage($product->error, 'errors');
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
 	if (! $error)
 	{
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$product->id);
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
 }
@@ -117,7 +117,8 @@ else if($action==='save_composed_product')
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
-			$product->update_sousproduit($id, $id_product,$row['qty'], isset($row['incdec']) ? 1 : 0 );
+			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0 );
+			else $object->del_sousproduit($id, $id_product);
 		}
 	}
 	$action='';
@@ -171,11 +172,11 @@ if ($action == 'search')
 //print $sql;
 
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader("","",$langs->trans("CardProduct".$object->type));
 
-$head=product_prepare_head($product, $user);
-$titre=$langs->trans("CardProduct".$product->type);
-$picto=($product->type==1?'service':'product');
+$head=product_prepare_head($object, $user);
+$titre=$langs->trans("CardProduct".$object->type);
+$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
 
 
@@ -191,19 +192,27 @@ if ($id > 0 || ! empty($ref))
 		print "<tr>";
 
 		$nblignes=6;
-		if ($product->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
-		if ($product->isservice()) $nblignes++;
+		if ($object->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
+		if ($object->isservice()) $nblignes++;
 
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-			print $form->showrefnav($product,'ref','',1,'ref');
+			print $form->showrefnav($object,'ref','',1,'ref');
 			print '</td>';
 
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
 		print '</tr>';
+
+		// Nature
+		if($object->type!=Product::TYPE_SERVICE)
+		{
+			print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="2">';
+			print $object->getLibFinished();
+			print '</td></tr>';
+		}
 
 		if (empty($conf->global->PRODUIT_MULTIPRICES))
 		{
@@ -232,28 +241,57 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 		}
 
+		print '</table>';
+
+		dol_fiche_end();
+
+
+		$prodsfather = $object->getFather(); 		// Parent Products
+		$object->get_sousproduits_arbo();			// Load $object->sousprod
+		$prods_arbo=$object->get_arbo_each_prod();
+		$nbofsubsubproducts=count($prods_arbo);		// This include sub sub product into nb
+		$prodschild = $object->getChildsArbo($id,1);
+		$nbofsubproducts=count($prodschild);		// This include only first level of childs
+
+
+		// Number of parent virtual products
+		print $form->textwithpicto($langs->trans("ParentProductsNumber").': '.count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
+
+		if (count($prodsfather) > 0)
+		{
+			print $langs->trans("ProductParentList").'<br>';
+			print '<table class="nobordernopadding">';
+			foreach($prodsfather as $value)
+			{
+				$idprod= $value["id"];
+				$productstatic->id=$idprod;// $value["id"];
+				$productstatic->type=$value["fk_product_type"];
+				$productstatic->ref=$value['label'];
+				print '<tr>';
+				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
+				print '</tr>';
+			}
+			print '</table>';
+		}
+
+
+		print '<br>'."\n";
+
+
 		// Number of subproducts
-		$prodsfather = $product->getFather(); //Parent Products
-		$product->get_sousproduits_arbo();			// Defined $product->sousprod
-		$prods_arbo=$product->get_arbo_each_prod();
-		$nbofsubproducts=count($prods_arbo);
-		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>';
-		print $form->textwithpicto($nbofsubproducts, $langs->trans('IfZeroItIsNotAVirtualProduct'));
-		print '</td>';
-		print '</tr>';
+		print $form->textwithpicto($langs->trans("AssociatedProductsNumber").': '.(empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)?$nbofsubproducts:$nbofsubsubproducts), $langs->trans('IfZeroItIsNotAVirtualProduct'));
 
 		// List of subproducts
 		if (count($prods_arbo) > 0)
 		{
 			$atleastonenotdefined=0;
-			print '<tr><td colspan="2">';
 			print $langs->trans("ProductAssociationList").'<br>';
 
 			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="action" value="save_composed_product" />';
 			print '<input type="hidden" name="id" value="'.$id.'" />';
 
-			print '<table class="centpercent nobordernopadding">';
+			print '<table class="centpercent noborder">';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ComposedProduct').'</td>';
@@ -262,7 +300,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans('Stock').'</td>';
 			print '<td align="center">'.$langs->trans('Qty').'</td>';
 			print '<td align="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
-			print '</tr>';
+			print '</tr>'."\n";
 
 			foreach($prods_arbo as $value)
 			{
@@ -270,11 +308,11 @@ if ($id > 0 || ! empty($ref))
 				$productstatic->type=$value['type'];
 				$productstatic->label=$value['label'];
 
-				$class=($class=='impair')?'pair':'impair';
-
-				print '<tr class="'.$class.'">';
 				if ($value['level'] <= 1)
 				{
+					$class=($class=='impair')?'pair':'impair';
+					print '<tr class="'.$class.'">';
+
 					$notdefined=0;
 					$productstatic->ref=$value['ref'];
 					$nb_of_subproduct = $value['nb'];
@@ -312,9 +350,17 @@ if ($id > 0 || ! empty($ref))
 						print '<td>'.$nb_of_subproduct.'</td>';
 						print '<td>'.($value['incdec']==1?'x':''  ).'</td>';
 					}
+
+					print '</tr>'."\n";
 				}
-				else
+				else 	// By default, we do not show this. It makes screen very difficult to understand
 				{
+					$hide='';
+					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide=' hideobject';
+
+					$class=($class=='impair')?'pair':'impair';
+					print '<tr class="'.$class.$hide.'" id="sub-'.$value['id_parent'].'">';
+
 					//$productstatic->ref=$value['label'];
 					$productstatic->ref=$value['ref'];
 					print '<td>';
@@ -328,8 +374,9 @@ if ($id > 0 || ! empty($ref))
 					if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
 					print '<td align="center">'.$value['nb'].'</td>';
 					print '<td>&nbsp;</td>';
+
+					print '</tr>'."\n";
 				}
-				print '</tr>';
 			}
 			print '<tr class="liste_total">';
 			print '<td class="liste_total"></td>';
@@ -348,19 +395,13 @@ if ($id > 0 || ! empty($ref))
 			// Stock
 			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 
-			print '<td align="center">';
+			print '<td align="right" colspan="2">';
 			if ($user->rights->produit->creer || $user->rights->service->creer)
 			{
 				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
 			}
 			print '</td>';
-			print '<td align="center">';
-			if ($user->rights->produit->creer || $user->rights->service->creer)
-			{
-				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
-			}
-			print '</td>';
-			print '</tr>';
+			print '</tr>'."\n";
 			print '</table>';
 
 			/*if($user->rights->produit->creer || $user->rights->service->creer) {
@@ -368,38 +409,7 @@ if ($id > 0 || ! empty($ref))
 			}*/
 
 			print '</form>';
-
-			print '</td></tr>';
 		}
-
-		// Number of parent virtual products
-		print '<tr class="pair"><td>'.$langs->trans("ParentProductsNumber").'</td><td>';
-		print $form->textwithpicto(count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
-		print '</td></tr>';
-
-		if (count($prodsfather) > 0)
-		{
-			print '<tr><td colspan="2">';
-			print $langs->trans("ProductParentList").'<br>';
-			print '<table class="nobordernopadding">';
-			foreach($prodsfather as $value)
-			{
-				$idprod= $value["id"];
-				$productstatic->id=$idprod;// $value["id"];
-				$productstatic->type=$value["fk_product_type"];
-				$productstatic->ref=$value['label'];
-				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
-				print '</tr>';
-			}
-			print '</table>';
-			print '</td></tr>';
-		}
-
-		print '</table>';
-
-		dol_fiche_end();
-
 
 		// Form with product to add
 		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -464,7 +474,7 @@ if ($id > 0 || ! empty($ref))
 						// check if a product is not already a parent product of this one
 						$prod_arbo=new Product($db);
 						$prod_arbo->id=$objp->rowid;
-						if ($prod_arbo->type==2 || $prod_arbo->type==3)
+						if ($prod_arbo->type==Product::TYPE_ASSEMBLYKIT || $prod_arbo->type== Product::TYPE_STOCKKIT)
 						{
 							$is_pere=0;
 							$prod_arbo->get_sousproduits_arbo();
@@ -500,11 +510,11 @@ if ($id > 0 || ! empty($ref))
 						print '<td>'.$labeltoshow.'</td>';
 
 
-						if($product->is_sousproduit($id, $objp->rowid))
+						if($object->is_sousproduit($id, $objp->rowid))
 						{
 							//$addchecked = ' checked="checked"';
-							$qty=$product->is_sousproduit_qty;
-							$incdec=$product->is_sousproduit_incdec;
+							$qty=$object->is_sousproduit_qty;
+							$incdec=$object->is_sousproduit_incdec;
 						}
 						else
 						{

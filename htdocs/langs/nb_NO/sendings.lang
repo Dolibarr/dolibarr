@@ -2,6 +2,7 @@
 RefSending=Ref. levering
 Sending=Levering
 Sendings=Leveringer
+AllSendings=All Shipments
 Shipment=Levering
 Shipments=Skipninger
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Ant. bestilt
 QtyShipped=Ant. levert
 QtyToShip=Ant. å levere
 QtyReceived=Ant. mottatt
-KeepToShip=Keep to ship
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Andre leveringer på denne ordren
 DateSending=Leveringsdato
 DateSendingShort=Leveringsdato

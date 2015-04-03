@@ -157,7 +157,7 @@ class FormOther
      *
      *    @param	string	$selected   Preselected ecotaxes
      *    @param    string	$htmlname	Name of combo list
-     *    @return	void
+     *    @return	integer
      */
     function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
     {
@@ -268,7 +268,7 @@ class FormOther
     /**
      *    Return a HTML select list to select a percent
      *
-     *    @param	string	$selected      	pourcentage pre-selectionne
+     *    @param	integer	$selected      	pourcentage pre-selectionne
      *    @param    string	$htmlname      	nom de la liste deroulante
      *    @param	int		$disabled		Disabled or not
      *    @param    int		$increment     	increment value
@@ -303,7 +303,7 @@ class FormOther
      * Return select list for categories (to use in form search selectors)
      *
      * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     * @param  string	$selected     	Preselected value
+     * @param  integer	$selected     	Preselected value
      * @param  string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @return string		        	Html combo list code
@@ -330,7 +330,7 @@ class FormOther
         }
 
         // Print a select with each of them
-        $moreforfilter.='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        $moreforfilter.='<select class="flat minwidth100" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -782,7 +782,7 @@ class FormOther
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        $montharray = monthArray($langs);	// Get array
+        $montharray = monthArray($langs, 1);	// Get array
 
         $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
@@ -834,7 +834,7 @@ class FormOther
      *  @param	int		$offset			Offset
      *  @param	int		$invert			Invert
      *  @param	string	$option			Option
-     *  @return	void
+     *  @return	string
      */
     function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {

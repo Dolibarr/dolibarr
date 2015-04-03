@@ -2,6 +2,7 @@
 RefSending=Ref. αποστολή
 Sending=Αποστολή
 Sendings=Αποστολές
+AllSendings=All Shipments
 Shipment=Αποστολή
 Shipments=Αποστολές
 ShowSending=Προβολή αποστολής
@@ -23,7 +24,7 @@ QtyOrdered=Ποσότητα παραγγελιών
 QtyShipped=Ποσότητα που αποστέλλεται
 QtyToShip=Ποσότητα προς αποστολή
 QtyReceived=Ποσότητα παραλαβής
-KeepToShip=Κρατήστε την αποστολή
+KeepToShip=Αναμένει για αποστολή
 OtherSendingsForSameOrder=Άλλες αποστολές για αυτό το σκοπό
 DateSending=Ημερομηνία αποστολή της παραγγελίας
 DateSendingShort=Ημερομηνία αποστολή της παραγγελίας
@@ -64,10 +65,10 @@ ShipmentLine=Σειρά αποστολής
 CarrierList=Κατάλογος των μεταφορέων
 SendingRunning=Προϊόν από εντολή παραγγελιών σε πελάτες
 SuppliersReceiptRunning=Προϊόν από εντολή παραγγελιών σε προμηθευτές
-ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+ProductQtyInCustomersOrdersRunning=Ποσότητα προϊόντων σε ανοιχτές παραγγελίες πελατών
+ProductQtyInSuppliersOrdersRunning=Ποσότητα προϊόντων σε ανοιχτές παραγγελίες προμηθευτών
+ProductQtyInShipmentAlreadySent=Ποσότητα προϊόντων από ανοιγμένες παραγγελίες του πελάτη που έχουν ήδη αποσταλεί
+ProductQtyInSuppliersShipmentAlreadyRecevied=Ποσότητα προϊόντων από ανοιγμένες παραγγελίες του προμηθευτή που έχουν ήδη ληφθεί
 
 # Sending methods
 SendingMethodCATCH=Πιάσε τον πελάτη

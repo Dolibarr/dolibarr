@@ -2,6 +2,7 @@
 RefSending=Реф. пратка
 Sending=Пратка
 Sendings=Превозите
+AllSendings=All Shipments
 Shipment=Пратка
 Shipments=Превозите
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Количество нареди
 QtyShipped=Количество изпратени
 QtyToShip=Количество за кораба
 QtyReceived=Количество получи
-KeepToShip=Придържайте се към кораб
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Други пратки за изпълнение на поръчката
 DateSending=Дата на изпращане ред
 DateSendingShort=Дата на изпращане ред

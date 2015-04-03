@@ -80,6 +80,13 @@ if ($action == 'add')
         	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
         	$action = 'create';
         }
+        if (GETPOST('type')=='link' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForLinkType");
+        	$action = 'create';
+        }
         if (GETPOST('type')=='radio' && !GETPOST('param'))
         {
         	$error++;

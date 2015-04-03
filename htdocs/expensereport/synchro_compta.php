@@ -16,8 +16,8 @@
  */
 
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-dol_include_once("/expensereport/class/expensereport.class.php");
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -49,12 +49,12 @@ if ($_GET["action"] == 'confirm_ndf_to_account' && $_GET["confirm"] == "yes"):
 	$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 
 	if ($insertid > 0):
-		$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport d";
+		$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport as d";
 		$sql.= " SET integration_compta = 1, fk_bank_account = $idAccount";
 		$sql.= " WHERE rowid = $idTrip";
 		$resql=$db->query($sql);
 		if($result):
-			Header("Location: synchro_compta.php?account=".$idAccount);
+			Header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
 			exit;
 		else:
 			dol_print_error($db);
@@ -75,12 +75,12 @@ if ($_GET["action"] == 'confirm_account_to_ndf' && $_GET["confirm"] == "yes"):
 	$sql.= " WHERE label LIKE '%".$expensereport->ref."%'";
 	$resql=$db->query($sql);
 	if ($resql > 0):
-		$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport d";
+		$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport as d";
 		$sql.= " SET integration_compta = 0, fk_bank_account = 0";
 		$sql.= " WHERE rowid = $idTrip";
 		$resql=$db->query($sql);
 		if($result):
-			Header("Location: synchro_compta.php?account=".$idAccount);
+			Header("Location: ".$_SERVER["PHP_SELF"]."?account=".$idAccount);
 			exit;
 		else:
 			dol_print_error($db);
@@ -110,13 +110,13 @@ dol_fiche_head('');
 
 if ($_GET["action"] == 'ndfTOaccount'):
 	$idTrip = $_GET['idTrip'];
-	$ret=$html->form_confirm("synchro_compta.php?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("ndfToAccount"),$langs->trans("ConfirmNdfToAccount"),"confirm_ndf_to_account","","",1);
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("ndfToAccount"),$langs->trans("ConfirmNdfToAccount"),"confirm_ndf_to_account","","",1);
 	if ($ret == 'html') print '<br />';
 endif;
 
 if ($_GET["action"] == 'accountTOndf'):
 	$idTrip = $_GET['idTrip'];
-	$ret=$html->form_confirm("synchro_compta.php?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("AccountToNdf"),$langs->trans("ConfirmAccountToNdf"),"confirm_account_to_ndf","","",1);
+	$ret=$html->form_confirm($_SERVER["PHP_SELF"]."?idTrip=".$idTrip."&account=".$idAccount,$langs->trans("AccountToNdf"),$langs->trans("ConfirmAccountToNdf"),"confirm_account_to_ndf","","",1);
 	if ($ret == 'html') print '<br />';
 endif;
 
@@ -136,11 +136,11 @@ else:
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("ViewAccountSynch").'">';
 	print "</form>";
 
-	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valid, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_c_expensereport_statuts";
+	$sql = "SELECT d.fk_bank_account, d.ref, d.rowid, d.date_valid, d.fk_user_author, d.total_ttc, d.integration_compta, d.fk_statut";
 	$sql.= " ,CONCAT(u.firstname,' ',u.lastname) as declarant_NDF";
-	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport d";
-	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u ON d.fk_user_author = u.rowid";
-	$sql.= " WHERE d.fk_c_expensereport_statuts = 6";
+	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
+	$sql.= " WHERE d.fk_statut = 6";
 	$sql.= " ORDER BY d.date_valid DESC";
 
 	$resql=$db->query($sql);
@@ -200,7 +200,7 @@ else:
 			print "</table>";
 
 		else:
-			print '<div class="error">'.$langs->trans("AucuneTripToSynch").'</div>';
+			print '<div class="error">'.$langs->trans("NoTripToSync").'</div>';
 		endif;
 
 		$db->free($resql);

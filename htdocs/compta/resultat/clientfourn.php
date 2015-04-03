@@ -651,7 +651,7 @@ if ($conf->donation->enabled)
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
+				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 				if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
 				print '<td align="right">'.price($obj->amount).'</td>';

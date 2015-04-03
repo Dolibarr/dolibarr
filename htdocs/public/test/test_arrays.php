@@ -1,5 +1,5 @@
 <?php
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
+//define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 
@@ -12,7 +12,7 @@ if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1')
 }
 
 
-$usedolheader=0;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
+$usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
 
 // HEADER
@@ -21,39 +21,41 @@ $usedolheader=0;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 if (empty($usedolheader))
 {
 	header("Content-type: text/html; charset=UTF8");
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta name="robots" content="noindex,nofollow" />
-<meta name="author" content="Dolibarr Development Team">
-<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
-<title>Test page</title>
-<!-- Includes for JQuery (Ajax library) -->
-<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui-latest.custom.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/css/jquery.dataTables.css" />
-<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
-<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
-<?php } ?>
-<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
-<!-- Includes JS for JQuery -->
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/js/jquery.dataTables.js"></script>
-<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
-<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>--
-<?php } ?>
-</head>
+	?>
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+	<html>
+	<head>
+	<meta name="robots" content="noindex,nofollow" />
+	<meta name="author" content="Dolibarr Development Team">
+	<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
+	<title>Test page</title>
+	<!-- Includes for JQuery (Ajax library) -->
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui-latest.custom.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/css/jquery.dataTables.css" />
+	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
+	<?php } ?>
+	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
+	<!-- Includes JS for JQuery -->
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/js/jquery.dataTables.js"></script>
+	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
+	<?php } ?>
+	</head>
 
-<body style="padding: 10px;">
+	<body style="padding: 10px;">
 
-<div data-role="page">
+	<div data-role="page">
 
-<?php
+	<?php
 }
 else
 {
-	llxHeader();
+	$arraycss=array('/includes/jquery/plugins/datatables/css/jquery.dataTables.css');
+	$arrayjs=array('/includes/jquery/plugins/datatables/js/jquery.dataTables.js');
+	llxHeader('','','','',0,0,$arrayjs,$arraycss);
 }
 
 
@@ -64,7 +66,7 @@ else
 <h1>
 This page is a sample of page using tables. It is designed to make test with<br>
 - css (edit page to change to test another css)<br>
-- jmobile (add parameter dol_use_jmobile=1 to enable view with jmobile)<br>
+- jmobile (add parameter dol_use_jmobile=1&dol_optimize_smallscreen=1 to enable view with jmobile)<br>
 - dataTables<br>
 - tablednd<br>
 </h1>
@@ -111,47 +113,27 @@ This page is a sample of page using tables. It is designed to make test with<br>
 
 
 
-<br><hr><br>Example 1 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd => Use this for tables that are edited forms<br><br>
 
+
+<br><hr><br>Example 1 : Standard table => Use this if you need the drag and drop for lines<br>
 
 <?php
-	$tasksarray=array(1,2,3);	// To force having several lines
-	$tagidfortablednd='tablelines';
-	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+$sortfield='aaa';
+$sortorder='ASC';
+$tasksarray=array(1,2,3);	// To force having several lines
+$tagidfortablednd='tablelines3';
+if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
-<div class="tagtable centpercent" id="tablelines">
-    <div class="tagtr liste_titre">
-        <div class="tagtd">line3<input type="hidden" name="cartitem" value="3"></div>
-        <div class="tagtd">dfsdf</div>
-        <div class="tagtd">ffdsfsd</div>
-        <div class="tagtd tdlineupdown">aaaa</div>
-    </div>
-    <div class="impair tagtr">
-        <div class="tagtd">line4<input type="hidden" name="cartitem" value="3"></div>
-        <div class="tagtd">dfsdf</div>
-        <div class="tagtd"><input name="count" value="4"></div>
-        <div class="tagtd tdlineupdown">bbbb</div>
-    </div>
-    <div class="pair tagtr">
-        <div class="tagtd">line5<input type="hidden" name="cartitemb" value="3"></div>
-        <div class="tagtd">dfsdf</div>
-        <div class="tagtd"><input name="countb" value="4"></div>
-        <div class="tagtd tdlineupdown">bbbb</div>
-    </div>
-<!-- Using form into div make Firefox crazy (page loading does not end) -->
-<!--	<form class="liste_titre" method="POST" action="1.php">
-        <div>line1<input type="hidden" name="cartitem" value="1"></div>
-        <div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
-        <div><input name="count" value="4"></div>
-        <div><input type="submit" name="count2" class="button noshadow" value="aaa"></div>
-    </form>
-    <form class="impair" method="POST" action="2.php">
-        <div>line2<input type="hidden" name="cartitem" value="2"></div>
-        <div><select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select></div>
-        <div><input name="countb" value="4"></div>
-        <div class="tdlineupdown"><input type="submit" value="xxx" class="button"></div>
-    </form>-->
-</div>
+<table class="liste noborder tagtable centpercent" id="tablelines3">
+<tr class="liste_titre">
+<?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title3'),0,$_SERVER["PHP_SELF"],'ccc','','','align="center"',$sortfield,$sortorder); ?>
+</tr>
+<tr class="pair"><td class="pair">a1</td><td class="pair" align="right">b1</td><td class="tdlineupdown pair" align="left">c1</td></tr>
+<tr class="impair"><td class="impair">a2</td><td class="impair" align="right">b2</td><td class="tdlineupdown impair" align="left">c2</td></tr>
+</table>
+<br>
 
 
 
@@ -238,7 +220,7 @@ $('xxxth').replaceWith(
 
 <table id="idtableexample2" class="centpercent">
 	<thead>
-    <tr>
+    <tr class="liste_titre">
         <th>snake</th>
         <th><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></th>
 		<?php print getTitleFieldOfList($langs->trans('zzz'),1,$_SERVER["PHP_SELF"],'','','','align="center" class="tagtd"',$sortfield,$sortorder); ?>
@@ -248,81 +230,111 @@ $('xxxth').replaceWith(
     <tr>
         <td>line1</td>
         <td>dfsdf</td>
-		<td> xxx </td>
+		<td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line2</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line3</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line4</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line5</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line6</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line7</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line8</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line9</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line10</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line11</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     <tr>
         <td>line12</td>
         <td>dfsdf</td>
-        <td> xxx </td>
+        <td align="center"> xxx </td>
     </tr>
     </tbody>
 </table>
 <br>
 
 
-<br><hr><br>Example 3 : Standard table => Use this if you need the drag and drop for lines<br>
+<br><hr><br>Example 3 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd => Use this, but AVOID IT if possible, for tables that need to have a different form for each line (drag and drop of lines does not work for this case, also height of title can't be forced to a minimum)<br><br>
+
 
 <?php
 	$tasksarray=array(1,2,3);	// To force having several lines
-	$tagidfortablednd='tablelines3';
+	$tagidfortablednd='tablelines';
 	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
-<table class="tagtable centpercent centpercent" id="tablelines3">
-<tr class="liste_titre"><td>title1</td><td>title2</td></tr>
-<tr class="pair"><td class="pair">a1</td><td class="tdlineupdown pair">b1</td></tr>
-<tr class="impair"><td class="impair">a2</td><td class="tdlineupdown impair">b2</td></tr>
-</table>
-<br>
+<div class="tagtable centpercent" id="tablelines">
+    <div class="tagtr liste_titre">
+        <div class="tagtd">line3<input type="hidden" name="cartitem" value="3"></div>
+        <div class="tagtd">dfsdf</div>
+        <div class="tagtd">ffdsfsd</div>
+        <div class="tagtd tdlineupdown">aaaa</div>
+    </div>
+    <div class="impair tagtr">
+        <div class="tagtd">line4<input type="hidden" name="cartitem" value="3"></div>
+        <div class="tagtd">dfsdf</div>
+        <div class="tagtd"><input name="count" value="4"></div>
+        <div class="tagtd tdlineupdown">bbbb</div>
+    </div>
+    <div class="pair tagtr">
+        <div class="tagtd">line5<input type="hidden" name="cartitemb" value="3"></div>
+        <div class="tagtd">dfsdf</div>
+        <div class="tagtd"><input name="countb" value="4"></div>
+        <div class="tagtd tdlineupdown">bbbb</div>
+    </div>
+<!-- Using form into div make Firefox crazy (page loading does not end) -->
+<!--	<form class="liste_titre" method="POST" action="1.php">
+        <div>line1<input type="hidden" name="cartitem" value="1"></div>
+        <div><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></div>
+        <div><input name="count" value="4"></div>
+        <div><input type="submit" name="count2" class="button noshadow" value="aaa"></div>
+    </form>
+    <form class="impair" method="POST" action="2.php">
+        <div>line2<input type="hidden" name="cartitem" value="2"></div>
+        <div><select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select></div>
+        <div><input name="countb" value="4"></div>
+        <div class="tdlineupdown"><input type="submit" value="xxx" class="button"></div>
+    </form>-->
+</div>
+
+
 
 
 <?php

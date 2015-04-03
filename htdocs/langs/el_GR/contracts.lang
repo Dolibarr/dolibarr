@@ -19,6 +19,7 @@ ServiceStatusLateShort=Έληξε
 ServiceStatusClosed=Τερματισμένη
 ServicesLegend=Services legend
 Contracts=Συμβόλαια
+ContractsAndLine=Συμβόλαια και η γραμμή των συμβολαίων
 Contract=Συμβόλαιο
 NoContracts=Κανένα Συμβόλαιο
 MenuServices=Υπηρεσίες

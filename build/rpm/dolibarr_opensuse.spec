@@ -180,8 +180,10 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/contrat
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
+%_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
+%_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
 %_datadir/dolibarr/htdocs/externalsite
 %_datadir/dolibarr/htdocs/fichinter
@@ -193,6 +195,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/install
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
 %_datadir/dolibarr/htdocs/livraison
+%_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
 %_datadir/dolibarr/htdocs/opensurvey

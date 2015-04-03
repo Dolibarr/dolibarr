@@ -2,6 +2,7 @@
 RefSending=Pakrovimo nuoroda
 Sending=Pakrovimas
 Sendings=Pakrovimai
+AllSendings=All Shipments
 Shipment=Siunta
 Shipments=Pakrovimai
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Užsakytas kiekis
 QtyShipped=Išsiųstas kiekis
 QtyToShip=Kiekis išsiuntimui
 QtyReceived=Gautas kiekis
-KeepToShip=Laikyti siuntimui
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Kiti vežimai, skirti šiam užsakymui
 DateSending=Užsakymo išsiuntimo data
 DateSendingShort=Užsakymo išsiuntimo data

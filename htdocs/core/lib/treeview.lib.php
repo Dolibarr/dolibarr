@@ -31,7 +31,7 @@
  * @param	array	$fulltree		Array of entries in correct order
  * @param 	string	$key			Key of entry into fulltree to show picto
  * @param	int		$silent			Do not output indent and picto, returns only value
- * @return	array					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
+ * @return	integer[]					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */
 function tree_showpad(&$fulltree,$key,$silent=0)
 {

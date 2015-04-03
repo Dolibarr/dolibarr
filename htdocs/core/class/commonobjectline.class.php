@@ -29,6 +29,19 @@
  */
 abstract class CommonObjectLine extends CommonObject
 {
+	/**
+	 * Id of the line
+	 * @var int
+	 */
+	public $id;
+
+	/**
+	 * Id of the line
+	 * @var int
+	 * @deprecated Try to use id property as possible
+	 */
+	public $rowid;
+
     //! Database handler
     public $db;
 

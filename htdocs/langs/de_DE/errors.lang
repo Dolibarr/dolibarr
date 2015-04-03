@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Quell- und Zielbankkonto müssen unterschiedlich 
 ErrorBadThirdPartyName=Der für den Partner eingegebene Name ist ungültig.
 ErrorProdIdIsMandatory=Die %s ist zwingend notwendig
 ErrorBadCustomerCodeSyntax=Die eingegebene Kundennummer ist unzulässig.
-ErrorBadBarCodeSyntax=Falsche Syntax für Barcode
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Kunden Nr. erforderlich
 ErrorBarCodeRequired=Barcode erforderlich 
 ErrorCustomerCodeAlreadyUsed=Diese Kunden-Nr. ist bereits vergeben.
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Diese Funktion erfordert aktiviertes JavaScript. Ak
 ErrorPasswordsMustMatch=Die eingegebenen Passwörter müssen identisch sein.
 ErrorContactEMail=Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie Ihren Administrator unter der folgenden E-Mail-Adresse <b>%s</b> und fügen Sie den Fehlercode <b>%s</b> in Ihrer Nachricht ein, oder (noch besser) fügen Sie einen Screenshot dieser Seite als Anhang bei.
 ErrorWrongValueForField=Falscher Wert für Feld Nr. <b>%s</b> (Wert '<b>%s</b>' passt nicht zur Regex-Regel <b>%s</b>)
-ErrorFieldValueNotIn=Nicht korrekter Wert für das Feld-Nummer <b>%s</b> (Wert: '<b>%s</b>' ist kein verfügbarer Wert im Feld <b>%s</b> der Tabelle <b>%s</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Falscher Wert für Feldnummer <b>%s</b> (für den Wert <b>'%s'</b> besteht keine <b>%s</b> Referenz)
 ErrorsOnXLines=Fehler in <b>%s</b> Quellzeilen
 ErrorFileIsInfectedWithAVirus=Der Virenschutz konnte diese Datei nicht freigeben (eventuell ist diese mit einem Virus infiziert)
@@ -160,6 +160,13 @@ ErrorPriceExpressionInternal=Interner Fehler '%s'
 ErrorPriceExpressionUnknown=Unbekannter Fehler '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
 ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
 
 # Warnings
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert

@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - propal
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Quotations
 Proposal=Quotation
 ProposalShort=Quotation
@@ -40,12 +40,9 @@ OtherPropals=Other quotations
 CopyPropalFrom=Create quotation by copying existing quotation
 CreateEmptyPropal=Create empty quotation or from list of products/services
 DefaultProposalDurationValidity=Default quotation validity duration (in days)
-UseCustomerContactAsPropalRecipientIfExist=Use customer contact address if defined instead of third party address as proposal recipient address
 ClonePropal=Clone quotation
 ConfirmClonePropal=Are you sure you want to clone this quotation <b>%s</b> ?
 ProposalsAndProposalsLines=Quotation and lines
 ProposalLine=Quotation line
-# Document models
 DocModelAzurDescription=A complete quotation (logo...)
 DocModelJauneDescription=Jaune quotation model
-DocModelRoigDescription=A complete quotation model with Spanish tax RE and IRPF

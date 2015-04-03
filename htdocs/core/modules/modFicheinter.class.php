@@ -21,7 +21,7 @@
  */
 
 /**
- *	\defgroup   ficheinter     Module intervention cards
+ *	\defgroup   ficheinter     Module Interventions
  *	\brief      Module to manage intervention cards
  *	\file       htdocs/core/modules/modFicheinter.class.php
  *	\ingroup    ficheinter

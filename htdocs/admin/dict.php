@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -324,7 +324,7 @@ $tabcond[13]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabl
 $tabcond[14]= (! empty($conf->product->enabled) && ! empty($conf->ecotax->enabled));
 $tabcond[15]= true;
 $tabcond[16]= (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
-$tabcond[17]= ! empty($conf->deplacement->enabled);
+$tabcond[17]= (! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled));
 $tabcond[18]= ! empty($conf->expedition->enabled);
 $tabcond[19]= ! empty($conf->societe->enabled);
 $tabcond[20]= ! empty($conf->fournisseur->enabled);

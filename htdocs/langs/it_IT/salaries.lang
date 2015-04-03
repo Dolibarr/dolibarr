@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Codice di contabilità per i pagamenti dei salari
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codice di contabilità per oneri finanziari
 Salary=Stipendio
 Salaries=Stipendi
 Employee=Dipendente
@@ -6,3 +8,6 @@ NewSalaryPayment=Nuovo pagamento stipendio
 SalaryPayment=Pagamento stipendio
 SalariesPayments=Pagamento stipendi
 ShowSalaryPayment=Mostra i pagamenti stipendio
+THM=Prezzo medio orario
+TJM=Prezzo medio giornaliero
+CurrentSalary=Current salary

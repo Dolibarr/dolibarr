@@ -36,45 +36,68 @@
  */
 abstract class CommonObject
 {
-    public $db;
+    /**
+     * @var DoliDb		Database handler (result of a new DoliDB)
+     */
+	public $db;
 
     /**
-     * @var error 	Error string
-     * @deprecated	Use instead the array of error strings
+     * @var string 		Error string
+     * @deprecated		Use instead the array of error strings
      */
     public $error;
 
     /**
-     * @var errors	Aray of error string
+     * @var string[]	Array of error strings
      */
     public $errors;
 
-    public $canvas;                // Contains canvas name if it is
-	public $context=array();		// Use to pass context information
+    /**
+     * @var string		Can be used to pass information when only object is provied to method
+     */
+    public $context=array();
+
+    /**
+     * @var string		Contains canvas name if record is an alternative canvas record
+     */
+    public $canvas;
+
+    /**
+     * @var string		Key value used to track if data is coming from import wizard
+     */
+    public $import_key;
+
+    /**
+     * @var mixed		Contains data to manage extrafields
+     */
+    public $array_options=array();
+
+    /**
+     * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjectsIds;
+
+    /**
+     * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjects;
+
+    /**
+     * @var string		Column name of the ref field.
+     */
+    protected $table_ref_field = '';
+
+
+
+    // Following var are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
     public $name;
     public $lastname;
     public $firstname;
     public $civility_id;
-    public $import_key;
-
-    public $array_options=array();
-
-    /**
-     * @var Societe
-     */
     public $thirdparty;
 
-    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
-    public $linkedObjects;		// Loaded by ->fetchObjectLinked
-
     // No constructor as it is an abstract class
-
-    /**
-     * Column name of the ref field.
-     * @var string
-     */
-    protected $table_ref_field = '';
 
 
     /**
@@ -889,7 +912,7 @@ abstract class CommonObject
 
         if (! $this->table_element)
         {
-            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
+            dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
             return -1;
         }
 
@@ -1777,6 +1800,7 @@ abstract class CommonObject
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
             if ($this->element == 'expensereport')                                         $fieldtva='total_tva';
+            if ($this->element == 'askpricesupplier')                                      $fieldttc='total';
 
             if (empty($nodatabaseupdate))
             {
@@ -1967,6 +1991,9 @@ abstract class CommonObject
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
+                    else if ($objecttype == 'askpricesupplier')			{
+                        $classpath = 'comm/askpricesupplier/class';
+                    }
                     else if ($objecttype == 'shipping')			{
                         $classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
                     }
@@ -2137,8 +2164,9 @@ abstract class CommonObject
 
         $fieldstatus="fk_statut";
         if ($elementTable == 'user') $fieldstatus="statut";
-        if ($elementTable == 'expensereport') $fieldstatus="fk_c_expensereport_statuts";
-        
+        if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
+		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
         $sql.= " SET ".$fieldstatus." = ".$status;
         // If status = 1 = validated, update also fk_user_valid
@@ -2388,6 +2416,91 @@ abstract class CommonObject
     }
 
 
+	/**
+     *    Return incoterms informations
+     *
+     *    @return	string	incoterms info
+     */
+    function display_incoterms()
+    {
+        $out = '';
+		$this->incoterms_libelle = '';
+		if (!empty($this->fk_incoterms))
+		{
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$res = $this->db->fetch_object($result);
+				$out .= $res->code;
+			}
+		}
+
+		$out .= ' - '.$this->location_incoterms;
+
+		return $out;
+    }
+
+	/**
+     *    Return incoterms informations for pdf display
+     *
+     *    @return	string		incoterms info
+     */
+	function getIncotermsForPDF()
+	{
+		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$res = $this->db->fetch_object($resql);
+			return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+     *    Define incoterms values of current object
+     *
+     *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
+	 * 	  @param 	string  $location		 location of incoterm
+     *    @return	int     		<0 if KO, >0 if OK
+     */
+    function setIncoterms($id_incoterm, $location)
+    {
+        if ($this->id && $this->table_element)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
+			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+            $sql.= " WHERE rowid = " . $this->id;
+			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+            	$this->fk_incoterms = $id_incoterm;
+				$this->location_incoterms = $location;
+
+				$sql = 'SELECT libelle FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
+				$res = $this->db->query($sql);
+				if ($res)
+				{
+					$obj = $this->db->fetch_object($res);
+					$this->libelle_incoterms = $obj->libelle;
+				}
+                return 1;
+            }
+            else
+			{
+                return -1;
+            }
+        }
+        else return -1;
+    }
+
+
     /**
      *  Return if a country is inside the EEC (European Economic Community)
      *
@@ -2485,6 +2598,10 @@ abstract class CommonObject
         			$tplpath = 'comm/'.$element;
         			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
+        		else if ($objecttype == 'askpricesupplier')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
+        		}
         		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
         			$tplpath = 'expedition';
         			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
@@ -2573,25 +2690,34 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
+
+		// Define usemargins
+		$usemargins=0;
+		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
+		print '<td>'.$langs->trans('Description').'</td>';
+
+		if ($this->element == 'askpricesupplier')
+		{
+			print '<td align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
+		}
 
 		// VAT
-		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 
 		// Price HT
-		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
+		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
-		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
@@ -2599,13 +2725,13 @@ abstract class CommonObject
 		}
 
 		// Reduction short
-		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
+		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td align="right" width="50"><label for="progress">' . $langs->trans('Progress') . '</label></td>';
+			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
 		}
 
-		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" class="margininfos" width="80">'.$langs->trans('BuyingPrice').'</td>';
@@ -2672,7 +2798,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string		$action				GET/POST action
-	 *	@param	array	    $line		       	Selected object line to output
+	 *	@param CommonObjectLine $line		       	Selected object line to output
 	 *	@param  string	    $var               	Is it a an odd line (true)
 	 *	@param  int		    $num               	Number of line (0)
 	 *	@param  int		    $i					I
@@ -2686,7 +2812,9 @@ abstract class CommonObject
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form,$bc,$bcdd, $object_rights;
+
+		$object_rights = $this->getRights();
 
 		$element=$this->element;
 
@@ -2705,12 +2833,7 @@ abstract class CommonObject
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($this->db);
-
-				$product_static->type=$line->fk_product_type;
-				$product_static->id=$line->fk_product;
-				$product_static->ref=$line->ref;
-                if (! empty($line->entity))
-                    $product_static->entity=$line->entity;
+				$product_static->fetch($line->fk_product);
 				$text=$product_static->getNomUrl(1);
 
 				// Define output language and label
@@ -2743,7 +2866,7 @@ abstract class CommonObject
 				}
 
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
-				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));
+				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -3369,6 +3492,31 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *  Build thumb
+	 *
+	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *	@return		void
+	 */
+	function add_thumb($file)
+	{
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
+
+		$file_osencoded=dol_osencode($file);
+		if (file_exists($file_osencoded))
+		{
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file_osencoded, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file_osencoded, $maxwidthmini, $maxheightmini, '_mini', $quality);
+		}
+	}
+
 
 	/* Functions common to commonobject and commonobjectline */
 
@@ -3508,7 +3656,8 @@ abstract class CommonObject
 
     /**
      *	Add/Update all extra fields values for the current object.
-     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */
@@ -3534,6 +3683,7 @@ abstract class CommonObject
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
                	$attributeSize  = $extrafields->attribute_size[$attributeKey];
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	$attributeParam = $extrafields->attribute_param[$attributeKey];
                	switch ($attributeType)
                	{
                		case 'int':
@@ -3556,6 +3706,19 @@ abstract class CommonObject
             		case 'datetime':
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
+           		case 'link':
+				$param_list=array_keys($attributeParam ['options']);
+				// 0 : ObjectName
+				// 1 : classPath
+				$InfoFieldList = explode(":", $param_list[0]);
+				dol_include_once($InfoFieldList[1]);
+				$object = new $InfoFieldList[0]($this->db);
+				if ($value)
+				{
+					$object->fetch(0,$value);
+					$this->array_options[$key]=$object->id;
+				}
+				break;
                	}
             }
             $this->db->begin();
@@ -3730,5 +3893,17 @@ abstract class CommonObject
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->{$this->element};
+	}
+
 
 }

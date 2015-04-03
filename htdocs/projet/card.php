@@ -38,6 +38,7 @@ $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
+$cancel=GETPOST('cancel','alpha');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -49,11 +50,16 @@ $hookmanager->initHooks(array('projectcard','globalcard'));
 
 $object = new Project($db);
 $extrafields = new ExtraFields($db);
+
+// Load object
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can use generic include because when creating a project, ref is defined and we dont want error if fetch fails from ref.
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	$object->fetch_thirdparty();
-	$id=$object->id;
+    $ret = $object->fetch($id,$ref);	// If we create project, ref may be defined into POST but record does not yet exists into database
+    if ($ret > 0) {
+        $object->fetch_thirdparty();
+        $id=$object->id;
+    }
 }
 
 // Security check
@@ -78,9 +84,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	// Cancel
-	if (GETPOST("cancel") && ! empty($backtopage))
+	if ($cancel)
 	{
 		if (GETPOST("comefromclone")==1)
 		{
@@ -96,24 +101,13 @@ if (empty($reshook))
 			    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
 		    }
 		}
-	    header("Location: ".$backtopage);
-	    exit;
-	}
+		if ($backtopage)
+		{
+	    	header("Location: ".$backtopage);
+	    	exit;
+		}
 
-	//if cancel and come from clone then delete the cloned project
-	if (GETPOST("cancel") && (GETPOST("comefromclone")==1))
-	{
-	    $result=$object->delete($user);
-	    if ($result > 0)
-	    {
-	        header("Location: index.php");
-	        exit;
-	    }
-	    else
-	    {
-	        dol_syslog($object->error,LOG_DEBUG);
-		    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
-	    }
+		$action = '';
 	}
 
 	if ($action == 'add' && $user->rights->projet->creer)
@@ -148,9 +142,10 @@ if (empty($reshook))
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
 	        $result = $object->create($user);
-	        if ($result > 0)
+	        if (! $error && $result > 0)
 	        {
 	            // Add myself as project leader
 	            $result = $object->add_contact($user->id, 'PROJECTLEADER', 'internal');
@@ -224,10 +219,7 @@ if (empty($reshook))
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-			if ($ret < 0)
-			{
-				$error++;
-			}
+			if ($ret < 0) $error++;
 	    }
 
 	    if (! $error)
@@ -379,9 +371,11 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $userstatic = new User($db);
 
-
+$title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name;
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Projects"),$help_url);
+
+llxHeader("",$title,$help_url);
 
 
 if ($action == 'create' && $user->rights->projet->creer)

@@ -70,7 +70,7 @@ if ($idprod > 0)
 
 		if ($num)
 		{
-            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 			$i = 0;
 			while ($i < $num)
 			{

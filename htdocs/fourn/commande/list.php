@@ -45,7 +45,7 @@ $search_user=GETPOST('search_user');
 $search_ht=GETPOST('search_ht');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
-$search_status=(GETPOST('search_status','int')!=''?GETPOST('search_status','int'):GETPOST('statut','int'));
+$search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -100,7 +100,7 @@ $offset = $conf->liste_limit * $page ;
 
 
 /*
- * Mode Liste
+ * Mode list
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, cf.date_commande as dc,";
@@ -130,17 +130,17 @@ if ($search_user)
 {
 	$sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
-if ($search_ht)
+if ($search_ht != '')
 {
-	$sql .= " AND cf.total_ht = '".$db->escape(price2num($search_ht))."'";
+	$sql .= natural_search("cf.total_ht",$search_ht, 1);
 }
-if ($search_ttc)
+if ($search_ttc != '')
 {
-	$sql .= " AND cf.total_ttc = '".$db->escape(price2num($search_ttc))."'";
+	$sql .= natural_search("cf.total_ttc", $search_ttc, 1);
 }
 if ($sall)
 {
-	$sql .= natural_search(array('cf.ref', 'cf.note_public', 'cf.note_private'), $sall);
+	$sql .= natural_search(array('cf.ref', 'cf.ref_supplier', 'cf.note_public', 'cf.note_private'), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
@@ -153,9 +153,9 @@ if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
 }
-if ($search_status >= 0)
+if ($search_status != '' && $search_status >= 0)
 {
-	if ($search_status == 6 || $search_status == 7) $sql.=" AND cf.fk_statut IN (6,7)";
+	if (strstr($search_status, ',')) $sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
 	else $sql.=" AND cf.fk_statut = ".$search_status;
 }
 
@@ -205,17 +205,17 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
+	print '<td class="liste_titre"><input size="8" type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
 	if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_refsupp" value="'.$search_refsupp.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.$search_company.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_company" value="'.$search_company.'"></td>';
 	if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS))
 	{
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
 	print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_user" value="'.$search_user.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" size="4" class="flat" name="search_ht" value="'.$search_ht.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="text" size="4" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" size="6" class="flat" name="search_ht" value="'.$search_ht.'"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" size="6" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';

@@ -1000,7 +1000,7 @@ class Categorie extends CommonObject
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
-	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
+	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
@@ -1265,7 +1265,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Return name and link of category (with picto)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
 	 * 	@param		int		$maxlength		Max length of text
 	 *	@return		string					Chaine avec URL
@@ -1277,15 +1277,15 @@ class Categorie extends CommonObject
 		$result='';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='category';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$lienfin;
+		if ($withpicto != 2) $result.=$link.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$linkend;
 		return $result;
 	}
 
@@ -1295,11 +1295,9 @@ class Categorie extends CommonObject
 	 *
 	 *  @param      string	$sdir       Repertoire destination finale
 	 *  @param      string	$file		Nom du fichier uploade
-	 *  @param      int		$maxWidth   Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight  Hauteur maximum que dois faire la miniature (120 par defaut)
 	 *	@return		void
 	 */
-	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
+	function add_photo($sdir, $file)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1321,29 +1319,10 @@ class Categorie extends CommonObject
 			if (file_exists($originImage))
 			{
 				// Cree fichier en taille vignette
-				$this->add_thumb($originImage,$maxWidth,$maxHeight);
+				$this->add_thumb($originImage);
 			}
 		}
 	}
-
-	/**
-	 *  Build thumb
-	 *
-	 *  @param      string	$file           Chemin du fichier d'origine
-	 *  @param      int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
-	 *	@return		void
-	 */
-	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
-	{
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
-
-		if (file_exists($file))
-		{
-			vignette($file,$maxWidth,$maxHeight);
-		}
-	}
-
 
 	/**
 	 *    Return tableau de toutes les photos de la categorie

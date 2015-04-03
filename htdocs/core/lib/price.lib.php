@@ -49,7 +49,7 @@
  *		@param	int		$type						0/1=Product/service
  *		@param  Societe	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
  *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate function).
- *		@param  float   $progress                   Situation invoices progress (value from 0 to 100, 100 by default)
+ *		@param  integer   $progress                   Situation invoices progress (value from 0 to 100, 100 by default)
  *		@return result[ 0=total_ht,
  *						 1=total_vat,
  *						 2=total_ttc,

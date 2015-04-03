@@ -2,3 +2,4 @@
 ExternalSiteSetup=Link configuraçao ao site externo
 ExternalSiteURL=URL site externo
 ExternalSiteModuleNotComplete=Modulo SiteExterno nao foi configurado corretamente.
+ExampleMyMenuEntry=Minha entrada do menu

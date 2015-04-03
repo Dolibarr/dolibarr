@@ -139,3 +139,5 @@ ListOfNotificationsDone=Lista toate notificările e-mail trimis
 MailSendSetupIs=Configurarea trimiterii  e-mail a fost de configurat la '%s'.  Acest mod nu poate fi utilizat pentru a trimite email-uri în masă.
 MailSendSetupIs2=Trebuie mai întâi să mergi, cu un cont de administrator, în meniu%sHome - Setup - EMails%s  pentru a schimba parametrul  <strong>'%s'</strong> de utilizare în modul '%s'.  Cu acest mod, puteți introduce configurarea serverului SMTP furnizat de furnizorul de servicii Internet și de a folosi facilitatea Mass email .
 MailSendSetupIs3=Daca aveti intrebari cu privire la modul de configurare al serverului SMTP, puteți cere la %s.
+YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
+NbOfTargetedContacts=Current number of targeted contact emails

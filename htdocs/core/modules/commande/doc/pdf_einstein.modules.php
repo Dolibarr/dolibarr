@@ -276,6 +276,29 @@ class pdf_einstein extends ModelePDFCommandes
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
+				// Incoterm
+				$height_incoterms = 0;
+				if ($conf->incoterm->enabled)
+				{
+					$desc_incoterms = $object->getIncotermsForPDF();
+					if ($desc_incoterms)
+					{
+						$tab_top = 88;
+
+						$pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+						$nexY = $pdf->GetY();
+						$height_incoterms=$nexY-$tab_top;
+	
+						// Rect prend une longueur en 3eme param
+						$pdf->SetDrawColor(192,192,192);
+						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
+	
+						$tab_top = $nexY+6;
+						$height_incoterms += 4;
+					}
+				}
+				
 				// Affiche notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
@@ -291,7 +314,7 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				if ($notetoshow)
 				{
-					$tab_top = 88;
+					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -747,19 +770,20 @@ class pdf_einstein extends ModelePDFCommandes
         // If payment mode not forced or forced to VIR, show payment with BAN
         if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
         {
-	        if (! empty($conf->global->FACTURE_RIB_NUMBER))
-	        {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+        	if (! empty($object->fk_bank) || ! empty($conf->global->FACTURE_RIB_NUMBER))
+			{
+				$bankid=(empty($object->fk_bank)?$conf->global->FACTURE_RIB_NUMBER:$object->fk_bank);
+				$account = new Account($this->db);
+				$account->fetch($bankid);
 
-                $curx=$this->marge_gauche;
-                $cury=$posy;
+				$curx=$this->marge_gauche;
+				$cury=$posy;
 
-                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
+				$posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
 
-                $posy+=2;
-	        }
-		}
+				$posy+=2;
+			}
+        }
 
 		return $posy;
 	}

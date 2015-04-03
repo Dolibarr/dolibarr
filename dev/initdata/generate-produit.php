@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/dev/generate-produit.php
+ *      \file       dev/initdata/generate-produit.php
  *		\brief      Script de generation de donnees aleatoires pour les produits
  */
 

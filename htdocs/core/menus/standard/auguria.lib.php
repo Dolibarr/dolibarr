@@ -220,22 +220,27 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
 	// Show logo company
-	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO))
+	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
-			print "\n".'<!-- Show logo on menu -->'."\n";
-			print '<div class="blockvmenuimpair">'."\n";
-			print '<div class="menu_titre" id="menu_titre_logo"></div>';
-			print '<div class="menu_top" id="menu_top_logo"></div>';
-			print '<div class="menu_contenu" id="menu_contenu_logo">';
-			print '<div class="center"><img title="" src="'.$urllogo.'"></div>'."\n";
-			print '</div>';
-			print '<div class="menu_end" id="menu_end_logo"></div>';
-			print '</div>'."\n";
 		}
+		else
+		{
+			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+		}
+		$title=$langs->trans("GoIntoSetupToChangeLogo");
+		print "\n".'<!-- Show logo on menu -->'."\n";
+		print '<div class="blockvmenuimpair">'."\n";
+		print '<div class="menu_titre" id="menu_titre_logo"></div>';
+		print '<div class="menu_top" id="menu_top_logo"></div>';
+		print '<div class="menu_contenu" id="menu_contenu_logo">';
+		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 80%"></div>'."\n";
+		print '</div>';
+		print '<div class="menu_end" id="menu_end_logo"></div>';
+		print '</div>'."\n";
 	}
 
 	// We update newmenu with entries found into database

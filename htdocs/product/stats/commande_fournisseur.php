@@ -46,7 +46,7 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array (
-		'productstatssupplyorder' 
+		'productstatssupplyorder'
 ));
 
 $mesg = '';
@@ -76,7 +76,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
  * View
  */
 
-$commandefournstatic = new CommandeFournisseur($db);
+$supplierorderstatic = new CommandeFournisseur($db);
 $societestatic = new Societe($db);
 
 $form = new Form($db);
@@ -85,55 +85,55 @@ $formother = new FormOther($db);
 if ($id > 0 || ! empty($ref)) {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
-	
+
 	$parameters = array (
-			'id' => $id 
+			'id' => $id
 	);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0)
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	
+
 	llxHeader("", "", $langs->trans("CardProduct" . $product->type));
-	
+
 	if ($result > 0) {
 		$head = product_prepare_head($product, $user);
 		$titre = $langs->trans("CardProduct" . $product->type);
-		$picto = ($product->type == 1 ? 'service' : 'product');
+		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
-		
+
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0)
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		
+
 		print '<table class="border" width="100%">';
-		
+
 		// Reference
 		print '<tr>';
 		print '<td width="30%">' . $langs->trans("Ref") . '</td><td colspan="3">';
 		print $form->showrefnav($product, 'ref', '', 1, 'ref');
 		print '</td>';
 		print '</tr>';
-		
+
 		// Libelle
 		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->libelle . '</td>';
 		print '</tr>';
-		
+
 		// Status (to sell)
 		print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Sell") . ')</td><td colspan="3">';
 		print $product->getLibStatut(2, 0);
 		print '</td></tr>';
-		
+
 		// Status (to buy)
 		print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Buy") . ')</td><td colspan="3">';
 		print $product->getLibStatut(2, 1);
 		print '</td></tr>';
-		
+
 		show_stats_for_company($product, $socid);
-		
+
 		print "</table>";
-		
+
 		print '</div>';
-		
+
 		if ($user->rights->fournisseur->commande->lire) {
 			$sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
@@ -150,15 +150,15 @@ if ($id > 0 || ! empty($ref)) {
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))
-				$sql .= ' AND MONTH(f.datef) IN (' . $search_month . ')';
+				$sql .= ' AND MONTH(c.date_commande) IN (' . $search_month . ')';
 			if (! empty($search_year))
-				$sql .= ' AND YEAR(f.datef) IN (' . $search_year . ')';
+				$sql .= ' AND YEAR(c.date_commande) IN (' . $search_year . ')';
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . $user->id;
 			if ($socid)
 				$sql .= " AND c.fk_soc = " . $socid;
 			$sql .= " ORDER BY $sortfield $sortorder ";
-			
+
 			// Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
 			$total_qty = 0;
@@ -173,20 +173,20 @@ if ($id > 0 || ! empty($ref)) {
 					}
 				}
 			}
-			
+
 			$sql .= $db->plimit($conf->liste_limit + 1, $offset);
-			
+
 			$result = $db->query($sql);
 			if ($result) {
 				$num = $db->num_rows($result);
-				
+
 				if (! empty($id))
 					$option .= '&amp;id=' . $product->id;
 				if (! empty($search_month))
 					$option .= '&amp;search_month=' . $search_month;
 				if (! empty($search_year))
 					$option .= '&amp;search_year=' . $search_year;
-				
+
 				print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
 				if (! empty($sortfield))
 					print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -196,16 +196,18 @@ if ($id > 0 || ! empty($ref)) {
 					print '<input type="hidden" name="page" value="' . $page . '"/>';
 					$option .= '&amp;page=' . $page;
 				}
-				
+
 				print_barre_liste($langs->trans("SuppliersOrders"), $page, $_SERVER["PHP_SELF"], "&amp;id=$product->id", $sortfield, $sortorder, '', $num, $totalrecords, '');
 				print '<div class="liste_titre">';
-				print $langs->trans('Period') . '(' . $langs->trans("DateInvoice") . ') ';
+				print $langs->trans('Period') . ' (' . $langs->trans("OrderDate") . ') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 				print '</div>';
-				
+				print '</div>';
+
 				$i = 0;
 				print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre">';
@@ -217,19 +219,19 @@ if ($id > 0 || ! empty($ref)) {
 				print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
-				
+
 				if ($num > 0) {
 					$var = True;
 					while ( $i < $num && $i < $conf->liste_limit ) {
 						$objp = $db->fetch_object($result);
 						$var = ! $var;
-						
+
 						print '<tr ' . $bc[$var] . '>';
 						print '<td>';
-						$commandestatic->id = $objp->commandeid;
-						$commandestatic->ref = $objp->ref;
-						$commandestatic->statut = $objp->statut;
-						print $commandestatic->getNomUrl(1);
+						$supplierorderstatic->id = $objp->commandeid;
+						$supplierorderstatic->ref = $objp->ref;
+						$supplierorderstatic->statut = $objp->statut;
+						print $supplierorderstatic->getNomUrl(1);
 						print "</td>\n";
 						$societestatic->fetch($objp->socid);
 						print '<td>' . $societestatic->getNomUrl(1) . '</td>';
@@ -238,10 +240,10 @@ if ($id > 0 || ! empty($ref)) {
 						print dol_print_date($db->jdate($objp->date_commande)) . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
-						print '<td align="right">' . $commandestatic->getLibStatut(4) . '</td>';
+						print '<td align="right">' . $supplierorderstatic->getLibStatut(4) . '</td>';
 						print "</tr>\n";
 						$i ++;
-						
+
 						if (! empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 							$total_ht += $objp->total_ht;
 							$total_qty += $objp->qty;
