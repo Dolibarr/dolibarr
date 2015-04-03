@@ -528,7 +528,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				// Todo Edit or delete button
 				// Action
-				if ($user->rights->produit->creer || $user->rights->service->creer) {
+				if ($staticprod->getRights()->creer) {
 					print '<td align="right">';
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
 					print img_delete();

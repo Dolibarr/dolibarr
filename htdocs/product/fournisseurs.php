@@ -296,7 +296,7 @@ if ($id || $ref)
 			print "</div>\n";
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
+			if (($action == 'add_price' || $action == 'updateprice' ) && $product->getRights()->creer)
 			{
 				$langs->load("suppliers");
 
@@ -497,7 +497,7 @@ if ($id || $ref)
 
 			if ($action != 'add_price' && $action != 'updateprice')
 			{
-				if ($user->rights->produit->creer || $user->rights->service->creer)
+				if ($product->getRights()->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
 					print $langs->trans("AddSupplierPrice").'</a>';
@@ -620,7 +620,7 @@ if ($id || $ref)
 
 						// Modify-Remove
 						print '<td align="center">';
-						if ($user->rights->produit->creer || $user->rights->service->creer)
+						if ($product->getRights()->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';

@@ -144,9 +144,7 @@ if ($object->id)
 	print "</div>\n";
 
 
-	$permtoedit=0;
-	if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) $permtoedit=1;
-	if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) $permtoedit=1;
+	$permtoedit = $object->getRights()->creer;
 	if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
 
 	/* ************************************************************************** */
