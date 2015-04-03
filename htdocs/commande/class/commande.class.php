@@ -51,8 +51,17 @@ class Commande extends CommonOrder
 
     var $id;
 
-    var $socid;		// Id client
-    var $client;		// Objet societe client (a charger par fetch_client)
+	/**
+	 * Client ID
+	 * @var int
+	 */
+    var $socid;
+
+	/**
+	 * Client (loaded by fetch_client)
+	 * @var Societe
+	 */
+    var $client;
 
     var $ref;
     var $ref_client;
@@ -69,30 +78,12 @@ class Commande extends CommonOrder
 	 * - STATUS_CLOSED
 	 * @var int
 	 */
-    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Delivered=Sent/Received, billed or not)
+    var $statut;
+	/**
+	 * @deprecated
+	 */
     var $facturee;		// deprecated
     var $billed;		// billed or not
-
-	/**
-	 * Canceled status
-	 */
-	const STATUS_CANCELED = -1;
-	/**
-	 * Draft status
-	 */
-	const STATUS_DRAFT = 0;
-	/**
-	 * Validated status
-	 */
-	const STATUS_VALIDATED = 1;
-	/**
-	 * Accepted/On process not managed for customer orders
-	 */
-	const STATUS_ACCEPTED = 2;
-	/**
-	 * Closed (Sent/Received, billed or not)
-	 */
-	const STATUS_CLOSED = 3;
 
     var $brouillon;
     var $cond_reglement_id;
@@ -152,6 +143,27 @@ class Commande extends CommonOrder
      * ERR Not engouch stock
      */
     const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
+
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Accepted/On process not managed for customer orders
+	 */
+	const STATUS_ACCEPTED = 2;
+	/**
+	 * Closed (Sent/Received, billed or not)
+	 */
+	const STATUS_CLOSED = 3;
 
 
     /**

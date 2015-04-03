@@ -54,19 +54,56 @@ class Propal extends CommonObject
 
     var $id;
 
-    var $socid;		// Id client
-    var $client;		// Objet societe client (a charger par fetch_client)
+	/**
+	 * ID of the client
+	 * @var int
+	 */
+    var $socid;
+	/**
+	 * Client (loaded by fetch_client)
+	 * @var Societe
+	 */
+    var $client;
 
     var $contactid;
     var $fk_project;
     var $author;
     var $ref;
     var $ref_client;
-    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
-    var $datec;						// Date of creation
-    var $datev;						// Date of validation
-    var $date;						// Date of proposal
-    var $datep;						// Same than date
+
+	/**
+	 * Status of the quote
+	 * Check the following constants:
+	 * - STATUS_DRAFT
+	 * - STATUS_VALIDATED
+	 * - STATUS_SIGNED
+	 * - STATUS_NOTSIGNED
+	 * - STATUS_BILLED
+	 * @var int
+	 */
+    var $statut;
+
+	/**
+	 * Date of creation
+	 * @var
+	 */
+    var $datec;
+	/**
+	 * Date of validation
+	 * @var
+	 */
+    var $datev;
+	/**
+	 * Date of the quote
+	 * @var
+	 */
+    var $date;
+
+	/**
+	 * Same than date ¿?
+	 * @var
+	 */
+    var $datep;
     var $date_livraison;
     var $fin_validite;
 
@@ -79,9 +116,19 @@ class Propal extends CommonObject
     var $total_localtax1;			// Total Local Taxes 1
     var $total_localtax2;			// Total Local Taxes 2
     var $total_ttc;					// Total with tax
-    var $price;						// deprecated (for compatibility)
-    var $tva;						// deprecated (for compatibility)
-    var $total;						// deprecated (for compatibility)
+
+	/**
+	 * @deprecated
+	 */
+    var $price;
+	/**
+	 * @deprecated
+	 */
+    var $tva;
+	/**
+	 * @deprecated
+	 */
+    var $total;
 
     var $cond_reglement_id;
     var $cond_reglement_code;
@@ -91,10 +138,16 @@ class Propal extends CommonObject
     var $remise;
     var $remise_percent;
     var $remise_absolue;
-    var $note;						// deprecated (for compatibility)
+	/**
+	 * @deprecated
+	 */
+    var $note;
     var $note_private;
     var $note_public;
-    var $fk_delivery_address;		// deprecated (for compatibility)
+	/**
+	 * @deprecated
+	 */
+    var $fk_delivery_address;
     var $fk_address;
     var $address_type;
     var $address;
@@ -126,6 +179,26 @@ class Propal extends CommonObject
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Signed quote
+	 */
+	const STATUS_SIGNED = 2;
+	/**
+	 * Not signed quote
+	 */
+	const STATUS_NOTSIGNED = 3;
+	/**
+	 * Billed quote
+	 */
+	const STATUS_BILLED = 4;
 
     /**
      *	Constructor
@@ -361,7 +434,7 @@ class Propal extends CommonObject
         // Check parameters
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
@@ -525,7 +598,7 @@ class Propal extends CommonObject
         if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
         if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
@@ -650,7 +723,7 @@ class Propal extends CommonObject
      */
     function deleteline($lineid)
     {
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $line=new PropaleLigne($this->db);
 
@@ -1007,7 +1080,7 @@ class Propal extends CommonObject
         }
 
         $this->id=0;
-        $this->statut=0;
+        $this->statut=self::STATUS_DRAFT;
 
         if (empty($conf->global->PROPALE_ADDON) || ! is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
         {
@@ -1192,7 +1265,7 @@ class Propal extends CommonObject
 				$this->location_incoterms = $obj->location_incoterms;									
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 				
-                if ($obj->fk_statut == 0)
+                if ($obj->fk_statut == self::STATUS_DRAFT)
                 {
                     $this->brouillon = 1;
                 }
@@ -1385,8 +1458,8 @@ class Propal extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
             $sql.= " SET ref = '".$num."',";
-            $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+            $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             dol_syslog(get_class($this)."::valid", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -1441,7 +1514,7 @@ class Propal extends CommonObject
 
             	$this->ref=$num;
             	$this->brouillon=0;
-            	$this->statut = 1;
+            	$this->statut = self::STATUS_VALIDATED;
             	$this->user_valid_id=$user->id;
             	$this->datev=$now;
 
@@ -1476,7 +1549,7 @@ class Propal extends CommonObject
         if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             dol_syslog(get_class($this)."::set_date", LOG_DEBUG);
             if ($this->db->query($sql) )
@@ -1505,7 +1578,7 @@ class Propal extends CommonObject
         if (! empty($user->rights->propal->creer))
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_fin_validite!=''?"'".$this->db->idate($date_fin_validite)."'":'null');
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
             if ($this->db->query($sql) )
             {
                 $this->fin_validite = $date_fin_validite;
@@ -1655,7 +1728,7 @@ class Propal extends CommonObject
             $remise = price2num($remise);
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             if ($this->db->query($sql) )
             {
@@ -1689,7 +1762,7 @@ class Propal extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
             $sql.= " SET remise_absolue = ".$remise;
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
             if ($this->db->query($sql) )
             {
@@ -1797,7 +1870,7 @@ class Propal extends CommonObject
         	$modelpdf=$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
         	$trigger_name='PROPAL_CLOSE_REFUSED';
 
-            if ($statut == 2)
+            if ($statut == self::STATUS_SIGNED)
             {
             	$trigger_name='PROPAL_CLOSE_SIGNED';
 				$modelpdf=$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
@@ -1814,7 +1887,7 @@ class Propal extends CommonObject
                     return -2;
                 }
             }
-            if ($statut == 4)
+            if ($statut == self::STATUS_BILLED)
             {
             	$trigger_name='PROPAL_CLASSIFY_BILLED';
             }
@@ -1864,11 +1937,11 @@ class Propal extends CommonObject
      */
     function classifyBilled()
     {
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = 4';
-        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = '.self::STATUS_BILLED;
+        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT.' ;';
         if ($this->db->query($sql) )
         {
-        	$this->statut=4;
+        	$this->statut=self::STATUS_BILLED;
             return 1;
         }
         else
@@ -1896,12 +1969,12 @@ class Propal extends CommonObject
      */
     function set_draft($user)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
         if ($this->db->query($sql))
         {
-            $this->statut = 0;
+            $this->statut = self::STATUS_DRAFT;
             $this->brouillon = 1;
             return 1;
         }
@@ -1945,7 +2018,7 @@ class Propal extends CommonObject
         	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         }
         if ($socid) $sql.= " AND s.rowid = ".$socid;
-        if ($draft)	$sql.= " AND p.fk_statut = 0";
+        if ($draft)	$sql.= " AND p.fk_statut = ".self::STATUS_DRAFT;
         if ($notcurrentuser > 0) $sql.= " AND p.fk_user_author <> ".$user->id;
         $sql.= $this->db->order($sortfield,$sortorder);
         $sql.= $this->db->plimit($limit,$offset);
@@ -2215,7 +2288,7 @@ class Propal extends CommonObject
     function availability($availability_id)
     {
         dol_syslog('Propale::availability('.$availability_id.')');
-        if ($this->statut >= 0)
+        if ($this->statut >= self::STATUS_DRAFT)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
             $sql .= ' SET fk_availability = '.$availability_id;
@@ -2249,7 +2322,7 @@ class Propal extends CommonObject
     function demand_reason($demand_reason_id)
     {
         dol_syslog('Propale::demand_reason('.$demand_reason_id.')');
-        if ($this->statut >= 0)
+        if ($this->statut >= self::STATUS_DRAFT)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
             $sql .= ' SET fk_input_reason = '.$demand_reason_id;
@@ -2356,11 +2429,11 @@ class Propal extends CommonObject
 	global $langs;
 	$langs->load("propal");
 
-	if ($statut==0) $statuttrans='statut0';
-	if ($statut==1) $statuttrans='statut1';
-	if ($statut==2) $statuttrans='statut3';
-	if ($statut==3) $statuttrans='statut5';
-	if ($statut==4) $statuttrans='statut6';
+	if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
+	if ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
+	if ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
+	if ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
+	if ($statut==self::STATUS_BILLED) $statuttrans='statut6';
 
 	if ($mode == 0)	return $this->labelstatut[$statut];
 	if ($mode == 1)	return $this->labelstatut_short[$statut];
@@ -2393,8 +2466,8 @@ class Propal extends CommonObject
             $clause = " AND";
         }
         $sql.= $clause." p.entity = ".$conf->entity;
-        if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
-        if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
+        if ($mode == 'opened') $sql.= " AND p.fk_statut = ".self::STATUS_VALIDATED;
+        if ($mode == 'signed') $sql.= " AND p.fk_statut = ".self::STATUS_SIGNED;
         if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);
@@ -2405,12 +2478,12 @@ class Propal extends CommonObject
 
             if ($mode == 'opened') {
 	            $delay_warning=$conf->propal->cloture->warning_delay;
-	            $statut = 1;
+	            $statut = self::STATUS_VALIDATED;
 	            $label = $langs->trans("PropalsToClose");
             }
             if ($mode == 'signed') {
 	            $delay_warning=$conf->propal->facturation->warning_delay;
-	            $statut = 2;
+	            $statut = self::STATUS_SIGNED;
 	            $label = $langs->trans("PropalsToBill");
             }
 
@@ -2815,7 +2888,14 @@ class PropaleLigne  extends CommonObject
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
-    var $product_type = 0;	// Type 0 = product, 1 = Service
+	/**
+	 * Product type.
+	 * Use the following constants:
+	 * - Product::TYPE_PRODUCT
+	 * - Product::TYPE_SERVICE
+	 * @var int
+	 */
+    var $product_type = Product::TYPE_PRODUCT;
 
     var $qty;
     var $tva_tx;

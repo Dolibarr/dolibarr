@@ -55,10 +55,15 @@ class FactureFournisseur extends CommonInvoice
     var $socid;
     //Check constants for types
     var $type = self::TYPE_STANDARD;
-    //! 0=draft,
-    //! 1=validated
-    //! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
-    //! Also 2, should be 3=classified abandoned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
+
+	/**
+	 * Check constants for more info:
+	 * - STATUS_DRAFT
+	 * - STATUS_VALIDATED
+	 * - STATUS_PAID
+	 * - STATUS_ABANDONED
+	 * @var int
+	 */
     var $statut;
     //! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
     var $paye;
@@ -438,7 +443,7 @@ class FactureFournisseur extends CommonInvoice
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 $this->fetch_optionals($this->id,$extralabels);
 
-                if ($this->statut == 0) $this->brouillon = 1;
+                if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
                 $result=$this->fetch_lines();
                 if ($result < 0)
@@ -886,7 +891,7 @@ class FactureFournisseur extends CommonInvoice
         $error=0;
 
         // Protection
-        if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management)
+        if ($this->statut > self::STATUS_DRAFT)	// This is to avoid to validate twice (avoid errors on logs and stock management)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
             return 0;
@@ -995,7 +1000,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $error)
             {
             	$this->ref = $num;
-            	$this->statut=1;
+            	$this->statut=self::STATUS_VALIDATED;
             	//$this->date_validation=$now; this is stored into log table
             }
 
@@ -1032,7 +1037,7 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
             return 0;
@@ -1746,7 +1751,7 @@ class FactureFournisseur extends CommonInvoice
         // Load source object
         $object->fetch($fromid);
         $object->id=0;
-        $object->statut=0;
+        $object->statut=self::STATUS_DRAFT;
 
         // Clear fields
         $object->ref_supplier=$langs->trans("CopyOf").' '.$object->ref_supplier;
