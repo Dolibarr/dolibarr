@@ -323,8 +323,6 @@ else	// Show
     $var=true;
 
     // Language
-    print_fiche_titre($langs->trans("Language"),'','');
-    print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 
