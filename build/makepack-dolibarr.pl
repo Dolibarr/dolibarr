@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \author       (c)2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This is list of constant you can set to have generated packages moved into a specific dir: 
 #DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'
@@ -15,8 +15,12 @@
 
 use Cwd;
 
+
+# Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
-$RPMSUBVERSION="auto";	# auto use value found into BUILD
+$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
+$PUBLISHBETARC="ldestailleur\@asso.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
+
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
@@ -41,6 +45,7 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "makensis.exe"=>"NSIS"
 );
 
+$RPMSUBVERSION="auto";	# auto use value found into BUILD
 if (-d "/usr/src/redhat")   { $RPMDIR="/usr/src/redhat"; } # redhat
 if (-d "/usr/src/packages") { $RPMDIR="/usr/src/packages"; } # opensuse
 if (-d "/usr/src/RPM")      { $RPMDIR="/usr/src/RPM"; } # mandrake
@@ -59,8 +64,6 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
-$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="ldestailleur\@asso.dolibarr.org:/home/dolibarr/dolibarr.org/files";
 if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
     print "Error: Missing environment variables.\n";
@@ -210,9 +213,9 @@ else {
     		printf(" %2d - %-14s  (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
     	}
     	$cpt=98;
-    	printf(" %2d - %-14s  (%s)\n",$cpt,"ASSO (publish)","Need ".join(",",values %REQUIREMENTPUBLISH));
+    	printf(" %2d - %-14s  (%s)\n",$cpt,"ASSO (publish)","Need ".$REQUIREMENTPUBLISH{"ASSO"});
     	$cpt=99;
-    	printf(" %2d - %-14s  (%s)\n",$cpt,"SF (publish)","Need ".join(",",values %REQUIREMENTPUBLISH));
+    	printf(" %2d - %-14s  (%s)\n",$cpt,"SF (publish)","Need ".$REQUIREMENTPUBLISH{"SF"});
     
     	# Ask which target to build
     	print "Choose one package number or several separated with space (0 - ".$cpt."): ";
@@ -1026,9 +1029,16 @@ if ($nboftargetok) {
 	    		if (! $filesize) { next; }
 
 				print "\n";
-	    		print "Publish file ".$file." to ".$filestoscan{$file}."\n";
 	    		
-	    		$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
+	    		if ($target eq 'SF') { 
+	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
+		    		print "Publish file ".$file." to $NEWPUBLISH/".$filestoscan{$file}."\n";
+	    		}
+	    		else
+	    		{
+	    			$destFolder="$NEWPUBLISH";
+		    		print "Publish file ".$file." to $NEWPUBLISH\n";
+	    		}
 
 				# mkdir	   
 				#my $ssh = Net::SSH::Perl->new("frs.sourceforge.net");
