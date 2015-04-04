@@ -31,6 +31,7 @@ English Dolibarr ChangeLog
 - Fix: Bad SEPA xml file creation
 - Fix: [ bug #1892 ] PHP Fatal error when using USER_UPDATE_SESSION trigger and adding a supplier invoice payment
 - Fix: Showing system error if not enough stock of product into orders creation with lines
+- Fix: [ bug #2535 ] Untranslated string in "Linked objects" page of a project
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
