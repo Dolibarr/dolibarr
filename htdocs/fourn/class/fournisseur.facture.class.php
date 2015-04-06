@@ -105,7 +105,7 @@ class FactureFournisseur extends CommonInvoice
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
-	
+
     var $extraparams=array();
 
     /**
@@ -428,9 +428,9 @@ class FactureFournisseur extends CommonInvoice
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-				
+
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->socid  = $obj->socid;
@@ -1408,7 +1408,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function info($id)
     {
-        $sql = 'SELECT c.rowid, datec, tms as datem,';
+        $sql = 'SELECT c.rowid, datec, tms as datem, ';
         $sql.= ' fk_user_author, fk_user_valid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
         $sql.= ' WHERE c.rowid = '.$id;
@@ -1434,7 +1434,7 @@ class FactureFournisseur extends CommonInvoice
                 }
                 $this->date_creation     = $obj->datec;
                 $this->date_modification = $obj->datem;
-                //$this->date_validation   = $obj->datev; Should be stored in log table
+                //$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
             }
             $this->db->free($result);
         }
