@@ -516,6 +516,10 @@ class CMailFile
 
 
 	// Encode subject according to RFC 2822 - http://en.wikipedia.org/wiki/MIME#Encoded-Word
+
+	/**
+	 * @param string $stringtoencode
+	 */
 	function encodetorfc2822($stringtoencode)
 	{
 		global $conf;
@@ -639,7 +643,7 @@ class CMailFile
 	/**
 	 * Create SMTP headers (mode = 'mail')
 	 *
-	 * @return	smtp headers
+	 * @return	string headers
 	 */
 	function write_smtpheaders()
 	{
@@ -690,7 +694,7 @@ class CMailFile
 	 *
 	 * @param	array	$filename_list			Array of filenames
 	 * @param 	array	$mimefilename_list		Array of mime types
-	 * @return	array							mime headers
+	 * @return	string							mime headers
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
