@@ -67,7 +67,7 @@ class ActionsCardService
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param	string	$action    Type of action
-	 *    @param	string	$id			Id of object
+	 *    @param	integer	$id			Id of object
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
