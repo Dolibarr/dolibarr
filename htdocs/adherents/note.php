@@ -54,7 +54,7 @@ if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
 	if ($res < 0)
 	{
 		setEventMessage($object->error, 'errors');
