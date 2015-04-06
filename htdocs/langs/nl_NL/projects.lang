@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Lijst van aan het project verbonden levera
 ListContractAssociatedProject=Lijst van aan het project verbonden contracten
 ListFichinterAssociatedProject=Lijst van aan het project verbonden interventies
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Lijst van aan het project verbonden acties
 ActivityOnProjectThisWeek=Projectactiviteit in deze week
 ActivityOnProjectThisMonth=Projectactiviteit in deze maand

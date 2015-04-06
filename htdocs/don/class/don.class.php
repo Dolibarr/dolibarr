@@ -54,7 +54,7 @@ class Don extends CommonObject
     var $country;
     var $email;
     var $public;
-    var $fk_project;
+    var $fk_projet;
     var $modepaiement;
     var $modepaiementid;
     var $note_private;
@@ -337,7 +337,7 @@ class Don extends CommonObject
         // $sql.= ", country"; -- Deprecated
         $sql.= ", fk_country";
         $sql.= ", public";
-        $sql.= ", fk_project";
+        $sql.= ", fk_projet";
         $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", fk_user_author";
@@ -359,7 +359,7 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->town)."'";
 		$sql.= ", ".$this->country_id;
         $sql.= ", ".$this->public;
-        $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
+        $sql.= ", ".($this->fk_projet > 0?$this->fk_projet:"null");
        	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql.= ", ".$user->id;
@@ -455,7 +455,7 @@ class Don extends CommonObject
         $sql .= ",town='".$this->db->escape($this->town)."'";
         $sql .= ",fk_country = ".$this->country_id;
         $sql .= ",public=".$this->public;
-        $sql .= ",fk_project=".($this->fk_project>0?$this->fk_project:'null');
+        $sql .= ",fk_projet=".($this->fk_projet>0?$this->fk_projet:'null');
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
         $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
@@ -601,11 +601,11 @@ class Don extends CommonObject
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
-        $sql.= " d.phone_mobile, d.fk_project,";
+        $sql.= " d.phone_mobile, d.fk_projet,";
         $sql.= " p.title as project_label,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_project";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
 		if (! empty($id))
@@ -647,7 +647,7 @@ class Don extends CommonObject
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
                 $this->project        = $obj->project_label;
-                $this->fk_project     = $obj->fk_project;
+                $this->fk_projet      = $obj->fk_projet;
                 $this->public         = $obj->public;
                 $this->modepaymentid  = $obj->fk_payment;
                 $this->modepayment    = $obj->libelle;
@@ -677,8 +677,8 @@ class Don extends CommonObject
     /**
      *    Validate a promise of donation
      *
-     *    @param	int		$id   	id of donation
-     *    @param  	int		$userid  	User who validate the promise
+     *    @param	int		$id   		id of donation
+     *    @param  	int		$userid  	User who validate the donation/promise
      *    @return   int     			<0 if KO, >0 if OK
      */
     function valid_promesse($id, $userid)
@@ -706,16 +706,16 @@ class Don extends CommonObject
     }
 
     /**
-     *    Classe le don comme paye, le don a ete recu
+     *    Classify the donation as paid, the donation was received
      *
-     *    @param	int		$id           	    id du don a modifier
-     *    @param    int		$modepaiement   	mode de paiement
+     *    @param	int		$id           	    id of donation
+     *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id, $modepaiement='')
+    function set_paid($id, $modepayment='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
-        if ($modepaiement)
+        if ($modepayment)
         {
             $sql .= ", fk_payment=$modepayment";
         }
@@ -741,7 +741,7 @@ class Don extends CommonObject
     }
 
     /**
-     *    Set donation to status canceled
+     *    Set donation to status cancelled
      *
      *    @param	int		$id   	    id of donation
      *    @return   int     			<0 if KO, >0 if OK

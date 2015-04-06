@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Danh sách các hóa đơn của nhà cung
 ListContractAssociatedProject=Danh sách các hợp đồng được gắn với dự án
 ListFichinterAssociatedProject=Danh sách các sự can thiệp được gắn với dự án
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Danh sách các hoạt động được gắn với dự án
 ActivityOnProjectThisWeek=Các hoạt động của dự án trong tuần này
 ActivityOnProjectThisMonth=Các hoạt động của dự án trong tháng này

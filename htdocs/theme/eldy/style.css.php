@@ -269,7 +269,7 @@ input, textarea, select {
 	border-bottom:solid 1px rgba(0,0,0,.2);
 	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:4px;
-	margin-left:1px;
+	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
 	}
@@ -1917,7 +1917,7 @@ table.liste td {
 	background-color: #f9f9f9;
 }
 tr.pair td, tr.impair td {
-	padding: 4px;
+	padding: 2px;
     border-bottom: 1px solid #ddd;
 }
 div.liste_titre .tagtd {

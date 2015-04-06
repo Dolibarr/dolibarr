@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Luettelo tavarantoimittajien laskut liitty
 ListContractAssociatedProject=Luettelo sopimukset hankkeeseen liittyvät
 ListFichinterAssociatedProject=Luettelo toimien hankkeeseen liittyvän
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Luettelo toimia, jotka liittyvät hankkeen
 ActivityOnProjectThisWeek=Toiminta hanke tällä viikolla
 ActivityOnProjectThisMonth=Toiminta hankkeen tässä kuussa

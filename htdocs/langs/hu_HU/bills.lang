@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Összesen két új kedvezményt meg kell eg
 ConfirmRemoveDiscount=Biztosan el akarja távolítani ezt a kedvezményt?
 RelatedBill=Kapcsolódó számla
 RelatedBills=Kapcsolódó számlák
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

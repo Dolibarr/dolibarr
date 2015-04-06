@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Seznam računov dobaviteljev, povezanih s 
 ListContractAssociatedProject=Seznam pogodb, povezanih s projektom
 ListFichinterAssociatedProject=Seznam intervencij, povezanih s projektom
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Seznam aktivnosti, povezanih s projektom
 ActivityOnProjectThisWeek=Aktivnosti na projektu v tem tednu
 ActivityOnProjectThisMonth=Aktivnosti na projektu v tem mesecu

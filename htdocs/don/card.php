@@ -106,7 +106,7 @@ if ($action == 'update')
         $object->email       = GETPOST("email");
 		$object->date        = $donation_date;
 		$object->public      = GETPOST("public");
-		$object->fk_project  = GETPOST("fk_project");
+		$object->fk_projet   = GETPOST("fk_projet");
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
 		
@@ -161,7 +161,7 @@ if ($action == 'add')
 		$object->note_private= GETPOST("note_private");
 		$object->note_public = GETPOST("note_public");
 		$object->public      = GETPOST("public");
-		$object->fk_project  = GETPOST("fk_project");
+		$object->fk_projet   = GETPOST("fk_projet");
 		
 		// Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -343,7 +343,7 @@ if ($action == 'create')
     	$formproject=new FormProjets($db);
     	
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $formproject->select_projects(-1, GETPOST("fk_project"),'fk_project', 0, 1, 0, 1);
+        $formproject->select_projects(-1, GETPOST("fk_projet"),'fk_projet', 0, 1, 0, 1);
 		print "</td></tr>\n";
     }
 
@@ -459,7 +459,7 @@ if (! empty($id) && $action == 'edit')
     	
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects(-1, $object->fk_project,'fk_project', 0, 1, 0, 1);
+		$formproject->select_projects(-1, $object->fk_projet,'fk_projet', 0, 1, 0, 1);
         print '</td></tr>';
     }
 

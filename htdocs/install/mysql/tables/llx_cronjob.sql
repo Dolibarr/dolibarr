@@ -33,11 +33,11 @@ CREATE TABLE llx_cronjob
 	md5params 		varchar(32),
   	module_name 		varchar(255),
   	priority 		integer DEFAULT 0,
-  	datelastrun 		datetime,
-  	datenextrun 		datetime,
-  	datestart		datetime,
-  	dateend			datetime,
-  	datelastresult      	datetime,
+  	datelastrun 		datetime,					-- date last run and when should be next
+  	datenextrun 		datetime,					-- job will be run if current date higher that this date
+  	datestart		datetime,						-- before this date no jobs will be run
+  	dateend			datetime,						-- after this date, no more jobs will be run
+  	datelastresult      	datetime,				
   	lastresult      	text,
   	lastoutput      	text,
   	unitfrequency	 	integer NOT NULL DEFAULT 0,

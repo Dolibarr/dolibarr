@@ -24,5 +24,5 @@ BackToHelpCenter=W innym przypadku, kliknij tutaj, aby przejść <a href="%s">ws
 LinkToGoldMember=Możesz połączyć jedno z trenera wybranej przez Dolibarr dla danego języka ( %s), klikając jego Widget (status i maksymalną cenę są automatycznie uaktualniane):
 PossibleLanguages=Obsługiwane języki
 MakeADonation=Pomoc Dolibarr projektu, dokonać wpłaty
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Pomoc projekt Dolibarr, zapisz się na fundamencie
+SeeOfficalSupport=Do oficjalnego wsparcia Dolibarr w Twoim języku: <br> <a href="%s" target="_blank"><b>% S</b></a>

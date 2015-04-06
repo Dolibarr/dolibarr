@@ -180,7 +180,8 @@ if (empty($reshook))
 	// Set project
 	if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
 	{
-	    $object->setProject($projectid);
+	    $result=$object->setProject($projectid);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
@@ -223,7 +224,7 @@ if (empty($reshook))
 			{
 				$db->rollback();
 
-	        	setEventMessage($object->error, 'errors');
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -448,7 +449,7 @@ if (empty($reshook))
 	    }
 	    else
 		{
-	    	setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -619,7 +620,7 @@ if (empty($reshook))
 	    }
 
 	    // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-	    if ($user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
+	    if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
 	    {
 	        $action='confirm_approve';	// can make standard or first level approval also if permission is set
 	    }
@@ -670,8 +671,8 @@ if (empty($reshook))
 	            exit;
 	        }
 	        else
-	        {
-	            setEventMessage($object->error, 'errors');
+			{
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -686,7 +687,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -703,7 +704,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -718,7 +719,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -741,7 +742,7 @@ if (empty($reshook))
 				}
 				else
 				{
-					setEventMessage($object->error, 'errors');
+		            setEventMessages($object->error, $object->errors, 'errors');
 					$action='';
 				}
 			}
@@ -786,7 +787,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -917,22 +918,20 @@ if (empty($reshook))
 					}
 
 					$object_id = $object->create($user);
-
 					if ($object_id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
-						$srcobject->fetch($object->origin_id);
-
-						$object->set_date_livraison($user, $srcobject->date_livraison);
-						$object->set_id_projet($user, $srcobject->fk_project);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
+							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$object->set_id_projet($user, $srcobject->fk_project);
+
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
 							{
@@ -1009,11 +1008,11 @@ if (empty($reshook))
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							setEventMessage($srcobject->error, 'errors');
+			        		setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 							$error ++;
 						}
 					} else {
-						setEventMessage($object->error, 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
 				}
@@ -1023,7 +1022,7 @@ if (empty($reshook))
 		        	if ($id < 0)
 		        	{
 		        		$error++;
-			        	setEventMessage($langs->trans($object->error), 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 		        	}
 				}
 	        }
@@ -1969,11 +1968,12 @@ elseif (! empty($object->id))
 	$cols = 3;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-	// Ligne de	3 colonnes
+	// Total
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	print '<td colspan="2">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
+	// Total VAT
 	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="2">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
@@ -1991,6 +1991,7 @@ elseif (! empty($object->id))
 		print '</tr>';
 	}
 
+	// Total TTC
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="2">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 

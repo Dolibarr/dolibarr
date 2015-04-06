@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=二つの新しい割引の合計は元の�
 ConfirmRemoveDiscount=この割引を削除してよろしいですか？
 RelatedBill=関連する請求書
 RelatedBills=関連する請求書
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

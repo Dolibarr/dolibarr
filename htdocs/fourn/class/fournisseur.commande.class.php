@@ -1066,6 +1066,12 @@ class CommandeFournisseur extends CommonOrder
                         }
                     }
 
+	                if (! $error)
+                    {
+                    	$result=$this->insertExtraFields();
+	                    if ($result < 0) $error++;
+                    }
+
 					if (! $error && ! $notrigger)
 	                {
 						// Call trigger
@@ -1376,9 +1382,10 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	date		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
+     * @param	int			$notrigger          	1 = notrigger
      * @return 	int						<0 if KO, >0 if OK
      */
-    function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet='')
+    function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet=0, $notrigger=0)
     {
         global $conf;
         $error = 0;

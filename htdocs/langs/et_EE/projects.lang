@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Antud projektiga seotud ostuarvete nimekir
 ListContractAssociatedProject=Antud projektiga seotud lepingute nimekiri
 ListFichinterAssociatedProject=Antud projektiga seotud sekkumiste nimekiri
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Antud projektiga seotud tegevuste nimekiri
 ActivityOnProjectThisWeek=Projekti aktiivsus sellel nädalal
 ActivityOnProjectThisMonth=Projekti aktiivsus sellel kuul

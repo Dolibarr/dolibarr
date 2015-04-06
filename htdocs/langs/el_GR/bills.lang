@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Το σύνολο των δύο νέων τ
 ConfirmRemoveDiscount=Είστε σίγουροι ότι θέλετε να αφαιρέσετε την έκπτωση;
 RelatedBill=Σχετιζόμενο τιμολόγιο
 RelatedBills=Σχετιζόμενα τιμολόγια
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Τελευταίο σχετικό τιμολόγιο
 WarningBillExist=Προσοχή, ένα ή περισσότερα τιμολόγια υπάρχουν ήδη
 

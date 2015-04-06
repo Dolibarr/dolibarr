@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=فهرست فاکتورها منبع در 
 ListContractAssociatedProject=فهرست قرارداد در ارتباط با پروژه
 ListFichinterAssociatedProject=فهرست مداخلات مرتبط با پروژه
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=فهرست رویدادی به این پروژه
 ActivityOnProjectThisWeek=فعالیت در پروژه این هفته
 ActivityOnProjectThisMonth=فعالیت در پروژه این ماه

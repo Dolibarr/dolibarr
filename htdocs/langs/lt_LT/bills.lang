@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Dviejų naujų nuolaidų suma turi būti ly
 ConfirmRemoveDiscount=Ar tikrai norite pašalinti šią nuolaidą ?
 RelatedBill=Susijusi sąskaita-faktūra
 RelatedBills=Susiję sąskaitos-faktūros
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

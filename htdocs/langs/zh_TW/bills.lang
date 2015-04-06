@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=兩個新的折扣總額必須等於原來�
 ConfirmRemoveDiscount=你確定要刪除此折扣？
 RelatedBill=相關發票
 RelatedBills=有關發票
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 
