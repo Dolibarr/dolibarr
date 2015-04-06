@@ -49,7 +49,6 @@ $builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
-
 if (GETPOST('button_search'))
 {
 	$filter=GETPOST('filtre',2);
@@ -58,6 +57,7 @@ if (GETPOST('button_search'))
 if ($option == 'late') $filter = 'paye:0';
 if ($option == 'unpaidall') $filter = 'paye:0';
 if ($mode == 'sendremind' && $filter == '') $filter = 'paye:0';
+if ($filter == '') $filter = 'paye:0';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
