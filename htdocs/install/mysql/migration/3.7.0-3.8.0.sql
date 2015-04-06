@@ -515,4 +515,5 @@ create table llx_c_price_global_variable_updater
 )ENGINE=innodb;
 
 ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
+ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL after note_private;
 
