@@ -52,7 +52,11 @@ class CommandeFournisseur extends CommonOrder
 
     var $id;
 
-    var $ref;		 // TODO deprecated
+	/**
+	 * TODO: Remove
+	 * @deprecated
+	 */
+    var $ref;
     var $product_ref;
     var $ref_supplier;
     var $brouillon;

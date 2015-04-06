@@ -61,6 +61,34 @@ abstract class CommonInvoice extends CommonObject
     const TYPE_SITUATION = 5;
 
 	/**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated (need to be paid)
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Classified paid.
+	 * If paid partially, $this->close_code can be:
+	 * - CLOSECODE_DISCOUNTVAT
+	 * - CLOSECODE_BADDEBT
+	 * If paid completelly, this->close_code will be null
+	 */
+	const STATUS_CLOSED = 2;
+
+	/**
+	 * Classified abandoned and no payment done.
+	 * $this->close_code can be:
+	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_ABANDONED
+	 * - CLOSECODE_REPLACED
+	 */
+	const STATUS_ABANDONED = 3;
+
+	/**
 	 * 	Return amount of payments already done
 	 *
 	 *	@return		int		Amount of payment already done, <0 if KO
