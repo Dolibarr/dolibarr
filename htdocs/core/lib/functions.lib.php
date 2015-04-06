@@ -3010,8 +3010,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 }
 
 /**
- *	Function that return a number with universal decimal format (decimal separator is '.') from
- *	an amount typed by a user.
+ *	Function that return a number with universal decimal format (decimal separator is '.') from an amount typed by a user.
  *	Function to use on each input amount before any numeric test or database insert
  *
  *	@param	float	$amount			Amount to convert/clean
@@ -4992,7 +4991,15 @@ function natural_search($fields, $value, $numeric=0)
             	}
             	if ($newcrit != '')
             	{
-            		$newres .= ($i2 > 0 ? ' OR ' : '') . $field . ' '.$operator.' '.price2num($newcrit);
+            		$numnewcrit = price2num($newcrit);
+            		if (is_numeric($numnewcrit))
+            		{
+            			$newres .= ($i2 > 0 ? ' OR ' : '') . $field . ' '.$operator.' '.$numnewcrit;
+            		}
+            		else
+            		{
+            			$newres .= ($i2 > 0 ? ' OR ' : '') . '1 = 2';	// force false
+            		}
             		$i2++;	// a criteria was added to string
             	}
             }
