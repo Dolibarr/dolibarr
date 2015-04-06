@@ -512,3 +512,6 @@ create table llx_c_price_global_variable_updater
 	next_update			integer DEFAULT 0,
 	last_status			text DEFAULT NULL
 )ENGINE=innodb;
+
+ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
+

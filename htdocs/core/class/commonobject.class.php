@@ -1611,7 +1611,7 @@ abstract class CommonObject
     	}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
-    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+    		dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
 
