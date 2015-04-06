@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,26 +46,13 @@ if ($result > 0)
     $result=$adht->fetch($object->typeid);
 }
 
+$permissionnote=$user->rights->adherent->creer;  // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
  */
 
-if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
-{
-	$db->begin();
-
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
-	if ($res < 0)
-	{
-		setEventMessage($object->error, 'errors');
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 
 
@@ -129,49 +117,16 @@ if ($id)
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
-    // Private note
-    print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-	print '<td valign="top" colspan="3">';
-	if ($action == 'edit' && $user->rights->adherent->creer)
-	{
-	    print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
-        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note_private',$object->note_private,'',280,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
-        $doleditor->Create();
-	}
-	else
-	{
-		print dol_htmlentitiesbr($object->note_private);
-	}
-	print "</td></tr>";
-
-	if ($action == 'edit')
-	{
-		print '<tr><td colspan="4" align="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
-	}
-
     print "</table>";
-	print "</form>\n";
+    print '<br>';
 
 
-    /*
-    * Actions
-    */
-    print '</div>';
-    print '<div class="tabsAction">';
+    $colwidth='20';
+    $permission = $user->rights->adherent->creer;  // Used by the include of notes.tpl.php
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    if ($user->rights->adherent->creer && $action != 'edit')
-    {
-        print '<div class="inline-block divButAction"><a class="butAction" href="note.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify')."</a></div>";
-    }
 
-    print "</div>";
-
+    dol_fiche_end();
 
 }
 
