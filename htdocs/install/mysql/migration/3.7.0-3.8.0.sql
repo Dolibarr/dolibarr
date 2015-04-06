@@ -64,6 +64,7 @@ create table llx_payment_loan
   fk_user_modif		integer
 )ENGINE=innodb;
 
+ALTER TABLE llx_extrafields ADD COLUMN fieldrequired integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
 ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
 
