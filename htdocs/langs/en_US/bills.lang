@@ -298,6 +298,7 @@ RelatedCustomerInvoices=Related customer invoices
 RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
+MergingPDFTool=Merging PDF tool
 
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate

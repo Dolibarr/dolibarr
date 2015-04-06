@@ -120,7 +120,7 @@ if ($mode == 'search')
 
 $now=dol_now();
 $form=new Form($db);
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 $formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
@@ -245,7 +245,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
@@ -259,10 +259,8 @@ if ($resql)
 	}
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
-	//if ($syear == '') $syear = date("Y");
-	$htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
