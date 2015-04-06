@@ -82,7 +82,7 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    string	$param      Date TMS to convert
+	 *   @param	    int		$param      Date TMS to convert
 	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
@@ -271,7 +271,7 @@ abstract class DoliDB implements Database
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	int					$gm			1=Input informations are GMT values, otherwise local to server TZ
-	 *	@return	int|string						Date TMS
+	 *	@return	int|string						Date TMS or ''
 	 */
 	function jdate($string, $gm=false)
 	{

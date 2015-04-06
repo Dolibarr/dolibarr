@@ -158,7 +158,7 @@ class mailing_contacts4 extends MailingTargets
     /**
      *		Return here number of distinct emails returned by your selector.
      *
-     *		@param	string	$sql		Requete sql de comptage
+     *		@param		string	$sql		Requete sql de comptage
      *		@return		int		Number of recipients
      */
     function getNbOfRecipients($sql='')

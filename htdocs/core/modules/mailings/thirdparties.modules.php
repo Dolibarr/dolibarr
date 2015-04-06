@@ -157,7 +157,7 @@ class mailing_thirdparties extends MailingTargets
 	 *	emails from a text file, this function must return 500.
 	 *
 	 *  @param      string	$sql        Requete sql de comptage
-	 *	@return		int			Nb of recipients
+	 *	@return		int					Nb of recipients
 	 */
 	function getNbOfRecipients($sql='')
 	{

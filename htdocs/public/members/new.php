@@ -25,9 +25,9 @@
  *	\brief      Example of form to add a new member
  *
  *  Note that you can add following constant to change behaviour of page
- *  MEMBER_NEWFORM_AMOUNT               Default amount for autosubscribe form
+ *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_NEWFORM_EDITAMOUNT           Amount can be edited
- *  MEMBER_NEWFORM_PAYONLINE            Suggest paypemt with paypal of paybox
+ *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal of paybox
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
  *  MEMBER_NEWFORM_FORCETYPE            Force type of member
@@ -40,7 +40,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
@@ -138,7 +138,7 @@ function llxFooterVierge()
  * Actions
  */
 
-// Action called when page is submited
+// Action called when page is submitted
 if ($action == 'add')
 {
     // test if login already exists
@@ -335,7 +335,7 @@ if ($action == 'add')
     }
 }
 
-// Action called after a submited was send and member created succesfully
+// Action called after a submitted was send and member created successfully
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 if ($action == 'added')

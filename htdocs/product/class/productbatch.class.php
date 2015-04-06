@@ -462,7 +462,7 @@ class Productbatch extends CommonObject
     /**
      * Return all batch detail records for given product and warehouse
      *
-     *  @param	obj			$db    database object
+     *  @param	DoliDB			$db    database object
      *  @param	int			$fk_product_stock    id product_stock for objet
      *  @param	int			$with_qty    doesn't return line with 0 quantity
 	 *  @return int          	<0 if KO, >0 if OK

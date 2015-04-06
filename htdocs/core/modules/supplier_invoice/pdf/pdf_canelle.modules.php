@@ -819,7 +819,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  Show payments table
 	 *
 	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object invoice
+	 *  @param  FactureFournisseur		$object     	Object invoice
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
@@ -903,7 +903,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  Show top header of page.
 	 *
 	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  FactureFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -1090,7 +1090,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *   	Show footer of page. Need this->emetteur object
      *
 	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	FactureFournisseur		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text

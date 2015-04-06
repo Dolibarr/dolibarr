@@ -44,11 +44,11 @@ Use clear commit messages with the following structure:
 <pre>
 FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
 or
-CLOSE|Close #456 Short description (where #456 is number feature request, if it exists. In upper case to appear into ChangeLog)
+CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. In upper case to appear into ChangeLog)
 or
-NEW|New Short description (In upper case to appear into ChangeLog)
+NEW|New Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #456)
 or
-Short description (when the commit is not introducing feature or closing a bug)
+Short description (when the commit is not introducing feature nor closing a bug)
 
 Long description (Can span accross multiple lines).
 </pre>
