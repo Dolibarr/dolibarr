@@ -514,11 +514,11 @@ class CMailFile
 		return $res;
 	}
 
-
-	// Encode subject according to RFC 2822 - http://en.wikipedia.org/wiki/MIME#Encoded-Word
-
 	/**
-	 * @param string $stringtoencode
+	 * Encode subject according to RFC 2822 - http://en.wikipedia.org/wiki/MIME#Encoded-Word
+	 * 
+	 * @param string $stringtoencode String to encode
+	 * @return string                string encoded
 	 */
 	function encodetorfc2822($stringtoencode)
 	{
