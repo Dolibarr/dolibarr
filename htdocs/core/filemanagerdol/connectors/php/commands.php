@@ -23,9 +23,13 @@
  */
 
 /**
- * @param string $currentFolder
+ * GetFolders
+ * 
+ * @param	string	$resourceType		Resource type
+ * @param 	string 	$currentFolder		Current folder
+ * @return 	void
  */
-function GetFolders( $resourceType, $currentFolder )
+function GetFolders($resourceType, $currentFolder)
 {
 	// Map the virtual path to the local server path.
 	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFolders');
@@ -182,7 +186,13 @@ function CreateFolder( $resourceType, $currentFolder )
 // DOL_CHANGE
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
 /**
- * @param string $currentFolder
+ * FileUpload
+ * 
+ * @param	string	$resourceType	Resource type
+ * @param 	string 	$currentFolder	Current folder
+ * @param	string	$sCommand		Command
+ * @param	string	$CKEcallback	Callback
+ * @return	null
  */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
