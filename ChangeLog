@@ -35,6 +35,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #2534 ] SQL error when editing a supplier invoice line
 - Fix: [ bug #2535 ] Untranslated string in "Linked objects" page of a project
 - Fix: [ bug #2545 ] Missing object_margin.png in Amarok theme
+- Fix: [ bug #2542 ] Contracts store localtax preferences
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
