@@ -22,6 +22,9 @@
  * This is the File Manager Connector for PHP.
  */
 
+/**
+ * @param string $currentFolder
+ */
 function GetFolders( $resourceType, $currentFolder )
 {
 	// Map the virtual path to the local server path.
@@ -178,6 +181,9 @@ function CreateFolder( $resourceType, $currentFolder )
 
 // DOL_CHANGE
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
+/**
+ * @param string $currentFolder
+ */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	if (!isset($_FILES)) {

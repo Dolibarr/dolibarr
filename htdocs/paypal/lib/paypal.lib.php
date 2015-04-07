@@ -436,6 +436,16 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  '      desc:               Product description
  '--------------------------------------------------------------------------------------------------------------------------------------------
  */
+/**
+ * @param double $paymentAmount
+ * @param string $currencyCodeType
+ * @param string $paymentType
+ * @param string $returnURL
+ * @param string $cancelURL
+ * @param string $tag
+ * @param string $solutionType
+ * @param string $landingPage
+ */
 function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
 {
     //------------------------------------------------------------------------------------------------------------------------------------
