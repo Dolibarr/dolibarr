@@ -67,7 +67,7 @@ if (! empty($id) || ! empty($ref))
 
 	if ($result)
 	{
-		$head=product_prepare_head($object, $user);
+		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 

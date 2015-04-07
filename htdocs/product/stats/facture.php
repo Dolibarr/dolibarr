@@ -90,7 +90,7 @@ if ($id > 0 || ! empty($ref))
 
 	if ($result > 0)
 	{
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
@@ -148,7 +148,7 @@ if ($id > 0 || ! empty($ref))
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($socid) $sql.= " AND f.fk_soc = ".$socid;
             $sql.= " ORDER BY $sortfield $sortorder ";
-            
+
             //Calcul total qty and amount for global if full scan list
             $total_ht=0;
             $total_qty=0;
@@ -163,21 +163,21 @@ if ($id > 0 || ! empty($ref))
             		}
             	}
             }
-            
+
             $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
             $result = $db->query($sql);
-            if ($result) 
+            if ($result)
 			{
                 $num = $db->num_rows($result);
-                
+
                 if (! empty($id))
                 	$option .= '&amp;id='.$product->id;
                 if (! empty($search_month))
                 	$option .= '&amp;search_month='.$search_month;
                 if (! empty($search_year))
                 	$option .= '&amp;search_year='.$search_year;
-                
+
                 print '<form method="post" action="' . $_SERVER ['PHP_SELF'] . '?id='.$product->id.'" name="search_form">' . "\n";
                 if (! empty($sortfield))
                 	print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -187,7 +187,7 @@ if ($id > 0 || ! empty($ref))
                 	print '<input type="hidden" name="page" value="' . $page . '"/>';
                 	$option .= '&amp;page=' . $page;
                 }
-                
+
                 print_barre_liste($langs->trans("CustomersInvoices"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$product->id,$sortfield,$sortorder,'',$num,$totalrecords,'');
                 print '<div class="liste_titre">';
                 print $langs->trans('Period').' ('.$langs->trans("DateInvoice") .') - ';
@@ -235,7 +235,7 @@ if ($id > 0 || ! empty($ref))
                         print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
                         print "</tr>\n";
                         $i++;
-                        
+
                         if (!empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
                         	$total_ht+=$objp->total_ht;
                         	$total_qty+=$objp->qty;

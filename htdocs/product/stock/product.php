@@ -384,7 +384,7 @@ if ($id > 0 || $ref)
 
 	if ($result > 0)
 	{
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);

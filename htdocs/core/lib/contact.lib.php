@@ -94,7 +94,7 @@ function contact_prepare_head(Contact $object)
     	$head[$tab][2] = 'category';
     	$tab++;
     }
-    
+
     // Info
     $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Info");

@@ -36,7 +36,7 @@
  */
 function tax_prepare_head(ChargeSociales $object)
 {
-    global $langs, $conf;
+    global $langs, $conf, $user;
 
     $h = 0;
     $head = array();

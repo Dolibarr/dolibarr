@@ -77,7 +77,7 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($result > 0)
 	{
-		$head=product_prepare_head($object, $user);
+		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'margin', $titre, 0, $picto);

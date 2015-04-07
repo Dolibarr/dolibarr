@@ -28,12 +28,11 @@
  * Prepare array with list of tabs
  *
  * @param   Product	$object		Object related to tabs
- * @param	User	$user		Object user
  * @return  array				Array of tabs to show
  */
-function product_prepare_head($object, $user)
+function product_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;

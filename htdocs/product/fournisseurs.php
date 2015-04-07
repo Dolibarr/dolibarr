@@ -143,7 +143,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			$_POST["price"] = 0;
 		}
 	}
-	
+
 		$product = new ProductFournisseur($db);
 		$result=$product->fetch($id);
 		if ($result <= 0)
@@ -191,7 +191,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				}
 				else
 				{
-					if ($price_expression !== '') 
+					if ($price_expression !== '')
 					{
 						//Check the expression validity by parsing it
 						$priceparser = new PriceParser($db);
@@ -257,7 +257,7 @@ if ($id || $ref)
 			 *  En mode visu
 			 */
 
-			$head=product_prepare_head($product, $user);
+			$head=product_prepare_head($product);
 			$titre=$langs->trans("CardProduct".$product->type);
 			$picto=($product->type== Product::TYPE_SERVICE?'service':'product');
 			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
@@ -323,7 +323,7 @@ if ($id || $ref)
 					$supplier->fetch($socid);
 					print $supplier->getNomUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
-					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';				
+					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
 				}
 				else
@@ -380,7 +380,7 @@ if ($id || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
-				print '</td></tr>';				
+				print '</td></tr>';
 
 				// Vat rate
 				$default_vat='';
@@ -450,7 +450,7 @@ if ($id || $ref)
 				print '</td>';
 				print '</tr>';
 
-				
+
 				// Delai livraison jours
 				print '<tr>';
 				print '<td>'.$langs->trans('NbDaysToDelivery').'</td>';

@@ -138,7 +138,7 @@ class ActionsCardProduct
 
 		if ($action == 'view')
 		{
-            $head = product_prepare_head($this->object,$user);
+            $head = product_prepare_head($this->object);
 
             $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
 

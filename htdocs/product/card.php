@@ -1306,7 +1306,7 @@ else
         // Fiche en mode visu
         else
 		{
-            $head=product_prepare_head($object, $user);
+            $head=product_prepare_head($object);
             $titre=$langs->trans("CardProduct".$object->type);
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
