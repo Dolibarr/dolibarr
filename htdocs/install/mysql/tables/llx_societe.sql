@@ -70,6 +70,8 @@ create table llx_societe
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
   supplier_account         varchar(32),                         		-- compte client chez un fournisseur
   fk_prospectlevel         varchar(12),                         		-- prospect level (in llx_c_prospectlevel)
+  fk_incoterms             integer,										-- for incoterms
+  location_incoterms       varchar(255),								-- for incoterms
   customer_bad             tinyint        DEFAULT 0,            		-- mauvais payeur 0/1
   customer_rate            real           DEFAULT 0,            		-- taux fiabilite client (0 a 1)
   supplier_rate            real           DEFAULT 0,            		-- taux fiabilite fournisseur (0 a 1)

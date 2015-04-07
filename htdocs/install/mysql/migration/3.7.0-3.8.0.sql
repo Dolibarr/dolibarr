@@ -378,6 +378,9 @@ CREATE TABLE llx_askpricesupplierdet_extrafields (
 -- End Module AskPriceSupplier --
 
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime after date_approve;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer after fk_user_approve;
+
 ALTER TABLE llx_societe ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_societe ADD COLUMN location_incoterms varchar(255);
 ALTER TABLE llx_propal ADD COLUMN fk_incoterms integer;
@@ -386,8 +389,6 @@ ALTER TABLE llx_commande ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_commande ADD COLUMN location_incoterms varchar(255);
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_commande_fournisseur ADD COLUMN location_incoterms varchar(255);
-ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime after date_approve;
-ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer after fk_user_approve;
 ALTER TABLE llx_facture ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_facture ADD COLUMN location_incoterms varchar(255);
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_incoterms integer;

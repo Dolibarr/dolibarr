@@ -62,6 +62,8 @@ create table llx_commande_fournisseur
   fk_cond_reglement		integer,                       -- condition de reglement
   fk_mode_reglement		integer,                       -- mode de reglement
   fk_input_method	    integer default 0,            -- id coming from c_input_reason, '0' if no defined
+  fk_incoterms          integer,						-- for incoterms
+  location_incoterms    varchar(255),					-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255)					-- for stock other parameters with json format
   
