@@ -1131,7 +1131,7 @@ class Contrat extends CommonObject
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext=trim($this->ref_ext);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
 		if (isset($this->fk_projet)) $this->fk_projet=trim($this->fk_projet);
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature=trim($this->fk_commercial_signature);
@@ -2417,7 +2417,7 @@ class ContratLigne extends CommonObject
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);
-		$this->statut=trim($this->statut);
+		$this->statut=(int) $this->statut;
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->tva_tx=trim($this->tva_tx);

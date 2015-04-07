@@ -577,7 +577,7 @@ class FactureFournisseur extends CommonInvoice
         //	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
         //	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
         if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
-        if (isset($this->statut)) $this->statut=trim($this->statut);
+        if (isset($this->statut)) $this->statut=(int) $this->statut;
         if (isset($this->author)) $this->author=trim($this->author);
         if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
         if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
