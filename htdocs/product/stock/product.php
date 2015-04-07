@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
- * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2013-2015 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -646,7 +646,7 @@ if (empty($action) && $product->id)
 {
     print "<div class=\"tabsAction\">\n";
 
-    if ($user->rights->stock->creer)
+    if ($user->rights->stock->mouvement->creer)
     {
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
     }
