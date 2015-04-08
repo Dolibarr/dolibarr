@@ -415,26 +415,45 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
 
 }
 
-/*
- '-------------------------------------------------------------------------------------------------------------------------------------------
- ' Purpose:     Prepares the parameters for the SetExpressCheckout API Call.
- ' Inputs:
- '      paymentAmount:      Total value of the shopping cart
- '      currencyCodeType:   Currency code value the PayPal API
- '      paymentType:        paymentType has to be one of the following values: Sale or Order or Authorization
- '      returnURL:          the page where buyers return to after they are done with the payment review on PayPal
- '      cancelURL:          the page where buyers return to when they cancel the payment review on PayPal
- '      shipToName:     the Ship to name entered on the merchant's site
- '      shipToStreet:       the Ship to Street entered on the merchant's site
- '      shipToCity:         the Ship to City entered on the merchant's site
- '      shipToState:        the Ship to State entered on the merchant's site
- '      shipToCountryCode:  the Code for Ship to Country entered on the merchant's site
- '      shipToZip:          the Ship to ZipCode entered on the merchant's site
- '      shipToStreet2:      the Ship to Street2 entered on the merchant's site
- '      phoneNum:           the phoneNum  entered on the merchant's site
- '      email:              the buyer email
- '      desc:               Product description
- '--------------------------------------------------------------------------------------------------------------------------------------------
+/**
+ *-------------------------------------------------------------------------------------------------------------------------------------------
+ * Purpose:     Prepares the parameters for the SetExpressCheckout API Call.
+ * Inputs:
+ *      paymentAmount:      Total value of the shopping cart
+ *      currencyCodeType:   Currency code value the PayPal API
+ *      paymentType:        paymentType has to be one of the following values: Sale or Order or Authorization
+ *      returnURL:          the page where buyers return to after they are done with the payment review on PayPal
+ *      cancelURL:          the page where buyers return to when they cancel the payment review on PayPal
+ *      shipToName:     the Ship to name entered on the merchant's site
+ *      shipToStreet:       the Ship to Street entered on the merchant's site
+ *      shipToCity:         the Ship to City entered on the merchant's site
+ *      shipToState:        the Ship to State entered on the merchant's site
+ *      shipToCountryCode:  the Code for Ship to Country entered on the merchant's site
+ *      shipToZip:          the Ship to ZipCode entered on the merchant's site
+ *      shipToStreet2:      the Ship to Street2 entered on the merchant's site
+ *      phoneNum:           the phoneNum  entered on the merchant's site
+ *      email:              the buyer email
+ *      desc:               Product description
+ *
+ * @param 	double 			$paymentAmount		Payment amount
+ * @param 	string 			$currencyCodeType	Currency
+ * @param 	string 			$paymentType		Payment type
+ * @param 	string 			$returnURL			Return Url
+ * @param 	string 			$cancelURL			Cancel Url
+ * @param 	string 			$tag				Tag
+ * @param 	string 			$solutionType		Type
+ * @param 	string 			$landingPage		Landing page
+ * @param	string			$shipToName			Ship to name
+ * @param	string			$shipToStreet		Ship to street
+ * @param	string			$shipToCity			Ship to city
+ * @param	string			$shipToState		Ship to state
+ * @param	string			$shipToCountryCode	Ship to country code
+ * @param	string			$shipToZip			Ship to zip
+ * @param	string			$shipToStreet2		Ship to street2
+ * @param	string			$phoneNum			Phone
+ * @param	string			$email				Email
+ * @param	string			$desc				Description
+ * @return	array								Array
  */
 function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum, $email='', $desc='')
 {
