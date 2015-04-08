@@ -346,6 +346,47 @@ if ($mode != 'marketplace')
         	}
         }
 
+		// Is the module required?
+		$required = false;
+		$disable_setup = false;
+
+		if (
+			(!empty( $conf->global->$const_name ) || !empty( $objMod->always_enabled )) // Module enabled
+			&& ( !empty( $conf->multicompany->enabled ) && $objMod->core_enabled ) && ( $user->entity || $conf->entity != 1 )
+		) {
+			$required = true;
+			if (!empty( $conf->multicompany->enabled ) && $user->entity) {
+				$disable_setup = true;
+			}
+		}
+
+		// Generate the setup link
+		$setup_url = false;
+		if (
+			(!empty( $conf->global->$const_name ) || !empty( $objMod->always_enabled )) // Module enabled
+			&& !empty( $objMod->config_page_url ) && ! $objMod->disabled && !$disable_setup
+		) {
+			if (is_array( $objMod->config_page_url )) {
+				$i = 0;
+				foreach ($objMod->config_page_url as $urlpage) {
+					if ($i ++) {
+						$setup_url = $urlpage;
+					} else {
+						if (preg_match( '/^([^@]+)@([^@]+)$/i', $urlpage, $regs )) {
+							$setup_url = dol_buildpath( '/' . $regs[2] . '/admin/' . $regs[1], 1 );
+						} else {
+							$setup_url = $urlpage;
+						}
+					}
+				}
+				print "</td>\n";
+			} else if (preg_match( '/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs )) {
+				$setup_url = dol_buildpath( '/' . $regs[2] . '/admin/' . $regs[1], 1 );
+			} else {
+				$setup_url = $objMod->config_page_url;
+			}
+		}
+
         // Print a separator if we change family
         //print "<tr><td>xx".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
         //if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
@@ -356,7 +397,6 @@ if ($mode != 'marketplace')
             $familytext=empty($familylib[$family])?$family:$familylib[$family];
             print $familytext;
             print "</td>\n";
-    		print '<td align="right">'.$langs->trans("SetupShort").'</td>'."\n";
             print "</tr>\n";
             $atleastoneforfamily=0;
             //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
@@ -392,9 +432,19 @@ if ($mode != 'marketplace')
         }
         print '</td>';
 
-        // Name
-        print '<td valign="top">'.$objMod->getName();
-        print "</td>\n";
+		// Name + setup link
+		print '<td valign="top">';
+		if ($setup_url) {
+			print '<a href ="' . $setup_url . '">';
+		}
+		print $objMod->getName();
+
+		if ($setup_url) {
+			print '&nbsp';
+			print img_picto($langs->trans("Setup") . ':' . $langs->trans("Setup"),'setup');
+			print '</a>';
+		}
+		print "</td>\n";
 
         // Desc
         print '<td valign="top">';
@@ -418,17 +468,15 @@ if ($mode != 'marketplace')
         // Activate/Disable and Setup (2 columns)
         if (! empty($conf->global->$const_name))	// If module is activated
         {
-        	$disableSetup = 0;
 
         	print '<td align="center" valign="middle">';
             if (! empty($objMod->disabled))
         	{
         		print $langs->trans("Disabled");
         	}
-        	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+        	else if ($required)
         	{
         		print $langs->trans("Required");
-        		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else
         	{
@@ -437,49 +485,6 @@ if ($mode != 'marketplace')
         		print '</a>';
         	}
         	print '</td>'."\n";
-
-        	if (! empty($objMod->config_page_url) && !$disableSetup)
-        	{
-        		if (is_array($objMod->config_page_url))
-        		{
-        			print '  <td align="right" valign="top">';
-        			$i=0;
-        			foreach ($objMod->config_page_url as $page)
-        			{
-        				$urlpage=$page;
-        				if ($i++)
-        				{
-        					print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
-        					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
-        				}
-        				else
-        				{
-        					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
-        					{
-        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-        					}
-        					else
-        					{
-        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
-        					}
-        				}
-        			}
-        			print "</td>\n";
-        		}
-        		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
-        		{
-        			print '<td align="right" valign="top"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
-        		}
-        		else
-        		{
-        			print '<td align="right" valign="top"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
-        		}
-        	}
-        	else
-        	{
-        		print "<td>&nbsp;</td>";
-        	}
-
         }
         else	// Module not activated
 		{
@@ -499,7 +504,6 @@ if ($mode != 'marketplace')
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}
-        	print "</td>\n  <td>&nbsp;</td>";
         }
 
         print "</tr>\n";
