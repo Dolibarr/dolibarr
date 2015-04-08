@@ -3,7 +3,10 @@ How to contribute to Dolibarr
 
 Bug reports and feature requests
 --------------------------------
-** NEW **
+
+*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
+
+**NEW**
 
 Issues are now managed on [GitHub](https://github.com/Dolibarr/dolibarr/Issues).
 
