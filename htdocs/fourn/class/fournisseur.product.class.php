@@ -631,17 +631,19 @@ class ProductFournisseur extends Product
     /**
      *	Display supplier of product
      *
-     *	@param	int		$withpicto	Add picto
-     *	@param	string	$option		Target of link ('', 'customer', 'prospect', 'supplier')
-     *	@return	string				String with supplier price
+     *	@param	int		$withpicto		Add picto
+     *	@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *	@param	int		$maxlen			Max length of name
+     *  @param	integer	$notooltip		1=Disable tooltip
+     *	@return	string					String with supplier price
 	 *  TODO Remove this method. Use getNomUrl directly.
      */
-    function getSocNomUrl($withpicto=0,$option='supplier')
+    function getSocNomUrl($withpicto=0,$option='supplier',$maxlen=0,$notooltip=0)
     {
         $thirdparty = new Fournisseur($this->db);
         $thirdparty->fetch($this->fourn_id);
 
-        return $thirdparty->getNomUrl($withpicto,$option);
+        return $thirdparty->getNomUrl($withpicto,$option,$maxlen,$notooltip);
     }
 
     /**
@@ -649,13 +651,15 @@ class ProductFournisseur extends Product
      *
      *  @param	int		$showunitprice	Show "Unit price" into output string
      *  @param	int		$showsuptitle	Show "Supplier" into output string
+     *	@param	int		$maxlen			Max length of name
+     *  @param	integer	$notooltip		1=Disable tooltip
      *	@return	string					String with supplier price
      */
-    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1)
+    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0)
     {
         global $langs;
         $langs->load("suppliers");
-        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier').' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         return $out;
     }
 
