@@ -950,40 +950,40 @@ if (empty($reshook))
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
-								$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-								$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
-								$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
+								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
-								if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
 								{
-									$lines [$i]->fetch_optionals($lines [$i]->rowid);
-									$array_option = $lines [$i]->array_options;
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_option = $lines[$i]->array_options;
 								}
 
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
+								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
 								$res = $productsupplier->fetch($idProductFourn);
 
 								$result = $object->addline(
 									$desc,
-									$lines [$i]->subprice,
-									$lines [$i]->qty,
-									$lines [$i]->tva_tx,
-									$lines [$i]->localtax1_tx,
-									$lines [$i]->localtax2_tx,
-									$lines [$i]->fk_product,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$lines[$i]->tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product,
 									$productsupplier->product_fourn_price_id,
 									$productsupplier->ref_fourn,
-									$lines [$i]->remise_percent,
+									$lines[$i]->remise_percent,
 									'HT',
 									0,
-									$lines [$i]->product_type,
+									$lines[$i]->product_type,
 									'',
 									'',
 									null,
@@ -996,7 +996,7 @@ if (empty($reshook))
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0 && $lines [$i]->product_type == 9) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
