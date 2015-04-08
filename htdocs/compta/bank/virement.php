@@ -79,7 +79,7 @@ if ($action == 'add')
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
 
-		if ($accountto->id != $accountfrom->id)
+		if (($accountto->id != $accountfrom->id) && ($accountto->currency_code == $accountfrom->currency_code))
 		{
 			$db->begin();
 
