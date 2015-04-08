@@ -78,6 +78,7 @@ IdWarehouse=Id warehouse
 DescWareHouse=Description warehouse
 LieuWareHouse=Localisation warehouse
 WarehousesAndProducts=Warehouses and products
+WarehousesAndProductsBatchDetail=Warehouses and products (with detail per batch/serial)
 AverageUnitPricePMPShort=Weighted average input price
 AverageUnitPricePMP=Weighted average input price
 SellPriceMin=Selling Unit Price
