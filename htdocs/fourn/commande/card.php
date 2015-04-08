@@ -1911,7 +1911,7 @@ elseif (! empty($object->id))
 	print '</td></tr>';
 
 
-	// Delai livraison jours
+	// Delivery delay (in days)
 	print '<tr>';
 	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
 	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';

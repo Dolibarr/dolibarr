@@ -201,7 +201,7 @@ if (empty($reshook))
 				{
 
 					$error++;
-					setEventMessage($product->error, 'errors');
+					setEventMessage($product->error, $product->errors, 'errors');
 				}
 				else
 				{
@@ -528,13 +528,9 @@ if ($id || $ref)
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("Charges").'</td>';
-				}
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("DiscountQtyMin").'</td>';
+				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -604,6 +600,11 @@ if ($id || $ref)
 						// Discount
 						print '<td align="right">';
 						print price2num($productfourn->fourn_remise_percent).'%';
+						print '</td>';
+
+						// Delivery delay
+						print '<td align="right">';
+						print $productfourn->delivery_time_days;
 						print '</td>';
 
 						// Charges ????
