@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - categories
-Rubrique=Tag/Category
-Rubriques=Tags/Categories
-categories=tags/categories
-TheCategorie=The tag/category
-NoCategoryYet=No tag/category of this type created
+Rubrique=Label/Catégorie
+Rubriques=Labels/Catégories
+categories=labels/catégories
+TheCategorie=Le label/Catégorie
+NoCategoryYet=Aucun label/catégorie de ce type n'a été créé
 In=Dans
 AddIn=Ajouter dans
 modify=modifier
@@ -18,8 +18,8 @@ ContactsCategoriesArea=Contacts tags/categories area
 MainCats=Main tags/categories
 SubCats=Sous-catégories
 CatStatistics=Statistiques
-CatList=List of tags/categories
-AllCats=All tags/categories
+CatList=Liste des labels/catégories
+AllCats=Tous les labels/catégories
 ViewCat=View tag/category
 NewCat=Add tag/category
 NewCategory=New tag/category
