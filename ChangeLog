@@ -209,6 +209,12 @@ Dolibarr better:
 - Fix: Bad SEPA xml file creation
 - Fix: [ bug #1892 ] PHP Fatal error when using USER_UPDATE_SESSION trigger and adding a supplier invoice payment
 - Fix: Showing system error if not enough stock of product into orders creation with lines
+- Fix: [ bug #2543 ] Untranslated "Contract" origin string when creating an invoice from a contract
+- Fix: [ bug #2534 ] SQL error when editing a supplier invoice line
+- Fix: [ bug #2535 ] Untranslated string in "Linked objects" page of a project
+- Fix: [ bug #2545 ] Missing object_margin.png in Amarok theme
+- Fix: [ bug #2542 ] Contracts store localtax preferences
+- Fix: Bad permission assignments for stock movements actions
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
