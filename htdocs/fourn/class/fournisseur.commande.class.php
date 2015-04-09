@@ -1392,13 +1392,19 @@ class CommandeFournisseur extends CommonOrder
     function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet=0, $notrigger=0)
     {
         global $conf;
+
         $error = 0;
         require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
-        // Check parameters
-        if ($entrepot <= 0 || $qty <= 0)
+        // Check parameters (if test are wrong here, there is bug into caller)
+        if ($entrepot <= 0)
         {
-            $this->error='BadValueForParameterWarehouseOrQty';
+            $this->error='ErrorBadValueForParameterWarehouse';
+            return -1;
+        }
+        if ($qty <= 0)
+        {
+            $this->error='ErrorBadValueForParameterQty';
             return -1;
         }
 
