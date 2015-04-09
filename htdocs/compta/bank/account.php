@@ -403,7 +403,7 @@ if ($id > 0 || ! empty($ref))
 		print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
 		if ($nbcategories)
 		{
-			print '<br>'.$langs->trans("Category").': <select class="flat" name="cat1">'.$options.'</select>';
+			print '<br>'.$langs->trans("Rubrique").': <select class="flat" name="cat1">'.$options.'</select>';
 		}
 		print '</td>';
 		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.GETPOST("debit").'"></td>';
