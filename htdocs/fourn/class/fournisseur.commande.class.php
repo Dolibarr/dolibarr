@@ -1747,18 +1747,37 @@ class CommandeFournisseur extends CommonOrder
             if ($type == 'nev') $statut = 7;
             if ($type == 'can') $statut = 7;
 
-        	if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && ($type == 'tot'))
-	    	{
-	    		// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
-	    		$dispatchedlinearray=$this->getDispachedLines(0);
-	    		if (count($dispatchedlinearray) > 0)
+            // Some checks to accept the record
+            if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
+            {
+				// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
+	        	if (! $error && ($type == 'tot'))
+		    	{
+		    		$dispatchedlinearray=$this->getDispachedLines(0);
+		    		if (count($dispatchedlinearray) > 0)
+		    		{
+		    			$result=-1;
+		    			$error++;
+		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
+		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
+		    		}
+
+		    	}
+	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to rception done, only if status of all line are ok (refuse denied)
 	    		{
-	    			$result=-1;
-	    			$error++;
-	    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
-	    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
+	    			$dispatcheddenied=$this->getDispachedLines(2);
+	    			if (count($dispatchedlinearray) > 0)
+	    			{
+		    			$result=-1;
+		    			$error++;
+		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionDenied';
+		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionDenied', LOG_DEBUG);
+	    			}
 	    		}
-	    	}
+            }
+
+            // TODO LDR01 Add option to accept only if ALL predefined products are received (same qty).
+
 
             if (! $error && ! ($statut == 4 or $statut == 5 or $statut == 7))
             {

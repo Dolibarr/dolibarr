@@ -109,7 +109,7 @@ if ($action == 'denydispatchline' &&
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result=$supplierorderdispatch->fetch($lineid);
 	if (! $result) dol_print_error($db);
-	$result=$supplierorderdispatch->setStatut(-1);
+	$result=$supplierorderdispatch->setStatut(2);
 	if ($result < 0)
 	{
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
@@ -678,10 +678,15 @@ if ($id > 0 || ! empty($ref))
 								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
 								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
 							}
-							else
+							if ($objp->status == 1)
 							{
-								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Disapprove").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
 								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
+							}
+							if ($objp->status == 2)
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
 							}
 						}
 						print '</td>';

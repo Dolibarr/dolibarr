@@ -495,16 +495,19 @@ class CommandeFournisseurDispatch extends CommonObject
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8');
         }
         if ($mode == 4)
         {
             if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
             if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+            if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut8').' '.$langs->trans($this->statuts[$statut]);
         }
         if ($mode == 5)
         {
             if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
             if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut8');
         }
     }
 
