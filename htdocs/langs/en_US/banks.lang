@@ -158,3 +158,5 @@ LabelRIB=BAN Label
 NoBANRecord=No BAN record
 DeleteARib=Delete BAN record
 ConfirmDeleteRib=Are you sure you want to delete this BAN record ?
+StartDate=Start date
+EndDate=End date
