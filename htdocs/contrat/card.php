@@ -958,6 +958,8 @@ if ($action == 'create')
     print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
     print '<input type="hidden" name="remise_percent" value="0">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Ref
@@ -1053,7 +1055,9 @@ if ($action == 'create')
 
     print "</table>\n";
 
-    print '<br><div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+    dol_fiche_end();
+
+    print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
     if (is_object($objectsrc))
     {
@@ -1065,10 +1069,8 @@ if ($action == 'create')
         	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
         }
 	}
-
+    
     print "</form>\n";
-
-    dol_fiche_end();
 }
 else
 /* *************************************************************************** */
