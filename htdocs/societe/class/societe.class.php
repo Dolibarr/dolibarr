@@ -1727,7 +1727,7 @@ class Societe extends CommonObject
      *
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param	int		$maxlen			Max length of text
+     *		@param	int		$maxlen			Max length of name
      *      @param	integer	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */

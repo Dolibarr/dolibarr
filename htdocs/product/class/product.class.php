@@ -3689,7 +3689,7 @@ class Product extends CommonObject
      */
 	function isproduct()
 	{
-		return ($this->type != Product::TYPE_PRODUCT ? true : false);
+		return ($this->type == Product::TYPE_PRODUCT ? true : false);
 	}
 
     /**

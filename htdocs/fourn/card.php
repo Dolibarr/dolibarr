@@ -364,7 +364,7 @@ if ($object->id > 0)
 
 
 	/*
-	 * Last orders
+	 * Last supplier orders
 	 */
 	$orderstatic = new CommandeFournisseur($db);
 
@@ -409,7 +409,7 @@ if ($object->id > 0)
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
-    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
     			print '<td align="right"><a href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
@@ -455,7 +455,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last invoices
+	 * Last supplier invoices
 	 */
 	$MAXLIST=5;
 

@@ -161,6 +161,14 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'approuver';
 
+		/*$r++;
+		$this->rights[$r][0] = 1191;
+		$this->rights[$r][1] = 'Approuver une commande fournisseur (si supérieur hiérarchique)';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'approve_ifsupervisor_advance';*/
+
 		$r++;
 		$this->rights[$r][0] = 1186;
 		$this->rights[$r][1] = 'Commander une commande fournisseur';
@@ -249,6 +257,18 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
+
+	    if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+	    {
+			$r++;
+		    $this->rights[$r][0] = 1190;
+			$this->rights[$r][1] = 'Approve supplier order (second level)';		// $langs->trans("Permission1190");
+			$this->rights[$r][2] = 'w';
+			$this->rights[$r][3] = 0;
+			$this->rights[$r][4] = 'commande';
+			$this->rights[$r][5] = 'approve2';
+	    }
+
 
 		// Exports
 		//--------

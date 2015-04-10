@@ -190,12 +190,13 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
+	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 5, 6, 7, 9)))
+	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
+	        else if ($object->statut == 3) $newstatus=2;	// Ordered->Approved
 	        else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
@@ -950,40 +951,40 @@ if (empty($reshook))
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
-								$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-								$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
-								$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
+								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
-								if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
 								{
-									$lines [$i]->fetch_optionals($lines [$i]->rowid);
-									$array_option = $lines [$i]->array_options;
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_option = $lines[$i]->array_options;
 								}
 
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
+								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
 								$res = $productsupplier->fetch($idProductFourn);
 
 								$result = $object->addline(
 									$desc,
-									$lines [$i]->subprice,
-									$lines [$i]->qty,
-									$lines [$i]->tva_tx,
-									$lines [$i]->localtax1_tx,
-									$lines [$i]->localtax2_tx,
-									$lines [$i]->fk_product,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$lines[$i]->tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product,
 									$productsupplier->product_fourn_price_id,
 									$productsupplier->ref_fourn,
-									$lines [$i]->remise_percent,
+									$lines[$i]->remise_percent,
 									'HT',
 									0,
-									$lines [$i]->product_type,
+									$lines[$i]->product_type,
 									'',
 									'',
 									null,
@@ -996,7 +997,7 @@ if (empty($reshook))
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0 && $lines [$i]->product_type == 9) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
@@ -1911,7 +1912,7 @@ elseif (! empty($object->id))
 	print '</td></tr>';
 
 
-	// Delai livraison jours
+	// Delivery delay (in days)
 	print '<tr>';
 	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
 	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
@@ -2671,7 +2672,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
 					}
 				}
-				if (in_array($object->statut, array(5, 6, 7, 9)))
+				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{

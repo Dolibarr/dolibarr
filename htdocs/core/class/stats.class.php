@@ -31,7 +31,7 @@ abstract class Stats
 {
 	protected $db;
 	var $_lastfetchdate=array();	// Dates of cache file read by methods
-	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts) 
+	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
 	 * Return nb of elements by month for several years
@@ -76,7 +76,7 @@ abstract class Stats
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
-		
+
 		// Load file into $data
 		if ($foundintocache)    // Cache file found and is not too old
 		{
@@ -203,11 +203,14 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
-			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-			@chmod($newpathofdestfile, octdec($newmask));
-
+			if ($fp)
+			{
+				fwrite($fp, json_encode($data));
+				fclose($fp);
+				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+				@chmod($newpathofdestfile, octdec($newmask));
+			}
+			else dol_syslog("Failed to write cache file", LOG_ERR);
 			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
@@ -309,21 +312,23 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
 			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
 			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
-			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-			@chmod($newpathofdestfile, octdec($newmask));
-
+			if ($fp)
+			{
+				fwrite($fp, json_encode($data));
+				fclose($fp);
+				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+				@chmod($newpathofdestfile, octdec($newmask));
+			}
 			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		return $data;
-	}	
-	
-	
+	}
+
+
 	// Here we have low level of shared code called by XxxStats.class.php
 
-	
+
 	/**
 	 * 	Return nb of elements by year
 	 *
@@ -532,8 +537,8 @@ abstract class Stats
 
 		return $data;
 	}
-	
-	
+
+
 	/**
 	 *	   Return number or total of product refs
 	 *
@@ -544,7 +549,7 @@ abstract class Stats
 	function _getAllByProduct($sql, $limit=10)
 	{
 		global $langs;
-		
+
 		$result=array();
 		$res=array();
 
@@ -567,6 +572,6 @@ abstract class Stats
         else dol_print_error($this->db);
 
 		return $result;
-	}	
+	}
 }
 

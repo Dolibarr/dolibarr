@@ -154,7 +154,7 @@ class ProductFournisseur extends Product
 	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
 	 *    @param  	float		$remise				Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				Set NPR or not
-	 *    @param	int			$delivery_time_days	Delay in days for delivery (max)
+	 *    @param	int			$delivery_time_days	Delay in days for delivery (max). May be '' if not defined.
      *    @return	int								<0 if KO, >=0 if OK
      */
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0)
@@ -167,7 +167,7 @@ class ProductFournisseur extends Product
         if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
         if (empty($remise_percent)) $remise_percent=0;
-		if (empty($delivery_time_days)) $delivery_time_days=0;
+        if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
 		{
 			//$ttx = get_default_tva($fourn,$mysoc,$this->id);	// We must use the VAT rate defined by user and not calculate it
@@ -202,7 +202,7 @@ class ProductFournisseur extends Product
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " info_bits = ".$newnpr.",";
 			$sql.= " charges = ".$charges.",";
-			$sql.= " delivery_time_days = ".$delivery_time_days;
+			$sql.= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null');
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -437,16 +437,16 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_remise_percent	= $record["remise_percent"];
 				$prodfourn->fourn_remise			= $record["remise"];
                 $prodfourn->fourn_unitprice			= $record["unitprice"];
-				$prodfourn->fourn_charges          = $record["charges"];
-				$prodfourn->fourn_unitcharges      = $record["unitcharges"];
+				$prodfourn->fourn_charges           = $record["charges"];
+				$prodfourn->fourn_unitcharges       = $record["unitcharges"];
                 $prodfourn->fourn_tva_tx			= $record["tva_tx"];
                 $prodfourn->fourn_id				= $record["fourn_id"];
                 $prodfourn->fourn_name				= $record["supplier_name"];
                 $prodfourn->fk_availability			= $record["fk_availability"];
 				$prodfourn->delivery_time_days		= $record["delivery_time_days"];
                 $prodfourn->id						= $prodid;
-                $prodfourn->fourn_tva_npr						= $record["info_bits"];
-                $prodfourn->fk_supplier_price_expression     = $record["fk_supplier_price_expression"];
+                $prodfourn->fourn_tva_npr					= $record["info_bits"];
+                $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
 
                 if (!empty($prodfourn->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($this->db);
@@ -631,17 +631,19 @@ class ProductFournisseur extends Product
     /**
      *	Display supplier of product
      *
-     *	@param	int		$withpicto	Add picto
-     *	@param	string	$option		Target of link ('', 'customer', 'prospect', 'supplier')
-     *	@return	string				String with supplier price
+     *	@param	int		$withpicto		Add picto
+     *	@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *	@param	int		$maxlen			Max length of name
+     *  @param	integer	$notooltip		1=Disable tooltip
+     *	@return	string					String with supplier price
 	 *  TODO Remove this method. Use getNomUrl directly.
      */
-    function getSocNomUrl($withpicto=0,$option='supplier')
+    function getSocNomUrl($withpicto=0,$option='supplier',$maxlen=0,$notooltip=0)
     {
         $thirdparty = new Fournisseur($this->db);
         $thirdparty->fetch($this->fourn_id);
 
-        return $thirdparty->getNomUrl($withpicto,$option);
+        return $thirdparty->getNomUrl($withpicto,$option,$maxlen,$notooltip);
     }
 
     /**
@@ -649,13 +651,15 @@ class ProductFournisseur extends Product
      *
      *  @param	int		$showunitprice	Show "Unit price" into output string
      *  @param	int		$showsuptitle	Show "Supplier" into output string
+     *	@param	int		$maxlen			Max length of name
+     *  @param	integer	$notooltip		1=Disable tooltip
      *	@return	string					String with supplier price
      */
-    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1)
+    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0)
     {
         global $langs;
         $langs->load("suppliers");
-        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier').' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         return $out;
     }
 

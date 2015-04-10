@@ -821,8 +821,9 @@ if (empty($action) && $product->id)
 
 
 /*
- * Stock detail
+ * Stock detail (by warehouse). Do not go down into batch.
  */
+
 print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
@@ -870,9 +871,9 @@ if ($resql)
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
-		print '<td align="right">'.(price2num($product->pmp)?price2num($product->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($product->pmp)?price2num($product->pmp,'MU'):'').'</td>';
 		// Value purchase
-		print '<td align="right">'.(price2num($product->pmp)?price(price2num($product->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($product->pmp)?price(price2num($product->pmp*$obj->reel,'MT')):'').'</td>';
         // Sell price
 		print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'),1);
@@ -880,13 +881,13 @@ if ($resql)
         print '</td>';
         // Value sell
         print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>'; // Ditto : Show PMP from movement or from product
+        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>';
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
 		if (price2num($product->pmp)) $totalwithpmp += $obj->reel;
-		$totalvalue = $totalvalue + ($product->pmp*$obj->reel); // Ditto : Show PMP from movement or from product
-        $totalvaluesell = $totalvaluesell + ($product->price*$obj->reel); // Ditto : Show PMP from movement or from product
+		$totalvalue = $totalvalue + ($product->pmp*$obj->reel);
+        $totalvaluesell = $totalvaluesell + ($product->price*$obj->reel);
 		//Batch Detail
 		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
 		{

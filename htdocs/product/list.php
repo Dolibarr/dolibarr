@@ -476,8 +476,11 @@ else
     					{
     						if ($product_fourn->product_fourn_price_id > 0)
     						{
-    							$htmltext=$product_fourn->display_price_product_fournisseur();
-    							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    							{
+    								$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
+    								print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    							}
     							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
     						}
     					}

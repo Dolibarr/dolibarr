@@ -220,6 +220,7 @@ Next=Next
 Cards=Cards
 Card=Card
 Now=Now
+HourStart=Start hour
 Date=Date
 DateAndHour=Date and hour
 DateStart=Date start
@@ -700,6 +701,7 @@ SelectElementAndClickRefresh=Select an element and click Refresh
 PrintFile=Print File %s
 ShowTransaction=Show transaction
 GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into Home - Setup - Display to hide.
+Denied=Denied
 # Week day
 Monday=Monday
 Tuesday=Tuesday

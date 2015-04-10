@@ -1076,7 +1076,7 @@ if (empty($reshook))
 											$lines[$i]->fetch_optionals($lines[$i]->rowid);
 											$array_options = $lines[$i]->array_options;
 										}
-										
+
 										// View third's localtaxes for now
 										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->client);
 										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->client);

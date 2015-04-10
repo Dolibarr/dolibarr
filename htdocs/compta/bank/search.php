@@ -178,9 +178,10 @@ if ($resql)
 	print '<form method="post" action="search.php" name="search_form">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
-	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
-	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
-	$moreforfilter .= $langs->trans('EndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
+	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('StartDate') . ' ';
+	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= ' - ';
+	$moreforfilter .= $langs->trans('EndDate') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
 
 
 	if ($moreforfilter) {

@@ -7,6 +7,7 @@ ProductStatusNotOnBatchShort=No
 Batch=Batch/Serial
 atleast1batchfield=Eat-by date or Sell-by date or Batch number
 batch_number=Batch/Serial number
+BatchNumberShort=Batch/Serial
 l_eatby=Eat-by date
 l_sellby=Sell-by date
 DetailBatchNumber=Batch/Serial details

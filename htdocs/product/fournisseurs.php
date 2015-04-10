@@ -43,6 +43,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
+$cancel=GETPOST('cancel', 'alpha');
 $socid=GETPOST('socid', 'int');
 $backtopage=GETPOST('backtopage','alpha');
 $error=0;
@@ -77,6 +78,8 @@ if (! $sortorder) $sortorder="ASC";
  * Actions
  */
 
+if ($cancel) $action='';
+
 $parameters=array('socid'=>$socid, 'id_prod'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -97,59 +100,70 @@ if (empty($reshook))
 		}
 	}
 
-if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
-{
-    $id_fourn=GETPOST("id_fourn");
-    if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
-    $ref_fourn=GETPOST("ref_fourn");
-    if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
-    $quantity=GETPOST("qty");
-	$remise_percent=price2num(GETPOST('remise_percent','alpha'));
-    $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
-    $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
-    $tva_tx = price2num($tva_tx);
-	$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
-	$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
+	if ($action == 'updateprice')
+	{
+		$id_fourn=GETPOST("id_fourn");
+		if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
+		$ref_fourn=GETPOST("ref_fourn");
+		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
+		$quantity=GETPOST("qty");
+		$remise_percent=price2num(GETPOST('remise_percent','alpha'));
+		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
+		$tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
+		$tva_tx = price2num($tva_tx);
+		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
+		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 
-    if ($tva_tx == '')
-    {
-		$error++;
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")), 'errors');
-    }
-	if (empty($quantity))
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")), 'errors');
-	}
-	if (empty($ref_fourn))
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")), 'errors');
-	}
-	if ($id_fourn <= 0)
-	{
-		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")), 'errors');
-	}
-	if ($_POST["price"] < 0 || $_POST["price"] == '')
-	{
-		if ($price_expression === '')	// Return error of missing price only if price_expression not set
+		if ($tva_tx == '')
 		{
 			$error++;
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")), 'errors');
 		}
-		else
+		if (! is_numeric($tva_tx))
 		{
-			$_POST["price"] = 0;
+			$error++;
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorFieldMustBeANumeric",'eeee'), 'errors');
 		}
-	}
+		if (empty($quantity))
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")), 'errors');
+		}
+		if (empty($ref_fourn))
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")), 'errors');
+		}
+		if ($id_fourn <= 0)
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")), 'errors');
+		}
+		if ($_POST["price"] < 0 || $_POST["price"] == '')
+		{
+			if ($price_expression === '')	// Return error of missing price only if price_expression not set
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")), 'errors');
+			}
+			else
+			{
+				$_POST["price"] = 0;
+			}
+		}
 
 		$product = new ProductFournisseur($db);
 		$result=$product->fetch($id);
 		if ($result <= 0)
 		{
 			$error++;
-			setEventMessage($product->error, 'errors');
+			setEventMessages($product->error, $product->errors, 'errors');
 		}
 
 		if (! $error)
@@ -187,7 +201,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				{
 
 					$error++;
-					setEventMessage($product->error, 'errors');
+					setEventMessage($product->error, $product->errors, 'errors');
 				}
 				else
 				{
@@ -222,13 +236,10 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 				$db->rollback();
 			}
 		}
-	}
-
-	if (GETPOST('cancel') == $langs->trans("Cancel"))
-	{
-		$action = '';
-		header("Location: fournisseurs.php?id=".$_GET["id"]);
-		exit;
+		else
+		{
+			$action = 'add_price';
+		}
 	}
 }
 
@@ -253,10 +264,6 @@ if ($id || $ref)
 	{
 		if ($action <> 'edit' && $action <> 're-edit')
 		{
-			/*
-			 *  En mode visu
-			 */
-
 			$head=product_prepare_head($product);
 			$titre=$langs->trans("CardProduct".$product->type);
 			$picto=($product->type== Product::TYPE_SERVICE?'service':'product');
@@ -325,6 +332,8 @@ if ($id || $ref)
 					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
 					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					print '<input type="hidden" name="socid" value="'.$socid.'">';
 				}
 				else
 				{
@@ -487,11 +496,7 @@ if ($id || $ref)
 				print '</form>';
 			}
 
-			/* ************************************************************************** */
-			/*                                                                            */
-			/* Barre d'action                                                             */
-			/*                                                                            */
-			/* ************************************************************************** */
+			// Actions buttons
 
 			print "\n<div class=\"tabsAction\">\n";
 
@@ -523,13 +528,9 @@ if ($id || $ref)
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("Charges").'</td>';
-				}
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("DiscountQtyMin").'</td>';
+				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -599,6 +600,11 @@ if ($id || $ref)
 						// Discount
 						print '<td align="right">';
 						print price2num($productfourn->fourn_remise_percent).'%';
+						print '</td>';
+
+						// Delivery delay
+						print '<td align="right">';
+						print $productfourn->delivery_time_days;
 						print '</td>';
 
 						// Charges ????

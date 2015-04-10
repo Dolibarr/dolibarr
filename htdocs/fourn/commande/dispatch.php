@@ -101,6 +101,23 @@ if ($action == 'uncheckdispatchline' &&
 	}
 }
 
+if ($action == 'denydispatchline' &&
+	! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+)
+{
+	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+	$result=$supplierorderdispatch->fetch($lineid);
+	if (! $result) dol_print_error($db);
+	$result=$supplierorderdispatch->setStatut(2);
+	if ($result < 0)
+	{
+		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+		$error++;
+		$action='';
+	}
+}
+
 if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 {
 	$commande = new CommandeFournisseur($db);
@@ -123,7 +140,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
-				if (! GETPOST($ent,'int') > 0)
+				if (! (GETPOST($ent,'int') > 0))
 				{
 					dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' ' .($numline);
@@ -133,7 +150,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 				if (! $error)
 				{
-					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -643,11 +660,13 @@ if ($id > 0 || ! empty($ref))
 						{
 							if (empty($objp->status))
 							{
-								print '<a class="button buttonRefused" href="#">'.$langs->trans("Check").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Approve").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Deny").'</a>';
 							}
 							else
 							{
-								print '<a class="button buttonRefused" href="#">'.$langs->trans("Uncheck").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Disapprove").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Deny").'</a>';
 							}
 						}
 						else
@@ -656,11 +675,18 @@ if ($id > 0 || ! empty($ref))
 							if ($commande->statut == 5) $disabled=1;
 							if (empty($objp->status))
 							{
-								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Check").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
 							}
-							else
+							if ($objp->status == 1)
 							{
-								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Uncheck").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
+							}
+							if ($objp->status == 2)
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
 							}
 						}
 						print '</td>';
