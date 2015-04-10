@@ -425,15 +425,18 @@ if ($id > 0)
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$i = 0; $total = 0;
+			$i = 0;
+            $total_insurance = 0;
+            $total_interest = 0;
+            $total_capital = 0;
 			echo '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-			print '<td align="center" colspan="2">'.$langs->trans("Insurance").'</td>';
-			print '<td align="center" colspan="2">'.$langs->trans("Interest").'</td>';
-      		print '<td align="center" colspan="2">'.$langs->trans("Capital").'</td>';
+			print '<td align="center">'.$langs->trans("Insurance").'</td>';
+			print '<td align="center">'.$langs->trans("Interest").'</td>';
+      		print '<td align="center">'.$langs->trans("Capital").'</td>';
       		print '<td>&nbsp;</td>';
       		print '</tr>';
 
@@ -442,27 +445,31 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				print "<tr ".$bc[$var].">";
+				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td align="right">'.price($objp->amount_insurance)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_interest)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
-        		print '<td align="right">'.price($objp->amount_capital)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+                print '<td align="right">'.price($objp->amount_insurance, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
+                print '<td align="right">'.price($objp->amount_interest, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
+                print '<td align="right">'.price($objp->amount_capital, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
 				print "</tr>";
-				$totalpaid += $objp->amount_capital;
+                $total_insurance += $objp->amount_insurance;
+                $total_interest += $objp->amount_interest;
+                $total_capital += $objp->amount_capital;
 				$i++;
 			}
 
+			$totalpaid = $total_insurance + $total_interest + $total_capital;
+
 			if ($object->paid == 0)
 			{
-				print '<tr><td colspan="7" align="right">'.$langs->trans("AlreadyPaid").' :</td><td align="right"><b>'.price($totalpaid).'</b></td><td>&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-				print '<tr><td colspan="7" align="right">'.$langs->trans("AmountExpected").' :</td><td align="right" bgcolor="#d0d0d0">'.price($object->capital).'</td><td bgcolor="#d0d0d0">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" align="right">'.$langs->trans("AlreadyPaid").' :</td><td align="right"><b>'.price($totalpaid, 0, $langs, 0, 0, -1, $conf->currency).'</b></td></tr>';
+				print '<tr><td colspan="5" align="right">'.$langs->trans("AmountExpected").' :</td><td align="right" bgcolor="#d0d0d0">'.price($object->capital, 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
-				print '<tr><td colspan="7" align="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td align="right" bgcolor="#f0f0f0"><b>'.price($staytopay).'</b></td><td bgcolor="#f0f0f0">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" align="right">'.$langs->trans("RemainderToPay").' :</td>';
+				print '<td align="right" bgcolor="#f0f0f0"><b>'.price($staytopay, 0, $langs, 0, 0, -1, $conf->currency).'</b></td></tr>';
 			}
 			print "</table>";
 			$db->free($resql);
