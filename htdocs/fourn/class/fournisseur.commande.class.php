@@ -1391,7 +1391,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet=0, $notrigger=0)
     {
-        global $conf;
+        global $conf, $langs;
 
         $error = 0;
         require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
@@ -1409,9 +1409,43 @@ class CommandeFournisseur extends CommonOrder
         }
 
         $dispatchstatus = 1;
-        if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0;	// Setting dispatch status (a validation step after receiving products) will be done manually to 1 if this option is on
+        if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0;	// Setting dispatch status (a validation step after receiving products) will be done manually to 1 or 2 if this option is on
 
         $now=dol_now();
+
+        // If a serial number is provided, we check that sellby and eatby match already existing serial
+        if ($batch)
+        {
+			$sql = "SELECT rowid, batch, eatby, sellby FROM ".MAIN_DB_PREFIX."product_batch WHERE batch = '".$this->db->escape($batch)."'";
+            dol_syslog(get_class($this)."::dispatchProduct scan serial to check if eatby and sellby match", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+            	$num = $this->db->num_rows($resql);
+            	$i=0;
+            	while ($i < $num)
+            	{
+            		$obj = $this->db->fetch_object($resql);
+            		if ($obj->eatby != $eatby)
+            		{
+						$this->error=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $obj->eatby);
+            			return -1;
+            		}
+            		if ($obj->sellby != $sellby)
+            		{
+						$this->error=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $obj->sellby);
+            			return -1;
+            		}
+            		$i++;
+            	}
+            }
+            else
+			{
+            	dol_print_error($this->db);
+            	return -1;
+			}
+        }
+
 
         if (($this->statut == 3 || $this->statut == 4 || $this->statut == 5))
         {
@@ -1480,7 +1514,7 @@ class CommandeFournisseur extends CommonOrder
             }
         }
         else
-        {
+		{
             $this->error='BadStatusForObject';
             return -2;
         }

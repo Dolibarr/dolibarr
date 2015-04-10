@@ -127,11 +127,15 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 	$db->begin();
 
+	$pos=0;
 	foreach($_POST as $key => $value)
 	{
 		if (preg_match('/^product_([0-9]+)$/i', $key, $reg))	// without batch module enabled
 		{
-			$numline=$reg[1] + 1;	// line of product
+			$pos++;
+
+			//$numline=$reg[1] + 1;	// line of product
+			$numline=$pos;
 			$prod = "product_".$reg[1];
 			$qty = "qty_".$reg[1];
 			$ent = "entrepot_".$reg[1];
@@ -161,8 +165,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 		}
 		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// with batch module enabled
 		{
+			$pos++;
+
 			//eat-by date dispatch
-			$numline=$reg[2] + 1;	// line of product
+			//$numline=$reg[2] + 1;	// line of product
+			$numline=$pos;
 			$prod = "product_".$reg[1]."_".$reg[2];
 			$qty = "qty_".$reg[1]."_".$reg[2];
 			$ent = "entrepot_".$reg[1]."_".$reg[2];
@@ -202,7 +209,6 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				}
 			}
 		}
-
 	}
 
 	if (! $notrigger && ! $error)
@@ -430,6 +436,20 @@ if ($id > 0 || ! empty($ref))
 							$nbproduct++;
 
 							$var=!$var;
+
+							// To show detail cref and description value, we must make calculation by cref
+							//print ($objp->cref?' ('.$objp->cref.')':'');
+							//if ($objp->description) print '<br>'.nl2br($objp->description);
+							if ((empty($conf->productbatch->enabled)) || $objp->tobatch==0)
+							{
+								$suffix='_'.$i;
+							} else {
+								$suffix='_0_'.$i;
+							}
+
+
+							print "\n";
+							print '<!-- Line '.$suffix.' -->'."\n";
 							print "<tr ".$bc[$var].">";
 
 							$linktoprod='<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
@@ -458,16 +478,6 @@ if ($id > 0 || ! empty($ref))
 								print '<td colspan="4">';
 								print $linktoprod;
 								print "</td>";
-							}
-
-							// To show detail cref and description value, we must make calculation by cref
-							//print ($objp->cref?' ('.$objp->cref.')':'');
-							//if ($objp->description) print '<br>'.nl2br($objp->description);
-							if ((empty($conf->productbatch->enabled)) || $objp->tobatch==0)
-							{
-								$suffix='_'.$i;
-							} else {
-								$suffix='_0_'.$i;
 							}
 
 							$up_ht_disc=$objp->subprice;
