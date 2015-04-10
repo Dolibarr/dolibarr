@@ -2439,7 +2439,12 @@ class ContratLigne extends CommonObject
 		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
 		$this->fk_user_cloture=trim($this->fk_user_cloture);
 		$this->commentaire=trim($this->commentaire);
-
+		//if (empty($this->subprice)) $this->subprice = 0;
+		if (empty($this->price_ht)) $this->price_ht = 0;
+		if (empty($this->total_ht)) $this->total_ht = 0;
+		if (empty($this->total_tva)) $this->total_tva = 0;
+		if (empty($this->total_ttc)) $this->total_ttc = 0;
+		
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -2483,8 +2488,8 @@ class ContratLigne extends CommonObject
 		$sql.= " remise_percent='".$this->remise_percent."',";
 		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
 		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
-		$sql.= " subprice='".$this->subprice."',";
-		$sql.= " price_ht='".$this->price_ht."',";
+		$sql.= " subprice=".($this->subprice != '' ? $this->subprice : "null").",";
+		$sql.= " price_ht=".($this->price_ht != '' ? $this->price_ht : "null").",";
 		$sql.= " total_ht='".$this->total_ht."',";
 		$sql.= " total_tva='".$this->total_tva."',";
 		$sql.= " total_localtax1='".$this->total_localtax1."',";

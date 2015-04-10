@@ -1991,7 +1991,11 @@ input.liste_titre {
 
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
-	background: none;
+	//background: none;
+	background: #FFF;
+}
+.tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
+	border-bottom: none;
 }
 
 .margintable td {
