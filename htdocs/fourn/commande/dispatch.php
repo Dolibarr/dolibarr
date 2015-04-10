@@ -493,13 +493,15 @@ if ($id > 0 || ! empty($ref))
 								print '</td>';
 
 								print '<td>';
-								print '<input type="text" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" size="40" value="">';
+								print '<input type="text" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" size="40" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
 								print '<td>';
-								$form->select_date('','dlc'.$suffix,'','',1,"");
+								$dlcdatesuffix=dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+								$form->select_date($dlcdatesuffix,'dlc'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td>';
-								$form->select_date('','dluo'.$suffix,'','',1,"");
+								$dluodatesuffix=dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+								$form->select_date($dluodatesuffix,'dluo'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td colspan="2">&nbsp</td>';		// Qty ordered + qty already dispatached
 							}
@@ -512,7 +514,7 @@ if ($id > 0 || ! empty($ref))
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 							}
-							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'">';
+							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.(GETPOST('qty'.$suffix)!='' ? GETPOST('qty'.$suffix) : $remaintodispatch).'">';
 							print '</td>';
 
 							// Warehouse
@@ -570,7 +572,8 @@ if ($id > 0 || ! empty($ref))
 
 		dol_fiche_end();
 
-		// List of already dispatching
+
+		// List of lines already dispatched
 		$sql = "SELECT p.ref, p.label,";
 		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
 		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
