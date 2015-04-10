@@ -176,22 +176,27 @@ if ($resql)
 		{
 			print ' ('.$langs->trans("DomainUser").')';
 		}
-        // TODO This should be done with a hook
+
+		$entity=$obj->entity;
+		$entitystring='';
+        // TODO Set of entitystring should be done with a hook
         if (is_object($mc))
         {
 			if (! empty($conf->multicompany->enabled))
 	        {
-	        	if (empty($obj->entity))
+	        	if (empty($entity))
 	        	{
-	        		print ' ('.$langs->trans("AllEntities").')';
+	        		$entitystring=$langs->trans("AllEntities");
 	        	}
 	        	else
 	        	{
-	        		$mc->getInfo($obj->entity);
-	        		print ' ('.$mc->label.')';
+	        		$mc->getInfo($entity);
+	        		$entitystring=$mc->label;
 	        	}
 	        }
         }
+        print ($entitystring?' ('.$entitystring.')':'');
+
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';
