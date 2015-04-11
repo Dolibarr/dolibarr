@@ -386,7 +386,7 @@ ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for e
 ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter  
 LibraryToBuildPDF=Library used to build PDF
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>   
-LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
+LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (vat is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
 SMS=SMS
 LinkToTestClickToDial=Enter a phone number to call to show a link to test the ClickToDial url for user <strong>%s</strong>
 RefreshPhoneLink=Refresh link
@@ -818,12 +818,12 @@ LocalTax2IsUsedDescES= The RE rate by default when creating prospects, invoices,
 LocalTax2IsNotUsedDescES= By default the proposed IRPF is 0. End of rule.
 LocalTax2IsUsedExampleES= In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
 LocalTax2IsNotUsedExampleES= In Spain they are bussines not subject to tax system of modules.
-CalcLocaltax=Reports
-CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax=Reports on local taxes
+CalcLocaltax1=Sales - Purchases
 CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
-CalcLocaltax2ES=Purchases
+CalcLocaltax2=Purchases
 CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
-CalcLocaltax3ES=Sales
+CalcLocaltax3=Sales
 CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
