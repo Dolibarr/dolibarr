@@ -43,3 +43,4 @@ ListOfSupplierOrders=Danh sách các đơn đặt hàng nhà cung cấp
 MenuOrdersSupplierToBill=Đơn đặt hàng nhà cung cấp cho hóa đơn
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

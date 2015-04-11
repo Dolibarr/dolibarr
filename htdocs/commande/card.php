@@ -138,8 +138,10 @@ if (empty($reshook))
 	}
 
 	// Reopen a closed order
-	else if ($action == 'reopen' && $user->rights->commande->creer) {
-		if ($object->statut == 3) {
+	else if ($action == 'reopen' && $user->rights->commande->creer)
+	{
+		if ($object->statut == -1 || $object->statut == 3)
+		{
 			$result = $object->set_reopen($user);
 			if ($result > 0)
 			{
@@ -1279,7 +1281,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+			$dateorder		    = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 
 			$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
@@ -1300,7 +1302,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
-		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 		$projectid          = 0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
@@ -1368,7 +1370,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	}
 	// Date
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
-	$form->select_date('', 're', '', '', '', "crea_commande", 1, 1);
+	//$form->select_date($dateorder, 're', '', '', '', "crea_commande", 1, 1);
+	$form->select_date('', 're', '', '', '', "crea_commande", 1, 1);			// Always autofill date with current date
 	print '</td></tr>';
 
 	// Date de livraison
@@ -1376,7 +1379,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	if (empty($datedelivery))
 	{
 		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE_DELIVERY)?-1:'';
 	}
 	$form->select_date($datedelivery, 'liv_', '', '', '', "crea_commande", 1, 1);
 	print "</td></tr>";
@@ -2180,7 +2183,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 				}
 
 				// Reopen a closed order
-				if ($object->statut == 3 && $user->rights->commande->creer) {
+				if (($object->statut == 3 || $object->statut == -1) && $user->rights->commande->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
 				}
 

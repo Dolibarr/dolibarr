@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
-$search_ref=GETPOST('search_ref','alpha');
+$search_ref=GETPOST('search_ref','alpha')!=''?GETPOST('search_ref','alpha'):GETPOST('sref','alpha');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_company=GETPOST('search_company','alpha');
 $sall=GETPOST('sall');
@@ -110,7 +111,7 @@ $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Ped
 llxHeader('',$langs->trans("Orders"),$help_url);
 
 $sql = 'SELECT s.nom as name, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-$sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
+$sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 // We'll need this table joined to the select in order to filter by sale
@@ -415,7 +416,7 @@ if ($resql)
 
         // warning late icon
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_delivery)) < ($now - $conf->commande->client->warning_delay))
 			print img_picto($langs->trans("Late"),"warning");
 		if(!empty($objp->note_private))
 		{
@@ -466,7 +467,7 @@ if ($resql)
 
 		// Delivery date
 		print '<td align="center">';
-		print dol_print_date($db->jdate($objp->date_livraison), 'day');
+		print dol_print_date($db->jdate($objp->date_delivery), 'day');
 		print '</td>';
 
 		// Amount HT
