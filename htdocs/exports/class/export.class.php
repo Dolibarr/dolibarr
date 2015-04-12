@@ -328,7 +328,7 @@ class Export
 	function conditionDate($Field, $Value, $Sens)
 	{
 		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
-		if (strlen($Value)==4) $Condition=" date_format(".$Field.",'%Y') ".$Sens." ".$Value;
+		if (strlen($Value)==4) $Condition=" date_format(".$Field.",'%Y') ".$Sens." '".$Value."'";
 		elseif (strlen($Value)==6) $Condition=" date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
 		else  $Condition=" date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
 		return $Condition;
