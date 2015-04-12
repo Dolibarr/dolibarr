@@ -432,7 +432,9 @@ if ($id > 0 || $ref)
 
 		// PMP
 		print '<tr><td>'.$langs->trans("AverageUnitPricePMP").'</td>';
-		print '<td>'.price($product->pmp).' '.$langs->trans("HT").'</td>';
+		print '<td>';
+		if ($product->pmp > 0) print price($product->pmp).' '.$langs->trans("HT");
+		print '</td>';
 		print '</tr>';
 
 		// Minimum Price

@@ -16,6 +16,7 @@ CancelSending=Cancel sending
 DeleteSending=Delete sending
 Stock=Stock
 Stocks=Stocks
+StocksByLotSerial=Stock by lot/serial
 Movement=Movement
 Movements=Movements
 ErrorWarehouseRefRequired=Warehouse reference name is required

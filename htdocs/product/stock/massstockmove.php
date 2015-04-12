@@ -107,13 +107,28 @@ if ($action == 'addline')
 	{
 		$producttmp=new Product($db);
 		$producttmp->fetch($id_product);
-		if ($producttmp->status_batch)
+		if ($producttmp->hasbatch())
 		{
 			if (empty($batch))
 			{
 				$error++;
 				setEventMessage($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), 'errors');
 			}
+		}
+	}
+
+	// TODO Check qty is ok for stock move. Note qty may not be enough yet, but we make a check now to report a warning.
+	// What is important is to have qty when doing action 'createmovements'
+	if (! $error)
+	{
+		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
+		if ($producttmp->hasbatch())
+		{
+
+		}
+		else
+		{
+
 		}
 	}
 
@@ -214,12 +229,19 @@ if ($action == 'createmovements')
 				}
 				else
 				{
-					// FIXME Seach record into product_batch table from serial to use same value for dlc and dluo
-					// FIXME MAke field batch lot required.
-
-					/*var_dump($batch);
-					var_dump($product->stock_warehouse);
-					exit;*/
+					$arraybatchinfo=$product->loadBatchInfo($batch);
+					if (count($arraybatchinfo) > 0)
+					{
+						$firstrecord = array_shift($arraybatchinfo);
+						$dlc=$firstrecord['eatby'];
+						$dluo=$firstrecord['sellby'];
+						//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
+					}
+					else
+					{
+						$dlc='';
+						$dluo='';
+					}
 
 					// Remove stock
 					$result1=$product->correct_stock_batch(
@@ -325,7 +347,6 @@ $param='';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
-print getTitleFieldOfList('');
 if ($conf->productbatch->enabled)
 {
 	print getTitleFieldOfList($langs->trans('Batch'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
@@ -351,8 +372,6 @@ else
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
 print $form->select_produits($id_product,'productid',$filtertype,$limit);
-print '</td>';
-print '<td>';
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
@@ -386,12 +405,9 @@ foreach($listofdata as $key => $val)
 	$warehousestatict->fetch($val['id_tw']);
 
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$productstatic->getNomUrl(1).'</td>';
 	print '<td>';
-	$oldref=$productstatic->ref;
-	$productstatic->ref=$productstatic->label;
 	print $productstatic->getNomUrl(1);
-	$productstatic->ref=$oldref;
+	print ' - '.$productstatic->label;
 	print '</td>';
 	if ($conf->productbatch->enabled)
 	{

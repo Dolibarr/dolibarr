@@ -3202,7 +3202,8 @@ class Product extends CommonObject
 	/**
 	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
 	 *
-	 *    @return     int             < 0 if KO, > 0 if OK
+	 *    @return     	int             < 0 if KO, > 0 if OK
+	 *    @see			load_virtual_stock, getBatchInfo
 	 */
 	function load_stock()
 	{
@@ -3250,9 +3251,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about virtual stock of a product
+	 *    Load information about objects that are delat between physical and virtual stock of a product
 	 *
-	 *    @return     int             < 0 if KO, > 0 if OK
+	 *    @return   int             < 0 if KO, > 0 if OK
+	 *    @see		load_stock, getBatchInfo
 	 */
     function load_virtual_stock()
     {
@@ -3307,6 +3309,44 @@ class Product extends CommonObject
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
     }
+
+
+	/**
+	 *  Load existing information about a serial
+	 *
+	 *	@param		string		$batch
+	 *  @return     array		Array with record into product_batch
+	 *  @see		load_stock, load_virtual_stock
+	 */
+    function loadBatchInfo($batch)
+    {
+    	$result=array();
+
+    	$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
+    	$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$this->id." AND pb.batch = '".$this->db->escape($batch)."'";
+    	$sql.= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+    	dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		$i=0;
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+				$result[]=array('batch'=>$batch, 'eatby'=>$this->db->jdate($obj->eatby), 'sellby'=>$this->db->jdate($obj->sellby), 'qty'=>$obj->qty);
+				$i++;
+    		}
+    		return $result;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		$this->db->rollback();
+    		return array();
+    	}
+    }
+
 
 	/**
 	 *  Move an uploaded file described into $file array into target directory $sdir.
