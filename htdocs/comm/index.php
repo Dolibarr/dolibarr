@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ if (! empty($conf->propal->enabled)) $propalstatic=new Propal($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("CustomerArea"));
+print_fiche_titre($langs->trans("CommercialArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
