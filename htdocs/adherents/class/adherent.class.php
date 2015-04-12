@@ -476,7 +476,7 @@ class Adherent extends CommonObject
 		    $action='update';
 
             // Actions on extra fields (by external module)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 		    $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';

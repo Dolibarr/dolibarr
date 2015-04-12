@@ -877,7 +877,7 @@ class Commande extends CommonOrder
                     	//$action='create';
 
 	                    // Actions on extra fields (by external module or standard code)
-	                    // FIXME le hook fait double emploi avec le trigger !!
+	                    // TODO le hook fait double emploi avec le trigger !!
 	                    /*$hookmanager->initHooks(array('orderdao'));
 	                    $parameters=array('socid'=>$this->id);
 	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2663,7 +2663,7 @@ class Commande extends CommonOrder
     	$action='create';
 
     	// Actions on extra fields (by external module or standard code)
-    	// FIXME le hook fait double emploi avec le trigger !!
+    	// TODO le hook fait double emploi avec le trigger !!
     	$hookmanager->initHooks(array('orderdao'));
     	$parameters=array('id'=>$this->id);
     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

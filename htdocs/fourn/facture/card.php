@@ -1139,7 +1139,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('supplierinvoicedao'));
 			$parameters=array('id'=>$object->id);
 

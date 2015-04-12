@@ -360,7 +360,7 @@ class ProductFournisseur extends Product
             	$this->fk_product				= $obj->fk_product;
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;
-            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // FIXME this field not exist in llx_product_fournisseur_price
+            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
 
                 if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {

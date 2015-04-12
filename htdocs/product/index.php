@@ -383,7 +383,6 @@ function activitytrim($product_type)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		//$tmpyear=$beginyear; // FIXME $beginyear is not defined
 		$tmpyear=0;
 		$trim1=0;
 		$trim2=0;

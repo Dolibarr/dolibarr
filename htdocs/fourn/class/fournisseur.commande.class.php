@@ -1413,40 +1413,6 @@ class CommandeFournisseur extends CommonOrder
 
         $now=dol_now();
 
-        // If a serial number is provided, we check that sellby and eatby match already existing serial
-        if ($batch)
-        {
-			$sql = "SELECT rowid, batch, eatby, sellby FROM ".MAIN_DB_PREFIX."product_batch WHERE batch = '".$this->db->escape($batch)."'";
-            dol_syslog(get_class($this)."::dispatchProduct scan serial to check if eatby and sellby match", LOG_DEBUG);
-            $resql = $this->db->query($sql);
-            if ($resql)
-            {
-            	$num = $this->db->num_rows($resql);
-            	$i=0;
-            	while ($i < $num)
-            	{
-            		$obj = $this->db->fetch_object($resql);
-            		if ($obj->eatby != $eatby)
-            		{
-						$this->error=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $obj->eatby);
-            			return -1;
-            		}
-            		if ($obj->sellby != $sellby)
-            		{
-						$this->error=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $obj->sellby);
-            			return -1;
-            		}
-            		$i++;
-            	}
-            }
-            else
-			{
-            	dol_print_error($this->db);
-            	return -1;
-			}
-        }
-
-
         if (($this->statut == 3 || $this->statut == 4 || $this->statut == 5))
         {
             $this->db->begin();
@@ -1468,13 +1434,11 @@ class CommandeFournisseur extends CommonOrder
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH',$user);
 					if ($result < 0)
                     {
-                        $this->db->rollback();
+                        $error++;
                         return -1;
                     }
 					// End call triggers
                 }
-
-                $this->db->commit();
             }
             else
 			{
@@ -1483,7 +1447,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             // Si module stock gere et que incrementation faite depuis un dispatching en stock
-            if (!$error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+            if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
 
                 $mouv = new MouvementStock($this->db);
@@ -1495,13 +1459,13 @@ class CommandeFournisseur extends CommonOrder
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;
-                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error, LOG_ERR);
+                        $this->errors=$mouv->errors;
+                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',',$this->errors), LOG_ERR);
                         $error++;
                     }
                 }
             }
 
-            //TODO: Check if there is a current transaction in DB but seems not.
             if ($error == 0)
             {
                 $this->db->commit();

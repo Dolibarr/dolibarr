@@ -181,6 +181,8 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN batch varchar(30) DEFAULT NULL;
 ALTER TABLE llx_stock_mouvement ADD COLUMN eatby date DEFAULT NULL;
 ALTER TABLE llx_stock_mouvement ADD COLUMN sellby date DEFAULT NULL;
 
+UPDATE llx_product_batch SET batch = 'unknown' WHERE batch IS NULL;
+ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(30) NOT NULL;
 
 
 CREATE TABLE llx_expensereport (

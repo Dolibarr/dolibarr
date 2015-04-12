@@ -3146,6 +3146,8 @@ class Product extends CommonObject
 			else
 			{
 			    $this->error=$movementstock->error;
+			    $this->errors=$movementstock->errors;
+
 				$this->db->rollback();
 				return -1;
 			}
@@ -3198,7 +3200,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about stock of a product into stock_warehouse[] and stock_reel
+	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
 	 *
 	 *    @return     int             < 0 if KO, > 0 if OK
 	 */

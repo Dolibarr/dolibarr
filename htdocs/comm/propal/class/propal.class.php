@@ -173,7 +173,7 @@ class Propal extends CommonObject
     var $labelstatut_short=array();
 
     var $specimen;
-	
+
 	//Incorterms
 	var $fk_incoterms;
 	var $location_incoterms;
@@ -958,7 +958,7 @@ class Propal extends CommonObject
                     	$action='update';
 
                     	// Actions on extra fields (by external module or standard code)
-                    	// FIXME le hook fait double emploi avec le trigger !!
+                    	// TODO le hook fait double emploi avec le trigger !!
                     	$hookmanager->initHooks(array('propaldao'));
                     	$parameters=array('socid'=>$this->id);
                     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1262,9 +1262,9 @@ class Propal extends CommonObject
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-				
+
                 if ($obj->fk_statut == self::STATUS_DRAFT)
                 {
                     $this->brouillon = 1;
@@ -1300,7 +1300,7 @@ class Propal extends CommonObject
                 	$extrafieldsline=new ExtraFields($this->db);
                 	$line = new PropaleLigne($this->db);
                 	$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
-                	
+
                     $num = $this->db->num_rows($result);
                     $i = 0;
 
@@ -1353,7 +1353,7 @@ class Propal extends CommonObject
                         $line->date_end  		= $objp->date_end;
 
                         $line->fetch_optionals($line->id,$extralabelsline);
-                        
+
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
                         //print "xx $i ".$this->lines[$i]->fk_product;
@@ -1392,7 +1392,7 @@ class Propal extends CommonObject
     	$action='update';
 
     	// Actions on extra fields (by external module or standard code)
-    	// FIXME le hook fait double emploi avec le trigger !!
+    	// TODO le hook fait double emploi avec le trigger !!
     	$hookmanager->initHooks(array('propaldao'));
     	$parameters=array('id'=>$this->id);
     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
