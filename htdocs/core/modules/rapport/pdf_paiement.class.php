@@ -60,8 +60,8 @@ class pdf_paiement
 		$this->tab_top = 30;
 
 		$this->line_height = 5;
-		$this->line_per_page = 46;
-		$this->tab_height = 250;	//$this->line_height * $this->line_per_page;
+		$this->line_per_page = 40;
+		$this->tab_height = $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5;	// must be > $this->line_height * $this->line_per_page and < $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5;
 
 		$this->posxdate=$this->marge_gauche+2;
 		$this->posxpaymenttype=42;
@@ -71,6 +71,7 @@ class pdf_paiement
 		$this->posxpaymentamount=162;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
+			$this->line_per_page = 35;
 			$this->posxpaymenttype-=10;
 			$this->posxinvoice-=0;
 			$this->posxinvoiceamount-=10;
@@ -399,7 +400,7 @@ class pdf_paiement
 			// BankAccount
 			$pdf->SetXY($this->posxbankaccount, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell($this->posxbankaccount - $this->posxdate, $this->line_height, $lines[$j][8], 0, 'L', 0);
-			
+
 			// Invoice amount
 			$pdf->SetXY($this->posxinvoiceamount, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell($this->posxpaymentamount- $this->posxinvoiceamount - 1, $this->line_height, $lines[$j][5], 0, 'R', 0);
