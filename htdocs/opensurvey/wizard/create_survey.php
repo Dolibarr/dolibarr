@@ -79,7 +79,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	$testdate = false;
 	$champdatefin = dol_mktime(0,0,0,GETPOST('champdatefinmonth'),GETPOST('champdatefinday'),GETPOST('champdatefinyear'));
 
-	if (GETPOST('champdatefin') && ($champdatefin > 0))	// A date was provided
+	if ($champdatefin && ($champdatefin > 0))	// A date was provided
 	{
 		// Expire date is not before today
 		if ($champdatefin >= dol_now())
@@ -90,16 +90,17 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		else
 		{
 			$testdate = true;
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			//setEventMessage($langs->trans('ExpiredDate'),'errors');
+			setEventMessage($langs->trans('ExpiredDate'),'warnings');
 		}
 	}
 
 	if (! $testdate) {
 		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), 'errors');
 	}
-
+	
 	if ($titre && $testdate)
 	{
 		if (! empty($creation_sondage_date))
