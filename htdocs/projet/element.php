@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +282,14 @@ foreach ($listofreferent as $key => $value)
 				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ttc)?price($element->total_ttc):'&nbsp;').'</td>';
 
 				// Status
-				print '<td align="right">'.$element->getLibStatut(5).'</td>';
+				print '<td align="right">';
+				if ($element instanceof CommonInvoice) {
+					//This applies for Facture and FactureFournisseur
+					print $element->getLibStatut(5, $element->getSommePaiement());
+				} else {
+					print $element->getLibStatut(5);
+				}
+				print '</td>';
 
 				print '</tr>';
 
