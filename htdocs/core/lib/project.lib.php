@@ -419,7 +419,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level==0)
 	{
-		print '<tr class="liste_total">';
+		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) print '<td></td><td></td>';
 		print '<td></td>';
