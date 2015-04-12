@@ -114,8 +114,8 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
-		$sql.= ' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs';
-		$sql.= ' WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
+		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
