@@ -3314,8 +3314,8 @@ class Product extends CommonObject
 	/**
 	 *  Load existing information about a serial
 	 *
-	 *	@param		string		$batch
-	 *  @return     array		Array with record into product_batch
+	 *	@param		string		$batch		Lot/serial number
+	 *  @return     array					Array with record into product_batch
 	 *  @see		load_stock, load_virtual_stock
 	 */
     function loadBatchInfo($batch)
