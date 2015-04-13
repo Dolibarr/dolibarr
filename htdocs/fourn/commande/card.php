@@ -140,6 +140,7 @@ if (empty($reshook))
 	{
 	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		else $object->ref_supplier = GETPOST('ref_supplier','alpha');	// The setValueFrom does not set new property of object
 	}
 
 	// Set incoterm

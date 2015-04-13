@@ -274,16 +274,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
-	
+
 						// Rect prend une longueur en 3eme param
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
-	
+
 						$tab_top = $nexY+6;
 						$height_incoterms += 4;
 					}
 				}
-				
+
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
@@ -957,46 +957,57 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
-
-		$pdf->SetFont('','B', $default_font_size);
+		$posy+=1;
 
 		if ($object->ref_supplier)
 		{
     		$posy+=4;
+			$pdf->SetFont('','B', $default_font_size);
     		$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
     		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSupplier")." : " . $object->ref_supplier, '', 'R');
+			$posy+=1;
 		}
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$posy+=6;
 		if (! empty($conf->global->PDF_SHOW_PROJECT))
 		{
 			$object->fetch_projet();
-			$pdf->SetXY($posx,$posy);
 			if (! empty($object->project->ref))
 			{
-				$langs->load("projects");
+        		$posy+=4;
+				$pdf->SetXY($posx,$posy);
+        		$langs->load("projects");
 				$pdf->SetTextColor(0,0,60);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
-        		$posy+=4;
 			}
 		}
 
-		$pdf->SetXY($posx,$posy);
 		if ($object->date)
 		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(255,0,0);
 			$pdf->MultiCell(100, 4, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
 		}
 
-		$posy+=2;
+		if ($object->thirdparty->code_fournisseur)
+		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
+		}
+
+		$posy+=1;
 		$pdf->SetTextColor(0,0,60);
 
 		// Show list of linked objects
