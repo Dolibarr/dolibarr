@@ -2681,19 +2681,21 @@ elseif (! empty($object->id))
 				}
 
 				// Create bill
-				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
+				if (! empty($conf->facture->enabled))
 				{
-					if ($user->rights->fournisseur->facture->creer)
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
 					{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						if ($user->rights->fournisseur->facture->creer)
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						}
+
+						//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
+						//{
+						//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						//}
 					}
-
-					//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-					//{
-					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-					//}
 				}
-
 
 				// Create a remote order using WebService only if module is activated
 				if (! empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) // 2 means accepted
