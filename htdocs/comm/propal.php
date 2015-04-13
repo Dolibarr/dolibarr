@@ -542,12 +542,19 @@ if (empty($reshook))
 	}
 
 	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
-		$object->cloture($user, 4, '');
+	else if ($action == 'classifybilled' && $user->rights->propal->cloturer)
+	{
+		$result=$object->cloture($user, 4, '');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
 			$object->reopen($user, 1);
@@ -555,33 +562,54 @@ if (empty($reshook))
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		if (! GETPOST('statut')) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == Propal::STATUS_VALIDATED) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+			if ($object->statut == Propal::STATUS_VALIDATED)
+			{
+				$result=$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
 			}
 		}
 	}
 
 	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
-		$object->cloture($user, 4, '');
+	else if ($action == 'classifybilled' && $user->rights->propal->cloturer)
+	{
+		$result=$object->cloture($user, 4, '');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
-			$object->reopen($user, 1);
+		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
+		{
+			$result=$object->reopen($user, 1);
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		if (! GETPOST('statut')) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
 			$action = 'statut';
@@ -2203,7 +2231,8 @@ if ($action == 'create')
 				}
 
 				// Create an invoice and classify billed
-				if ($object->statut == Propal::STATUS_SIGNED) {
+				if ($object->statut == Propal::STATUS_SIGNED)
+				{
 					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';

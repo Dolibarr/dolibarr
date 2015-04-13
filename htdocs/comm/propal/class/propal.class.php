@@ -1854,7 +1854,6 @@ class Propal extends CommonObject
     {
         global $langs,$conf;
 
-        $this->statut = $statut;
         $error=0;
         $now=dol_now();
 
@@ -1882,7 +1881,7 @@ class Propal extends CommonObject
 
                 if ($result < 0)
                 {
-                    $this->error=$this->db->error();
+                    $this->error=$this->db->lasterror();
                     $this->db->rollback();
                     return -2;
                 }
@@ -1913,7 +1912,9 @@ class Propal extends CommonObject
 
             if ( ! $error )
             {
-                $this->db->commit();
+		        $this->statut = $statut;
+        
+		        $this->db->commit();
                 return 1;
             }
             else
@@ -1924,7 +1925,7 @@ class Propal extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             $this->db->rollback();
             return -1;
         }
