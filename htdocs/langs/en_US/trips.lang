@@ -72,7 +72,6 @@ DATE_VALIDE=Validation date
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 
-Deny=Deny
 TO_PAID=Pay
 BROUILLONNER=Reopen
 SendToValid=Sent to approve
