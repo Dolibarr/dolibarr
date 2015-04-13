@@ -3269,7 +3269,7 @@ function get_localtax_by_third($local)
 /**
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
- *  This function is called to retrieve type for building PDF. Such call of function must be removed.
+ *  This function is also called to retrieve type for building PDF. Such call of function must be removed.
  *  Instead this function must be called when adding a line to get (array of localtax and type) and
  *  provide it to the function calcul_price_total.
  *
