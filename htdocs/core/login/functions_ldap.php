@@ -34,13 +34,21 @@
  */
 function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 {
-	global $_POST,$db,$conf,$langs;
+	global $db,$conf,$langs;
+	global $_POST;
 	global $dolibarr_main_auth_ldap_host,$dolibarr_main_auth_ldap_port;
 	global $dolibarr_main_auth_ldap_version,$dolibarr_main_auth_ldap_servertype;
 	global $dolibarr_main_auth_ldap_login_attribute,$dolibarr_main_auth_ldap_dn;
 	global $dolibarr_main_auth_ldap_admin_login,$dolibarr_main_auth_ldap_admin_pass;
 	global $dolibarr_main_auth_ldap_filter;
 	global $dolibarr_main_auth_ldap_debug;
+
+	// Force master entity in transversal mode
+	$entity=$entitytotest;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $entity=1;
+
+	$login='';
+	$resultFetchUser='';
 
 	if (! function_exists("ldap_connect"))
 	{
@@ -52,11 +60,10 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		return;
 	}
 
-	$login='';
-	$resultFetchUser='';
-
-	if (!empty($_POST["username"]) || $usertotest)
+	if ($usertotest)
 	{
+		dol_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest." passwordtotest=".preg_replace('/./','*',$passwordtotest)." entitytotest=".$entitytotest);
+
 		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 		$ldaphost=$dolibarr_main_auth_ldap_host;
 		$ldapport=$dolibarr_main_auth_ldap_port;
@@ -80,7 +87,6 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		$ldap->searchUser=$ldapadminlogin;
 		$ldap->searchPassword=$ldapadminpass;
 
-		dol_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest);
 		if ($ldapdebug)
 		{
 			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
@@ -146,47 +152,56 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 				$login=$usertotest;
 
 				// ldap2dolibarr synchronisation
-				if ($login && ! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+				if ($login && ! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')	// ldap2dolibarr synchronisation
 				{
-					dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
+						dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
 
-					// On charge les attributs du user ldap
-					if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
-					$resultFetchLdapUser = $ldap->fetch($login,$userSearchFilter);
+						// On charge les attributs du user ldap
+						if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
+						$resultFetchLdapUser = $ldap->fetch($login,$userSearchFilter);
 
-					if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
-					if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset,'day')."<br>\n";
-					if ($ldapdebug) print "DEBUG: badPasswordTime = ".dol_print_date($ldap->badpwdtime,'day')."<br>\n";
+						if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
+						if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset,'day')."<br>\n";
+						if ($ldapdebug) print "DEBUG: badPasswordTime = ".dol_print_date($ldap->badpwdtime,'day')."<br>\n";
 
-					// On recherche le user dolibarr en fonction de son SID ldap
-					$sid = $ldap->getObjectSid($login);
-					if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
+						// On recherche le user dolibarr en fonction de son SID ldap
+						$sid = $ldap->getObjectSid($login);
+						if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
 
-					$user=new User($db);
-					$resultFetchUser=$user->fetch('',$login,$sid);
-					if ($resultFetchUser > 0)
-					{
-						dol_syslog("functions_ldap::check_user_password_ldap Sync user found id=".$user->id);
-						// On verifie si le login a change et on met a jour les attributs dolibarr
-
-						if ($conf->multicompany->enabled) {
-							global $mc;
-
-							$ret=$mc->checkRight($user->id, $entitytotest);
-							if ($ret < 0) $login=false; // provoque l'echec de l'identification
-						}
-
-
-						if ($user->login != $ldap->login && $ldap->login)
+						$usertmp=new User($db);
+						$resultFetchUser=$usertmp->fetch('',$login,$sid);
+						if ($resultFetchUser > 0)
 						{
-							$user->login = $ldap->login;
-							$user->update($user);
-							// TODO Que faire si update echoue car on update avec un login deja existant.
-						}
+							dol_syslog("functions_ldap::check_user_password_ldap Sync user found user id=".$usertmp->id);
+							// On verifie si le login a change et on met a jour les attributs dolibarr
 
-						//$resultUpdate = $user->update_ldap2dolibarr($ldap);
-					}
+							if ($usertmp->login != $ldap->login && $ldap->login)
+							{
+								$usertmp->login = $ldap->login;
+								$usertmp->update($usertmp);
+								// TODO Que faire si update echoue car on update avec un login deja existant.
+							}
+
+							//$resultUpdate = $usertmp->update_ldap2dolibarr($ldap);
+						}
+						unset($usertmp);
 				}
+
+				if (! empty($conf->multicompany->enabled))	// We must check entity (even if sync is not active)
+				{
+					global $mc;
+
+					$usertmp=new User($db);
+					$usertmp->fetch('',$login);
+					$ret=$mc->checkRight($usertmp->id, $entitytotest);
+					if ($ret < 0)
+					{
+						dol_syslog("functions_ldap::check_user_password_ldap Authentification ko entity '".$entitytotest."' not allowed for user '".$usertmp->id."'");
+						$login=''; // force authentication failure
+					}
+					unset($usertmp);
+				}
+
 			}
 			if ($result == 1)
 			{

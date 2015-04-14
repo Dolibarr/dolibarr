@@ -235,7 +235,9 @@ if ($socid)
 	$soc = new Societe($db);
 	$result = $soc->fetch($socid);
 
-	llxHeader("","",$langs->trans("Category"));
+	$title=$langs->trans("Category");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$soc->name." - ".$title;
+	llxHeader("",$title);
 
 	// Show tabs
 	$head = societe_prepare_head($soc);
@@ -339,9 +341,9 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
+		$picto=($product->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'category', $titre,0,$picto);
 
 

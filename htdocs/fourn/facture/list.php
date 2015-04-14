@@ -5,6 +5,7 @@
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +71,7 @@ $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
+$search_status=GETPOST('search_status','alpha');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
@@ -118,7 +120,7 @@ if ($mode == 'search')
 
 $now=dol_now();
 $form=new Form($db);
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 $formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
@@ -188,6 +190,11 @@ if ($search_amount_all_tax != '')
 	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
 }
 
+if ($search_status != '')
+{
+	$sql.= " AND fac.fk_statut = '".$db->escape($search_status)."'";
+}
+
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -238,7 +245,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
@@ -252,10 +259,8 @@ if ($resql)
 	}
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
-	//if ($syear == '') $syear = date("Y");
-	$htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';

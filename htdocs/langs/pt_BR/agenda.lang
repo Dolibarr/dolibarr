@@ -2,7 +2,6 @@
 IdAgenda=ID evento
 Actions=Eventos
 ActionsArea=Área de eventos (Atividades e Tarefas)
-LocalAgenda=Calendário interno
 ActionsOwnedBy=Evento de propriedade do
 DoneBy=Concluído por
 Event=Evento
@@ -19,6 +18,7 @@ ActionsToDoBy=Eventos atribuídos à
 ActionsDoneBy=Eventos concluído por
 ActionsForUser=Eventos para o usuário
 ActionsForUsersGroup=Eventos para todos os usuários do grupo
+ActionAssignedTo=Evento atribuído a
 AllMyActions=Todos meus eventos/tarefas
 AllActions=Todas os eventos/tarefas
 ViewList=Exibir lista
@@ -33,18 +33,18 @@ AgendaExtSitesDesc=Esta página permite importar calendários de fontes externas
 ActionsEvents=Para qual eventos o Dolibarr irá criar uma atividade na agenda automaticamente
 PropalValidatedInDolibarr=Proposta %s validada
 InvoiceValidatedInDolibarr=Fatura %s validada
+InvoiceValidatedInDolibarrFromPos=Fatura %s validada no POS
 InvoiceBackToDraftInDolibarr=Fatura %s volta ao estado de rascunho
 OrderValidatedInDolibarr=Pedido %s validado
+OrderCanceledInDolibarr=Pedido %s cancelado
 OrderApprovedInDolibarr=Pedido %s aprovado
 OrderRefusedInDolibarr=Pedido %s recusado
 OrderBackToDraftInDolibarr=Pedido %s volta ao estado de rascunho
-OrderCanceledInDolibarr=Pedido %s cancelado
 ProposalSentByEMail=Proposta comercial %s enviada por e-mail
 OrderSentByEMail=Pedido do cliente %s enviado por e-mail
 InvoiceSentByEMail=Fatura do cliente %s enviada por e-mail
 SupplierOrderSentByEMail=Pedido do fornecedor %s enviado por e-mail
 SupplierInvoiceSentByEMail=Fatura do fornecedor %s enviada por e-mail
-ShippingSentByEMail=Entrega %s enviado por e-mail
 ShippingValidated=Envio %s validado
 NewCompanyToDolibarr=Fornecedor criado
 DateActionPlannedStart=Data de início do planejamento
@@ -53,7 +53,6 @@ DateActionDoneStart=Data real de início
 DateActionDoneEnd=Data real de fim
 DateActionEnd=Data de término
 AgendaUrlOptions1=Você também pode adicionar os seguintes parâmetros para filtrar o resultado:
-AgendaUrlOptions2=<b>Usuário=%s</b> permitir apenas resultados para atividades atribuídas, criadas ou concluídas pelo usuário <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> para restringir açoes de propriedade do usuario <b>%s</b>.
 AgendaUrlOptions4=<b>Usuário=%s</b> permitir apenas resultados para atividades atribuídas ao usuário <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir a saida de açoes associadas ao projeto <b>PROJECT_ID</b>.

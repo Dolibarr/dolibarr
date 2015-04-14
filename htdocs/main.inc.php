@@ -111,17 +111,17 @@ function test_sql_and_script_inject($val, $type)
 /**
  * Security: Return true if OK, false otherwise.
  *
- * @param		string		$var		Variable name
- * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean					true if there is an injection
+ * @param		string			$var		Variable name
+ * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
+ * @return		boolean||null				true if there is an injection. Stop code if injection found.
  */
-function analyse_sql_and_script(&$var, $type)
+function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 {
     if (is_array($var))
     {
         foreach ($var as $key => $value)
         {
-            if (analyse_sql_and_script($value,$type))
+            if (analyseVarsForSqlAndScriptsInjection($value,$type))
             {
                 $var[$key] = $value;
             }
@@ -147,16 +147,16 @@ if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && ! defined('NOREQUIRE
 if (! empty($_SERVER["PHP_SELF"]))
 {
     $morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
-    analyse_sql_and_script($morevaltochecklikepost,2);
+    analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost,2);
 }
 // Sanity check on GET parameters
 if (! empty($_SERVER["QUERY_STRING"]))
 {
     $morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
-    analyse_sql_and_script($morevaltochecklikeget,1);
+    analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget,1);
 }
 // Sanity check on POST
-analyse_sql_and_script($_POST,0);
+analyseVarsForSqlAndScriptsInjection($_POST,0);
 
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -490,7 +490,8 @@ if (! defined('NOLOGIN'))
         if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
             // We show login page
-            dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
+			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." showing the login form and exit");
+        	dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
@@ -974,7 +975,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print "<head>\n";
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
-        print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+        print '<meta name="robots" content="noindex,nofollow">'."\n";      				// Do not index
+        print '<meta name="viewport" content="width=device-width, initial-scale=1">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
@@ -1390,6 +1392,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (empty($conf->dol_hide_topmenu))
     {
+    	print '<div class="side-nav-vert"><div id="id-top">';
+
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
@@ -1410,6 +1414,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
@@ -1429,8 +1434,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    print '<div class="login_block">'."\n";
 
-	    $toprightmenu.='<div class="login_block_user">';
 	    // Add login user link
+	    $toprightmenu.='<div class="login_block_user">';
 	    //$toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'login_block_elem2',2);	// This include div class="login"
         $toprightmenu.= $user->getNomurl(0, '', true, 0, 11);
 		$toprightmenu.='</div>';
@@ -1464,6 +1469,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    print $toprightmenu;
 
 	    print "</div>\n";
+		print '</div></div>';
 
 	    unset($form);
     }
@@ -1503,7 +1509,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    $hookmanager->initHooks(array('searchform','leftblock'));
 
     	if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<!-- Begin left layout -->'."\n".'<div class="ui-layout-west">'."\n";
-		else print "\n".'<!-- Begin id-left -->'."\n".'<div id="id-left">'."\n";
+		else print "\n".'<!-- Begin id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
 
 	    print "\n";
 
@@ -1685,11 +1691,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    // Execute hook printLeftBlock
 	    $parameters=array();
-	    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
-	    print $leftblock;
+	    $reshook=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    print $hookmanager->resPrint;
 
 	    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
-	    else print '</div> <!-- end id-left -->';	// End div id="id-left"
+	    else print '</div></div> <!-- end id-left -->';	// End div id="id-left"
     }
 
     print "\n";

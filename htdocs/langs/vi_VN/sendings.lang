@@ -2,6 +2,7 @@
 RefSending=Tài liệu tham khảo. lô hàng
 Sending=Lô hàng
 Sendings=Lô hàng
+AllSendings=All Shipments
 Shipment=Lô hàng
 Shipments=Lô hàng
 ShowSending=Show Sending
@@ -15,7 +16,7 @@ SearchASending=Tìm kiếm hàng
 StatisticsOfSendings=Thống kê cho lô hàng
 NbOfSendings=Số lô hàng
 NumberOfShipmentsByMonth=Số lô hàng theo tháng
-SendingCard=Shipment card
+SendingCard=Thẻ hàng
 NewSending=Lô hàng mới
 CreateASending=Tạo một lô hàng
 CreateSending=Tạo lô hàng

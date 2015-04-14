@@ -13,7 +13,7 @@ ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Žurnāli
 JournalFinancial=Financial journals
 Exports=Eksports
-Export=Export
+Export=Eksportēt
 Modelcsv=Eksporta modulis
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Select a model of export
@@ -68,7 +68,7 @@ Lineofinvoice=Line of invoice
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Kolonu atdalītājs eksportējamā failā
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

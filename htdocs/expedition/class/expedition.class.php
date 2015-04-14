@@ -492,9 +492,9 @@ class Expedition extends CommonObject
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-			
+
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -878,7 +878,7 @@ class Expedition extends CommonObject
 		if (isset($this->fk_delivery_address)) $this->fk_delivery_address=trim($this->fk_delivery_address);
 		if (isset($this->shipping_method_id)) $this->shipping_method_id=trim($this->shipping_method_id);
 		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->trueDepth)) $this->trueDepth=trim($this->trueDepth);
 		if (isset($this->trueWidth)) $this->trueWidth=trim($this->trueWidth);
 		if (isset($this->trueHeight)) $this->trueHeight=trim($this->trueHeight);
@@ -1075,7 +1075,7 @@ class Expedition extends CommonObject
 								}
 								if (file_exists($dir))
 								{
-									if (!dol_delete_dir($dir))
+									if (!dol_delete_dir_recursive($dir))
 									{
 										$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
 										return 0;

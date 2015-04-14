@@ -98,8 +98,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $productstatic=new Product($db);
 
-$titre = $langs->trans("Referer",$object->name);
-llxHeader('',$titre,'');
+$title = $langs->trans("Referer",$object->name);
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$title,$help_url);
 
 if (empty($socid))
 {
@@ -311,7 +313,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left">';
 print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 print '</td>';
-print '<td class="liste_titre">'; // date
+print '<td class="liste_titre nowrap">'; // date
 print $formother->select_month($month?$month:-1,'month',1);
 $formother->select_year($year?$year:-1,'year',1, 20, 1);
 print '</td>';

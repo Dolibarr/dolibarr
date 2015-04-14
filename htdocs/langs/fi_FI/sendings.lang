@@ -2,6 +2,7 @@
 RefSending=Ref. lähettäminen
 Sending=Lähettävä
 Sendings=Sendings
+AllSendings=All Shipments
 Shipment=Lähettävä
 Shipments=Toimitukset
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Kpl velvoitti
 QtyShipped=Kpl lähetysvuotta
 QtyToShip=Kpl alusten
 QtyReceived=Kpl saanut
-KeepToShip=Pidä alusten
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Muut sendings tässä tilauksessa
 DateSending=Päiväys lähettämistä, jotta
 DateSendingShort=Päiväys lähettämistä, jotta

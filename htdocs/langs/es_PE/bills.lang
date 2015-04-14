@@ -1,9 +1,7 @@
-# Dolibarr language file - es_PU - bills
+# Dolibarr language file - Source file is en_US - bills
 ErrorVATIntraNotConfigured=Número de IGV intracomunitario aún no configurado
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factura. Acepto perder el IGV de este descuento
 AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IGV)
 IntracommunityVATNumber=Número de IGV intracomunitario
 VATIsNotUsedForInvoice=* IGV no aplicable  art-293B del CGI
-PDFBerniqueDescription=Modelo para las facturas con varios tipos de IGV, incluido también el número de IGV Intracomunitario
 PDFCrabeDescription=Modelo de factura completo (IGV,  método de pago a mostrar, logotipo...)
-PDFOursinDescription=Modelo de factura completo (IGV, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)

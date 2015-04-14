@@ -2,6 +2,7 @@
 RefSending=Ref enviament
 Sending=Enviament
 Sendings=Enviaments
+AllSendings=All Shipments
 Shipment=Enviament
 Shipments=Enviaments
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Qt. demanada
 QtyShipped=Qt. enviada
 QtyToShip=Qt. a enviar
 QtyReceived=Qt. rebuda
-KeepToShip=Quede per enviar
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Altres enviaments d'aquesta comanda
 DateSending=Data d'expedició
 DateSendingShort=Data d'expedició

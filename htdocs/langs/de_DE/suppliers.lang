@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Lieferanten
-Supplier=Lieferant
 AddSupplier=Lieferant anlegen
 SupplierRemoved=Lieferant entfernt
 SuppliersInvoice=Lieferantenrechnung
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Lieferantenrechnungen und Zahlungen
 ExportDataset_fournisseur_3=Lieferantenbestellungen und Auftragszeilen
 ApproveThisOrder=Bestellung bestätigen
 ConfirmApproveThisOrder=Möchten Sie diese Bestellung wirklich bestätigen <b>%s</b> ?
-DenyingThisOrder=Bestellung ablehnen
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Möchten Sie diese Bestellung wirklich ablehnen <b>%s</b> ?
 ConfirmCancelThisOrder=Möchten Sie diese Bestellung wirklich verwerfen <b>%s</b> ?
 AddCustomerOrder=Erzeuge Kundenbestellung
@@ -44,3 +43,4 @@ ListOfSupplierOrders=Liste der Lieferantenbestellungen
 MenuOrdersSupplierToBill=Zu berechnende Lieferantenbestellungen
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

@@ -18,7 +18,7 @@ CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tache pour lancer cette commande toute les 5 minutes.
 # Menu
 CronJobs=Travaux programmés
-CronListActive=Liste des travaux actifs/programmés
+CronListActive=Liste des travaux
 CronListInactive=Liste des travaux inactifs
 # Page list
 CronDateLastRun=Dernier lancement
@@ -26,15 +26,15 @@ CronLastOutput=Sortie du dernier lancement
 CronLastResult=Dernier code de retour
 CronListOfCronJobs=Liste des travaux planifiés
 CronCommand=Commande
-CronList=Liste des travaux
-CronDelete= Supprimer les travaux cron
-CronConfirmDelete= Êtes-vous sûr de vouloir supprimer ces travaux cron ?
-CronExecute=Lancer cette tâche
-CronConfirmExecute= Êtes-vous sûr de vouloir lancer ce travail maintenant?
-CronInfo= Les travaux planifiés permettent d'exécuter des tâches à intervales réguliers
+CronList=Travaux planifiées
+CronDelete=Effacer les travaux planifiés
+CronConfirmDelete=Êtes-vous sûr de vouloir supprimer ce travail planifié ?
+CronExecute=Lancer les travaux planifiés
+CronConfirmExecute=Êtes-vous sûr de vouloir exécuter ce travail planifié maintenant?
+CronInfo=Le module des travaux planifiés permet d'exécuter des opérations qui ont été programmées
 CronWaitingJobs=Travaux en attente
 CronTask=Tâche
-CronNone= Aucun(e)
+CronNone=Aucun(e)
 CronDtStart=Date de début
 CronDtEnd=Date de fin
 CronDtNextLaunch=Prochaine exécution
@@ -75,6 +75,7 @@ CronObjectHelp=Le nom de l'objet à charger. <BR> Par exemple pour appeler la m�
 CronMethodHelp=La méthode à lancer. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur de la méthode est <i>fetch</i>
 CronArgsHelp=Les arguments de la méthode. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être <i>0, RefProduit</i>
 CronCommandHelp=La commande système a exécuter.
+CronCreateJob=Créer un nouveau travail planifié
 # Info
 CronInfoPage=Information
 # Common
@@ -84,3 +85,4 @@ CronType_command=Commande terminal
 CronMenu=Cron
 CronCannotLoadClass=Impossible de charger la classe %s ou l'objet %s
 UseMenuModuleToolsToAddCronJobs=Aller dans le menu "Accueil - Outils modules - Liste des travaux" pour voir et éditer les travaux planifiés.
+TaskDisabled=Tâche désactivée

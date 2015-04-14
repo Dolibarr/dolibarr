@@ -476,9 +476,9 @@ class PaiementFourn extends Paiement
 
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien
 	 *	@return		string					Chaine avec URL
 	 */
@@ -495,13 +495,13 @@ class PaiementFourn extends Paiement
         }
         $label = $langs->trans("ShowPayment").': '.$text;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$text.$lienfin;
+		if ($withpicto != 2) $result.=$link.$text.$linkend;
 		return $result;
 	}
 }

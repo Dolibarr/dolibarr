@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - users
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Бухгалтерский код для выплат зарплаты
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Бухгалтерский код для финансовых выплат
 Salary=Зарплата
 Salaries=Зарплаты
 Employee=Сотрудник
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+NewSalaryPayment=Новая выплата зарплаты
+SalaryPayment=Выплата зарплаты
+SalariesPayments=Выплата зарплат
+ShowSalaryPayment=Показать выплату зарплаты
+THM=Средняя расценка почасовой оплаты
+TJM=Средняя расценка дневной оплаты
+CurrentSalary=Текущая зарплата

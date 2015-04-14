@@ -119,6 +119,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CLONE':
 		    case 'ORDER_VALIDATE':
 		    case 'ORDER_DELETE':
+		    case 'ORDER_CANCEL':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
 		    case 'LINEORDER_INSERT':
@@ -134,6 +135,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_SUPPLIER_REFUSE':
 		    case 'ORDER_SUPPLIER_CANCEL':
 		    case 'ORDER_SUPPLIER_SENTBYMAIL':
+            case 'ORDER_SUPPLIER_DISPATCH':
 		    case 'LINEORDER_SUPPLIER_DISPATCH':
 		    case 'LINEORDER_SUPPLIER_CREATE':
 		    case 'LINEORDER_SUPPLIER_UPDATE':

@@ -941,7 +941,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
- * 	@return	void
+ * 	@return	string|null
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
@@ -1159,7 +1159,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1185,7 +1185,7 @@ function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1210,7 +1210,7 @@ function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1569,7 +1569,7 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	Object		$object				Object
  *	@param	string		$type				Type
  *  @param  Translate	$outputlangs		Object langs for output
- * 	@return	void
+ * 	@return	integer
  */
 function pdf_getTotalQty($object,$type,$outputlangs)
 {

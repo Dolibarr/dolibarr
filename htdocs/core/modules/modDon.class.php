@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
  */
 
 /**
- *	\defgroup   don     Module donation
+ *	\defgroup   don     Module donations
  *	\brief      Module to manage the follow-up of the donations
  *	\file       htdocs/core/modules/modDon.class.php
- *	\ingroup    don
+ *	\ingroup    donations
  *	\brief      Description and activation file for module Donation
  */
 
@@ -64,7 +64,7 @@ class modDon  extends DolibarrModules
 		$this->requiredby = array();
 
 		// Config pages
-		$this->config_page_url = array("dons.php");
+		$this->config_page_url = array("donation.php@don");
 
 		// Constants
 		$this->const = array ();
@@ -102,6 +102,13 @@ class modDon  extends DolibarrModules
 				"chaine",
 				"Thank you",
 				"Message affiché sur le récépissé de versements ou dons",
+				"0"
+		);
+		$this->const[5] = array (
+				"DONATION_ACCOUNTINGACCOUNT",
+				"chaine",
+				"7581",
+				"Compte comptable de remise des versements ou dons",
 				"0"
 		);
 
@@ -146,8 +153,8 @@ class modDon  extends DolibarrModules
 		global $conf;
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','donation',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][4]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][4]."','donation',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);

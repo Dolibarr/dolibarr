@@ -139,3 +139,5 @@ ListOfNotificationsDone=Liste aller versandten E-Mail Benachrichtigungen
 MailSendSetupIs=Der E-Mail-Versand wurde auf '%s' konfiguriert. Dieser Modus kann nicht für Massen-Mails verwendet werden.
 MailSendSetupIs2=Sie müssen zuerst mit einem Admin-Konto im Menü %sHome - Einstellungen - EMails%s den Parameter <strong>'%s'</strong> auf den Modus '%s' ändern. Dann können Sie die Daten des SMTP-Servers von Ihrem Internetdienstanbieter eingeben und die Masse-E-Mail-Funktion nutzen.
 MailSendSetupIs3=If you have any questions on how to setup your SMTP server, you can ask to %s.
+YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
+NbOfTargetedContacts=Current number of targeted contact emails

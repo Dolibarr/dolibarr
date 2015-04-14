@@ -2,6 +2,7 @@
 RefSending=Ref. Livrare
 Sending=Livrare
 Sendings=Livrari
+AllSendings=All Shipments
 Shipment=Livrare
 Shipments=Livrari
 ShowSending=Arata expedieri
@@ -23,7 +24,7 @@ QtyOrdered=Cant.  comandată
 QtyShipped=Cant.  livrată
 QtyToShip=Cant.  de livrat
 QtyReceived=Cant.  primită
-KeepToShip=Rest de livrat
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Alte livrări pentru această comandă
 DateSending=Data dispoziţiei de livrare
 DateSendingShort=Data disp.  de livrare
@@ -62,12 +63,12 @@ ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unei noi livrări se face
 RelatedShippings=Livrări asociate
 ShipmentLine=Linie de livrare
 CarrierList=Lista transportatori
-SendingRunning=Product from ordered customer orders
-SuppliersReceiptRunning=Product from ordered supplier orders
-ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
+SendingRunning=Produs din comenzile clientului comandate
+SuppliersReceiptRunning=Produs din comenzile furnizorului comandate
+ProductQtyInCustomersOrdersRunning=Cantitate produs in comenzile clientilor deschise
+ProductQtyInSuppliersOrdersRunning=Cantitate produs in comenzile furnizorilor deschise
+ProductQtyInShipmentAlreadySent=Cantitate produs din comenzile clientilor deschise deja trimise
+ProductQtyInSuppliersShipmentAlreadyRecevied=Cantitate produs din comenzile furnizorilor deschise deja primite
 
 # Sending methods
 SendingMethodCATCH=Colectată de client

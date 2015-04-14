@@ -319,7 +319,6 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$askpricesupplier->type=0;
 						$nextval=$module->getNextValue($mysoc,$askpricesupplier);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';

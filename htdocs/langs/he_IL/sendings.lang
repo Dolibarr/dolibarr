@@ -2,6 +2,7 @@
 RefSending=Ref. shipment
 Sending=Shipment
 Sendings=משלוחים
+AllSendings=All Shipments
 Shipment=Shipment
 Shipments=משלוחים
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Qty ordered
 QtyShipped=Qty shipped
 QtyToShip=Qty to ship
 QtyReceived=Qty received
-KeepToShip=Keep to ship
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Other shipments for this order
 DateSending=Date sending order
 DateSendingShort=Date sending order

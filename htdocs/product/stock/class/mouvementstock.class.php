@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  *
@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/product/stock/class/mouvementstock.class.php
  *	\ingroup    stock
- *	\brief      Fichier de la classe de gestion des mouvements de stocks
+ *	\brief      File of class to manage stock movement (input or output)
  */
 
 
@@ -32,6 +32,12 @@ class MouvementStock extends CommonObject
 {
     var $error;
     var $db;
+
+	var $product_id;
+	var $entrepot_id;
+	var $qty;
+	var $type;
+
 
     /**
 	 *  Constructor
@@ -49,10 +55,11 @@ class MouvementStock extends CommonObject
 	 *	@param		User	$user			User object
 	 *	@param		int		$fk_product		Id of product
 	 *	@param		int		$entrepot_id	Id of warehouse
-	 *	@param		int		$qty			Qty of movement (can be <0 or >0)
+	 *	@param		int		$qty			Qty of movement (can be <0 or >0 depending on parameter type)
 	 *	@param		int		$type			Direction of movement:
 	 *										0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
+	 *                                      Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$inventorycode	Inventory code
@@ -60,16 +67,16 @@ class MouvementStock extends CommonObject
 	 *	@param		date	$eatby			eat-by date
 	 *	@param		date	$sellby			sell-by date
 	 *	@param		string	$batch			batch number
-	 *	@param		boolean	$skip_sellby	If set to true, stock mouvement is done without impacting batch record
+	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_batch=false)
 	{
 		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$error = 0;
-		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode");
+		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
 		// Clean parameters
 		if (empty($price)) $price=0;
@@ -77,6 +84,16 @@ class MouvementStock extends CommonObject
 
 		// Check parameters
 		if (empty($fk_product)) return 0;
+		if ($eatby < 0)
+		{
+			$this->errors[]='ErrorBadValueForParameterEatBy';
+			return -1;
+		}
+		if ($sellby < 0)
+		{
+			$this->errors[]='ErrorBadValueForParameterEatBy';
+			return -1;
+		}
 
 		// Set properties of movement
 		$this->product_id = $fk_product;
@@ -84,7 +101,7 @@ class MouvementStock extends CommonObject
 		$this->qty = $qty;
 		$this->type = $type;
 
-		$this->db->begin();
+		$mvid = 0;
 
 		$product = new Product($this->db);
 		$result=$product->fetch($fk_product);
@@ -93,24 +110,74 @@ class MouvementStock extends CommonObject
 			dol_print_error('',"Failed to fetch product");
 			return -1;
 		}
+
+		$this->db->begin();
+
 		$product->load_stock();
 
 		// Test if product require batch data. If yes, and there is not, we throw an error.
-		if ($product->hasbatch() && ! $skip_sellby)
+		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 		{
-			if (empty($batch) && empty($eatby) && empty($sellby))
+			//if (empty($batch) && empty($eatby) && empty($sellby))
+			if (empty($batch))
 			{
-				$this->errors[]="ErrorTryToMakeMoveOnProductRequiringBatchData";
+				$this->errors[]=$langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->name);
 				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
 
 				$this->db->rollback();
 				return -2;
 			}
+
+			// If a serial number is provided, we check that sellby and eatby match already existing serial
+			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
+			$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$fk_product." AND pb.batch = '".$this->db->escape($batch)."'";
+            dol_syslog(get_class($this)."::_create scan serial for this product to check if eatby and sellby match", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+            	$num = $this->db->num_rows($resql);
+            	$i=0;
+            	while ($i < $num)
+            	{
+            		$obj = $this->db->fetch_object($resql);
+            		if ($this->db->jdate($obj->eatby) != $eatby)
+            		{
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->eatby), $eatby);
+						dol_syslog($langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->eatby), $eatby));
+						$this->db->rollback();
+            			return -3;
+            		}
+            		if ($this->db->jdate($obj->sellby) != $sellby)
+            		{
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->sellby), $sellby);
+						dol_syslog($langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->sellby), $sellby));
+						$this->db->rollback();
+            			return -3;
+            		}
+            		$i++;
+            	}
+            }
+            else
+			{
+            	dol_print_error($this->db);
+            	$this->db->rollback();
+            	return -1;
+			}
+		}
+
+		// TODO Check qty is ok for stock move.
+		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
+		{
+
+		}
+		else
+		{
+
 		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
-		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
+		if ($product->type != Product::TYPE_SERVICE || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
@@ -121,8 +188,6 @@ class MouvementStock extends CommonObject
 				$origintype = '';
 				$fk_origin = 0;
 			}
-
-			$mvid = 0;
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
 			$sql.= " datem, fk_product, batch, eatby, sellby,";
@@ -150,15 +215,15 @@ class MouvementStock extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
+				$this->errors[]=$this->db->lasterror();
 				$error = -1;
 			}
 
 			// Define current values for qty and pmp
 			$oldqty=$product->stock_reel;
-			$oldqtywarehouse=0;
 			$oldpmp=$product->pmp;
-			$oldpmpwarehouse=0;
+			$oldqtywarehouse=0;
+			//$oldpmpwarehouse=0;
 
 			// Test if there is already a record for couple (warehouse / product)
 			$num = 0;
@@ -176,22 +241,21 @@ class MouvementStock extends CommonObject
 					{
 						$num = 1;
 						$oldqtywarehouse = $obj->reel;
-						$oldpmpwarehouse = $obj->pmp;
+						//$oldpmpwarehouse = $obj->pmp;
 						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
 				}
 				else
 				{
-					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->db->lasterror();
 					$error = -2;
 				}
 			}
 
 			// Calculate new PMP.
 			$newpmp=0;
-			$newpmpwarehouse=0;
-			/*
+			//$newpmpwarehouse=0;
 			if (! $error)
 			{
 				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
@@ -200,27 +264,28 @@ class MouvementStock extends CommonObject
 				{
 					// If we will change PMP for the warehouse we edit and the product, we must first check/clean that PMP is defined
 					// on every stock entry with old value (so global updated value will match recalculated value from product_stock)
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
+			/*		$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
 					$sql.= " WHERE pmp = 0 AND fk_product = ".$fk_product;
 					dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
-						$this->error=$this->db->lasterror();
+						$this->errors[]=$this->db->lasterror();
 						$error = -4;
 					}
-
+			*/
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
 					else
 					{
-						$newpmp=$price; // For this product, PMP was not yet set. We will set it later.
+						$newpmp=$price; // For this product, PMP was not yet set. We set it to input price.
 					}
+			/*
 					$oldqtywarehousetouse=$oldqtywarehouse;
 					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
 					else $newpmpwarehouse=$price;
-
+			*/
 					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
 					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
 					//exit;
@@ -228,35 +293,38 @@ class MouvementStock extends CommonObject
 				else if ($type == 1 || $type == 2)
 				{
 					// After a stock decrease, we don't change value of PMP for product.
+					$newpmp = $oldpmp;
 				}
 				else
 				{
 					$newpmp = $oldpmp;
-					$newpmpwarehouse = $oldpmpwarehouse;
+					//$newpmpwarehouse = $oldpmpwarehouse;
 				}
 			}
-			*/
 
-			// Update denormalized value of stock in product_stock and product
+			// Update stock quantity
 			if (! $error)
 			{
 				if ($num > 0)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".$newpmpwarehouse.", reel = reel + ".$qty;
+					//$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".$newpmpwarehouse.", reel = reel + ".$qty;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
 					$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 				}
 				else
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
-					$sql.= " (pmp, reel, fk_entrepot, fk_product) VALUES ";
-					$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
+					//$sql.= " (pmp, reel, fk_entrepot, fk_product) VALUES ";
+					//$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
+					$sql.= " (reel, fk_entrepot, fk_product) VALUES ";
+					$sql.= " (".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}
 
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
-					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->db->lasterror();
 					$error = -3;
 				}
 				else if(empty($fk_product_stock))
@@ -266,14 +334,15 @@ class MouvementStock extends CommonObject
 
 			}
 
-			// Update detail stock for sell-by date
-			if (($product->hasbatch()) && (! $error) && (! $skip_sellby))
+			// Update detail stock for batch product
+			if (! $error && ! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 			{
 				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby, 'sellby'=>$sellby, 'batchnumber'=>$batch);
 				$result=$this->_create_batch($param_batch, $qty);
 				if ($result<0) $error++;
 			}
 
+			// Update PMP and denormalized value of stock qty at product level
 			if (! $error)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
@@ -285,7 +354,7 @@ class MouvementStock extends CommonObject
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
-					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->db->lasterror();
 					$error = -4;
 				}
 			}
@@ -480,7 +549,7 @@ class MouvementStock extends CommonObject
 	 * @param	int			$qty	Quantity of product with batch number
 	 * @return 	int   				<0 if KO, else return productbatch id
 	 */
-	function _create_batch($dluo, $qty )
+	function _create_batch($dluo, $qty)
 	{
 		$pdluo=new Productbatch($this->db);
 
@@ -505,7 +574,7 @@ class MouvementStock extends CommonObject
 			$result = -1;
 		}
 
-		//batch record found so we update it
+		// Batch record found so we update it
 		if ($result>0)
 		{
 			if ($pdluo->id >0)
@@ -545,8 +614,10 @@ class MouvementStock extends CommonObject
      * @param   int $origintype     origin type
      * @return  string              name url
      */
-	function get_origin($fk_origin, $origintype) {
-		switch ($origintype) {
+	function get_origin($fk_origin, $origintype)
+	{
+		switch ($origintype)
+		{
 			case 'commande':
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 				$origin = new Commande($this->db);
@@ -576,4 +647,22 @@ class MouvementStock extends CommonObject
 		$origin->fetch($fk_origin);
 		return $origin->getNomUrl(1);
 	}
+
+
+	/**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf,$mysoc;
+
+        // Initialize parameters
+        $this->id=0;
+
+        // There is no specific properties. All data into insert are provided as method parameter.
+    }
 }

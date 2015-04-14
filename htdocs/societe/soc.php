@@ -63,6 +63,10 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartycard','globalcard'));
+
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -77,8 +81,6 @@ if (! empty($canvas))
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
 
 /*
@@ -1091,7 +1093,7 @@ else
             $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
-		
+
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
@@ -1101,7 +1103,7 @@ else
 	        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 			print '</td></tr>';
 		}
-		
+
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1226,11 +1228,11 @@ else
 
 				//Incoterms
 				if (!empty($conf->incoterm->enabled))
-				{	
+				{
 					$object->fk_incoterms			= GETPOST('incoterm_id', 'int');
 					$object->location_incoterms		= GETPOST('lcoation_incoterms', 'alpha');
 				}
-				
+
                 //Local Taxes
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
@@ -1585,8 +1587,9 @@ else
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
+            // Juridical type
             print '<tr><td><label for="legal_form">'.$langs->trans('JuridicalStatus').'</label></td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code);
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code,'',0);
             print '</td></tr>';
 
             // Capital
@@ -1627,7 +1630,7 @@ else
 	            print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
 			}
-			
+
             // Logo
             print '<tr class="hideonsmartphone">';
             print '<td><label for="photoinput">'.$langs->trans("Logo").'</label></td>';
@@ -2016,7 +2019,7 @@ else
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
-		{			
+		{
 			print '<tr><td>';
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('IncotermLabel');
@@ -2030,7 +2033,7 @@ else
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
-			else 
+			else
 			{
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
 			}

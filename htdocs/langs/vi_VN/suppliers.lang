@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Nhà cung cấp
-Supplier=Nhà cung cấp
 AddSupplier=Tạo một nhà cung cấp
 SupplierRemoved=Nhà cung cấp loại bỏ
 SuppliersInvoice=Nhà cung cấp hóa đơn
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Hoá đơn và các khoản thanh toán nhà cung c�
 ExportDataset_fournisseur_3=Đơn đặt hàng nhà cung cấp và các dòng lệnh
 ApproveThisOrder=Chấp thuận đơn hàng này
 ConfirmApproveThisOrder=Bạn Bạn có chắc chắn muốn chấp nhận <b>để% s?</b>
-DenyingThisOrder=Phủ nhận thứ tự này
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Bạn có chắc chắn bạn muốn từ chối lệnh <b>này% s?</b>
 ConfirmCancelThisOrder=Bạn có chắc chắn bạn muốn hủy bỏ lệnh <b>này% s?</b>
 AddCustomerOrder=Tạo đơn đặt hàng
@@ -44,3 +43,4 @@ ListOfSupplierOrders=Danh sách các đơn đặt hàng nhà cung cấp
 MenuOrdersSupplierToBill=Đơn đặt hàng nhà cung cấp cho hóa đơn
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

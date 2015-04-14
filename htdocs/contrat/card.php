@@ -958,6 +958,8 @@ if ($action == 'create')
     print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
     print '<input type="hidden" name="remise_percent" value="0">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Ref
@@ -1053,7 +1055,9 @@ if ($action == 'create')
 
     print "</table>\n";
 
-    print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+    dol_fiche_end();
+
+    print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
     if (is_object($objectsrc))
     {
@@ -1065,10 +1069,8 @@ if ($action == 'create')
         	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
         }
 	}
-
+    
     print "</form>\n";
-
-    dol_fiche_end();
 }
 else
 /* *************************************************************************** */
@@ -1270,7 +1272,9 @@ else
         $usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
 
-        // Title line for service
+        $var=false;
+        
+		// Title line for service
         $cursorline=1;
         while ($cursorline <= $nbofservices)
         {
@@ -1309,8 +1313,6 @@ else
                 print '<td width="30">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=true;
-
                 $objp = $db->fetch_object($result);
 
                 $var=!$var;
@@ -1338,18 +1340,18 @@ else
                     }
                     else
                     {
-                        print "<td>".dol_htmlentitiesbr($objp->description)."</td>\n";
+                        print '<td>'.dol_htmlentitiesbr($objp->description)."</td>\n";
                     }
                     // TVA
                     print '<td align="center">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
                     // Prix
-                    print '<td align="right">'.price($objp->subprice)."</td>\n";
+                    print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
-                        print '<td align="right">'.$objp->remise_percent."%</td>\n";
+                        print '<td align="right" '.$bc[$var].'>'.$objp->remise_percent."%</td>\n";
                     }
                     else
                     {
@@ -1481,7 +1483,7 @@ else
                     print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
-                    print '<br>'.$langs->trans("DateEndPlanned").' ';
+                    print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
                     $form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
 
@@ -1505,7 +1507,7 @@ else
 
             if ($object->statut > 0)
             {
-                print '<tr '.$bc[false].'>';
+                print '<tr '.$bc[$var].'>';
                 print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr></td>';
                 print "</tr>\n";
             }
@@ -1521,7 +1523,7 @@ else
             if ($action == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == GETPOST('rowid'))
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
-                if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+                if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1541,7 +1543,7 @@ else
                 array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1553,7 +1555,7 @@ else
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
             /*
@@ -1565,7 +1567,7 @@ else
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
                 $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
-                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+                print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
 
@@ -1574,7 +1576,7 @@ else
             {
                 print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
 
-                print '<tr '.$bc[false].'>';
+                print '<tr '.$bc[$var].'>';
                 print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
                 print '<td width="30" align="right">';
                 if ($user->societe_id == 0)
@@ -1591,7 +1593,7 @@ else
                 print '</td>';
                 print "</tr>\n";
 
-                print '<tr '.$bc[false].'>';
+                print '<tr '.$bc[$var].'>';
 
                 print '<td>';
                 // Si pas encore active
@@ -1630,7 +1632,7 @@ else
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="notopnoleftnoright" width="100%">';
+                print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;
@@ -1680,7 +1682,7 @@ else
 
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="noborder" width="100%">';
+                print '<table class="noborder tableforservicepart2" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut_reelle;

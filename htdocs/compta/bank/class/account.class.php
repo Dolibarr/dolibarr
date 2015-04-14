@@ -39,12 +39,12 @@ class Account extends CommonObject
     public $table_element='bank_account';
 
     /**
-     * //TODO: Discuss this. $rowid is preferred over $id
-     * @var
+     * @var	int		Use id instead of rowid
      * @deprecated
      */
     var $rowid;
     var $id;
+
     var $ref;
     var $label;
     //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
@@ -781,8 +781,8 @@ class Account extends CommonObject
         		$result=$this->deleteExtraFields();
         		if ($result < 0)
         		{
-        			return -1;
         			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        			return -1;
         		}
         	}
 
@@ -968,9 +968,9 @@ class Account extends CommonObject
 
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
+     *    	Return clicable name (with picto eventually)
      *
-     *		@param	int		$withpicto		Inclut le picto dans le lien
+     *		@param	int		$withpicto		Include picto into link
      *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
      *		@return	string					Chaine avec URL
      */
@@ -988,17 +988,17 @@ class Account extends CommonObject
 
         if (empty($mode))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id.$linkclose;
+            $linkend='</a>';
         }
         else if ($mode == 'transactions')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
-            $lienfin='</a>';
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$this->id.$linkclose;
+            $linkend='</a>';
         }
 
-        if ($withpicto) $result.=($lien.img_object($label, 'account', 'class="classfortooltip"').$lienfin.' ');
-        $result.=$lien.$this->label.$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
+        $result.=$link.$this->label.$linkend;
         return $result;
     }
 
@@ -1521,9 +1521,9 @@ class AccountLine extends CommonObject
 
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
+     *    	Return clicable name (with picto eventually)
      *
-     *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *		@param	int		$maxlen			Longueur max libelle
      *		@param	string	$option			Option ('showall')
      *		@return	string					Chaine avec URL
@@ -1534,11 +1534,11 @@ class AccountLine extends CommonObject
 
         $result='';
         $label=$langs->trans("ShowTransaction").': '.$this->rowid;
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($label, 'account', 'class="classfortooltip"').$lienfin.' ');
-        $result.=$lien.$this->rowid.$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
+        $result.=$link.$this->rowid.$linkend;
 
         if ($option == 'showall' || $option == 'showconciliated') $result.=' (';
         if ($option == 'showall')

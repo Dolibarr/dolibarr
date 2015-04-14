@@ -35,45 +35,68 @@
  */
 abstract class CommonObject
 {
-    public $db;
+    /**
+     * @var DoliDb		Database handler (result of a new DoliDB)
+     */
+	public $db;
 
     /**
-     * @var error 	Error string
-     * @deprecated	Use instead the array of error strings
+     * @var string 		Error string
+     * @deprecated		Use instead the array of error strings
      */
     public $error;
 
     /**
-     * @var errors	Aray of error string
+     * @var string[]	Array of error strings
      */
     public $errors;
 
-    public $canvas;                // Contains canvas name if it is
-	public $context=array();		// Use to pass context information
+    /**
+     * @var string		Can be used to pass information when only object is provied to method
+     */
+    public $context=array();
+
+    /**
+     * @var string		Contains canvas name if record is an alternative canvas record
+     */
+    public $canvas;
+
+    /**
+     * @var string		Key value used to track if data is coming from import wizard
+     */
+    public $import_key;
+
+    /**
+     * @var mixed		Contains data to manage extrafields
+     */
+    public $array_options=array();
+
+    /**
+     * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjectsIds;
+
+    /**
+     * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
+     */
+    public $linkedObjects;
+
+    /**
+     * @var string		Column name of the ref field.
+     */
+    protected $table_ref_field = '';
+
+
+
+    // Following var are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
     public $name;
     public $lastname;
     public $firstname;
     public $civility_id;
-    public $import_key;
-
-    public $array_options=array();
-
-    /**
-     * @var Societe
-     */
     public $thirdparty;
 
-    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
-    public $linkedObjects;		// Loaded by ->fetchObjectLinked
-
     // No constructor as it is an abstract class
-
-    /**
-     * Column name of the ref field.
-     * @var string
-     */
-    protected $table_ref_field = '';
 
 
     /**
@@ -1588,7 +1611,7 @@ abstract class CommonObject
     	}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
-    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+    		dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
 
@@ -1864,10 +1887,11 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
+     *  @param	int		$alsosametype	0=Return only links to different object than source. 1=Include also link to objects of same type.
      *	@return	void
      *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
-	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR',$alsosametype=1)
     {
         global $conf;
 
@@ -1901,7 +1925,7 @@ abstract class CommonObject
         	return -1;
         }
 
-        // Links beetween objects are stored in this table
+        // Links between objects are stored in table element_element
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
         $sql.= " WHERE ";
@@ -1960,7 +1984,7 @@ abstract class CommonObject
 
                     $classpath = $element.'/class';
 
-                    // To work with non standard path
+                    // To work with non standard classpath or module name
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
                     }
@@ -1996,7 +2020,7 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
-                    if ($conf->$module->enabled && $element != $this->element)
+                    if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
@@ -2662,10 +2686,9 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
-	 *  @param	int			$permtoedit			Permission to edit line
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $permtoedit=0)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
 		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
 
@@ -2758,7 +2781,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline,$permtoedit);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
 
 			$i++;
@@ -2770,7 +2793,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string		$action				GET/POST action
-	 *	@param	array	    $line		       	Selected object line to output
+	 *	@param CommonObjectLine $line		       	Selected object line to output
 	 *	@param  string	    $var               	Is it a an odd line (true)
 	 *	@param  int		    $num               	Number of line (0)
 	 *	@param  int		    $i					I
@@ -2779,13 +2802,14 @@ abstract class CommonObject
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
-	 *  @param	int			$permtoedit			Permission to edit
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0,$permtoedit=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form,$bc,$bcdd, $object_rights;
+
+		$object_rights = $this->getRights();
 
 		$element=$this->element;
 
@@ -3191,7 +3215,7 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// FIXME Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
+		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
 	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
@@ -3458,6 +3482,31 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *  Build thumb
+	 *
+	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *	@return		void
+	 */
+	function add_thumb($file)
+	{
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
+
+		$file_osencoded=dol_osencode($file);
+		if (file_exists($file_osencoded))
+		{
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file_osencoded, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file_osencoded, $maxwidthmini, $maxheightmini, '_mini', $quality);
+		}
+	}
+
 
 	/* Functions common to commonobject and commonobjectline */
 
@@ -3624,6 +3673,7 @@ abstract class CommonObject
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
                	$attributeSize  = $extrafields->attribute_size[$attributeKey];
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
+               	$attributeParam = $extrafields->attribute_param[$attributeKey];
                	switch ($attributeType)
                	{
                		case 'int':
@@ -3646,6 +3696,19 @@ abstract class CommonObject
             		case 'datetime':
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
+           		case 'link':
+				$param_list=array_keys($attributeParam ['options']);
+				// 0 : ObjectName
+				// 1 : classPath
+				$InfoFieldList = explode(":", $param_list[0]);
+				dol_include_once($InfoFieldList[1]);
+				$object = new $InfoFieldList[0]($this->db);
+				if ($value)
+				{
+					$object->fetch(0,$value);
+					$this->array_options[$key]=$object->id;
+				}
+				break;
                	}
             }
             $this->db->begin();
@@ -3820,5 +3883,17 @@ abstract class CommonObject
 		}
 		return $out;
 	}
+
+	/**
+	 * Returns the rights used for this class
+	 * @return stdClass
+	 */
+	public function getRights()
+	{
+		global $user;
+
+		return $user->rights->{$this->element};
+	}
+
 
 }

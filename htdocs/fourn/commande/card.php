@@ -140,6 +140,7 @@ if (empty($reshook))
 	{
 	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		else $object->ref_supplier = GETPOST('ref_supplier','alpha');	// The setValueFrom does not set new property of object
 	}
 
 	// Set incoterm
@@ -180,7 +181,8 @@ if (empty($reshook))
 	// Set project
 	if ($action ==	'classin' && $user->rights->fournisseur->commande->creer)
 	{
-	    $object->setProject($projectid);
+	    $result=$object->setProject($projectid);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->creer)
@@ -189,26 +191,42 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
+	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 5, 6, 7, 9)))
+	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
+	        else if ($object->statut == 3) $newstatus=2;	// Ordered->Approved
 	        else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
 	        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
 
+	        $db->begin();
+
 	        $result = $object->setStatus($user, $newstatus);
 	        if ($result > 0)
 	        {
+	        	if ($newstatus == 0)
+	        	{
+		        	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+	        		$sql.= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
+	        		$sql.= ' WHERE rowid = '.$object->id;
+
+	        		$resql=$db->query($sql);
+	        	}
+
+        		$db->commit();
+
 	            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            exit;
 	        }
 	        else
-	        {
-	        	setEventMessage($object->error, 'errors');
+			{
+				$db->rollback();
+
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -433,7 +451,7 @@ if (empty($reshook))
 	    }
 	    else
 		{
-	    	setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -448,14 +466,12 @@ if (empty($reshook))
     	{
     		$price_base_type = 'HT';
     		$ht = price2num(GETPOST('price_ht'));
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end);
     	}
     	else
     	{
     		$ttc = price2num(GETPOST('price_ttc'));
     		$ht = $ttc / (1 + ($tva_tx / 100));
     		$price_base_type = 'HT';
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
     	}
 
    		if ($lineid)
@@ -572,6 +588,7 @@ if (empty($reshook))
 		}
 	}
 
+	// Validate
 	if ($action == 'confirm_valid' && $confirm == 'yes' &&
 	    ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->commande->creer))
 	    || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
@@ -605,13 +622,13 @@ if (empty($reshook))
 	    }
 
 	    // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-	    if ($user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
+	    if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
 	    {
-	        $action='confirm_approve';
+	        $action='confirm_approve';	// can make standard or first level approval also if permission is set
 	    }
 	}
 
-	if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
+	if (($action == 'confirm_approve' || $action == 'confirm_approve2') && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 	{
 	    $idwarehouse=GETPOST('idwarehouse', 'int');
 
@@ -626,7 +643,7 @@ if (empty($reshook))
 		}
 
 	    // Check parameters
-	    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change)
+	    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change)	// warning name of option should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
 	    {
 	        if (! $idwarehouse || $idwarehouse == -1)
 	        {
@@ -638,7 +655,7 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	        $result	= $object->approve($user, $idwarehouse);
+	        $result	= $object->approve($user, $idwarehouse, ($action=='confirm_approve2'?1:0));
 	        if ($result > 0)
 	        {
 	            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -656,8 +673,8 @@ if (empty($reshook))
 	            exit;
 	        }
 	        else
-	        {
-	            setEventMessage($object->error, 'errors');
+			{
+	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	    }
 	}
@@ -672,7 +689,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -689,7 +706,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -704,7 +721,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -727,7 +744,7 @@ if (empty($reshook))
 				}
 				else
 				{
-					setEventMessage($object->error, 'errors');
+		            setEventMessages($object->error, $object->errors, 'errors');
 					$action='';
 				}
 			}
@@ -772,7 +789,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessage($object->error, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -819,7 +836,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('supplierorderdao'));
 			$parameters=array('id'=>$object->id);
 
@@ -903,22 +920,20 @@ if (empty($reshook))
 					}
 
 					$object_id = $object->create($user);
-
 					if ($object_id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
-						$srcobject->fetch($object->origin_id);
-
-						$object->set_date_livraison($user, $srcobject->date_livraison);
-						$object->set_id_projet($user, $srcobject->fk_project);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
+							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$object->set_id_projet($user, $srcobject->fk_project);
+
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
 							{
@@ -937,40 +952,40 @@ if (empty($reshook))
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
-								$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-								$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
-								$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
+								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
-								if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
 								{
-									$lines [$i]->fetch_optionals($lines [$i]->rowid);
-									$array_option = $lines [$i]->array_options;
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_option = $lines[$i]->array_options;
 								}
 
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
+								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
 								$res = $productsupplier->fetch($idProductFourn);
 
 								$result = $object->addline(
 									$desc,
-									$lines [$i]->subprice,
-									$lines [$i]->qty,
-									$lines [$i]->tva_tx,
-									$lines [$i]->localtax1_tx,
-									$lines [$i]->localtax2_tx,
-									$lines [$i]->fk_product,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$lines[$i]->tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product,
 									$productsupplier->product_fourn_price_id,
 									$productsupplier->ref_fourn,
-									$lines [$i]->remise_percent,
+									$lines[$i]->remise_percent,
 									'HT',
 									0,
-									$lines [$i]->product_type,
+									$lines[$i]->product_type,
 									'',
 									'',
 									null,
@@ -983,7 +998,7 @@ if (empty($reshook))
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0 && $lines [$i]->product_type == 9) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
@@ -995,11 +1010,11 @@ if (empty($reshook))
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							setEventMessage($srcobject->error, 'errors');
+			        		setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 							$error ++;
 						}
 					} else {
-						setEventMessage($object->error, 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
 				}
@@ -1009,7 +1024,7 @@ if (empty($reshook))
 		        	if ($id < 0)
 		        	{
 		        		$error++;
-			        	setEventMessage($langs->trans($object->error), 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 		        	}
 				}
 	        }
@@ -1657,7 +1672,7 @@ elseif (! empty($object->id))
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new	Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+				$text.=$notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
@@ -1665,9 +1680,9 @@ elseif (! empty($object->id))
 	}
 
 	/*
-	 * Confirmation de l'approbation
+	 * Confirm approval
 	 */
-	if ($action	== 'approve')
+	if ($action	== 'approve' || $action	== 'approve2')
 	{
         $qualified_for_stock_change=0;
 	    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -1692,9 +1707,16 @@ elseif (! empty($object->id))
 					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
 			);
 		}
+		$text=$langs->trans("ConfirmApproveThisOrder",$object->ref);
+		if (! empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+			$notify=new	Notify($db);
+			$text.='<br>';
+			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
+		}
 
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
-
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
 	/*
@@ -1731,9 +1753,12 @@ elseif (! empty($object->id))
 		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
-	if (!$formconfirm) {
+	if (!$formconfirm)
+	{
 		$parameters=array('lineid'=>$lineid);
-		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm
@@ -1888,7 +1913,7 @@ elseif (! empty($object->id))
 	print '</td></tr>';
 
 
-	// Delai livraison jours
+	// Delivery delay (in days)
 	print '<tr>';
 	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
 	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
@@ -1945,11 +1970,12 @@ elseif (! empty($object->id))
 	$cols = 3;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-	// Ligne de	3 colonnes
+	// Total
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	print '<td colspan="2">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
+	// Total VAT
 	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="2">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
@@ -1967,6 +1993,7 @@ elseif (! empty($object->id))
 		print '</tr>';
 	}
 
+	// Total TTC
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="2">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 	print '</tr>';
 
@@ -2013,7 +2040,7 @@ elseif (! empty($object->id))
 	// Show object lines
 	$inputalsopricewithtax=0;
 	if (! empty($object->lines))
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->commande->creer);
+		$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
 	$num = count($object->lines);
 
@@ -2277,8 +2304,13 @@ elseif (! empty($object->id))
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
+
+		$object->fetch_projet();
 		// Tableau des substitutions
 		$formmail->substit['__ORDERREF__']=$object->ref;
+		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
@@ -2554,7 +2586,7 @@ elseif (! empty($object->id))
 			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_order_advance->validate)))
 					{
 						$tmpbuttonlabel=$langs->trans('Validate');
-						if ($user->rights->fournisseur->commande->approuver) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
+						if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) $tmpbuttonlabel = $langs->trans("ValidateAndApprove");
 
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">';
 						print $tmpbuttonlabel;
@@ -2576,13 +2608,51 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->approuver)
 					{
-						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+						if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && ! empty($object->user_approve_id))
+						{
+							print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
+						}
+						else
+						{
+							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("ApproveOrder").'</a>';
+					}
+				}
+
+				// Second approval (if option SUPPLIER_ORDER_DOUBLE_APPROVAL is set)
+				if ($object->statut == 1)
+				{
+					if ($user->rights->fournisseur->commande->approve2)
+					{
+						if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && ! empty($object->user_approve_id2))
+						{
+							print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SecondApprovalAlreadyDone")).'">'.$langs->trans("Approve2Order").'</a>';
+						}
+						else
+						{
+							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve2">'.$langs->trans("Approve2Order").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Approve2Order").'</a>';
+					}
+				}
+
+				// Refuse
+				if ($object->statut == 1)
+				{
+					if ($user->rights->fournisseur->commande->approuver || $user->rights->fournisseur->commande->approve2)
+					{
 						print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 					}
 					else
 					{
-						print '<a class="butActionRefused" href="#">'.$langs->trans("ApproveOrder").'</a>';
-						print '<a class="butActionRefused" href="#">'.$langs->trans("RefuseOrder").'</a>';
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("RefuseOrder").'</a>';
 					}
 				}
 
@@ -2603,7 +2673,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
 					}
 				}
-				if (in_array($object->statut, array(5, 6, 7, 9)))
+				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
@@ -2612,24 +2682,32 @@ elseif (! empty($object->id))
 				}
 
 				// Create bill
-				if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
+				if (! empty($conf->facture->enabled))
 				{
-					if ($user->rights->fournisseur->facture->creer)
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
 					{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						if ($user->rights->fournisseur->facture->creer)
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						}
+
+						//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
+						//{
+						//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						//}
 					}
-
-					//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-					//{
-					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-					//}
 				}
-
 
 				// Create a remote order using WebService only if module is activated
 				if (! empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) // 2 means accepted
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=webservice&amp;mode=init">'.$langs->trans('CreateRemoteOrder').'</a>';
+				}
+
+				// Clone
+				if ($user->rights->fournisseur->commande->creer)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Cancel
@@ -2639,12 +2717,6 @@ elseif (! empty($object->id))
 					{
 						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 					}
-				}
-
-				// Clone
-				if ($user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Delete
@@ -2683,26 +2755,21 @@ elseif (! empty($object->id))
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
-        // List of actions on element
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-        $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
-
-
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
 			/*
 			 * Commander (action=commande)
 			 */
-			print '<br>';
+			print '<!-- form to record supplier order -->'."\n";
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
+			print_fiche_titre($langs->trans("ToOrder"),'','');
 			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
+			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-			print $form->select_date($date_com,'','','','',"commande");
+			print $form->select_date($date_com,'',1,1,'',"commande");
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -2713,6 +2780,7 @@ elseif (! empty($object->id))
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("ToOrder").'"></td></tr>';
 			print '</table>';
 			print '</form>';
+			print "<br>";
 		}
 
 		if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
@@ -2720,14 +2788,15 @@ elseif (! empty($object->id))
 			/*
 			 * Receptionner (action=livraison)
 			 */
-			print '<br>';
+			print '<!-- form to record supplier order received -->'."\n";
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
+			print_fiche_titre($langs->trans("Receive"),'','');
 			print '<table class="border" width="100%">';
-			print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
+			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print $form->select_date('','','','','',"commande");
+			print $form->select_date('','',1,1,'',"commande");
 			print "</td></tr>\n";
 
 			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
@@ -2745,7 +2814,14 @@ elseif (! empty($object->id))
 			print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Receive").'"></td></tr>';
 			print "</table>\n";
 			print "</form>\n";
+			print "<br>";
 		}
+
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+        $formactions=new FormActions($db);
+        $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
+
 
 		// List of actions on element
 		/* Hidden because" available into "Log" tab

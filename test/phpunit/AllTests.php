@@ -31,14 +31,17 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
-if ($langs->defaultlang != 'en_US') {
+if ($langs->defaultlang != 'en_US')
+{
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
     exit;
 }
-if (! empty($conf->google->enabled)) {
+if (! empty($conf->google->enabled))
+{
     print "Warning: Google module should not be enabled.\n";
 }
-if (empty($user->id)) {
+if (empty($user->id))
+{
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -161,6 +164,8 @@ class AllTests
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
+        require_once dirname(__FILE__).'/MouvementStockTest.php';
+        $suite->addTestSuite('MouvementStockTest');
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');

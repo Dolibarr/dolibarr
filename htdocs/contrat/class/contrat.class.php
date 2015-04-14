@@ -89,23 +89,7 @@ class Contrat extends CommonObject
 	var $product;
 
 	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var
-	 */
-	var $user_author;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var User
-	 */
-	public $user_creation;
-
-	/**
-	 * TODO: Which is the correct one?
-	 * Author of the contract
-	 * @var int
+	 * @var int		Id of user author of the contract
 	 */
 	public $fk_user_author;
 
@@ -117,38 +101,37 @@ class Contrat extends CommonObject
 	public $user_author_id;
 
 	/**
-	 * @var User
+	 * @var User 	Object user that create the contract. Set by the info method.
+	 */
+	public $user_creation;
+
+	/**
+	 * @var User 	Object user that close the contract. Set by the info method.
 	 */
 	public $user_cloture;
 
 	/**
-	 * Date of creation
-	 * @var int
+	 * @var int		Date of creation
 	 */
 	var $date_creation;
 
 	/**
-	 * Date of last modification
-	 * Not filled until you call ->info()
-	 * @var int
+	 * @var int		Date of last modification. Not filled until you call ->info()
 	 */
 	public $date_modification;
 
 	/**
-	 * Date of validation
-	 * @var int
+	 * @var int		Date of validation
 	 */
 	var $date_validation;
 
 	/**
-	 * Date when contract was signed
-	 * @var int
+	 * @var int		Date when contract was signed
 	 */
 	var $date_contrat;
 
 	/**
-	 * Date of contract closure
-	 * @var int
+	 * @var int		Date of contract closure
 	 * @deprecated we close contract lines, not a contract
 	 */
 	var $date_cloture;
@@ -157,21 +140,15 @@ class Contrat extends CommonObject
 	var $commercial_suivi_id;
 
 	/**
-	 * @deprecated Use note_private or note_public instead
-	 */
-	var $note;
-
-	/**
-	 * Private note
-	 * @var string
+	 * @var string	Private note
 	 */
 	var $note_private;
 
 	/**
-	 * Public note
-	 * @var string
+	 * @var string	Public note
 	 */
 	var $note_public;
+
 	var $modelpdf;
 
 	/**
@@ -184,8 +161,7 @@ class Contrat extends CommonObject
 	var $extraparams=array();
 
 	/**
-	 * Contract lines
-	 * @var ContratLigne[]
+	 * @var ContratLigne[]		Contract lines
 	 */
 	var $lines=array();
 
@@ -569,7 +545,6 @@ class Contrat extends CommonObject
 				$this->commercial_signature_id	= $result["fk_commercial_signature"];
 				$this->commercial_suivi_id		= $result["fk_commercial_suivi"];
 
-				$this->note						= $result["note_private"];	// deprecated
 				$this->note_private				= $result["note_private"];
 				$this->note_public				= $result["note_public"];
 				$this->modelpdf					= $result["model_pdf"];
@@ -726,7 +701,7 @@ class Contrat extends CommonObject
 				// Retreive all extrafield for propal
 				// fetch optionals attributes and labels
 				$line->fetch_optionals($line->id,$extralabelsline);
-				
+
 				$this->lines[]			= $line;
 
 				//dol_syslog("1 ".$line->desc);
@@ -822,13 +797,13 @@ class Contrat extends CommonObject
 				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
 
-				
+
 				// Retreive all extrafield for propal
 				// fetch optionals attributes and labels
-				
+
 				$line->fetch_optionals($line->id,$extralabelsline);
-			
-				
+
+
 				$this->lines[]        = $line;
 
 				$total_ttc+=$objp->total_ttc;
@@ -1156,7 +1131,7 @@ class Contrat extends CommonObject
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext=trim($this->ref_ext);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
 		if (isset($this->fk_projet)) $this->fk_projet=trim($this->fk_projet);
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature=trim($this->fk_commercial_signature);
@@ -1742,9 +1717,9 @@ class Contrat extends CommonObject
 
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int		$maxlength		Max length of ref
 	 *	@return	string					Chaine avec URL
 	 */
@@ -1755,15 +1730,15 @@ class Contrat extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContract").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='contract';
 
 
-		if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$lienfin;
+		if ($withpicto != 2) $result.=$link.($maxlength?dol_trunc($this->ref,$maxlength):$this->ref).$linkend;
 		return $result;
 	}
 
@@ -2290,9 +2265,9 @@ class ContratLigne extends CommonObject
 	}
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlength		Max length
 	 *  @return	string					Chaine avec URL
  	 */
@@ -2303,15 +2278,15 @@ class ContratLigne extends CommonObject
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='contract';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->label.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->label.$linkend;
 		return $result;
 	}
 
@@ -2442,7 +2417,7 @@ class ContratLigne extends CommonObject
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);
-		$this->statut=trim($this->statut);
+		$this->statut=(int) $this->statut;
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->tva_tx=trim($this->tva_tx);
@@ -2464,7 +2439,12 @@ class ContratLigne extends CommonObject
 		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
 		$this->fk_user_cloture=trim($this->fk_user_cloture);
 		$this->commentaire=trim($this->commentaire);
-
+		//if (empty($this->subprice)) $this->subprice = 0;
+		if (empty($this->price_ht)) $this->price_ht = 0;
+		if (empty($this->total_ht)) $this->total_ht = 0;
+		if (empty($this->total_tva)) $this->total_tva = 0;
+		if (empty($this->total_ttc)) $this->total_ttc = 0;
+		
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -2508,8 +2488,8 @@ class ContratLigne extends CommonObject
 		$sql.= " remise_percent='".$this->remise_percent."',";
 		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
 		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
-		$sql.= " subprice='".$this->subprice."',";
-		$sql.= " price_ht='".$this->price_ht."',";
+		$sql.= " subprice=".($this->subprice != '' ? $this->subprice : "null").",";
+		$sql.= " price_ht=".($this->price_ht != '' ? $this->price_ht : "null").",";
 		$sql.= " total_ht='".$this->total_ht."',";
 		$sql.= " total_tva='".$this->total_tva."',";
 		$sql.= " total_localtax1='".$this->total_localtax1."',";

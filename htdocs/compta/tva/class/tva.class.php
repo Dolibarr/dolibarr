@@ -89,7 +89,9 @@ class Tva extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Insert request
+		$this->db->begin();
+
+		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
 		$sql.= "tms,";
 		$sql.= "datep,";
@@ -126,13 +128,22 @@ class Tva extends CommonObject
             if ($result < 0) $error++;
             // End call triggers
 
-            //FIXME: Add rollback if trigger fail
-            return $this->id;
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return $this->id;
+            }
+            else
+			{
+				$this->db->rollback();
+				return -1;
+            }
         }
         else
-        {
-            $this->error="Error ".$this->db->lasterror();
-            return -1;
+		{
+			$this->error="Error ".$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
         }
     }
 
@@ -160,7 +171,9 @@ class Tva extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Update request
+		$this->db->begin();
+
+		// Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 
 		$sql.= " tms=".$this->db->idate($this->tms).",";
@@ -181,20 +194,27 @@ class Tva extends CommonObject
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            return -1;
+            $error++;
         }
 
-		if (! $notrigger)
+		if (! $error && ! $notrigger)
 		{
             // Call trigger
             $result=$this->call_trigger('TVA_MODIFY',$user);
             if ($result < 0) $error++;
             // End call triggers
-
-            //FIXME: Add rollback if trigger fail
     	}
 
-        return 1;
+        if (! $error)
+    	{
+    		$this->db->commit();
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->db->rollback();
+    		return -1;
+    	}
     }
 
 
@@ -640,14 +660,14 @@ class Tva extends CommonObject
 		$result='';
         $label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

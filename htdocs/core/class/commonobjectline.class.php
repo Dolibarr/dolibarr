@@ -28,6 +28,19 @@
  */
 abstract class CommonObjectLine extends CommonObject
 {
+	/**
+	 * Id of the line
+	 * @var int
+	 */
+	public $id;
+
+	/**
+	 * Id of the line
+	 * @var int
+	 * @deprecated Try to use id property as possible
+	 */
+	public $rowid;
+
 	// TODO
 
 	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.

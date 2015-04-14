@@ -288,7 +288,7 @@ if (empty($reshook))
 	elseif ($action == 'deletepaiement' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
-	    if ($object->statut == 1 && $object->paye == 0)
+	    if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0)
 	    {
 	    	$paiementfourn = new PaiementFourn($db);
 	        $result=$paiementfourn->fetch(GETPOST('paiement_id'));
@@ -867,8 +867,8 @@ if (empty($reshook))
 	elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
 	{
 	    $result = $object->fetch($id);
-	    if ($object->statut == 2
-	    || ($object->statut == 3 && $object->close_code != 'replaced'))
+	    if ($object->statut == FactureFournisseur::STATUS_CLOSED
+	    || ($object->statut == FactureFournisseur::STATUS_ABANDONED && $object->close_code != 'replaced'))
 	    {
 	        $result = $object->set_unpaid($user);
 	        if ($result > 0)
@@ -1139,7 +1139,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('supplierinvoicedao'));
 			$parameters=array('id'=>$object->id);
 
@@ -1664,7 +1664,7 @@ else
             	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
             	$notify=new Notify($db);
             	$text.='<br>';
-            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid);
+            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid, $object);
             }*/
             $formquestion=array();
 
@@ -1716,7 +1716,9 @@ else
 
         if (!$formconfirm) {
 			$parameters=array('lineid'=>$lineid);
-			$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+			elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -1737,8 +1739,8 @@ else
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
@@ -1786,8 +1788,8 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td>';
-        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td>';
+        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td>';
+        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td>';
 
         /*
          * List of payments
@@ -1851,7 +1853,7 @@ else
                     }
                     print '<td align="right">'.price($objp->amount).'</td>';
                     print '<td align="center">';
-                    if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+                    if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
                         print img_delete();
@@ -1889,15 +1891,17 @@ else
 
         print '</tr>';
 
+	    $form_permission = $object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0;
+
         // Date
-        print '<tr><td>'.$form->editfieldkey("Date",'datef',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
-        print $form->editfieldval("Date",'datef',$object->datep,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
+        print '<tr><td>'.$form->editfieldkey("Date",'datef',$object->datep,$object,$form_permission,'datepicker').'</td><td colspan="3">';
+        print $form->editfieldval("Date",'datef',$object->datep,$object,$form_permission,'datepicker');
         print '</td>';
 
         // Due date
-        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
-        print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
-        if ($action != 'editdate_lim_reglement' && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
+        print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,$form_permission,'datepicker').'</td><td colspan="3">';
+        print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,$form_permission,'datepicker');
+        if ($action != 'editdate_lim_reglement' && $object->statut < FactureFournisseur::STATUS_CLOSED && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
         print '</td>';
 
 		// Conditions de reglement par defaut
@@ -1960,8 +1964,9 @@ else
         $alreadypaid=$object->getSommePaiement();
         print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
 
-        print '<tr><td>'.$langs->trans('AmountHT').'</td><td align="right">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">&nbsp;</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">';
+        // Amount
+        print '<tr><td>'.$langs->trans('AmountHT').'</td><td colspan="3">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">';
         if (GETPOST('calculationrule')) $calculationrule=GETPOST('calculationrule','alpha');
         else $calculationrule=(empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)?'totalofround':'roundoftotal');
         if ($calculationrule == 'totalofround') $calculationrulenum=1;
@@ -1978,16 +1983,16 @@ else
         if ($societe->localtax1_assuj=="1") //Localtax1
         {
             print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-            print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
-            print '<td colspan="2">&nbsp;</td></tr>';
+            print '<td colspan="3">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '</tr>';
         }
         if ($societe->localtax2_assuj=="1") //Localtax2
         {
             print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-            print '<td align="right">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
-            print '<td colspan="2">&nbsp;</td></tr>';
+            print '<td colspan="3">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '</tr>';
         }
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">&nbsp;</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
         // Project
         if (! empty($conf->projet->enabled))
@@ -2079,7 +2084,7 @@ else
         <input type="hidden" name="socid" value="'.$societe->id.'">
 		';
 
-		if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		if (! empty($conf->use_javascript_ajax) && $object->statut == FactureFournisseur::STATUS_DRAFT) {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
@@ -2090,7 +2095,7 @@ else
 
 		// Show object lines
 		if (! empty($object->lines))
-			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1, $user->rights->fournisseur->facture->creer);
+			$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
 
 		$num=count($object->lines);
 
@@ -2277,7 +2282,7 @@ else
         }
 */
 		// Form to add new line
-        if ($object->statut == 0 && $user->rights->fournisseur->facture->creer)
+        if ($object->statut == FactureFournisseur::STATUS_DRAFT && $user->rights->fournisseur->facture->creer)
 		{
 			if ($action != 'editline')
 			{
@@ -2308,7 +2313,7 @@ else
             print '<div class="tabsAction">';
 
 		    // Modify a validated invoice with no payments
-			if ($object->statut == 1 && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
@@ -2327,7 +2332,7 @@ else
             }
 
             // Send by mail
-            if (($object->statut == 1 || $object->statut == 2))
+            if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
             {
                 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
                 {
@@ -2338,13 +2343,13 @@ else
 
 
             // Make payments
-            if ($action != 'edit' && $object->statut == 1 && $object->paye == 0  && $user->societe_id == 0)
+            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
             {
                 print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create &amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
             }
 
             // Classify paid
-            if ($action != 'edit' && $object->statut == 1 && $object->paye == 0  && $user->societe_id == 0)
+            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
             {
                 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
                 print '>'.$langs->trans('ClassifyPaid').'</a>';
@@ -2353,7 +2358,7 @@ else
             }
 
             // Validate
-            if ($action != 'edit' && $object->statut == 0)
+            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
             {
                 if (count($object->lines))
                 {

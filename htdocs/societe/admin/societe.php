@@ -165,10 +165,7 @@ if ($action == 'setdoc')
 
 	$db->begin();
 
-	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		$conf->global->COMPANY_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity);
 
 	// On active le modele
 	$type='company';
@@ -294,7 +291,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 
-$head = societe_admin_prepare_head(null);
+$head = societe_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
 

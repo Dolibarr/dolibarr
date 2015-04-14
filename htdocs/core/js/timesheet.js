@@ -1,4 +1,3 @@
-//FIXME total not working    
 /* Copyright (C) 2014 delcroip <delcroip@gmail.com>
  * Laurent Destailleur 2015 <eldy@users.sourceforge.net>
  *
@@ -122,7 +121,28 @@ function updateTotal(days,mode)
         var nbline = document.getElementById('numberOfLines').value;
         for (var i=0;i<nbline;i++)
         { 
-            var id='task['+i+']['+days+']';   
+            var id='timespent['+i+']['+days+']';   
+            var taskTime= new Date(0);
+            var element=document.getElementById(id);
+            if(element)
+            {
+            	/* alert(element.value);*/
+                if (element.value)
+                {   
+                	result=parseTime(element.value,taskTime);
+                }
+                else
+                {
+                	result=parseTime(element.innerHTML,taskTime);
+                }
+                if (result >= 0)
+                {
+                	total.setHours(total.getHours()+taskTime.getHours());
+                	total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+                }
+            }
+
+            var id='timeadded['+i+']['+days+']';   
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
@@ -152,7 +172,23 @@ function updateTotal(days,mode)
         var nbline = document.getElementById('numberOfLines').value;
         for (var i=0;i<nbline;i++)
         { 
-            var id='task['+i+']['+days+']';   
+            var id='timespent['+i+']['+days+']';   
+            var taskTime= new Date(0);
+            var element=document.getElementById(id);
+            if(element)
+            {
+                if (element.value)
+                {   
+                    total+=parseInt(element.value);
+
+                   }
+                else
+                {
+                    total+=parseInt(element.innerHTML);
+                }
+            }
+
+            var id='timeadded['+i+']['+days+']';   
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)

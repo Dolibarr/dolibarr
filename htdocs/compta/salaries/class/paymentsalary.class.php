@@ -95,6 +95,8 @@ class PaymentSalary extends CommonObject
 			return -1;
 		}
 
+		$this->db->begin();
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 
@@ -129,11 +131,18 @@ class PaymentSalary extends CommonObject
             $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
             if ($result < 0) $error++;
             // End call triggers
-
-			//FIXME: Add rollback if trigger fail
 		}
 
-		return 1;
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
@@ -490,14 +499,14 @@ class PaymentSalary extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

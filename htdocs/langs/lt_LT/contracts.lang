@@ -19,6 +19,7 @@ ServiceStatusLateShort=Pasibaigęs
 ServiceStatusClosed=Uždarytas
 ServicesLegend=Paslaugų legenda
 Contracts=Sutartys
+ContractsAndLine=Contracts and line of contracts
 Contract=Sutartis
 NoContracts=Nėra sutarčių
 MenuServices=Paslaugos

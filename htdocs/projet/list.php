@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015 		 Claudio Aschieri 		<c.aschieri@19.coop>
+ * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,9 @@ $search_sale=GETPOST('search_sale','int');
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
+$sday	= GETPOST('sday','int');
+$smonth	= GETPOST('smonth','int');
+$syear	= GETPOST('syear','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
@@ -92,6 +95,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$day="";
 	$month="";
 	$year="";
+	$sday="";
+	$smonth="";
+	$syear="";
 }
 
 /*
@@ -138,6 +144,19 @@ if ($search_label)
 if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($smonth > 0)
+{
+    if ($syear > 0 && empty($sday))
+    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($syear,$smonth,false))."' AND '".$db->idate(dol_get_last_day($syear,$smonth,false))."'";
+    else if ($syear > 0 && ! empty($sday))
+    	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+    else
+    	$sql.= " AND date_format(p.datee, '%m') = '".$smonth."'";
+}
+else if ($syear > 0)
+{
+    $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($syear,1,false))."' AND '".$db->idate(dol_get_last_day($syear,12,false))."'";
 }
 if ($month > 0)
 {
@@ -235,7 +254,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SalesRepresentative"),$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->global->PROJECT_LIST_SHOW_STARTDATE)) print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -251,9 +271,19 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
+	// Sale representative
 	print '<td class="liste_titre">&nbsp;</td>';
-
-	print '<td class="liste_titre">';
+	// Start date
+	if (! empty($conf->global->PROJECT_LIST_SHOW_STARTDATE))
+	{
+		print '<td class="liste_titre center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="sday" value="'.$sday.'">';
+		print '<input class="flat" type="text" size="1" maxlength="2" name="smonth" value="'.$smonth.'">';
+		$formother->select_year($syear?$syear:-1,'syear',1, 20, 5);
+		print '</td>';
+	}
+	// End date
+	print '<td class="liste_titre center">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	$formother->select_year($year?$year:-1,'year',1, 20, 5);
@@ -271,102 +301,107 @@ if ($resql)
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
 
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($resql);
+    while ($i < $num)
+    {
+    	$objp = $db->fetch_object($resql);
 
-		$projectstatic->id = $objp->projectid;
-		$projectstatic->user_author_id = $objp->fk_user_creat;
-		$projectstatic->public = $objp->public;
+    	$projectstatic->id = $objp->projectid;
+    	$projectstatic->user_author_id = $objp->fk_user_creat;
+    	$projectstatic->public = $objp->public;
 
-		$userAccess = $projectstatic->restrictedProjectArea($user);
+    	$userAccess = $projectstatic->restrictedProjectArea($user);
 
-		if ($userAccess >= 0)
-		{
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+    	if ($userAccess >= 0)
+    	{
+    		$var=!$var;
+    		print "<tr ".$bc[$var].">";
 
-			// Project url
-			print "<td>";
-			$projectstatic->ref = $objp->ref;
-			print $projectstatic->getNomUrl(1);
-			print "</td>";
+    		// Project url
+    		print "<td>";
+    		$projectstatic->ref = $objp->ref;
+    		print $projectstatic->getNomUrl(1);
+    		print "</td>";
 
-			// Title
-			print '<td>';
-			print dol_trunc($objp->title,24);
-			print '</td>';
+    		// Title
+    		print '<td>';
+    		print dol_trunc($objp->title,80);
+    		print '</td>';
 
-			// Company
-			print '<td>';
-			if ($objp->socid)
-			{
-				$socstatic->id=$objp->socid;
-				$socstatic->name=$objp->name;
-				print $socstatic->getNomUrl(1);
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td>';
+    		// Company
+    		print '<td>';
+    		if ($objp->socid)
+    		{
+    			$socstatic->id=$objp->socid;
+    			$socstatic->name=$objp->name;
+    			print $socstatic->getNomUrl(1);
+    		}
+    		else
+    		{
+    			print '&nbsp;';
+    		}
+    		print '</td>';
 
 
-			// Sales Rapresentatives
-			print '<td>';
-			if($objp->socid)
-			{
-				$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
-        $nbofsalesrepresentative=count($listsalesrepresentatives);
-        if ($nbofsalesrepresentative > 3)   // We print only number
-        {
-            print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
-            print $nbofsalesrepresentative;
-            print '</a>';
-        }
-        else if ($nbofsalesrepresentative > 0)
-        {
-            $userstatic=new User($db);
-            $j=0;
-            foreach($listsalesrepresentatives as $val)
-            {
-                $userstatic->id=$val['id'];
-                $userstatic->lastname=$val['lastname'];
-                $userstatic->firstname=$val['firstname'];
-                print $userstatic->getNomUrl(1);
-                $j++;
-                if ($j < $nbofsalesrepresentative) print ', ';
-            }
-        }
-        else print $langs->trans("NoSalesRepresentativeAffected");
-			}
-			else
-			{
-				print '&nbsp';
-			}
-			print '</td>';
+    		// Sales Rapresentatives
+    		print '<td>';
+    		if($objp->socid)
+    		{
+    			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
+    			$nbofsalesrepresentative=count($listsalesrepresentatives);
+    			if ($nbofsalesrepresentative > 3)   // We print only number
+    			{
+    				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
+    				print $nbofsalesrepresentative;
+    				print '</a>';
+    			}
+    			else if ($nbofsalesrepresentative > 0)
+    			{
+    				$userstatic=new User($db);
+    				$j=0;
+    				foreach($listsalesrepresentatives as $val)
+    				{
+    					$userstatic->id=$val['id'];
+    					$userstatic->lastname=$val['lastname'];
+    					$userstatic->firstname=$val['firstname'];
+    					print $userstatic->getNomUrl(1);
+    					$j++;
+    					if ($j < $nbofsalesrepresentative) print ', ';
+    				}
+    			}
+    			//else print $langs->trans("NoSalesRepresentativeAffected");
+    		}
+    		else
+    		{
+    			print '&nbsp';
+    		}
+    		print '</td>';
 
-			// Date end
-			print '<td align="left">';
-			print dol_print_date($db->jdate($objp->date_end),'day');
-			print '</td>';
+    		// Date start
+    		print '<td class="center">';
+    		print dol_print_date($db->jdate($objp->date_start),'day');
+    		print '</td>';
 
-			// Visibility
-			print '<td align="left">';
-			if ($objp->public) print $langs->trans('SharedProject');
-			else print $langs->trans('PrivateProject');
-			print '</td>';
+    		// Date end
+    		print '<td class="center">';
+    		print dol_print_date($db->jdate($objp->date_end),'day');
+    		print '</td>';
 
-			// Status
-			$projectstatic->statut = $objp->fk_statut;
-			print '<td align="right" colspan="2">'.$projectstatic->getLibStatut(5).'</td>';
+    		// Visibility
+    		print '<td align="left">';
+    		if ($objp->public) print $langs->trans('SharedProject');
+    		else print $langs->trans('PrivateProject');
+    		print '</td>';
 
-			print "</tr>\n";
+    		// Status
+    		$projectstatic->statut = $objp->fk_statut;
+    		print '<td align="right" colspan="2">'.$projectstatic->getLibStatut(5).'</td>';
 
-		}
+    		print "</tr>\n";
 
-		$i++;
-	}
+    	}
+
+    	$i++;
+    }
 
 	$db->free($resql);
 }

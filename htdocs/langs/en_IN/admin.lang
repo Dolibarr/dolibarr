@@ -1,4 +1,4 @@
-# Dolibarr language file - en_IN - admin
+# Dolibarr language file - Source file is en_US - admin
 Module20Name=Quotations
 Module20Desc=Quotation's management
 Permission21=Read quotations
@@ -9,7 +9,6 @@ Permission26=Close quotations
 Permission27=Delete quotations
 Permission28=Export quotations
 WebCalAddEventOnStatusPropal=Add calendar event on quotations status change
-##### Proposals #####
 PropalSetup=Quotations module setup
 ProposalsNumberingModules=Quotations numbering modules
 ProposalsPDFModules=Quotations documents models

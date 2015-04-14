@@ -6,6 +6,7 @@
  * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <forian.henry@open-concept.pro>
+ * Copyright (C) 2015	   Charles-Fr BENKE     <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,10 +74,11 @@ class ExtraFields
 	'mail'=>'ExtrafieldMail',
 	'select' => 'ExtrafieldSelect',
 	'sellist' => 'ExtrafieldSelectList',
-	'separate' => 'ExtrafieldSeparator',
-	'checkbox' => 'ExtrafieldCheckBox',
 	'radio' => 'ExtrafieldRadio',
+	'checkbox' => 'ExtrafieldCheckBox',
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
+	'link' => 'ExtrafieldLink',
+	'separate' => 'ExtrafieldSeparator',
 	);
 
 	/**
@@ -187,6 +189,9 @@ class ExtraFields
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
 				$typedb='text';
 				$lengthdb='';
+			} elseif ($type=='link') {
+				$typedb='int';
+				$lengthdb='11';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -404,6 +409,9 @@ class ExtraFields
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
 				$typedb='text';
 				$lengthdb='';
+			} elseif ($type=='link') {
+				$typedb='int';
+				$lengthdb='11';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -522,7 +530,7 @@ class ExtraFields
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$alwayseditable."',";
-			$sql.= " '".$param."'";
+			$sql.= " '".$param."',";
 			$sql.= " ".$list;
 			$sql.= ")";
 			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
@@ -559,6 +567,8 @@ class ExtraFields
 	{
 		global $conf;
 
+		if ( empty($elementtype) ) return array();
+
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		$array_name_label=array();
@@ -592,11 +602,11 @@ class ExtraFields
 					$this->attribute_elementtype[$tab->name]=$tab->elementtype;
 					$this->attribute_unique[$tab->name]=$tab->fieldunique;
 					$this->attribute_required[$tab->name]=$tab->fieldrequired;
-					$this->attribute_param[$tab->name]=unserialize($tab->param);
+					$this->attribute_param[$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 					$this->attribute_perms[$tab->name]=$tab->perms;
-					$this->attribute_perms[$tab->name]=$tab->list;
+					$this->attribute_list[$tab->name]=$tab->list;
 				}
 			}
 		}
@@ -795,7 +805,7 @@ class ExtraFields
 					$sqlwhere.= ' WHERE 1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
-				//$sql.=preg_replace('/^ AND /','',$sqlwhere);
+				$sql.=$sqlwhere;
 				//print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
@@ -1043,6 +1053,20 @@ class ExtraFields
 			}
 			$out .= '</select>';
 		}
+		elseif ($type == 'link')
+		{
+			$out='';
+
+			$param_list=array_keys($param['options']);
+			// 0 : ObjectName
+			// 1 : classPath
+			$InfoFieldList = explode(":", $param_list[0]);
+			dol_include_once($InfoFieldList[1]);
+			$object = new $InfoFieldList[0]($this->db);
+			$object->fetch($value);
+			$out='<input type="text" class="flat" name="options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
+
+		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -1267,6 +1291,22 @@ class ExtraFields
 				}
 			} else
 				dol_syslog(get_class($this) . '::showOutputField error ' . $this->db->lasterror(), LOG_WARNING);
+		}
+		elseif ($type == 'link')
+		{
+			$out='';
+			// only if something to display (perf)
+			if ($value)
+			{
+				$param_list=array_keys($params['options']);
+				// 0 : ObjectName
+				// 1 : classPath
+				$InfoFieldList = explode(":", $param_list[0]);
+				dol_include_once($InfoFieldList[1]);
+				$object = new $InfoFieldList[0]($this->db);
+				$object->fetch($value);
+				$value=$object->getNomUrl(3);
+			}
 		}
 		else
 		{

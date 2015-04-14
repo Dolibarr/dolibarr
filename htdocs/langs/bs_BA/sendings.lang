@@ -2,6 +2,7 @@
 RefSending=Referenca pošiljke
 Sending=Pošiljka
 Sendings=Pošiljke
+AllSendings=All Shipments
 Shipment=Pošiljka
 Shipments=Pošiljke
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Naručena količina
 QtyShipped=Poslana količina
 QtyToShip=Količina za slanje
 QtyReceived=Primljena količina
-KeepToShip=Zadržati za slanje
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Druge pošiljke za ovu narudžbu
 DateSending=Datum slanja narudžbe
 DateSendingShort=Datum slanja narudžbe

@@ -2,6 +2,7 @@
 RefSending=Ref. sūtījumam
 Sending=Sūtījums
 Sendings=Sūtījumi
+AllSendings=All Shipments
 Shipment=Sūtījums
 Shipments=Sūtījumi
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Pasūtītais daudzums
 QtyShipped=Daudzums kas nosūtīts
 QtyToShip=Daudzums, kas jānosūta
 QtyReceived=Saņemtais daudzums
-KeepToShip=Glabāt uz kuģa
+KeepToShip=Vēl jāpiegādā
 OtherSendingsForSameOrder=Citas sūtījumiem uz šo rīkojumu
 DateSending=Datums nosūtot kārtība
 DateSendingShort=Datums nosūtot kārtība

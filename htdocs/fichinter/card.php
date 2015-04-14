@@ -847,7 +847,7 @@ else if ($action == 'update_extras')
 	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
-		// FIXME le hook fait double emploi avec le trigger !!
+		// TODO le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('interventiondao'));
 		$parameters=array('id'=>$object->id);
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1210,7 +1210,9 @@ else if ($id > 0 || ! empty($ref))
 	if (!$formconfirm)
 	{
 		$parameters=array('lineid'=>$lineid);
-		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm

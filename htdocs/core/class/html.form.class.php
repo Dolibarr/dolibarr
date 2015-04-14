@@ -395,12 +395,13 @@ class Form
         $htmltext=str_replace("\n","",$htmltext);
 
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
+        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
+        elseif ($notabs == 2) $s.='<div class="inline-block nowrap">';
         if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
@@ -411,8 +412,8 @@ class Form
         // Use another method to help avoid having a space in value in order to use this value with jquery
         // TODO add this in css
         //if ($text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
-        $paramfortooltiptd.= (($direction < 0)?' style="padding-left: 3px !important;"':'');
-        $paramfortooltiptd.= (($direction > 0)?' style="padding-right: 3px !important;"':'');
+        $paramfortooltiptd.= (($direction < 0)?' class="inline-block" style="padding: 0px; padding-left: 3px !important;"':'');
+        $paramfortooltiptd.= (($direction > 0)?' class="inline-block" style="padding: 0px; padding-right: 3px !important;"':'');
         if ((string) $text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
         if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
@@ -422,6 +423,7 @@ class Form
             $s.= '>'.$img.'</'.$tag.'>';
         }
         if (empty($notabs)) $s.='</tr></table>';
+		elseif ($notabs == 2) $s.='</div>';
 
         return $s;
     }
@@ -583,7 +585,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."c_incoterms";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code ASC";
-	
+
         dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -593,14 +595,14 @@ class Form
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($htmlname, $events);
 			}
-			
+
 			if (!empty($page))
 			{
 				$out .= '<form method="post" action="'.$page.'">';
 	            $out .= '<input type="hidden" name="action" value="set_incoterms">';
 	            $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			}
-			
+
             $out.= '<select id="'.$htmlname.'" class="flat selectincoterm" name="'.$htmlname.'" '.$htmloption.'>';
 			$out.= '<option value=""></option>';
             $num = $this->db->num_rows($resql);
@@ -627,17 +629,17 @@ class Form
 					{
                         $out.= '<option value="'.$row['rowid'].'">';
                     }
-					
+
                     if ($row['code']) $out.= $row['code'];
-					
+
 					$out.= '</option>';
                 }
             }
             $out.= '</select>';
-			
+
 			$out .= '<input id="location_incoterms" name="location_incoterms" size="14" value="'.$location_incoterms.'">';
-			
-			if (!empty($page)) 
+
+			if (!empty($page))
 			{
 	            $out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></form>';
 			}
@@ -866,7 +868,7 @@ class Form
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
@@ -1641,7 +1643,7 @@ class Form
         if ($result)
         {
             require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
             $num = $this->db->num_rows($result);
 
             $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'" autofocus>';
@@ -2022,7 +2024,7 @@ class Form
         $result=$this->db->query($sql);
         if ($result)
         {
-            require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
             $num = $this->db->num_rows($result);
 
@@ -2191,7 +2193,7 @@ class Form
             }
             else
             {
-                require_once DOL_DOCUMENT_ROOT.'/product/class/priceparser.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
                 $form.= '<option value="0">&nbsp;</option>';
 
                 $i = 0;
@@ -2869,7 +2871,7 @@ class Form
                     {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $obj->label;
+                    print trim($obj->label);
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;
@@ -3870,7 +3872,7 @@ class Form
                 {
                     $prodstatic=new Product($this->db);
                     $prodstatic->fetch($idprod);
-                    if ($prodstatic->type == 1)   // We know product is a service
+                    if ($prodstatic->type == Product::TYPE_SERVICE)   // We know product is a service
                     {
                         $code_country.=",'".$societe_acheteuse->country_code."'";
                     }
@@ -4445,7 +4447,7 @@ class Form
         }
         else
        {
-       		$selected=($useempty?'':' selected="selected"');
+       		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected="selected"');
             $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
         }

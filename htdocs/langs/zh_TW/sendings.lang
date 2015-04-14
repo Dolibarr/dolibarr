@@ -2,6 +2,7 @@
 RefSending=出貨單編號
 Sending=出貨
 Sendings=出貨
+AllSendings=All Shipments
 Shipment=出貨
 Shipments=出貨
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=訂購數量
 QtyShipped=出貨數量
 QtyToShip=出貨數量
 QtyReceived=收到的數量
-KeepToShip=持續出貨
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=此訂單的其他出貨清單
 DateSending=出貨日期
 DateSendingShort=出貨日期

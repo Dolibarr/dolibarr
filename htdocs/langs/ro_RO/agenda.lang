@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Factura %s validată
 InvoiceValidatedInDolibarrFromPos=Factura %s validată din POS
 InvoiceBackToDraftInDolibarr=Factura %s revenită de statutul schiţă
 InvoiceDeleteDolibarr=Factura %s ştearsă
-OrderValidatedInDolibarr= Comanda %s validată
+OrderValidatedInDolibarr=Comanda %s validată
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Comanda  %s anulată
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Comanda %s aprobată
 OrderRefusedInDolibarr=Comanda %s refuzată
 OrderBackToDraftInDolibarr=Comanda %s revenită de statutul schiţă
@@ -69,7 +72,7 @@ DateActionDoneEnd= Data reală a terminării
 DateActionStart= Data începerii
 DateActionEnd= Data terminării
 AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri pentru  filtrarea rezultatelor:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> ​​pentru a limita exportul de acțiuni create de, sau atribuite utilizatorului<b>%s</b>.
 AgendaUrlOptions3=<b>logind=%s</b> ​​pentru a limita exportul de acțiuni deţinute de utilizatorul <b>%s</b>
 AgendaUrlOptions4=<b>logint=% s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>% s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pentru a limita exportul de acțiuni asociate la proiectul <b>PROJECT_ID</b>.
@@ -91,3 +94,5 @@ WorkingTimeRange=Rang timp muncă
 WorkingDaysRange=Rang zile muncă
 AddEvent=Creare eveniment
 MyAvailability=Disponibilitatea mea
+ActionType=Event type
+DateActionBegin=Start event date

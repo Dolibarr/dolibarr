@@ -54,7 +54,8 @@ create table llx_adherent
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   datefin          datetime,  -- date de fin de validite de la cotisation
-  note             text,
+  note_private     text DEFAULT NULL,
+  note_public      text DEFAULT NULL,
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
   tms              timestamp, -- date de modification

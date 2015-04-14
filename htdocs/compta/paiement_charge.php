@@ -178,7 +178,7 @@ if ($_GET["action"] == 'create')
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
-	print "<tr class=\"liste_titre\"><td colspan=\"3\">Charge</td>";
+	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("SocialContribution")."</td>";
 
 	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">".$charge->type_libelle."</td></tr>\n";

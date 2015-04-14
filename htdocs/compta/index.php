@@ -127,7 +127,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	$langs->load("donations");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/list.php">';
+    print '<form method="post" action="'.DOL_URL_ROOT.'/don/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
@@ -497,7 +497,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 // Last donations
 if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 {
-	include_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
     $donationstatic=new Don($db);

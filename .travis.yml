@@ -104,16 +104,15 @@ before_script:
 script: 
  - cd htdocs/install
  - date
-# - php upgrade.php 3.4.0 3.5.0 > upgrade.log
-# - php upgrade2.php 3.4.0 3.5.0 > upgrade2.log
- - php upgrade.php 3.5.0 3.6.0 >> upgrade.log
- - php upgrade2.php 3.5.0 3.6.0 >> upgrade2.log
- - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
-# - cat upgrade360370.log
- - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
- - php upgrade.php 3.7.0 3.8.0 >> upgrade.log
- - php upgrade2.php 3.7.0 3.8.0 >> upgrade2.log
-# - cat upgrade2.log
+# - php upgrade.php 3.4.0 3.5.0 ignoredbversion > upgrade340350.log
+# - php upgrade2.php 3.4.0 3.5.0 ignoredbversion > upgrade340350-2.log
+ - php upgrade.php 3.5.0 3.6.0 ignoredbversion > upgrade350360.log
+ - php upgrade2.php 3.5.0 3.6.0 ignoredbversion > upgrade350360-2.log
+ - php upgrade.php 3.6.0 3.7.0 ignoredbversion > upgrade360370.log
+ - php upgrade2.php 3.6.0 3.7.0 ignoredbversion > upgrade360370-2.log
+ - php upgrade.php 3.7.0 3.8.0 ignoredbversion > upgrade370380.log
+ - php upgrade2.php 3.7.0 3.8.0 ignoredbversion > upgrade370380-2.log
+# - cat upgrade370380-2.log
  - cd ../..
  - date
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
