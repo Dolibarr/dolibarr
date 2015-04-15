@@ -2,6 +2,7 @@
 MailTargets=Destinatários
 MailRecipient=Destinatário
 MailTo=Destinatário(s)
+MailCC=Copiar para
 MailFile=Arquivo
 ResetMailing=Limpar Mailing
 MailingResult=Resultado do envio de e-mails
@@ -27,6 +28,7 @@ ConfirmCloneEMailing=Voce tem certeza que quer clonar este e-mailing ?
 CloneContent=Clonar mensagem
 CloneReceivers=Clonar recebidores
 DateLastSend=Data ultimo envio
+DateSending=Data envio
 CheckRead=Ler recebidor
 YourMailUnsubcribeOK=O e-mail <b>%s</b> foi removido com sucesso da lista
 MailtoEMail=Hyper-link ao e-mail

@@ -111,8 +111,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
@@ -129,7 +133,7 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print '</table>';
@@ -182,7 +186,7 @@ if (! $found)
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print '</table>';
@@ -223,8 +227,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
@@ -245,7 +253,7 @@ if (! $found)
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print "</table>";

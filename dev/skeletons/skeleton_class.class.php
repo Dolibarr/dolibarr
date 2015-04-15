@@ -270,28 +270,20 @@ class Skeleton_Class extends CommonObject
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (! $error && ! $notrigger)
 		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
+            // Uncomment this and change MYOBJECT to your own tag if you
+            // want this action calls a trigger.
 
-	            //// Call triggers
-	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-	            //// End call triggers
-			 }
+            //// Call triggers
+            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+            //// End call triggers
 		}
 
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -344,11 +336,6 @@ class Skeleton_Class extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}

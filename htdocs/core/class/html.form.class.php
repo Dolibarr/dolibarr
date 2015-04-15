@@ -395,12 +395,12 @@ class Form
         $htmltext=str_replace("\n","",$htmltext);
 
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
+        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
         elseif ($notabs == 2) $s.='<div class="inline-block nowrap">';
         if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
@@ -412,8 +412,8 @@ class Form
         // Use another method to help avoid having a space in value in order to use this value with jquery
         // TODO add this in css
         //if ($text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
-        $paramfortooltiptd.= (($direction < 0)?' class="inline-block" style="padding-left: 3px !important;"':'');
-        $paramfortooltiptd.= (($direction > 0)?' class="inline-block" style="padding-right: 3px !important;"':'');
+        $paramfortooltiptd.= (($direction < 0)?' class="inline-block" style="padding: 0px; padding-left: 3px !important;"':'');
+        $paramfortooltiptd.= (($direction > 0)?' class="inline-block" style="padding: 0px; padding-right: 3px !important;"':'');
         if ((string) $text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
         if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
@@ -868,7 +868,7 @@ class Form
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
@@ -2871,7 +2871,7 @@ class Form
                     {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $obj->label;
+                    print trim($obj->label);
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;

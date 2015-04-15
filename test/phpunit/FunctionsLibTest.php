@@ -230,6 +230,9 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='<h2>abc</h2>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
+        $input='<img src="https://xxx.com/aaa/image.png" />';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after,'Failure on test of img tag');
 
         // False
         $input='xxx < br>';

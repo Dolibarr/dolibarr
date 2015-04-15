@@ -201,7 +201,7 @@ class Categorie extends CommonObject
 				$action='create';
 
 				// Actions on extra fields (by external module or standard code)
-				// FIXME le hook fait double emploi avec le trigger !!
+				// TODO le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
 				$parameters=array('socid'=>$this->id);
 				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -294,7 +294,7 @@ class Categorie extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

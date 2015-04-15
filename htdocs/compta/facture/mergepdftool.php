@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -24,17 +24,19 @@
  */
 
 /**
- *		\file       htdocs/compta/facture/impayees.php
+ *		\file       htdocs/compta/facture/mergepdftool.php
  *		\ingroup    facture
- *		\brief      Page to list and build liste of unpaid invoices
+ *		\brief      Page to list and build doc of selected invoices
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("mails");
 $langs->load("bills");
@@ -44,6 +46,18 @@ $action = GETPOST('action','alpha');
 $option = GETPOST('option');
 $mode=GETPOST('mode');
 $builddoc_generatebutton=GETPOST('builddoc_generatebutton');
+$month = GETPOST("month","int");
+$year = GETPOST("year","int");
+$filter = GETPOST("filtre");
+if (GETPOST('button_search'))
+{
+	$filter=GETPOST('filtre',2);
+	if ($filter != 'payed:0') $option='';
+}
+if ($option == 'late') $filter = 'paye:0';
+if ($option == 'unpaidall') $filter = 'paye:0';
+if ($mode == 'sendremind' && $filter == '') $filter = 'paye:0';
+if ($filter == '') $filter = 'paye:0';
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -53,6 +67,20 @@ $diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
 if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
 
 $resultmasssend='';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+{
+	$search_ref="";
+	$search_ref_supplier="";
+	$search_label="";
+	$search_company="";
+	$search_amount_no_tax="";
+	$search_amount_all_tax="";
+	$year="";
+	$month="";
+	$filter="";
+}
+
 
 
 /*
@@ -297,8 +325,14 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 		dol_mkdir($diroutputpdf);
 
 		// Save merged file
-		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
-		if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+		$filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Invoices")));
+		if ($filter=='paye:0')
+		{
+			if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+			else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+		}
+		if ($year) $filename.='_'.$year;
+		if ($month) $filename.='_'.$month;
 		if ($pagecount)
 		{
 			$now=dol_now();
@@ -306,6 +340,9 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 			$pdf->Output($file,'F');
 			if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+			$langs->load("exports");
+			setEventMessage($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')));
 		}
 		else
 		{
@@ -340,9 +377,9 @@ if ($action == 'remove_file')
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formother = new FormOther($db);
 
-$title=$langs->trans("BillsCustomersUnpaid");
-if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
+$title=$langs->trans("MergingPDFTool");
 
 llxHeader('',$title);
 
@@ -410,14 +447,15 @@ $sql.= ",".MAIN_DB_PREFIX."facture as f";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
-$sql.= " AND f.type IN (0,1,3,5) AND f.fk_statut = 1";
-$sql.= " AND f.paye = 0";
+$sql.= " AND f.type IN (0,1,3,5)";
+if ($filter == 'paye:0') $sql.= " AND f.fk_statut = 1";
+//$sql.= " AND f.paye = 0";
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-if (GETPOST('filtre'))
+if ($filter && $filter != -1)		// GETPOST('filtre') may be a string
 {
-	$filtrearr = explode(",", GETPOST('filtre'));
+	$filtrearr = explode(",", $filter);
 	foreach ($filtrearr as $fil)
 	{
 		$filt = explode(":", $fil);
@@ -427,10 +465,21 @@ if (GETPOST('filtre'))
 if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$db->escape($search_ref)."%'";
 if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
-if ($search_paymentmode)     $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
+if ($search_paymentmode) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
+if ($month > 0)
+{
+	if ($year > 0)
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+	else
+	$sql.= " AND date_format(f.datef, '%m') = '$month'";
+}
+else if ($year > 0)
+{
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+}
 $sql.= " GROUP BY s.nom, s.rowid, s.email, f.rowid, f.facnumber, f.ref_client, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp,";
 $sql.= " f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, fk_mode_reglement";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -438,7 +487,7 @@ $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
 $sql.= " f.facnumber DESC";
-
+//print $sql;
 //$sql .= $db->plimit($limit+1,$offset);
 
 $resql = $db->query($sql);
@@ -454,25 +503,28 @@ if ($resql)
 
 	$param="";
 	$param.=(! empty($socid)?"&amp;socid=".$socid:"");
-	$param.=(! empty($option)?"&amp;option=".$option:"");
 	if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
-    	if ($search_refcustomer) $param.='&amp;search_ref='.urlencode($search_refcustomer);
+   	if ($search_refcustomer) $param.='&amp;search_ref='.urlencode($search_refcustomer);
 	if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
 	if ($search_societe)     $param.='&amp;search_paymentmode='.urlencode($search_paymentmode);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($late)               $param.='&amp;late='.urlencode($late);
-
+	if ($mode)               $param.='&amp;mode='.urlencode($mode);
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=str_replace('&amp;','&',$param);
 
-	$titre=(! empty($socid)?$langs->trans("BillsCustomersUnpaidForCompany",$soc->name):$langs->trans("BillsCustomersUnpaid"));
+	//$titre=(! empty($socid)?$langs->trans("BillsCustomersUnpaidForCompany",$soc->name):$langs->trans("BillsCustomersUnpaid"));
+	$titre=(! empty($socid)?$langs->trans("BillsCustomersForCompany",$soc->name):$langs->trans("BillsCustomers"));
 	if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
-	else $titre.=' ('.$langs->trans("All").')';
+	//else $titre.=' ('.$langs->trans("All").')';
 
 	$link='';
-	if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
-	elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpaidAll").'</a>';
+	if (empty($option) || $option == 'late') $link.=($link?' - ':'').'<a href="'.$_SERVER["PHP_SELF"].'?option=unpaidall'.$param.'">'.$langs->trans("ShowUnpaidAll").'</a>';
+	if (empty($option) || $option == 'unpaidall') $link.=($link?' - ':'').'<a href="'.$_SERVER["PHP_SELF"].'?option=late'.$param.'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+
+	$param.=(! empty($option)?"&amp;option=".$option:"");
+
 	print_fiche_titre($titre,$link);
 	//print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 
@@ -574,7 +626,11 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
     print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="center">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	$syear = $year;
+	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
+	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre" align="left">';
@@ -586,21 +642,22 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
+	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
+	print $form->selectarray('filtre', $liststatus, $filter, 1);
+	print '</td>';
+	print '<td class="liste_titre" align="center">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+	print '<br>';
 	if (empty($mode))
 	{
-		print '<td class="liste_titre" align="center">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
-		print '</td>';
 	}
 	else
 	{
-		print '<td class="liste_titre" align="center">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkallsend">'.$langs->trans("All").'</a> / <a href="#" id="checknonesend">'.$langs->trans("None").'</a>';
-		print '</td>';
 	}
+	print '</td>';
 	print "</tr>\n";
 
 	if ($num > 0)

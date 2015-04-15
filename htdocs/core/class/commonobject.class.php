@@ -1611,7 +1611,7 @@ abstract class CommonObject
     	}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
-    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+    		dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
 
@@ -1887,10 +1887,11 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
+     *  @param	int		$alsosametype	0=Return only links to different object than source. 1=Include also link to objects of same type.
      *	@return	void
      *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
-	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR',$alsosametype=1)
     {
         global $conf;
 
@@ -1924,7 +1925,7 @@ abstract class CommonObject
         	return -1;
         }
 
-        // Links beetween objects are stored in this table
+        // Links between objects are stored in table element_element
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
         $sql.= " WHERE ";
@@ -1983,7 +1984,7 @@ abstract class CommonObject
 
                     $classpath = $element.'/class';
 
-                    // To work with non standard path
+                    // To work with non standard classpath or module name
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
                     }
@@ -2019,7 +2020,7 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
-                    if ($conf->$module->enabled && $element != $this->element)
+                    if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
@@ -3214,7 +3215,7 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// FIXME Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
+		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
 	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];

@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Yhteensä kaksi uutta alennus on oltava alk
 ConfirmRemoveDiscount=Oletko varma, että haluat poistaa tämän edullisista?
 RelatedBill=Related lasku
 RelatedBills=Related laskut
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Varoitus, yksi tai useampi lasku jo olemassa
 

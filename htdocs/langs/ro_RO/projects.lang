@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Lista facturi furnizori  asociate  la proi
 ListContractAssociatedProject=Lista contracte  asociate  la  proiect
 ListFichinterAssociatedProject=Lista intervenţii  asociate  la  proiectului
 ListExpenseReportsAssociatedProject=Lista rapoartelor cheltuieli  asociate proiectului
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Lista evenimentelor  asociate la proiectului
 ActivityOnProjectThisWeek=Activitatea de pe proiect în această săptămână
 ActivityOnProjectThisMonth=Activitatea de pe proiect în această lună

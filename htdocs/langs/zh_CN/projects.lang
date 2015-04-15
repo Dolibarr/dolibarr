@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=名单与项目相关的供应商的发票
 ListContractAssociatedProject=名单与项目有关的合同
 ListFichinterAssociatedProject=名单与项目相关的干预措施
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=名单与项目有关的行动
 ActivityOnProjectThisWeek=对项目活动周
 ActivityOnProjectThisMonth=本月初对项目活动

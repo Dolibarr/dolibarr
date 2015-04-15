@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Общо на две нови отстъп�
 ConfirmRemoveDiscount=Сигурен ли сте, че искате да премахнете тази отстъпка?
 RelatedBill=Свързани фактура
 RelatedBills=Свързани фактури
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

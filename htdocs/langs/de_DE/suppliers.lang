@@ -43,3 +43,4 @@ ListOfSupplierOrders=Liste der Lieferantenbestellungen
 MenuOrdersSupplierToBill=Zu berechnende Lieferantenbestellungen
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

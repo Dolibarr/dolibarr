@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Lista de Faturas de Fornecedores Associado
 ListContractAssociatedProject=Lista de Contratos Associados ao Projeto
 ListFichinterAssociatedProject=Lista de intervenções associadas ao projeto
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Lista de eventos associados ao projeto
 ActivityOnProjectThisWeek=Atividade do Projeto nesta Semana
 ActivityOnProjectThisMonth=Actividade do Projecto neste Mês

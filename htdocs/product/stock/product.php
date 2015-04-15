@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
- * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2013-2015 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -384,7 +384,7 @@ if ($id > 0 || $ref)
 
 	if ($result > 0)
 	{
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
@@ -432,7 +432,9 @@ if ($id > 0 || $ref)
 
 		// PMP
 		print '<tr><td>'.$langs->trans("AverageUnitPricePMP").'</td>';
-		print '<td>'.price($product->pmp).' '.$langs->trans("HT").'</td>';
+		print '<td>';
+		if ($product->pmp > 0) print price($product->pmp).' '.$langs->trans("HT");
+		print '</td>';
 		print '</tr>';
 
 		// Minimum Price
@@ -541,7 +543,8 @@ if ($id > 0 || $ref)
         }
 
         // Number of supplier order running
-        if (! empty($conf->fournisseur->enabled)) {
+        if (! empty($conf->fournisseur->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             $result=$product->load_stats_commande_fournisseur(0,'3,4');
             print $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$product->stats_commande_fournisseur['qty'];
@@ -551,7 +554,8 @@ if ($id > 0 || $ref)
         }
 
 	    // Number of product from supplier order already received (partial receipt)
-        if (! empty($conf->fournisseur->enabled)) {
+        if (! empty($conf->fournisseur->enabled))
+        {
             if ($found) print '<br>'; else $found=1;
             print $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$product->stats_reception['qty'];
         }
@@ -801,7 +805,7 @@ if (empty($action) && $product->id)
 {
     print "<div class=\"tabsAction\">\n";
 
-    if ($user->rights->stock->creer)
+    if ($user->rights->stock->mouvement->creer)
     {
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
     }
@@ -819,8 +823,9 @@ if (empty($action) && $product->id)
 
 
 /*
- * Stock detail
+ * Stock detail (by warehouse). Do not go down into batch.
  */
+
 print '<br><table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
@@ -868,9 +873,9 @@ if ($resql)
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
 		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
 		// PMP
-		print '<td align="right">'.(price2num($product->pmp)?price2num($product->pmp,'MU'):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($product->pmp)?price2num($product->pmp,'MU'):'').'</td>';
 		// Value purchase
-		print '<td align="right">'.(price2num($product->pmp)?price(price2num($product->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
+		print '<td align="right">'.(price2num($product->pmp)?price(price2num($product->pmp*$obj->reel,'MT')):'').'</td>';
         // Sell price
 		print '<td align="right">';
         if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'),1);
@@ -878,13 +883,13 @@ if ($resql)
         print '</td>';
         // Value sell
         print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>'; // Ditto : Show PMP from movement or from product
+        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>';
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
 		if (price2num($product->pmp)) $totalwithpmp += $obj->reel;
-		$totalvalue = $totalvalue + ($product->pmp*$obj->reel); // Ditto : Show PMP from movement or from product
-        $totalvaluesell = $totalvaluesell + ($product->price*$obj->reel); // Ditto : Show PMP from movement or from product
+		$totalvalue = $totalvalue + ($product->pmp*$obj->reel);
+        $totalvaluesell = $totalvaluesell + ($product->price*$obj->reel);
 		//Batch Detail
 		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
 		{

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ if (! empty($conf->ficheinter->enabled))  require_once DOL_DOCUMENT_ROOT.'/fichi
 if (! empty($conf->deplacement->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/donations/class/don.class.php';
+if (! empty($conf->don->enabled))         require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 $langs->load("projects");
 $langs->load("companies");
@@ -254,9 +255,10 @@ $listofreferent=array(
 	'name'=>"Donation",
 	'title'=>"ListDonationsAssociatedProject",
 	'class'=>'Don',
+	'margin'=>'add',
 	'table'=>'don',
 	'datefieldname'=>'date',
-	'disableamount'=>1,
+	'disableamount'=>0,
 	'test'=>$conf->don->enabled && $user->rights->don->lire),
 );
 
@@ -344,7 +346,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
 		// Thirdparty or user
 		print '<td>';
-		if ($tablename == 'expensereport_det') print $langs->trans("User");
+		if ($tablename == 'expensereport_det' || 'don') print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountHT").'</td>';
@@ -462,14 +464,25 @@ foreach ($listofreferent as $key => $value)
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1,'',48);
                 }
+				else if ($tablename == 'don')
+                {
+                	$tmpuser2=new User($db);
+                	$tmpuser2->fetch($don->fk_user_author);
+                	print $tmpuser2->getNomUrl(1,'',48);
+                }
 				print '</td>';
 
                 // Amount without tax
 				if (empty($value['disableamount']))
 				{
+					if ($tablename == 'don') $total_ht_by_line=$element->amount;
+					else
+					{
+						$total_ht_by_line=$element->total_ht;
+					}
 					print '<td align="right">';
 					if (! $qualifiedfortotal) print '<strike>';
-					print (isset($element->total_ht)?price($element->total_ht):'&nbsp;');
+					print (isset($total_ht_by_line)?price($total_ht_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
 					print '</td>';
 				}
@@ -478,9 +491,14 @@ foreach ($listofreferent as $key => $value)
                 // Amount inc tax
 				if (empty($value['disableamount']))
 				{
+					if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+					else
+					{
+						$total_ttc_by_line=$element->total_ttc;
+					}
 					print '<td align="right">';
 					if (! $qualifiedfortotal) print '<strike>';
-					print (isset($element->total_ttc)?price($element->total_ttc):'&nbsp;');
+					print (isset($total_ttc_by_line)?price($total_ttc_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
 					print '</td>';
 				}
@@ -496,11 +514,11 @@ foreach ($listofreferent as $key => $value)
 
 				if ($qualifiedfortotal)
 				{
-					$total_ht = $total_ht + $element->total_ht;
-					$total_ttc = $total_ttc + $element->total_ttc;
+					$total_ht = $total_ht + $total_ht_by_line;
+					$total_ttc = $total_ttc + $total_ttc_by_line;
 
-					$total_ht_by_third += $element->total_ht;
-					$total_ttc_by_third += $element->total_ttc;
+					$total_ht_by_third += $total_ht_by_line;
+					$total_ttc_by_third += $total_ttc_by_line;
 				}
 
 				if (canApplySubtotalOn($tablename))
@@ -620,16 +638,18 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($elementarray[$i]);
 				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
 
-				$total_ht = $total_ht + $element->total_ht;
-				$total_ttc = $total_ttc + $element->total_ttc;
+				if ($tablename == 'don') $total_ht_by_line=$element->amount;
+				else $total_ht_by_line=$element->total_ht;
+
+				$total_ht = $total_ht + $total_ht_by_line;
+
+				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+				else $total_ttc_by_line=$element->total_ttc;
+
+				$total_ttc = $total_ttc + $total_ttc_by_line;
 			}
 
-			print '<tr >';
-			print '<td align="left" >'.$name.'</td>';
-			print '<td align="right">'.$i.'</td>';
-			print '<td align="right">'.price($total_ht).'</td>';
-			print '<td align="right">'.price($total_ttc).'</td>';
-			print '</tr>';
+			// Calculate margin
 			if ($margin=="add")
 			{
 				$margin_ht+= $total_ht;
@@ -640,8 +660,44 @@ foreach ($listofreferent as $key => $value)
 				$margin_ht-= $total_ht;
 				$margin_ttc-= $total_ttc;
 			}
-		}
 
+			// Show $total_ht & $total_ttc -- add a minus when necessary
+			if ($margin!="add")
+			{
+				$total_ht = -$total_ht;
+				$total_ttc = -$total_ttc;
+			}
+
+			switch ($classname) {
+				case 'FactureFournisseur':
+					$newclassname = 'SupplierInvoice';
+					break;
+				case 'Facture':
+					$newclassname = 'Bill';
+					break;
+				case 'Propal':
+					$newclassname = 'CommercialProposal';
+					break;
+				case 'Commande':
+					$newclassname = 'Order';
+					break;
+				case 'Expedition':
+					$newclassname = 'Sending';
+					break;
+				case 'Contrat':
+					$newclassname = 'Contract';
+					break;
+				default:
+					$newclassname = $classname;
+			}
+
+			print '<tr >';
+			print '<td align="left">'.$langs->trans($newclassname).'</td>';
+			print '<td align="right">'.$i.'</td>';
+			print '<td align="right">'.price($total_ht).'</td>';
+			print '<td align="right">'.price($total_ttc).'</td>';
+			print '</tr>';
+		}
 	}
 }
 // and the margin amount total

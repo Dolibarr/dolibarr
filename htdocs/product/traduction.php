@@ -143,7 +143,7 @@ $cancel != $langs->trans("Cancel") &&
 	$product->fetch($id);
 	$langtodelete=GETPOST('langdel','alpha');
 
-	
+
 	if ( $product->delMultiLangs($langtodelete) > 0 )
 	{
 		$action = '';
@@ -168,7 +168,7 @@ llxHeader("","",$langs->trans("Translation"));
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-$head=product_prepare_head($product, $user);
+$head=product_prepare_head($product);
 $titre=$langs->trans("CardProduct".$product->type);
 $picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 dol_fiche_head($head, 'translation', $titre, 0, $picto);

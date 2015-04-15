@@ -43,3 +43,4 @@ ListOfSupplierOrders=Lista över leverantörsorder
 MenuOrdersSupplierToBill=Leverantörs order att fakturera
 NbDaysToDelivery=Leveransförsening, dagar
 DescNbDaysToDelivery=Den största förseningen visas med produktbeställningslista
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

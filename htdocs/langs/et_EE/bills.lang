@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Kahe uue allahindluse summa peab olema võr
 ConfirmRemoveDiscount=Kas oled täiesti kindel, et soovid selle allahindluse eemaldada?
 RelatedBill=Seotud arve
 RelatedBills=Seotud arved
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

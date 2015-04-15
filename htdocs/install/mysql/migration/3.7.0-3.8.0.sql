@@ -64,6 +64,7 @@ create table llx_payment_loan
   fk_user_modif		integer
 )ENGINE=innodb;
 
+ALTER TABLE llx_extrafields ADD COLUMN fieldrequired integer DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
 ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
 
@@ -180,6 +181,8 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN batch varchar(30) DEFAULT NULL;
 ALTER TABLE llx_stock_mouvement ADD COLUMN eatby date DEFAULT NULL;
 ALTER TABLE llx_stock_mouvement ADD COLUMN sellby date DEFAULT NULL;
 
+UPDATE llx_product_batch SET batch = 'unknown' WHERE batch IS NULL;
+ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(30) NOT NULL;
 
 
 CREATE TABLE llx_expensereport (
@@ -377,6 +380,9 @@ CREATE TABLE llx_askpricesupplierdet_extrafields (
 -- End Module AskPriceSupplier --
 
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_approve2 datetime after date_approve;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_user_approve2 integer after fk_user_approve;
+
 ALTER TABLE llx_societe ADD COLUMN fk_incoterms integer;
 ALTER TABLE llx_societe ADD COLUMN location_incoterms varchar(255);
 ALTER TABLE llx_propal ADD COLUMN fk_incoterms integer;
@@ -423,7 +429,7 @@ ALTER TABLE llx_societe_extrafields ADD UNIQUE INDEX uk_societe_extrafields (fk_
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
 ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
-ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_project integer NULL;
+ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_projet integer NULL;
 
 create table llx_don_extrafields
 (
@@ -510,3 +516,7 @@ create table llx_c_price_global_variable_updater
 	next_update			integer DEFAULT 0,
 	last_status			text DEFAULT NULL
 )ENGINE=innodb;
+
+ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
+ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL after note_private;
+

@@ -365,10 +365,7 @@ class DoliDBSqlite3 extends DoliDB
      */
     function getDriverInfo()
     {
-        // FIXME: Dummy method
-        // TODO: Implement
-
-        return '';
+        return 'sqlite3 php driver';
     }
 
 

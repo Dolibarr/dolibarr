@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Total of two new discount must be equal to 
 ConfirmRemoveDiscount=Are you sure you want to remove this discount ?
 RelatedBill=Related invoice
 RelatedBills=Related invoices
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

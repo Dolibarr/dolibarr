@@ -174,8 +174,8 @@ if ($conf->societe->enabled)
 	    print '<td>'.$notifiedevent['code'].'</td>';
 	    print '<td>'.$label.'</td>';
 	    print '<td align="right">';
-		$nb = $notify->countDefinedNotifications($notifiedevent['code'], 0);
-		print $nb;
+		$tmparray = $notify->getNotificationsArray($notifiedevent['code'], 0);
+		print count($tmparray);
 	    print '</td>';
 	    print '</tr>';
 	}

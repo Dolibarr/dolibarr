@@ -220,8 +220,8 @@ class ICal
         }
 
         if (($key == "DTSTAMP") or ($key == "LAST-MODIFIED") or ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
-        if ($key == "RRULE" ) $value = $this->ical_rrule($value);
-
+        //if ($key == "RRULE" ) $value = $this->ical_rrule($value);
+        
         if (stristr($key,"DTSTART") or stristr($key,"DTEND") or stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
         {
         	if (stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))

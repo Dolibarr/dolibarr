@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Insgesamt zwei neue Rabatt muss gleich zu d
 ConfirmRemoveDiscount=Sind Sie sicher, dass Sie diesen Rabatt entfernen möchten?
 RelatedBill=Ähnliche Rechnung
 RelatedBills=Ähnliche Rechnungen
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Letzte ähnliche Rechnung
 WarningBillExist=Achtung, es existiert bereits mindestens eine Rechnung
 

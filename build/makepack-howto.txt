@@ -8,7 +8,7 @@ This files describe steps made by Dolibarr packaging team to make a
 beta version of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in /ChangeLog
+- Update version/info in ChangeLog. To generate a changelog, you can do "git log x.y.z..HEAD --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIXED\|NEW'"
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
 - Update version number with x.y.z-w in build/debian/changelog
 - Update version number with x.y.z-w in build/rpm/*.spec
@@ -17,10 +17,11 @@ beta version of Dolibarr, step by step.
 - Create a branch (x.y).
 
 - Run makepack-dolibarr.pl to generate all packages.
+
 - Move build files into www.dolibarr.org web site
   (/home/dolibarr/wwwroot/files/lastbuild).
 
-- Post a news on dolibarr.org/dolibarr.fr
+- Post a news on dolibarr.org/dolibarr.fr + social networks
 - Send mail on mailings-list
 
 
@@ -35,14 +36,16 @@ complete release of Dolibarr, step by step.
 - Update version number with x.y.z in build/rpm/*.spec
 - Commit all changes.
 
-- Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
+- Run makepack-dolibarr.pl to generate all packages.
+
 - Check content of built packages.
 - Move build files into www.dolibarr.org web site
   (/home/dolibarr/wwwroot/files/stable).
+
 - Run makepack-dolibarr.pl again with option to publish files on 
   sourceforge. This will also add official tag.
 - Edit symbolic links in directory "/home/dolibarr/wwwroot/files/stable/xxx"
   on server to point to new files (used by some web sites).
 
+- Post a news on dolibarr.org/dolibarr.fr + social networks
 - Send mail on mailings-list
-- Send news on OpenSource web sites (if major beta or release)

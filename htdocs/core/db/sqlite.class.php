@@ -296,7 +296,7 @@ class DoliDBSqlite extends DoliDB
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
+	 *	@param		integer	$port		Port of database server
 	 *	@return		resource			Database access handler
 	 *	@see		close
      */
@@ -345,10 +345,7 @@ class DoliDBSqlite extends DoliDB
      */
     function getDriverInfo()
     {
-	    // FIXME: Dummy method
-	    // TODO: Implement
-
-    	return '';
+	    return 'sqlite php driver';
     }
 
 
@@ -459,7 +456,7 @@ class DoliDBSqlite extends DoliDB
     /**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
      */
     function fetch_row($resultset)
@@ -511,7 +508,7 @@ class DoliDBSqlite extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@param  integer	$resultset   Curseur de la requete voulue
 	 *	@return	void
 	 */
     function free($resultset=0)
@@ -629,7 +626,7 @@ class DoliDBSqlite extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return return          		XXX(field) or XXX('value') or field or 'value'
+     *  @return string          		XXX(field) or XXX('value') or field or 'value'
      */
     function encrypt($fieldorvalue, $withQuotes=0)
     {

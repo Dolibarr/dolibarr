@@ -627,7 +627,7 @@ if ($id > 0)
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></a></td>';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomerOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></a></td>';
 				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				//if($num2 > 0) print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.img_picto($langs->trans("CreateInvoiceForThisCustomer"),'object_bill').'</a></td>';
 				//else print '<td width="20px" align="right"><a href="#">'.img_picto($langs->trans("NoOrdersToInvoice"),'object_bill').'</a></td>';
@@ -854,7 +854,7 @@ if ($id > 0)
 		$facturestatic = new Facture($db);
 
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
-        $sql.= ', f.total';
+        $sql.= ', f.total as total_ht';
         $sql.= ', f.tva as total_tva';
         $sql.= ', f.total_ttc';
 		$sql.= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut';
@@ -896,7 +896,7 @@ if ($id > 0)
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = $objp->facnumber;
 				$facturestatic->type = $objp->type;
-                $facturestatic->total_ht = $objp->total;
+                $facturestatic->total_ht = $objp->total_ht;
                 $facturestatic->total_tva = $objp->total_tva;
                 $facturestatic->total_ttc = $objp->total_ttc;
 				print $facturestatic->getNomUrl(1);
@@ -909,7 +909,7 @@ if ($id > 0)
 				{
 					print '<td align="right"><b>!!!</b></td>';
 				}
-				print '<td align="right" width="120">'.price($objp->total_ttc).'</td>';
+				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
 
 				print '<td align="right" class="nowrap" width="100" >'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
 				print "</tr>\n";

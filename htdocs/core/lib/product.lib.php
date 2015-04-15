@@ -28,12 +28,11 @@
  * Prepare array with list of tabs
  *
  * @param   Product	$object		Object related to tabs
- * @param	User	$user		Object user
  * @return  array				Array of tabs to show
  */
-function product_prepare_head($object, $user)
+function product_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;
@@ -94,7 +93,7 @@ function product_prepare_head($object, $user)
 	$head[$h][2] = 'referers';
 	$h++;
 
-    if($object->isproduct())    // Si produit stockable
+    if ($object->isproduct() || ($object->isservice() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
         if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
         {

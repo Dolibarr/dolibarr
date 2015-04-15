@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,18 +70,6 @@ class box_graph_product_distribution extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-		$text = $langs->trans("BoxProductDistribution",$max);
-		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject',
-				'target'=>'none'	// Set '' to get target="_blank"
-		);
-
 		$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 		$param_showinvoicenb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
 		$param_showpropalnb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
@@ -109,6 +97,20 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		$nowarray=dol_getdate(dol_now(),true);
 		if (empty($year)) $year=$nowarray['year'];
+
+
+		$text = $langs->trans("BoxProductDistribution",$max).' - '.$langs->trans("Year").': '.$year;
+		$this->info_box_head = array(
+				'text' => $text,
+				'limit'=> dol_strlen($text),
+				'graph'=> 1,
+				'sublink'=>'',
+				'subtext'=>$langs->trans("Filter"),
+				'subpicto'=>'filter.png',
+				'subclass'=>'linkobject',
+				'target'=>'none'	// Set '' to get target="_blank"
+		);
+
 
 		$nbofgraph=0;
 		if ($showinvoicenb) $nbofgraph++;

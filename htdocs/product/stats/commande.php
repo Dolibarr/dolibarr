@@ -89,7 +89,7 @@ if ($id > 0 || ! empty($ref))
 
 	if ($result > 0)
 	{
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
@@ -126,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '</div>';
 
-		if ($user->rights->commande->lire) 
+		if ($user->rights->commande->lire)
 		{
 			$sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client, c.rowid, d.total_ht as total_ht, c.ref,";
 			$sql .= " c.ref_client,";
@@ -147,7 +147,7 @@ if ($id > 0 || ! empty($ref))
 			if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 			$sql.= " ORDER BY $sortfield $sortorder ";
-	            
+
 	        //Calcul total qty and amount for global if full scan list
 	        $total_ht=0;
 	        $total_qty=0;
@@ -162,21 +162,21 @@ if ($id > 0 || ! empty($ref))
 	        		}
 	        	}
 	        }
-	            
+
 			$sql.= $db->plimit($conf->liste_limit +1, $offset);
-	
+
 			$result = $db->query($sql);
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-	 			
+
 				if (! empty($id))
 	            	$option .= '&amp;id='.$product->id;
 	            if (! empty($search_month))
 	            	$option .= '&amp;search_month='.$search_month;
 	            if (! empty($search_year))
 	            	$option .= '&amp;search_year='.$search_year;
-	            
+
 	            print '<form method="post" action="' . $_SERVER ['PHP_SELF'] . '?id='.$product->id.'" name="search_form">' . "\n";
 	            if (! empty($sortfield))
 	            	print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -186,7 +186,7 @@ if ($id > 0 || ! empty($ref))
 	            	print '<input type="hidden" name="page" value="' . $page . '"/>';
 	            	$option .= '&amp;page=' . $page;
 	            }
-	
+
 				print_barre_liste($langs->trans("CustomersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,$totalrecords,'');
 				print '<div class="liste_titre">';
 			    print $langs->trans('Period').' ('.$langs->trans("OrderDate") .') - ';
@@ -197,7 +197,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 			    print '</div>';
 				print '</div>';
-	
+
 				$i = 0;
 	            print '<table class="noborder" width="100%">';
 				print '<tr class="liste_titre">';
@@ -209,7 +209,7 @@ if ($id > 0 || ! empty($ref))
 				print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.total_ht","",$option,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","",$option,'align="right"',$sortfield,$sortorder);
 				print "</tr>\n";
-	
+
 				if ($num > 0)
 				{
 					$var=True;
@@ -217,7 +217,7 @@ if ($id > 0 || ! empty($ref))
 					{
 						$objp = $db->fetch_object($result);
 						$var=!$var;
-	
+
 						print '<tr '.$bc[$var].'>';
 	 					print '<td>';
 	                    $orderstatic->id=$objp->commandeid;
@@ -232,10 +232,10 @@ if ($id > 0 || ! empty($ref))
 						print dol_print_date($db->jdate($objp->date_commande))."</td>";
 						print  '<td align="center">'.$objp->qty."</td>\n";
 	                    print '<td align="right">'.price($objp->total_ht)."</td>\n";
-						print '<td align="right">'.$commandestatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
+						print '<td align="right">'.$orderstatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
 						print "</tr>\n";
 						$i++;
-	                        
+
 	                    if (!empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	                        $total_ht+=$objp->total_ht;
 	                        $total_qty+=$objp->qty;

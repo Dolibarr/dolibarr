@@ -1146,6 +1146,9 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
+		// Clean parameters
+		if (empty($this->price_by_qty)) $this->price_by_qty=0;
+
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
 		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
@@ -1153,7 +1156,7 @@ class Product extends CommonObject
 		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."_log_price", LOG_DEBUG);
+		dol_syslog(get_class($this)."::_log_price", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if(! $resql)
 		{
@@ -1180,7 +1183,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
 
-		dol_syslog(get_class($this)."log_price_delete", LOG_DEBUG);
+		dol_syslog(get_class($this)."::log_price_delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1315,7 +1318,7 @@ class Product extends CommonObject
 
 		$id=$this->id;
 
-		dol_syslog(get_class($this)."update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
+		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
@@ -1393,7 +1396,7 @@ class Product extends CommonObject
             $sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
 
-			dol_syslog(get_class($this)."update_price", LOG_DEBUG);
+			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1583,7 +1586,7 @@ class Product extends CommonObject
 				$this->db->free($resql);
 
 
-				// Retrieve all extrafield for thirdparty
+				// Retreive all extrafield for current object
 				// fetch optionals attributes and labels
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 				$extrafields=new ExtraFields($this->db);
@@ -3143,6 +3146,8 @@ class Product extends CommonObject
 			else
 			{
 			    $this->error=$movementstock->error;
+			    $this->errors=$movementstock->errors;
+
 				$this->db->rollback();
 				return -1;
 			}
@@ -3195,9 +3200,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about stock of a product into stock_warehouse[] and stock_reel
+	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
 	 *
-	 *    @return     int             < 0 if KO, > 0 if OK
+	 *    @return     	int             < 0 if KO, > 0 if OK
+	 *    @see			load_virtual_stock, getBatchInfo
 	 */
 	function load_stock()
 	{
@@ -3245,9 +3251,10 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about virtual stock of a product
+	 *    Load information about objects that are delat between physical and virtual stock of a product
 	 *
-	 *    @return     int             < 0 if KO, > 0 if OK
+	 *    @return   int             < 0 if KO, > 0 if OK
+	 *    @see		load_stock, getBatchInfo
 	 */
     function load_virtual_stock()
     {
@@ -3302,6 +3309,44 @@ class Product extends CommonObject
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
     }
+
+
+	/**
+	 *  Load existing information about a serial
+	 *
+	 *	@param		string		$batch		Lot/serial number
+	 *  @return     array					Array with record into product_batch
+	 *  @see		load_stock, load_virtual_stock
+	 */
+    function loadBatchInfo($batch)
+    {
+    	$result=array();
+
+    	$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
+    	$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$this->id." AND pb.batch = '".$this->db->escape($batch)."'";
+    	$sql.= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+    	dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		$i=0;
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+				$result[]=array('batch'=>$batch, 'eatby'=>$this->db->jdate($obj->eatby), 'sellby'=>$this->db->jdate($obj->sellby), 'qty'=>$obj->qty);
+				$i++;
+    		}
+    		return $result;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		$this->db->rollback();
+    		return array();
+    	}
+    }
+
 
 	/**
 	 *  Move an uploaded file described into $file array into target directory $sdir.
@@ -3686,7 +3731,7 @@ class Product extends CommonObject
      */
 	function isproduct()
 	{
-		return ($this->type != Product::TYPE_PRODUCT ? true : false);
+		return ($this->type == Product::TYPE_PRODUCT ? true : false);
 	}
 
     /**

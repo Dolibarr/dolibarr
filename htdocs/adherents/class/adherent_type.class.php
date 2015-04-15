@@ -73,7 +73,7 @@ class AdherentType extends CommonObject
     {
         global $conf;
 
-        $this->statut=trim($this->statut);
+        $this->statut=(int) $this->statut;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
         $sql.= "libelle";

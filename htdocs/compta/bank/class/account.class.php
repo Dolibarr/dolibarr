@@ -781,8 +781,8 @@ class Account extends CommonObject
         		$result=$this->deleteExtraFields();
         		if ($result < 0)
         		{
-        			return -1;
         			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        			return -1;
         		}
         	}
 

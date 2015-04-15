@@ -895,7 +895,7 @@ class Societe extends CommonObject
             	$action='update';
 
                 // Actions on extra fields (by external module or standard code)
-                // FIXME le hook fait double emploi avec le trigger !!
+                // TODO le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1578,7 +1578,7 @@ class Societe extends CommonObject
      *
      *	@param	User	$user		Filtre sur un user auteur des remises
      * 	@param	string	$filter		Filtre autre
-     * 	@param	string	$maxvalue	Filter on max value for discount
+     * 	@param	integer	$maxvalue	Filter on max value for discount
      *	@return	int					<0 if KO, Credit note amount otherwise
      */
     function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
@@ -1727,8 +1727,8 @@ class Societe extends CommonObject
      *
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param	int		$maxlen			Max length of text
-     *      @param	string	$notooltip		1=Disable tooltip
+     *		@param	int		$maxlen			Max length of name
+     *      @param	integer	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
     function getNomUrl($withpicto=0,$option='',$maxlen=0,$notooltip=0)
