@@ -215,9 +215,6 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='text with <div>some div</div>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
-        $input='text with HTML &nbsp; entities';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
         $input='xxx<br>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);

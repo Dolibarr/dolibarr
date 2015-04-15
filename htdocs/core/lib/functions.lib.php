@@ -3871,6 +3871,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
 {
 	$newstring=$stringtoencode;
+
 	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
 	{
 		$newstring=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$newstring);	// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
@@ -4043,33 +4044,27 @@ function dol_microtime_float()
  *	Return if a text is a html content
  *
  *	@param	string	$msg		Content to check
- *	@param	int		$option		0=Full detection, 1=Fast check
- *	@return	boolean				true/false
+ *	@return	boolean				True if an HTML string. False if opposite
  *	@see	dol_concatdesc
  */
-function dol_textishtml($msg,$option=0)
+function dol_textishtml($msg)
 {
-	if ($option == 1)
-	{
-		if (preg_match('/<html/i',$msg))				return true;
-		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<br/i',$msg))				return true;
-		return false;
+	/**
+	 * Commented because of bug #64430 https://bugs.php.net/bug.php?id=64430
+	 * Non-HTML tags are treated as valid HTML tags
+	 *
+	 * From: http://stackoverflow.com/questions/5732758/detect-html-tags-in-a-string
+	 */
+	//
+//	if ($msg == strip_tags($msg)) {
+//		return false;
+//	}
+
+	if (preg_match('/<[a-zA-Z0-9]+( .*)?>/', $msg)) {
+		return true;
 	}
-	else
-	{
-		if (preg_match('/<html/i',$msg))				return true;
-		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<(b|em|i)>/i',$msg))		return true;
-		elseif (preg_match('/<(br|div|font|li|span|strong|table)>/i',$msg)) 	  return true;
-		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
-		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
-		elseif (preg_match('/<(img)\s+[^<>]*>/i',$msg)) return true;			// must accept <img src="http://mydomain.com/aaa.png" />
-		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
-		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
-		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
-		return false;
-	}
+
+	return false;
 }
 
 /**

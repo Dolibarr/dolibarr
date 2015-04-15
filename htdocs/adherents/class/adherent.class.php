@@ -154,7 +154,7 @@ class Adherent extends CommonObject
         if ($msgishtml == -1)
         {
             $msgishtml = 0;
-            if (dol_textishtml($text,1)) $msgishtml = 1;
+            if (dol_textishtml($text)) $msgishtml = 1;
         }
 
         $texttosend=$this->makeSubstitution($text);
@@ -192,7 +192,7 @@ class Adherent extends CommonObject
 		$birthday = dol_print_date($this->birth,'day');
 
 		$msgishtml = 0;
-		if (dol_textishtml($text,1)) $msgishtml = 1;
+		if (dol_textishtml($text)) $msgishtml = 1;
 
 		$infos='';
 		if ($this->civility_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel()."\n";
