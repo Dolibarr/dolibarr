@@ -204,9 +204,12 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='<h2>abc</h2>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
-        $input='<img src="https://xxx.com/aaa/image.png" />';
+        $input='<img id="abc" src="https://xxx.com/aaa/image.png" />';
         $after=dol_textishtml($input);
         $this->assertTrue($after,'Failure on test of img tag');
+        $input='<a class="azerty" href="https://xxx.com/aaa/image.png" />';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after,'Failure on test of a tag');
 
         // False
         $input='xxx < br>';
@@ -218,6 +221,10 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='xxx <brstyle="ee">';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
+        $input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+
     }
 
 
