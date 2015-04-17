@@ -51,6 +51,8 @@ if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 
+$viewstatut=GETPOST('viewstatut');
+
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -89,6 +91,9 @@ if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no p
 if ($socid)
 {
 	$sql.= " AND e.fk_soc = ".$socid;
+}
+if ($viewstatut <> '') {
+	$sql.= " AND e.fk_statut = ".$viewstatut;
 }
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
