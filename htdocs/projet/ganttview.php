@@ -150,8 +150,9 @@ if ($id > 0 || ! empty($ref))
 
 
 /*
- * Actions
+ * Buttons actions
  */
+
 print '<div class="tabsAction">';
 
 if ($user->rights->projet->all->creer || $user->rights->projet->creer)
@@ -205,6 +206,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_milestone']=0;
 		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
+		//print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";
 		$tasks[$taskcursor]['task_name']=$val->label;
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
@@ -243,7 +245,6 @@ if (count($tasksarray)>0)
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
 		$taskcursor++;
 	}
-	//var_dump($tasks);
 
 	print "\n";
 

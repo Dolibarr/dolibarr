@@ -3880,7 +3880,7 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$
 		$newstring=strtr($newstring,array('__and__'=>'&','__lt__'=>'<','__gt__'=>'>','__dquot__'=>'"'));
 	}
 	else
-	{
+	{print 'eee';
 		if ($removelasteolbr) $newstring=preg_replace('/(\r\n|\r|\n)$/i','',$newstring);	// Remove last \n (may remove several)
 		$newstring=dol_nl2br(dol_htmlentities($newstring,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 	}
@@ -4064,7 +4064,8 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/<(br|div|font|li|span|strong|table)>/i',$msg)) 	  return true;
 		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
 		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
-		elseif (preg_match('/<(img)\s+[^<>]*>/i',$msg)) return true;			// must accept <img src="http://mydomain.com/aaa.png" />
+		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i',$msg)) return true;	// must accept <img src="http://mydomain.com/aaa.png" />
+		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i',$msg)) return true;	// must accept <a href="http://mydomain.com/aaa.png" />
 		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
 		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
