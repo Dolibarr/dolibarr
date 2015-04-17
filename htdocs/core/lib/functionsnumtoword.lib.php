@@ -45,9 +45,8 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 	}
 	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
 	in case exist why ask $lang like a parameter?*/
-	if ($langs == 'es_MX' && $numorcurrency == 'currency')
+	if (((is_object($langs) && $langs->default == 'es_MX') || (! is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency')
 	{	
-		
 		if ($numero>=1 && $numero<2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
 		}
