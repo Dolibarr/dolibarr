@@ -93,7 +93,7 @@ ConfirmPaidTrip=Are you sure you want to change status of this expense report to
 CancelTrip=Cancel an expense report
 ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
+BrouillonnerTrip=Move back expense report to status "Draft"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
 SaveTrip=Validate expense report
