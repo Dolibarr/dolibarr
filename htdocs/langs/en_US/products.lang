@@ -267,3 +267,5 @@ GlobalVariableUpdaterHelpFormat1=format is {"URL": "http://example.com/urlofws",
 UpdateInterval=Update interval (minutes)
 LastUpdated=Last updated
 CorrectlyUpdated=Correctly updated
+PropalMergePdfProductActualFile=Files use to add into PDF Azur_plus are/is 
+PropalMergePdfProductChooseFile=Select PDF files
