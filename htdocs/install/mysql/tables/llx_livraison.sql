@@ -33,7 +33,7 @@ create table llx_livraison
   fk_user_author        integer,						-- createur du bon de livraison
   date_valid            datetime,						-- date de validation
   fk_user_valid         integer,						-- valideur du bon de livraison
-  date_delivery 	    date		DEFAULT NULL,		-- delivery date
+  date_delivery 	    datetime		DEFAULT NULL,	-- delivery date
   fk_address  			integer,						-- delivery address (deprecated)
   fk_statut             smallint     DEFAULT 0,
   total_ht              double(24,8) DEFAULT 0,
