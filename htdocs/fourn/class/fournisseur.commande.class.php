@@ -2400,7 +2400,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		if ($nb === 0) return $langs->trans('Undefined');
+		if ($nb === 0) return '';
 		else return $nb.' '.$langs->trans('Days');
 	}
 
