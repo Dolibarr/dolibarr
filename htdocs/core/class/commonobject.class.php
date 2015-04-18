@@ -3350,25 +3350,26 @@ abstract class CommonObject
 	    $this->db->begin();
 
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-	    $sql.= " WHERE rowid =".$rowid;
+	    $sql.= " WHERE rowid=".$rowid;
 
 	    dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
-	    if ($this->db->query($sql))
-	    {
-	        if (! $notrigger)
+            $resql=$this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                if (! $notrigger)
 	        {
 	            $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
 	            if ($result < 0) { $this->db->rollback(); return -1; }
 	        }
-
-	        return 1;
-	    }
-	    else
-	    {
-	        $this->error=$this->db->lasterror();
-	        $this->db->rollback();
-	        return -1;
-	    }
+                $this->db->commit();
+                return 1;
+            }
 	}
 
 
