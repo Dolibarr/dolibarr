@@ -530,7 +530,7 @@ if ($resql)
 
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
 
-	if (!empty(GETPOST('modelselected'))) {
+	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
 	if (! empty($mode) && $action == 'presend')
