@@ -144,7 +144,7 @@ if ($object->id)
 	print "</div>\n";
 
 
-	$permtoedit = $object->getRights()->creer;
+	$permtoedit = $object->getRight('creer');
 	if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
 
 	/* ************************************************************************** */

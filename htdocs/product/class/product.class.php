@@ -815,7 +815,7 @@ class Product extends CommonObject
 			$this->error = "Object must be fetched before calling delete";
 			return -1;
 		}
-		if (empty($this->getRights()->supprimer))
+		if (!$this->getRight('supprimer'))
 		{
 			$this->error = "ErrorForbidden";
 			return 0;
@@ -3526,7 +3526,7 @@ class Product extends CommonObject
     							{
     								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
-    							if ($this->getRights()->creer)
+    							if ($this->getRight('creer'))
     							{
     								// Link to resize
     			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
@@ -3552,7 +3552,7 @@ class Product extends CommonObject
     						if ($showfilename) $return.= '<br>'.$viewfilename;
     						if ($showaction)
     						{
-    							if ($this->getRights())
+    							if ($this->getRight('creer'))
     							{
     								// Link to resize
     			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';

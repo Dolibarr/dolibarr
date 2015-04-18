@@ -210,7 +210,7 @@ if ($object->id)
     print '</div>';
 
     $modulepart = 'produit';
-    $permission = $object->getRights()->creer;
+    $permission = $object->getRight('creer');
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
     

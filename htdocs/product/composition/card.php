@@ -185,7 +185,7 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Fiche en mode edition
 	 */
-	if ($object->getRights()->lire)
+	if ($object->getRight('lire'))
 	{
 		print '<table class="border" width="100%">';
 
@@ -340,7 +340,7 @@ if ($id > 0 || ! empty($ref))
 					if (! empty($conf->stock->enabled)) print '<td align="right">'.$value['stock'].'</td>';	// Real stock
 
 					// Qty + IncDec
-					if ($object->getRights()->creer)
+					if ($object->getRight('creer'))
 					{
 						print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 						print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked="checked"':''  ).' /></td>';
@@ -396,7 +396,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
 
 			print '<td align="right" colspan="2">';
-			if ($object->getRights()->creer)
+			if ($object->getRight('creer'))
 			{
 				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
 			}

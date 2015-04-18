@@ -3897,6 +3897,16 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Returns the requested right for this class
+	 * @param string $key User right key to find (creer, supprimer...)
+	 * @return int
+	 */
+	public function getRight($key)
+	{
+		return $this->getRights()->{$key};
+	}
+
+	/**
 	 * Function used to replace a thirdparty id with another one.
 	 * This function is meant to be called from replaceThirdparty with the appropiate tables
 	 * Column name fk_soc MUST be used to identify thirdparties

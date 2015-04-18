@@ -296,7 +296,7 @@ if (empty($reshook))
     }
 
     // Update a product or service
-    if ($action == 'update' && $object->getRights()->creer)
+    if ($action == 'update' && $object->getRight('creer'))
     {
     	if (GETPOST('cancel'))
         {
@@ -400,7 +400,7 @@ if (empty($reshook))
 
     // Action clone object
     if ($action == 'confirm_clone' && $confirm != 'yes') { $action=''; }
-    if ($action == 'confirm_clone' && $confirm == 'yes' && $object->getRights()->creer)
+    if ($action == 'confirm_clone' && $confirm == 'yes' && $object->getRight('creer'))
     {
         if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
         {
@@ -490,7 +490,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
     if ($action == 'confirm_delete' && $confirm == 'yes')
     {
-        if ($object->getRights()->supprimer)
+        if ($object->getRight('supprimer'))
         {
             $result = $object->delete($object->id);
         }
@@ -1111,7 +1111,7 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        if ($action == 'edit' && $user->getRights()->creer)
+        if ($action == 'edit' && $object->getRight('creer'))
         {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1470,12 +1470,12 @@ else
             {*/
                 // Accountancy sell code
                 print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$object->getRights()->creer,'string').'</td><td colspan="2">';
-                print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$object->getRights()->creer,'string');
+                print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$object->getRight('creer'),'string');
                 print '</td></tr>';
 
                 // Accountancy buy code
                 print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$object->getRights()->creer,'string').'</td><td colspan="2">';
-                print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$object->getRights()->creer,'string');
+                print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$object->getRight('creer'),'string');
                 print '</td></tr>';
             //}
 
@@ -1676,7 +1676,7 @@ if (empty($reshook))
 {
 	if ($action == '' || $action == 'view')
 	{
-	    if ($object->getRights()->creer)
+	    if ($object->getRight('creer'))
 	    {
 	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
@@ -1694,7 +1694,7 @@ if (empty($reshook))
 	    }
 	    $object_is_used = $object->isObjectUsed($object->id);
 
-	    if ($object->getRights()->supprimer)
+	    if ($object->getRight('supprimer'))
 	    {
 	        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
 	        {
