@@ -74,7 +74,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " WHERE s.email <> ''";
 		    $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 		    $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		    $sql.= " AND cs.fk_societe = s.rowid";
+		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
 		    $sql.= " UNION ";
@@ -83,7 +83,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " WHERE s.email <> ''";
 		    $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 		    $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		    $sql.= " AND cs.fk_societe = s.rowid";
+		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
 		}

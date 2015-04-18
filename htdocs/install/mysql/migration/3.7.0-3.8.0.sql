@@ -520,3 +520,6 @@ create table llx_c_price_global_variable_updater
 ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
 ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL after note_private;
 
+-- Feature request: A page to merge two thirdparties into one #2613
+ALTER TABLE llx_categorie_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;

@@ -416,13 +416,13 @@ if ($action == 'update' && ! $_POST["cancel"])
 
 	            	$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 	            	$sql.= " SET fk_socpeople=".$db->escape($contactid);
-	            	if ($contact->socid) $sql.=", fk_societe=".$db->escape($contact->socid);
+	            	if ($contact->socid) $sql.=", fk_soc=".$db->escape($contact->socid);
 	            	$sql.= " WHERE rowid=".$object->id;
             	}
             	else
             	{
             		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-            		$sql.= " SET fk_socpeople=NULL, fk_societe=NULL";
+            		$sql.= " SET fk_socpeople=NULL, fk_soc=NULL";
             		$sql.= " WHERE rowid=".$object->id;
             	}
 	            dol_syslog("fiche::update", LOG_DEBUG);

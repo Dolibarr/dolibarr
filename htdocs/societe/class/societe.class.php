@@ -2752,7 +2752,7 @@ class Societe extends CommonObject
     {
         if ($categorie_id > 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
             $sql.= " VALUES ('".$categorie_id."','".$this->id."');";
 
             if ($resql=$this->db->query($sql)) return 0;
@@ -3253,4 +3253,49 @@ class Societe extends CommonObject
 
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 * It must be used within a transaction to avoid trouble
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		/**
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
+		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 */
+		$sql = 'SELECT rowid
+FROM llx_societe_commerciaux
+WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
+  SELECT fk_user
+  FROM llx_societe_commerciaux
+  WHERE fk_soc = '.(int) $origin_id.'
+);';
+
+		$query = $db->query($sql);
+
+		while ($result = $db->fetch_object($query)) {
+			$db->query('DELETE FROM llx_societe_commerciaux WHERE rowid = '.$result->rowid);
+		}
+
+		/**
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
+		 * Do not include llx_societe because it will be replaced later
+		 */
+		$tables = array(
+			'societe_address',
+			'societe_commerciaux',
+			'societe_log',
+			'societe_prices',
+			'societe_remise',
+			'societe_remise_except',
+			'societe_rib'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

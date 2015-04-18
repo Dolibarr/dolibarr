@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +94,96 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($action == 'confirm_merge' && $confirm == 'yes') {
+
+		$errors = 0;
+		$soc_origin_id = GETPOST('soc_origin', 'int');
+		$soc_origin = new Societe($db);
+
+		if ($soc_origin_id < 1) {
+			$langs->load('errors');
+			$langs->load('companies');
+			setEventMessage($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), 'errors');
+		} else {
+
+			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1) {
+				setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+				$errors++;
+			}
+
+			if (!$errors) {
+				$db->begin();
+
+				$objects = array(
+					'Adherent' => '/adherents/class/adherent.class.php',
+					'Societe' => '/societe/class/societe.class.php',
+					'Bookmark' => '/bookmarks/class/bookmark.class.php',
+					'Categorie' => '/categories/class/categorie.class.php',
+					'ActionComm' => '/comm/action/class/actioncomm.class.php',
+					'Propal' => '/comm/propal/class/propal.class.php',
+					'Commande' => '/commande/class/commande.class.php',
+					'Facture' => '/compta/facture/class/facture.class.php',
+					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+					'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
+					'Contact' => '/contact/class/contact.class.php',
+					'Contrat' => '/contrat/class/contrat.class.php',
+					'Expedition' => '/expedition/class/expedition.class.php',
+					'Fichinter' => '/fichinter/class/fichinter.class.php',
+					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+					'Livraison' => '/livraison/class/livraison.class.php',
+					'Product' => '/product/class/product.class.php',
+					'Project' => '/projet/class/project.class.php',
+					'User' => '/user/class/user.class.php',
+				);
+
+				//First, all core objects must update their tables
+				foreach ($objects as $object_name => $object_file) {
+
+					require_once DOL_DOCUMENT_ROOT.$object_file;
+
+					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
+						$errors++;
+						$db->rollback();
+					}
+				}
+
+				//External modules should update their ones too
+				$hookmanager->initHooks(array(
+					'mergethirds'
+				));
+
+				if (!$errors) {
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+						'soc_origin' => $soc_origin->id,
+						'soc_dest' => $object->id
+					), $soc_dest, $action);
+
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						$errors++;
+					}
+				}
+
+				if (!$errors) {
+					//We finally remove the old thirdparty
+					if ($soc_origin->delete($soc_origin->id) < 1) {
+						$db->rollback();
+						$errors++;
+					}
+				}
+			}
+
+			if (!$errors) {
+				setEventMessage($langs->trans('ThirdpartiesMergeSuccess'));
+				$db->commit();
+			} else {
+				setEventMessage($langs->trans('ErrorsThirdpartyMerge'), 'errors');
+			}
+		}
+	}
+
     if (GETPOST('getcustomercode'))
     {
         // We defined value code_client
@@ -1682,6 +1773,20 @@ else
             print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
         }
 
+	    if ($action == 'merge') {
+		    $form = new Form($db);
+
+		    $options = array(
+			    array(
+				    'label' => $langs->trans('MergeOriginThirdparty'),
+				    'type' => 'other',
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1)
+			    )
+		    );
+
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("MergeThirdparties"),$langs->trans("ConfirmMergeThirdparties"),"confirm_merge",$options,'',1);
+	    }
+
         dol_htmloutput_errors($error,$errors);
 
         $showlogo=$object->logo;
@@ -2132,6 +2237,8 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("Merge")).'">'.$langs->trans('Merge').'</a></div>';
+
 	        if (! empty($object->email))
 	        {
 	        	$langs->load("mails");
