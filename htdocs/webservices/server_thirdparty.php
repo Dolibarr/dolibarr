@@ -664,7 +664,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
             if ($key == 'name'     && $val != '')  $sql.=" AND s.name LIKE '%".$db->escape($val)."%'";
         	if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
             if ($key == 'supplier' && $val != '')  $sql.=" AND s.fournisseur = ".$db->escape($val);
-            if ($key == 'category' && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+            if ($key == 'category' && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
         dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 

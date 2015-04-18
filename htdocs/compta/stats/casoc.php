@@ -183,7 +183,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category 
 	{
-	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe";
+	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
 	else if ($selected_cat) 	// Into a specific category
 	{
@@ -201,13 +201,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_cat === -2)	// Without any category  
 	{
-	    $sql.=" AND cs.fk_societe is null";
+	    $sql.=" AND cs.fk_soc is null";
 	}
 	else if ($selected_cat) {	// Into a specific category
 	    $sql.= " AND (c.rowid = ".$selected_cat;
 	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
 	    $sql.= ")";
-		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_societe = s.rowid";
+		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 } else {
 	/*
@@ -221,7 +221,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category 
 	{
-	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe";
+	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
 	else if ($selected_cat) 	// Into a specific category
 	{
@@ -235,13 +235,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_cat === -2)	// Without any category  
 	{
-	    $sql.=" AND cs.fk_societe is null";
+	    $sql.=" AND cs.fk_soc is null";
 	}
 	else if ($selected_cat) {	// Into a specific category
 	    $sql.= " AND (c.rowid = ".$selected_cat;
 	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
 	    $sql.= ")";
-		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_societe = s.rowid";
+		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 }
 $sql.= " AND f.entity = ".$conf->entity;
