@@ -210,7 +210,7 @@ if ($resql)
 
 	$text=$langs->trans("Projects");
 	if ($mine) $text=$langs->trans('MyProjects');
-	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
