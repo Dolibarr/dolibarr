@@ -42,7 +42,7 @@ if (GETPOST('leftmenu') == 'modulesadmintools') $title=$langs->trans("ModulesSys
 
 llxHeader(array(),$title);
 
-print_fiche_titre($title,'','setup');
+print_fiche_titre($title,'','title_setup');
 
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";

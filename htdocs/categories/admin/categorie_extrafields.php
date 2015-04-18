@@ -49,6 +49,7 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
+
 require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 
@@ -63,7 +64,7 @@ llxHeader('',$langs->trans("Categories"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'title_setup');
 
 $head = categoriesadmin_prepare_head();
 

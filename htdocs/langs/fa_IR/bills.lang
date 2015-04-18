@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=مجموع دو تخفیف های جدید 
 ConfirmRemoveDiscount=آیا مطمئن هستید که می خواهید به حذف این تخفیف؟
 RelatedBill=فاکتور های مرتبط
 RelatedBills=فاکتورها مرتبط
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Latest related invoice
 WarningBillExist=Warning, one or more invoice already exist
 

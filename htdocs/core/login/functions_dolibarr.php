@@ -112,18 +112,16 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				}
 
 				// We must check entity
-				if ($passok)
+				if ($passok && ! empty($conf->multicompany->enabled))	// We must check entity
 				{
 					global $mc;
 
-					if (!isset($mc)) {
-						//Global not available, disable $conf->multicompany->enabled for safety
-						$conf->multicompany->enabled = false;
-					}
-
-					if (! empty($conf->multicompany->enabled)) {
+					if (! isset($mc)) $conf->multicompany->enabled = false; 	// Global not available, disable $conf->multicompany->enabled for safety
+					else
+					{
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
-						if ($ret < 0) {
+						if ($ret < 0)
+						{
 							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko entity '" . $entitytotest . "' not allowed for user '" . $obj->rowid . "'");
 							$login = ''; // force authentication failure
 						}

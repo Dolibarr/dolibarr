@@ -42,7 +42,7 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -151,7 +151,7 @@ abstract class ModeleNumRefDeliveryOrder
  *	Create object on disk
  *
  *	@param	DoliDB		$db  			objet base de donnee
- *	@param	Object		$object			object delivery
+ *	@param	Livraison		$object			object delivery
  *	@param	string		$modele			force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @return int         				0 if KO, 1 if OK

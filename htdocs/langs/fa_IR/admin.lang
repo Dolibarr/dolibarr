@@ -10,7 +10,7 @@ VersionUnknown=ناشناخته
 VersionRecommanded=توصیه شده
 FileCheck=Files Integrity
 FilesMissing=Missing Files
-FilesUpdated=Updated Files
+FilesUpdated=بروزرسانی فایلها
 FileCheckDolibarr=Check Dolibarr Files Integrity
 XmlNotFound=Xml File of Dolibarr Integrity Not Found
 SessionId=جلسه ID
@@ -142,7 +142,7 @@ Box=جعبه
 Boxes=جعبه
 MaxNbOfLinesForBoxes=حداکثر تعداد خطوط برای جعبه
 PositionByDefault=به طور پیش فرض منظور
-Position=Position
+Position=موقعیت
 MenusDesc=مدیران منوها محتوا از 2 میله منو (نوار افقی و نوار عمودی) را تعریف کنیم.
 MenusEditorDesc=ویرایشگر منو به شما اجازه تعریف نوشته های شخصی در منوها. استفاده از آن را به دقت برای جلوگیری از ساخت dolibarr نوشته های ناپایدار و منو برای همیشه غیر قابل دسترس. <br> برخی از ماژول اضافه کردن ورودی در منو (در منو <b>همه</b> در اغلب موارد). اگر برخی از این نوشته های به اشتباه حذف خواهند، شما می توانید آنها را غیر فعال و reenabling ماژول بازگرداند.
 MenuForUsers=منو برای کاربران
@@ -299,7 +299,7 @@ DoNotUseInProduction=آیا در استفاده از تولید نیست
 ThisIsProcessToFollow=این راه اندازی به فرآیند است:
 StepNb=مرحله٪ s را
 FindPackageFromWebSite=پیدا کردن یک بسته است که ویژگی فراهم می کند شما می خواهید (به عنوان مثال در وب سایت رسمی٪ بازدید کنندگان).
-DownloadPackageFromWebSite=Download package %s.
+DownloadPackageFromWebSite=دانلود بسته %s.
 UnpackPackageInDolibarrRoot=باز کردن فایل بسته به پوشه ریشه Dolibarr <b>هست٪ s</b>
 SetupIsReadyForUse=نصب به پایان رسید و Dolibarr آماده استفاده است با این بخش جدید است.
 NotExistsDirect=ریشه جایگزین تعریف نشده است. <br>
@@ -309,7 +309,7 @@ YouCanSubmitFile=ماژول را انتخاب کنید:
 CurrentVersion=نسخه فعلی Dolibarr
 CallUpdatePage=برو به صفحه ای که به روز رسانی ساختار بانک اطلاعاتی و دادهها:٪ است.
 LastStableVersion=آخرین نسخه پایدار
-UpdateServerOffline=Update server offline
+UpdateServerOffline=بروزرسانی آفلاین سرور
 GenericMaskCodes=شما می توانید ماسک شماره را وارد کنید. در این ماسک، تگ های زیر می تواند مورد استفاده قرار گیرد: <br> <b>{000000}</b> مربوط به تعداد خواهد شد که در هر یک از٪ s را افزایش مییابد. به عنوان بسیاری از صفر را وارد کنید به عنوان طول مورد نظر از ضد. شمارنده خواهد شد صفر از سمت چپ به منظور به صفر کرده اند و بسیاری از ماسک به پایان رسید. <br> <b>{000.000 +000}</b> همان قبلی است اما جبران مربوطه را به شماره در سمت راست علامت + شروع به کار رفته در اولین٪ است. <br> <b>{000000 @ X}</b> همان قبلی است اما شمارنده به صفر زمانی که ماه X برسد (x بین 1 و 12، و یا 0 به استفاده از ماه های اولیه سال مالی تعیین شده در تنظیمات خود را، و یا 99 به صفر هر ماه ). اگر این گزینه استفاده می شود و x است 2 یا بالاتر، و سپس دنباله {YY} {میلی متر} یا {تاریخ برای ورود yyyy} {میلی متر} نیز مورد نیاز است. <br> <b>{تولد}</b> روز (01 تا 31). <br> <b>{میلی متر}</b> ماه (01 تا 12). <br> <b>{YY}، {تاریخ برای ورود yyyy}</b> یا <b>{Y}</b> سال بیش از 2، 4 و یا 1 عدد. <br>
 GenericMaskCodes2=<b>{CCCC}</b> کد مشتری در تعداد کاراکتر <br> <b>{cccc000}</b> کد مشتری در تعداد کاراکتر توسط شمارنده اختصاص داده شده برای مشتری است. این مبارزه اختصاص داده شده به مشتری است که در همان زمان از مبارزه جهانی بازنشانی کنید. <br> <b>{TTTT}</b> کد از نوع thirdparty در تعداد شخصیت (نگاه کنید به انواع فرهنگ لغت-thirdparty). <br>
 GenericMaskCodes3=تمام شخصیت های دیگر در ماسک دست نخورده باقی خواهد ماند. <br> فضاهای امکان پذیر نیست. <br>
@@ -389,6 +389,7 @@ ExtrafieldSeparator=تفکیک کننده
 ExtrafieldCheckBox=جعبه
 ExtrafieldRadio=دکمه های رادیویی
 ExtrafieldCheckBoxFromList= Checkbox from table
+ExtrafieldLink=Link to an object
 ExtrafieldParamHelpselect=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ... <br><br> به منظور داشتن لیست بسته به نوع دیگر: <br> 1، VALUE1 | parent_list_code: parent_key <br> 2، VALUE2 | parent_list_code: parent_key
 ExtrafieldParamHelpcheckbox=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ...
 ExtrafieldParamHelpradio=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ...
@@ -494,6 +495,8 @@ Module500Name=هزینه های ویژه (مالیاتی، کمک های اجت�
 Module500Desc=مدیریت هزینه های خاص مانند مالیات، مشارکت اجتماعی، سود سهام و حقوق
 Module510Name=حقوق
 Module510Desc=مدیریت کارکنان حقوق و پرداخت
+Module520Name=Loan
+Module520Desc=Management of loans
 Module600Name=اطلاعیه ها
 Module600Desc=Send EMail notifications on some Dolibarr business events to third-party contacts (setup defined on each thirdparty)
 Module700Name=کمک های مالی
@@ -506,23 +509,23 @@ Module1200Name=اخوندک
 Module1200Desc=ادغام آخوندک
 Module1400Name=حسابداری
 Module1400Desc=مدیریت حسابداری (احزاب دو)
-Module1520Name=Document Generation
+Module1520Name=ساخت سند
 Module1520Desc=Mass mail document generation
-Module1780Name=دسته بندی ها
-Module1780Desc=مدیریت گروه (محصولات، تامین کنندگان و مشتریان)
+Module1780Name=Tags/Categories
+Module1780Desc=Create tags/category (products, customers, suppliers, contacts or members)
 Module2000Name=ویرایشگر WYSIWYG
 Module2000Desc=اجازه می دهد به ویرایش برخی از متن با استفاده از ویرایشگر پیشرفته
-Module2200Name=Dynamic Prices
+Module2200Name=قیمت های پویا.
 Module2200Desc=Enable the usage of math expressions for prices
 Module2300Name=cron را
-Module2300Desc=وظیفه مدیریت برنامه ریزی
+Module2300Desc=Scheduled job management
 Module2400Name=دستور کار
 Module2400Desc=رویدادهای / وظایف و مدیریت برنامه
 Module2500Name=الکترونیکی مدیریت محتوا
 Module2500Desc=ذخیره و به اشتراک اسناد
 Module2600Name=سرویس دهنده وب
 Module2600Desc=فعال کردن Dolibarr خدمات وب سرور
-Module2650Name=WebServices (client)
+Module2650Name=وب سروسی ها ( کلاینت)
 Module2650Desc=Enable the Dolibarr web services client (Can be used to push data/requests to external servers. Supplier orders supported only for the moment)
 Module2700Name=Gravatar در
 Module2700Desc=استفاده از سرویس آنلاین Gravatar در (www.gravatar.com) برای نشان دادن عکس از کاربران / کاربران (که با ایمیل های خود را). نیاز به دسترسی به اینترنت
@@ -714,6 +717,11 @@ Permission510=خوانده شده حقوق
 Permission512=ایجاد / اصلاح حقوق
 Permission514=حذف حقوق
 Permission517=حقوق صادرات
+Permission520=Read Loans
+Permission522=Create/modify loans
+Permission524=Delete loans
+Permission525=Access loan calculator
+Permission527=Export loans
 Permission531=خوانده شده خدمات
 Permission532=ایجاد / اصلاح خدمات
 Permission534=حذف خدمات
@@ -746,6 +754,7 @@ Permission1185=تصویب سفارشات کالا
 Permission1186=سفارشات تامین کننده نظم
 Permission1187=اذعان دریافت سفارشات کالا
 Permission1188=حذف سفارشات کالا
+Permission1190=Approve (second approval) supplier orders
 Permission1201=دریافت نتیجه شده از صادرات
 Permission1202=ایجاد / اصلاح صادرات
 Permission1231=خوانده شده فاکتورها منبع
@@ -758,10 +767,10 @@ Permission1237=سفارشات عرضه کننده کالا صادرات و مش�
 Permission1251=اجرای واردات انبوه از داده های خارجی به پایگاه داده (بار داده ها)
 Permission1321=فاکتورها صادرات به مشتریان، ویژگی ها و پرداخت ها
 Permission1421=سفارشات صادرات مشتری و ویژگی های
-Permission23001 = به نشانه خوانده شدن برنامه ریزی شده کار
-Permission23002 = ایجاد / بروز رسانی برنامه ریزی شده کار
-Permission23003 = حذف کار برنامه ریزی شده
-Permission23004 = اجرای کار برنامه ریزی شده
+Permission23001=Read Scheduled job
+Permission23002=Create/update Scheduled job
+Permission23003=Delete Scheduled job
+Permission23004=Execute Scheduled job
 Permission2401=دفعات بازدید: اقدامات (رویدادها و وظایف) مرتبط با حساب کاربری خود
 Permission2402=ایجاد / اصلاح اعمال (رویدادها و وظایف) به حساب او در ارتباط است
 Permission2403=حذف اقدامات (رویدادها و وظایف) مرتبط با حساب کاربری خود
@@ -808,7 +817,7 @@ DictionaryOrderMethods=مرتب سازی بر روش
 DictionarySource=منبع از پیشنهادات / سفارشات
 DictionaryAccountancyplan=نمودار حساب
 DictionaryAccountancysystem=مدل برای نمودار حساب
-DictionaryEMailTemplates=Emails templates
+DictionaryEMailTemplates=الگوهای ایمیل
 SetupSaved=راه اندازی نجات داد
 BackToModuleList=بازگشت به لیست ماژول ها
 BackToDictionaryList=برگشت به فهرست واژه نامه ها
@@ -1107,7 +1116,7 @@ ModuleCompanyCodeAquarium=بازگشت یک کد حسابداری ساخته ش�
 ModuleCompanyCodePanicum=بازگشت یک کد حسابداری خالی است.
 ModuleCompanyCodeDigitaria=کد حسابداری بستگی به کد های شخص ثالث. کد از شخصیت "C" در مقام اول و پس از آن 5 حرف اول کد های شخص ثالث تشکیل شده است.
 UseNotifications=استفاده از اطلاعیه
-NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one third party at time.<br>* or by setting a global target email address on module setup page.
+NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one contact at time.<br>* or by setting global target email addresses in module setup page.
 ModelModules=اسناد قالب
 DocumentModelOdt=تولید اسناد از OpenDocuments قالب (. ODT و یا فایل های ODS برای آفیس اپن سورس کنند، KOffice، TextEdit، ...)
 WatermarkOnDraft=تعیین میزان مد آب در پیش نویس سند
@@ -1557,6 +1566,7 @@ SuppliersSetup=تامین کننده راه اندازی ماژول
 SuppliersCommandModel=قالب کامل جهت عرضه کننده کالا (logo. ..)
 SuppliersInvoiceModel=قالب کامل منبع فاکتور (logo. ..)
 SuppliersInvoiceNumberingModel=فاکتورها تامین کننده شماره مدل
+IfSetToYesDontForgetPermission=If set to yes, don't forget to provide permissions to groups or users allowed for the second approval
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=راه اندازی ماژول GeoIP با Maxmind
 PathToGeoIPMaxmindCountryDataFile=مسیر فایل حاوی Maxmind آی پی به ترجمه کشور است. <br> مثال: <br> / usr / محلی / سهم / GeoIP با / GeoIP.dat <br> / usr / اشتراک / GeoIP با / GeoIP.dat
@@ -1601,3 +1611,8 @@ ExpenseReportsSetup=Setup of module Expense Reports
 TemplatePDFExpenseReports=Document templates to generate expense report document
 NoModueToManageStockDecrease=No module able to manage automatic stock decrease has been activated. Stock decrease will be done on manual input only.
 NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.
+YouMayFindNotificationsFeaturesIntoModuleNotification=You may find options for EMail notifications by enabling and configuring the module "Notification".
+ListOfNotificationsPerContact=List of notifications per contact*
+ListOfFixedNotifications=List of fixed notifications
+GoOntoContactCardToAddMore=Go on the tab "Notifications" of a thirdparty contact to add or remove notifications for contacts/addresses
+Threshold=Threshold

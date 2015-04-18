@@ -55,7 +55,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
 
 			//print 'rrrrr'.get_include_path();
-		    $res = include_once('ChromePhp.php');
+		    $res = @include_once('ChromePhp.php');
 		    if (! $res) $res=@include_once('ChromePhp.class.php');
 
 		    restore_include_path();

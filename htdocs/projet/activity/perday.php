@@ -48,10 +48,32 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
+$now=dol_now();
+$nowtmp=dol_getdate($now);
+$nowday=$nowtmp['mday'];
+$nowmonth=$nowtmp['mon'];
+$nowyear=$nowtmp['year'];
+
+$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):date("Y"));
+$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):date("m"));
+$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):date("d"));
+$day = (int) $day;
+$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
+
+$daytoparse = $now;
+if ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, $year);
+
 
 /*
  * Actions
  */
+
+if (GETPOST('submitdateselect'))
+{
+	$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+
+	$action = '';
+}
 
 if ($action == 'addtime' && $user->rights->projet->creer)
 {
@@ -133,6 +155,16 @@ $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
 
+$prev = dol_getdate($daytoparse - (24 * 3600));
+$prev_year  = $prev['year'];
+$prev_month = $prev['mon'];
+$prev_day   = $prev['mday'];
+
+$next = dol_getdate($daytoparse + (24 * 3600));
+$next_year  = $next['year'];
+$next_month = $next['mon'];
+$next_day   = $next['mday'];
+
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
 
@@ -157,10 +189,21 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($projec
 
 llxHeader("",$title,"");
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 
-print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
+// Show navigation bar
+$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"day")." </span>\n";
+$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+$nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
+$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+
+$picto='calendarweek';
+
+
+print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].($project->id > 0 ? '?id='.$project->id : '').'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -169,13 +212,25 @@ $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperday', '', 0, 'task');
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
+if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br><br>';
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
 }
+print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+print '<br>';
+print "\n";
 
+// Filter on user
+/*	dol_fiche_head('');
+	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
+	print '<td>';
+	if ($mine) print $user->getLoginUrl(1);
+	print '</td>';
+	print '</tr></table>';
+	dol_fiche_end();
+*/
 
 // Filter on user
 /*	dol_fiche_head('');
@@ -187,15 +242,9 @@ else
 	dol_fiche_end();
 */
 
-// Filter on user
-/*	dol_fiche_head('');
-	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
-	print '<td>';
-	if ($mine) print $user->getLoginUrl(1);
-	print '</td>';
-	print '</tr></table>';
-	dol_fiche_end();
-*/
+
+print '<div align="right">'.$nav.'</div>';
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -207,7 +256,7 @@ print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
-print '<td align="center">'.$langs->trans("DateAndHour").'</td>';
+print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
 print "</tr>\n";
 
@@ -217,7 +266,7 @@ $restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJEC
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $daytoparse);
 }
 else
 {
@@ -232,6 +281,13 @@ print '<input type="submit" class="button"'.($disabledtask?' disabled="disabled"
 print '</div>';
 
 print '</form>';
+
+
+print '<script type="text/javascript">';
+print "jQuery(document).ready(function () {\n";
+print '		jQuery(".timesheetalreadyrecorded").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50, content: \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $user->getFullName($langs))).'\'});';
+print "});";
+print '</script>';
 
 
 llxFooter();

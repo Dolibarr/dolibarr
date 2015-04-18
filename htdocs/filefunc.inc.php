@@ -8,6 +8,7 @@
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,14 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
+
+//replace conf filename with "conf" parameter on url by GET
+if (!empty($_GET['conf'])) {
+    setcookie('dolconf', $_GET['conf'],0,'/');
+    $conffile = 'conf/' . $_GET['conf'] . '.php';
+} else {
+    $conffile = 'conf/' . (!empty($_COOKIE['dolconf']) ? $_COOKIE['dolconf'] : 'conf') . '.php';
+}
 
 
 // Include configuration

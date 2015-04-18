@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Liste over leverandørens fakturaer knytte
 ListContractAssociatedProject=Liste over kontrakter knyttet til prosjektet
 ListFichinterAssociatedProject=Liste over tiltak knyttet til prosjektet
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Liste over tiltak knyttet til prosjektet
 ActivityOnProjectThisWeek=Aktiviteter i prosjektet denne uke
 ActivityOnProjectThisMonth=Aktiviteter i prosjektet denne måned

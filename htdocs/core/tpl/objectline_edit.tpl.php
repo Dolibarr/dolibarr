@@ -23,6 +23,7 @@
  * $object (invoice, order, ...)
  * $conf
  * $langs
+ * $seller, $nuyer
  * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)

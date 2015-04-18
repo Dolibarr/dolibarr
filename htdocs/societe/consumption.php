@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * Version V1.1 Initial version of Philippe Berthet
@@ -76,6 +76,7 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("propal");
+$langs->load("interventions");
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('consumptionthirdparty'));
@@ -99,7 +100,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $productstatic=new Product($db);
 
-$title = $langs->trans("Referer",$object->name);
+$title = $langs->trans("Referers",$object->name);
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);

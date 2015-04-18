@@ -36,7 +36,7 @@
  */
 function tax_prepare_head(ChargeSociales $object)
 {
-    global $langs, $conf;
+    global $langs, $conf, $user;
 
     $h = 0;
     $head = array();
@@ -57,7 +57,7 @@ function tax_prepare_head(ChargeSociales $object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -496,7 +496,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql.= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
         	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 			else $sql.= " AND f.type IN (0,1,2,3,5)";
-            $sql.= " AND f.rowid = d.".$fk_facture;;
+            $sql.= " AND f.rowid = d.".$fk_facture;
             $sql.= " AND pf.".$fk_facture2." = f.rowid";
             $sql.= " AND pa.rowid = pf.".$fk_payment;
             if ($y && $m)

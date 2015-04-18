@@ -37,7 +37,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("FileCheckDolibarr"),'','setup');
+print_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
 
 // Version
 $var = true;

@@ -321,7 +321,7 @@ class Loan extends CommonObject
      *  Return label of loan status (unpaid, paid)
      *
      *  @param	int		$mode       	0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
     function getLibStatut($mode=0,$alreadypaid=-1)
@@ -334,7 +334,7 @@ class Loan extends CommonObject
      *
      *  @param	int		$statut        	Id statut
      *  @param  int		$mode          	0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
     function LibStatut($statut,$mode=0,$alreadypaid=-1)
@@ -447,7 +447,7 @@ class Loan extends CommonObject
 	 * Information on record
 	 *
 	 * @param	int		$id      Id of record
-	 * @return	void
+	 * @return	integer|null
 	 */
 	function info($id)
 	{

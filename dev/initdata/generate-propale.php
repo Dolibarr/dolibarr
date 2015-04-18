@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/dev/generate-propale.php
+ *	    \file       dev/initdata/generate-propale.php
  *		\brief      Script de generation de donnees aleatoires pour les propales
  */
 

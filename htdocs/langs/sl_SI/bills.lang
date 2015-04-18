@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Vsota obeh novih popustov mora biti enaka o
 ConfirmRemoveDiscount=Ali zares želite odstraniti ta popust ?
 RelatedBill=Podobni račun
 RelatedBills=Povezani računi
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Zadnji povezan račun
 WarningBillExist=Pozor, obstaja že en ali več računov
 

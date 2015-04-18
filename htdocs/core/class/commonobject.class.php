@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1611,7 +1611,7 @@ abstract class CommonObject
     	}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
-    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+    		dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
 
@@ -1887,10 +1887,11 @@ abstract class CommonObject
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
      *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
+     *  @param	int		$alsosametype	0=Return only links to different object than source. 1=Include also link to objects of same type.
      *	@return	void
      *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
      */
-	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR',$alsosametype=1)
     {
         global $conf;
 
@@ -1924,7 +1925,7 @@ abstract class CommonObject
         	return -1;
         }
 
-        // Links beetween objects are stored in this table
+        // Links between objects are stored in table element_element
         $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
         $sql.= " WHERE ";
@@ -1983,7 +1984,7 @@ abstract class CommonObject
 
                     $classpath = $element.'/class';
 
-                    // To work with non standard path
+                    // To work with non standard classpath or module name
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
                     }
@@ -2019,7 +2020,7 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
-                    if ($conf->$module->enabled && $element != $this->element)
+                    if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
@@ -3214,7 +3215,7 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// FIXME Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
+		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
 	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
@@ -3349,25 +3350,26 @@ abstract class CommonObject
 	    $this->db->begin();
 
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-	    $sql.= " WHERE rowid =".$rowid;
+	    $sql.= " WHERE rowid=".$rowid;
 
 	    dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
-	    if ($this->db->query($sql))
-	    {
-	        if (! $notrigger)
+            $resql=$this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                if (! $notrigger)
 	        {
 	            $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
 	            if ($result < 0) { $this->db->rollback(); return -1; }
 	        }
-
-	        return 1;
-	    }
-	    else
-	    {
-	        $this->error=$this->db->lasterror();
-	        $this->db->rollback();
-	        return -1;
-	    }
+                $this->db->commit();
+                return 1;
+            }
 	}
 
 
@@ -3894,5 +3896,27 @@ abstract class CommonObject
 		return $user->rights->{$this->element};
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 * This function is meant to be called from replaceThirdparty with the appropiate tables
+	 * Column name fk_soc MUST be used to identify thirdparties
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @param array $tables Tables that need to be changed
+	 * @return bool
+	 */
+	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
+	{
+		foreach ($tables as $table) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
+			if (!$db->query($sql)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

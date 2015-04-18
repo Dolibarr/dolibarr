@@ -72,6 +72,7 @@ ListSupplierInvoicesAssociatedProject=Списък на фактурите на 
 ListContractAssociatedProject=Списък на договори, свързани с проекта
 ListFichinterAssociatedProject=Списък на интервенциите, свързани с проекта
 ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=Списък на събития, свързани с проекта
 ActivityOnProjectThisWeek=Дейности в проекта тази седмица
 ActivityOnProjectThisMonth=Дейност по проект, този месец

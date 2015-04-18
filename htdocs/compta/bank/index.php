@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ llxHeader('',$langs->trans('AccountsArea'),$help_url);
 $link='';
 if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
 if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
-print_fiche_titre($langs->trans("AccountsArea"),$link);
+print_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
 
 
 // On charge tableau des comptes financiers (ouverts par defaut)
@@ -111,8 +112,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
@@ -129,7 +134,7 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print '</table>';
@@ -182,7 +187,7 @@ if (! $found)
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print '</table>';
@@ -223,8 +228,12 @@ foreach ($accounts as $key=>$type)
 		if ($acc->rappro)
 		{
 			$result=$acc->load_board($user,$acc->id);
-			print $acc->nbtodo;
-			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+            if ($result<0) {
+                setEventMessage($acc->error, 'errors');
+            } else {
+                print $result->nbtodo;
+                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+            }
 		}
 		else print $langs->trans("FeatureDisabled");
 		print '</td>';
@@ -245,7 +254,7 @@ if (! $found)
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print "</table>";

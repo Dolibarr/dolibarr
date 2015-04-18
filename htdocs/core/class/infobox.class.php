@@ -30,7 +30,7 @@ class InfoBox
 	/**
 	 * Name of positions 0=Home, 1=...
 	 *
-	 * @return	array		Array with list of zones
+	 * @return	string[]		Array with list of zones
 	 */
 	static function getListOfPagesForBoxes()
 	{

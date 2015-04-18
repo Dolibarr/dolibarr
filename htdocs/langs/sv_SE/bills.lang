@@ -294,6 +294,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Totalt för två nya rabatt måste vara lik
 ConfirmRemoveDiscount=Är du säker på att du vill ta bort denna rabatt?
 RelatedBill=Relaterade faktura
 RelatedBills=Relaterade fakturor
+RelatedCustomerInvoices=Related customer invoices
+RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Senast relaterad faktura
 WarningBillExist=Varning, en eller flera fakturor finns redan
 

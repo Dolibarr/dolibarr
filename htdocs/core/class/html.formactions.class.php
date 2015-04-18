@@ -211,7 +211,10 @@ class FormActions
         		{
 	        		$tmpa=dol_getdate($action->datep);
 	        		$tmpb=dol_getdate($action->datef);
-	        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) print '-'.dol_print_date($action->datef,'hour');
+	        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
+	        		{
+	        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef,'hour');
+	        		}
 	        		else print '-'.dol_print_date($action->datef,'dayhour');
         		}
         		print '</td>';

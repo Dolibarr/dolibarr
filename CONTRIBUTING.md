@@ -3,7 +3,10 @@ How to contribute to Dolibarr
 
 Bug reports and feature requests
 --------------------------------
-** NEW **
+
+*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
+
+**NEW**
 
 Issues are now managed on [GitHub](https://github.com/Dolibarr/dolibarr/Issues).
 
@@ -42,28 +45,19 @@ Please don't edit the ChangeLog file. A project manager will update it from your
 Use clear commit messages with the following structure:
 
 <pre>
-KEYWORD Short description (may be the bug number #456)
+FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
+or
+CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. In upper case to appear into ChangeLog)
+or
+NEW|New Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #456)
+or
+Short description (when the commit is not introducing feature nor closing a bug)
 
 Long description (Can span accross multiple lines).
 </pre>
 
-Where KEYWORD is one of:
-
-- "Fixed" for bug fixes (May be followed by the bug number i.e: #456)
-- "Closed" for a commit to close a feature request issue (May be followed by the bug number i.e: #456)
-- void, don't put a keyword if the commit is not introducing feature or closing a bug.
-
 ### Pull Requests
-When submitting a pull request, use following syntax:
-
-<pre>
-KEYWORD Short description (may be the bug number #456)
-</pre>
-
-Where KEYWORD is one of:
-
-- "FIXED" or "Fixed" for bug fixes. In upper case to appear into ChangeLog. (May be followed by the bug number i.e: #456)
-- "NEW" or "New" for new features. In upper case to appear into ChangeLog. (May be followed by the task number i.e: #123)
+When submitting a pull request, use same rule than Commits. With upper case keyword to appear into ChangeLog.
 
 
 ### Resources

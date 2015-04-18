@@ -115,7 +115,7 @@ $notify = new Notify($db);
 llxHeader('',$langs->trans("NotificationSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br><br>';
 
@@ -174,8 +174,8 @@ if ($conf->societe->enabled)
 	    print '<td>'.$notifiedevent['code'].'</td>';
 	    print '<td>'.$label.'</td>';
 	    print '<td align="right">';
-		$nb = $notify->countDefinedNotifications($notifiedevent['code'], 0);
-		print $nb;
+		$tmparray = $notify->getNotificationsArray($notifiedevent['code'], 0);
+		print count($tmparray);
 	    print '</td>';
 	    print '</tr>';
 	}

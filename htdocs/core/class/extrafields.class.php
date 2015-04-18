@@ -74,11 +74,11 @@ class ExtraFields
 	'mail'=>'ExtrafieldMail',
 	'select' => 'ExtrafieldSelect',
 	'sellist' => 'ExtrafieldSelectList',
-	'separate' => 'ExtrafieldSeparator',
-	'checkbox' => 'ExtrafieldCheckBox',
 	'radio' => 'ExtrafieldRadio',
+	'checkbox' => 'ExtrafieldCheckBox',
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 	'link' => 'ExtrafieldLink',
+	'separate' => 'ExtrafieldSeparator',
 	);
 
 	/**
@@ -568,11 +568,11 @@ class ExtraFields
 		global $conf;
 
 		if ( empty($elementtype) ) return array();
-		
+
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		$array_name_label=array();
-		
+
 		// For avoid conflicts with external modules
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
@@ -602,7 +602,7 @@ class ExtraFields
 					$this->attribute_elementtype[$tab->name]=$tab->elementtype;
 					$this->attribute_unique[$tab->name]=$tab->fieldunique;
 					$this->attribute_required[$tab->name]=$tab->fieldrequired;
-					$this->attribute_param[$tab->name]=unserialize($tab->param);
+					$this->attribute_param[$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 					$this->attribute_perms[$tab->name]=$tab->perms;
@@ -805,7 +805,7 @@ class ExtraFields
 					$sqlwhere.= ' WHERE 1';
 				}
 				if (in_array($InfoFieldList[0],array('tablewithentity'))) $sqlwhere.= ' AND entity = '.$conf->entity;	// Some tables may have field, some other not. For the moment we disable it.
-				//$sql.=preg_replace('/^ AND /','',$sqlwhere);
+				$sql.=$sqlwhere;
 				//print $sql;
 
 				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
@@ -1056,7 +1056,7 @@ class ExtraFields
 		elseif ($type == 'link')
 		{
 			$out='';
-			
+
 			$param_list=array_keys($param['options']);
 			// 0 : ObjectName
 			// 1 : classPath

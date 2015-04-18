@@ -181,8 +181,8 @@ if ($result > 0)
     print '<tr><td>'.$langs->trans("NbOfActiveNotifications").'</td>';
     print '<td colspan="3">';
     $notify=new Notify($db);
-    $nb = $notify->countDefinedNotifications('', $object->id);
-    print $nb;
+    $tmparray = $notify->getNotificationsArray('', $object->id);
+    print count($tmparray);
     print '</td></tr>';
     print '</table>';
 
@@ -264,42 +264,8 @@ if ($result > 0)
     print_liste_field_titre('','','');
     print '</tr>';
 
-    // List of notifications enabled for fixed email
-    foreach($conf->global as $key => $val)
-    {
-    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-    	$var = ! $var;
-		print '<tr '.$bc[$var].'><td>';
-		$listtmp=explode(',',$val);
-		$first=1;
-		foreach($listtmp as $keyemail => $valemail)
-		{
-			if (! $first) print ', ';
-			$first=0;
-			$valemail=trim($valemail);
-    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-			if (isValidEmail($valemail, 1))
-			{
-				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
-				else print ' &lt;'.$valemail.'&gt;';
-			}
-			else
-			{
-				$langs->load("errors");
-				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
-			}
-		}
-		print '</td>';
-		print '<td>';
-		$label=($langs->trans("Notify_".$reg[1])!="Notify_".$reg[1]?$langs->trans("Notify_".$reg[1]):$reg[1]);
-		print $label;
-		print '</td>';
-		print '<td>';
-		print $langs->trans("Email");
-		print '</td>';
-		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
-		print '</tr>';
-    }
+	$langs->load("errors");
+	$langs->load("other");
 
     // List of notifications enabled for contacts
     $sql = "SELECT n.rowid, n.type,";
@@ -360,6 +326,56 @@ if ($result > 0)
     else
     {
         dol_print_error($db);
+    }
+
+    // List of notifications enabled for fixed email
+    /*
+    foreach($conf->global as $key => $val)
+    {
+    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+    	$var = ! $var;
+		print '<tr '.$bc[$var].'><td>';
+		$listtmp=explode(',',$val);
+		$first=1;
+		foreach($listtmp as $keyemail => $valemail)
+		{
+			if (! $first) print ', ';
+			$first=0;
+			$valemail=trim($valemail);
+    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+			if (isValidEmail($valemail, 1))
+			{
+				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
+				else print ' &lt;'.$valemail.'&gt;';
+			}
+			else
+			{
+				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
+			}
+		}
+		print '</td>';
+		print '<td>';
+		$notifcode=preg_replace('/_THRESHOLD_.*$/','',$reg[1]);
+		$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
+		$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
+		print $label;
+		if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
+		{
+			print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
+		}
+		print '</td>';
+		print '<td>';
+		print $langs->trans("Email");
+		print '</td>';
+		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
+		print '</tr>';
+    }*/
+    if ($user->admin)
+    {
+	    $var = ! $var;
+		print '<tr '.$bc[$var].'><td colspan="4">';
+		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
+		print '</td></tr>';
     }
 
     print '</table>';

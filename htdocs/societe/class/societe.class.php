@@ -248,7 +248,6 @@ class Societe extends CommonObject
 
     var $specimen;
 
-
     /**
      * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
      * @var int
@@ -905,7 +904,7 @@ class Societe extends CommonObject
             	$action='update';
 
                 // Actions on extra fields (by external module or standard code)
-                // FIXME le hook fait double emploi avec le trigger !!
+                // TODO le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1589,7 +1588,7 @@ class Societe extends CommonObject
      *
      *	@param	User	$user		Filtre sur un user auteur des remises
      * 	@param	string	$filter		Filtre autre
-     * 	@param	string	$maxvalue	Filter on max value for discount
+     * 	@param	integer	$maxvalue	Filter on max value for discount
      *	@return	int					<0 if KO, Credit note amount otherwise
      */
     function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
@@ -1738,8 +1737,8 @@ class Societe extends CommonObject
      *
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param	int		$maxlen			Max length of text
-     *      @param	string	$notooltip		1=Disable tooltip
+     *		@param	int		$maxlen			Max length of name
+     *      @param	integer	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
     function getNomUrl($withpicto=0,$option='',$maxlen=0,$notooltip=0)
@@ -2766,7 +2765,7 @@ class Societe extends CommonObject
     {
         if ($categorie_id > 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
             $sql.= " VALUES ('".$categorie_id."','".$this->id."');";
 
             if ($resql=$this->db->query($sql)) return 0;
@@ -3267,4 +3266,49 @@ class Societe extends CommonObject
 
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 * It must be used within a transaction to avoid trouble
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		/**
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
+		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 */
+		$sql = 'SELECT rowid
+FROM llx_societe_commerciaux
+WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
+  SELECT fk_user
+  FROM llx_societe_commerciaux
+  WHERE fk_soc = '.(int) $origin_id.'
+);';
+
+		$query = $db->query($sql);
+
+		while ($result = $db->fetch_object($query)) {
+			$db->query('DELETE FROM llx_societe_commerciaux WHERE rowid = '.$result->rowid);
+		}
+
+		/**
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
+		 * Do not include llx_societe because it will be replaced later
+		 */
+		$tables = array(
+			'societe_address',
+			'societe_commerciaux',
+			'societe_log',
+			'societe_prices',
+			'societe_remise',
+			'societe_remise_except',
+			'societe_rib'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

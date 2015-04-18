@@ -178,7 +178,7 @@ if ($result) {
 
 /*
  * Action
- * FIXME Action must be set before any view part
+ * FIXME Action must be set before any view part to respect MVC
  */
 
 // Bookkeeping Write

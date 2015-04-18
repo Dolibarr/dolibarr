@@ -55,10 +55,15 @@ class FactureFournisseur extends CommonInvoice
     var $socid;
     //Check constants for types
     var $type = self::TYPE_STANDARD;
-    //! 0=draft,
-    //! 1=validated
-    //! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
-    //! Also 2, should be 3=classified abandoned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
+
+	/**
+	 * Check constants for more info:
+	 * - STATUS_DRAFT
+	 * - STATUS_VALIDATED
+	 * - STATUS_PAID
+	 * - STATUS_ABANDONED
+	 * @var int
+	 */
     var $statut;
     //! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
     var $paye;
@@ -100,7 +105,7 @@ class FactureFournisseur extends CommonInvoice
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
-	
+
     var $extraparams=array();
 
     /**
@@ -248,7 +253,7 @@ class FactureFournisseur extends CommonInvoice
             	$action='create';
 
 				// Actions on extra fields (by external module or standard code)
-				// FIXME le hook fait double emploi avec le trigger !!
+				// TODO le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('supplierinvoicedao'));
 				$parameters=array('socid'=>$this->id);
 				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -423,9 +428,9 @@ class FactureFournisseur extends CommonInvoice
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-				
+
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->socid  = $obj->socid;
@@ -438,7 +443,7 @@ class FactureFournisseur extends CommonInvoice
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 $this->fetch_optionals($this->id,$extralabels);
 
-                if ($this->statut == 0) $this->brouillon = 1;
+                if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
                 $result=$this->fetch_lines();
                 if ($result < 0)
@@ -502,7 +507,8 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->product_ref		= $obj->product_ref;       // Internal reference
                     $this->lines[$i]->ref				= $obj->product_ref;       // deprecated.
                     $this->lines[$i]->ref_supplier		= $obj->ref_supplier;      // Reference product supplier TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields it into updateline
-                    $this->lines[$i]->libelle			= $obj->label;             // This field may contains label of product (when invoice create from order)
+                    $this->lines[$i]->libelle			= $obj->label;             // Deprecated
+                    $this->lines[$i]->label  			= $obj->label;             // This field may contains label of product (when invoice create from order)
                     $this->lines[$i]->product_desc		= $obj->product_desc;      // Description du produit
                     $this->lines[$i]->subprice			= $obj->pu_ht;
                     $this->lines[$i]->pu_ht				= $obj->pu_ht;
@@ -520,6 +526,7 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->total_ttc			= $obj->total_ttc;
                     $this->lines[$i]->fk_product		= $obj->fk_product;
                     $this->lines[$i]->product_type		= $obj->product_type;
+                    $this->lines[$i]->product_label		= $obj->label;
                     $this->lines[$i]->info_bits		    = $obj->info_bits;
                     $this->lines[$i]->fk_parent_line    = $obj->fk_parent_line;
                     $this->lines[$i]->special_code		= $obj->special_code;
@@ -572,7 +579,7 @@ class FactureFournisseur extends CommonInvoice
         //	if (isset($this->total_localtax1)) $this->total_localtax1=trim($this->total_localtax1);
         //	if (isset($this->total_localtax2)) $this->total_localtax2=trim($this->total_localtax2);
         if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
-        if (isset($this->statut)) $this->statut=trim($this->statut);
+        if (isset($this->statut)) $this->statut=(int) $this->statut;
         if (isset($this->author)) $this->author=trim($this->author);
         if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
         if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
@@ -886,7 +893,7 @@ class FactureFournisseur extends CommonInvoice
         $error=0;
 
         // Protection
-        if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management)
+        if ($this->statut > self::STATUS_DRAFT)	// This is to avoid to validate twice (avoid errors on logs and stock management)
         {
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
             return 0;
@@ -995,7 +1002,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $error)
             {
             	$this->ref = $num;
-            	$this->statut=1;
+            	$this->statut=self::STATUS_VALIDATED;
             	//$this->date_validation=$now; this is stored into log table
             }
 
@@ -1032,7 +1039,7 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
             return 0;
@@ -1403,7 +1410,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function info($id)
     {
-        $sql = 'SELECT c.rowid, datec, tms as datem,';
+        $sql = 'SELECT c.rowid, datec, tms as datem, ';
         $sql.= ' fk_user_author, fk_user_valid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
         $sql.= ' WHERE c.rowid = '.$id;
@@ -1429,7 +1436,7 @@ class FactureFournisseur extends CommonInvoice
                 }
                 $this->date_creation     = $obj->datec;
                 $this->date_modification = $obj->datem;
-                //$this->date_validation   = $obj->datev; Should be stored in log table
+                //$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
             }
             $this->db->free($result);
         }
@@ -1746,7 +1753,7 @@ class FactureFournisseur extends CommonInvoice
         // Load source object
         $object->fetch($fromid);
         $object->id=0;
-        $object->statut=0;
+        $object->statut=self::STATUS_DRAFT;
 
         // Clear fields
         $object->ref_supplier=$langs->trans("CopyOf").' '.$object->ref_supplier;
@@ -1847,7 +1854,22 @@ class FactureFournisseur extends CommonInvoice
 		return $user->rights->fournisseur->facture;
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facture_fourn'
+		);
 
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 

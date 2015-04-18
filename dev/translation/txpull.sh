@@ -26,7 +26,6 @@ fi
 
 if [ "x$1" = "xall" ]
 then
-    cd htdocs/lang
 	for dir in `find htdocs/langs/* -type d`
 	do
 	    fic=`basename $dir`

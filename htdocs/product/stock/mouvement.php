@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ $search_product = trim(GETPOST("search_product"));
 $search_warehouse = trim(GETPOST("search_warehouse"));
 $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
+$search_batch = trim(GETPOST("search_batch"));
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -70,6 +72,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_product="";
     $search_warehouse="";
     $search_user="";
+    $search_batch="";
     $sall="";
 }
 
@@ -147,34 +150,17 @@ else if ($year > 0)
 {
     $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if (! empty($search_movement))
-{
-    $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
-}
-if (! empty($search_inventorycode))
-{
-    $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
-}
-if (! empty($search_product_ref))
-{
-    $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
-}
-if (! empty($search_product))
-{
-    $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
-}
-if (! empty($search_warehouse))
-{
-    $sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
-}
-if (! empty($search_user))
-{
-    $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
-}
 if ($idproduct > 0)
 {
     $sql.= " AND p.rowid = '".$idproduct."'";
 }
+if (! empty($search_movement))      $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
+if (! empty($search_inventorycode)) $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
+if (! empty($search_product_ref))   $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
+if (! empty($search_product))       $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
+if (! empty($search_warehouse))     $sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
+if (! empty($search_user))          $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
+if (! empty($search_batch))         $sql.= " AND m.batch LIKE '%".$db->escape($search_batch)."%'";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -400,7 +386,7 @@ if ($resql)
     {
         print "<div class=\"tabsAction\">\n";
 
-        if ($user->rights->stock->creer)
+        if ($user->rights->stock->mouvement->creer)
         {
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("StockCorrection").'</a>';
         }
@@ -439,13 +425,13 @@ if ($resql)
 	if (! empty($conf->productbatch->enabled))
 	{
 		$langs->load("productbatch");
-	    print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
-		print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
-		print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
+	    print_liste_field_titre($langs->trans("BatchNumberShort"),$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("l_eatby"),$_SERVER["PHP_SELF"],'m.eatby','',$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("l_sellby"),$_SERVER["PHP_SELF"],'m.sellby','',$param,'align="center"',$sortfield,$sortorder);
 	}
     print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("InventoryCode"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("InventoryCodeShort"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
@@ -473,13 +459,13 @@ if ($resql)
     // Batch
 	if (! empty($conf->productbatch->enabled))
 	{
-		print '<td></td>';
+		print '<td align="center"><input class="flat" type="text" size="5" name="search_batch" value="'.($search_batch).'"></td>';
 		print '<td></td>';
 		print '<td></td>';
 	}
     // Warehouse
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';
+    print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
     print '</td>';
     // Author
     print '<td class="liste_titre" align="left">';
@@ -491,7 +477,7 @@ if ($resql)
     print '</td>';
     // Label of movement
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
+    print '<input class="flat" type="text" size="8" name="search_movement" value="'.$search_movement.'">';
     print '</td>';
     // Origin of movement
     print '<td class="liste_titre" align="left">';
@@ -543,7 +529,7 @@ if ($resql)
         // Batch
     	if (! empty($conf->productbatch->enabled))
 		{
-	    		print '<td align="right">'.$objp->batch.'</td>';
+	    		print '<td align="center">'.$objp->batch.'</td>';
 	            print '<td align="center">'. dol_print_date($objp->eatby,'day') .'</td>';
 	            print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
 		}

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ if ($action == 'add')
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
 
-		if ($accountto->id != $accountfrom->id)
+		if (($accountto->id != $accountfrom->id) && ($accountto->currency_code == $accountfrom->currency_code))
 		{
 			$db->begin();
 
@@ -150,7 +151,7 @@ if($error)
 	$amount = GETPOST('amount','int');
 }
 
-print_fiche_titre($langs->trans("BankTransfer"));
+print_fiche_titre($langs->trans("BankTransfer"), '', 'title_bank.png');
 
 print $langs->trans("TransferDesc");
 print "<br><br>";

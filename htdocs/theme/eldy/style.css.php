@@ -255,8 +255,9 @@ textarea.cke_source:focus
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
+    font-family: <?php print $fontlist ?>;
+    background: #FDFDFD;
+    color: #444;
     border: 1px solid #C0C0C0;
     /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
@@ -269,7 +270,7 @@ input, textarea, select {
 	border-bottom:solid 1px rgba(0,0,0,.2);
 	/* box-shadow: 1px 1px 1px rgba(0,0,0,.2) inset;*/
 	padding:4px;
-	margin-left:1px;
+	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
 	}
@@ -1778,11 +1779,11 @@ table.noborder tr, div.noborder form {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 26px;
+	min-height: 20px;
 }
 
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
-	padding: 1px 2px 1px 3px;			/* t r b l */
+	padding: 5px 2px 5px 3px;			/* t r b l */
 }
 
 table.nobordernopadding {
@@ -1917,7 +1918,7 @@ table.liste td {
 	background-color: #f9f9f9;
 }
 tr.pair td, tr.impair td {
-	padding: 4px;
+    padding: 5px 2px;
     border-bottom: 1px solid #ddd;
 }
 div.liste_titre .tagtd {
@@ -1991,7 +1992,11 @@ input.liste_titre {
 
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
-	background: none;
+	//background: none;
+	background: #FFF;
+}
+.tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
+	border-bottom: none;
 }
 
 .margintable td {

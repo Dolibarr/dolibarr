@@ -536,9 +536,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//virtual stock to compute the stock to buy value
 		$stocktobuy = max(max($objp->desiredstock, $objp->alertstock) - $stock - $ordered, 0);
 		$disabled = '';
-		if($ordered > 0) {
-			$compare = $usevirtualstock ? $stock : $stock + $ordered;
-			if($compare >= $objp->desiredstock) {
+		if ($ordered > 0)
+		{
+			$stockforcompare = $usevirtualstock ? $stock : $stock + $ordered;
+			if ($stockforcompare >= $objp->desiredstock)
+			{
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled="disabled"';
 			}
@@ -546,7 +548,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				$picto = img_picto('', './img/no', '', 1);
 			}
 		} else {
-			$picto = img_picto('', './img/no', '', 1);
+			//$picto = img_help('',$langs->trans("NoPendingReceptionOnSupplierOrder"));
+			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), './img/no', '', 1);
 		}
 
 		print '<tr '.$bc[$var].'>';

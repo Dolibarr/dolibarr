@@ -3391,7 +3391,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 
 				if ($resqla && $resql)
 				{
-					foreach($elements['tables'] as $table)		// FIXME We must not update tables if oldid is not renamed
+					foreach($elements['tables'] as $table)
 					{
 						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 						$sql.= "fk_mode_reglement = ".$elements['new_id'][$key];
