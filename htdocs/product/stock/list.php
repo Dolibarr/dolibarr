@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,8 @@ $year = strftime("%Y",time());
 /*
  *	View
  */
+
+$form=new Form($db);
 
 $sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
 $sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
@@ -118,7 +120,11 @@ if ($result)
             // Selling value
             print '<td align="right">';
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue,'MT'),1);
-            else print $langs->trans("Variable");
+            else
+			{
+				$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
+            	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
+			}
             print '</td>';
             // Status
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
@@ -134,7 +140,14 @@ if ($result)
 		print '<tr class="liste_total">';
         print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
         print '<td align="right">'.price(price2num($total,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
-        print '<td align="right">'.price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency).'</td>';
+        print '<td align="right">';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell,'MT'),1,$langs,0,0,-1,$conf->currency);
+        else
+		{
+			$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
+           	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
+		}
+        print '</td>';
         print '<td align="right">&nbsp;</td>';
         print "</tr>\n";
 	}

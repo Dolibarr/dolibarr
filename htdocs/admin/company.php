@@ -369,7 +369,7 @@ if ($action == 'edit' || $action == 'updateedit')
     // Logo
     $var=!$var;
     print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
-    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+    print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" id="logo" size="50">';
     print '</td><td valign="middle" align="right">';
     if (! empty($mysoc->logo_mini))
@@ -605,8 +605,9 @@ if ($action == 'edit' || $action == 'updateedit')
         }
         print '</td></tr>';
 
+        $opcions=array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"),$langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"),$langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
+
         print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
-        $opcions=array($langs->transcountry("CalcLocaltax1",$mysoc->country_code),$langs->transcountry("CalcLocaltax2",$mysoc->country_code),$langs->transcountry("CalcLocaltax3",$mysoc->country_code));
         print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
         print '</td></tr>';
         print "</table>";
@@ -649,7 +650,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	        print '</td></tr>';
         }
         print '<tr><td align="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
-        $opcions=array($langs->transcountry("CalcLocaltax1",$mysoc->country_code),$langs->transcountry("CalcLocaltax2",$mysoc->country_code),$langs->transcountry("CalcLocaltax3",$mysoc->country_code));
         print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
         print '</td></tr>';
         print "</table>";
@@ -754,7 +754,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
 
-    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+    print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print $mysoc->logo;
     print '</td><td valign="center" align="right">';
 
@@ -1061,15 +1061,15 @@ else
         print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
         if($conf->global->MAIN_INFO_LOCALTAX_CALC2==0)
         {
-        	print $langs->transcountry("CalcLocaltax1",$mysoc->country_code);
+        	print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
         }
         else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==1)
         {
-        	print $langs->transcountry("CalcLocaltax2",$mysoc->country_code);
+        	print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
         }
         else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==2)
         {
-        	print $langs->transcountry("CalcLocaltax3",$mysoc->country_code);
+        	print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
         }
 
         print '</td></tr>';

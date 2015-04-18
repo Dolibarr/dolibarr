@@ -117,17 +117,17 @@ function task_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'task_task';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("TaskRessourceLinks");
 	$head[$h][2] = 'task_contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("TimeSpent");
 	$head[$h][2] = 'task_time';
 	$h++;
@@ -143,14 +143,14 @@ function task_prepare_head($object)
     	$nbNote = 0;
         if(!empty($object->note_private)) $nbNote++;
 		if(!empty($object->note_public)) $nbNote++;
-		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'task_notes';
 		$h++;
     }
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$listoffiles=dol_dir_list($filesdir,'files',1,'','thumbs');
@@ -371,7 +371,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$taskstatic->id=$lines[$i]->id;
 					$taskstatic->ref=$lines[$i]->ref;
 					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
-					print $taskstatic->getNomUrl(1,($showproject?'':'withproject'));
+					print $taskstatic->getNomUrl(1,'withproject');
 				}
 				print '</td>';
 
@@ -469,7 +469,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level==0)
 	{
-		print '<tr class="liste_total">';
+		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) print '<td></td><td></td>';
 		print '<td></td>';
@@ -504,9 +504,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   string		$tasksrole				Array of roles user has on task
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
+ * @param	int			$preselectedday			Preselected day
  * @return  $inc
  */
-function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
+function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0, $preselectedday='')
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
@@ -527,6 +528,12 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 			{
 				$var = !$var;
 				$lastprojectid=$lines[$i]->fk_project;
+
+				if ($preselectedday)
+				{
+					$projectstatic->id = $lines[$i]->fk_project;
+					$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id);	// Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTaks for all day of a week
+				}
 			}
 
 			// If we want all or we have a role on task, we show it
@@ -549,7 +556,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				// Ref
 				print '<td>';
 				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
-				print $taskstatic->getNomUrl(1);
+				print $taskstatic->getNomUrl(1,'withproject');
 				print '</td>';
 
 				// Label task
@@ -559,7 +566,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				$taskstatic->ref=$lines[$i]->label;
 				$taskstatic->date_start=$lines[$i]->date_start;
 				$taskstatic->date_end=$lines[$i]->date_end;
-				print $taskstatic->getNomUrl(0);
+				print $taskstatic->getNomUrl(0,'withproject');
 				//print "<br>";
 				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
@@ -613,14 +620,21 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 
 				// Form to add new time
 				print '<td class="nowrap" align="center">';
-				$s='';
-				$s.=$form->select_date('',$lines[$i]->id,1,1,2,"addtime",1,0,1,$disabledtask);
-				print $s;
+				$tableCell=$form->select_date($preselectedday,$lines[$i]->id,1,1,2,"addtime",0,0,1,$disabledtask);
+				print $tableCell;
 				print '</td><td align="right">';
-				//$s.='&nbsp;&nbsp;&nbsp;';
-				$s=$form->select_duration($lines[$i]->id.'duration','',$disabledtask,'text',0,1);
-				//$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
-				print $s;
+
+				$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+		        $alreadyspent='';
+		        if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
+
+				$tableCell='';
+				$tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled="disabled" id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+                $tableCell.=' + ';
+				//$tableCell.='&nbsp;&nbsp;&nbsp;';
+				$tableCell.=$form->select_duration($lines[$i]->id.'duration','',$disabledtask,'text',0,1);
+				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
+				print $tableCell;
 				print '</td>';
 
 				print '<td align="right">';
@@ -633,7 +647,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 
 			$inc++;
 			$level++;
-			if ($lines[$i]->id) projectLinesPerDay($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+			if ($lines[$i]->id) projectLinesPerDay($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday);
 			$level--;
 		}
 		else
@@ -776,18 +790,30 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				for ($idw = 0; $idw < 7; $idw++)
 		        {
 					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+					$tmparray=dol_getdate($tmpday);
 		        	$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
 		        	$alreadyspent='';
 		        	if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
                     $tableCell ='<td align="center">';
                     $tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled="disabled" id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
-                    $tableCell.='+';
-		        	$tableCell.='<input type="text" class="center" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
-		        	$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
-                    $tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
+                    //$placeholder=' placeholder="00:00"';
+                    $placeholder='';
+                    //if (! $disabledtask)
+                    //{
+                    	$tableCell.='+';
+                    	$tableCell.='<input type="text" alt="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" title="'.$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']).'" '.($disabledtask?'disabled="disabled"':$placeholder).' class="center" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+		        		$tableCell.=' onkeypress="return regexEvent(this,event,\'timeChar\')"';
+                    	$tableCell.= 'onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
+                    //}
                     $tableCell.='</td>';
                     print $tableCell;
 		        }
+
+				print '<td align="right">';
+				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
+				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
+				print '</td>';
+
 		        print "</tr>\n";
 			}
 

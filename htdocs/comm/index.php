@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,7 +67,7 @@ if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("CustomerArea"));
+print_fiche_titre($langs->trans("CommercialArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -578,6 +578,103 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		dol_print_error($db);
 	}
 }
+
+/*
+ * Opened Order
+ */
+if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
+{
+	$langs->load("order");
+
+	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total as total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= ", ".MAIN_DB_PREFIX."commande as c";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.fk_statut = 1";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND s.rowid = ".$socid;
+	$sql.= " ORDER BY c.rowid DESC";
+
+	$result=$db->query($sql);
+	if ($result)
+	{
+		$total = 0;
+		$num = $db->num_rows($result);
+		$i = 0;
+		if ($num > 0)
+		{
+			$var=true;
+
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></td></tr>';
+
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
+			{
+				$obj = $db->fetch_object($result);
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+
+				// Ref
+				print '<td class="nowrap" width="140">';
+
+				$orderstatic->id=$obj->commandeid;
+				$orderstatic->ref=$obj->ref;
+                $orderstatic->ref_client=$obj->ref_client;
+                $orderstatic->total_ht = $obj->total_ht;
+                $orderstatic->total_tva = $obj->total_tva;
+                $orderstatic->total_ttc = $obj->total_ttc;
+
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding nowrap">';
+				print $orderstatic->getNomUrl(1);
+				print '</td>';
+				print '<td width="18" class="nobordernopadding nowrap">';
+				//if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				print '</td>';
+				print '<td width="16" align="center" class="nobordernopadding">';
+				$filename=dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+				print $formfile->getDocumentsLink($orderstatic->element, $filename, $filedir);
+				print '</td></tr></table>';
+
+				print "</td>";
+
+                print '<td class="nowrap">';
+                $companystatic->id=$obj->rowid;
+                $companystatic->name=$obj->name;
+                $companystatic->client=$obj->client;
+                $companystatic->canvas=$obj->canvas;
+                print $companystatic->getNomUrl(1, 'company', 44);
+                print '</td>';
+				print '<td align="right">';
+				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
+				print '</tr>'."\n";
+				$i++;
+				$total += $obj->total_ttc;
+			}
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			else if ($total>0)
+			{
+				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+			}
+			print "</table><br>";
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
 
 
 print '</div></div></div>';

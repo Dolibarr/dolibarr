@@ -62,10 +62,12 @@ create table llx_commande
   fk_mode_reglement		integer,						-- mode de reglement
   
   date_livraison		date 	  default NULL,
-  fk_shipping_method    integer,                        -- shipping method id
+  fk_shipping_method    integer,                       -- shipping method id
   fk_availability		integer NULL,
   fk_input_reason		integer,						-- id coming from c_input_reason, '0' if no defined
   fk_delivery_address	integer,						-- delivery address (deprecated)
+  fk_incoterms          integer,						-- for incoterms
+  location_incoterms    varchar(255),					-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255)					-- for stock other parameters with json format
   

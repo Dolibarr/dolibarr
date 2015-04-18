@@ -78,7 +78,27 @@ foreach($fulltree as $key => $val)
 	$userstatic->firstname=$val['firstname'];
 	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
-	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].(empty($conf->multicompany->enabled)?'':' - '.$langs->trans("Instance").' '.$val['entity']).')';
+
+	$entity=$val['entity'];
+	$entitystring='';
+	// TODO Set of entitystring should be done with a hook
+	if (is_object($mc))
+	{
+		if (! empty($conf->multicompany->enabled))
+		{
+			if (empty($entity))
+			{
+				$entitystring=$langs->trans("AllEntities");
+			}
+			else
+			{
+				$mc->getInfo($entity);
+				$entitystring=$mc->label;
+			}
+		}
+	}
+
+	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
 
 	$data[] = array(
 		'rowid'=>$val['rowid'],

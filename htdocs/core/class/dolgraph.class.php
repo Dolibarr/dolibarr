@@ -115,7 +115,7 @@ class DolGraph
 	 * Set Y precision
 	 *
 	 * @param 	float	$which_prec		Precision
-	 * @return 	string
+	 * @return 	boolean
 	 */
 	function SetPrecisionY($which_prec)
 	{
@@ -187,7 +187,7 @@ class DolGraph
 	 * Set y label
 	 *
 	 * @param 	string	$label		Y label
-	 * @return	boolean				True
+	 * @return	boolean|null				True
 	 */
 	function SetYLabel($label)
 	{
@@ -198,7 +198,7 @@ class DolGraph
 	 * Set width
 	 *
 	 * @param 	int		$w			Width
-	 * @return	boolean				True
+	 * @return	boolean|null				True
 	 */
 	function SetWidth($w)
 	{
@@ -554,7 +554,7 @@ class DolGraph
 	/**
 	 * Return min value of all data
 	 *
-	 * @return 	int		Max value of all data
+	 * @return 	double		Max value of all data
 	 */
 	function GetFloorMinValue()
 	{
@@ -578,7 +578,7 @@ class DolGraph
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
-	 * @return	void
+	 * @return	integer|null
 	 */
 	function draw($file,$fileurl='')
 	{

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C)      2014	Charles-Fr BENKE		<charles.fr@benke.fr>
  *
@@ -383,7 +383,6 @@ function activitytrim($product_type)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		//$tmpyear=$beginyear; // FIXME $beginyear is not defined
 		$tmpyear=0;
 		$trim1=0;
 		$trim2=0;

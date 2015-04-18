@@ -90,7 +90,7 @@ if (g)
 	var barText = "Resource";
 	var graphFormat = "day";
 
-	g.setDateInputFormat('yyyy-mm-dd');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
+	g.setDateInputFormat('mm/dd/yyyy');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', does not work with 'yyyy-mm-dd')
 	g.setDateDisplayFormat('<?php echo $dateformat; ?>');
 	/* For JSGanttImproved g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>'); */
 	/* For JSGanttImproved g.setDayMajorDateDisplayFormat('dd mon'); */
@@ -143,8 +143,8 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     $start_date = $task["task_start_date"];
     $end_date = $task["task_end_date"];
     if (!$end_date) $end_date = $start_date;
-    $start_date = dol_print_date($start_date,"%Y-%m-%d");
-    $end_date = dol_print_date($end_date,"%Y-%m-%d");
+    $start_date = dol_print_date($start_date,"%m/%d/%Y");
+    $end_date = dol_print_date($end_date,"%m/%d/%Y");
     // Resources
     $resources = $task["task_resources"];
     // Define depend (ex: "", "4,13", ...)

@@ -62,7 +62,7 @@ function loan_prepare_head($object)
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$tab][1].= ' ('.$nbFiles.')';
+	if($nbFiles > 0) $head[$tab][1].= ' <span class="badge">'.$nbFiles.'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
 

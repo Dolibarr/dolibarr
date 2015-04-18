@@ -140,6 +140,7 @@ if (empty($reshook))
 	{
 	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+		else $object->ref_supplier = GETPOST('ref_supplier','alpha');	// The setValueFrom does not set new property of object
 	}
 
 	// Set incoterm
@@ -190,12 +191,13 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
+	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 5, 6, 7, 9)))
+	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
+	        else if ($object->statut == 3) $newstatus=2;	// Ordered->Approved
 	        else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
@@ -834,7 +836,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('supplierorderdao'));
 			$parameters=array('id'=>$object->id);
 
@@ -918,22 +920,20 @@ if (empty($reshook))
 					}
 
 					$object_id = $object->create($user);
-
 					if ($object_id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
-						$srcobject->fetch($object->origin_id);
-
-						$object->set_date_livraison($user, $srcobject->date_livraison);
-						$object->set_id_projet($user, $srcobject->fk_project);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0)
 						{
+							$object->set_date_livraison($user, $srcobject->date_livraison);
+							$object->set_id_projet($user, $srcobject->fk_project);
+
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
 							{
@@ -952,40 +952,40 @@ if (empty($reshook))
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
-								$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-								$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
-								$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);
+								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
-								if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) 							// For avoid conflicts if
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
 								                                                                                                      // trigger used
 								{
-									$lines [$i]->fetch_optionals($lines [$i]->rowid);
-									$array_option = $lines [$i]->array_options;
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_option = $lines[$i]->array_options;
 								}
 
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines [$i]->fk_product, $lines [$i]->qty);
+								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
 								$res = $productsupplier->fetch($idProductFourn);
 
 								$result = $object->addline(
 									$desc,
-									$lines [$i]->subprice,
-									$lines [$i]->qty,
-									$lines [$i]->tva_tx,
-									$lines [$i]->localtax1_tx,
-									$lines [$i]->localtax2_tx,
-									$lines [$i]->fk_product,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$lines[$i]->tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product,
 									$productsupplier->product_fourn_price_id,
 									$productsupplier->ref_fourn,
-									$lines [$i]->remise_percent,
+									$lines[$i]->remise_percent,
 									'HT',
 									0,
-									$lines [$i]->product_type,
+									$lines[$i]->product_type,
 									'',
 									'',
 									null,
@@ -998,7 +998,7 @@ if (empty($reshook))
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0 && $lines [$i]->product_type == 9) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
@@ -1010,11 +1010,11 @@ if (empty($reshook))
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							setEventMessage($srcobject->error, 'errors');
+			        		setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 							$error ++;
 						}
 					} else {
-						setEventMessage($object->error, 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
 				}
@@ -1024,7 +1024,7 @@ if (empty($reshook))
 		        	if ($id < 0)
 		        	{
 		        		$error++;
-			        	setEventMessage($langs->trans($object->error), 'errors');
+			        	setEventMessages($object->error, $object->errors, 'errors');
 		        	}
 				}
 	        }
@@ -1913,7 +1913,7 @@ elseif (! empty($object->id))
 	print '</td></tr>';
 
 
-	// Delai livraison jours
+	// Delivery delay (in days)
 	print '<tr>';
 	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
 	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
@@ -2040,7 +2040,7 @@ elseif (! empty($object->id))
 	// Show object lines
 	$inputalsopricewithtax=0;
 	if (! empty($object->lines))
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+		$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 
 	$num = count($object->lines);
 
@@ -2246,6 +2246,9 @@ elseif (! empty($object->id))
 	/*
 	 * Action presend
 	 */
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -2338,6 +2341,7 @@ elseif (! empty($object->id))
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='order_supplier_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['orderid']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
@@ -2673,7 +2677,7 @@ elseif (! empty($object->id))
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Disapprove").'</a>';
 					}
 				}
-				if (in_array($object->statut, array(5, 6, 7, 9)))
+				if (in_array($object->statut, array(3, 5, 6, 7, 9)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
@@ -2682,19 +2686,21 @@ elseif (! empty($object->id))
 				}
 
 				// Create bill
-				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
+				if (! empty($conf->facture->enabled))
 				{
-					if ($user->rights->fournisseur->facture->creer)
+					if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 9))  // 2 means accepted
 					{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						if ($user->rights->fournisseur->facture->creer)
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						}
+
+						//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
+						//{
+						//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						//}
 					}
-
-					//if ($user->rights->fournisseur->commande->creer && $object->statut > 2)
-					//{
-					//	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
-					//}
 				}
-
 
 				// Create a remote order using WebService only if module is activated
 				if (! empty($conf->syncsupplierwebservices->enabled) && $object->statut >= 2) // 2 means accepted
@@ -2758,6 +2764,7 @@ elseif (! empty($object->id))
 			/*
 			 * Commander (action=commande)
 			 */
+			print '<!-- form to record supplier order -->'."\n";
 			print '<form name="commande" action="card.php?id='.$object->id.'&amp;action=commande" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="commande">';
@@ -2766,7 +2773,7 @@ elseif (! empty($object->id))
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-			print $form->select_date($date_com,'','','','',"commande");
+			print $form->select_date($date_com,'',1,1,'',"commande");
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -2785,6 +2792,7 @@ elseif (! empty($object->id))
 			/*
 			 * Receptionner (action=livraison)
 			 */
+			print '<!-- form to record supplier order received -->'."\n";
 			print '<form action="card.php?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden"	name="action" value="livraison">';
@@ -2792,7 +2800,7 @@ elseif (! empty($object->id))
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print $form->select_date('','','','','',"commande");
+			print $form->select_date('','',1,1,'',"commande");
 			print "</td></tr>\n";
 
 			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";

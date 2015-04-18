@@ -303,7 +303,7 @@ if (empty($reshook))
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note = GETPOST('note');
-					$object->statut = 0;
+					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
@@ -543,52 +543,80 @@ if (empty($reshook))
 	}
 
 	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
-		$object->cloture($user, 4, '');
+	else if ($action == 'classifybilled' && $user->rights->propal->cloturer)
+	{
+		$result=$object->cloture($user, 4, '');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
+		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
 			$object->reopen($user, 1);
 		}
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		if (! GETPOST('statut')) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == 1) {
-				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+			if ($object->statut == Propal::STATUS_VALIDATED)
+			{
+				$result=$object->cloture($user, GETPOST('statut'), GETPOST('note'));
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
 			}
 		}
 	}
 
 	// Classify billed
-	else if ($action == 'classifybilled' && $user->rights->propal->cloturer) {
-		$object->cloture($user, 4, '');
+	else if ($action == 'classifybilled' && $user->rights->propal->cloturer)
+	{
+		$result=$object->cloture($user, 4, '');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
 	}
 
 	// Reopen proposal
-	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'confirm_reopen' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == 2 || $object->statut == 3 || $object->statut == 4) {
-			$object->reopen($user, 1);
+		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
+		{
+			$result=$object->reopen($user, 1);
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 	}
 
 	// Close proposal
-	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel')) {
+	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel'))
+	{
 		if (! GETPOST('statut')) {
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("CloseAs")), 'errors');
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == 1) {
+			if ($object->statut == Propal::STATUS_VALIDATED) {
 				$object->cloture($user, GETPOST('statut'), GETPOST('note'));
 			}
 		}
@@ -1154,7 +1182,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('propaldao'));
 			$parameters = array('id' => $object->id);
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been
@@ -1745,7 +1773,7 @@ if ($action == 'create')
 	$absolute_discount = price2num($absolute_discount, 'MT');
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	if ($absolute_discount) {
-		if ($object->statut > 0) {
+		if ($object->statut > Propal::STATUS_DRAFT) {
 			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
 		} else {
 			// Remise dispo de type non avoir
@@ -1807,7 +1835,7 @@ if ($action == 'create')
 	} else {
 		if (! empty($object->fin_validite)) {
 			print dol_print_date($object->fin_validite, 'daytext');
-			if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay))
+			if ($object->statut == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay))
 				print img_warning($langs->trans("Late"));
 		} else {
 			print '&nbsp;';
@@ -2091,7 +2119,7 @@ if ($action == 'create')
 	<input type="hidden" name="id" value="' . $object->id . '">
 	';
 
-	if (! empty($conf->use_javascript_ajax) && $object->statut == 0) {
+	if (! empty($conf->use_javascript_ajax) && $object->statut == Propal::STATUS_DRAFT) {
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
@@ -2101,7 +2129,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->propal->creer)
+	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer)
 	{
 		if ($action != 'editline')
 		{
@@ -2164,7 +2192,7 @@ if ($action == 'create')
 			if ($action != 'statut' && $action != 'editline')
 			{
 				// Validate
-				if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 &&
+				if ($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0 &&
 			        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
        				|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
 				) {
@@ -2178,18 +2206,18 @@ if ($action == 'create')
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}
 				// Edit
-				if ($object->statut == 1 && $user->rights->propal->creer) {
+				if ($object->statut == Propal::STATUS_VALIDATED && $user->rights->propal->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 				}
 
 				// ReOpen
-				if (($object->statut == 2 || $object->statut == 3 || $object->statut == 4) && $user->rights->propal->cloturer) {
+				if (($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) && $user->rights->propal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=reopen' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen') . '"';
 					print '>' . $langs->trans('ReOpen') . '</a></div>';
 				}
 
 				// Send
-				if ($object->statut == 1 || $object->statut == 2) {
+				if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED) {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
@@ -2197,14 +2225,14 @@ if ($action == 'create')
 				}
 
 				// Create an order
-				if (! empty($conf->commande->enabled) && $object->statut == 2) {
+				if (! empty($conf->commande->enabled) && $object->statut == Propal::STATUS_SIGNED) {
 					if ($user->rights->commande->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddOrder") . '</a></div>';
 					}
 				}
 
 				// Create contract
-				if ($conf->contrat->enabled && $object->statut == 2) {
+				if ($conf->contrat->enabled && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($user->rights->contrat->creer) {
@@ -2213,7 +2241,8 @@ if ($action == 'create')
 				}
 
 				// Create an invoice and classify billed
-				if ($object->statut == 2) {
+				if ($object->statut == Propal::STATUS_SIGNED)
+				{
 					if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddBill") . '</a></div>';
@@ -2227,7 +2256,7 @@ if ($action == 'create')
 				}
 
 				// Close
-				if ($object->statut == 1 && $user->rights->propal->cloturer) {
+				if ($object->statut == Propal::STATUS_VALIDATED && $user->rights->propal->cloturer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=statut' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
 					print '>' . $langs->trans('Close') . '</a></div>';
 				}
@@ -2288,6 +2317,10 @@ if ($action == 'create')
 	/*
 	 * Action presend
  	 */
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$object->fetch_projet();
@@ -2382,6 +2415,7 @@ if ($action == 'create')
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
 		$formmail->param['models'] = 'propal_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['id'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 		// Init list of files

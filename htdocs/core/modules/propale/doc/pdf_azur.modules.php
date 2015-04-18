@@ -617,6 +617,57 @@ class pdf_azur extends ModelePDFPropales
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
+				//If propal merge product PDF is active
+				if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) 
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
+					
+					$already_merged = array ();
+					foreach ( $object->lines as $line ) {
+						if (! empty($line->fk_product) && ! (in_array($line->fk_product, $already_merged))) {
+							// Find the desire PDF
+							$filetomerge = new Propalmergepdfproduct($this->db);
+					
+							if ($conf->global->MAIN_MULTILANGS) {
+								$filetomerge->fetch_by_product($line->fk_product, $outputlangs->defaultlang);
+							} else {
+								$filetomerge->fetch_by_product($line->fk_product);
+							}
+					
+							$already_merged[] = $line->fk_product;
+					
+							// If PDF is selected and file is not empty
+							if (count($filetomerge->lines) > 0) {
+								foreach ( $filetomerge->lines as $linefile ) {
+									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
+										if (! empty($conf->product->enabled))
+											$filetomerge_dir = $conf->product->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($line->product_ref);
+										elseif (! empty($conf->service->enabled))
+											$filetomerge_dir = $conf->service->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($line->product_ref);
+											
+										dol_syslog(get_class($this) . ':: upload_dir=' . $filetomerge_dir, LOG_DEBUG);
+											
+										$infile = $filetomerge_dir . '/' . $linefile->file_name;
+										if (is_file($infile)) {
+											$pagecount = $pdf->setSourceFile($infile);
+											for($i = 1; $i <= $pagecount; $i ++) {
+												$tplidx = $pdf->ImportPage($i);
+												$s = $pdf->getTemplatesize($tplidx);
+												$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+												$pdf->useTemplate($tplidx);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				//exit;
+				
+				
+				
 				$pdf->Close();
 
 				$pdf->Output($file,'F');

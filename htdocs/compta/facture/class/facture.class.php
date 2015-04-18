@@ -137,7 +137,7 @@ class Facture extends CommonInvoice
 	var $specimen;
 
 	var $fac_rec;
-	
+
 	//Incoterms
 	var $fk_incoterms;
 	var $location_incoterms;
@@ -563,7 +563,7 @@ class Facture extends CommonInvoice
 					$action='create';
 
 					// Actions on extra fields (by external module or standard code)
-					// FIXME le hook fait double emploi avec le trigger !!
+					// TODO le hook fait double emploi avec le trigger !!
 					$hookmanager->initHooks(array('invoicedao'));
 					$parameters=array('invoiceid'=>$this->id);
 					$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action); // Note that $action and $object may have been modified by some hooks
@@ -1045,9 +1045,9 @@ class Facture extends CommonInvoice
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-				
+
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
 				// Retreive all extrafield for invoice
@@ -3618,7 +3618,7 @@ class Facture extends CommonInvoice
 			$this->db->commit();
 			return 1;
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this) . "::update Error setFinal " . $sql, LOG_ERR);
 			$this->db->rollback();
 			return -1;
@@ -3641,11 +3641,28 @@ class Facture extends CommonInvoice
 			$last = $res['max(situation_counter)'];
 			return ($last == $this->situation_counter);
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facture'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }
 

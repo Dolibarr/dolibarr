@@ -1331,7 +1331,7 @@ class Task extends CommonObject
 	/**
 	 *	Return status label of object
 	 *
-	 *	@param	string	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param	integer	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  			Label
 	 */
 	function getLibStatut($mode=0)
@@ -1343,7 +1343,7 @@ class Task extends CommonObject
 	 *	Return status label for an object
 	 *
 	 *	@param	int			$statut	  	Id statut
-	 *	@param	string		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param	integer		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  				Label
 	 */
 	function LibStatut($statut,$mode=0)

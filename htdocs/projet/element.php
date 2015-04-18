@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -636,23 +637,18 @@ foreach ($listofreferent as $key => $value)
 			{
 				$element->fetch($elementarray[$i]);
 				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
+
 				if ($tablename == 'don') $total_ht_by_line=$element->amount;
-				else
-				{
-					$total_ht_by_line=$element->total_ht;
-				}
+				else $total_ht_by_line=$element->total_ht;
 
 				$total_ht = $total_ht + $total_ht_by_line;
-				
+
 				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
-				else
-				{
-					$total_ttc_by_line=$element->total_ttc;
-				}
+				else $total_ttc_by_line=$element->total_ttc;
 
 				$total_ttc = $total_ttc + $total_ttc_by_line;
 			}
-			
+
 			// Calculate margin
 			if ($margin=="add")
 			{
@@ -664,7 +660,7 @@ foreach ($listofreferent as $key => $value)
 				$margin_ht-= $total_ht;
 				$margin_ttc-= $total_ttc;
 			}
-			
+
 			// Show $total_ht & $total_ttc -- add a minus when necessary
 			if ($margin!="add")
 			{
@@ -672,8 +668,31 @@ foreach ($listofreferent as $key => $value)
 				$total_ttc = -$total_ttc;
 			}
 
+			switch ($classname) {
+				case 'FactureFournisseur':
+					$newclassname = 'SupplierInvoice';
+					break;
+				case 'Facture':
+					$newclassname = 'Bill';
+					break;
+				case 'Propal':
+					$newclassname = 'CommercialProposal';
+					break;
+				case 'Commande':
+					$newclassname = 'Order';
+					break;
+				case 'Expedition':
+					$newclassname = 'Sending';
+					break;
+				case 'Contrat':
+					$newclassname = 'Contract';
+					break;
+				default:
+					$newclassname = $classname;
+			}
+
 			print '<tr >';
-			print '<td align="left" >'.$name.'</td>';
+			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			print '<td align="right">'.$i.'</td>';
 			print '<td align="right">'.price($total_ht).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';

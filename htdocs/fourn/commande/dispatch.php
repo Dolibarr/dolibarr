@@ -101,6 +101,23 @@ if ($action == 'uncheckdispatchline' &&
 	}
 }
 
+if ($action == 'denydispatchline' &&
+	! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+)
+{
+	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+	$result=$supplierorderdispatch->fetch($lineid);
+	if (! $result) dol_print_error($db);
+	$result=$supplierorderdispatch->setStatut(2);
+	if ($result < 0)
+	{
+		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+		$error++;
+		$action='';
+	}
+}
+
 if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 {
 	$commande = new CommandeFournisseur($db);
@@ -110,11 +127,15 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 	$db->begin();
 
+	$pos=0;
 	foreach($_POST as $key => $value)
 	{
 		if (preg_match('/^product_([0-9]+)$/i', $key, $reg))	// without batch module enabled
 		{
-			$numline=$reg[1] + 1;	// line of product
+			$pos++;
+
+			//$numline=$reg[1] + 1;	// line of product
+			$numline=$pos;
 			$prod = "product_".$reg[1];
 			$qty = "qty_".$reg[1];
 			$ent = "entrepot_".$reg[1];
@@ -123,7 +144,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
-				if (! GETPOST($ent,'int') > 0)
+				if (! (GETPOST($ent,'int') > 0))
 				{
 					dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' ' .($numline);
@@ -133,7 +154,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 				if (! $error)
 				{
-					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -144,8 +165,11 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 		}
 		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// with batch module enabled
 		{
+			$pos++;
+
 			//eat-by date dispatch
-			$numline=$reg[2] + 1;	// line of product
+			//$numline=$reg[2] + 1;	// line of product
+			$numline=$pos;
 			$prod = "product_".$reg[1]."_".$reg[2];
 			$qty = "qty_".$reg[1]."_".$reg[2];
 			$ent = "entrepot_".$reg[1]."_".$reg[2];
@@ -185,7 +209,6 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				}
 			}
 		}
-
 	}
 
 	if (! $notrigger && ! $error)
@@ -413,6 +436,20 @@ if ($id > 0 || ! empty($ref))
 							$nbproduct++;
 
 							$var=!$var;
+
+							// To show detail cref and description value, we must make calculation by cref
+							//print ($objp->cref?' ('.$objp->cref.')':'');
+							//if ($objp->description) print '<br>'.nl2br($objp->description);
+							if ((empty($conf->productbatch->enabled)) || $objp->tobatch==0)
+							{
+								$suffix='_'.$i;
+							} else {
+								$suffix='_0_'.$i;
+							}
+
+
+							print "\n";
+							print '<!-- Line '.$suffix.' -->'."\n";
 							print "<tr ".$bc[$var].">";
 
 							$linktoprod='<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
@@ -443,16 +480,6 @@ if ($id > 0 || ! empty($ref))
 								print "</td>";
 							}
 
-							// To show detail cref and description value, we must make calculation by cref
-							//print ($objp->cref?' ('.$objp->cref.')':'');
-							//if ($objp->description) print '<br>'.nl2br($objp->description);
-							if ((empty($conf->productbatch->enabled)) || $objp->tobatch==0)
-							{
-								$suffix='_'.$i;
-							} else {
-								$suffix='_0_'.$i;
-							}
-
 							$up_ht_disc=$objp->subprice;
 							if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 
@@ -476,13 +503,15 @@ if ($id > 0 || ! empty($ref))
 								print '</td>';
 
 								print '<td>';
-								print '<input type="text" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" size="40" value="">';
+								print '<input type="text" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" size="40" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
 								print '<td>';
-								$form->select_date('','dlc'.$suffix,'','',1,"");
+								$dlcdatesuffix=dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+								$form->select_date($dlcdatesuffix,'dlc'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td>';
-								$form->select_date('','dluo'.$suffix,'','',1,"");
+								$dluodatesuffix=dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+								$form->select_date($dluodatesuffix,'dluo'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td colspan="2">&nbsp</td>';		// Qty ordered + qty already dispatached
 							}
@@ -495,7 +524,7 @@ if ($id > 0 || ! empty($ref))
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 								print '<input name="pu'.$suffix.'" type="hidden" value="'.$up_ht_disc.'"><!-- This is a up including discount -->';
 							}
-							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.($remaintodispatch).'">';
+							print '<input id="qty'.$suffix.'" name="qty'.$suffix.'" type="text" size="8" value="'.(GETPOST('qty'.$suffix)!='' ? GETPOST('qty'.$suffix) : $remaintodispatch).'">';
 							print '</td>';
 
 							// Warehouse
@@ -553,7 +582,8 @@ if ($id > 0 || ! empty($ref))
 
 		dol_fiche_end();
 
-		// List of already dispatching
+
+		// List of lines already dispatched
 		$sql = "SELECT p.ref, p.label,";
 		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
 		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
@@ -643,11 +673,13 @@ if ($id > 0 || ! empty($ref))
 						{
 							if (empty($objp->status))
 							{
-								print '<a class="button buttonRefused" href="#">'.$langs->trans("Check").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Approve").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Deny").'</a>';
 							}
 							else
 							{
-								print '<a class="button buttonRefused" href="#">'.$langs->trans("Uncheck").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Disapprove").'</a>';
+								print '<a class="button buttonRefused" href="#">'.$langs->trans("Deny").'</a>';
 							}
 						}
 						else
@@ -656,11 +688,18 @@ if ($id > 0 || ! empty($ref))
 							if ($commande->statut == 5) $disabled=1;
 							if (empty($objp->status))
 							{
-								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Check").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
 							}
-							else
+							if ($objp->status == 1)
 							{
-								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Uncheck").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=denydispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Deny").'</a>';
+							}
+							if ($objp->status == 2)
+							{
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=uncheckdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Reinit").'</a>';
+								print '<a class="button'.($disabled?' buttonRefused':'').'" href="'.$_SERVER["PHP_SELF"]."?id=".$id."&action=checkdispatchline&lineid=".$objp->dispatchlineid.'">'.$langs->trans("Approve").'</a>';
 							}
 						}
 						print '</td>';

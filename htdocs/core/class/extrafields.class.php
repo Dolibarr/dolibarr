@@ -568,11 +568,11 @@ class ExtraFields
 		global $conf;
 
 		if ( empty($elementtype) ) return array();
-		
+
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 
 		$array_name_label=array();
-		
+
 		// For avoid conflicts with external modules
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
@@ -602,7 +602,7 @@ class ExtraFields
 					$this->attribute_elementtype[$tab->name]=$tab->elementtype;
 					$this->attribute_unique[$tab->name]=$tab->fieldunique;
 					$this->attribute_required[$tab->name]=$tab->fieldrequired;
-					$this->attribute_param[$tab->name]=unserialize($tab->param);
+					$this->attribute_param[$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
 					$this->attribute_perms[$tab->name]=$tab->perms;
@@ -1056,7 +1056,7 @@ class ExtraFields
 		elseif ($type == 'link')
 		{
 			$out='';
-			
+
 			$param_list=array_keys($param['options']);
 			// 0 : ObjectName
 			// 1 : classPath

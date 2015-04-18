@@ -49,7 +49,7 @@ class PrintingDriver
      *  Return list of printing driver
      *
      *  @param  DoliDB  $db                 Database handler
-     *  @param  string  $maxfilenamelength  Max length of value to show
+     *  @param  integer  $maxfilenamelength  Max length of value to show
      *  @return array                       List of drivers
     */
     static function listDrivers($db,$maxfilenamelength=0)

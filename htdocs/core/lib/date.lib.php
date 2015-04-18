@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -836,18 +836,18 @@ function monthArray($outputlangs,$short=0)
 	if (! empty($short))
 	{
 		$montharray = array (
-		    1  => $outputlangs->trans("Jan"),
-		    2  => $outputlangs->trans("Feb"),
-		    3  => $outputlangs->trans("Mar"),
-		    4  => $outputlangs->trans("Apr"),
-		    5  => $outputlangs->trans("May"),
-		    6  => $outputlangs->trans("Jun"),
-		    7  => $outputlangs->trans("Jul"),
-		    8  => $outputlangs->trans("Aug"),
-		    9  => $outputlangs->trans("Sep"),
-		    10 => $outputlangs->trans("Oct"),
-		    11 => $outputlangs->trans("Nov"),
-		    12 => $outputlangs->trans("Dec")
+		    1  => $outputlangs->trans("JanuaryMin"),
+		    2  => $outputlangs->trans("FebruaryMin"),
+		    3  => $outputlangs->trans("MarchMin"),
+		    4  => $outputlangs->trans("AprilMin"),
+		    5  => $outputlangs->trans("MayMin"),
+		    6  => $outputlangs->trans("JuneMin"),
+		    7  => $outputlangs->trans("JulyMin"),
+		    8  => $outputlangs->trans("AugustMin"),
+		    9  => $outputlangs->trans("SeptemberMin"),
+		    10 => $outputlangs->trans("OctoberMin"),
+		    11 => $outputlangs->trans("NovemberMin"),
+		    12 => $outputlangs->trans("DecemberMin")
 			);
 	}
 

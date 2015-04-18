@@ -431,9 +431,11 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Label
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="40" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
-    // Customer
+    // Thirdparty
     print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-   	$text=$form->select_company(GETPOST('socid','int'),'socid','',1,1);
+    $filteronlist='';
+    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+   	$text=$form->select_thirdparty_list(GETPOST('socid','int'),'socid',$filteronlist,1,1);
     if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
     {
     	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
@@ -576,7 +578,9 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-        $text=$form->select_company($object->thirdparty->id,'socid','',1,1);
+	    $filteronlist='';
+	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+        $text=$form->select_thirdparty_list($object->thirdparty->id,'socid',$filteronlist,1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';

@@ -100,7 +100,7 @@ if ($object->id)
 	/*
 	 *  En mode visu
 	*/
-	$head=product_prepare_head($object, $user);
+	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 	dol_fiche_head($head, 'photos', $titre, 0, $picto);

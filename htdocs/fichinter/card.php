@@ -847,7 +847,7 @@ else if ($action == 'update_extras')
 	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
-		// FIXME le hook fait double emploi avec le trigger !!
+		// TODO le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('interventiondao'));
 		$parameters=array('id'=>$object->id);
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1732,6 +1732,9 @@ else if ($id > 0 || ! empty($ref))
 	/*
 	 * Action presend
 	 */
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1819,6 +1822,7 @@ else if ($id > 0 || ! empty($ref))
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='fichinter_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['fichinter_id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 

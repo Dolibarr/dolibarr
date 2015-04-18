@@ -386,7 +386,7 @@ if ($rowid > 0)
 		{
 		    $sql.= " AND (d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
 		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
-		    $sql.= " OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+		    $sql.= " OR d.town LIKE '%".$sall."%' OR d.note_public LIKE '%".$sall."%' OR d.note_private LIKE '%".$sall."%')";
 		}
 		if ($status != '')
 		{

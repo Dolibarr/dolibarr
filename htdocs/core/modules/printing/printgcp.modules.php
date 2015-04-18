@@ -254,7 +254,7 @@ class printing_printgcp extends PrintingDriver
     /**
      *  Login into Google Account
      *
-     *  @return string           true or false
+     *  @return boolean           true or false
      */
     function GoogleLogin()
     {
@@ -324,8 +324,8 @@ class printing_printgcp extends PrintingDriver
      *
      *  @param  string  $url            url to hit
      *  @param  array   $postfields     array of post fields
-     *  @param  array   $headers        array of http headers
-     *  @return array                   response from curl
+     *  @param  string[]   $headers        array of http headers
+     *  @return string                   response from curl
      */
     private function makeCurl($url,$postfields=array(),$headers=array())
     {

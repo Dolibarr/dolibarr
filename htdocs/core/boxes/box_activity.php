@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
- * Copyright (C) 2005-2013 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015 Frederic France        <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ class box_activity extends ModeleBoxes
         $nbofyears=2;
 
         if (! empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) $nbofyears=$conf->global->MAIN_BOX_ACTIVITY_DURATION;
-        $textHead = $langs->trans("Activity").' <span class="badge">'.$nbofyears.' '.$langs->trans("DurationYears").'</span>';
+        $textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofyears*12);
         $this->info_box_head = array(
             'text' => $textHead,
             'limit'=> dol_strlen($textHead),
@@ -102,7 +102,8 @@ class box_activity extends ModeleBoxes
 
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
             $data = array();
-            if ($refresh) {
+            if ($refresh)
+            {
                 $sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
                 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
                 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

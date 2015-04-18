@@ -110,7 +110,7 @@ if ($sall)
             if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
             $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
-            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
+            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note_public LIKE '%".$db->escape($sall)."%' OR d.note_private LIKE '%".$db->escape($sall)."%')";
         }
 }
 if ($type > 0)

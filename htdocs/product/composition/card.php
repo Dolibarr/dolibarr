@@ -174,7 +174,7 @@ if ($action == 'search')
 
 llxHeader("","",$langs->trans("CardProduct".$object->type));
 
-$head=product_prepare_head($object, $user);
+$head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
 $picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 dol_fiche_head($head, 'subproduct', $titre, 0, $picto);
@@ -268,7 +268,7 @@ if ($id > 0 || ! empty($ref))
 				$productstatic->type=$value["fk_product_type"];
 				$productstatic->ref=$value['label'];
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
+				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
 				print '</tr>';
 			}
 			print '</table>';
