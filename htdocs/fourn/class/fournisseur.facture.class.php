@@ -507,7 +507,8 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->product_ref		= $obj->product_ref;       // Internal reference
                     $this->lines[$i]->ref				= $obj->product_ref;       // deprecated.
                     $this->lines[$i]->ref_supplier		= $obj->ref_supplier;      // Reference product supplier TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields it into updateline
-                    $this->lines[$i]->libelle			= $obj->label;             // This field may contains label of product (when invoice create from order)
+                    $this->lines[$i]->libelle			= $obj->label;             // Deprecated
+                    $this->lines[$i]->label  			= $obj->label;             // This field may contains label of product (when invoice create from order)
                     $this->lines[$i]->product_desc		= $obj->product_desc;      // Description du produit
                     $this->lines[$i]->subprice			= $obj->pu_ht;
                     $this->lines[$i]->pu_ht				= $obj->pu_ht;
@@ -525,6 +526,7 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->total_ttc			= $obj->total_ttc;
                     $this->lines[$i]->fk_product		= $obj->fk_product;
                     $this->lines[$i]->product_type		= $obj->product_type;
+                    $this->lines[$i]->product_label		= $obj->label;
                     $this->lines[$i]->info_bits		    = $obj->info_bits;
                     $this->lines[$i]->fk_parent_line    = $obj->fk_parent_line;
                     $this->lines[$i]->special_code		= $obj->special_code;

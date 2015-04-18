@@ -1164,7 +1164,7 @@ class Categorie extends CommonObject
 	{
 		$cats = array();
 
-		$typeid=-1; $table='';;
+		$typeid=-1; $table='';
 		if ($type == '0' || $type == 'product')	       { $typeid=0; $table='product';   $type='product'; }
 		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='soc';   $type='fournisseur'; }
 		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='soc';   $type='societe'; }

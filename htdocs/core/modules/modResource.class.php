@@ -61,7 +61,7 @@ class modResource extends DolibarrModules
 		// (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Manage resources (printers, cars, room, ...) you can then share into events";
 		// Possible values for version are: 'development', 'experimental' or version
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -114,8 +114,7 @@ class modResource extends DolibarrModules
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
-		// Minimum version of Dolibarr required by module
-		$this->need_dolibarr_version = array(3, 5);
+		
 		$this->langfiles = array("resource@resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled

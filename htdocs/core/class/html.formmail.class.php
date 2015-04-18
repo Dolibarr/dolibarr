@@ -291,7 +291,8 @@ class FormMail extends Form
         	foreach($this->lines_model as $line) {
         		$modelmail_array[$line->id]=$line->label;
         	}
-        	if (count($modelmail_array>0)) {
+        	
+        	if (count($modelmail_array)>0) {
 	        	$out.= '<table class="nobordernopadding" width="100%"><tr><td width="20%">'."\n";
 	        	$out.= $langs->trans('SelectMailModel').':'.$this->selectarray('modelmailselected', $modelmail_array,$model_id);
 	        	$out.= '</td>';
@@ -836,15 +837,15 @@ class FormMail extends Form
 		if ($resql)
 		{
 			$this->lines_model=array();
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new ModelMailLine();
+			while ($obj = $this->db->fetch_object($resql)) 
+			{
+				$line = new ModelMail();
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
 				$line->content=$obj->lacontentbel;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
-				
 			}
 			$this->db->free($resql);
 			return $num;
@@ -857,7 +858,10 @@ class FormMail extends Form
 	}
 }
 
-class ModelMailLine 
+/**
+ * ModelMail
+ */
+class ModelMail
 {
 	public $id;
 	public $label;
@@ -865,4 +869,3 @@ class ModelMailLine
 	public $content;
 	public $lang;
 }
-
