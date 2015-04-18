@@ -78,8 +78,8 @@ if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no p
 }
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target AND ee.targettype = 'delivery'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
@@ -185,6 +185,14 @@ if ($resql)
 		}*/
 		print "</td>\n";
 		if($conf->livraison_bon->enabled) {
+		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
+            $receiving=(! empty($shipment->linkedObjects['delivery'][0])?$shipment->linkedObjects['delivery'][0]:'');
+            
+            // Ref
+            print '<td>';
+            print !empty($receiving) ? $receiving->getNomUrl($db) : '';
+            print '</td>';
+            
 			// Date real
 			print "<td align=\"center\">";
 			print dol_print_date($db->jdate($objp->date_livraison),"day");
