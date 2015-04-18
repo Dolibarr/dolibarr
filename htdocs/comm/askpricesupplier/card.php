@@ -1730,7 +1730,7 @@ if ($action == 'create')
 	/*
 	 * Action presend
  	 */
-	if (!empty(GETPOST('modelselected'))) {
+	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
 	if ($action == 'presend')

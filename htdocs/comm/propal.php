@@ -2308,7 +2308,7 @@ if ($action == 'create')
 	 * Action presend
  	 */
 	//Select mail models is same action as presend
-	if (!empty(GETPOST('modelselected'))) {
+	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
 	if ($action == 'presend')
