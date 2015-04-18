@@ -288,7 +288,7 @@ if ($resql)
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
-	print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
 
  	// Print the search-by-sale and search-by-categ filters

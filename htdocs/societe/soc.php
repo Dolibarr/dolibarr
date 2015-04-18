@@ -853,7 +853,8 @@ else
         $object->forme_juridique_code=GETPOST('forme_juridique_code');
         /* Show create form */
 
-        print_fiche_titre($langs->trans("NewThirdParty"));
+        $linkback="";
+        print_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
         if (! empty($conf->use_javascript_ajax))
         {

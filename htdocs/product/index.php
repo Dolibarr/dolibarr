@@ -67,7 +67,8 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 
 llxHeader("",$langs->trans("ProductsAndServices"),$helpurl);
 
-print_fiche_titre($transAreaType);
+$linkback="";
+print_fiche_titre($transAreaType,$linkback,'title_products.png');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

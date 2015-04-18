@@ -46,8 +46,8 @@ $transAreaType = $langs->trans("ThirdPartiesArea");
 $helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
 llxHeader("",$langs->trans("ThirdParties"),$helpurl);
-
-print_fiche_titre($transAreaType);
+$linkback='';
+print_fiche_titre($transAreaType,$linkback,'title_companies.png');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';

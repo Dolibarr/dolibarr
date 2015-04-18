@@ -2780,12 +2780,12 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
  *  @param	string	$morehtml			More html to show
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.png', $pictoisfullpath=0, $morehtml='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='')
 {
 	global $conf,$langs;
 
-	if ($picto == 'setup') $picto='title.png';
-	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
+	if ($picto == 'setup') $picto='title_setup.png';
+	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
 
 	if (($num > $conf->liste_limit) || ($num == -1))
 	{

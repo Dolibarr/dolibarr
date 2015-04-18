@@ -74,7 +74,7 @@ else if ($type == '1')
 
 llxHeader('','',$helpurl);
 
-print_fiche_titre($title, $mesg);
+print_fiche_titre($title, $mesg,'title_products.png');
 
 
 $param = '';
