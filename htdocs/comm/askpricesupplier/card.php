@@ -1730,6 +1730,9 @@ if ($action == 'create')
 	/*
 	 * Action presend
  	 */
+	if (!empty(GETPOST('modelselected'))) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$object->fetch_projet();
@@ -1802,6 +1805,7 @@ if ($action == 'create')
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';
 		$formmail->param['models'] = 'askpricesupplier_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['id'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 		// Init list of files
