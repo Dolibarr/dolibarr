@@ -175,14 +175,17 @@ foreach ($langstrings_3d AS $filename => $file) {
 	}
 }
 
-echo "<h2>Duplicate strings in lang files in $workdir</h2>";
+echo "<h2>Duplicate strings in lang files in $workdir - ".count($dups)." found</h2>";
 echo "<pre>";
 
 echo "<table border_bottom=1> ";
-echo "<thead><tr><th>String</th><th>File and lines</th></thead>";
+echo "<thead><tr><th align=\"center\">#</th><th>String</th><th>File and lines</th></thead>";
 echo "<tbody>";
+$count = 0;
 foreach ($dups as $string => $pages) {
+	$count++;
 	echo "<tr>";
+	echo "<td align=\"center\">$count</td>";
 	echo "<td>$string</td>";
 	echo "<td>";
 	foreach ($pages AS $page => $lines ) {
