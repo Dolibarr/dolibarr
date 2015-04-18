@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Francis Appels          <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -492,9 +492,9 @@ class Expedition extends CommonObject
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
-			
+
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -878,7 +878,7 @@ class Expedition extends CommonObject
 		if (isset($this->fk_delivery_address)) $this->fk_delivery_address=trim($this->fk_delivery_address);
 		if (isset($this->shipping_method_id)) $this->shipping_method_id=trim($this->shipping_method_id);
 		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->trueDepth)) $this->trueDepth=trim($this->trueDepth);
 		if (isset($this->trueWidth)) $this->trueWidth=trim($this->trueWidth);
 		if (isset($this->trueHeight)) $this->trueHeight=trim($this->trueHeight);
@@ -1673,6 +1673,22 @@ class Expedition extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'expedition'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 

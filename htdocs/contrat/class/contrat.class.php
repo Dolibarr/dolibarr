@@ -1131,7 +1131,7 @@ class Contrat extends CommonObject
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
 		if (isset($this->ref_ext)) $this->ref_ext=trim($this->ref_ext);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
-		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
 		if (isset($this->fk_projet)) $this->fk_projet=trim($this->fk_projet);
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature=trim($this->fk_commercial_signature);
@@ -2112,6 +2112,23 @@ class Contrat extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'contrat'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 
@@ -2417,7 +2434,7 @@ class ContratLigne extends CommonObject
 		// Clean parameters
 		$this->fk_contrat=trim($this->fk_contrat);
 		$this->fk_product=trim($this->fk_product);
-		$this->statut=trim($this->statut);
+		$this->statut=(int) $this->statut;
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->tva_tx=trim($this->tva_tx);
@@ -2439,7 +2456,12 @@ class ContratLigne extends CommonObject
 		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
 		$this->fk_user_cloture=trim($this->fk_user_cloture);
 		$this->commentaire=trim($this->commentaire);
-
+		//if (empty($this->subprice)) $this->subprice = 0;
+		if (empty($this->price_ht)) $this->price_ht = 0;
+		if (empty($this->total_ht)) $this->total_ht = 0;
+		if (empty($this->total_tva)) $this->total_tva = 0;
+		if (empty($this->total_ttc)) $this->total_ttc = 0;
+		
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -2483,8 +2505,8 @@ class ContratLigne extends CommonObject
 		$sql.= " remise_percent='".$this->remise_percent."',";
 		$sql.= " remise=".($this->remise?"'".$this->remise."'":"null").",";
 		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
-		$sql.= " subprice='".$this->subprice."',";
-		$sql.= " price_ht='".$this->price_ht."',";
+		$sql.= " subprice=".($this->subprice != '' ? $this->subprice : "null").",";
+		$sql.= " price_ht=".($this->price_ht != '' ? $this->price_ht : "null").",";
 		$sql.= " total_ht='".$this->total_ht."',";
 		$sql.= " total_tva='".$this->total_tva."',";
 		$sql.= " total_localtax1='".$this->total_localtax1."',";

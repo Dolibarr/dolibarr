@@ -49,12 +49,15 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now=dol_now();
-
-$year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
-$month=GETPOST("month","int")?GETPOST("month","int"):date("m");
-$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
-$day=GETPOST("day","int")?GETPOST("day","int"):date("d");
+$nowtmp=dol_getdate($now);
+$nowday=$nowtmp['mday'];
+$nowmonth=$nowtmp['mon'];
+$nowyear=$nowtmp['year'];
+$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):date("Y"));
+$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):date("m"));
+$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):date("d"));
 $day = (int) $day;
+$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 
 $startdayarray=dol_get_first_day_week($day, $month, $year);
 
@@ -82,6 +85,13 @@ $usertoprocess=$user;
 /*
  * Actions
  */
+
+if (GETPOST('submitdateselect'))
+{
+	$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+
+	$action = '';
+}
 
 if ($action == 'addtime' && $user->rights->projet->creer)
 {
@@ -173,19 +183,18 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($projec
 
 llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
-
-$tmpday = $first_day;
 
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
-$nav.=" </span>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week." </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$picto='calendarweek';
+$nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
+$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
+$picto='calendarweek';
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -199,12 +208,14 @@ $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperweek', '', 0, 'task');
 
 // Show description of content
-if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
+if ($mine) print $langs->trans("MyTasksDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br><br>';
-	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br><br>';
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
+	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
 }
+print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+print '<br>';
 print "\n";
 
 // Filter on user
@@ -248,6 +259,7 @@ for($i=0;$i<7;$i++)
 {
 	print '<td width="7%" align="center">'.dol_print_date($startday + ($i * 3600 * 24), '%a').'<br>'.dol_print_date($startday + ($i * 3600 * 24), 'day').'</td>';
 }
+print '<td class="liste_total"></td>';
 
 print "</tr>\n";
 
@@ -268,11 +280,12 @@ if (count($tasksarray) > 0)
                 <td class="liste_total" width="7%" align="center"><div id="totalDay[4]">&nbsp;</div></td>
                 <td class="liste_total" width="7%" align="center"><div id="totalDay[5]">&nbsp;</div></td>
                 <td class="liste_total" width="7%" align="center"><div id="totalDay[6]">&nbsp;</div></td>
+                <td class="liste_total"></td>
     </tr>';
 }
 else
 {
-	print '<tr><td colspan="10">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="11">'.$langs->trans("NoTasks").'</td></tr>';
 }
 print "</table>";
 
@@ -286,6 +299,7 @@ print '<input type="submit" class="button" name="save" value="'.dol_escape_htmlt
 print '</div>';
 
 print '</form>'."\n\n";
+
 
 $modeinput='hours';
 

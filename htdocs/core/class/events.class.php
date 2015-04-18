@@ -31,7 +31,6 @@
 
 /**
  *	Events class
- *	Initialy built by build_class_from_table on 2008-02-28 17:25
  */
 class Events // extends CommonObject
 {
@@ -40,6 +39,8 @@ class Events // extends CommonObject
 
 	var $id;
 	var $db;
+
+	var $error;
 
 	var $tms;
 	var $type;

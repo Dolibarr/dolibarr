@@ -101,7 +101,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("GUISetup"),'','setup');
+print_fiche_titre($langs->trans("GUISetup"),'','title_setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";
@@ -323,8 +323,6 @@ else	// Show
     $var=true;
 
     // Language
-    print_fiche_titre($langs->trans("Language"),'','');
-    print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 

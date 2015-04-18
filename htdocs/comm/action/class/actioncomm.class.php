@@ -333,7 +333,7 @@ class ActionComm extends CommonObject
             	$action='create';
 
 	            // Actions on extra fields (by external module or standard code)
-				// FIXME le hook fait double emploi avec le trigger !!
+				// TODO le hook fait double emploi avec le trigger !!
             	$hookmanager->initHooks(array('actioncommdao'));
 	            $parameters=array('actcomm'=>$this->id);
 	            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -657,7 +657,7 @@ class ActionComm extends CommonObject
 			$action='update';
 
         	// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
         	$hookmanager->initHooks(array('actioncommdao'));
         	$parameters=array('actcomm'=>$this->id);
         	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1262,6 +1262,23 @@ class ActionComm extends CommonObject
         $this->userownerid=$user->id;
         $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
     }
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'actioncomm'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 
 }
 

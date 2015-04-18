@@ -81,8 +81,8 @@ llxHeader("",$langs->trans("Loan"),$help_url);
 if ($object->id)
 {
 	$alreadypayed=$object->getSumPayment();
-	
-    $head = loan_prepare_head($object, $user);
+
+    $head = loan_prepare_head($object);
 
     dol_fiche_head($head, 'documents',  $langs->trans("Loan"), 0, 'bill');
 

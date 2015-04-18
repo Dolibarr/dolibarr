@@ -341,7 +341,7 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'category', $titre,0,$picto);

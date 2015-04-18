@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/public/studs.php
+ *	\file       htdocs/public/opensurvey/studs.php
  *	\ingroup    opensurvey
  *	\brief      Page to list surveys
  */
@@ -111,12 +111,14 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		}
 
 		$nom=substr(GETPOST("nom"),0,64);
-
+		
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
-		$sql.= ' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs';
-		$sql.= ' WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
+		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
+		if (! $resql) dol_print_error($db);
+		
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
 		{

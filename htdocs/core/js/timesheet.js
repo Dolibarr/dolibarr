@@ -1,4 +1,3 @@
-//FIXME total not working    
 /* Copyright (C) 2014 delcroip <delcroip@gmail.com>
  * Laurent Destailleur 2015 <eldy@users.sourceforge.net>
  *

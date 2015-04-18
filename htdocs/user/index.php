@@ -67,7 +67,7 @@ llxHeader('',$langs->trans("ListOfUsers"));
 
 print_fiche_titre($langs->trans("ListOfUsers"), '<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>');
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_societe, u.login,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login,";
 $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
@@ -75,7 +75,7 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2,";
 $sql.= " s.nom as name, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 {
@@ -85,7 +85,7 @@ else
 {
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
-if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
+if (! empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 if (! empty($search_user))
 {
     $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
@@ -113,7 +113,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LastName"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_societe",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_soc",$param,"","",$sortfield,$sortorder);
     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
     {
 	    print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
@@ -164,9 +164,9 @@ if ($result)
         print '<td>'.ucfirst($obj->lastname).'</td>';
         print '<td>'.ucfirst($obj->firstname).'</td>';
         print "<td>";
-        if ($obj->fk_societe)
+        if ($obj->fk_soc)
         {
-            $companystatic->id=$obj->fk_societe;
+            $companystatic->id=$obj->fk_soc;
             $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);

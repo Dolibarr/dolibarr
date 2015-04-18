@@ -6,7 +6,8 @@
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2013 Juanjo Menent			   <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent                <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +240,7 @@ $form=new Form($db);
 //if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("AskPriceSupplierSetup"),$linkback,'title_setup');
 
 $head = askpricesupplier_admin_prepare_head();
 
@@ -319,7 +320,6 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$askpricesupplier->type=0;
 						$nextval=$module->getNextValue($mysoc,$askpricesupplier);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';

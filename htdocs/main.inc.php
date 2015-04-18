@@ -111,17 +111,17 @@ function test_sql_and_script_inject($val, $type)
 /**
  * Security: Return true if OK, false otherwise.
  *
- * @param		string		$var		Variable name
- * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean					true if there is an injection
+ * @param		string			$var		Variable name
+ * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
+ * @return		boolean||null				true if there is an injection. Stop code if injection found.
  */
-function analyse_sql_and_script(&$var, $type)
+function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 {
     if (is_array($var))
     {
         foreach ($var as $key => $value)
         {
-            if (analyse_sql_and_script($value,$type))
+            if (analyseVarsForSqlAndScriptsInjection($value,$type))
             {
                 $var[$key] = $value;
             }
@@ -147,16 +147,16 @@ if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && ! defined('NOREQUIRE
 if (! empty($_SERVER["PHP_SELF"]))
 {
     $morevaltochecklikepost=array($_SERVER["PHP_SELF"]);
-    analyse_sql_and_script($morevaltochecklikepost,2);
+    analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost,2);
 }
 // Sanity check on GET parameters
 if (! empty($_SERVER["QUERY_STRING"]))
 {
     $morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
-    analyse_sql_and_script($morevaltochecklikeget,1);
+    analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget,1);
 }
 // Sanity check on POST
-analyse_sql_and_script($_POST,0);
+analyseVarsForSqlAndScriptsInjection($_POST,0);
 
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -975,7 +975,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print "<head>\n";
 		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
-        print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+        print '<meta name="robots" content="noindex,nofollow">'."\n";      				// Do not index
+        print '<meta name="viewport" content="width=device-width, initial-scale=1">';	// Scale for mobile device
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";	// Needed for Responsive Web Design
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);

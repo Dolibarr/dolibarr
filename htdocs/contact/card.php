@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,7 +256,7 @@ if (empty($reshook))
         }
         else
         {
-            setEventMessage($object->error,$object->errors,'errors');
+            setEventMessages($object->error,$object->errors,'errors');
         }
     }
 
@@ -412,7 +413,8 @@ else
             }
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-            print_fiche_titre($title);
+            $linkback='';
+            print_fiche_titre($title,$linkback,'title_companies.png');
 
             // Affiche les erreurs
             dol_htmloutput_errors(is_numeric($error)?'':$error,$errors);

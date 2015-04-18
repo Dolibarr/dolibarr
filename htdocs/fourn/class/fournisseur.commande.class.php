@@ -52,7 +52,11 @@ class CommandeFournisseur extends CommonOrder
 
     var $id;
 
-    var $ref;		 // TODO deprecated
+	/**
+	 * TODO: Remove
+	 * @deprecated
+	 */
+    var $ref;
     var $product_ref;
     var $ref_supplier;
     var $brouillon;
@@ -1066,6 +1070,12 @@ class CommandeFournisseur extends CommonOrder
                         }
                     }
 
+	                if (! $error)
+                    {
+                    	$result=$this->insertExtraFields();
+	                    if ($result < 0) $error++;
+                    }
+
 					if (! $error && ! $notrigger)
 	                {
 						// Call trigger
@@ -1381,19 +1391,25 @@ class CommandeFournisseur extends CommonOrder
      */
     function dispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet=0, $notrigger=0)
     {
-        global $conf;
+        global $conf, $langs;
+
         $error = 0;
         require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
-        // Check parameters
-        if ($entrepot <= 0 || $qty <= 0)
+        // Check parameters (if test are wrong here, there is bug into caller)
+        if ($entrepot <= 0)
         {
-            $this->error='BadValueForParameterWarehouseOrQty';
+            $this->error='ErrorBadValueForParameterWarehouse';
+            return -1;
+        }
+        if ($qty <= 0)
+        {
+            $this->error='ErrorBadValueForParameterQty';
             return -1;
         }
 
         $dispatchstatus = 1;
-        if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0;	// Setting dispatch status (a validation step after receiving products) will be done manually to 1 if this option is on
+        if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0;	// Setting dispatch status (a validation step after receiving products) will be done manually to 1 or 2 if this option is on
 
         $now=dol_now();
 
@@ -1418,13 +1434,11 @@ class CommandeFournisseur extends CommonOrder
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH',$user);
 					if ($result < 0)
                     {
-                        $this->db->rollback();
+                        $error++;
                         return -1;
                     }
 					// End call triggers
                 }
-
-                $this->db->commit();
             }
             else
 			{
@@ -1433,7 +1447,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             // Si module stock gere et que incrementation faite depuis un dispatching en stock
-            if (!$error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+            if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
 
                 $mouv = new MouvementStock($this->db);
@@ -1445,13 +1459,13 @@ class CommandeFournisseur extends CommonOrder
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;
-                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error, LOG_ERR);
+                        $this->errors=$mouv->errors;
+                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',',$this->errors), LOG_ERR);
                         $error++;
                     }
                 }
             }
 
-            //TODO: Check if there is a current transaction in DB but seems not.
             if ($error == 0)
             {
                 $this->db->commit();
@@ -1464,7 +1478,7 @@ class CommandeFournisseur extends CommonOrder
             }
         }
         else
-        {
+		{
             $this->error='BadStatusForObject';
             return -2;
         }
@@ -1731,18 +1745,37 @@ class CommandeFournisseur extends CommonOrder
             if ($type == 'nev') $statut = 7;
             if ($type == 'can') $statut = 7;
 
-        	if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && ($type == 'tot'))
-	    	{
-	    		// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
-	    		$dispatchedlinearray=$this->getDispachedLines(0);
-	    		if (count($dispatchedlinearray) > 0)
+            // Some checks to accept the record
+            if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
+            {
+				// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
+	        	if (! $error && ($type == 'tot'))
+		    	{
+		    		$dispatchedlinearray=$this->getDispachedLines(0);
+		    		if (count($dispatchedlinearray) > 0)
+		    		{
+		    			$result=-1;
+		    			$error++;
+		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
+		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
+		    		}
+
+		    	}
+	    		if (! $error && ! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot'))	// Accept to move to rception done, only if status of all line are ok (refuse denied)
 	    		{
-	    			$result=-1;
-	    			$error++;
-	    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionToApprove';
-	    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
+	    			$dispatcheddenied=$this->getDispachedLines(2);
+	    			if (count($dispatchedlinearray) > 0)
+	    			{
+		    			$result=-1;
+		    			$error++;
+		    			$this->errors[]='ErrorCantSetReceptionToTotalDoneWithReceptionDenied';
+		    			dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionDenied', LOG_DEBUG);
+	    			}
 	    		}
-	    	}
+            }
+
+            // TODO LDR01 Add option to accept only if ALL predefined products are received (same qty).
+
 
             if (! $error && ! ($statut == 4 or $statut == 5 or $statut == 7))
             {
@@ -2367,7 +2400,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		if ($nb === 0) return $langs->trans('Undefined');
+		if ($nb === 0) return '';
 		else return $nb.' '.$langs->trans('Days');
 	}
 
@@ -2382,6 +2415,23 @@ class CommandeFournisseur extends CommonOrder
 		return $user->rights->fournisseur->commande;
 	}
 
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'commande_fournisseur'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 

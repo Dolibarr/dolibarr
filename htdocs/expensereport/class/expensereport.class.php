@@ -623,7 +623,7 @@ class ExpenseReport extends CommonObject
 							print $langs->trans('Draft').' '.img_picto($langs->trans('Draft'),'statut0');
 							break;
 						case 2:
-							print $langs->trans('TripForValid').' '.img_picto($langs->trans('TripForValid'),'statut3');;
+							print $langs->trans('TripForValid').' '.img_picto($langs->trans('TripForValid'),'statut3');
 							break;
 						case 5:
 							print $langs->trans('TripForPaid').' '.img_picto($langs->trans('TripForPaid'),'statut3');

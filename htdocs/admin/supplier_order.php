@@ -182,43 +182,27 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
     	$res3=1;
     }*/
 
-    // TODO We add/delete permission until permission can have a condition on a global var
-    $r_id = 1190;
-    $entity = $conf->entity;
-    $r_desc=$langs->trans("Permission1190");
-    $r_modul='fournisseur';
-    $r_type='w';
-    $r_perms='commande';
-    $r_subperms='approve2';
-    $r_def=0;
+    // TODO We add/delete permission here until permission can have a condition on a global var
+    include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
+    $newmodule=new modFournisseur($db);
+	// clear default rights array
+    $newmodule->rights=array();
+    // add new right
+    $r=0;
+    $newmodule->rights[$r][0] = 1190;
+	$newmodule->rights[$r][1] = $langs->trans("Permission1190");
+	$newmodule->rights[$r][2] = 'w';
+	$newmodule->rights[$r][3] = 0;
+	$newmodule->rights[$r][4] = 'commande';
+	$newmodule->rights[$r][5] = 'approve2';
 
     if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
     {
-    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-    	$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-    	$sql.= " VALUES ";
-    	$sql.= "(".$r_id.",".$entity.",'".$db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
-
-    	$resqlinsert=$db->query($sql,1);
-    	if (! $resqlinsert)
-    	{
-    		if ($db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
-    		{
-    			setEventMessage($db->lasterror(),'errors');
-    			$error++;
-    		}
-    	}
+    	$newmodule->insert_permissions(1);
     }
     else
     {
-    	$sql = "DELETE FROM	".MAIN_DB_PREFIX."rights_def";
-    	$sql.= " WHERE id = ".$r_id;
-       	$resqldelete=$db->query($sql,1);
-    	if (! $resqldelete)
-    	{
-   			setEventMessage($db->lasterror(),'errors');
-   			$error++;
-    	}
+    	$newmodule->delete_permissions();
     }
 }
 
@@ -234,7 +218,7 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 llxHeader("","");
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'title_setup');
 
 print "<br>";
 

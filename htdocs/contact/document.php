@@ -79,7 +79,7 @@ llxHeader("",$langs->trans("Contact"), $helpurl);
 
 if ($object->id)
 {
-    $head = contact_prepare_head($object, $user);
+    $head = contact_prepare_head($object);
 
     dol_fiche_head($head, 'documents',  $langs->trans("Contact"), 0, 'contact');
 

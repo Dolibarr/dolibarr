@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014 Alexandre Spangaro  <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ $form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_societe as fk_soc,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
 $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
@@ -118,7 +119,7 @@ if ($result)
 	$param='';
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
-	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
+	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy.png');
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 

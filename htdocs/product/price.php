@@ -353,7 +353,7 @@ if (! empty($id) || ! empty($ref))
 
 llxHeader("", "", $langs->trans("CardProduct" . $object->type));
 
-$head = product_prepare_head($object, $user);
+$head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct" . $object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 dol_fiche_head($head, 'price', $titre, 0, $picto);

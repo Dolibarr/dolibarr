@@ -75,6 +75,9 @@ create table llx_facture
   note_private			text,
   note_public			text,
   model_pdf				varchar(255),
+
+  fk_incoterms          integer,								-- for incoterms
+  location_incoterms    varchar(255),							-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255),							-- for stock other parameters with json format
 

@@ -126,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 			if ($object->fin_validite)
 			{
 				print dol_print_date($object->fin_validite,'daytext');
-				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($object->statut == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			}
 			else
 			{

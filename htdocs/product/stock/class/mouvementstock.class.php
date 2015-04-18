@@ -67,16 +67,16 @@ class MouvementStock extends CommonObject
 	 *	@param		date	$eatby			eat-by date
 	 *	@param		date	$sellby			sell-by date
 	 *	@param		string	$batch			batch number
-	 *	@param		boolean	$skip_sellby	If set to true, stock mouvement is done without impacting batch record
+	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_batch=false)
 	{
 		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$error = 0;
-		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode");
+		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
 		// Clean parameters
 		if (empty($price)) $price=0;
@@ -84,6 +84,16 @@ class MouvementStock extends CommonObject
 
 		// Check parameters
 		if (empty($fk_product)) return 0;
+		if ($eatby < 0)
+		{
+			$this->errors[]='ErrorBadValueForParameterEatBy';
+			return -1;
+		}
+		if ($sellby < 0)
+		{
+			$this->errors[]='ErrorBadValueForParameterEatBy';
+			return -1;
+		}
 
 		// Set properties of movement
 		$this->product_id = $fk_product;
@@ -91,7 +101,7 @@ class MouvementStock extends CommonObject
 		$this->qty = $qty;
 		$this->type = $type;
 
-		$this->db->begin();
+		$mvid = 0;
 
 		$product = new Product($this->db);
 		$result=$product->fetch($fk_product);
@@ -100,19 +110,69 @@ class MouvementStock extends CommonObject
 			dol_print_error('',"Failed to fetch product");
 			return -1;
 		}
+
+		$this->db->begin();
+
 		$product->load_stock();
 
 		// Test if product require batch data. If yes, and there is not, we throw an error.
-		if ($product->hasbatch() && ! $skip_sellby)
+		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 		{
-			if (empty($batch) && empty($eatby) && empty($sellby))
+			//if (empty($batch) && empty($eatby) && empty($sellby))
+			if (empty($batch))
 			{
-				$this->errors[]="ErrorTryToMakeMoveOnProductRequiringBatchData";
+				$this->errors[]=$langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->name);
 				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
 
 				$this->db->rollback();
 				return -2;
 			}
+
+			// If a serial number is provided, we check that sellby and eatby match already existing serial
+			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
+			$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$fk_product." AND pb.batch = '".$this->db->escape($batch)."'";
+            dol_syslog(get_class($this)."::_create scan serial for this product to check if eatby and sellby match", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+            	$num = $this->db->num_rows($resql);
+            	$i=0;
+            	while ($i < $num)
+            	{
+            		$obj = $this->db->fetch_object($resql);
+            		if ($this->db->jdate($obj->eatby) != $eatby)
+            		{
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->eatby), $eatby);
+						dol_syslog($langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->eatby), $eatby));
+						$this->db->rollback();
+            			return -3;
+            		}
+            		if ($this->db->jdate($obj->sellby) != $sellby)
+            		{
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->sellby), $sellby);
+						dol_syslog($langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, $this->db->jdate($obj->sellby), $sellby));
+						$this->db->rollback();
+            			return -3;
+            		}
+            		$i++;
+            	}
+            }
+            else
+			{
+            	dol_print_error($this->db);
+            	$this->db->rollback();
+            	return -1;
+			}
+		}
+
+		// TODO Check qty is ok for stock move.
+		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
+		{
+
+		}
+		else
+		{
+
 		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
@@ -128,8 +188,6 @@ class MouvementStock extends CommonObject
 				$origintype = '';
 				$fk_origin = 0;
 			}
-
-			$mvid = 0;
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
 			$sql.= " datem, fk_product, batch, eatby, sellby,";
@@ -157,7 +215,7 @@ class MouvementStock extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
+				$this->errors[]=$this->db->lasterror();
 				$error = -1;
 			}
 
@@ -190,7 +248,7 @@ class MouvementStock extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->db->lasterror();
 					$error = -2;
 				}
 			}
@@ -212,7 +270,7 @@ class MouvementStock extends CommonObject
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
-						$this->error=$this->db->lasterror();
+						$this->errors[]=$this->db->lasterror();
 						$error = -4;
 					}
 			*/
@@ -266,7 +324,7 @@ class MouvementStock extends CommonObject
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
-					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->db->lasterror();
 					$error = -3;
 				}
 				else if(empty($fk_product_stock))
@@ -276,8 +334,8 @@ class MouvementStock extends CommonObject
 
 			}
 
-			// Update detail stock for sell-by date
-			if (($product->hasbatch()) && (! $error) && (! $skip_sellby))
+			// Update detail stock for batch product
+			if (! $error && ! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 			{
 				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby, 'sellby'=>$sellby, 'batchnumber'=>$batch);
 				$result=$this->_create_batch($param_batch, $qty);
@@ -296,7 +354,7 @@ class MouvementStock extends CommonObject
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
-					$this->error=$this->db->lasterror();
+					$this->errors[]=$this->db->lasterror();
 					$error = -4;
 				}
 			}

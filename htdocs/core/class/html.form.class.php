@@ -868,7 +868,7 @@ class Form
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
@@ -1306,7 +1306,7 @@ class Form
         		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
         	}
         }
-        if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
+        if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut <> 0";
@@ -1529,7 +1529,7 @@ class Form
             		print img_picto($langs->trans("Search"), 'search');
             	}
             }
-            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' autofocus />';
             if ($hidelabel == 3) {
             	print img_picto($langs->trans("Search"), 'search');
             }
@@ -1646,7 +1646,7 @@ class Form
             require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
             $num = $this->db->num_rows($result);
 
-            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'" autofocus>';
             $out.='<option value="0" selected="selected">&nbsp;</option>';
 
             $i = 0;
@@ -2871,7 +2871,7 @@ class Form
                     {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $obj->label;
+                    print trim($obj->label);
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;
@@ -2930,10 +2930,11 @@ class Form
      *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
+     *    @param	int		$outputmode			0=HTML select string, 1=Array
      *    @return	string
      *    @see select_categories
      */
-    function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
+    function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0, $outputmode=0)
     {
         global $langs;
         $langs->load("categories");
@@ -2942,6 +2943,7 @@ class Form
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
         $output = '<select class="flat" name="'.$htmlname.'">';
+		$outarray=array();
         if (is_array($cate_arbo))
         {
             if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
@@ -2959,12 +2961,16 @@ class Form
                         $add = '';
                     }
                     $output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'],$maxlength,'middle').'</option>';
+					
+					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
                 }
             }
         }
         $output.= '</select>';
         $output.= "\n";
-        return $output;
+
+		if ($outputmode) return $outarray;
+		return $output;
     }
 
     /**

@@ -51,8 +51,17 @@ class Commande extends CommonOrder
 
     var $id;
 
-    var $socid;		// Id client
-    var $client;		// Objet societe client (a charger par fetch_client)
+	/**
+	 * Client ID
+	 * @var int
+	 */
+    var $socid;
+
+	/**
+	 * Client (loaded by fetch_client)
+	 * @var Societe
+	 */
+    var $client;
 
     var $ref;
     var $ref_client;
@@ -69,30 +78,12 @@ class Commande extends CommonOrder
 	 * - STATUS_CLOSED
 	 * @var int
 	 */
-    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Delivered=Sent/Received, billed or not)
+    var $statut;
+	/**
+	 * @deprecated
+	 */
     var $facturee;		// deprecated
     var $billed;		// billed or not
-
-	/**
-	 * Canceled status
-	 */
-	const STATUS_CANCELED = -1;
-	/**
-	 * Draft status
-	 */
-	const STATUS_DRAFT = 0;
-	/**
-	 * Validated status
-	 */
-	const STATUS_VALIDATED = 1;
-	/**
-	 * Accepted/On process not managed for customer orders
-	 */
-	const STATUS_ACCEPTED = 2;
-	/**
-	 * Closed (Sent/Received, billed or not)
-	 */
-	const STATUS_CLOSED = 3;
 
     var $brouillon;
     var $cond_reglement_id;
@@ -152,6 +143,27 @@ class Commande extends CommonOrder
      * ERR Not engouch stock
      */
     const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
+
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Accepted/On process not managed for customer orders
+	 */
+	const STATUS_ACCEPTED = 2;
+	/**
+	 * Closed (Sent/Received, billed or not)
+	 */
+	const STATUS_CLOSED = 3;
 
 
     /**
@@ -790,7 +802,7 @@ class Commande extends CommonOrder
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
-		    	$this->lines[$i]->array_options
+                    	$this->lines[$i]->array_options
                     );
                     if ($result < 0)
                     {
@@ -862,28 +874,25 @@ class Commande extends CommonOrder
 
                     if (! $error)
                     {
-                    	$action='create';
+                    	//$action='create';
 
 	                    // Actions on extra fields (by external module or standard code)
-	                    // FIXME le hook fait double emploi avec le trigger !!
-	                    $hookmanager->initHooks(array('orderdao'));
+	                    // TODO le hook fait double emploi avec le trigger !!
+	                    /*$hookmanager->initHooks(array('orderdao'));
 	                    $parameters=array('socid'=>$this->id);
 	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 	                    if (empty($reshook))
 	                    {
 	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-	                    	{
+	                    	{*/
 	                    		$result=$this->insertExtraFields();
-	                    		if ($result < 0)
-	                    		{
-	                    			$error++;
-	                    		}
-	                    	}
+	                    		if ($result < 0) $error++;
+	                    /*	}
 	                    }
-	                    else if ($reshook < 0) $error++;
+	                    else if ($reshook < 0) $error++;*/
                     }
 
-                    if (! $notrigger)
+                    if (! $error && ! $notrigger)
                     {
 			            // Call trigger
 			            $result=$this->call_trigger('ORDER_CREATE',$user);
@@ -891,29 +900,27 @@ class Commande extends CommonOrder
 			            // End call triggers
                     }
 
-	                if (!$error) {
+	                if (! $error)
+	                {
 		                $this->db->commit();
 		                return $this->id;
 	                }
-
-	                foreach($this->errors as $errmsg)
-	                {
-		                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-		                $this->error.=($this->error?', '.$errmsg:$errmsg);
-	                }
-	                $this->db->rollback();
-	                return -1*$error;
-
+	                else
+					{
+	                	$this->db->rollback();
+	                	return -1*$error;
+					}
                 }
                 else
-                {
+				{
+					$this->error=$this->db->lasterror();
                     $this->db->rollback();
                     return -1;
                 }
             }
         }
         else
-        {
+		{
             dol_print_error($this->db);
             $this->db->rollback();
             return -1;
@@ -2656,7 +2663,7 @@ class Commande extends CommonOrder
     	$action='create';
 
     	// Actions on extra fields (by external module or standard code)
-    	// FIXME le hook fait double emploi avec le trigger !!
+    	// TODO le hook fait double emploi avec le trigger !!
     	$hookmanager->initHooks(array('orderdao'));
     	$parameters=array('id'=>$this->id);
     	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -3285,6 +3292,23 @@ class Commande extends CommonOrder
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'commande'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 

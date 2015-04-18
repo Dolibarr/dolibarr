@@ -31,7 +31,7 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$sref=GETPOST("sref");;
+$sref=GETPOST("sref");
 $snom=GETPOST("snom");
 $sall=GETPOST("sall");
 
