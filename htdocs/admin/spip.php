@@ -110,7 +110,7 @@ llxHeader('',$langs->trans("MailmanSpipSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup');
 
 
 $head = mailmanspip_admin_prepare_head();

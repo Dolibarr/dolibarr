@@ -61,7 +61,7 @@ if (preg_match('/del(.*)/',$action,$reg))
 llxHeader('',$langs->trans("WorkflowSetup"),'');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'title_setup');
 
 print $langs->trans("WorkflowDesc").'<br>';
 print "<br>";
