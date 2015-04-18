@@ -223,6 +223,6 @@ echo '</pre>';
 echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient->response, ENT_QUOTES) . '</pre>';
 
-echo '</body>'."\n";;
-echo '</html>'."\n";;
+echo '</body>'."\n";
+echo '</html>'."\n";
 ?>
