@@ -2396,6 +2396,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			// Tableau des parametres complementaires
 			$formmail->param['action'] = 'send';
 			$formmail->param['models'] = 'order_send';
+			$formmail->param['models_id']=GETPOST('modelmailselected','int');
 			$formmail->param['orderid'] = $object->id;
 			$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 

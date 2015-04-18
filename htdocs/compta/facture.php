@@ -3733,6 +3733,10 @@ if ($action == 'create')
 	}
 	print '<br>';
 
+	//Select mail models is same action as presend
+	if (!empty(GETPOST('modelselected'))) {
+		$action = 'presend';
+	}
 	if ($action != 'prerelance' && $action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -3953,6 +3957,7 @@ if ($action == 'create')
 		// Tableau des parametres complementaires du post
 		$formmail->param['action'] = $action;
 		$formmail->param['models'] = $modelmail;
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['facid'] = $object->id;
 		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
