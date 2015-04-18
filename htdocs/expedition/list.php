@@ -80,8 +80,8 @@ if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no p
 }
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target AND ee.targettype = 'delivery'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
@@ -125,11 +125,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDeliveryPlanned"), $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
-	if($conf->expedition_bon->enabled) {
-		print_liste_field_titre($langs->trans("DeliveryOrder"), $_SERVER["PHP_SELF"],"e.date_expedition","",$param, '',$sortfield,$sortorder);
-    }
-        if($conf->livraison_bon->enabled) {
-		print_liste_field_titre($langs->trans("DateReceived"), $_SERVER["PHP_SELF"],"e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+    if($conf->livraison_bon->enabled) 
+    {
+		print_liste_field_titre($langs->trans("DeliveryOrder"), $_SERVER["PHP_SELF"],"l.ref","",$param, '',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("DateReceived"), $_SERVER["PHP_SELF"],"l.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
 	}
 	print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -143,13 +142,14 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
+	// Date
 	print '<td class="liste_titre">&nbsp;</td>';
-	if($conf->expedition_bon->enabled) {
+    if ($conf->livraison_bon->enabled)
+    {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
 		print '</td>';
-    }
-    if($conf->livraison_bon->enabled) {
+    	
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -193,14 +193,23 @@ if ($resql)
 		{
 		}*/
 		print "</td>\n";
-		if($conf->expedition_bon->enabled) {
-			// Date real
-			print '<td align="center">';
-			print dol_print_date($db->jdate($objp->date_expedition),"day");
-			print '</td>'."\n";
-        }
-        if($conf->livraison_bon->enabled) {
-			print '<td align="center">';
+
+		// Date real
+		print '<td align="center">';
+		print dol_print_date($db->jdate($objp->date_expedition),"day");
+		print '</td>'."\n";
+        
+        if ($conf->livraison_bon->enabled) 
+        {
+		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
+            $receiving=(! empty($shipment->linkedObjects['delivery'][0])?$shipment->linkedObjects['delivery'][0]:'');
+            
+        	// Ref
+            print '<td>';
+            print !empty($receiving) ? $receiving->getNomUrl($db) : '';
+            print '</td>';
+            
+        	print '<td align="center">';
 			print dol_print_date($db->jdate($objp->date_reception),"day");
 			print '</td>'."\n";
 		}

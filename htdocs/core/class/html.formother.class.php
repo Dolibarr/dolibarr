@@ -374,9 +374,13 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
             $comboenhancement = ajax_combobox($htmlname);
-            $out.=$comboenhancement;
-            $nodatarole=($comboenhancement?' data-role="none"':'');
+            if ($comboenhancement)
+            {
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+            }
         }
         // Select each sales and print them in a select input
         $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
