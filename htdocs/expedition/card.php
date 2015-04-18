@@ -1513,6 +1513,10 @@ else if ($id || $ref)
 	/*
 	 * Action presend
 	*/
+	//Select mail models is same action as presend
+	if (!empty(GETPOST('modelselected'))) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1611,6 +1615,7 @@ else if ($id || $ref)
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='shipping_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['shippingid']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 

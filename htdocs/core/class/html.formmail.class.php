@@ -291,8 +291,8 @@ class FormMail extends Form
         	foreach($this->lines_model as $line) {
         		$modelmail_array[$line->id]=$line->label;
         	}
-        	var_dump($modelmail_array);
-        	if (count($modelmail_array>0)) {
+        	
+        	if (count($modelmail_array)>0) {
 	        	$out.= '<table class="nobordernopadding" width="100%"><tr><td width="20%">'."\n";
 	        	$out.= $langs->trans('SelectMailModel').':'.$this->selectarray('modelmailselected', $modelmail_array,$model_id);
 	        	$out.= '</td>';
