@@ -255,8 +255,9 @@ textarea.cke_source:focus
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
+    font-family: <?php print $fontlist ?>;
+    background: #FDFDFD;
+    color: #444;
     border: 1px solid #C0C0C0;
     /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
