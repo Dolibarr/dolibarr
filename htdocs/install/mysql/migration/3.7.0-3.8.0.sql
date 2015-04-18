@@ -536,4 +536,4 @@ CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
 -- Feature request: A page to merge two thirdparties into one #2613
 ALTER TABLE llx_categorie_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
 ALTER TABLE llx_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
-
+ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
