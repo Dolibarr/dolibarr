@@ -857,12 +857,12 @@ class FormMail extends Form
 	}
 }
 
-class ModelMailLine {
+class ModelMailLine 
+{
 	public $id;
 	public $label;
 	public $topic;
 	public $content;
 	public $lang;
-	
 }
 
