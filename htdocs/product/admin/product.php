@@ -159,6 +159,10 @@ else if ($action == 'viewProdTextsInThirdpartyLanguage')
 	$view = GETPOST('activate_viewProdTextsInThirdpartyLanguage','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
 }
+elseif ($action == 'mergePropalProductCard') {
+	$view = GETPOST('activate_mergePropalProductCard','alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_PDF_MERGE_PROPAL", $view,'chaine',0,'',$conf->entity);
+}
 else if ($action == 'usesearchtoselectproduct')
 {
 	$usesearch = GETPOST('activate_usesearchtoselectproduct','alpha');
@@ -422,6 +426,21 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+// Activate propal merge produt card
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="mergePropalProductCard">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
