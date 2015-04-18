@@ -3168,6 +3168,7 @@ class Societe extends CommonObject
 		if ($resql)
 		{
 			$outstandingBill = 0;
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic=new Facture($this->db);
 			while($obj=$this->db->fetch_object($resql)) {
 				$facturestatic->id=$obj->rowid;
