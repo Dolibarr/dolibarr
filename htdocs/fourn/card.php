@@ -35,11 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
+$langs->load('companies');
 $langs->load('suppliers');
 $langs->load('products');
 $langs->load('bills');
 $langs->load('orders');
-$langs->load('companies');
 $langs->load('commercial');
 
 $action	= GETPOST('action');
@@ -201,13 +201,13 @@ if ($object->id > 0)
 	// Local Taxes
 	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsed").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
 	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsed").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
