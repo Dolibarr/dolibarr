@@ -649,13 +649,12 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 			print '<td align="right">';
 			$cn=$facturestatic->getSumCreditNotesUsed();
-			if (! empty($objp->am)) print price($objp->am);
-			if (! empty($objp->am) && ! empty($cn)) print '+';
-			if (! empty($cn)) print price($cn);
+			$dep=$facturestatic->getSumDepositsUsed();
+			print price($objp->am + $cn + $dep);
 			print '</td>';
 
 			// Remain to receive
-			print '<td align="right">'.((! empty($objp->am) || ! empty($cn))?price($objp->total_ttc-$objp->am-$cn):'&nbsp;').'</td>';
+			print '<td align="right">'.price($objp->total_ttc-$objp->am-$cn-$dep).'</td>';
 
 			// Status of invoice
 			print '<td align="right" class="nowrap">';
@@ -685,7 +684,7 @@ if ($resql)
 			$total_ht+=$objp->total_ht;
 			$total_tva+=($objp->total_tva + $tx1 + $tx2 + $revenuestamp);
 			$total_ttc+=$objp->total_ttc;
-			$total_paid+=$objp->am + $cn;
+			$total_paid+=$objp->am + $cn + $dep;
 
 			$i++;
 		}
