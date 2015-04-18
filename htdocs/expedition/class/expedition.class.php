@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Francis Appels          <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
