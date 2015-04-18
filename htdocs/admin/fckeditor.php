@@ -112,7 +112,7 @@ if (GETPOST('save','alpha'))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'setup');
+print_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
 print '<br>';
 
 $var=true;

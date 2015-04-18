@@ -55,7 +55,7 @@ if ($mine) $title=$langs->trans("MyActivities");
 
 llxHeader("",$title);
 
-print_fiche_titre($title);
+print_fiche_titre($title, '', 'title_project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else

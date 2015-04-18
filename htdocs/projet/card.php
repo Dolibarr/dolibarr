@@ -387,7 +387,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-    print_fiche_titre($langs->trans("NewProject"));
+    print_fiche_titre($langs->trans("NewProject"), '', 'title_project');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

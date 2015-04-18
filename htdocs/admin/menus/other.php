@@ -71,7 +71,7 @@ else if ($action == 'disable_layoutmenu')
 
 llxHeader('',$langs->trans("Setup"));
 
-print_fiche_titre($langs->trans("Menus"),'','setup');
+print_fiche_titre($langs->trans("Menus"),'','title_setup');
 
 
 $h = 0;

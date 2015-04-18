@@ -34,7 +34,7 @@ accessforbidden();
 
 llxHeader();
 
-print_fiche_titre("XDebug",'','setup');
+print_fiche_titre("XDebug",'','title_setup');
 
 print "<br>\n";
 
