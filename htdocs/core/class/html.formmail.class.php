@@ -836,15 +836,15 @@ class FormMail extends Form
 		if ($resql)
 		{
 			$this->lines_model=array();
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new ModelMailLine();
+			while ($obj = $this->db->fetch_object($resql)) 
+			{
+				$line = new ModelMail();
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
 				$line->content=$obj->lacontentbel;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
-				
 			}
 			$this->db->free($resql);
 			return $num;
@@ -857,7 +857,10 @@ class FormMail extends Form
 	}
 }
 
-class ModelMailLine 
+/**
+ * ModelMail
+ */
+class ModelMail
 {
 	public $id;
 	public $label;
