@@ -913,7 +913,7 @@ if ($id)
         print "</tr>";
 
         $colspan=count($fieldlist)+2;
-        if ($id == 4) $colspan++;;
+        if ($id == 4) $colspan++;
 
         if (! empty($alabelisused))  // Si un des champs est un libelle
         {
