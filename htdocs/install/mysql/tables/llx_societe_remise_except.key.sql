@@ -29,8 +29,8 @@ ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_fac
 
 
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
-ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_soc     FOREIGN KEY (fk_soc)     REFERENCES llx_societe (rowid);
-ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture_line   FOREIGN KEY (fk_facture_line) REFERENCES llx_facturedet (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_soc_remise_fk_soc     FOREIGN KEY (fk_soc)     REFERENCES llx_societe (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_soc_remise_fk_facture_line   FOREIGN KEY (fk_facture_line) REFERENCES llx_facturedet (rowid);
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture        FOREIGN KEY (fk_facture)        REFERENCES llx_facture (rowid);
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture_source FOREIGN KEY (fk_facture_source) REFERENCES llx_facture (rowid);
 

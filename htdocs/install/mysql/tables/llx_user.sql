@@ -52,7 +52,7 @@ create table llx_user
   admin             smallint DEFAULT 0,
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
-  fk_societe        integer,
+  fk_soc        integer,
   fk_socpeople      integer,
   fk_member         integer,
   fk_user           integer,               -- Hierarchic parent
