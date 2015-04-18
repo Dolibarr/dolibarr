@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -3896,5 +3896,27 @@ abstract class CommonObject
 		return $user->rights->{$this->element};
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 * This function is meant to be called from replaceThirdparty with the appropiate tables
+	 * Column name fk_soc MUST be used to identify thirdparties
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @param array $tables Tables that need to be changed
+	 * @return bool
+	 */
+	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
+	{
+		foreach ($tables as $table) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
+			if (!$db->query($sql)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

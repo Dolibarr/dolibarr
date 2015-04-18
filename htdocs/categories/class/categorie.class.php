@@ -7,6 +7,7 @@
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  * Copyright (C) 2013      Juanjo Menent      	<jmenent@2byte.es>
  * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1166,8 +1167,8 @@ class Categorie extends CommonObject
 
 		$typeid=-1; $table='';
 		if ($type == '0' || $type == 'product')	       { $typeid=0; $table='product';   $type='product'; }
-		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='societe';   $type='fournisseur'; }
-		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='societe';   $type='societe'; }
+		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='soc';   $type='fournisseur'; }
+		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='soc';   $type='societe'; }
 		else if ($type == '3' || $type == 'member')   { $typeid=3; $table='member';    $type='member'; }
         else if ($type == '4' || $type == 'contact')  { $typeid=4; $table='socpeople'; $type='contact'; }
 
@@ -1551,4 +1552,21 @@ class Categorie extends CommonObject
         $this->socid = 1;
         $this->type = 0;
     }
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'categorie_societe'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

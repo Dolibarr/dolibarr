@@ -83,7 +83,7 @@ $form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_societe as fk_soc,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
 $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datev as dm, s.fk_typepayment as type, s.num_payment,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
