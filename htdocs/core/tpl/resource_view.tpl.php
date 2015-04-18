@@ -90,7 +90,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';			
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';			
 			print img_delete();
 			print '</a>';
 			print '</div>';
