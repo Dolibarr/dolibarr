@@ -547,27 +547,25 @@ if (empty($reshook))
 	    	{
 	    		$up = price2num(GETPOST('price_ht'));
 	    		$price_base_type = 'HT';
-	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end);
 	    	}
 	    	else
 	    	{
 	    		$up = price2num(GETPOST('price_ttc'));
 	    		$price_base_type = 'TTC';
-	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
 	    	}
 
-	        if (GETPOST('idprod'))
+	        if (GETPOST('productid'))
 	        {
 	            $prod = new Product($db);
-	            $prod->fetch($_POST['idprod']);
+	            $prod->fetch(GETPOST('productid'));
 	            $label = $prod->description;
-	            if (trim($_POST['desc']) != trim($label)) $label=$_POST['desc'];
+	            if (trim($_POST['product_desc']) != trim($label)) $label=$_POST['product_desc'];
 
 	            $type = $prod->type;
 	        }
 	        else
 	        {
-	            $label = $_POST['desc'];
+	            $label = $_POST['product_desc'];
 	            $type = $_POST["type"]?$_POST["type"]:0;
 	        }
 
@@ -589,7 +587,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options);
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
