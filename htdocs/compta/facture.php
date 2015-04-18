@@ -1966,12 +1966,12 @@ if ($action == 'create')
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 		// Outstanding Bill
-		$outstandigBills = $soc->get_OutstandingBill();
+		$outstandingBills = $soc->get_OutstandingBill();
 		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandigBills, '', $langs, 0, 0, -1, $conf->currency);
+		print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
 		if ($soc->outstanding_limit != '')
 		{
-			if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
+			if ($outstandingBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
 			print ' / ' . price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 		}
 		print ')';
@@ -2832,11 +2832,11 @@ if ($action == 'create')
 		print ' &nbsp; ';
 		print '(<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?socid=' . $object->socid . '">' . $langs->trans('OtherBills') . '</a>';
 		// Outstanding Bill
-		$outstandigBills = $soc->get_OutstandingBill();
+		$outstandingBills = $soc->get_OutstandingBill();
 		print ' - ' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandigBills, '', $langs, 0, 0, - 1, $conf->currency);
+		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
 		if ($soc->outstanding_limit != '') {
-			if ($outstandigBills > $soc->outstanding_limit)
+			if ($outstandingBills > $soc->outstanding_limit)
 				print img_warning($langs->trans("OutstandingBillReached"));
 			print ' / ' . price($soc->outstanding_limit);
 		}

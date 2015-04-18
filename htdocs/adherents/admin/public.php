@@ -164,7 +164,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].' id="tramount"><td>';
 print $langs->trans("DefaultAmount");
 print '</td><td align="right">';
-print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';;
+print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
 print "</td></tr>\n";
 
 // Can edit
@@ -197,7 +197,7 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
     print '<tr '.$bc[$var].' id="tremail"><td>';
     print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
     print '</td><td align="right">';
-	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';;
+	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';
     print "</td></tr>\n";
 }
 

@@ -376,7 +376,7 @@ class ImportCsv extends ModeleImports
 						if ($obj) $tablewithentity_cache[$tablename]=1;		// table contains entity field
 						else $tablewithentity_cache[$tablename]=0;			// table does not contains entity field
 					}
-					else dol_print_error($this->db);;
+					else dol_print_error($this->db);
 				}
 				else
 				{
