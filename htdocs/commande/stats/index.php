@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ if ($mode == 'supplier')
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
-print_fiche_titre($title);
+print_fiche_titre($title,'','title_commercial.png');
 
 dol_mkdir($dir);
 

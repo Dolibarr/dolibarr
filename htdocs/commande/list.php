@@ -8,6 +8,7 @@
  * Copyright (C) 2013      Cédric Salvador        <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Jean-François Ferry      <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,7 +263,7 @@ if ($resql)
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
 
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
 	$i = 0;
 
 	// Lignes des champs de filtre

@@ -39,7 +39,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("InfoDatabase"),'','setup');
+print_fiche_titre($langs->trans("InfoDatabase"),'','title_setup');
 
 // Database
 print '<table class="noborder" width="100%">';
