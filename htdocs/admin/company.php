@@ -369,7 +369,7 @@ if ($action == 'edit' || $action == 'updateedit')
     // Logo
     $var=!$var;
     print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
-    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+    print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" id="logo" size="50">';
     print '</td><td valign="middle" align="right">';
     if (! empty($mysoc->logo_mini))
@@ -754,7 +754,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
 
-    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+    print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print $mysoc->logo;
     print '</td><td valign="center" align="right">';
 
