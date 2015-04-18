@@ -7,6 +7,7 @@
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  * Copyright (C) 2013      Juanjo Menent      	<jmenent@2byte.es>
  * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
