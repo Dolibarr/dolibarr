@@ -65,10 +65,10 @@ ShipmentLine=Shipment line
 CarrierList=List of transporters
 SendingRunning=Product from ordered customer orders
 SuppliersReceiptRunning=Product from ordered supplier orders
-ProductQtyInCustomersOrdersRunning=Product quantity into open customers orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into open suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
+ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
