@@ -2246,7 +2246,7 @@ elseif (! empty($object->id))
 	/*
 	 * Action presend
 	 */
-	if (!empty(GETPOST('modelselected'))) {
+	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
 	if ($action == 'presend')

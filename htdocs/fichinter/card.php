@@ -1732,7 +1732,7 @@ else if ($id > 0 || ! empty($ref))
 	/*
 	 * Action presend
 	 */
-	if (!empty(GETPOST('modelselected'))) {
+	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
 	if ($action == 'presend')

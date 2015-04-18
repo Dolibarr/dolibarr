@@ -2499,7 +2499,7 @@ else
         /*
          * Show mail form
         */
-        if (!empty(GETPOST('modelselected'))) {
+        if (GETPOST('modelselected')) {
         	$action = 'presend';
         }
         if ($action == 'presend')
