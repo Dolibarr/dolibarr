@@ -155,7 +155,7 @@ if (empty($reshook))
 	if ($action == 'setoutstanding_limit')
 	{
 		$object->fetch($id);
-		$object->outstanding_limit=GETPOST('setoutstanding_limit');
+		$object->outstanding_limit=GETPOST('outstanding_limit');
 		$result=$object->set_OutstandingBill($user);
 		if ($result < 0) setEventMessage($object->error,'errors');
 	}
