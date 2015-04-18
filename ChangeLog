@@ -198,6 +198,11 @@ Fix: [ bug #1757 ] Sorting breaks product/service statistics
 Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
 Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
 Fix: [ bug #1846 ] Browser IE11 not detected
+Fix: [ bug #1906 ] Deplacement does not allow translated decimal format
+Fix: [ bug #1905 ] Custom deplacement types do not get translated in deplacement card
+Fix: [ bug #2583 ] Unable to create a bank transfer with localized numbers
+Fix: [ bug #2577 ] Incorrect invoice status in "Linked objects" page of a project
+Fix: [ bug #2576 ] Unable to edit a dictionary entry that has # in its ref
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

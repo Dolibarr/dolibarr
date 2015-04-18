@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +99,14 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
     {
         $error=0;
 
+	    $km = GETPOST('km');
+
+	    if ($km) {
+		    $km = price2num($km);
+	    }
+
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
-        $object->km				= GETPOST('km','int');
+        $object->km				= $km;
         $object->type			= GETPOST('type','alpha');
         $object->socid			= GETPOST('socid','int');
         $object->fk_user		= GETPOST('fk_user','int');
@@ -157,8 +164,14 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
     {
         $result = $object->fetch($id);
 
+	    $km = GETPOST('km');
+
+	    if ($km) {
+		    $km = price2num($km);
+	    }
+
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
-        $object->km				= GETPOST('km','int');
+        $object->km				= $km;
         $object->type			= GETPOST('type','alpha');
         $object->socid			= GETPOST('socid','int');
         $object->fk_user		= GETPOST('fk_user','int');
@@ -198,12 +211,6 @@ else if ($action == 'setdated' && $user->rights->deplacement->creer)
     $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
     $result=$object->setValueFrom('dated',$dated,'','','date');
-    if ($result < 0) dol_print_error($db, $object->error);
-}
-else if ($action == 'setkm' && $user->rights->deplacement->creer)
-{
-    $object->fetch($id);
-    $result=$object->setValueFrom('km',GETPOST('km','int'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
@@ -348,7 +355,7 @@ else if ($id)
 
             // Km
             print '<tr><td class="fieldrequired">'.$langs->trans("FeesKilometersOrAmout").'</td><td>';
-            print '<input name="km" class="flat" size="10" value="'.$object->km.'">';
+            print '<input name="km" class="flat" size="10" value="'.price($object->km).'">';
             print '</td></tr>';
 
             // Where
@@ -416,10 +423,12 @@ else if ($id)
             print '</td></tr>';
 
             // Type
+	        $form->load_cache_types_fees();
+
             print '<tr><td>';
             print $form->editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
             print '</td><td>';
-            print $form->editfieldval("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
+            print $form->editfieldval("Type",'type', $form->cache_types_fees[$object->type],$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
             print '</td></tr>';
 
             // Who
@@ -440,7 +449,7 @@ else if ($id)
             print '<tr><td valign="top">';
             print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print '</td><td>';
-            print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
+            print $form->editfieldval("FeesKilometersOrAmout",'km',price($object->km),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print "</td></tr>";
 
             // Where

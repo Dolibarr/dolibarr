@@ -315,7 +315,14 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				// Status
-				print '<td align="right">'.$element->getLibStatut(5).'</td>';
+				print '<td align="right">';
+				if ($element instanceof CommonInvoice) {
+					//This applies for Facture and FactureFournisseur
+					print $element->getLibStatut(5, $element->getSommePaiement());
+				} else {
+					print $element->getLibStatut(5);
+				}
+				print '</td>';
 
 				print '</tr>';
 
