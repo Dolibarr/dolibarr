@@ -2163,7 +2163,10 @@ else
 
         print '</div>'."\n";
 
-
+        //Select mail models is same action as presend
+		if (!empty(GETPOST('modelselected'))) {
+			$action = 'presend';
+		}
 		if ($action == 'presend')
 		{
 			/*
@@ -2185,7 +2188,7 @@ else
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+				$newlang = $object->default_lang;
 
 			// Cree l'objet formulaire mail
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -2246,6 +2249,7 @@ else
 			// Tableau des parametres complementaires du post
 			$formmail->param['action']=$action;
 			$formmail->param['models']=$modelmail;
+			$formmail->param['models_id']=GETPOST('modelmailselected','int');
 			$formmail->param['socid']=$object->id;
 			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 
@@ -2255,7 +2259,6 @@ else
 				$formmail->clear_attached_files();
 				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 			}
-
 			print $formmail->get_form();
 
 			print '<br>';

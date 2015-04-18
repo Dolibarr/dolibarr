@@ -732,3 +732,4 @@ ShortThursday=T
 ShortFriday=F
 ShortSaturday=S
 ShortSunday=S
+SelectMailModel=Select email template

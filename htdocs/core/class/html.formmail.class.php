@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
  *             $formmail->show_form() affiche le formulaire
  */
-class FormMail
+class FormMail extends Form
 {
     var $db;
 
@@ -70,6 +70,8 @@ class FormMail
     var $param=array();
 
     var $error;
+
+    public $lines_model;
 
 
     /**
@@ -242,7 +244,7 @@ class FormMail
         else
         {
         	$out='';
-
+        	
         	// Define list of attached files
         	$listofpaths=array();
         	$listofnames=array();
@@ -263,8 +265,11 @@ class FormMail
 			}
 
         	// Get message template
-        	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs);
-
+			$model_id=0;
+        	if (array_key_exists('models_id',$this->param)) {
+        		$model_id=$this->param["models_id"];
+        	}
+        	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 
         	$out.= "\n<!-- Debut form mail -->\n";
         	if ($this->withform == 1)
@@ -277,6 +282,27 @@ class FormMail
         	{
         		$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
         	}
+        	
+        	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+        	if ($result<0) {
+        		setEventMessage($this->error,'errors');
+        	}
+        	$modelmail_array=array();
+        	foreach($this->lines_model as $line) {
+        		$modelmail_array[$line->id]=$line->label;
+        	}
+        	if (count($modelmail_array>0)) {
+	        	$out.= '<table class="nobordernopadding" width="100%"><tr><td width="20%">'."\n";
+	        	$out.= $langs->trans('SelectMailModel').':'.$this->selectarray('modelmailselected', $modelmail_array,$model_id);
+	        	$out.= '</td>';
+	        	$out.= '<td width="5px">';
+	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	        	$out.= '</td>';
+	        	$out.= '<td><input class="flat" type="submit" value="'.$langs->trans('Valid').'" name="modelselected" id="modelselected"></td>';
+	        	$out.= '</tr></table>';
+        	}
+        	
+        	
         	$out.= '<table class="border" width="100%">'."\n";
 
         	// Substitution array
@@ -617,8 +643,8 @@ class FormMail
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
-
-        		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
+				
+        		if (isset($_POST["message"]) &&  ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
 				else
 				{
 					$defaultmessage=make_substitutions($defaultmessage,$this->substit);
@@ -690,9 +716,10 @@ class FormMail
 	 * 		@param	string		$type_template	Get message for key module
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
+	 *      @param	int			$id				Id template to find
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	private function getEMailTemplate($db, $type_template, $user, $outputlangs)
+	private function getEMailTemplate($db, $type_template, $user, $outputlangs,$id=0)
 	{
 		$ret=array();
 
@@ -702,6 +729,7 @@ class FormMail
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		if (!empty($id)) $sql.= " AND rowid=".$id;
 		$sql.= $db->order("lang,label","ASC");
 		//print $sql;
 
@@ -745,5 +773,96 @@ class FormMail
 			return -1;
 		}
 	}
+	
+	/**
+	 *      Find if template exists
+	 *      Search into table c_email_templates
+	 *
+	 * 		@param	string		$type_template	Get message for key module
+	 *      @param	string		$user			Use template public or limited to this user
+	 *      @param	Translate	$outputlangs	Output lang object
+	 *      @return	int		<0 if KO,
+	 */
+	public function isEMailTemplate($type_template, $user, $outputlangs)
+	{
+		$ret=array();
+	
+		$sql = "SELECT label, topic, content, lang";
+		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
+		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
+		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
+		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		$sql.= $this->db->order("lang,label","ASC");
+		//print $sql;
+	
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num= $this->db->num_rows($resql);
+			$this->db->free($resql);
+			return $num;
+		}
+		else
+		{
+			$this->error=get_class($this).' '.__METHOD__.' ERROR:'.$this->db->lasterror();
+			return -1;
+		}
+	}
+	
+	/**
+	 *      Find if template exists
+	 *      Search into table c_email_templates
+	 *
+	 * 		@param	string		$type_template	Get message for key module
+	 *      @param	string		$user			Use template public or limited to this user
+	 *      @param	Translate	$outputlangs	Output lang object
+	 *      @return	int		<0 if KO,
+	 */
+	public function fetchAllEMailTemplate($type_template, $user, $outputlangs)
+	{
+		$ret=array();
+	
+		$sql = "SELECT rowid, label, topic, content, lang";
+		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
+		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
+		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
+		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		$sql.= $this->db->order("lang,label","ASC");
+		//print $sql;
+	
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->lines_model=array();
+			while ($obj = $this->db->fetch_object($resql)) {
+				$line = new ModelMailLine();
+				$line->id=$obj->rowid;
+				$line->label=$obj->label;
+				$line->topic=$obj->topic;
+				$line->content=$obj->lacontentbel;
+				$line->lang=$obj->lang;
+				$this->lines_model[]=$line;
+				
+			}
+			$this->db->free($resql);
+			return $num;
+		}
+		else
+		{
+			$this->error=get_class($this).' '.__METHOD__.' ERROR:'.$this->db->lasterror();
+			return -1;
+		}
+	}
+}
+
+class ModelMailLine {
+	public $id;
+	public $label;
+	public $topic;
+	public $content;
+	public $lang;
+	
 }
 
