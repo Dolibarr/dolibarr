@@ -7,6 +7,7 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -853,7 +854,8 @@ else
         $object->forme_juridique_code=GETPOST('forme_juridique_code');
         /* Show create form */
 
-        print_fiche_titre($langs->trans("NewThirdParty"));
+        $linkback="";
+        print_fiche_titre($langs->trans("NewThirdParty"),$linkback,'title_companies.png');
 
         if (! empty($conf->use_javascript_ajax))
         {
@@ -1773,20 +1775,6 @@ else
             print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
         }
 
-	    if ($action == 'merge') {
-		    $form = new Form($db);
-
-		    $options = array(
-			    array(
-				    'label' => $langs->trans('MergeOriginThirdparty'),
-				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1)
-			    )
-		    );
-
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("MergeThirdparties"),$langs->trans("ConfirmMergeThirdparties"),"confirm_merge",$options,'',1);
-	    }
-
         dol_htmloutput_errors($error,$errors);
 
         $showlogo=$object->logo;
@@ -2237,8 +2225,6 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("Merge")).'">'.$langs->trans('Merge').'</a></div>';
-
 	        if (! empty($object->email))
 	        {
 	        	$langs->load("mails");

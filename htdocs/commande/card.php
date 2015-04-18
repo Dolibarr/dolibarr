@@ -11,6 +11,7 @@
  * Copyright (C) 2012       Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1222,7 +1223,7 @@ $formorder = new FormOrder($db);
  */
 if ($action == 'create' && $user->rights->commande->creer)
 {
-	print_fiche_titre($langs->trans('CreateOrder'));
+	print_fiche_titre($langs->trans('CreateOrder'),'','title_commercial.png');
 
 	$soc = new Societe($db);
 	if ($socid > 0)

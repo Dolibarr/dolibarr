@@ -2,9 +2,10 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Florian Henry	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +117,7 @@ $companystatic = new Societe($db);
  */
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
+	print_fiche_titre($langs->trans("CreateRepeatableInvoice"),'','title_accountancy.png');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
@@ -576,7 +577,7 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num);
+			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num,'','title_accountancy.png');
 
 			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
 

@@ -65,12 +65,12 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Members"), 0, 'user');
+dol_fiche_head($head, 'attributes', $langs->trans("Members"), 0, 'title_user');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -914,7 +915,7 @@ if ($result > 0)
  *********************************************************************/
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans('AddContract'));
+	print_fiche_titre($langs->trans('AddContract'),'','title_commercial.png');
 
     $soc = new Societe($db);
     if ($socid>0) $soc->fetch($socid);

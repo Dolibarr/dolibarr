@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,7 @@ if ($result)
 	if ($search_desc) $urlparam.="&search_desc=".urlencode($search_desc);
 	if ($search_status != '' && $search_status > -1) $urlparam.="&search_status=".urlencode($search_status);
 
-	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_commercial.png');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="noborder" width="100%">';

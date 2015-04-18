@@ -293,7 +293,7 @@ $form=new Form($db);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("BillsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
 print '<br>';
 
 $head = invoice_admin_prepare_head();

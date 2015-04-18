@@ -42,7 +42,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("InfoBrowser"),'','setup');
+print_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
 
 $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 

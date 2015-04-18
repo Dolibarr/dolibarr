@@ -91,7 +91,7 @@ $formfile = new FormFile($db);
 //$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 //llxHeader('','',$help_url);
 
-//print_fiche_titre($langs->trans("Backup"),'','setup');
+//print_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 
 // Start with empty buffer
