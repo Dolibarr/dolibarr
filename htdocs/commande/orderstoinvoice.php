@@ -503,9 +503,8 @@ if ($action == 'create' && !$error)
 	print "</table>\n";
 }
 
-
 //Mode liste
-if (($action != 'create' && $action != 'add') || !$error)
+if (($action != 'create' && $action != 'add') && !$error)
 {
 	llxHeader();
 	?>

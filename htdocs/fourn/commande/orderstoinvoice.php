@@ -259,7 +259,7 @@ $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 
 // Mode creation
-if ($action == 'create' && empty($mesgs)) {
+if ($action == 'create' && !$error) {
 
 	llxHeader();
 	print_fiche_titre($langs->trans('NewBill'));
@@ -380,7 +380,7 @@ if ($action == 'create' && empty($mesgs)) {
 }
 
 // Mode liste
-if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
+if (($action != 'create' && $action != 'add') && !$error) {
 	llxHeader();
 	?>
 <script type="text/javascript">
