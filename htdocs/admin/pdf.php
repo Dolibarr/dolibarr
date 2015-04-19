@@ -93,7 +93,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("PDF"),'','setup');
+print_fiche_titre($langs->trans("PDF"),'','title_setup');
 
 print $langs->trans("PDFDesc")."<br>\n";
 print "<br>\n";

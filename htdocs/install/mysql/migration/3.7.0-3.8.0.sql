@@ -520,3 +520,21 @@ create table llx_c_price_global_variable_updater
 ALTER TABLE llx_adherent CHANGE COLUMN note note_private text DEFAULT NULL;
 ALTER TABLE llx_adherent ADD COLUMN note_public text DEFAULT NULL after note_private;
 
+CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
+  rowid integer NOT NULL auto_increment PRIMARY KEY,
+  fk_product integer NOT NULL,
+  file_name varchar(200) NOT NULL,
+  lang 	varchar(5) DEFAULT NULL,
+  fk_user_author integer DEFAULT NULL,
+  fk_user_mod integer NOT NULL,
+  datec datetime NOT NULL,
+  tms timestamp NOT NULL,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=InnoDB;
+
+
+-- Feature request: A page to merge two thirdparties into one #2613
+ALTER TABLE llx_categorie_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_categorie_fournisseur CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;

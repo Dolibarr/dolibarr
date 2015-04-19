@@ -255,8 +255,9 @@ textarea.cke_source:focus
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
-	font-family: <?php print $fontlist ?>;
-	background: #FDFDFD;
+    font-family: <?php print $fontlist ?>;
+    background: #FDFDFD;
+    color: #444;
     border: 1px solid #C0C0C0;
     /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
@@ -547,6 +548,10 @@ div.ficheaddleft {
 .containercenter {
 display : table;
 margin : 0px auto;
+}
+
+#pictotitle {
+	margin-right: 8px;
 }
 
 
@@ -1778,11 +1783,11 @@ table.noborder tr, div.noborder form {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 26px;
+	min-height: 20px;
 }
 
 table.noborder th, table.noborder td, div.noborder form, div.noborder form div {
-	padding: 1px 2px 1px 3px;			/* t r b l */
+	padding: 5px 2px 5px 3px;			/* t r b l */
 }
 
 table.nobordernopadding {
@@ -1917,7 +1922,7 @@ table.liste td {
 	background-color: #f9f9f9;
 }
 tr.pair td, tr.impair td {
-	padding: 2px;
+    padding: 5px 2px;
     border-bottom: 1px solid #ddd;
 }
 div.liste_titre .tagtd {

@@ -2400,7 +2400,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		if ($nb === 0) return $langs->trans('Undefined');
+		if ($nb === 0) return '';
 		else return $nb.' '.$langs->trans('Days');
 	}
 
@@ -2415,6 +2415,23 @@ class CommandeFournisseur extends CommonOrder
 		return $user->rights->fournisseur->commande;
 	}
 
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'commande_fournisseur'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 

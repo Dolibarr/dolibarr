@@ -11,6 +11,7 @@
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -271,6 +273,16 @@ if (empty($reshook))
 
             if ($id > 0)
             {
+				// Category association
+				$categories = GETPOST('categories');
+				if(!empty($categories)) {
+					$cat = new Categorie($db);
+					foreach($categories as $id_category) {
+						$cat->fetch($id_category);
+						$cat->add_type($object, 'product');
+					}
+				}
+				
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
             }
@@ -349,6 +361,23 @@ if (empty($reshook))
                 {
                     if ($object->update($object->id, $user) > 0)
                     {
+						// Category association
+						// First we delete all categories association
+						$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
+						$sql .= " WHERE fk_product = ".$object->id;
+						$db->query($sql);
+						
+						// Then we add the associated categories
+						$categories = GETPOST('categories');
+						if(!empty($categories)) {
+							$cat = new Categorie($db);
+							
+							foreach($categories as $id_category) {
+								$cat->fetch($id_category);
+								$cat->add_type($object, 'product');
+							}
+						}
+						
                         $action = 'view';
                     }
                     else
@@ -838,7 +867,8 @@ else
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
-        print_fiche_titre($title);
+        $linkback="";
+        print_fiche_titre($title,$linkback,'title_products.png');
 
         dol_fiche_head('');
 
@@ -1003,6 +1033,13 @@ else
         $doleditor->Create();
 
         print "</td></tr>";
+
+		// Categories
+		print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
+		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+		print "</td></tr>";
+
         print '</table>';
 
         print '<br>';
@@ -1272,6 +1309,18 @@ else
             $doleditor->Create();
 
             print "</td></tr>";
+
+			// Categories
+			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
+			$c = new Categorie($db);
+			$cats = $c->containing($object->id,0);
+			foreach($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+			print "</td></tr>";
+
             print '</table>';
 
             print '<br>';
@@ -1560,6 +1609,19 @@ else
             print '<!-- show Note --> '."\n";
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
             print '<!-- End show Note --> '."\n";
+
+			// Categories
+			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cat = new Categorie($db);
+			$categories = $cat->containing($object->id,0);
+			$catarray = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
+			
+			$toprint = array();
+			foreach($categories as $c) {
+				$toprint[] = $catarray[$c->id];
+			}
+			print implode('<br>', $toprint);
+			print "</td></tr>";
 
             print "</table>\n";
 

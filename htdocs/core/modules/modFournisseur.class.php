@@ -258,7 +258,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
-	    if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+	    if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
 	    {
 			$r++;
 		    $this->rights[$r][0] = 1190;

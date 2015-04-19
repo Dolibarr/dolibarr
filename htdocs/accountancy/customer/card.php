@@ -106,7 +106,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="action" value="ventil">';
 
 			$linkback='<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php">'.$langs->trans("Back").'</a>';
-			print_fiche_titre($langs->trans('CustomersVentilation'),$linkback,'setup');
+			print_fiche_titre($langs->trans('CustomersVentilation'),$linkback,'title_setup');
 
 			print '<table class="border" width="100%">';
 

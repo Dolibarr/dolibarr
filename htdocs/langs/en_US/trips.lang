@@ -7,7 +7,7 @@ TripsAndExpenses=Expenses reports
 TripsAndExpensesStatistics=Expense reports statistics
 TripCard=Expense report card
 AddTrip=Create expense report
-ListOfTrips=List of expense report
+ListOfTrips=List of expense reports
 ListOfFees=List of fees
 NewTrip=New expense report
 CompanyVisited=Company/foundation visited
@@ -27,7 +27,7 @@ AnyOtherInThisListCanValidate=Person to inform for validation.
 TripSociete=Information company
 TripSalarie=Informations user
 TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
+DeleteLine=Delete a line of the expense report
 ConfirmDeleteLine=Are you sure you want to delete this line ?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
@@ -40,11 +40,10 @@ TF_BUS=Bus
 TF_CAR=Car
 TF_PEAGE=Toll
 TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
+TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
 AucuneNDF=No expense reports found for this criteria
 AucuneLigne=There is no expense report declared yet
 AddLine=Add a line
@@ -56,12 +55,12 @@ ModePaiement=Payment mode
 Note=Note
 Project=Project
 
-VALIDATOR=User to inform for approbation
+VALIDATOR=User responsible for approval
 VALIDOR=Approved by
 AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
+AUTHORPAIEMENT=Paid by
 REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+CANCEL_USER=Deleted by
 
 MOTIF_REFUS=Reason
 MOTIF_CANCEL=Reason
@@ -74,7 +73,7 @@ DATE_PAIEMENT=Payment date
 
 TO_PAID=Pay
 BROUILLONNER=Reopen
-SendToValid=Sent to approve
+SendToValid=Sent on approval
 ModifyInfoGen=Edit
 ValidateAndSubmit=Validate and submit for approval
 
@@ -93,32 +92,10 @@ ConfirmPaidTrip=Are you sure you want to change status of this expense report to
 CancelTrip=Cancel an expense report
 ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
+BrouillonnerTrip=Move back expense report to status "Draft"
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
 SaveTrip=Validate expense report
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
-
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration 
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait 
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
 
 NoTripsToExportCSV=No expense report to export for this period.

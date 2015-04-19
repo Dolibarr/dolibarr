@@ -548,6 +548,9 @@ if ($resql)
 
 	print '<form id="form_unpaid" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
 
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 	if (! empty($mode) && $action == 'presend')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -590,6 +593,7 @@ if ($resql)
 		// Tableau des parametres complementaires du post
 		$formmail->param['action']=$action;
 		$formmail->param['models']=$modelmail;
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['facid']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 

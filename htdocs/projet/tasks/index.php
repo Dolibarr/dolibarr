@@ -78,7 +78,7 @@ if ($id)
 	$projectstatic->societe->fetch($projectstatic->societe->id);
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 // Show description of content
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';

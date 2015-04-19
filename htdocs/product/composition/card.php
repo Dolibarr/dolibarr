@@ -268,7 +268,7 @@ if ($id > 0 || ! empty($ref))
 				$productstatic->type=$value["fk_product_type"];
 				$productstatic->ref=$value['label'];
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';;
+				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
 				print '</tr>';
 			}
 			print '</table>';

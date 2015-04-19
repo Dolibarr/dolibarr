@@ -18,6 +18,7 @@ CKEditor               4.3.3         LGPL-2.1+                   Yes            
 FPDI                   1.5.2         Apache Software License 2.0 Yes             PDF templates management
 GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
+PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 odtPHP                 1.0.1         GPL-2+  b                   Yes             Library to build/edit ODT files
 PHPExcel               1.8.0         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.6         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP

@@ -292,7 +292,7 @@ llxHeader("",$langs->trans("ProjectsSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,title_setup);
 
 $head=project_admin_prepare_head();
 

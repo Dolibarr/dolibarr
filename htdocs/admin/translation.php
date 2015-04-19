@@ -52,7 +52,7 @@ $action=GETPOST('action');
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("TranslationSetup"),'','setup');
+print_fiche_titre($langs->trans("TranslationSetup"),'','title_setup');
 
 print $langs->trans("TranslationDesc")."<br>\n";
 print "<br>\n";
