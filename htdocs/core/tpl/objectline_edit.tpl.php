@@ -129,7 +129,6 @@ $coldisplay=-1; // We remove first td
 		print '></td>';
 	}
 	?>
-
 	<td align="right"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
 		// I comment this because it shows info even when not required

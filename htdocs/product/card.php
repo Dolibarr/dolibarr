@@ -244,6 +244,7 @@ if (empty($reshook))
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
             $object->hidden             	 = GETPOST('hidden')=='yes'?1:0;
+	        $object->fk_unit                 = GETPOST('units');
 			if ($fk_unit > 0) {
 				$object->fk_unit = $fk_unit;
 			}

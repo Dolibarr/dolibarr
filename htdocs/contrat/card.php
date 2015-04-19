@@ -338,7 +338,9 @@ if ($action == 'add' && $user->rights->contrat->creer)
 				                0,
 				                $lines[$i]->info_bits,
 			                    $lines[$i]->fk_fournprice,
-			                    $lines[$i]->pa_ht
+			                    $lines[$i]->pa_ht,
+		                        array(),
+			                    $lines[$i]->fk_unit
 		                    );
 
 		                    if ($result < 0)
