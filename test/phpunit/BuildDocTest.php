@@ -56,6 +56,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_proje
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
 
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+
+
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
@@ -102,6 +105,10 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
+
+        print "Enable module modExpenseReport";
+        $moduledescriptor=new modExpenseReport($db);
+        $moduledescriptor->init();
 
         if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
         if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
