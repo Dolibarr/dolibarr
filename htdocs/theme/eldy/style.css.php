@@ -550,6 +550,10 @@ display : table;
 margin : 0px auto;
 }
 
+#pictotitle {
+	margin-right: 8px;
+}
+
 
 /* ============================================================================== */
 /* Menu top et 1ere ligne tableau                                                 */

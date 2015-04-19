@@ -90,6 +90,7 @@ before_script:
  - echo Install apache server
  - sudo apt-get update
  - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
+ - sudo apt-get install mysql-server-5.6 mysql-client-5.6
  - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
  - echo Show default virtual host
  - sudo cat /etc/apache2/sites-available/default
@@ -111,8 +112,9 @@ script:
  - php upgrade.php 3.6.0 3.7.0 ignoredbversion > upgrade360370.log
  - php upgrade2.php 3.6.0 3.7.0 ignoredbversion > upgrade360370-2.log
  - php upgrade.php 3.7.0 3.8.0 ignoredbversion > upgrade370380.log
+ - cat upgrade370380.log
  - php upgrade2.php 3.7.0 3.8.0 ignoredbversion > upgrade370380-2.log
-# - cat upgrade370380-2.log
+ - cat upgrade370380-2.log
  - cd ../..
  - date
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php

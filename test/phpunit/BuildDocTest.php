@@ -56,6 +56,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_proje
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
 
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+
+
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
