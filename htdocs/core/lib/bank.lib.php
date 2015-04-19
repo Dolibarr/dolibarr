@@ -125,7 +125,7 @@ function bank_admin_prepare_head($object)
 function checkSwiftForAccount($account)
 {
     $swift = $account->bic;
-    if (preg_march("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
+    if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
         return true;
     } else {
         return false;

@@ -189,7 +189,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$usertoprocess,($projec
 
 llxHeader("",$title,"");
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 
 // Show navigation bar

@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,7 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 
 $head = member_admin_prepare_head();

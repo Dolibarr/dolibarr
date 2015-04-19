@@ -101,7 +101,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("GUISetup"),'','setup');
+print_fiche_titre($langs->trans("GUISetup"),'','title_setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
 print "<br>\n";

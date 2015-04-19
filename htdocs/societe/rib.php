@@ -416,8 +416,11 @@ if ($socid && $action != 'edit' && $action != "create")
             $var = !$var;
         }
 
-        if (count($rib_list) == 0) {
-            print '<tr '.$bc[0].'><td colspan="7" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+        if (count($rib_list) == 0) 
+        {
+        	$colspan=7;
+        	if (! empty($conf->prelevement->enabled)) $colspan++;
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';

@@ -108,7 +108,7 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Backup"),'','setup');
+print_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
 

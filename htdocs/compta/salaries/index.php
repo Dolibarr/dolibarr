@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014 Alexandre Spangaro  <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ if ($result)
 	$param='';
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
-	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
+	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy.png');
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 

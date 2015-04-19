@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is freei software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -157,7 +158,7 @@ if ($result)
  	if ($search_sale > 0)	$param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
 	$i = 0;
 

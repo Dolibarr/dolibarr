@@ -46,7 +46,7 @@ if ($action == 'convert')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','setup');
+print_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','title_setup');
 
 
 // Define request to get table description

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,11 +169,11 @@ if ($resql)
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,'', 'title_bank.png');
 	}
 	else
 	{
-		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', 'title_bank.png');
 	}
 
 	print '<form method="post" action="search.php" name="search_form">'."\n";

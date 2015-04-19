@@ -115,7 +115,7 @@ $notify = new Notify($db);
 llxHeader('',$langs->trans("NotificationSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br><br>';
 
