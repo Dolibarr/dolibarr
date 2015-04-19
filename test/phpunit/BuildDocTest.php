@@ -106,10 +106,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     {
         global $conf,$user,$langs,$db;
 
-        print "Enable module modExpenseReport";
-        $moduledescriptor=new modExpenseReport($db);
-        $moduledescriptor->init();
-
         if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
         if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
         if (! $conf->propal->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
