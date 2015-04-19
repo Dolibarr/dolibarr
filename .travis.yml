@@ -90,6 +90,7 @@ before_script:
  - echo Install apache server
  - sudo apt-get update
  - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-pgsql php5-intl
+ - sudo apt-get install mysql-server-5.6 mysql-client-5.6
  - sudo sed -i -e "s,/var/www,$(pwd)/htdocs,g" /etc/apache2/sites-available/default
  - echo Show default virtual host
  - sudo cat /etc/apache2/sites-available/default
