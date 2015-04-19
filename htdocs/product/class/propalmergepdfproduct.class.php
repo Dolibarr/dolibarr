@@ -225,7 +225,7 @@ class Propalmergepdfproduct extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param	int		$id    Id object
+     *  @param	int		$product_id    Id object
      *  @param	string	$lang  lang string id
      *  @return int          	<0 if KO, >0 if OK
      */
@@ -637,7 +637,8 @@ class Propalmergepdfproduct extends CommonObject
 
 }
 
-class PropalmergepdfproductLine{
+class PropalmergepdfproductLine
+{
 	var $id;
 	
 	var $fk_product;
@@ -652,5 +653,4 @@ class PropalmergepdfproductLine{
 	function __construct() {
 		return 1;
 	}
-
 }
