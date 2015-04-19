@@ -1194,7 +1194,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
-        $sql.= " AND p.entity = ".$conf->entity;
+        $sql.= " AND p.entity IN (".getEntity('propal', 1).")";
         if ($ref) $sql.= " AND p.ref='".$ref."'";
         else $sql.= " AND p.rowid=".$rowid;
 
@@ -2011,7 +2011,7 @@ class Propal extends CommonObject
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " WHERE p.entity IN (".getEntity('propal', 1).")";
         $sql.= " AND p.fk_soc = s.rowid";
         $sql.= " AND p.fk_statut = c.id";
         if (! $user->rights->societe->client->voir && ! $socid) //restriction
@@ -2466,7 +2466,7 @@ class Propal extends CommonObject
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = " AND";
         }
-        $sql.= $clause." p.entity = ".$conf->entity;
+        $sql.= $clause." p.entity IN (".getEntity('propal', 1).")";
         if ($mode == 'opened') $sql.= " AND p.fk_statut = ".self::STATUS_VALIDATED;
         if ($mode == 'signed') $sql.= " AND p.fk_statut = ".self::STATUS_SIGNED;
         if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
@@ -2629,7 +2629,7 @@ class Propal extends CommonObject
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = "AND";
         }
-        $sql.= " ".$clause." p.entity = ".$conf->entity;
+        $sql.= " ".$clause." p.entity IN (".getEntity('propal', 1).")";
 
         $resql=$this->db->query($sql);
         if ($resql)

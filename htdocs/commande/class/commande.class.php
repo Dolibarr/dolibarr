@@ -1466,7 +1466,7 @@ class Commande extends CommonOrder
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_input_reason = ca.rowid)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
-        $sql.= " WHERE c.entity = ".$conf->entity;
+        $sql.= " WHERE c.entity IN (".getEntity('commande', 1).")";
         if ($id)   	  $sql.= " AND c.rowid=".$id;
         if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql.= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
@@ -2185,7 +2185,7 @@ class Commande extends CommonOrder
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE c.entity = ".$conf->entity;
+        $sql.= " WHERE c.entity IN (".getEntity('commande', 1).")";
         $sql.= " AND c.fk_soc = s.rowid";
         if (! $user->rights->societe->client->voir && ! $socid) //restriction
         {
@@ -2824,7 +2824,7 @@ class Commande extends CommonOrder
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = " AND";
         }
-        $sql.= $clause." c.entity = ".$conf->entity;
+        $sql.= $clause." c.entity IN (".getEntity('commande', 1).")";
         //$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
         $sql.= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_ACCEPTED.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
@@ -3161,7 +3161,7 @@ class Commande extends CommonOrder
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = "AND";
         }
-        $sql.= " ".$clause." co.entity = ".$conf->entity;
+        $sql.= " ".$clause." co.entity IN (".getEntity('commande', 1).")";
 
         $resql=$this->db->query($sql);
         if ($resql)
