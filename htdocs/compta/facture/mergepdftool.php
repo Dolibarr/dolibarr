@@ -52,12 +52,15 @@ $filter = GETPOST("filtre");
 if (GETPOST('button_search'))
 {
 	$filter=GETPOST('filtre',2);
-	if ($filter != 'payed:0') $option='';
+	//if ($filter != 'payed:0') $option='';
 }
 if ($option == 'late') $filter = 'paye:0';
 if ($option == 'unpaidall') $filter = 'paye:0';
 if ($mode == 'sendremind' && $filter == '') $filter = 'paye:0';
 if ($filter == '') $filter = 'paye:0';
+
+$search_user = GETPOST('search_user','int');
+$search_sale = GETPOST('search_sale','int');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -72,6 +75,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 {
 	$search_ref="";
 	$search_ref_supplier="";
+	$search_user = "";
+	$search_sale = "";
 	$search_label="";
 	$search_company="";
 	$search_amount_no_tax="";
@@ -79,6 +84,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$year="";
 	$month="";
 	$filter="";
+	$option="";
 }
 
 
@@ -445,6 +451,13 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ",".MAIN_DB_PREFIX."facture as f";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_user > 0)
+{
+    $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
+    $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+}
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.entity = ".$conf->entity;
 $sql.= " AND f.type IN (0,1,3,5)";
@@ -479,6 +492,11 @@ if ($month > 0)
 else if ($year > 0)
 {
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+}
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
+if ($search_user > 0)
+{
+    $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
 }
 $sql.= " GROUP BY s.nom, s.rowid, s.email, f.rowid, f.facnumber, f.ref_client, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp,";
 $sql.= " f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type, fk_mode_reglement";
@@ -520,8 +538,8 @@ if ($resql)
 	//else $titre.=' ('.$langs->trans("All").')';
 
 	$link='';
-	if (empty($option) || $option == 'late') $link.=($link?' - ':'').'<a href="'.$_SERVER["PHP_SELF"].'?option=unpaidall'.$param.'">'.$langs->trans("ShowUnpaidAll").'</a>';
-	if (empty($option) || $option == 'unpaidall') $link.=($link?' - ':'').'<a href="'.$_SERVER["PHP_SELF"].'?option=late'.$param.'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+	//if (empty($option) || $option == 'late') $link.=($link?' - ':'').'<a href="'.$_SERVER["PHP_SELF"].'?option=unpaidall'.$param.'">'.$langs->trans("ShowUnpaidAll").'</a>';
+	//if (empty($option) || $option == 'unpaidall') $link.=($link?' - ':'').'<a href="'.$_SERVER["PHP_SELF"].'?option=late'.$param.'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
 
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 
@@ -599,6 +617,30 @@ if ($resql)
 
 	$i = 0;
 	print '<table class="liste" width="100%">';
+
+ 	// If the user can view prospects other than his'
+    $moreforfilter='';
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+ 		$langs->load("commercial");
+ 		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+ 	}
+    // If the user can view prospects other than his'
+    if ($user->rights->societe->client->voir || $socid)
+    {
+        $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+        $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+    }
+    if ($moreforfilter)
+    {
+        print '<tr class="liste_titre">';
+        print '<td class="liste_titre" colspan="13">';
+        print $moreforfilter;
+        print '</td></tr>';
+    }
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
@@ -635,7 +677,10 @@ if ($resql)
 	$syear = $year;
 	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	// Late
+	print '<td class="liste_titre" align="center">';
+	print '<input type="checkbox" name="option" value="late"'.($option == 'late'?' checked="checked"':'').'> '.$langs->trans("Late");
+	print '</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre" align="left">';
 	$form->select_types_paiements($search_paymentmode, 'search_paymentmode');
@@ -812,7 +857,6 @@ if ($resql)
 		$delallowed=$user->rights->facture->lire;
 
 		print '<br>';
-		print '<input type="hidden" name="option" value="'.$option.'">';
 		// We disable multilang because we concat already existing pdf.
 		$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),$langs->trans("PDFMerge"));
 	}

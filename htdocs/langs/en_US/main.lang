@@ -703,6 +703,7 @@ ShowTransaction=Show transaction
 GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into Home - Setup - Display to hide.
 Deny=Deny
 Denied=Denied
+ListOfTemplates=List of templates
 # Week day
 Monday=Monday
 Tuesday=Tuesday
