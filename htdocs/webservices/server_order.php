@@ -916,7 +916,17 @@ function updateOrder($authentication,$order)
 			if (isset($order['status']))
 			{
 				if ($order['status'] == -1) $result=$object->cancel($fuser);
-				if ($order['status'] == 1)  $result=$object->valid($fuser);
+				if ($order['status'] == 1)
+				{
+					$result=$object->valid($fuser);
+					if ($result	>= 0)
+					{
+						// Define output language
+						$outputlangs = $langs;
+						$order->generateDocument($order->modelpdf, $outputlangs);
+					
+					}
+				}
 				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
 				if ($order['status'] == 3)  $result=$object->cloture($fuser);
 			}
