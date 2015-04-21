@@ -67,12 +67,15 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
-//replace conf filename with "conf" parameter on url by GET
-if (!empty($_GET['conf'])) {
-    setcookie('dolconf', $_GET['conf'],0,'/');
-    $conffile = 'conf/' . $_GET['conf'] . '.php';
+// Replace conf filename with "conf" parameter on url by GET
+if (! empty($_GET['conf']))
+{
+	$confname=basename($_GET['conf']);
+    setcookie('dolconf', $confname, 0, '/');
+    $conffile = 'conf/'.$confname.'.php';
 } else {
-    $conffile = 'conf/' . (!empty($_COOKIE['dolconf']) ? $_COOKIE['dolconf'] : 'conf') . '.php';
+	$confname=basename(empty($_COOKIE['dolconf']) ? 'conf' : $_COOKIE['dolconf']);
+	$conffile = 'conf/'.$confname.'.php';
 }
 
 
