@@ -149,7 +149,7 @@ if (empty($usemargins)) $usemargins=0;
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
 		print '<td align="left" nowrap="nowrap">';
-		$label = $line->get_unit_label('short');
+		$label = $line->getLabelOfUnit('short');
 		if ($label !== '') {
 			print $langs->trans($label);
 		}

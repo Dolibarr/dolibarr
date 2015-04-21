@@ -732,11 +732,7 @@ if (empty($reshook))
 			$desc = $product_desc;
 			$type = GETPOST('type');
 
-			$fk_unit= GETPOST('units', 'int');
-
-			if ($fk_unit <= 0) {
-				$fk_unit = null;
-			}
+			$fk_unit= GETPOST('units', 'alpha');
 
 	    	$tva_tx = price2num($tva_tx);	// When vat is text input field
 

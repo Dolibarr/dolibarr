@@ -2100,7 +2100,7 @@ class Facture extends CommonInvoice
 	 *		@param		array		$array_options		extrafields array
 	 *      @param      int         $situation_percent  Situation advance percentage
 	 *      @param      int         $fk_prev_id         Previous situation line id reference
-	 * @param int $fk_unit Id of the unit to use. Null to use the default one
+	 * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_options=0, $situation_percent=100, $fk_prev_id='', $fk_unit = null)
@@ -2283,8 +2283,8 @@ class Facture extends CommonInvoice
 	 * 	@param		string		$label				Label of the line (deprecated, do not use)
 	 * 	@param		int			$special_code		Special code (also used by externals modules!)
      *  @param		array		$array_options		extrafields array
-	 * @param       int         $situation_percent  Situation advance percentage
-	 * @param int $fk_unit Id of the unit to use. Null to use the default one
+	 * 	@param      int         $situation_percent  Situation advance percentage
+	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=0, $fk_unit = null)

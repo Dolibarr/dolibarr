@@ -233,7 +233,7 @@ else {
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
 		print '<td align="left">';
-		print $form->select_units($line->fk_unit, "units");
+		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	?>

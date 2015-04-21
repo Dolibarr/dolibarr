@@ -399,12 +399,12 @@ class Propal extends CommonObject
      *		@param      int			$date_start       	Start date of the line
      *		@param      int			$date_end         	End date of the line
      *      @param		array		$array_options		extrafields array
-     * @param int $fk_unit Id of the unit to use. Null to use the default one
+     * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0, $fk_unit = null)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0, $fk_unit=null)
     {
     	global $mysoc;
 
@@ -583,10 +583,10 @@ class Propal extends CommonObject
      *	@param      int			$date_start       	Start date of the line
      *	@param      int			$date_end         	End date of the line
 	 *  @param		array		$array_options		extrafields array
-     * @param int $fk_unit Id of the unit to use. Null to use the default one
+     * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit = null)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null)
     {
         global $mysoc;
 
@@ -1923,7 +1923,7 @@ class Propal extends CommonObject
             if ( ! $error )
             {
 		        $this->statut = $statut;
-        
+
 		        $this->db->commit();
                 return 1;
             }

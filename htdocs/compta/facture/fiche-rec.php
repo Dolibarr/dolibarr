@@ -306,7 +306,7 @@ if ($action == 'create')
 				print '<td align="center">'.$objp->qty.'</td>';
 
 				if ($conf->global->PRODUCT_USE_UNITS) {
-					print '<td align="left">'.$product_static->get_unit_label().'</td>';
+					print '<td align="left">'.$product_static->getLabelOfUnit().'</td>';
 				}
 
 				// Percent
@@ -528,7 +528,7 @@ else
 				print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
 				print '<td align="center">'.$object->lines[$i]->qty.'</td>';
 				if ($conf->global->PRODUCT_USE_UNITS) {
-					print "<td align=\"left\">".$object->lines[$i]->get_unit_label()."</td>";
+					print "<td align=\"left\">".$object->lines[$i]->getLabelOfUnit()."</td>";
 				}
 				print "</tr>\n";
 				$i++;

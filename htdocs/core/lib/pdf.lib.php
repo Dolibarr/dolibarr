@@ -1463,7 +1463,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanag
 				$action);    // Note that $action and $object may have been modified by some hooks
 		} else {
 			if (empty($hidedetails) || $hidedetails > 1) {
-				return $langs->transnoentitiesnoconv($object->lines[$i]->get_unit_label('short'));
+				return $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
 			}
 		}
 	}

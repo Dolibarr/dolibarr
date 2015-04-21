@@ -1376,11 +1376,7 @@ if (empty($reshook))
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 				$desc = $product_desc;
 				$type = GETPOST('type');
-				$fk_unit= GETPOST('units', 'int');
-
-				if ($fk_unit <= 0) {
-					$fk_unit = null;
-				}
+				$fk_unit= GETPOST('units', 'alpha');
 			}
 
 			// Margin

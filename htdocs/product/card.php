@@ -225,14 +225,14 @@ if (empty($reshook))
             $object->barcode_type_label     = $stdobject->barcode_type_label;
 
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
-            $object->url					= GETPOST('url');
+            $object->url					 = GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
-            $object->customcode            = GETPOST('customcode');
-            $object->country_id            = GETPOST('country_id');
+            $object->customcode              = GETPOST('customcode');
+            $object->country_id              = GETPOST('country_id');
             $object->duration_value     	 = GETPOST('duration_value');
             $object->duration_unit      	 = GETPOST('duration_unit');
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
-            $object->desiredstock          = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
+            $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
             $object->weight             	 = GETPOST('weight');
             $object->weight_units       	 = GETPOST('weight_units');
@@ -245,9 +245,6 @@ if (empty($reshook))
             $object->finished           	 = GETPOST('finished');
             $object->hidden             	 = GETPOST('hidden')=='yes'?1:0;
 	        $object->fk_unit                 = GETPOST('units');
-			if ($fk_unit > 0) {
-				$object->fk_unit = $fk_unit;
-			}
             $object->accountancy_code_sell = GETPOST('accountancy_code_sell');
             $object->accountancy_code_buy  = GETPOST('accountancy_code_buy');
 
@@ -288,7 +285,7 @@ if (empty($reshook))
 						$cat->add_type($object, 'product');
 					}
 				}
-				
+
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
             }
@@ -380,18 +377,18 @@ if (empty($reshook))
 						$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
 						$sql .= " WHERE fk_product = ".$object->id;
 						$db->query($sql);
-						
+
 						// Then we add the associated categories
 						$categories = GETPOST('categories');
 						if(!empty($categories)) {
 							$cat = new Categorie($db);
-							
+
 							foreach($categories as $id_category) {
 								$cat->fetch($id_category);
 								$cat->add_type($object, 'product');
 							}
 						}
-						
+
                         $action = 'view';
                     }
                     else
@@ -1095,7 +1092,7 @@ else
 	    {
 		    print '<tr><td>'.$langs->trans('Unit').'</td>';
 		    print '<td colspan="3">';
-		    $form->select_units("units");
+		    print $form->selectUnits("units");
 		    print '</td></tr>';
 	    }
 
@@ -1379,13 +1376,13 @@ else
 			}
 			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
 			print "</td></tr>";
-	        
+
 	        // Units
 	        if($conf->global->PRODUCT_USE_UNITS)
 	        {
 		        print '<tr><td>'.$langs->trans('Unit').'</td>';
 		        print '<td colspan="3">';
-		        $form->select_units($object->fk_unit);
+		        print $form->selectUnits($object->fk_unit);
 		        print '</td></tr>';
 	        }
 
@@ -1659,7 +1656,7 @@ else
 			// Unit
 			if($conf->global->PRODUCT_USE_UNITS)
 			{
-				$unit = $object->get_unit_label();
+				$unit = $object->getLabelOfUnit();
 
 				print '<tr><td>'.$langs->trans('Unit').'</td><td>';
 				if ($unit !== '') {
@@ -1695,7 +1692,7 @@ else
 			$cat = new Categorie($db);
 			$categories = $cat->containing($object->id,0);
 			$catarray = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
-			
+
 			$toprint = array();
 			foreach($categories as $c) {
 				$toprint[] = $catarray[$c->id];

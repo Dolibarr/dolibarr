@@ -38,7 +38,7 @@ abstract class CommonObjectLine extends CommonObject
 	/**
 	 * Id of the line
 	 * @var int
-	 * @deprecated Try to use id property as possible
+	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
 	 */
 	public $rowid;
 
@@ -46,11 +46,11 @@ abstract class CommonObjectLine extends CommonObject
     public $db;
 
 	/**
-	 * Product/service unit
-	 * @var int
+	 * Product/service unit code ('km', 'm', 'p', ...)
+	 * @var string
 	 */
 	public $fk_unit;
-	// TODO
+
 
     /**
      *	Returns the text label from units dictionnary
@@ -58,7 +58,7 @@ abstract class CommonObjectLine extends CommonObject
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
-	public function get_unit_label($type='long')
+	public function getLabelOfUnit($type='long')
 	{
 		global $langs;
 
@@ -89,7 +89,7 @@ abstract class CommonObjectLine extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::get_unit_label Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

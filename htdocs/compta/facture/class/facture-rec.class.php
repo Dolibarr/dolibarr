@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
@@ -98,7 +98,7 @@ class FactureRec extends Facture
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
-		
+
 		$this->db->begin();
 
 		// Charge facture modele
@@ -415,9 +415,10 @@ class FactureRec extends Facture
      *	@param      int			$rang               Position of line
      *	@param		int			$special_code		Special code
      *	@param		string		$label				Label of the line
+     *	@param		string		$fk_unit			Unit
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit= null)
+	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
 		$facid=$this->id;
 
@@ -499,7 +500,7 @@ class FactureRec extends Facture
 			$sql.= ", '".price2num($total_ttc)."'";
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
-			$sql.= ", ".$fk_unit.")";
+			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null").")";
 
 			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 			if ($this->db->query($sql))
@@ -579,7 +580,7 @@ class FactureRec extends Facture
 		return $result;
 	}
 
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.

@@ -505,11 +505,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
             $desc=$product_desc;
-			$fk_unit= GETPOST('units', 'int');
-
-			if ($fk_unit <= 0) {
-				$fk_unit = null;
-			}
+			$fk_unit= GETPOST('units', 'alpha');
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
@@ -631,7 +627,7 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
 	  	else
 	  	  $pa_ht = null;
 
-	    $fk_unit = GETPOST('unit', 'int');
+	    $fk_unit = GETPOST('unit', 'alpha');
 
         $objectline->description=GETPOST('product_desc');
         $objectline->price_ht=GETPOST('elprice');
@@ -650,7 +646,7 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->pa_ht=$pa_ht;
 
 	    if ($fk_unit > 0) {
-		    $objectline->fk_unit = $_POST['unit'];
+		    $objectline->fk_unit = GETPOST('unit');
 	    } else {
 		    $objectline->fk_unit = null;
 	    }
@@ -977,7 +973,7 @@ if ($action == 'create')
     print '<input type="hidden" name="remise_percent" value="0">';
 
     dol_fiche_head();
-    
+
     print '<table class="border" width="100%">';
 
     // Ref
@@ -1087,7 +1083,7 @@ if ($action == 'create')
         	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
         }
 	}
-    
+
     print "</form>\n";
 }
 else
@@ -1291,7 +1287,7 @@ else
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
 
         $var=false;
-        
+
 		// Title line for service
         $cursorline=1;
         while ($cursorline <= $nbofservices)
@@ -1327,7 +1323,7 @@ else
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
-	            if($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
+	            if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
 				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
                 print '<td width="30">&nbsp;</td>';
@@ -1368,8 +1364,8 @@ else
                     print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
-	                //Unit
-	                if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->get_unit_label()).'</td>';
+	                // Unit
+	                if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
@@ -1494,12 +1490,12 @@ else
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-	              if($conf->global->PRODUCT_USE_UNITS)
-	              {
-		              print '<td align="left">';
-		              $form->select_units($objp->fk_unit, "unit");
-		              print '</td>';
-	              }
+                    if ($conf->global->PRODUCT_USE_UNITS)
+                    {
+                    	print '<td align="left">';
+                    	print $form->selectUnits($objp->fk_unit, "unit");
+                    	print '</td>';
+                    }
                     print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 					if (! empty($usemargins))
 					{

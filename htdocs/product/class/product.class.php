@@ -177,8 +177,8 @@ class Product extends CommonObject
     var $fk_price_expression;
 
 	/**
-	 * Unit
-	 * @var int
+	 * Unit code ('km', 'm', 'l', 'p', ...)
+	 * @var string
 	 */
 	public $fk_unit;
 
@@ -3820,7 +3820,7 @@ class Product extends CommonObject
 	 * 	@param	string $type Label type (long or short)
 	 *	@return	string|int <0 if ko, label if ok
 	 */
-	function get_unit_label($type='long')
+	function getLabelOfUnit($type='long')
 	{
 		global $langs;
 
@@ -3851,7 +3851,7 @@ class Product extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::get_unit_label Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

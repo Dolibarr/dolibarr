@@ -2823,46 +2823,36 @@ class Form
 	}
 
     /**
-     *      Prints units selector
+     *      Creates HTML units selector (code => label)
      *
-     *      @param	string	$selected        Preselected ID
-     *      @param  string	$htmlname        Select name
-     * 		@return	void
+     *      @param	string	$selected       Preselected code ('km', 'm', 'l', 'p', ...)
+     *      @param  string	$htmlname       Select name
+     *      @param	int		$showempty		Add a nempty line
+     * 		@return	string                  HTML select
      */
-    function select_units($selected = '', $htmlname = 'units')
-    {
-        print $this->load_units($selected, $htmlname);
-    }
-
-    /**
-     *      Creates HTML units selector
-     *
-     *      @param	string	$selected        Preselected ID
-     *      @param  string	$htmlname        Select name
-     * 		@return	string                   HTML select
-     */
-    function load_units($selected = '', $htmlname = 'units')
+    function selectUnits($selected = '', $htmlname = 'units', $showempty=0)
     {
         global $langs;
 
         $langs->load('products');
 
         $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+
         $sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
         $resql = $this->db->query($sql);
         if($resql && $this->db->num_rows($resql) > 0)
         {
-	        $return .= '<option value=""></option>';
+	        if ($showempty) $return .= '<option value="none"></option>';
 
-            while($res = $this->db->fetch_array($resql))
+            while($res = $this->db->fetch_object($resql))
             {
                 if ($selected == $res[0])
                 {
-                    $return.='<option value="'.$res[0].'" selected="selected">'.$langs->trans($res[1]).'</option>';
+                    $return.='<option value="'.$res->code.'" selected="selected">'.$langs->trans($res->label).'</option>';
                 }
                 else
                 {
-                    $return.='<option value="'.$res[0].'">'.$langs->trans($res[1]).'</option>';
+                    $return.='<option value="'.$res->code.'">'.$langs->trans($res->label).'</option>';
                 }
             }
             $return.='</select>';
@@ -3009,7 +2999,7 @@ class Form
                         $add = '';
                     }
                     $output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'],$maxlength,'middle').'</option>';
-					
+
 					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
                 }
             }

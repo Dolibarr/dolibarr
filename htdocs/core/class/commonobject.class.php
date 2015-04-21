@@ -3063,7 +3063,7 @@ abstract class CommonObject
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
         $this->tpl['price'] = price($line->subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-	    if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->get_unit_label('long');
+	    if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->getLabelOfUnit('long');
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
         // Output template part (modules that overwrite templates must declare this into descriptor)

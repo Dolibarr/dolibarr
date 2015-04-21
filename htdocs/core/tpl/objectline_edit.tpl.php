@@ -147,7 +147,7 @@ $coldisplay=-1; // We remove first td
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
 		print '<td align="left">';
-		$form->select_units($line->fk_unit, "units");
+		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	?>

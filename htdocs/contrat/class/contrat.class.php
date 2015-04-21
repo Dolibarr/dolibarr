@@ -1236,7 +1236,7 @@ class Contrat extends CommonObject
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
-	 * @param int $fk_unit Id of the unit to use. Null to use the default one
+	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null)
@@ -1339,7 +1339,7 @@ class Contrat extends CommonObject
 			else $sql.= ' null';
 			if ($date_start > 0) { $sql.= ",'".$this->db->idate($date_start)."'"; }
 			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
-			$sql.= ", ".$fk_unit;
+			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
@@ -1418,7 +1418,7 @@ class Contrat extends CommonObject
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
-	 * @param int $fk_unit Id of the unit to use. Null to use the default one
+	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null)
@@ -1512,7 +1512,7 @@ class Contrat extends CommonObject
 		else { $sql.=",date_ouverture=null"; }
 		if ($date_fin_reel > 0) { $sql.= ",date_cloture='".$this->db->idate($date_fin_reel)."'"; }
 		else { $sql.=",date_cloture=null"; }
-		$sql .= ", fk_unit=".$fk_unit;
+		$sql .= ", fk_unit=".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
 		$sql .= " WHERE rowid = ".$rowid;
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
@@ -2474,7 +2474,7 @@ class ContratLigne extends CommonObjectLine
 		if (empty($this->total_ht)) $this->total_ht = 0;
 		if (empty($this->total_tva)) $this->total_tva = 0;
 		if (empty($this->total_ttc)) $this->total_ttc = 0;
-		
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
