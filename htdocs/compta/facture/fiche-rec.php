@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Florian Henry	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,6 +203,7 @@ if ($action == 'create')
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
+		$sql.= ' l.fk_unit,';
 		$sql.= ' p.ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
@@ -222,6 +224,9 @@ if ($action == 'create')
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="center">'.$langs->trans("VAT").'</td>';
 				print '<td align="center">'.$langs->trans("Qty").'</td>';
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
+				}
 				print '<td>'.$langs->trans("ReductionShort").'</td>';
 				print '<td align="right">'.$langs->trans("TotalHT").'</td>';
 				print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
@@ -246,6 +251,7 @@ if ($action == 'create')
 
 				// Show product and description
 				$type=(isset($objp->product_type)?$objp->product_type:$objp->fk_product_type);
+				$product_static->fk_unit=$objp->fk_unit;
 
 				if ($objp->fk_product > 0)
 				{
@@ -298,6 +304,10 @@ if ($action == 'create')
 
 				// Qty
 				print '<td align="center">'.$objp->qty.'</td>';
+
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					print '<td align="left">'.$product_static->get_unit_label().'</td>';
+				}
 
 				// Percent
 				if ($objp->remise_percent > 0)
@@ -445,7 +455,11 @@ else
 			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td align="right">'.$langs->trans("Price").'</td>';
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
-			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
+			print '<td align="center">'.$langs->trans("Qty").'</td>';
+			if ($conf->global->PRODUCT_USE_UNITS) {
+				print '<td align="left">'.$langs->trans("Unit").'</td>';
+			}
+			print '</tr>';
 
 			$num = count($object->lines);
 			$i = 0;
@@ -512,7 +526,11 @@ else
 				}
 				print '<td align="right">'.price($object->lines[$i]->price).'</td>';
 				print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
-				print '<td align="center">'.$object->lines[$i]->qty.'</td></tr>'."\n";
+				print '<td align="center">'.$object->lines[$i]->qty.'</td>';
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					print "<td align=\"left\">".$object->lines[$i]->get_unit_label()."</td>";
+				}
+				print "</tr>\n";
 				$i++;
 			}
 			print '</table>';

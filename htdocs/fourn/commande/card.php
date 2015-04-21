@@ -347,7 +347,8 @@ if (empty($reshook))
 	    			'',
 	    			$date_start,
 	    			$date_end,
-	    			$array_options
+	    			$array_options,
+				    $productsupplier->fk_unit
 	    		);
 	    	}
 	    	if ($idprod == -99 || $idprod == 0)
@@ -375,6 +376,12 @@ if (empty($reshook))
 			$desc = $product_desc;
 			$type = GETPOST('type');
 
+			$fk_unit= GETPOST('units', 'int');
+
+			if ($fk_unit <= 0) {
+				$fk_unit = null;
+			}
+
 	    	$tva_tx = price2num($tva_tx);	// When vat is text input field
 
 	    	// Local Taxes
@@ -385,15 +392,16 @@ if (empty($reshook))
 	    	{
 	    		$price_base_type = 'HT';
 	    		$ht = price2num(GETPOST('price_ht'));
-	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end, $array_options);
+	    		$ttc = 0;
 	    	}
 	    	else
 	    	{
 	    		$ttc = price2num(GETPOST('price_ttc'));
 	    		$ht = $ttc / (1 + ($tva_tx / 100));
 	    		$price_base_type = 'HT';
-	    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options);
 	    	}
+
+			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
 		}
 
 	    //print "xx".$tva_tx; exit;
@@ -513,7 +521,8 @@ if (empty($reshook))
 	        false,
 	        $date_start,
 	        $date_end,
-	    	$array_options
+	    	$array_options,
+		    $_POST['units']
 	    );
 	    unset($_POST['qty']);
 	    unset($_POST['type']);
@@ -525,6 +534,7 @@ if (empty($reshook))
 	    unset($_POST['tva_tx']);
 	    unset($_POST['date_start']);
 	    unset($_POST['date_end']);
+		unset($_POST['units']);
 	    unset($localtax1_tx);
 	    unset($localtax2_tx);
 
@@ -989,7 +999,9 @@ if (empty($reshook))
 									'',
 									'',
 									null,
-									null
+									null,
+									array(),
+									$lines[$i]->fk_unit
 								);
 
 								if ($result < 0) {

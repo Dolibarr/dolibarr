@@ -61,6 +61,15 @@ if (in_array($object->element,array('propal', 'askpricesupplier','facture','invo
 	<td align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left">';
+		print '<span id="title_units">';
+		print $langs->trans('Unit');
+		print '</span></td>';
+	}
+	?>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
 	if ($this->situation_cycle_ref) {
@@ -220,6 +229,14 @@ else {
 	<?php } ?>
 	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left">';
+		print $form->select_units($line->fk_unit, "units");
+		print '</td>';
+	}
+	?>
 	<td align="right" class="nowrap"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
@@ -303,6 +320,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 	if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+	if ($conf->global->PRODUCT_USE_UNITS) {
+		$colspan++;
+	}
 
 	if (! empty($usemargins))
 	{
@@ -577,6 +597,7 @@ function setforfree() {
 	jQuery("#np_markRate").show();	// May no exists
 	jQuery(".np_marginRate").show();	// May no exists
 	jQuery(".np_markRate").show();	// May no exists
+	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
 	jQuery("#select_type").val(-1);
@@ -593,6 +614,8 @@ function setforpredef() {
 	jQuery("#np_markRate").hide();	// May no exists
 	jQuery(".np_marginRate").hide();	// May no exists
 	jQuery(".np_markRate").hide();	// May no exists
+	jQuery(".np_markRate").hide();	// May no exists
+	jQuery("#units, #title_units").hide();
 }
 
 </script>
