@@ -2,6 +2,7 @@
 -- Copyright (C) 2007      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2007-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
 -- Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
+-- Copyright (C) 2015      Marcos García    <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -47,5 +48,6 @@ create table llx_commande_fournisseurdet
   info_bits	                 integer      DEFAULT 0,     -- TVA NPR ou non
   special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
   rang						 integer      DEFAULT 0,
-  import_key				 varchar(14)
+  import_key				 varchar(14),
+  fk_unit         integer    DEFAULT NULL
 )ENGINE=innodb;

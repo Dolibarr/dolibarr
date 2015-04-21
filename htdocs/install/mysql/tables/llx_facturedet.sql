@@ -60,7 +60,8 @@ create table llx_facturedet
   import_key					varchar(14),
 
   situation_percent real,   -- % progression of lines invoicing
-  fk_prev_id        integer -- id of the line in the previous situation
+  fk_prev_id        integer, -- id of the line in the previous situation,
+  fk_unit           integer DEFAULT NULL -- id of the unit code¡
 
 )ENGINE=innodb;
 

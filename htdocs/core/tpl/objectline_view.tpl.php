@@ -145,6 +145,18 @@ if (empty($usemargins)) $usemargins=0;
 		} else echo '&nbsp;';	?>
 	</td>
 
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left" nowrap="nowrap">';
+		$label = $line->get_unit_label('short');
+		if ($label !== '') {
+			print $langs->trans($label);
+		}
+		print '</td>';
+	}
+	?>
+
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
 	<td align="right"><?php
 		$coldisplay++;

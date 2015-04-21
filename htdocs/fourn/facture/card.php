@@ -444,7 +444,8 @@ if (empty($reshook))
 	                            $product_type,
 	                        	$lines[$i]->rang,
 	                        	1,
-	                        	$lines[$i]->array_options
+	                        	$lines[$i]->array_options,
+	                        	$lines[$i]->fk_unit
 	                        );
 
 	                        if ($result < 0)
@@ -587,7 +588,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units']);
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
@@ -684,6 +685,7 @@ if (empty($reshook))
 	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
 	    	}
 
+		    //Replaces $fk_unit with the product's
 	        if ($idprod > 0)
 	        {
 	            $result=$productsupplier->fetch($idprod);
@@ -703,7 +705,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 
 	            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr, $price_base_type, $type, -1, 0, $array_options);
+	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, '', '', 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
 	        }
 	    	if ($idprod == -2 || $idprod == 0)
 	        {
@@ -730,6 +732,12 @@ if (empty($reshook))
 			$desc = $product_desc;
 			$type = GETPOST('type');
 
+			$fk_unit= GETPOST('units', 'int');
+
+			if ($fk_unit <= 0) {
+				$fk_unit = null;
+			}
+
 	    	$tva_tx = price2num($tva_tx);	// When vat is text input field
 
 	    	// Local Taxes
@@ -740,18 +748,15 @@ if (empty($reshook))
 	    	{
 	    		$ht = price2num($_POST['price_ht']);
 	            $price_base_type = 'HT';
-
-	            //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-	            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type, -1, 0, $array_options);
 	        }
 	        else
 			{
 	    		$ttc = price2num($_POST['price_ttc']);
 	            $ht = $ttc / (1 + ($tva_tx / 100));
 	            $price_base_type = 'HT';
-	            //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-	            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type, -1, 0, $array_options);
 	        }
+
+			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
 	    }
 
 	    //print "xx".$tva_tx; exit;
@@ -793,6 +798,7 @@ if (empty($reshook))
 			unset($_POST['np_markRate']);
 	    	unset($_POST['dp_desc']);
 			unset($_POST['idprodfournprice']);
+		    unset($_POST['units']);
 
 	    	unset($_POST['date_starthour']);
 	    	unset($_POST['date_startmin']);

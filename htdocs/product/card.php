@@ -7,7 +7,7 @@
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
@@ -181,6 +181,8 @@ if (empty($reshook))
 
         if (! $error)
         {
+	        $units = GETPOST('units', 'int');
+
             $object->ref                   = $ref;
             $object->libelle               = GETPOST('libelle');
             $object->price_base_type       = GETPOST('price_base_type');
@@ -242,6 +244,10 @@ if (empty($reshook))
             $object->volume_units       	 = GETPOST('volume_units');
             $object->finished           	 = GETPOST('finished');
             $object->hidden             	 = GETPOST('hidden')=='yes'?1:0;
+	        $object->fk_unit                 = GETPOST('units');
+			if ($fk_unit > 0) {
+				$object->fk_unit = $fk_unit;
+			}
             $object->accountancy_code_sell = GETPOST('accountancy_code_sell');
             $object->accountancy_code_buy  = GETPOST('accountancy_code_buy');
 
@@ -333,6 +339,14 @@ if (empty($reshook))
                 $object->volume_units           = GETPOST('volume_units');
                 $object->finished               = GETPOST('finished');
                 $object->hidden                 = GETPOST('hidden')=='yes'?1:0;
+
+	            $units = GETPOST('units', 'int');
+
+	            if ($units > 0) {
+		            $object->fk_unit = $units;
+	            } else {
+		            $object->fk_unit = null;
+	            }
 
 	            $object->barcode_type           = GETPOST('fk_barcode_type');
     	        $object->barcode		        = GETPOST('barcode');
@@ -588,7 +602,19 @@ if (empty($reshook))
             $object->id,
             GETPOST('remise_percent'),
             $price_base_type,
-            $pu_ttc
+            $pu_ttc,
+	        0,
+	        0,
+	        -1,
+	        0,
+	        0,
+	        0,
+	        0,
+	        '',
+	        '',
+	        '',
+	        0,
+	        $object->fk_unit
         );
         if ($result > 0)
         {
@@ -680,7 +706,18 @@ if (empty($reshook))
             '',
             '',
             $price_base_type,
-            $pu_ttc
+            $pu_ttc,
+	        '',
+	        '',
+	        0,
+	        -1,
+	        0,
+	        0,
+	        null,
+	        0,
+	        '',
+	        0,
+	        $object->fk_unit
         );
 
         if ($result > 0)
@@ -773,7 +810,20 @@ if (empty($reshook))
             '',
             '',
             $price_base_type,
-            $pu_ttc
+            $pu_ttc,
+	        Facture::TYPE_STANDARD,
+	        -1,
+	        0,
+	        '',
+	        0,
+	        0,
+	        null,
+	        0,
+	        '',
+	        0,
+	        100,
+	        '',
+	        $object->fk_unit
         );
 
         if ($result > 0)
@@ -1030,7 +1080,7 @@ else
 
         // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
         $doleditor = new DolEditor('note', GETPOST('note'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
-        $doleditor->Create();
+	    $doleditor->Create();
 
         print "</td></tr>";
 
@@ -1039,6 +1089,15 @@ else
 		$cate_arbo = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
 		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
 		print "</td></tr>";
+
+	    // Units
+	    if($conf->global->PRODUCT_USE_UNITS)
+	    {
+		    print '<tr><td>'.$langs->trans('Unit').'</td>';
+		    print '<td colspan="3">';
+		    $form->select_units("units");
+		    print '</td></tr>';
+	    }
 
         print '</table>';
 
@@ -1320,6 +1379,15 @@ else
 			}
 			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
 			print "</td></tr>";
+	        
+	        // Units
+	        if($conf->global->PRODUCT_USE_UNITS)
+	        {
+		        print '<tr><td>'.$langs->trans('Unit').'</td>';
+		        print '<td colspan="3">';
+		        $form->select_units($object->fk_unit);
+		        print '</td></tr>';
+	        }
 
             print '</table>';
 
@@ -1587,6 +1655,18 @@ else
                 }
                 print "</td></tr>\n";
             }
+
+			// Unit
+			if($conf->global->PRODUCT_USE_UNITS)
+			{
+				$unit = $object->get_unit_label();
+
+				print '<tr><td>'.$langs->trans('Unit').'</td><td>';
+				if ($unit !== '') {
+					print $langs->trans($unit);
+				}
+				print '</td></tr>';
+			}
 
         	// Custom code
         	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
