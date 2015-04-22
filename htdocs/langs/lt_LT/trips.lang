@@ -1,126 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
+ExpenseReport=Išlaidų ataskaita
+ExpenseReports=Išlaidų ataskaitos
+Trip=Išlaidų ataskaita
+Trips=Išlaidų ataskaitos
+TripsAndExpenses=Išlaidų ataskaitos
+TripsAndExpensesStatistics=Išlaidų ataskaitų statistika
+TripCard=Išlaidų ataskaitos kortelė
+AddTrip=Sukurti išlaidų ataskaitą
+ListOfTrips=Išlaidų ataskaitų sąrašas
 ListOfFees=Įmokų sąrašas
-NewTrip=New expense report
-CompanyVisited=aplankyta įmonė/organizacija
+NewTrip=Nauja išlaidų ataskaita
+CompanyVisited=Aplankyta įmonė/organizacija
 Kilometers=Kilometrų
-FeesKilometersOrAmout=Kilometrų kiekis
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
-ClassifyRefunded=Classify 'Refunded'
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+FeesKilometersOrAmout=Suma arba Kilometrai
+DeleteTrip=Ištrinti išlaidų ataskaitą
+ConfirmDeleteTrip=Ar tikrai norite ištrinti šią išlaidų ataskaitą ?
+ListTripsAndExpenses=Išlaidų ataskaitų sąrašas
+ListToApprove=Laukiama patvirtinimo
+ExpensesArea=Išlaidų ataskaitų sritis
+SearchATripAndExpense=Išlaidų ataskaitos paieška
+ClassifyRefunded=Klasifikuoti "Grąžinta"
+ExpenseReportWaitingForApproval=Nauja išlaidų ataskaita buvo pateikta patvirtinimui
+ExpenseReportWaitingForApprovalMessage=Nauja išlaidų ataskaita buvo pateikta ir laukia patvirtinimo.\n- Vartotojas: %s\n- Laikotarpis:%s \nSpauskite čia norėdami patvirtinti: %s
+TripId=Išlaidų ataskaitos ID
+AnyOtherInThisListCanValidate=Asmuo informuojamas patvirtinimui.
+TripSociete=Informacijos įmonė
+TripSalarie=Informacijos vartotojas
+TripNDF=Informacijos išlaidų ataskaiata
+DeleteLine=Ištrinti išlaidų taskaitos eilutę
+ConfirmDeleteLine=Ar tikrai norite ištrinti šią eilutę ?
+PDFStandardExpenseReports=Standartinis šablonas PDF dokumento išlaidų ataskaitoje generavimui
+ExpenseReportLine=Išlaidų ataskaitos eilutė
 TF_OTHER=Kitas
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Transportas
 TF_LUNCH=Pietūs
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
-TF_TAXI=Taxi
+TF_TRAIN=Traukinys
+TF_BUS=Autobusas
+TF_CAR=Automobilis
+TF_PEAGE=Mokamas
+TF_ESSENCE=Kuras
+TF_HOTEL=Hostelis
+TF_TAXI=Taksi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Jūs deklaravote kitą išlaidų ataskaitą panašiame laiko periode.
+ListTripsAndExpenses=Išlaidų ataskaitų sąrašas
+AucuneNDF=Pagal šį kriterijų nerasta išlaidų ataskaitos
+AucuneLigne=Dar nėra deklaruotos išlaidų ataskaitos
+AddLine=Pridėti eilutę
+AddLineMini=Pridėti
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Laikotarpio pradžia
+Date_FIN=Laikotarpio pabaiga
+ModePaiement=Mokėjimo būdas
+Note=Pranešimas
+Project=Projektas
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Vartotojas patvirtinimo informavimui
+VALIDOR=Patvirtinta
+AUTHOR=Įrašyta
+AUTHORPAIEMENT=Apmokėta
+REFUSEUR=Atmesta
+CANCEL_USER=Nutraukta
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Priežastis
+MOTIF_CANCEL=Priežastis
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Atmetimo data
+DATE_SAVE=Patvirtinimo data
+DATE_VALIDE=Patvirtinimo data
+DATE_CANCEL=Nutraukimo data
+DATE_PAIEMENT=Mokėjimo data
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+TO_PAID=Mokėti
+BROUILLONNER=Atidaryti iš naujo
+SendToValid=Siųsti patvirtinimui
+ModifyInfoGen=Redaguoti
+ValidateAndSubmit=Įvertinti ir pateikti tvirtinimui
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=Jums neleidžiama patvirtinti šią išlaidų ataskaitą
+NOT_AUTHOR=Jūs nesate šios išlaidų ataskaitos autorius. Operacija nutraukta.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Atmesti išlaidų ataskaitą
+ConfirmRefuseTrip=Ar tikrai norite atmesti šią išlaidų ataskaitą ?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Patvirtinti išlaidų ataskaitą
+ConfirmValideTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Apmokėti išlaidų ataskaitą
+ConfirmPaidTrip=Ar tikrai norite pakeisti šios išlaidų ataskaitos būklę į "Apmokėta" ?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Nutraukti išlaidų ataskaitą
+ConfirmCancelTrip=Ar tikrai norite nutraukti šią išlaidų ataskaitą ?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Išlaidų ataskaitos būklę grąžinti į "Projektas"
+ConfirmBrouillonnerTrip=Ar tikrai norite grąžinti šios išlaidų ataskaitos būklę į "Projektas" ?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Patvirtinti išlaidų ataskaitą
+ConfirmSaveTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
 
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
-
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Už šį laikotarpį nėra išlaidų ataskaitų eksportui

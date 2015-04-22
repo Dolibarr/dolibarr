@@ -14,6 +14,7 @@ MyTasksDesc=这种观点是有限的项目或任务你是一个接触（不管�
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=这种观点提出的所有项目，您可阅读任务。
 TasksDesc=这种观点提出的所有项目和任务（您的用户权限批准你认为一切）。
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=项目领域
 NewProject=新项目
 AddProject=Create project

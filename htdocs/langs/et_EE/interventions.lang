@@ -50,4 +50,4 @@ ArcticNumRefModelError=Aktiveerimine ebaõnnestus
 PacificNumRefModelDesc1=Tagastab numbri formaadiga %syymm-nnnn kus yy on aasta, mm on kuu ja nnnn on katkestusteta jada, mis ei lähe kunagi tagasi 0
 PacificNumRefModelError=$syymm algusega sekkumise kaart on juba olemas ja too ei sobi kokku sellise mudeliga jadaga. Kustuta või nimeta too kaart ümber selle mooduli aktiveerimiseks.
 PrintProductsOnFichinter=Trüki tooted sekkumise kaardile
-PrintProductsOnFichinterDetails=sekkumiste jaoks, mis on automaatselt loodud tellimustest
+PrintProductsOnFichinterDetails=interventions generated from orders

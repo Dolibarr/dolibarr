@@ -139,5 +139,5 @@ ListOfNotificationsDone=Gönderilen tüm e-posta bildirimleri listesi
 MailSendSetupIs=Yapılandırma e postası '%s' için ayarlandı. Bu mod toplu epostalama için kullanılamaz.
 MailSendSetupIs2='%s' Modunu kullanmak için <strong>'%s'</strong> parametresini değiştirecekseniz, önce yönetici hesabı ile %sGiriş - Ayarlar - Epostalar%s menüsüne gitmelisiniz. Bu mod ile İnternet Servis Sağlayıcınız tarafından sağlanan SMTP sunucusu ayarlarını girebilir ve Toplu eposta özelliğini kullanabilirsiniz.
 MailSendSetupIs3=SMTP sunucusunun nasıl yapılandırılacağı konusunda sorunuz varsa, %s e sorabilirsiniz.
-YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
-NbOfTargetedContacts=Current number of targeted contact emails
+YouCanAlsoUseSupervisorKeyword=Ayrıca; kullanıcının danışmanına giden epostayı almak için <strong>__SUPERVISOREMAIL__</strong> anahtar kelimesini de ekleyebilirsiniz (yalnızca bu danışman için bir eposta tanımlanmışsa çalışır).
+NbOfTargetedContacts=Mevcut hedef kişi eposta sayısı

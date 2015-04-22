@@ -14,6 +14,7 @@ MyTasksDesc=Denne visningen er begrenset til prosjekter eller oppgaver du er en 
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Denne visningen presenterer alle prosjekter og oppgaver du har lov til å lese.
 TasksDesc=Denne visningen presenterer alle prosjekter og oppgaver (dine brukertillatelser gi deg tillatelse til å vise alt).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Prosjektområde
 NewProject=Nytt prosjekt
 AddProject=Create project

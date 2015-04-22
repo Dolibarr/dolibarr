@@ -203,6 +203,7 @@ NewKeyWillBe=Le tue nuove credenziali per loggare al software sono
 ClickHereToGoTo=Clicca qui per andare a %s
 YouMustClickToChange=Devi cliccare sul seguente link per validare il cambio della password
 ForgetIfNothing=Se non hai richiesto questo cambio, lascia perdere questa mail. Le tue credenziali sono mantenute al sicuro.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Aggiungi evento al calendario %s

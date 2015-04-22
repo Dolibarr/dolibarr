@@ -14,6 +14,7 @@ MyTasksDesc=Tento pohled je omezen na projekty či úkoly u kterých jste uveden
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Tento pohled zobrazuje všechny projekty a úkoly které máte oprávnění číst.
 TasksDesc=Tento pohled zobrazuje všechny projekty a úkoly (vaše uživatelské oprávnění vám umožňuje vidět vše).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projekty
 NewProject=Nový projekt
 AddProject=Create project

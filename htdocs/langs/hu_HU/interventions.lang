@@ -50,4 +50,4 @@ ArcticNumRefModelError=Sikertelen aktiválás
 PacificNumRefModelDesc1=Számot ad a következő formában: %syymm-nnnn ahol yy az év, mm a hónap és nnnn 4 szám 0-tól indúlva
 PacificNumRefModelError=Egy intervenciós kártya $syymm kezdéssel már létezik és nem kompatibilies ezzel a szekvencia modellel. Távolítsa el vagy nevezze át hogy aktiválhassa a modult.
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders

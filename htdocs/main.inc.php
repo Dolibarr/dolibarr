@@ -10,6 +10,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -575,18 +576,14 @@ if (! defined('NOLOGIN'))
         }
         else
        {
-            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming)
-            {
-                // TODO We should use a hook here, not a trigger.
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++;
-                }
-                // End call triggers
-            }
+	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+	       $hookmanager->initHooks(array('main'));
+
+	       $action = '';
+	       $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+	       if ($reshook < 0) {
+		       setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	       }
         }
     }
 

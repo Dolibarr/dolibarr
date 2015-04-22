@@ -14,6 +14,7 @@ MyTasksDesc=Ovaj pregled predstavlja sve projekte ili zadatke za koje ste kontak
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Ovaj pregled predstavlja sve projekte ili zadatke koje možete čitati.
 TasksDesc=Ovaj pregled predstavlja sve projekte i zadatke (postavke vaših korisničkih dozvola vam omogućavaju da vidite sve).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Područje za projekte
 NewProject=Novi projekat
 AddProject=Create project

@@ -203,6 +203,7 @@ NewKeyWillBe=Noua dvs. cheie pentru a vă conecta la software-ul va fi
 ClickHereToGoTo=Click aici pentru a merge la %s
 YouMustClickToChange=Trebuie însă mai întâi să faceți clic pe link-ul următor pentru a valida această schimbare a parolei
 ForgetIfNothing=Dacă nu ați solicitat această schimbare, ignoraţi acest e-mail. Datele dvs.  sunt păstrate în condiții de siguranță.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Adăugaţi în calendar intrare %s

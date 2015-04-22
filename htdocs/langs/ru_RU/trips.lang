@@ -69,11 +69,9 @@ MOTIF_CANCEL=Причина
 DATE_REFUS=Дата отклонения
 DATE_SAVE=Дата проверки
 DATE_VALIDE=Дата проверки
-DateApprove=Дата утверждения
 DATE_CANCEL=Дата отмены
 DATE_PAIEMENT=Дата платежа
 
-Deny=Отменить
 TO_PAID=Оплатить
 BROUILLONNER=Открыть заново
 SendToValid=Отправить запрос на утверждение
@@ -100,27 +98,5 @@ ConfirmBrouillonnerTrip=Вы точно хотите изменить стату
 
 SaveTrip=Проверить отчёт о завтратах
 ConfirmSaveTrip=Вы точно хотите проверить данный отчёт о затратах?
-
-Synchro_Compta=NDF <-> Учётная запись
-
-TripSynch=Синхронизация: Расходы <-> текущий счёт
-TripToSynch=Примечание: оплата должна быть включена в расчёт
-AucuneTripToSynch=Состояние отчёта о затратах не  "Оплачен".
-ViewAccountSynch=Посмотреть аккаунт
-
-ConfirmNdfToAccount=Вы уверены, что хотите включить этот отчет о расходах в текущем счете?
-ndfToAccount=Отчет о расходах - Интеграция
-
-ConfirmAccountToNdf=Вы уверены, что хотите удалить этот отчет о расходах текущего счета?
-AccountToNdf=Оценка затрат - вывод
-
-LINE_NOT_ADDED=Номер строки добавил:
-NO_PROJECT=Ни один проект не выбран.
-NO_DATE=Ни одна дата не выбрана. 
-NO_PRICE=Цена не указана.
-
-TripForValid=Подтвердивший
-TripForPaid=Плательщик
-TripPaid=Плательщик
 
 NoTripsToExportCSV=Нет отчёта о затратах за этот период.

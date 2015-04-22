@@ -506,8 +506,12 @@ foreach ($listofreferent as $key => $value)
 
 				// Status
 				print '<td align="right">';
-				if ($tablename == 'expensereport_det') print $expensereport->getLibStatut(5);
-				else print $element->getLibStatut(5);
+				if ($element instanceof CommonInvoice) {
+					//This applies for Facture and FactureFournisseur
+					print $element->getLibStatut(5, $element->getSommePaiement());
+				} else {
+					print $element->getLibStatut(5);
+				}
 				print '</td>';
 
 				print '</tr>';

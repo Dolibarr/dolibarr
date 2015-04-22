@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Банк
 Banks=Банки
-MenuBankCash=Банк / Наличный
-MenuSetupBank=Банк / Наличный установки
+MenuBankCash=Банк / Наличные
+MenuSetupBank=Банк / Наличные установки
 BankName=Название банка
 FinancialAccount=Учетная запись
 FinancialAccounts=Счета
@@ -138,7 +138,7 @@ CashBudget=Наличный бюджет
 PlannedTransactions=Планируемые операции
 Graph=Графика
 ExportDataset_banque_1=Банковские операции и счета
-ExportDataset_banque_2=Deposit slip
+ExportDataset_banque_2=Бланк депозита
 TransactionOnTheOtherAccount=Сделка с другой учетной записи
 TransactionWithOtherAccount=Счет передачи
 PaymentNumberUpdateSucceeded=Оплата числа успешно обновлен
@@ -163,3 +163,5 @@ LabelRIB=Метка номера счета BAN
 NoBANRecord=Нет записи с номером счета BAN
 DeleteARib=Удалить запись в номером счета BAN
 ConfirmDeleteRib=Вы точно хотите удалить запись с номером счета BAN ?
+StartDate=Дата начала
+EndDate=Дата окончания

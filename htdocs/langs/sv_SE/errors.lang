@@ -159,14 +159,17 @@ ErrorPriceExpression22=Negativt resultat '%s'
 ErrorPriceExpressionInternal=Internt fel '%s'
 ErrorPriceExpressionUnknown=Okänt fel '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
-ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified before being allowed to do this action
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
 ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
 ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
 ErrorGlobalVariableUpdater2=Missing parameter '%s'
 ErrorGlobalVariableUpdater3=The requested data was not found in result
 ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriska inställningsparametrarna har ännu inte definierat

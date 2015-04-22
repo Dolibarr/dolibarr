@@ -14,6 +14,7 @@ MyTasksDesc=Ez a nézet azokra a projektekre van korlátozva amivel valamilyen �
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Ez a nézet minden az ön által megtekinthető projektre van korlátozva.
 TasksDesc=Ez a nézet minden projektet tartalmaz.
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projektek terület
 NewProject=Új projekt
 AddProject=Create project

@@ -14,6 +14,7 @@ MyTasksDesc=Această vedere  este limitată la proiecte sau sarcini  pentru care
 OnlyOpenedProject=Numai proiectele deschise sunt vizibile (proiecte cu statutul draft sau închise nu sunt vizibile).
 TasksPublicDesc=Această vedere prezintă toate proiectele şi activităţile  care sunt permise să le  citiţi.
 TasksDesc=Această vedere prezintă toate proiectele şi sarcinile (permisiuni de utilizator va acorda permisiunea de a vizualiza totul).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Proiecte
 NewProject=Proiect nou
 AddProject=Creare proiect

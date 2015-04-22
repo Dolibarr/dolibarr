@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Dauerauftragsübersicht
-CustomersStandingOrdersArea=Dauerauftragsübersicht (Kunden)
+CustomersStandingOrdersArea=SEPA-Lastschriftverfahren-Übersicht
 StandingOrders=Daueraufträge
 StandingOrder=Dauerauftrag
 NewStandingOrder=Neuer Dauerauftrag
@@ -14,8 +14,8 @@ WithdrawalReceiptShort=Beleg
 LastWithdrawalReceipts=%s neuste Abbuchungsbelege
 WithdrawedBills=Abgebuchte Rechnungen
 WithdrawalsLines=Abbuchungszeilen
-RequestStandingOrderToTreat=Request for standing orders to process
-RequestStandingOrderTreated=Request for standing orders processed
+RequestStandingOrderToTreat=Anfrage für Dauerauftrage zu bearbeiten
+RequestStandingOrderTreated=Anfrage für Daueraufträge bearbeitet
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Withdraw status must be set to 'credited' before declaring reject on specific lines.
 CustomersStandingOrders=Daueraufträge (Kunden)
 CustomerStandingOrder=Dauerauftrag (Kunde)

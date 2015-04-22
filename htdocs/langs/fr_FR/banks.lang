@@ -163,3 +163,5 @@ LabelRIB=Nom du RIB
 NoBANRecord=Aucun RIB enregistré
 DeleteARib=Supprimé RIB enregistré
 ConfirmDeleteRib=Etes vous sur de vouloir supprimé ce RIB ?
+StartDate=Start date
+EndDate=End date

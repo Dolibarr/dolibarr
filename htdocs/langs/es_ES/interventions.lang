@@ -50,4 +50,4 @@ ArcticNumRefModelError=Activación imposible
 PacificNumRefModelDesc1=Devuelve el número con el formato %syymm-nnnn dónde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin quedar a 0
 PacificNumRefModelError=Una factura que empieza por # $$syymm existe en base y es incompatible con esta numeración. Elimínela  o renombrela para activar este módulo.
 PrintProductsOnFichinter=Mostrar los productos en la ficha de intervención
-PrintProductsOnFichinterDetails=para las intervenciones generadas a partir de pedidos
+PrintProductsOnFichinterDetails=Intervenciones generadas desde pedidos

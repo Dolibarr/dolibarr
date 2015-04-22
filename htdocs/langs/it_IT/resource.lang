@@ -1,7 +1,7 @@
 
 MenuResourceIndex=Risorse
 MenuResourceAdd=Nuova risorsa
-MenuResourcePlanning=Resource planning
+MenuResourcePlanning=Pianificazione delle risorse
 DeleteResource=Elimina risorsa
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 NoResourceInDatabase=Nessuna risorsa nel database
@@ -17,7 +17,7 @@ ResourceFormLabel_description=Descrizione della risorsa
 
 ResourcesLinkedToElement=Risorse collegate all'elemento
 
-ShowResourcePlanning=Show resource planning
+ShowResourcePlanning=Visualizza pianificazione delle risorse
 GotoDate=Go to date
 
 ResourceElementPage=Risorse dell'elemento

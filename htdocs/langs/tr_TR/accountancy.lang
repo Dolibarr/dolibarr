@@ -52,7 +52,7 @@ AccountingVentilationSupplier=Tedarikçi hesabı analizi
 AccountingVentilationCustomer=Müşteri hesabı analizi
 Line=Satır
 
-CAHTF=Tedarikçi HT toplam sipariş
+CAHTF=Tedarikçi HT toplam alışı
 InvoiceLines=Analiz edilecek fatura kalemleri
 InvoiceLinesDone=Analiz edilen fatura kalemleri
 IntoAccount=Muhasebe hesabında
@@ -80,7 +80,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Genel hesapların uzunluğu
 ACCOUNTING_LENGTH_AACCOUNT=Üçüncü parti hesaplarının uzunluğu
 
 ACCOUNTING_SELL_JOURNAL=Satış günlüğü
-ACCOUNTING_PURCHASE_JOURNAL=Satınalma günlüğü
+ACCOUNTING_PURCHASE_JOURNAL=Alış günlüğü
 ACCOUNTING_BANK_JOURNAL=Banka günlüğü
 ACCOUNTING_CASH_JOURNAL=Kasa günlüğü
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Çeşitli günlük
@@ -109,9 +109,9 @@ Codejournal=Günlük
 DelBookKeeping=Büyük defter kayıtlarını sil
 
 SellsJournal=Satış günlüğü
-PurchasesJournal=Satınalma günlüğü
+PurchasesJournal=Alış günlüğü
 DescSellsJournal=Satış günlüğü
-DescPurchasesJournal=Satınalma günlüğü
+DescPurchasesJournal=Alış günlüğü
 BankJournal=Banka günlüğü
 DescBankJournal=Nakit dışında her türlü ödemeyi içeren banka günlüğü
 CashJournal=Kasa günlüğü

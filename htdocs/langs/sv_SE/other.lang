@@ -203,6 +203,7 @@ NewKeyWillBe=Din nya knappen för att logga in på programvaran kommer att vara
 ClickHereToGoTo=Klicka här för att gå till %s
 YouMustClickToChange=Du måste dock först klicka på följande länk för att bekräfta detta lösenord förändring
 ForgetIfNothing=Om du inte har begärt denna förändring, bara glömma detta mail. Dina referenser förvaras säkert.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Lägg till post i kalendern %s

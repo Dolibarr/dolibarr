@@ -14,6 +14,7 @@ MyTasksDesc=Dette synspunkt er begrænset til projekter eller opgaver, du er en 
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Dette synspunkt præsenterer alle projekter og opgaver, som du får lov til at læse.
 TasksDesc=Dette synspunkt præsenterer alle projekter og opgaver (din brugertilladelser give dig tilladelse til at se alt).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projekter område
 NewProject=Nyt projekt
 AddProject=Create project

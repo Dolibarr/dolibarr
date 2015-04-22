@@ -50,4 +50,4 @@ ArcticNumRefModelError=Nepavyko suaktyvinti
 PacificNumRefModelDesc1=Grąžinti numerį su formatu %syymm-nnnn, kur yy yra metai, mm mėnuo ir nnnn yra seka be pertrūkių ir be grąžinimo į 0
 PacificNumRefModelError=Intervencijos kortelė pradedant $syymm jau egzistuoja ir yra nesuderinama su šios sekos modeliu. Pašalinti ją arba pakeisti vardą šio modulio aktyvavimui.
 PrintProductsOnFichinter=Spausdinti produktus intervencinėje kortelėje
-PrintProductsOnFichinterDetails=Intervencijoms, sukurtoms iš užsakymų
+PrintProductsOnFichinterDetails=interventions generated from orders

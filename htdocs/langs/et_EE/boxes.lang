@@ -94,3 +94,4 @@ BoxProductDistributionFor=%s jaotus %s kaupa
 ForCustomersInvoices=Müügiarved
 ForCustomersOrders=Müügiarved
 ForProposals=Pakkumised
+LastXMonthRolling=The last %s month rolling
