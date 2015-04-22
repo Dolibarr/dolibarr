@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +195,12 @@ if ($id > 0 || ! empty($ref))
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+
+	if ($object->hasDelay()) {
+		print ' '.img_warning($langs->trans("Late"));
+	}
+
 	print '</td></tr>';
 
 	print "</table>";

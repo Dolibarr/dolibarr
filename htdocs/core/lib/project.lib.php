@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -342,26 +343,36 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				if ($showproject)
 				{
-					// Project ref
-					print "<td>";
-					if ($showlineingray) print '<i>';
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
 					$projectstatic->public=$lines[$i]->public;
+					$projectstatic->statut=$lines[$i]->projectstatus;
+					$projectstatic->date_end = $lines[$i]->projectdate_end;
+
+					// Project ref
+					print "<td>";
+					if ($showlineingray) print '<i>';
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1,'nolink');
 					if ($showlineingray) print '</i>';
+
+					if ($projectstatic->hasDelay()) {
+						print ' '.img_warning($langs->trans("Late"));
+					}
+
 					print "</td>";
 
 					// Project status
 					print '<td>';
-					$projectstatic->statut=$lines[$i]->projectstatus;
 					print $projectstatic->getLibStatut(2);
 					print "</td>";
 				}
 
 				// Ref of task
 				print '<td>';
+
+				$taskstatic->date_end = $lines[$i]->date_end;
+
 				if ($showlineingray)
 				{
 					print '<i>'.img_object('','projecttask').' '.$lines[$i]->ref.'</i>';
@@ -373,6 +384,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1,'withproject');
 				}
+
+				if ($taskstatic->hasDelay()) {
+					print ' '.img_warning($langs->trans("Late"));
+				}
+
 				print '</td>';
 
 				// Title of task
@@ -383,7 +399,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				{
 					print "&nbsp; &nbsp; &nbsp;";
 				}
-				print $lines[$i]->label;
+				global $db;
+				$form = new Form($db);
+				echo $form->textwithtooltip($lines[$i]->label, $lines[$i]->description);
 				if ($showlineingray) print '</i>';
 				else print '</a>';
 				print "</td>\n";
@@ -547,9 +565,6 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				$taskstatic->id=$lines[$i]->id;
 
 				print "<tr ".$bc[$var].">\n";
-
-				// Project
-				print "<td>";
 				print $projectstatic->getNomUrl(1);
 				print "</td>";
 
@@ -712,8 +727,17 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$projectstatic->id=$lines[$i]->fk_project;
 				$projectstatic->ref=$lines[$i]->projectref;
 				$projectstatic->public=$lines[$i]->public;
+				$projectstatic->date_end=$lines[$i]->projectdate_end;
+				$projectstatic->statut=$lines[$i]->projectstatus;
 				$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
+
+				// Project
+				print "<td>";
 				print $projectstatic->getNomUrl(1);
+				if ($projectstatic->hasDelay()) {
+					print ' '.img_warning($langs->trans("Late"));
+				}
+
 				print "</td>";
 
 				// Ref
@@ -900,7 +924,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
+	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.datee, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
@@ -960,12 +984,20 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 			$userAccess = $projectstatic->restrictedProjectArea($user);
 			if ($userAccess >= 0)
 			{
+				$projectstatic->date_end = $objp->datee;
+				$projectstatic->statut = $objp->fk_statut;
+
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				$projectstatic->ref=$objp->ref;
-				print $projectstatic->getNomUrl(1);
-				print ' - '.dol_trunc($objp->title,24).'</td>';
+				print $projectstatic->getNomUrl(1).' ';
+
+				if ($projectstatic->hasDelay()) {
+					print img_warning($langs->trans("Late")).' ';
+				}
+
+				print '- '.dol_trunc($objp->title,24).'</td>';
 				print '<td align="right">'.$objp->nb.'</td>';
 				$projectstatic->statut = $objp->fk_statut;
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';

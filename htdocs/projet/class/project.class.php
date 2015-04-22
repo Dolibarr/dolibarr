@@ -1511,5 +1511,89 @@ class Project extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 * Is the project having a delay?
+	 * Requires: $this->statut and $this->date_end to be defined.
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		// Fucking Dolibarr with its partial objects. Get screwed!
+		$this->fetch( $this->id );
+
+		if (!$this->date_end) {
+			return false;
+		}
+
+		$now = dol_now();
+
+		//Open status
+		if ($this->statut == 1 && ($this->date_end < ($now - $conf->projet->warning_delay))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 * @param User $user Objet user
+	 * @return int <0 if KO, 0=Nothing to show, >0 if OK
+	 * @deprecated Use loadBoard if possible
+	 */
+	public function load_board(User $user)
+	{
+		return $this->loadBoard($user);
+	}
+
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param	User	$user        		Objet user
+	 *      @return int         				<0 if KO, 0=Nothing to show, >0 if OK
+	 */
+	public function loadBoard(User $user)
+	{
+		global $conf;
+
+		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+		$this->nbtodo=$this->nbtodolate=0;
+
+		$sql = "SELECT p.rowid, p.fk_statut, p.datee";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " AND p.fk_statut = 1";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->id = $obj->rowid;
+
+				$this->nbtodo++;
+
+				$this->date_end = $obj->datee;
+				$this->statut = $obj->fk_statut;
+
+				if ($this->hasDelay()) {
+					$this->nbtodolate++;
+				}
+			}
+			return $num;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 }
 

@@ -15,6 +15,7 @@ OnlyOpenedProject=Only open projects are visible (projects in draft or closed st
 TasksPublicDesc=This view presents all projects and tasks you are allowed to read.
 TasksDesc=This view presents all projects and tasks (your user permissions grant you permission to view everything).
 AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
+Myprojects=My projects
 ProjectsArea=Projects area
 NewProject=New project
 AddProject=Create project
@@ -144,3 +145,6 @@ InputPerDay=Input per day
 InputPerWeek=Input per week 
 InputPerAction=Input per action
 TimeAlreadyRecorded=Time spent already recorded for this task/day and user %s
+
+ProjectsToClose=Projects to close
+TasksToClose=Tasks to close

@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +60,13 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$mode = GETPOST('mode');
+$mine = $mode=='mine' ? 1 : 0;
 
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$view_status = GETPOST('viewstatut', 'int');
 $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
@@ -118,6 +121,7 @@ $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 
 // We'll need this table joined to the select in order to filter by sale
@@ -145,6 +149,15 @@ if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
 }
+if ($view_status !== "") {
+	$sql .= " AND fk_statut = ".$db->escape($view_status);
+}
+if ($mode == 'late') {
+	$horq = dol_now() - $conf->projet->warning_delay;
+
+	$sql .= " AND p.fk_statut = 1 AND p.datee < '".$db->idate($horq)."'";
+}
+
 if ($smonth > 0)
 {
     if ($syear > 0 && empty($sday))
@@ -215,7 +228,6 @@ if ($resql)
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
 	print '<table class="noborder" width="100%">';
-
 
 	// Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
@@ -316,10 +328,19 @@ if ($resql)
     		$var=!$var;
     		print "<tr ".$bc[$var].">";
 
-    		// Project url
-    		print "<td>";
-    		$projectstatic->ref = $objp->ref;
-    		print $projectstatic->getNomUrl(1);
+			// Project url
+			$projectstatic->ref = $objp->ref;
+			$projectstatic->date_end = $objp->date_end;
+			$projectstatic->statut = $objp->fk_statut;
+
+			print "<td>";
+
+			print $projectstatic->getNomUrl(1);
+
+			if ($projectstatic->hasDelay()) {
+				print ' '.img_warning($langs->trans("Late"));
+			}
+
     		print "</td>";
 
     		// Title

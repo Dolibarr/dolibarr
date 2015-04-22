@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Marcos García  <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +157,11 @@ if ($object->id > 0)
 		// Date end
 		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 		print dol_print_date($projectstatic->date_end,'day');
+
+		if ($projectstatic->hasDelay()) {
+			print ' '.img_warning($langs->trans("Late"));
+		}
+
 		print '</td></tr>';
 
 		print '</table>';
