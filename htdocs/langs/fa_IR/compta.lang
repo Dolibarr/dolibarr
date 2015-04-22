@@ -29,6 +29,7 @@ ReportTurnover=حجم معاملات
 PaymentsNotLinkedToInvoice=پرداخت به هر فاکتور در ارتباط نیست، بنابراین به هر شخص ثالث مرتبط نیست
 PaymentsNotLinkedToUser=پرداخت به هر کاربر در ارتباط نیست
 Profit=سود
+AccountingResult=Accounting result
 Balance=تعادل
 Debit=بدهی
 Credit=اعتبار

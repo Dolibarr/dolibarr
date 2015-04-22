@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
 Salary=Palk
 Salaries=Palgad
 Employee=Töötaja
@@ -6,3 +8,6 @@ NewSalaryPayment=Uus palga makse
 SalaryPayment=Palga makse
 SalariesPayments=Palkade maksed
 ShowSalaryPayment=Näita palga makset
+THM=Average hourly price
+TJM=Average daily price
+CurrentSalary=Current salary

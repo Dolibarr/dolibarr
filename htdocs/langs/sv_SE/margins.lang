@@ -16,6 +16,7 @@ MarginDetails=Marginaldetaljer
 ProductMargins=Produktmarginaler
 CustomerMargins=Kundmarginaler
 SalesRepresentativeMargins=Återförsäljares marginaler
+UserMargins=User margins
 ProductService=Produkt eller tjänst
 AllProducts=Alla produkter och tjänster
 ChooseProduct/Service=Välj produkt eller tjänst

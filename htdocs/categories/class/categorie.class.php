@@ -297,7 +297,6 @@ class Categorie extends CommonObject
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
-			$action='update';
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
@@ -334,7 +333,7 @@ class Categorie extends CommonObject
 	 * 	Delete a category from database
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
-	 *	@return	void
+	 *	@return	int <0 KO >0 OK
 	 */
 	function delete($user)
 	{
@@ -689,7 +688,9 @@ class Categorie extends CommonObject
 	 */
 	function containsObject($type, $object_id)
 	{
-		$field = ''; $classname = ''; $category_table = ''; $object_table = '';
+		$field = '';
+		$category_table = '';
+
 		if ($type == 'product') {
 			$field = 'product';
 		}
@@ -726,7 +727,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return childs of a category
 	 *
-	 * @return	void
+	 * @return	array|int   <0 KO, array ok
 	 */
 	function get_filles()
 	{
@@ -1045,7 +1046,7 @@ class Categorie extends CommonObject
 	 *	Retourne les categories de premier niveau (qui ne sont pas filles)
 	 *
 	 *	@param		int		$type		Type of category
-	 *	@return		void
+	 *	@return		array
 	 */
 	function get_main_categories($type=null)
 	{
@@ -1058,7 +1059,7 @@ class Categorie extends CommonObject
 	 *
 	 * @param	string	$sep	Separator
 	 * @param	string	$url	Url
-	 * @return	void
+	 * @return	array
 	 */
 	function print_all_ways($sep = " &gt;&gt; ", $url='')
 	{
@@ -1088,7 +1089,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Retourne un tableau contenant la liste des categories meres
 	 *
-	 *	@return		void
+	 *	@return	int|array <0 KO, array OK
 	 */
 	function get_meres()
 	{
@@ -1123,7 +1124,7 @@ class Categorie extends CommonObject
 	 * 	Retourne dans un tableau tous les chemins possibles pour arriver a la categorie
 	 * 	en partant des categories principales, representes par des tableaux de categories
 	 *
-	 *	@return		void
+	 *	@return	array
 	 */
 	function get_all_ways()
 	{
@@ -1315,7 +1316,7 @@ class Categorie extends CommonObject
 			$originImage = $dir . $file['name'];
 
 			// Cree fichier en taille origine
-			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
+			dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
 
 			if (file_exists($originImage))
 			{
@@ -1329,17 +1330,23 @@ class Categorie extends CommonObject
 	 *  Build thumb
 	 *
 	 *  @param      string	$file           Chemin du fichier d'origine
-	 *  @param      int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
 	 *	@return		void
 	 */
-	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
+	function add_thumb($file)
 	{
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
 
 		if (file_exists($file))
 		{
-			vignette($file,$maxWidth,$maxHeight);
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
 		}
 	}
 
@@ -1560,8 +1567,6 @@ class Categorie extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
-
         dol_syslog(get_class($this)."::initAsSpecimen");
 
         // Initialise parametres

@@ -25,7 +25,7 @@ MenuToDoMyActions=Sonlanmayan etkinliklerim
 MenuDoneMyActions=Sonlanan etkinliklerim
 ListOfEvents=Etkinlik listesi (iç takvim)
 ActionsAskedBy=Etkinliği bildiren
-ActionsToDoBy=Etkinlikten etkilenen
+ActionsToDoBy=Etkinlik için görevlendirilen
 ActionsDoneBy=Etkinliği yapan
 ActionsForUser=Kullanıcı etkinlikleri
 ActionsForUsersGroup=Grupun tüm üyelerine ait etkinlikler
@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=%s Faturası doğrulandı
 InvoiceValidatedInDolibarrFromPos=POS tan doğrulanan fatura %s
 InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
 InvoiceDeleteDolibarr=%s faturası silindi
-OrderValidatedInDolibarr= %s Siparişi doğrulandı
+OrderValidatedInDolibarr=%s Siparişi doğrulandı
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=%s Siparişi iptal edildi
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=%s Siparişi onayladı
 OrderRefusedInDolibarr=Reddedilen teklif %s
 OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna geri götür
@@ -59,7 +62,8 @@ InvoiceSentByEMail=%s Müşteri faturası Eposta ile gönderildi
 SupplierOrderSentByEMail=%s Tedarikçi siparişi Eposta ile gönderildi
 SupplierInvoiceSentByEMail=%s Tedarikçi faturası Eposta ile gönderildi
 ShippingSentByEMail=%s Sevkiyatı Eposta ile gönderildi
-ShippingValidated= Nakliyat %s doğrulandı
+ShippingValidated= Sevkiyat %s doğrulandı
+InterventionSentByEMail=%s Müdahalesi Eposta ile gönderildi
 NewCompanyToDolibarr= Üçüncü parti oluşturuldu
 DateActionPlannedStart= Planlanan başlangıç tarihi
 DateActionPlannedEnd= Planlanan bitiş tarihi
@@ -68,7 +72,7 @@ DateActionDoneEnd= Gerçek bitiş tarihi
 DateActionStart= Başlama tarihi
 DateActionEnd= Bitiş tarihi
 AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
-AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>kullanıcı girişi=%s</b> sınırlayacak kullanıcı <b>%s</b>.
+AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>oturum açma=%s</b> sınırlayacak kullanıcı <b>%s</b>.
 AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinliklerle sınırlamak için<b>logint=%s</b>.
 AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
@@ -90,3 +94,5 @@ WorkingTimeRange=Çalışma saati aralığı
 WorkingDaysRange=Çalışma günleri aralığı
 AddEvent=Etkinlik oluştur
 MyAvailability=Uygunluğum
+ActionType=Event type
+DateActionBegin=Start event date

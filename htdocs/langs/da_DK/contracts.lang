@@ -19,6 +19,7 @@ ServiceStatusLateShort=Udløbet
 ServiceStatusClosed=Lukket
 ServicesLegend=Services legend
 Contracts=Kontrakter
+ContractsAndLine=Contracts and line of contracts
 Contract=Kontrakt
 NoContracts=Nr. kontrakter
 MenuServices=Services

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ $dates=dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('
 $datee=dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
 if (empty($dates) && ! empty($datesrfc)) $dates=dol_stringtotime($datesrfc);
 if (empty($datee) && ! empty($dateerfc)) $datee=dol_stringtotime($dateerfc);
-if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']))
+if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf->global->PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR))
 {
 	$new=dol_now();
 	$tmp=dol_getdate($new);
@@ -394,7 +395,14 @@ foreach ($listofreferent as $key => $value)
 				else print '<td></td>';
 
 				// Status
-				print '<td align="right">'.$element->getLibStatut(5).'</td>';
+				print '<td align="right">';
+				if ($element instanceof CommonInvoice) {
+					//This applies for Facture and FactureFournisseur
+					print $element->getLibStatut(5, $element->getSommePaiement());
+				} else {
+					print $element->getLibStatut(5);
+				}
+				print '</td>';
 
 				print '</tr>';
 
@@ -446,11 +454,11 @@ foreach ($listofreferent as $key => $value)
 			{
 				if ($key == 'order_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
 				}
 				if ($key == 'invoice_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
 				}
 			}
 		}
@@ -504,8 +512,31 @@ foreach ($listofreferent as $key => $value)
 				}
 			}
 
+			switch ($classname) {
+				case 'FactureFournisseur':
+					$newclassname = 'SupplierInvoice';
+					break;
+				case 'Facture':
+					$newclassname = 'Bill';
+					break;
+				case 'Propal':
+					$newclassname = 'CommercialProposal';
+					break;
+				case 'Commande':
+					$newclassname = 'Order';
+					break;
+				case 'Expedition':
+					$newclassname = 'Sending';
+					break;
+				case 'Contrat':
+					$newclassname = 'Contract';
+					break;
+				default:
+					$newclassname = $classname;
+			}
+
 			print '<tr >';
-			print '<td align="left" >'.$name.'</td>';
+			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			print '<td align="right">'.$i.'</td>';
 			print '<td align="right">'.price($total_ht).'</td>';
 			print '<td align="right">'.price($total_ttc).'</td>';

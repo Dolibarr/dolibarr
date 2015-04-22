@@ -155,6 +155,8 @@ MigrationFinished=Migratie voltooid
 LastStepDesc=<strong>Laatste stap:</strong> Definieer hier de login en het wachtwoord die u wilt gebruiken om verbinding te maken software. Niet los dit als het is de rekening voor alle anderen te beheren.
 ActivateModule=Activeer module %s
 ShowEditTechnicalParameters=Klik hier om verder gevorderde parameters te zien of aan te passen. (expert instellingen)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade
@@ -206,6 +208,7 @@ MigrationProjectTaskTime=Verstreken tijd van de update in seconden
 MigrationActioncommElement=Bijwerken van gegevens over acties
 MigrationPaymentMode=Data migratie voor de betaling mode
 MigrationCategorieAssociation=Overzetten van categoriën
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Toon niet beschikbare opties
 HideNotAvailableOptions=Verberg niet beschikbare opties

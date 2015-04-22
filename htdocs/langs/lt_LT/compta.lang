@@ -29,6 +29,7 @@ ReportTurnover=Apyvarta
 PaymentsNotLinkedToInvoice=Mokėjimai nėra susiję su jokia sąskaita-faktūra, todėl nėra susiję su jokia trečiąja šalimi
 PaymentsNotLinkedToUser=Mokėjimai nėra susieti su jokiu Vartotoju
 Profit=Pelnas
+AccountingResult=Accounting result
 Balance=Balansas
 Debit=Debetas
 Credit=Kreditas

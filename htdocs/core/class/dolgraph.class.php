@@ -935,16 +935,16 @@ class DolGraph
 					opacity: 0.80
 				}).appendTo("body").fadeIn(20);
 			}
-	
+
 			var previousPoint = null;
 			$("#placeholder_'.$tag.'").bind("plothover", function (event, pos, item) {
 				$("#x").text(pos.x.toFixed(2));
 				$("#y").text(pos.y.toFixed(2));
-		
+
 				if (item) {
 					if (previousPoint != item.dataIndex) {
 						previousPoint = item.dataIndex;
-				
+
 						$("#tooltip").remove();
 						/* console.log(item); */
 						var x = item.datapoint[0].toFixed(2);
@@ -1022,7 +1022,7 @@ class DolGraph
 		return $this->_stringtoshow;
 	}
 
-	
+
 	/**
 	 * getDefaultGraphSizeForStats
 	 *
@@ -1033,18 +1033,18 @@ class DolGraph
 	static function getDefaultGraphSizeForStats($direction,$defaultsize='')
 	{
 		global $conf;
-	
+
 		if ($direction == 'width')
 		{
 			if (empty($conf->dol_optimize_smallscreen)) return ($defaultsize ? $defaultsize : '500');
 			else return (empty($_SESSION['dol_screen_width']) ? '280' : ($_SESSION['dol_screen_width']-40));
 		}
-		if ($direction == 'height') 
+		if ($direction == 'height')
 		{
 			return (empty($conf->dol_optimize_smallscreen)?($defaultsize?$defaultsize:'200'):'160');
 		}
 		return 0;
 	}
-	
+
 }
 

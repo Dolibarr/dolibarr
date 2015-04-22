@@ -22,7 +22,7 @@
 
 /**
  *       \file        htdocs/compta/resultat/index.php
- *       \brief       Page reporting resultat
+ *       \brief       Page reporting result
  */
 
 require '../../main.inc.php';
@@ -570,8 +570,8 @@ print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right">'.$langs->trans("Outcome").'</td>';
-	print '<td align="right" class="borderrightlight">'.$langs->trans("Income").'</td>';
+	print '<td align="center">'.$langs->trans("Outcome").'</td>';
+	print '<td align="center" class="borderrightlight">'.$langs->trans("Income").'</td>';
 }
 print '</tr>';
 
@@ -634,7 +634,7 @@ print "</tr>\n";
 
 // Balance
 $var=!$var;
-print '<tr class="liste_total"><td>'.$langs->trans("Profit").'</td>';
+print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print '<td align="right" colspan="2" class="borderrightlight"> ';

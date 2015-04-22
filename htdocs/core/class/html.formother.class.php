@@ -362,8 +362,12 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            $out.= ajax_combobox($htmlname);
-            $nodatarole=' data-role="none"';
+            $htmlforcombo = ajax_combobox($htmlname);
+            if ($htmlforcombo)
+            {
+            	$out.= $htmlforcombo;
+            	$nodatarole=' data-role="none"';
+            }
         }
         // Select each sales and print them in a select input
         $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
@@ -590,7 +594,7 @@ class FormOther
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
-     * 		@return	void
+     * 		@return	string
      */
     function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
@@ -720,7 +724,7 @@ class FormOther
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	void
+     *    	@return	string
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
@@ -761,7 +765,7 @@ class FormOther
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	void
+     *    	@return	string
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
@@ -803,7 +807,7 @@ class FormOther
      *  @param	int			$offset			Offset
      *  @param	int			$invert			Invert
      *  @param	string		$option			Option
-     *  @return	void
+     *  @return	string
      */
     function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {

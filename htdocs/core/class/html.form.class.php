@@ -204,7 +204,7 @@ class Form
             else
 			{
 				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,0,-1,$conf->currency) : '');
+                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
@@ -2794,7 +2794,7 @@ class Form
      *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
-     *    @return	void
+     *    @return	string
      *    @see select_categories
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
@@ -3568,7 +3568,7 @@ class Form
      *
      *  @param	string	$selected    preselected currency code
      *  @param  string	$htmlname    name of HTML select list
-     * 	@return	void
+     * 	@return	string
      */
     function selectCurrency($selected='',$htmlname='currency_id')
     {
@@ -3667,7 +3667,7 @@ class Form
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	$options_only		Return options only (for ajax treatment)
-     *  @return	void
+     *  @return	string
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
     {
@@ -3755,7 +3755,7 @@ class Form
         	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         	{
         		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) $defaulttx = $this->cache_vatrates[$num-1]['txtva'];
-        		else $defaulttx=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+        		else $defaulttx=($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS == 'none' ? '' : $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS);
         	}
 
         	// Disabled if seller is not subject to VAT
@@ -4303,7 +4303,7 @@ class Form
         }
         else
        {
-       		$selected=($useempty?'':' selected="selected"');
+       		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected="selected"');
             $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
         }
@@ -4452,7 +4452,7 @@ class Form
      *    	Return HTML code to output a photo
      *
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
-     *     	@param  Object		$object			Object containing data to retrieve file name
+     *     	@param  object		$object			Object containing data to retrieve file name
      * 		@param	int			$width			Width of photo
      * 	  	@return string    					HTML code to output photo
      */

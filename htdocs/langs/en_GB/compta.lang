@@ -1,7 +1,0 @@
-# Dolibarr language file - en_GB - main
-CheckReceipt=Cheque deposit
-CheckReceiptShort=Cheque deposit
-NewCheckDeposit=New cheque deposit
-NoWaitingChecks=No cheques waiting for deposit.
-DateChequeReceived=Cheque reception date
-NbOfCheques=Nb of cheques

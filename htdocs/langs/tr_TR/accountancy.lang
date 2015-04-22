@@ -13,7 +13,9 @@ ConfigAccountingExpert=Hesap uzmanı modülü yapılandırması
 Journaux=Günlükler
 JournalFinancial=Mali günlükler
 Exports=Dışaaktarımlar
+Export=Dışaaktar
 Modelcsv=Dışaaktarım modeli
+OptionsDeactivatedForThisExportModel=Bu dışaaktarma modeli için seçenekler etkinleştirilmemiş
 Selectmodelcsv=Bir dışaaktarım modeli seç
 Modelcsv_normal=Klasik dışaaktarım
 Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
@@ -66,7 +68,7 @@ Lineofinvoice=Fatura satırı
 VentilatedinAccount=Muhasebe hesabında başarıyla analiz edildi
 NotVentilatedinAccount=Muhasebe hesabında analiz edilmedi.
 
-ACCOUNTING_SEPARATORCSV=CSV Ayırıcı
+ACCOUNTING_SEPARATORCSV=Dışaaktarma dosyası sütün ayırıcısı
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Analiz syfasında gösterilecek öğe sayısı (önerilen ençok:50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Analiz sayfalarında "Analiz edileceklerin" sıralandırılmasını en son öğelerden göre başlatın

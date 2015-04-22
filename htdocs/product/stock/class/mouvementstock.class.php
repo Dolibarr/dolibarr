@@ -72,7 +72,7 @@ class MouvementStock extends CommonObject
 
 		// Clean parameters
 		if (empty($price)) $price=0;
-		
+
 		if (empty($fk_product)) return 0;
 
 		$now=(! empty($datem) ? $datem : dol_now());
@@ -87,7 +87,7 @@ class MouvementStock extends CommonObject
 			return -1;
 		}
 		$product->load_stock();
-		
+
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
 		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
@@ -101,7 +101,7 @@ class MouvementStock extends CommonObject
 				$origintype = '';
 				$fk_origin = 0;
 			}
-			
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
 			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price, fk_origin, origintype)";
 			$sql.= " VALUES ('".$this->db->idate($now)."', ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
@@ -178,11 +178,11 @@ class MouvementStock extends CommonObject
 						$this->error=$this->db->lasterror();
 						$error = -4;
 					}
-					
+
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-					else 
+					else
 					{
 						$newpmp=$price; // For this product, PMP was not yet set. We will set it later.
 					}
@@ -196,7 +196,8 @@ class MouvementStock extends CommonObject
 				}
 				else if ($type == 1 || $type == 2)
 				{
-					// After a stock decrease, we don't change value of PMP for product.					
+					// After a stock decrease, we don't change value of PMP for product.
+					$newpmp = $oldpmp;
 				}
 				else
 				{
@@ -226,7 +227,7 @@ class MouvementStock extends CommonObject
 				{
 					$this->error=$this->db->lasterror();
 					$error = -3;
-				} 
+				}
 				else if(empty($fk_product_stock))
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
@@ -273,9 +274,9 @@ class MouvementStock extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('STOCK_MOVEMENT',$user);
-            if ($result < 0) $error++;          
+            if ($result < 0) $error++;
             // End call triggers
-            
+
             //FIXME: Restore previous value of product_id,  entrepot_id, qty if trigger fail
 		}
 
@@ -415,7 +416,7 @@ class MouvementStock extends CommonObject
 
 	/**
 	 * Count number of product in stock before a specific date
-	 *  
+	 *
 	 * @param 	int			$productidselected		Id of product to count
 	 * @param 	timestamp	$datebefore				Date limit
 	 * @return	int			Number
@@ -423,11 +424,11 @@ class MouvementStock extends CommonObject
 	function calculateBalanceForProductBefore($productidselected, $datebefore)
 	{
 		$nb=0;
-		
+
 		$sql = 'SELECT SUM(value) as nb from '.MAIN_DB_PREFIX.'stock_mouvement';
 		$sql.= ' WHERE fk_product = '.$productidselected;
 		$sql.= " AND datem < '".$this->db->idate($datebefore)."'";
-		
+
 		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -436,7 +437,7 @@ class MouvementStock extends CommonObject
 			if ($obj) $nb = $obj->nb;
 			return (empty($nb)?0:$nb);
 		}
-		else 
+		else
 		{
 			dol_print_error($this->db);
 			return -1;
@@ -452,7 +453,7 @@ class MouvementStock extends CommonObject
 	 */
 	function _create_batch($dluo, $qty ) {
 		$pdluo=New Productbatch($this->db);
-		
+
 		//Try to find an existing record with batch same batch number or id
 		if (is_numeric($dluo)) {
 			$result=$pdluo->fetch($dluo);
@@ -495,7 +496,7 @@ class MouvementStock extends CommonObject
 		}
 
 	}
-	
+
 	function get_origin($fk_origin, $origintype) {
 		switch ($origintype) {
 			case 'commande':
@@ -518,12 +519,12 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$origin = new FactureFournisseur($this->db);
 				break;
-			
+
 			default:
 				return '';
 				break;
 		}
-		
+
 		$origin->fetch($fk_origin);
 		return $origin->getNomUrl(1);
 	}

@@ -41,7 +41,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 /**
  * Empty header
  *
- * @return	none
+ * @return	void
  */
 function llxHeader()
 {
@@ -53,7 +53,7 @@ function llxHeader()
 /**
  * Empty footer
  *
- * @return	none
+ * @return	void
  */
 function llxFooter()
 {

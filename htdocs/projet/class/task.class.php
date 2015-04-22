@@ -807,7 +807,7 @@ class Task extends CommonObject
         if ($ret >= 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
 			if (isset($this->progress)) $sql.= ", progress = " . $this->progress;	// Do not overwrite value if not provided
             $sql.= " WHERE rowid = ".$this->id;
 
@@ -980,7 +980,7 @@ class Task extends CommonObject
             $newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-            $sql.= " SET duration_effective = duration_effective + '".$newDuration."'";
+            $sql.= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
@@ -1092,6 +1092,8 @@ class Task extends CommonObject
 		$clone_task=new Task($this->db);
 		$origin_task=new Task($this->db);
 
+		$clone_task->context['createfromclone']='createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -1158,8 +1160,6 @@ class Task extends CommonObject
 		// End
 		if (! $error)
 		{
-			$this->db->commit();
-
 			$clone_task_id=$clone_task->id;
 			$clone_task_ref = $clone_task->ref;
 
@@ -1279,20 +1279,19 @@ class Task extends CommonObject
 			{
 				//TODO clone time of affectation
 			}
+		}
 
-			if (! $error)
-			{
-				return $clone_task_id;
-			}
-			else
-			{
-				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
-				return -1;
-			}
+		unset($clone_task->context['createfromclone']);
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return $clone_task_id;
 		}
 		else
 		{
 			$this->db->rollback();
+			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}

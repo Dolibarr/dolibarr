@@ -155,6 +155,8 @@ MigrationFinished=Μετανάστευση τελειώσει
 LastStepDesc=<strong>Τελευταίο βήμα:</strong> Καθορίστε εδώ login και password που σκοπεύετε να χρησιμοποιήσετε για να συνδεθείτε με το λογισμικό. Να μην χάσετε αυτή, όπως είναι ο λογαριασμός για να επιτρέψει να διαχειριστεί όλες τις άλλες.
 ActivateModule=Ενεργοποίηση %s ενότητα
 ShowEditTechnicalParameters=Κάντε κλικ εδώ για να δείτε/επεξεργαστείτε προηγμένες παραμέτρους (κατάσταση έμπειρου χρήστη)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade
@@ -206,6 +208,7 @@ MigrationProjectTaskTime=Update time spent in seconds
 MigrationActioncommElement=Ενημέρωση στοιχεία για τις δράσεις
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
 MigrationCategorieAssociation=Μετακίνηση των κατηγοριών
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
 HideNotAvailableOptions=Απόκρυψη μη μη διαθέσιμων επιλογών

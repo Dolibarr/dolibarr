@@ -38,6 +38,7 @@ abstract class CommonObject
     public $error;
     public $errors;
     public $canvas;                // Contains canvas name if it is
+	public $context=array();		// Use to pass context information
 
     public $name;
     public $lastname;
@@ -821,7 +822,7 @@ abstract class CommonObject
      *	Update a specific field into database
      *
      *	@param	string	$field		Field to update
-     *	@param	mixte	$value		New value
+     *	@param	mixed	$value		New value
      *	@param	string	$table		To force other table element or element line (should not be used)
      *	@param	int		$id			To force other object id (should not be used)
      *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
@@ -2412,7 +2413,7 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @return	void
+     *  @return	int
      */
     function showLinkedObjectBlock()
     {
@@ -3456,7 +3457,8 @@ abstract class CommonObject
 
     /**
      *	Add/Update all extra fields values for the current object.
-     *  All data to describe values to insert are stored into $this->array_options=array('keyextrafield'=>'valueextrafieldtoadd')
+     *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
      *
      *  @return int -1=error, O=did nothing, 1=OK
      */

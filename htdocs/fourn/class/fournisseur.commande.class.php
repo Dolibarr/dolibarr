@@ -887,7 +887,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
-		//$sql.= ", date_livraison";
+		$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -899,12 +899,12 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " VALUES (";
         $sql.= "''";
         $sql.= ", '".$this->ref_supplier."'";
-        $sql.= ", '".$this->note_private."'";
-        $sql.= ", '".$this->note_public."'";
+        $sql.= ", '".$this->db->escape($this->note_private)."'";
+        $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
-		//$sql.= ", '".$this->db->idate($now)."'";
+		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", " . $this->source;
@@ -1024,7 +1024,9 @@ class CommandeFournisseur extends CommonOrder
 
         $error=0;
 
-        $this->db->begin();
+		$this->context['createfromclone'] = 'createfromclone';
+
+		$this->db->begin();
 
         // Load source object
         $objFrom = dol_clone($this);
@@ -1060,7 +1062,9 @@ class CommandeFournisseur extends CommonOrder
 			// End call triggers
         }
 
-        // End
+		unset($this->context['createfromclone']);
+
+		// End
         if (! $error)
         {
             $this->db->commit();
@@ -1261,18 +1265,20 @@ class CommandeFournisseur extends CommonOrder
     /**
      * Add a product into a stock warehouse.
      *
-     * @param 	User		$user		User object making change
-     * @param 	int			$product	Id of product to dispatch
-     * @param 	double		$qty		Qty to dispatch
-     * @param 	int			$entrepot	Id of warehouse to add product
-     * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
-     * @param	string		$comment	Comment for stock movement
-	 * @param	date		$eatby		eat-by date
-	 * @param	date		$sellby		sell-by date
-	 * @param	string		$batch		Lot number
+     * @param 	User		$user					User object making change
+     * @param 	int			$product				Id of product to dispatch
+     * @param 	double		$qty					Qty to dispatch
+     * @param 	int			$entrepot				Id of warehouse to add product
+     * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
+     * @param	string		$comment				Comment for stock movement
+	 * @param	date		$eatby					eat-by date
+	 * @param	date		$sellby					sell-by date
+	 * @param	string		$batch					Lot number
+	 * @param	int			$fk_commandefourndet	Id of supplier order line
+     * @param	int			$notrigger          	1 = notrigger
      * @return 	int						<0 if KO, >0 if OK
      */
-    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
+    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='', $fk_commandefourndet=0, $notrigger=0)
     {
         global $conf;
         $error = 0;
@@ -1292,8 +1298,8 @@ class CommandeFournisseur extends CommonOrder
             $this->db->begin();
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch ";
-            $sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
-            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."')";
+            $sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet) VALUES ";
+            $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."')";
 
             dol_syslog(get_class($this)."::DispatchProduct", LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -1609,9 +1615,9 @@ class CommandeFournisseur extends CommonOrder
 	/**
      *	Set the planned delivery date
      *
-     *	@param      User			$user        		Objet utilisateur qui modifie
-     *	@param      timestamp		$date_livraison     Date de livraison
-     *	@return     int         						<0 si ko, >0 si ok
+     *	@param      User			$user        		Objet user making change
+     *	@param      timestamp		$date_livraison     Planned delivery date
+     *	@return     int         						<0 if KO, >0 if OK
      */
     function set_date_livraison($user, $date_livraison)
     {

@@ -19,6 +19,7 @@ ServiceStatusLateShort=منقضی شده
 ServiceStatusClosed=بسته
 ServicesLegend=خدمات افسانه
 Contracts=قراردادها
+ContractsAndLine=Contracts and line of contracts
 Contract=قرارداد
 NoContracts=بدون قرارداد
 MenuServices=خدمات

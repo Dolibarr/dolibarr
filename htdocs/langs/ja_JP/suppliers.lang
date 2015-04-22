@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=サプライヤー
-Supplier=サプライヤー
-AddSupplier=サプライヤーを追加します。
+AddSupplier=Create a supplier
 SupplierRemoved=サプライヤーは、削除
 SuppliersInvoice=仕入先の請求書
 NewSupplier=新しいサプライヤー
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=サプライヤーの請求書と支払い
 ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=この注文を承認
 ConfirmApproveThisOrder=あなたは、注文<b>%sを</b>承認してもよろしいですか？
-DenyingThisOrder=この順序を否定
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=あなたは、この順序<b>%sを</b>拒否してもよろしいですか？
 ConfirmCancelThisOrder=あなたは、この順序<b>%sを</b>キャンセルしてもよろしいですか？
 AddCustomerOrder=顧客の注文を作成します。
@@ -42,3 +41,6 @@ NoneOrBatchFileNeverRan=noneまたはバッチ<b>%sは</b>最近走っていな�
 SentToSuppliers=Sent to suppliers
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

@@ -169,6 +169,8 @@ if ($result > 0)
 
     print '<tr><td>'.$langs->trans("NbOfActiveNotifications").'</td>';
     print '<td colspan="3">';
+    $nb=0;
+    // List of per contact notifications
     $sql = "SELECT COUNT(n.rowid) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
     $sql.= " WHERE fk_soc = ".$object->id;
@@ -186,6 +188,13 @@ if ($result > 0)
     }
     else {
         dol_print_error($db);
+    }
+    // List of notifications enabled for fixed email
+    foreach($conf->global as $key => $val)
+    {
+    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+    	$listtmp=explode(',',$val);
+    	$nb+=count($listtmp);
     }
     print $nb;
     print '</td></tr>';
@@ -273,16 +282,21 @@ if ($result > 0)
     foreach($conf->global as $key => $val)
     {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-    	//print $key.' - '.$val.' - '.$reg[1].'<br>';
-		print '<tr '.$bc[$var].'><td>'.$val;
-		if (isValidEmail($val))
+		print '<tr '.$bc[$var].'><td>';
+		$listtmp=explode(',',$val);
+		foreach($listtmp as $keyemail => $valemail)
 		{
-			print ' &lt;'.$val.'&gt;';
-		}
-		else
-		{
-			$langs->load("errors");
-			print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$val);
+			$valemail=trim($valemail);
+    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+			if (isValidEmail($valemail))
+			{
+				print ' &lt;'.$valemail.'&gt;';
+			}
+			else
+			{
+				$langs->load("errors");
+				print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
+			}
 		}
 		print '</td>';
 		print '<td>';

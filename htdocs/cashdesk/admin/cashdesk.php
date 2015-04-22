@@ -130,7 +130,16 @@ if (! empty($conf->stock->enabled))
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
-	print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
+	if (empty($conf->productbatch->enabled)) {
+	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
+	}
+	else 
+	{
+	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+	       $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
+	    }
+	    print $langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch'); 
+	}
 	print '</td></tr>';
 
 	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;

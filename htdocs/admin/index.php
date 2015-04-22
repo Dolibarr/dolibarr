@@ -100,6 +100,7 @@ print '<br>';
 print '<br>';
 
 // Add hook to add information
+$parameters=array();
 $reshook=$hookmanager->executeHooks('addHomeSetup',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 if (empty($reshook))

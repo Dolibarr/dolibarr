@@ -16,6 +16,7 @@ MarginDetails=Oran ayrıntıları
 ProductMargins=Ürün oranları
 CustomerMargins=Müşteri oranları
 SalesRepresentativeMargins=Satış temsilcisi oranları
+UserMargins=Kullanıcı oranları
 ProductService=Ürün veya Hizmet
 AllProducts=Bütün ürün ve hizmetler
 ChooseProduct/Service=Ürün veya hizmet seç

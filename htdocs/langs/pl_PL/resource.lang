@@ -1,34 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Zasoby
+MenuResourceAdd=Nowe zasoby
+MenuResourcePlanning=Planowane Zasoby
+DeleteResource=Usuń zasoby
+ConfirmDeleteResourceElement=Potwierdz usunięcie zasobów dla tego elementu
+NoResourceInDatabase=Brak zasobów w bazie danych
+NoResourceLinked=Brak podliknowanych zasobów
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Lista zasobów
+ResourceSingular=Zasoby
+ResourceCard=Karta zasobów
+AddResource=Utwórz zasoby
+ResourceFormLabel_ref=Nazwa zasobów
+ResourceType=Typ zasobów
+ResourceFormLabel_description=Opis zasobów
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Zasaby połączone z elementem
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Pokaż zasoby planowane
+GotoDate=Idz do daty
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Element zasobów
+ResourceCreatedWithSuccess=Zasoby poprawnie utworzone
+RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
+RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
+ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Karta zasobów
+ConfirmDeleteResource=Potwierdz by usunąc te zasoby
+RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
+DictionaryResourceType=Typ zasobów
 
-SelectResource=Select resource
+SelectResource=Wybierz zasoby

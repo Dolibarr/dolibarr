@@ -29,6 +29,7 @@ ReportTurnover=دوران
 PaymentsNotLinkedToInvoice=المدفوعات ليست مرتبطة بأي الفاتورة ، وذلك ليس مرتبطا بأي طرف ثالث
 PaymentsNotLinkedToUser=المدفوعات ليست مرتبطة بأي مستخدم
 Profit=الأرباح
+AccountingResult=Accounting result
 Balance=التوازن
 Debit=الخصم
 Credit=الائتمان

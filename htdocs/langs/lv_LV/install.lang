@@ -132,12 +132,12 @@ YouAskLoginCreationSoDolibarrNeedToConnect=Jūs lūdzat, lai izveidotu datu bāz
 BecauseConnectionFailedParametersMayBeWrong=Kā savienojums neizdevās, uzņēmēja vai super lietotāju parametri ir nepareizi.
 OrphelinsPaymentsDetectedByMethod=Bāreņi maksājums atklāj metode %s
 RemoveItManuallyAndPressF5ToContinue=Noņemiet to manuāli un nospiediet F5, lai turpinātu.
-KeepDefaultValuesWamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliWamp, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
+KeepDefaultValuesWamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliWamp, tāpēc vērtības šeit jau ir optimizētas. Mainiet tikai tad, ja jūs zināt, ko darāt.
 KeepDefaultValuesDeb=Jūs izmantojat Dolibarr iestatīšanas vedni no Linux paketi (Ubuntu, Debian, Fedora ...), tāpēc vērtības ierosinātās šeit jau ir optimizēta. Tikai datu bāzes īpašnieks, lai izveidotu paroli jāpabeidz. Mainītu citus parametrus tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesMamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliMamp, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojat Dolibarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 FieldRenamed=Lauks pārdēvēts
-IfLoginDoesNotExistsCheckCreateUser=Ja pieteikšanās neeksistē vēl, jums ir pārbaudīt opciju "Izveidot lietotāju"
+IfLoginDoesNotExistsCheckCreateUser=Ja lietotājs neeksistē, jums ir jāizvēlas opciju "Izveidot lietotāju"
 ErrorConnection=Server "<b>%s</b>", datu bāzes nosaukums "<b>%s</b>" login "<b>%s</b>", vai datu bāzes parole var būt nepareizi vai PHP klienta versijas var būt pārāk vecs, salīdzinot ar bāzes versiju.
 InstallChoiceRecommanded=Ieteicams izvēlēties, lai instalētu versiju <b>%s</b> no jūsu pašreizējā versijā <b>%s</b>
 InstallChoiceSuggested=<b>Instalējiet izvēli ierosināja uzstādītājam.</b>
@@ -155,6 +155,8 @@ MigrationFinished=Migrācija pabeigta
 LastStepDesc=<strong>Pēdējais solis:</strong> Noteikt šeit pieteikumvārdu un paroli, jūs plānojat izmantot, lai izveidotu savienojumu ar programmatūru. Nepalaidiet garām šo, jo tas ir konts, lai administrētu visus pārējos.
 ActivateModule=Aktivizēt moduli %s
 ShowEditTechnicalParameters=Noklikšķiniet šeit, lai parādītu / rediģēt papildu parametrus (ekspertu režīmā)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\n\nClick OK to start migration process...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade
@@ -170,7 +172,7 @@ MigrationRelationshipTables=Datu migrācija uz attiecībām tabulām (%s)
 MigrationPaymentsUpdate=Maksājumu datu korekcija
 MigrationPaymentsNumberToUpdate=%s maksājums (-iem), lai atjauninātu
 MigrationProcessPaymentUpdate=Atjaunināt maksājumu(-us) %s
-MigrationPaymentsNothingToUpdate=Nav daudz lietas, kas darīt
+MigrationPaymentsNothingToUpdate=Nav vairāk lietu ko darīt
 MigrationPaymentsNothingUpdatable=Ne vairāk maksājumus, kas var tikt izlabotas
 MigrationContractsUpdate=Līgumu datu korekcija
 MigrationContractsNumberToUpdate=%s līgumu (-iem), lai atjauninātu
@@ -206,6 +208,7 @@ MigrationProjectTaskTime=Atjaunināšanas laiks sekundēs
 MigrationActioncommElement=Atjaunināt informāciju par pasākumiem
 MigrationPaymentMode=Datu migrācija uz maksājumu režīmā
 MigrationCategorieAssociation=Kategoriju migrācija
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Rādīt nepieejamās iespējas
 HideNotAvailableOptions=Slēpt nepieejamās iespējas

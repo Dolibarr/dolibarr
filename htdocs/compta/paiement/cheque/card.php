@@ -355,7 +355,7 @@ if ($action == 'new')
 	print $form->select_date($filterdate,'fd',0,0,1,'',1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
-    print $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
+    $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
     print '<center>';

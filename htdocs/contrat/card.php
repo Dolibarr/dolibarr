@@ -73,7 +73,7 @@ $object = new Contrat($db);
 $extrafields = new ExtraFields($db);
 
 // Load object
-if ($id > 0 || ! empty($ref)) {
+if ($id > 0 || ! empty($ref) && $action!='add') {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
@@ -201,6 +201,13 @@ if ($action == 'add' && $user->rights->contrat->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		$action='create';
 		$error++;
+	}
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	if ($ret < 0) {
+		$error ++;
+		$action = 'create';
 	}
 
 	if (! $error)
@@ -352,10 +359,6 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	    }
 	    else
 	    {
-
-	    	// Fill array 'array_options' with data from add form
-	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-
 	        $result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -659,7 +662,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contr
 // Close all lines
 else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
-    $result = $object->cloture($user);
+    $object->cloture($user);
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
@@ -1095,7 +1098,7 @@ else
         	$ref = substr($object->ref, 1, 4);
         	if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
         	{
-        		$numref = $object->getNextNumRef($soc);
+        		$numref = $object->getNextNumRef($object->thirdparty);
         	}
         	else
         	{

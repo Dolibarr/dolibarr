@@ -197,7 +197,7 @@ if (empty($reshook))
 					$now=dol_now();
 
 					// Positionne date debut envoi
-					$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=".$db->idate($now)." WHERE rowid=".$object->id;
+					$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$object->id;
 					$resql2=$db->query($sql);
 					if (! $resql2)
 					{
@@ -293,7 +293,7 @@ if (empty($reshook))
 							dol_syslog("comm/mailing/card.php: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 							$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql.=" SET statut=1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
+							$sql.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
 							$resql2=$db->query($sql);
 							if (! $resql2)
 							{
@@ -336,7 +336,7 @@ if (empty($reshook))
 							dol_syslog("comm/mailing/card.php: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_WARNING);
 
 							$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
+							$sql.=" SET statut=-1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
 							$resql2=$db->query($sql);
 							if (! $resql2)
 							{
@@ -778,7 +778,7 @@ else
                     if ($conf->file->mailing_limit_sendbyweb == 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
-                    	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
+                    	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
                     	$text.='<br><br>';
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';

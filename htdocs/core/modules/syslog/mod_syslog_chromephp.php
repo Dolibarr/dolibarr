@@ -7,6 +7,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 {
+	var $code = 'chromephp';
+
 	/**
 	 * 	Return name of logger
 	 *
@@ -42,7 +44,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return boolean
+	 * @return int
 	 */
 	public function isActive()
 	{
@@ -51,8 +53,13 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		{
 			if (empty($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH)) $conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH='/usr/share/php';
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
-		    $res = @include_once 'ChromePhp.class.php';
+
+			//print 'rrrrr'.get_include_path();
+		    $res = include_once('ChromePhp.php');
+		    if (! $res) $res=@include_once('ChromePhp.class.php');
+
 		    restore_include_path();
+
 		    if ($res)
 		    {
 		        return 1;
@@ -77,10 +84,11 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		return array(
 			array(
-				'name' => $langs->trans('IncludePath'),
+				'name' => $langs->trans('IncludePath','SYSLOG_CHROMEPHP_INCLUDEPATH'),
 				'constant' => 'SYSLOG_CHROMEPHP_INCLUDEPATH',
 				'default' => '/usr/share/php',
-				'attr' => 'size="40"'
+				'attr' => 'size="60"',
+			    'example' => DOL_DOCUMENT_ROOT.'/includes/chromephp'
 			)
 		);
 	}
@@ -88,29 +96,24 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	boolean		True if configuration ok
+	 * 	@return	array		Array of errors. Empty array if ok.
 	 */
 	public function checkConfiguration()
 	{
-		global $langs;
+		global $langs,$conf;
 
 		$errors = array();
 
-		$oldinclude = get_include_path();
-		set_include_path(SYSLOG_CHROMEPHP_INCLUDEPATH);
-
-		if (!file_exists('ChromePhp.class.php'))
+		if (! file_exists($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH.'/ChromePhp.php') && ! file_exists($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH.'/ChromePhp.class.php'))
 		{
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php');
+			$errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php or ChromePhp.php');
 		}
-
-		set_include_path($oldinclude);
 
 		return $errors;
 	}
 
 	/**
-	 * 	Output log content
+	 * 	Output log content. We also start output buffering at first log write.
 	 *
 	 *	@param	array	$content	Content to log
 	 * 	@return	void
@@ -122,16 +125,18 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		if (! empty($conf->global->MAIN_SYSLOG_DISABLE_CHROMEPHP)) return;	// Global option to disable output of this handler
 
 		//We check the configuration to avoid showing PHP warnings
-		if (count($this->checkConfiguration())) return false;
+		if (count($this->checkConfiguration()) > 0) return false;
 
 		try
 		{
 			// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once() a constant from
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
-			set_include_path(SYSLOG_CHROMEPHP_INCLUDEPATH);
-			include_once 'ChromePhp.class.php';
+			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
+		    $res = @include_once('ChromePhp.php');
+		    if (! $res) $res=@include_once('ChromePhp.class.php');
 			set_include_path($oldinclude);
+
 			ob_start();	// To be sure headers are not flushed until all page is completely processed
 			if ($content['level'] == LOG_ERR) ChromePhp::error($content['message']);
 			elseif ($content['level'] == LOG_WARNING) ChromePhp::warn($content['message']);

@@ -305,16 +305,16 @@ if ($conf->use_javascript_ajax)
 		{
 			foreach ($showextcals as $val)
 			{
-				$htmlname = dol_string_nospecial($val['name']);
+				$htmlname = md5($val['name']);
 				$s.='<script type="text/javascript">' . "\n";
 				$s.='jQuery(document).ready(function () {' . "\n";
-				$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
+				$s.='		jQuery("#check_ext' . $htmlname . '").click(function() {';
 				$s.=' 		/* alert("'.$htmlname.'"); */';
-				$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
+				$s.=' 		jQuery(".family_ext' . $htmlname . '").toggle();';
 				$s.='		});' . "\n";
 				$s.='});' . "\n";
 				$s.='</script>' . "\n";
-				$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 			}
 		}
 	}
@@ -614,7 +614,7 @@ else
 	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
-	if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
+	//if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
 	//print $sql;
 	$resql=$db->query($sql);
 	if ($resql)
@@ -804,7 +804,7 @@ $db->close();
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
  * @param	array	$colorsbytype	Array with colors by type
- * @param	string	$var			true or false for alternat style on tr/td
+ * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */
 function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array(), $var=false)
@@ -869,7 +869,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					}
 
 					$color=$event->icalcolor;
-					$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
+					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unsortable');
 				}
 				else if ($event->type_code == 'BIRTHDAY')
 				{

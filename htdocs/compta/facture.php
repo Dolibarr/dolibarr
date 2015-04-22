@@ -5,12 +5,13 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
+ * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -563,10 +564,12 @@ if (empty($reshook))
 			// Boucle sur chaque taux de tva
 			$i = 0;
 			foreach ($object->lines as $line) {
-				$amount_ht [$line->tva_tx] += $line->total_ht;
-				$amount_tva [$line->tva_tx] += $line->total_tva;
-				$amount_ttc [$line->tva_tx] += $line->total_ttc;
-				$i ++;
+				if($line->total_ht!=0) { // no need to create discount if amount is null
+					$amount_ht [$line->tva_tx] += $line->total_ht;
+					$amount_tva [$line->tva_tx] += $line->total_tva;
+					$amount_ttc [$line->tva_tx] += $line->total_ttc;
+					$i ++;
+				}
 			}
 
 			// Insert one discount by VAT rate category
@@ -583,6 +586,7 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
+
 			foreach ($amount_ht as $tva_tx => $xxx) {
 				$discount->amount_ht = abs($amount_ht [$tva_tx]);
 				$discount->amount_tva = abs($amount_tva [$tva_tx]);
@@ -633,7 +637,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-		if ($ret < 0) $error ++;
+		if ($ret < 0) $error++;
 
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
@@ -1042,8 +1046,12 @@ if (empty($reshook))
 											$lines[$i]->fetch_optionals($lines[$i]->rowid);
 											$array_option = $lines[$i]->array_options;
 										}
+										
+										// View third's localtaxes for now
+										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->client);
+										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->client);
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
+										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
 
 										if ($result > 0) {
 											$lineid = $result;
@@ -1673,8 +1681,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
@@ -2188,15 +2195,25 @@ if ($action == 'create')
 		print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
-		$newclassname = $classname;
-		if ($newclassname == 'Propal')
-			$newclassname = 'CommercialProposal';
-		elseif ($newclassname == 'Commande')
-			$newclassname = 'Order';
-		elseif ($newclassname == 'Expedition')
-			$newclassname = 'Sending';
-		elseif ($newclassname == 'Fichinter')
-			$newclassname = 'Intervention';
+		switch ($classname) {
+			case 'Propal':
+				$newclassname = 'CommercialProposal';
+				break;
+			case 'Commande':
+				$newclassname = 'Order';
+				break;
+			case 'Expedition':
+				$newclassname = 'Sending';
+				break;
+			case 'Contrat':
+				$newclassname = 'Contract';
+				break;
+			case 'Fichinter':
+				$newclassname = 'Intervention';
+				break;
+			default:
+				$newclassname = $classname;
+		}
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
 		//We check if Origin document has already an invoice attached to it
@@ -2733,7 +2750,7 @@ if ($action == 'create')
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
 		{
-			if ($object->statut == 0 && $object->type != TYPE_CREDIT_NOTE && $object->type != TYPE_DEPOSIT)
+			if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT)
 				print ' (' . $addabsolutediscount . ')<br>';
 			else
 				print '. ';
@@ -3599,13 +3616,13 @@ if ($action == 'create')
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
-		$formmail->substit ['__FACREF__'] = $object->ref;
-		$formmail->substit ['__SIGNATURE__'] = $user->signature;
-		$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit ['__PERSONALIZED__'] = '';
-		$formmail->substit ['__CONTACTCIVNAME__'] = '';
+		$formmail->substit['__FACREF__'] = $object->ref;
+		$formmail->substit['__SIGNATURE__'] = $user->signature;
+		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->substit['__CONTACTCIVNAME__'] = '';
 
 		// Find the good contact adress
 		$custcontact = '';
@@ -3614,7 +3631,7 @@ if ($action == 'create')
 
 		if (is_array($contactarr) && count($contactarr) > 0) {
 			foreach ($contactarr as $contact) {
-				if ($contact ['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
+				if ($contact['libelle'] == $langs->trans('TypeContact_facture_external_BILLING')) {	// TODO Use code and not label
 
 					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
@@ -3625,15 +3642,15 @@ if ($action == 'create')
 			}
 
 			if (! empty($custcontact)) {
-				$formmail->substit ['__CONTACTCIVNAME__'] = $custcontact;
+				$formmail->substit['__CONTACTCIVNAME__'] = $custcontact;
 			}
 		}
 
 		// Tableau des parametres complementaires du post
-		$formmail->param ['action'] = $action;
-		$formmail->param ['models'] = $modelmail;
-		$formmail->param ['facid'] = $object->id;
-		$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+		$formmail->param['action'] = $action;
+		$formmail->param['models'] = $modelmail;
+		$formmail->param['facid'] = $object->id;
+		$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 		// Init list of files
 		if (GETPOST("mode") == 'init') {

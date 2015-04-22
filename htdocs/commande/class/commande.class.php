@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
@@ -60,7 +60,7 @@ class Commande extends CommonOrder
     var $ref_int;
     var $contactid;
     var $fk_project;
-    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Delivered=Sent/Received, billed or not)
     var $facturee;		// deprecated
     var $billed;		// billed or not
 
@@ -109,6 +109,11 @@ class Commande extends CommonOrder
     // Pour board
     var $nbtodo;
     var $nbtodolate;
+
+     /**
+     * ERR Not engouch stock
+     */
+    const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
 
     /**
@@ -162,7 +167,6 @@ class Commande extends CommonOrder
             }
 
             $obj = new $classname();
-            $numref = "";
             $numref = $obj->getNextValue($soc,$this);
 
             if ($numref != "")
@@ -295,7 +299,7 @@ class Commande extends CommonOrder
             // Rename directory if dir was a temporary ref
             if (preg_match('/^[\(]?PROV/i', $this->ref))
             {
-            	// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+            	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
                 // in order not to lose the attachments
                 $oldref = dol_sanitizeFileName($this->ref);
                 $newref = dol_sanitizeFileName($num);
@@ -433,7 +437,7 @@ class Commande extends CommonOrder
         global $conf,$langs;
         $error=0;
 
-        if ($this->statut != 3)
+        if ($this->statut != -1 && $this->statut != 3)
         {
         	dol_syslog(get_class($this)."::set_reopen order has not status closed", LOG_WARNING);
             return 0;
@@ -457,7 +461,7 @@ class Commande extends CommonOrder
         else
         {
             $error++;
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             dol_print_error($this->db);
         }
 
@@ -746,8 +750,11 @@ class Commande extends CommonOrder
                     );
                     if ($result < 0)
                     {
-                        $this->error=$this->db->lasterror();
-                        dol_print_error($this->db);
+                    	if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
+                    	{
+                        	$this->error=$this->db->lasterror();
+                        	dol_print_error($this->db);
+                    	}
                         $this->db->rollback();
                         return -1;
                     }
@@ -879,6 +886,8 @@ class Commande extends CommonOrder
 
         $error=0;
 
+        $this->context['createfromclone'] = 'createfromclone';
+
         $this->db->begin();
 
 		// get extrafields so they will be clone
@@ -942,6 +951,8 @@ class Commande extends CommonOrder
             if ($result < 0) $error++;
             // End call triggers
         }
+
+        unset($this->context['createfromclone']);
 
         // End
         if (! $error)
@@ -1079,19 +1090,19 @@ class Commande extends CommonOrder
      *	Add an order line into database (linked to product/service or not)
      *
      *	@param      string			$desc            	Description of line
-     *	@param      double			$pu_ht    	        Unit price (without tax)
-     *	@param      double			$qty             	Quantite
-     *	@param      double			$txtva           	Taux de tva force, sinon -1
-     *	@param      double			$txlocaltax1		Local tax 1 rate
-     *	@param      double			$txlocaltax2		Local tax 2 rate
+     *	@param      float			$pu_ht    	        Unit price (without tax)
+     *	@param      float			$qty             	Quantite
+     *	@param      float			$txtva           	Taux de tva force, sinon -1
+     *	@param      float			$txlocaltax1		Local tax 1 rate
+     *	@param      float			$txlocaltax2		Local tax 2 rate
      *	@param      int				$fk_product      	Id du produit/service predefini
-     *	@param      double			$remise_percent  	Pourcentage de remise de la ligne
+     *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
      *	@param      int				$info_bits			Bits de type de lignes
      *	@param      int				$fk_remise_except	Id remise
      *	@param      string			$price_base_type	HT or TTC
-     *	@param      double			$pu_ttc    		    Prix unitaire TTC
-     *	@param      timestamp		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      float			$pu_ttc    		    Prix unitaire TTC
+     *	@param      int		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param      int		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1182,10 +1193,12 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -3;
+					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
 
@@ -1201,6 +1214,8 @@ class Commande extends CommonOrder
 
             // Insert line
             $this->line=new OrderLine($this->db);
+
+            $this->line->context = $this->context;
 
             $this->line->fk_commande=$this->id;
             $this->line->label=$label;
@@ -1285,16 +1300,16 @@ class Commande extends CommonOrder
      *	$this->client must be loaded
      *
      *	@param		int				$idproduct			Product Id
-     *	@param		double			$qty				Quantity
-     *	@param		double			$remise_percent		Product discount relative
-     * 	@param    	timestamp		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-     * 	@param    	timestamp		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     *	@param		float			$qty				Quantity
+     *	@param		float			$remise_percent		Product discount relative
+     * 	@param    	int		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+     * 	@param    	int		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      * 	@return    	void
      *
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
-    function add_product($idproduct, $qty, $remise_percent=0, $date_start='', $date_end='')
+    function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
     {
         global $conf, $mysoc;
 
@@ -1315,6 +1330,8 @@ class Commande extends CommonOrder
             $price = $prod->price;
 
             $line=new OrderLine($this->db);
+
+            $line->context = $this->context;
 
             $line->fk_product=$idproduct;
             $line->desc=$prod->description;
@@ -1692,7 +1709,6 @@ class Commande extends CommonOrder
      */
     function loadExpeditions($filtre_statut=-1)
     {
-        $num=0;
         $this->expeditions = array();
 
         $sql = 'SELECT cd.rowid, cd.fk_product,';
@@ -1961,7 +1977,7 @@ class Commande extends CommonOrder
      *	Set the order date
      *
      *	@param      User		$user       Object user making change
-     *	@param      timestamp	$date		Date
+     *	@param      int	$date		Date
      *	@return     int         			<0 if KO, >0 if OK
      */
     function set_date($user, $date)
@@ -1995,7 +2011,7 @@ class Commande extends CommonOrder
      *	Set the planned delivery date
      *
      *	@param      User			$user        		Objet utilisateur qui modifie
-     *	@param      timestamp		$date_livraison     Date de livraison
+     *	@param      int		$date_livraison     Date de livraison
      *	@return     int         						<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison)
@@ -2324,16 +2340,16 @@ class Commande extends CommonOrder
      *
      *  @param    	int				$rowid            	Id of line to update
      *  @param    	string			$desc             	Description de la ligne
-     *  @param    	double			$pu               	Prix unitaire
-     *  @param    	double			$qty              	Quantity
-     *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
-     *  @param    	double			$txtva           	Taux TVA
-     * 	@param		double			$txlocaltax1		Local tax 1 rate
-     *  @param		double			$txlocaltax2		Local tax 2 rate
+     *  @param    	float			$pu               	Prix unitaire
+     *  @param    	float			$qty              	Quantity
+     *  @param    	float			$remise_percent   	Pourcentage de remise de la ligne
+     *  @param    	float			$txtva           	Taux TVA
+     * 	@param		float			$txlocaltax1		Local tax 1 rate
+     *  @param		float			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
-     *  @param    	timestamp		$date_start        	Start date of the line
-     *  @param    	timestamp		$date_end          	End date of the line
+     *  @param    	int		$date_start        	Start date of the line
+     *  @param    	int		$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
      * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -2344,7 +2360,7 @@ class Commande extends CommonOrder
 	 *  @param		array			$array_option		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
     {
         global $conf, $mysoc;
 
@@ -2398,6 +2414,8 @@ class Commande extends CommonOrder
 
             // Update line
             $this->line=new OrderLine($this->db);
+
+            $this->line->context = $this->context;
 
             // Stock previous line records
             $staticline=new OrderLine($this->db);
@@ -2578,6 +2596,8 @@ class Commande extends CommonOrder
      */
     function update_extrafields($user)
     {
+        global $hookmanager, $conf;
+
     	$action='create';
 
     	// Actions on extra fields (by external module or standard code)
@@ -3167,7 +3187,7 @@ class Commande extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $conf,$langs;
 
 		$langs->load("orders");
 

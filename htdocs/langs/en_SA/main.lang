@@ -1,4 +1,4 @@
-# Dolibarr language file - en_SA - main
+# Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
@@ -15,5 +15,6 @@ FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %I:%M %p
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y, %I:%M %p
 FormatDateHourText=%d %B %Y, %I:%M %p

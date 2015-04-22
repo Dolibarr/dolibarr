@@ -120,7 +120,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$object->datec);
+		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc,$object->datec);
 
 		return  $numFinal;
   }

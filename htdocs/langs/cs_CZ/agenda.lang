@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Faktura %s ověřena
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Faktura %s vrátit do stavu návrhu
 InvoiceDeleteDolibarr=Faktura %s smazána
-OrderValidatedInDolibarr= Objednat %s ověřena
+OrderValidatedInDolibarr=Objednat %s ověřena
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Objednat %s zrušen
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Objednat %s schválen
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Objednat %s vrátit do stavu návrhu
@@ -58,8 +61,9 @@ OrderSentByEMail=%s zákazníků objednávka zaslána e-mailem
 InvoiceSentByEMail=%s faktuře Zákazníka zaslána e-mailem
 SupplierOrderSentByEMail=%s Dodavatel objednávka zaslána e-mailem
 SupplierInvoiceSentByEMail=%s dodavatelské faktury zasílané e-mailem
-ShippingSentByEMail=Přepravní %s zaslána e-mailem
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Třetí strana vytvořena
 DateActionPlannedStart= Plánované datum zahájení
 DateActionPlannedEnd= Plánované datum ukončení
@@ -68,7 +72,7 @@ DateActionDoneEnd= Skutečné datum ukončení
 DateActionStart= Datum zahájení
 DateActionEnd= Datum ukončení
 AgendaUrlOptions1=Můžete také přidat následující parametry filtrování výstupu:
-AgendaUrlOptions2=<b>login = %s</b> omezit výstup na akce vytvořené, přidělených nebo provést uživatele <b>%s.</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s</b> omezit výstup na akce přiřazených uživatelských <b>%s.</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
 AddEvent=Create event
 MyAvailability=My availability
+ActionType=Event type
+DateActionBegin=Start event date

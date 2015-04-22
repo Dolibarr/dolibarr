@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=供应商
-Supplier=供应商
-AddSupplier=新增供应商
+AddSupplier=Create a supplier
 SupplierRemoved=供应商删除
 SuppliersInvoice=供应商发票
 NewSupplier=新供应商
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=供应商发票和付款
 ExportDataset_fournisseur_3=供应商的订单和订单行
 ApproveThisOrder=批准这一命令
 ConfirmApproveThisOrder=你确定要批准了这项命令？
-DenyingThisOrder=否认这种秩序
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=你确定要否认这个秩序？
 ConfirmCancelThisOrder=您确定要取消此订单？
 AddCustomerOrder=创建客户订单
@@ -42,3 +41,6 @@ NoneOrBatchFileNeverRan=无或批处理<b>%不是</b>最近跑
 SentToSuppliers=发送到供应商
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)

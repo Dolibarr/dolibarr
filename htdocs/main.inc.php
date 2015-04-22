@@ -9,7 +9,7 @@
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,7 +490,8 @@ if (! defined('NOLOGIN'))
         if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
             // We show login page
-            dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
+			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." showing the login form and exit");
+        	dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
@@ -574,18 +575,14 @@ if (! defined('NOLOGIN'))
         }
         else
        {
-            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming)
-            {
-                // TODO We should use a hook here, not a trigger.
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++;
-                }
-                // End call triggers
-            }
+	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+	       $hookmanager->initHooks(array('main'));
+
+	       $action = '';
+	       $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+	       if ($reshook < 0) {
+		       setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	       }
         }
     }
 
@@ -1444,6 +1441,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    	else $appli.=" ".DOL_VERSION;
 	    }
 	    else $appli.=" ".DOL_VERSION;
+		if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';

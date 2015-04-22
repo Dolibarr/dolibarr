@@ -136,6 +136,8 @@ print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 $var=true;
 
+$found=0;
+
 if (! empty($conf->facture->enabled))
 {
 	$var=!$var;
@@ -148,6 +150,7 @@ if (! empty($conf->facture->enabled))
 	print $form->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
+	$found++;
 }
 
 if (! empty($conf->commande->enabled))
@@ -162,6 +165,7 @@ if (! empty($conf->commande->enabled))
 	print $form->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
+	$found++;
 }
 
 if (! empty($conf->expedition->enabled))
@@ -176,7 +180,17 @@ if (! empty($conf->expedition->enabled))
 	print $form->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
+	$found++;
 }
+
+if (! $found)
+{
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td colspan="2">'.$langs->trans("NoModueToManageStockDecrease").'</td>';
+	print "</tr>\n";
+}
+
 print '</table>';
 
 print '<br>';
@@ -188,6 +202,8 @@ print "  <td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
 print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 $var=true;
+
+$found=0;
 
 if (! empty($conf->fournisseur->enabled))
 {
@@ -201,6 +217,7 @@ if (! empty($conf->fournisseur->enabled))
 	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
+	$found++;
 }
 
 if (! empty($conf->fournisseur->enabled))
@@ -215,6 +232,7 @@ if (! empty($conf->fournisseur->enabled))
 	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
+	$found++;
 }
 if (! empty($conf->fournisseur->enabled))
 {
@@ -228,64 +246,75 @@ if (! empty($conf->fournisseur->enabled))
 	print $form->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n</td>\n</tr>\n";
+	$found++;
+}
+
+if (! $found)
+{
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td colspan="2">'.$langs->trans("NoModueToManageStockIncrease").'</td>';
+	print "</tr>\n";
 }
 
 print '</table>';
 
 // Optio to force stock to be enough before adding a line into document
-print '<br>';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print "  <td>".$langs->trans("RuleForStockAvailability")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
-print '</tr>'."\n";
+if ($conf->invoice->enabled || $conf->order->enabled || $conf->expedition->enabled)
+{
+	print '<br>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print "  <td>".$langs->trans("RuleForStockAvailability")."</td>\n";
+	print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+	print '</tr>'."\n";
 
-if($conf->invoice->enabled) {
-	$var = !$var;
-	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
-	print '<td width="160" align="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_INVOICE\">";
-	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_INVOICE",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
+	if($conf->invoice->enabled) {
+		$var = !$var;
+		print "<tr ".$bc[$var].">";
+		print '<td width="60%">'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
+		print '<td width="160" align="right">';
+		print "<form method=\"post\" action=\"stock.php\">";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_INVOICE\">";
+		print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_INVOICE",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE,1);
+		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+		print '</form>';
+		print "</td>\n";
+		print "</tr>\n";
+	}
+
+	if($conf->order->enabled) {
+		$var = !$var;
+		print "<tr ".$bc[$var].">";
+		print '<td width="60%">'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
+		print '<td width="160" align="right">';
+		print "<form method=\"post\" action=\"stock.php\">";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_ORDER\">";
+		print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_ORDER",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER,1);
+		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+		print '</form>';
+		print "</td>\n";
+		print "</tr>\n";
+	}
+
+	if($conf->expedition->enabled) {
+		$var = !$var;
+		print "<tr ".$bc[$var].">";
+		print '<td width="60%">'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
+		print '<td width="160" align="right">';
+		print "<form method=\"post\" action=\"stock.php\">";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT\">";
+		print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT,1);
+		print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+		print '</form>';
+		print "</td>\n";
+		print "</tr>\n";
+	}
+	print '</table>';
 }
-
-if($conf->order->enabled) {
-	$var = !$var;
-	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
-	print '<td width="160" align="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_ORDER\">";
-	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_ORDER",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
-}
-
-if($conf->expedition->enabled) {
-	$var = !$var;
-	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
-	print '<td width="160" align="right">';
-	print "<form method=\"post\" action=\"stock.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT\">";
-	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT,1);
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</form>';
-	print "</td>\n";
-	print "</tr>\n";
-}
-print '</table>';
-
 
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)

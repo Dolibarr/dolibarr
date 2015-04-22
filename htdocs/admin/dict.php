@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
- * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
  * Copyright (C) 2011-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
@@ -1217,7 +1217,7 @@ if ($id)
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $isdisable=0; $isdisable = 0; }
 
-                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;';
+                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;id='.$id.'&amp;';
 
 					// Favorite
 					// Only activated on country dictionary

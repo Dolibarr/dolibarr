@@ -1229,14 +1229,14 @@ class Product extends CommonObject
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					return -3;
 				}
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -2;
 		}
 	}
@@ -3024,7 +3024,9 @@ class Product extends CommonObject
 				}
 			}
 			$this->db->free($result);
-			$this->load_virtual_stock();
+
+			$this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
+
 			return 1;
 		}
 		else
@@ -3048,18 +3050,21 @@ class Product extends CommonObject
         $stock_sending_client=0;
         $stock_reception_fournisseur=0;
 
-        if (! empty($conf->commande->enabled)) {
+        if (! empty($conf->commande->enabled))
+        {
             $result=$this->load_stats_commande(0,'1,2');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_commande_client=$this->stats_commande['qty'];
         }
-        if (! empty($conf->expedition->enabled)) {
+        if (! empty($conf->expedition->enabled))
+        {
             $result=$this->load_stats_sending(0,'1,2');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_sending_client=$this->stats_expedition['qty'];
         }
-        if (! empty($conf->fournisseur->enabled)) {
-            $result=$this->load_stats_commande_fournisseur(0,'3,4');
+        if (! empty($conf->fournisseur->enabled))
+        {
+            $result=$this->load_stats_commande_fournisseur(0,'1,2,3,4');
             if ($result < 0) dol_print_error($db,$this->error);
             $stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
@@ -3095,20 +3100,24 @@ class Product extends CommonObject
 	 *
 	 *  @param  string	$sdir       Target directory
 	 *  @param  string	$file       Array of file info of file to upload: array('name'=>..., 'tmp_name'=>...)
-	 *  @param  int		$maxWidth   Largeur maximum que dois faire la miniature (160 by defaut)
-	 *  @param  int		$maxHeight  Hauteur maximum que dois faire la miniature (120 by defaut)
 	 *  @return	int					<0 if KO, >0 if OK
 	 */
-	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
+	function add_photo($sdir, $file)
 	{
+		global $conf;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$result = 0;
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
+
+		$dir = $sdir;
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
+		else $dir .= '/'.dol_sanitizeFileName($this->ref);
 
 		dol_mkdir($dir);
 
 		$dir_osencoded=$dir;
+
 		if (is_dir($dir_osencoded))
 		{
 			$originImage = $dir . '/' . $file['name'];
@@ -3119,7 +3128,7 @@ class Product extends CommonObject
 			if (file_exists(dol_osencode($originImage)))
 			{
 				// Cree fichier en taille vignette
-				$this->add_thumb($originImage,$maxWidth,$maxHeight);
+				$this->add_thumb($originImage);
 			}
 		}
 
@@ -3131,18 +3140,24 @@ class Product extends CommonObject
 	 *  Build thumb
 	 *
 	 *  @param  string	$file           Chemin du fichier d'origine
-	 *  @param  int		$maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param  int		$maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
 	 *  @return	void
 	 */
-	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
+	function add_thumb($file)
 	{
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
+
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
 
 		$file_osencoded=dol_osencode($file);
 		if (file_exists($file_osencoded))
 		{
-			vignette($file,$maxWidth,$maxHeight);
+			// Create small thumbs for company (Ratio is near 16/9)
+	        // Used on logon for example
+	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+
+	        // Create mini thumbs for company (Ratio is near 16/9)
+	        // Used on menu or for setup page for example
+	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
 		}
 	}
 
@@ -3156,8 +3171,8 @@ class Product extends CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
-		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
-		$dir = $sdir . '/'. $pdir;
+		$dir = $sdir;
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
 
 		$nbphoto=0;
 
@@ -3199,8 +3214,19 @@ class Product extends CommonObject
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
-		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
-		$dir = $sdir . '/'. $pdir;
+		$dir = $sdir . '/';
+		$pdir = '/';
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+		{
+			$dir .= get_exdir($this->id,2) . $this->id ."/photos/";
+			$pdir .= get_exdir($this->id,2) . $this->id ."/photos/";
+		}
+		else
+		{
+			$dir .= $this->ref.'/';
+			$pdir .= $this->ref.'/';
+		}
+
 		$dirthumb = $dir.'thumbs/';
 		$pdirthumb = $pdir.'thumbs/';
 

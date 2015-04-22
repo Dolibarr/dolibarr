@@ -29,6 +29,7 @@ ReportTurnover=Ciro
 PaymentsNotLinkedToInvoice=Herhangi bir faturaya bağlı olmayan ödemeler, herhangi bir üçüncü partiye de bağlı değildir
 PaymentsNotLinkedToUser=Herhangi bir kullanıcıya bağlı olmayan ödemeler
 Profit=Kar
+AccountingResult=Muhasebe sonucu
 Balance=Bakiye
 Debit=Borç
 Credit=Alacak

@@ -16,6 +16,7 @@ MarginDetails=Detalles de márgenes realizados
 ProductMargins=Márgenes por producto
 CustomerMargins=Márgenes por cliente
 SalesRepresentativeMargins=Margenes por comercial
+UserMargins=Márgenes del usuario
 ProductService=Producto o servicio
 AllProducts=Todos los productos y servicios
 ChooseProduct/Service=Elija el producto o servicio

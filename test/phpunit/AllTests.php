@@ -153,15 +153,20 @@ class AllTests
         $suite->addTestSuite('UserGroupTest');
         require_once dirname(__FILE__).'/BankAccountTest.php';
         $suite->addTestSuite('BankAccountTest');
-		require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
+        require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
         $suite->addTestSuite('CompanyBankAccountTest');
+        require_once dirname(__FILE__).'/BonPrelevementTest.php';
+        $suite->addTestSuite('BonPrelevementTest');
+
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';
         $suite->addTestSuite('ChargeSocialesTest');
         require_once dirname(__FILE__).'/HolidayTest.php';
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
-
+        require_once dirname(__FILE__).'/MouvementStockTest.php';
+        $suite->addTestSuite('MouvementStockTest');
+        
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 

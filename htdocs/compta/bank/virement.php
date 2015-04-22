@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copytight (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if ($action == 'add')
 
 	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 	$label = GETPOST('label','alpha');
-	$amount= GETPOST('amount','int');
+	$amount= GETPOST('amount');
 
 	if (! $label)
 	{
@@ -167,11 +168,11 @@ print '</tr>';
 
 $var=false;
 print '<tr '.$bc[$var].'><td>';
-print $form->select_comptes($account_from,'account_from',0,'',1);
+$form->select_comptes($account_from,'account_from',0,'',1);
 print "</td>";
 
 print "<td>\n";
-print $form->select_comptes($account_to,'account_to',0,'',1);
+$form->select_comptes($account_to,'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";

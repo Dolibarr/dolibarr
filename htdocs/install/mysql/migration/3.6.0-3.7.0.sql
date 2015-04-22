@@ -27,6 +27,9 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_CLOSE','Customer order classify delivered','Executed when a customer order is set delivered','commande',5);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_CLASSIFY_BILLED','Customer order classify billed','Executed when a customer order is set to billed','commande',5);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_CANCEL','Customer order canceled','Executed when a customer order is canceled','commande',5);
 
 -- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_signature DROP NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_suivi DROP NOT NULL;
@@ -209,6 +212,8 @@ ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREI
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
 DELETE from llx_product_price where fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
+
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
 
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
@@ -1093,6 +1098,9 @@ ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
 
+ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
+ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
+  
 
 -- add extrafield on ficheinter lines
 CREATE TABLE llx_fichinterdet_extrafields
@@ -1155,3 +1163,15 @@ ALTER TABLE llx_resource MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
 -- This request make mysql drop (mysql bug, so we add it at end):
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type(rowid);
 
+-- this update change the old formated url on llx_bank_url
+UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
+
+-- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
+
+
+-- IVORY COST (id country=21)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (212, 21,  '18','0',7.5,2,0,0,'IVA standard rate',1);
+
+ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;

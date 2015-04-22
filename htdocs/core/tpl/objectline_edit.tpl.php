@@ -88,7 +88,9 @@ $coldisplay=-1; // We remove first td
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
     $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
-	$doleditor=new DolEditor('product_desc',$line->description,'',164,'dolibarr_details','',false,true,$enable,$nbrows,'98%');
+	$toolbarname='dolibarr_details';
+	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
+	$doleditor=new DolEditor('product_desc',$line->description,'',164,$toolbarname,'',false,true,$enable,$nbrows,'98%');
 	$doleditor->Create();
 	?>
 	</td>
@@ -333,7 +335,7 @@ if (! empty($conf->margin->enabled))
 		var rounding = main_rounding_unit;
 		var pos = amount.indexOf(dec);
 		var decpart = '';
-		if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+		if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Remove 0 for decimal part
 		var nbdec = decpart.length;
 		if (nbdec > rounding) rounding = nbdec;
 	    // If rounding higher than max shown

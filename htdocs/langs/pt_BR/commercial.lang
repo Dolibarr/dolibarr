@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - commercial
 CommercialArea=Área Comercial
-CommercialCard=Ficha Comercial
 DeleteAction=Eliminar um evento/tarefa
 NewAction=Novo evento/tarefa
 AddAction=Criar evento/tarefa

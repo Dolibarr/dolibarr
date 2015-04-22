@@ -324,7 +324,7 @@ if ($action == 'remove_file')
 	$langs->load("other");
 	$upload_dir = $diroutputpdf;
 	$file = $upload_dir . '/' . GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,'');
+	$ret=dol_delete_file($file);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 	$action='';
@@ -482,7 +482,8 @@ if ($resql)
 		$formmail = new FormMail($db);
 
 		print '<br>';
-		print_fiche_titre($langs->trans("SendRemind"),'','').'<br>';
+		print_fiche_titre($langs->trans("SendRemind"),'','');
+		print '<br>';
 
 		$topicmail="MailTopicSendRemindUnpaidInvoices";
 		$modelmail="facture_relance";
@@ -682,13 +683,12 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 			print '<td align="right">';
 			$cn=$facturestatic->getSumCreditNotesUsed();
-			if (! empty($objp->am)) print price($objp->am);
-			if (! empty($objp->am) && ! empty($cn)) print '+';
-			if (! empty($cn)) print price($cn);
+			$dep=$facturestatic->getSumDepositsUsed();
+			print price($objp->am + $cn + $dep);
 			print '</td>';
 
 			// Remain to receive
-			print '<td align="right">'.((! empty($objp->am) || ! empty($cn))?price($objp->total_ttc-$objp->am-$cn):'&nbsp;').'</td>';
+			print '<td align="right">'.price($objp->total_ttc-$objp->am-$cn-$dep).'</td>';
 
 			// Status of invoice
 			print '<td align="right" class="nowrap">';
@@ -718,7 +718,7 @@ if ($resql)
 			$total_ht+=$objp->total_ht;
 			$total_tva+=($objp->total_tva + $tx1 + $tx2 + $revenuestamp);
 			$total_ttc+=$objp->total_ttc;
-			$total_paid+=$objp->am + $cn;
+			$total_paid+=$objp->am + $cn + $dep;
 
 			$i++;
 		}
