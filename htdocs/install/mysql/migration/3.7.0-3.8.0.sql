@@ -581,8 +581,6 @@ alter table llx_facture_fourn_det add fk_unit integer default NULL;
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
 
 
-ALTER TABLE llx_user DROP INDEX uk_user_fk_societe;
-ALTER TABLE llx_user ADD INDEX idx_user_fk_societe   (fk_soc);
 
 
 -- Feature request: A page to merge two thirdparties into one #2613
@@ -594,7 +592,11 @@ ALTER TABLE llx_categorie_fournisseur DROP FOREIGN KEY fk_categorie_fournisseur_
 ALTER TABLE llx_categorie_fournisseur CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
 ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_fk_soc   FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 
-ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
-ALTER TABLE llx_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_user DROP INDEX uk_user_fk_societe;
+ALTER TABLE llx_user DROP INDEX idx_user_fk_societe;
+ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER;
+ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
+
+
 
 
