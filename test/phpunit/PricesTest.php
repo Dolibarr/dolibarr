@@ -197,14 +197,14 @@ class PricesTest extends PHPUnit_Framework_TestCase
 
         // --------------------------------------------------------
 
-        // 10 * 10 HT - 0% discount with 10% vat and 0% localtax1 type 3, 21% localtax2 type 5 (method we provide value)
+        // 10 * 10 HT - 0% discount with 10% vat and 0% localtax1 type 3, 19% localtax2 type 5 (method we provide value)
 		$mysoc->country_code='ES';
 		$mysoc->country_id=4;
 		$mysoc->localtax1_assuj=0;
 		$mysoc->localtax2_assuj=1;
-        $result2=calcul_price_total(10, 10, 0, 10, 0, -1, 0, 'HT', 0, 0);
+        $result2=calcul_price_total(10, 10, 0, 10, 0, -19, 0, 'HT', 0, 0);
 		// result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-        $this->assertEquals(array(100, 10, 89, 10, 1, 8.9, 100, 10, 89, 0, -21, 0, -2.10, 0, 0, -21),$result2,'Test5 ES');
+        $this->assertEquals(array(100, 10, 91, 10, 1, 9.1, 100, 10, 91, 0, -19, 0, -1.90, 0, 0, -19),$result2,'Test5 ES');
 
         // 10 * 10 HT - 0% discount with 10% vat and 0% localtax1 type 3, 21% localtax2 type 5 (other method autodetect)
 		$mysoc->country_code='ES';
@@ -214,19 +214,19 @@ class PricesTest extends PHPUnit_Framework_TestCase
         $result2=calcul_price_total(10, 10, 0, 10, -1, -1, 0, 'HT', 0, 0);
 		print __METHOD__." result2=".join(', ',$result2)."\n";
 		// result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-		$this->assertEquals(array(100, 10, 89, 10, 1, 8.9, 100, 10, 89, 0, -21, 0, -2.10, 0, 0, -21),$result2,'Test6 ES');
+		$this->assertEquals(array(100, 10, 91, 10, 1, 9.1, 100, 10, 91, 0, -19, 0, -1.90, 0, 0, -19),$result2,'Test6 ES');
 
 		// --------------------------------------------------------
 
-        // Credit Note: 10 * -10 HT - 0% discount with 10% vat and 0% localtax1 type 3, 21% localtax2 type 5 (method we provide value)
+        // Credit Note: 10 * -10 HT - 0% discount with 10% vat and 0% localtax1 type 3, 19% localtax2 type 5 (method we provide value)
 		$mysoc->country_code='ES';
 		$mysoc->country_id=4;
 		$mysoc->localtax1_assuj=0;
 		$mysoc->localtax2_assuj=1;
-        $result2=calcul_price_total(10, -10, 0, 10, 0, 1, 0, 'HT', 0, 0);
+        $result2=calcul_price_total(10, -10, 0, 10, 0, 19, 0, 'HT', 0, 0);
 		print __METHOD__." result2=".join(', ',$result2)."\n";
 		// result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-		$this->assertEquals(array(-100, -10, -89, -10, -1, -8.9, -100, -10, -89, 0, 21, 0, 2.1, 0, 0, 21),$result2,'Test7 ES');
+		$this->assertEquals(array(-100, -10, -91, -10, -1, -9.1, -100, -10,- 91, 0, 19, 0, 1.90, 0, 0, 19),$result2,'Test7 ES');
 
         // Credit Note: 10 * -10 HT - 0% discount with 10% vat and 1.4% localtax1 type 3, 0% localtax2 type 5 (other method autodetect)
 		$mysoc->country_code='ES';
@@ -235,7 +235,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$mysoc->localtax2_assuj=1;
         $result2=calcul_price_total(10, -10, 0, 10, -1, -1, 0, 'HT', 0, 0);
 		print __METHOD__." result2=".join(', ',$result2)."\n";
-		$this->assertEquals(array(-100, -10, -89, -10, -1, -8.9, -100, -10, -89, 0, 21, 0, 2.1, 0, 0, 21),$result2,'Test8 ES');
+		$this->assertEquals(array(-100, -10, -91, -10, -1, -9.1, -100, -10,- 91, 0, 19, 0, 1.90, 0, 0, 19),$result2,'Test8 ES');
 
 
         /*
