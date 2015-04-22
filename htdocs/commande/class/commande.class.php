@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
@@ -29,6 +30,7 @@
  *  \brief      Fichier des classes de commandes
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
+require_once DOL_DOCUMENT_ROOT ."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
@@ -802,7 +804,8 @@ class Commande extends CommonOrder
                         $this->lines[$i]->fk_fournprice,
                         $this->lines[$i]->pa_ht,
                     	$this->lines[$i]->label,
-                    	$this->lines[$i]->array_options
+                    	$this->lines[$i]->array_options,
+	                    $this->lines[$i]->fk_unit
                     );
                     if ($result < 0)
                     {
@@ -1062,6 +1065,7 @@ class Commande extends CommonOrder
                 $line->rang              = $object->lines[$i]->rang;
                 $line->special_code      = $object->lines[$i]->special_code;
                 $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
+	            $line->fk_unit			 = $object->lines[$i]->fk_unit;
 
                 $line->date_start      	= $object->lines[$i]->date_start;
                 $line->date_end    		= $object->lines[$i]->date_end;
@@ -1165,6 +1169,7 @@ class Commande extends CommonOrder
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
 	 *  @param		array			$array_options		extrafields array
+     * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1174,11 +1179,11 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0, $fk_unit=null)
     {
     	global $mysoc, $conf, $langs;
 
-        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
+        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type, fk_unit=$fk_unit", LOG_DEBUG);
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1295,6 +1300,7 @@ class Commande extends CommonOrder
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
+	        $this->line->fk_unit=$fk_unit;
 
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
@@ -1398,6 +1404,7 @@ class Commande extends CommonOrder
             $line->ref=$prod->ref;
             $line->libelle=$prod->libelle;
             $line->product_desc=$prod->description;
+	        $line->fk_unit=$prod->fk_unit;
 
             // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
             // Save the start and end date of the line in the object
@@ -1654,6 +1661,7 @@ class Commande extends CommonOrder
         $sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx,';
         $sql.= ' l.localtax1_tx, l.localtax2_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
         $sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
+	    $sql.= ' l.fk_unit,';
         $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1711,6 +1719,7 @@ class Commande extends CommonOrder
                 $line->product_label	= $objp->product_label;
                 $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
+	            $line->fk_unit          = $objp->fk_unit;
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
                 $line->date_end         = $this->db->jdate($objp->date_end);
@@ -2420,9 +2429,10 @@ class Commande extends CommonOrder
      *  @param		string			$label				Label
      *  @param		int				$special_code		Special code (also used by externals modules!)
 	 *  @param		array			$array_options		extrafields array
+     * 	@param 		string			$fk_unit 			Code of the unit to use. Null to use the default one
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
     {
         global $conf, $mysoc;
 
@@ -2442,6 +2452,7 @@ class Commande extends CommonOrder
             if (empty($remise)) $remise=0;
             if (empty($remise_percent)) $remise_percent=0;
             if (empty($special_code) || $special_code == 3) $special_code=0;
+
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
             $pu = price2num($pu);
@@ -2514,6 +2525,7 @@ class Commande extends CommonOrder
             $this->line->product_type=$type;
             $this->line->fk_parent_line=$fk_parent_line;
             $this->line->skip_update_total=$skip_update_total;
+	        $this->line->fk_unit=$fk_unit;
 
 			// infos marge
 			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
@@ -3194,6 +3206,7 @@ class Commande extends CommonOrder
         $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code, l.fk_parent_line,';
         $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.localtax1_tx, l.localtax2_tx,';
         $sql.= ' l.date_start, l.date_end,';
+	    $sql.= ' l.fk_unit,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
         $sql.= ' p.description as product_desc, p.stock as stock_reel,';
         $sql.= ' p.entity';
@@ -3243,6 +3256,7 @@ class Commande extends CommonOrder
 				$this->lines[$i]->pa_ht				= $marginInfos[0];
 				$this->lines[$i]->marge_tx			= $marginInfos[1];
 				$this->lines[$i]->marque_tx			= $marginInfos[2];
+	            $this->lines[$i]->fk_unit			= $obj->fk_unit;
 
                 $i++;
             }
@@ -3385,6 +3399,7 @@ class OrderLine extends CommonOrderLine
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.label as custom_label, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
         $sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
+	    $sql.= ' cd.fk_unit,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc,';
         $sql.= ' cd.date_start, cd.date_end';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
@@ -3430,6 +3445,7 @@ class OrderLine extends CommonOrderLine
             $this->libelle			= $objp->product_libelle;  // deprecated
             $this->product_label	= $objp->product_libelle;
             $this->product_desc     = $objp->product_desc;
+	        $this->fk_unit          = $objp->fk_unit;
 
             $this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
@@ -3546,7 +3562,8 @@ class OrderLine extends CommonOrderLine
         $sql.= ' tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
         $sql.= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
-        $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end)';
+        $sql.= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
+	    $sql.= ' fk_unit)';
         $sql.= " VALUES (".$this->fk_commande.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -3575,7 +3592,8 @@ class OrderLine extends CommonOrderLine
         $sql.= " '".price2num($this->total_localtax2)."',";
         $sql.= " '".price2num($this->total_ttc)."',";
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
-        $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+        $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").',';
+	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit);
         $sql.= ')';
 
         dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -3693,6 +3711,7 @@ class OrderLine extends CommonOrderLine
 		$sql.= " , product_type=".$this->product_type;
 		$sql.= " , fk_parent_line=".(! empty($this->fk_parent_line)?$this->fk_parent_line:"null");
 		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
+		$sql.= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

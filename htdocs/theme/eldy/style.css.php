@@ -1796,11 +1796,11 @@ table.nobordernopadding {
 }
 table.nobordernopadding tr {
 	border: 0px !important;
-	padding: 0px 0px;
+	padding: 0px 0px !important;
 }
 table.nobordernopadding td {
 	border: 0px !important;
-	padding: 0px 0px;
+	padding: 0px 0px !important;
 }
 
 /* For lists */

@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,12 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ============================================================================
 
-
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login, entity);
-
-ALTER TABLE llx_user ADD INDEX idx_user_fk_societe   (fk_soc);
-
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_socpeople (fk_socpeople);
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_member    (fk_member);
+ALTER TABLE llx_commande_fournisseurdet ADD CONSTRAINT fk_commande_fournisseurdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);

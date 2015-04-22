@@ -129,7 +129,6 @@ $coldisplay=-1; // We remove first td
 		print '></td>';
 	}
 	?>
-
 	<td align="right"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
 		// I comment this because it shows info even when not required
@@ -143,6 +142,15 @@ $coldisplay=-1; // We remove first td
 		&nbsp;
 	<?php } ?>
 	</td>
+
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left">';
+		print $form->selectUnits($line->fk_unit, "units");
+		print '</td>';
+	}
+	?>
 
 	<td align="right" nowrap><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {

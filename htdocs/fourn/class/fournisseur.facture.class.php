@@ -480,7 +480,7 @@ class FactureFournisseur extends CommonInvoice
     {
         $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
-        $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line';
+        $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
@@ -531,6 +531,7 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->fk_parent_line    = $obj->fk_parent_line;
                     $this->lines[$i]->special_code		= $obj->special_code;
                     $this->lines[$i]->rang       		= $obj->rang;
+                    $this->lines[$i]->fk_unit           = $obj->fk_unit;
 
                     $i++;
                 }
@@ -1117,13 +1118,14 @@ class FactureFournisseur extends CommonInvoice
      *  @param      int		$rang            	Position of line
      *  @param		int		$notrigger			Disable triggers
 	 *  @param		array	$array_options		extrafields array
+     * 	@param 		string	$fk_unit 			Code of the unit to use. Null to use the default one
      *	@return    	int             			>0 if OK, <0 if KO
      *
      *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      */
-    function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0)
+    function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null)
     {
-        dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
+        dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -1158,7 +1160,7 @@ class FactureFournisseur extends CommonInvoice
         {
             $idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent, true, '', '', $array_options);
+            $result=$this->updateline($idligne, $desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $price_base_type, $info_bits, $type, $remise_percent, true, '', '', $array_options, $fk_unit);
             if ($result > 0)
             {
                 $this->rowid = $idligne;
@@ -1213,12 +1215,13 @@ class FactureFournisseur extends CommonInvoice
      * @param      	timestamp	$date_start     	Date start of service
      * @param      	timestamp   $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
+     * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
      * @return    	int           					<0 if KO, >0 if OK
      */
-    function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0)
+    function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null)
     {
     	global $mysoc;
-        dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent", LOG_DEBUG);
+        dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         $pu = price2num($pu);
@@ -1288,6 +1291,7 @@ class FactureFournisseur extends CommonInvoice
         else $sql.= ", fk_product = null";
         $sql.= ", product_type = ".$product_type;
         $sql.= ", info_bits = ".$info_bits;
+	    $sql.= ", ".($fk_unit ? "'".$this->db->escape($fk_unit)."'":"null");
         $sql.= " WHERE rowid = ".$id;
 
         dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
@@ -1877,7 +1881,7 @@ class FactureFournisseur extends CommonInvoice
 /**
  *  Class to manage line invoices
  */
-class SupplierInvoiceLine extends CommonInvoice
+class SupplierInvoiceLine extends CommonObjectLine
 {
 	public $element='facture_fourn_det';
 	public $table_element='facture_fourn_det';
