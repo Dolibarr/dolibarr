@@ -46,6 +46,7 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("salaries");
 $langs->load("loan");
 $langs->load("donations");
 
