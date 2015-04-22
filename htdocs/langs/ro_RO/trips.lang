@@ -1,126 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
+ExpenseReport=Raport Cheltuieli
+ExpenseReports=Rapoarte Cheltuieli
+Trip=Raport Cheltuieli
+Trips=Rapoarte Cheltuieli
+TripsAndExpenses=Rapoarte Cheltuieli
+TripsAndExpensesStatistics=Statistici Rapoarte Cheltuieli
+TripCard=Fisa Raport Cheltuieli
+AddTrip=Creare Raport Cheltuieli
+ListOfTrips=Listă  rapoarte de cheltuieli
 ListOfFees=Lista note cheltuieli
-NewTrip=New expense report
+NewTrip= Raport de cheltuieli nou
 CompanyVisited=Societatea / Instituţia vizitată
 Kilometers=Kilometri
 FeesKilometersOrAmout=Valoarea  sau km
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
+DeleteTrip=Șterge raport de cheltuieli
+ConfirmDeleteTrip=Sunteți sigur că doriți să ștergeți acest raport cheltuieli?
+ListTripsAndExpenses=Listă rapoarte de cheltuieli
+ListToApprove=În așteptare pentru aprobare
+ExpensesArea=Rapoarte de cheltuieli
+SearchATripAndExpense=Căutați un raport de cheltuieli
 ClassifyRefunded=Clasează "Rambursată"
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
+TripId=ID Raport de cheltuieli 
+AnyOtherInThisListCanValidate=Persoana de informare pentru validare.
+TripSociete=Informații   companie
+TripSalarie=Informații Utilizator 
 TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
+DeleteLine=Ștergeo linie a raportului de cheltuieli
+ConfirmDeleteLine=Sunteţi sigur că doriţi să ştergeţi această linie?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ExpenseReportLine=Line raport de cheltuieli
 TF_OTHER=Altele
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Transport
 TF_LUNCH=Prânz
-TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
+TF_METRO=Metrou
+TF_TRAIN=Tren
+TF_BUS=Autobuz
+TF_CAR=Mașină
+TF_PEAGE=Taxă
+TF_ESSENCE=Combustibil
 TF_HOTEL=Hostel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Ați declarat un alt raport de cheltuieli într-un interval de timp similar.
+ListTripsAndExpenses=Listă rapoarte de cheltuieli
+AucuneNDF=Nu există rapoarte de cheltuieli pentru acest criteriu
+AucuneLigne=Nu există încă nici un raport de cheltuieli declarate 
+AddLine=Adaugao linie
+AddLineMini=Adaugă
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Perioada Dată început
+Date_FIN=Perioada Dată sfârşit
+ModePaiement=Mod plata
+Note=Notă
+Project=Proiect
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Utilizatorul de informat pentru aprobare
+VALIDOR=Aprobat de
+AUTHOR=Înregistrat de
+AUTHORPAIEMENT=Platit de
+REFUSEUR=Respins de
+CANCEL_USER=Anulat de
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Motiv
+MOTIF_CANCEL=Motiv
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Dată respingere
+DATE_SAVE=Dată validare
+DATE_VALIDE=Dată validare
+DATE_CANCEL=Data anulare
+DATE_PAIEMENT=Data Plata 
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+TO_PAID=Plăteşte
+BROUILLONNER=Redeschide
+SendToValid=Trimis la aprobare
+ModifyInfoGen=Editare
+ValidateAndSubmit=Validareaza și trimite pentru aprobare
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=Nu aveti permisiunea să aprobati acest raport de cheltuieli
+NOT_AUTHOR=Tu nu esti autorul acestui raport de cheltuieli. Operatiune anulata.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Respinge un raport de cheltuieli
+ConfirmRefuseTrip=Sunteți sigur că doriți să respingeti acest raport cheltuieli?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Aproba raport de cheltuieli
+ConfirmValideTrip=Sunteți sigur că doriți să aprobati acest raport cheltuieli?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Plăste un raport de cheltuieli
+ConfirmPaidTrip=Sunteţi sigur că doriţi sa clasati acest raport de cheltuieli ca "Platit" ?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Anulează un raport de cheltuieli
+ConfirmCancelTrip=Sunteți sigur că doriți să anulați acest raport cheltuieli?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
+BrouillonnerTrip=Muta Inapoi raportul de cheltuieli la statutul de "Draft" 
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
-SaveTrip=Validate expense report
+SaveTrip=Valideaza raport de cheltuieli
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
-
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
 
 NoTripsToExportCSV=No expense report to export for this period.

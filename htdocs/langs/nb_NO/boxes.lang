@@ -94,3 +94,4 @@ BoxProductDistributionFor=Fordeling av %s for %s
 ForCustomersInvoices=Kundens fakturaer
 ForCustomersOrders=Kundeordrer
 ForProposals=Tilbud
+LastXMonthRolling=The last %s month rolling

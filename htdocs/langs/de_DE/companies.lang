@@ -83,7 +83,7 @@ DefaultLang=Standardsprache
 VATIsUsed=MwSt.-pflichtig
 VATIsNotUsed=Nicht MwSt-pflichtig
 CopyAddressFromSoc=Übernehme die Adresse vom Partner
-NoEmailDefined=Es ist keine Mail-Adresse definiert
+NoEmailDefined=Es wurde keine Mailadresse definiert
 ##### Local Taxes #####
 LocalTax1IsUsedES= RE wird verwendet
 LocalTax1IsNotUsedES= RE wird nicht verwendet

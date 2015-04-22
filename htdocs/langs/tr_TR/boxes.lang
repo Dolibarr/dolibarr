@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=Rss bilgileri
 BoxLastProducts=Son %s ürün/hizmet
-BoxProductsAlertStock=Stoktaki ürün uyarısı
+BoxProductsAlertStock=Stok uyarısındaki ürünler
 BoxLastProductsInContract=Son %s sözleşmeli ürün/hizmet
 BoxLastSupplierBills=Son tedarikçi faturaları
 BoxLastCustomerBills=Son müşteri faturaları
@@ -94,3 +94,4 @@ BoxProductDistributionFor=%sin %s içindeki dağılımı
 ForCustomersInvoices=Müşteri faturaları
 ForCustomersOrders=Müşteri siparişleri
 ForProposals=Teklifler
+LastXMonthRolling=Devreden son %s ay

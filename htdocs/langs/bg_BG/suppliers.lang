@@ -43,4 +43,4 @@ ListOfSupplierOrders=Списък на нарежданията за доста�
 MenuOrdersSupplierToBill=Поръчки на доставчика за фактуриране
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
-UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

@@ -163,3 +163,5 @@ LabelRIB=Etiqueta BAN
 NoBANRecord=Nenhum registro de BAN
 DeleteARib=Excluir registro BAN
 ConfirmDeleteRib=Tem certeza de que deseja excluir este registro BAN?
+StartDate=Start date
+EndDate=End date

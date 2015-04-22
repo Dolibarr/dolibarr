@@ -14,6 +14,7 @@ MyTasksDesc=Selles vaates näidatakse vaid neid projekte või ülesandeid, mille
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=See vaade esitab kõik projektid ja ülesanded, mida sul on lubatud vaadata.
 TasksDesc=See vaade näitab kõiki projekte ja ülesandeid (sinu kasutajaõigused annavad ligipääsu kõigele)
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projektide ala
 NewProject=Uus projekt
 AddProject=Create project

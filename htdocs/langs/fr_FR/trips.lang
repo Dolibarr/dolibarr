@@ -17,7 +17,7 @@ DeleteTrip=Supprimer les notes de frais / déplacements
 ConfirmDeleteTrip=Êtes-vous sûr de vouloir supprimer cette note de frais ?
 ListTripsAndExpenses=Liste des notes de frais
 ListToApprove=En attente d'approbation
-ExpensesArea=Espace Notes de frais
+ExpensesArea=Espace notes de frais
 SearchATripAndExpense=Rechercher une note de frais
 ClassifyRefunded=Classer 'Remboursé'
 ExpenseReportWaitingForApproval=Une nouvelle note de frais a été soumise pour approbation
@@ -69,11 +69,9 @@ MOTIF_CANCEL=Motif
 DATE_REFUS=Date refus
 DATE_SAVE=Date validation
 DATE_VALIDE=Date validation
-DateApprove=Date approbation
 DATE_CANCEL=Date annulation
 DATE_PAIEMENT=Payment date
 
-Deny=Refuser
 TO_PAID=Payer
 BROUILLONNER=Reopen
 SendToValid=Sent to approve
@@ -100,27 +98,5 @@ ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to sta
 
 SaveTrip=Validate expense report
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
-
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
 
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période

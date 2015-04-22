@@ -50,4 +50,4 @@ ArcticNumRefModelError=アクティブ化に失敗
 PacificNumRefModelDesc1=yyは年である%syymm - nnnnの形式でニュメロを返す、mmは月ですと、nnnnはなく休憩と0〜ノーリターンでシーケンスです。
 PacificNumRefModelError=$ syymmで始まる介入のカードは、すでに存在し、シーケンスのこのモデルと互換性がありません。それを削除するか、このモジュールをアクティブにするには、その名前を変更。
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders

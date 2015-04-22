@@ -50,4 +50,4 @@ ArcticNumRefModelError=Αποτυχία ενεργοποίησης
 PacificNumRefModelDesc1=Αριθμός επιστροφής με μορφή %syymm-nnnn όπυ yy το έτος, mm ο μήνας και nnnn μια ακολουθία χωρίς διακοπή και χωρίς επιστροφή στο 0.
 PacificNumRefModelError=Μια καρτέλα παρέμβασης με $syymm ήδη υπάρχει και δεν είναι συμβατή με αυτή την ακολουθία. Απομακρύνετε την ή μετονομάστε την για να ενεργοποιήσετε το module.
 PrintProductsOnFichinter=Εκτυπώστε προϊόντα στην κάρτα παρέμβασης
-PrintProductsOnFichinterDetails=Για τις παρεμβάσεις που προέρχονται από παραγγελίες
+PrintProductsOnFichinterDetails=παρεμβάσεις που προέρχονται από παραγγελίες

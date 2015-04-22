@@ -203,6 +203,7 @@ NewKeyWillBe=Uw nieuwe sleutel in te loggen zal zijn
 ClickHereToGoTo=Klik hier om naar %s
 YouMustClickToChange=Je moet echter wel eerst klikken op de volgende link om de wachtwoord wijziging te valideren
 ForgetIfNothing=Als u deze wijziging niet heeft aangevraagd, negeer deze e-mail. Uw referenties blijven veilig bewaard.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Nieuwe vermelding in de agenda %s

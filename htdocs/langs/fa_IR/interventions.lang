@@ -50,4 +50,4 @@ ArcticNumRefModelError=برای فعال سازی ناموفق
 PacificNumRefModelDesc1=بازگشت numero با فرمت٪ syymm-NNNN که در آن YY سال است، میلی متر در ماه است و NNNN دنباله بدون استراحت و بدون بازگشت به 0 است
 PacificNumRefModelError=کارت مداخله با $ شروع میشوند syymm حال حاضر وجود دارد و سازگار با این مدل توالی نیست. آن را حذف و یا تغییر نام آن را به این ماژول را فعال کنید.
 PrintProductsOnFichinter=محصول چاپ بر روی کارت مداخله
-PrintProductsOnFichinterDetails=forinterventions تولید شده از سفارشات
+PrintProductsOnFichinterDetails=interventions generated from orders

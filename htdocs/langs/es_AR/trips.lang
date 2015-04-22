@@ -11,3 +11,4 @@ DeleteTrip=Delete expense report
 ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
 ListTripsAndExpenses=List of expense reports
 ExpensesArea=Expense reports area
+SearchATripAndExpense=Search an expense report

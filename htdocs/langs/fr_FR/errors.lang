@@ -160,13 +160,16 @@ ErrorPriceExpressionInternal=Erreur interne '%s'
 ErrorPriceExpressionUnknown=Erreur inconnue '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
 ErrorTryToMakeMoveOnProductRequiringBatchData=Erreur, vous essayez de faire un mouvement sans lot/numéro de série, sur un produit qui exige un lot/numéro de série.
-ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Toutes les réceptions enregistrées doivent d'abord être vérifiées avant d'être autorisés à faire cette action
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Toutes les réceptions enregistrées doivent d'abord être vérifiées (approuvées ou refusées) avant d'être autorisé à faire cette action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Toutes les réceptions enregistrées doivent d'abord être vérifiées (approuvées) avant d'être autorisé à faire cette action
 ErrorGlobalVariableUpdater0=La requête HTTP a échoué avec l'erreur '%s'
 ErrorGlobalVariableUpdater1=Format JSON invalide '%s'
 ErrorGlobalVariableUpdater2=Paramètre manquant '%s'
 ErrorGlobalVariableUpdater3=La donnée recherché n'a pas été trouvée
 ErrorGlobalVariableUpdater4=Le client SOAP a échoué avec l'erreur '%s'
 ErrorGlobalVariableUpdater5=Pas de variable globale
+ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
+ErrorFieldMustBeAnInteger=Le champ <b>%s</b> doit être un numérique
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

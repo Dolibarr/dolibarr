@@ -163,3 +163,5 @@ LabelRIB=BAN etikett
 NoBANRecord=Inget BAN rad
 DeleteARib=Radera BAN rad
 ConfirmDeleteRib=Är du säker på att du vill ta bort denna BAN rad?
+StartDate=Start date
+EndDate=End date
