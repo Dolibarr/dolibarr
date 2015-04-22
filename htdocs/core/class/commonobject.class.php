@@ -50,7 +50,7 @@ abstract class CommonObject
     /**
      * @var string[]	Array of error strings
      */
-    public $errors;
+    public $errors=array();
 
     /**
      * @var string		Can be used to pass information when only object is provied to method
