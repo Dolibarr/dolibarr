@@ -1648,8 +1648,8 @@ function isValidEmail($address, $acceptsupervisorkey=0)
 
 /**
  *  Return true if phone number syntax is ok
- *
- * TODO: Decide what to do with this
+ *  TODO Decide what to do with this
+ *  
  *  @param	string		$phone		phone (Ex: "0601010101")
  *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
@@ -4957,10 +4957,10 @@ function dol_getmypid()
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
  * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
- * @param	integer			$nofinaland	Do now output the final 'AND'
+ * @param	integer			$nofinaland	1=Do now output the final 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $numeric=0, $nofinaland)
+function natural_search($fields, $value, $numeric=0, $nofinaland=0)
 {
     global $db,$langs;
 
