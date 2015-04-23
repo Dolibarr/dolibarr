@@ -858,6 +858,7 @@ class Form
      *	@param	int		$limit			Maximum number of elements
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
+     *  @see select_thirdparty()
      */
     function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
     {
@@ -1227,6 +1228,7 @@ class Form
      *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	void
      *  @deprecated
+     *  @see select_dolusers()
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
@@ -3029,6 +3031,7 @@ class Form
      *     @param	int			$width				Force width of box
      *     @return 	void
      *     @deprecated
+     *     @see formconfirm()
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {

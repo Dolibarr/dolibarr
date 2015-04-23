@@ -153,6 +153,11 @@ class mailing_fraise extends MailingTargets
      */
     function add_to_target($mailing_id,$filtersarray=array())
     {
+	    // Deprecation warning
+	    if ($filtersarray) {
+		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
+	    }
+
     	global $langs,$_POST;
 		$langs->load("members");
         $langs->load("companies");

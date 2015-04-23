@@ -42,6 +42,7 @@ abstract class DolibarrModules
     /**
      * @var string Relative path to module style sheet
      * @deprecated
+     * @see module_parts
      */
     public $style_sheet = '';
 

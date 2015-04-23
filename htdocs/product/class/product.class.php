@@ -59,10 +59,15 @@ class Product extends CommonObject
 	var $id ;
 	//! Ref
 	var $ref;
-    /**
-     * Product label
-     * @var string
-     */
+	/*
+	 * @deprecated
+	 * @see label
+	 */
+	var $libelle;
+	/**
+	 * Product label
+	 * @var string
+	 */
 	var $label;
     /**
      * Product descripion
@@ -182,6 +187,20 @@ class Product extends CommonObject
 	var $note;
 
     var $fk_price_expression;
+
+	/**
+	 * @deprecated
+	 * @see fourn_pu
+	 */
+	var $buyprice;
+	public $fourn_pu;
+
+	/**
+	 * @deprecated
+	 * @see ref_supplier
+	 */
+	var $ref_fourn;
+	public $ref_supplier;
 
 	/**
 	 * Unit code ('km', 'm', 'l', 'p', ...)
@@ -817,6 +836,11 @@ class Product extends CommonObject
 	 */
 	function delete($id=0)
 	{
+		// Deprecation warning
+		if (0 == $id) {
+			dol_syslog(__METHOD__ . " with parameter is deprecated", LOG_WARNING);
+		}
+
 		global $conf,$user,$langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -1252,7 +1276,7 @@ class Product extends CommonObject
                     	$obj->price = $price_result;
                     }
                 }
-				$this->buyprice = $obj->price;                      // \deprecated
+				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
 				$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier

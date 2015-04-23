@@ -154,6 +154,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * @deprecated Use fk_project instead
+	 * @see fk_project
 	 */
 	var $fk_projet;
 
@@ -1642,6 +1643,8 @@ class Contrat extends CommonObject
 	 */
 	function update_statut($user)
 	{
+		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 		// If draft, we keep it (should not happen)
 		if ($this->statut == 0) return 1;
 
@@ -2165,6 +2168,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 * @var string
 	 * @deprecated Use $label instead
+	 * @see label
 	 */
 	public $libelle;
 
@@ -2189,6 +2193,7 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 * @var float
 	 * @deprecated Use $price_ht instead
+	 * @see price_ht
 	 */
 	public $price;
 

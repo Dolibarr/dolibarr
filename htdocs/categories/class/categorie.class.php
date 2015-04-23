@@ -1181,6 +1181,11 @@ class Categorie extends CommonObject
 	 */
 	function containing($id,$type,$mode='object')
 	{
+		// Deprecation warning
+		if (is_numeric($type)) {
+			dol_syslog(__METHOD__ . ': using numeric types is deprecated.', LOG_WARNING);
+		}
+
 		$cats = array();
 
 		$typeid=-1; $table='';
@@ -1241,6 +1246,11 @@ class Categorie extends CommonObject
 	 */
 	function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
+		// Deprecation warning
+		if (is_numeric($type)) {
+			dol_syslog(__METHOD__ . ': using numeric types is deprecated.', LOG_WARNING);
+		}
+
 		$cats = array();
 
 		$typeid=-1;

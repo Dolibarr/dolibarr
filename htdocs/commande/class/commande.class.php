@@ -74,17 +74,15 @@ class Commande extends CommonOrder
 
 	/**
 	 * Status of the order. Check the following constants:
-	 * - STATUS_CANCELED
-	 * - STATUS_DRAFT
-	 * - STATUS_ACCEPTED
-	 * - STATUS_CLOSED
 	 * @var int
+	 * @see Commande::STATUS_CANCELED, Commande::STATUS_DRAFT, Commande::STATUS_ACCEPTED, Commande::STATUS_CLOSED
 	 */
     var $statut;
 	/**
 	 * @deprecated
+	 * @see billed
 	 */
-    var $facturee;		// deprecated
+    var $facturee;
     var $billed;		// billed or not
 
     var $brouillon;
@@ -100,7 +98,11 @@ class Commande extends CommonOrder
     var $fk_delivery_address;
     var $address;
     var $date;				// Date commande
-    var $date_commande;		// Date commande (deprecated)
+	/**
+	 * @deprecated
+	 * @see date
+	 */
+    var $date_commande;
     var $date_livraison;	// Date livraison souhaitee
     var $shipping_method_id;
     var $fk_remise_except;
@@ -116,7 +118,11 @@ class Commande extends CommonOrder
     var $rang;
     var $special_code;
     var $source;			// Origin of order
-    var $note;				// deprecated
+	/**
+	 * @deprecated
+	 * @see note_private, note_public
+	 */
+    var $note;
     var $note_private;
     var $note_public;
     var $extraparams=array();
@@ -1776,7 +1782,7 @@ class Commande extends CommonOrder
      *	@param      int		$filtre_statut      Filter on status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      *
-     *	TODO deprecated, move to Shipping class
+     *	TODO deprecate, move to Shipping class
      */
     function loadExpeditions($filtre_statut=-1)
     {
@@ -1823,7 +1829,7 @@ class Commande extends CommonOrder
      *
      * @return	int		Nb of shipments
      *
-     * TODO deprecated, move to Shipping class
+     * TODO deprecate, move to Shipping class
      */
     function nb_expedition()
     {
@@ -1849,7 +1855,7 @@ class Commande extends CommonOrder
      *	@param      int		$filtre_statut      Filtre sur statut
      *	@return     int                 		0 si OK, <0 si KO
      *
-     *	TODO  deprecated, move to Shipping class
+     *	TODO  deprecate, move to Shipping class
      */
     function livraison_array($filtre_statut=self::STATUS_CANCELED)
     {
@@ -2399,9 +2405,12 @@ class Commande extends CommonOrder
 	 *
 	 * @return     int     <0 if ko, >0 if ok
 	 * @deprecated
+	 * @see classifyBilled()
 	 */
 	function classer_facturee()
 	{
+		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 		return $this->classifyBilled();
 	}
 
@@ -3346,6 +3355,7 @@ class OrderLine extends CommonOrderLine
 	 * Id of parent order
 	 * @var int
 	 * @deprecated Use fk_commande
+	 * @see fk_commande
 	 */
 	public $commande_id;
 
@@ -3367,6 +3377,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * @deprecated
+	 * @see remise_percent, fk_remise_except
 	 */
 	var $remise;
 

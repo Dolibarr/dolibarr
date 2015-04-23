@@ -77,7 +77,21 @@ class Expedition extends CommonObject
 	var $trueSize;
 
 	var $date_delivery;		// Date delivery planed
-	var $date_expedition;	// Date delivery real
+	/**
+	 * @deprecated
+	 * @see date_shipping
+	 */
+	var $date;
+	/**
+	 * @deprecated
+	 * @see date_shipping
+	 */
+	var $date_expedition;
+	/**
+	 * Effective delivery date
+	 * @var int
+	 */
+	public $date_shipping;
 	var $date_creation;
 	var $date_valid;
 
@@ -459,8 +473,8 @@ class Expedition extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO obsolete
-				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO obsolete
+				$this->date                 = $this->db->jdate($obj->date_expedition);	// TODO deprecated
+				$this->date_expedition      = $this->db->jdate($obj->date_expedition);	// TODO deprecated
 				$this->date_shipping        = $this->db->jdate($obj->date_expedition);	// Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
@@ -1708,9 +1722,10 @@ class ExpeditionLigne
 
 	// From llx_commandedet or llx_propaldet
 	var $qty_asked;
-	var $libelle;       // Label produit
-	var $product_desc;  // Description produit
-	var $ref;
+	public $product_ref;
+	public $product_label;
+	public $product_desc;
+
 
 	// Invoicing
 	var $remise_percent;
@@ -1720,6 +1735,24 @@ class ExpeditionLigne
 	var $total_localtax1;   // Total Local tax 1
 	var $total_localtax2;   // Total Local tax 2
 
+	public $fk_origin_line;
+
+	// Deprecated
+	/**
+	 * @deprecated
+	 * @see fk_origin_line
+	 */
+	var $origin_line_id;
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
+	var $ref;
+	/**
+	 * @deprecated
+	 * @see product_label
+	 */
+	var $libelle;
 
     /**
      *	Constructor

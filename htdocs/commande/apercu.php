@@ -129,7 +129,7 @@ if ($id > 0 || ! empty($ref))
 			print '</tr>';
 
 			// Si fichier detail PDF existe
-			// TODO obsolete ?
+			// TODO deprecated ?
 			if (file_exists($filedetail))
 			{
 				print "<tr ".$bc[$var]."><td>Commande detaillee</td>";

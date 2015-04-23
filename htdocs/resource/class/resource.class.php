@@ -606,9 +606,9 @@ class Resource extends CommonObject
      * Fetch all resources available, declared by modules
      * Load available resource in array $this->available_resources
      *
-     * note : deprecated, remplaced by hook getElementResources
-     *
      * @return int 	number of available resources declared by modules
+     * @deprecated, remplaced by hook getElementResources
+     * @see getElementResources()
      */
     function fetch_all_available() {
     	global $conf;

@@ -50,9 +50,21 @@ class Contact extends CommonObject
 	var $zip;
 	var $town;
 
-	var $fk_departement;		// deprecated
-	var $departement_code;		// deprecated
-	var $departement;			// deprecated
+	/**
+	 * @deprecated
+	 * @see state_id
+	 */
+	var $fk_departement;
+	/**
+	 * @deprecated
+	 * @see state_code
+	 */
+	var $departement_code;
+	/**
+	 * @deprecated
+	 * @see state
+	 */
+	var $departement;
 	var $state_id;	        	// Id of department
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
@@ -80,7 +92,11 @@ class Contact extends CommonObject
 	var $birthday;
 	var $default_lang;
     var $note_public;           // Public note
-	var $note;                  // deprecated
+	/**
+	 * @deprecated
+	 * @see note_public, note_private
+	 */
+	var $note;
 	var $note_private;			// Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 

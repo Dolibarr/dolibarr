@@ -52,6 +52,11 @@ class Livraison extends CommonObject
 	var $ref_customer;
 	var $statut;
 
+	/**
+	 * @deprecated
+	 * @see note_public, note_private
+	 */
+	var $note;
 	var $note_public;
 	var $note_private;
 
@@ -1014,10 +1019,8 @@ class Livraison extends CommonObject
 /**
  *  Classe de gestion des lignes de bons de livraison
  */
-class LivraisonLigne
+class LivraisonLigne extends CommonObjectLine
 {
-	var $db;
-
 	// From llx_expeditiondet
 	var $qty;
 	var $qty_asked;
@@ -1027,7 +1030,19 @@ class LivraisonLigne
 	var $origin_id;
 	var $label;       // Label produit
 	var $description;  // Description produit
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
 	var $ref;
+	/**
+	 * @deprecated
+	 * @see product_label;
+	 */
+	var $libelle;
+
+	public $product_ref;
+	public $product_label;
 
 	/**
 	 *	Constructor

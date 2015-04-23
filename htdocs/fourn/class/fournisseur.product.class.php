@@ -42,7 +42,11 @@ class ProductFournisseur extends Product
     var $product_fourn_price_id;  // id of ligne product-supplier
 
     var $id;                      // product id
-    var $fourn_ref;               // deprecated
+	/**
+	 * @deprecated
+	 * @see ref_supplier
+	 */
+    var $fourn_ref;
     var $delivery_time_days;
     var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
     var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
@@ -348,7 +352,8 @@ class ProductFournisseur extends Product
             if ($obj)
             {
             	$this->product_fourn_price_id	= $rowid;
-            	$this->fourn_ref				= $obj->ref_fourn;
+            	$this->fourn_ref				= $obj->ref_fourn; // deprecated
+	            $this->ref_supplier             = $obj->ref_fourn;
             	$this->fourn_price				= $obj->price;
             	$this->fourn_charges            = $obj->charges;
             	$this->fourn_qty                = $obj->quantity;
