@@ -1462,7 +1462,7 @@ class Form
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
 		}
 		$nbassignetouser=count($assignedtouser);
 
