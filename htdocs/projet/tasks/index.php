@@ -38,6 +38,8 @@ if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search
 else $search_status=GETPOST('search_status');
 $search_task_ref=GETPOST('search_task_ref');
 $search_task_label=GETPOST('search_task_label');
+$search_project_user=GETPOST('search_project_user');
+$search_task_user=GETPOST('search_task_user');
 
 
 // Security check
@@ -108,13 +110,34 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 $morewherefilter='';
 if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref, 0, 1);
 if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label, 0, 1);
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, $search_task_user);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
 print '<table class="noborder" width="100%">';
+
+// If the user can view users
+if ($user->rights->user->user->lire)
+{
+	$moreforfilter.=($moreforfilter?' &nbsp; ':'');
+    $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ' ';
+    $moreforfilter.=$form->select_dolusers($search_project_user,'search_project_user',1);
+}
+if ($user->rights->user->user->lire)
+{
+	$moreforfilter.=($moreforfilter?' &nbsp; ':'');
+    $moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ' ';
+    $moreforfilter.=$form->select_dolusers($search_task_user,'search_task_user',1);
+}
+if (! empty($moreforfilter))
+{
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre" colspan="10">';
+    print $moreforfilter;
+    print '</td></tr>';
+}
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';

@@ -562,9 +562,11 @@ class Task extends CommonObject
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
      * @param	string	$morewherefilter	Add more filter into where SQL request
+     * @param	string	$filteronprojuser	Filter on user that is a contact of project
+     * @param	string	$filterontaskuse	Filter on user assigned to task
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='')
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuse=0)
     {
         global $conf;
 
@@ -580,19 +582,25 @@ class Task extends CommonObject
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-            $sql.= " WHERE t.fk_projet = p.rowid";
-            $sql.= " AND p.entity = ".$conf->entity;
-            if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-            if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
+            $sql.= " WHERE p.entity = ".$conf->entity;
+            $sql.= " AND t.fk_projet = p.rowid";
         }
         if ($mode == 1)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             $sql.= " WHERE p.entity = ".$conf->entity;
-            if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-            if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         }
+        if ($filteronprojuser)
+        {
+			// TODO
+        }
+        if ($filterontaskuser)
+        {
+			// TODO
+        }
+        if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+        if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
         if ($morewherefilter) $sql.=" AND (".$morewherefilter.")";
