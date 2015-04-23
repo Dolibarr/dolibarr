@@ -2477,6 +2477,8 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 						min-height: 20px;
 						}
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
+table.cal_event td.cal_event { padding: 4px 4px !important; }
+table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -moz-padding-start: 0px; -webkit-padding-start: 0px; }
 li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
