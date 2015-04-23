@@ -4957,9 +4957,10 @@ function dol_getmypid()
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
  * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
+ * @param	integer			$nofinaland	Do now output the final 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $numeric=0)
+function natural_search($fields, $value, $numeric=0, $nofinaland)
 {
     global $db,$langs;
 
@@ -5014,7 +5015,7 @@ function natural_search($fields, $value, $numeric=0)
         if ($newres) $res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') .$newres . ($i2 > 1 ? ')' : '');
         $j++;
     }
-    $res = " AND (" . $res . ")";
+    $res = ($nofinaland?"":" AND ")."(" . $res . ")";
     //print 'xx'.$res.'yy';
     return $res;
 }

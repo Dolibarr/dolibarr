@@ -36,6 +36,8 @@ $id=GETPOST('id','int');
 $search_project=GETPOST('search_project');
 if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search_status=1;
 else $search_status=GETPOST('search_status');
+$search_task_ref=GETPOST('search_task_ref');
+$search_task_label=GETPOST('search_task_label');
 
 
 // Security check
@@ -56,8 +58,18 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 {
 	$search_project="";
 	$search_status="";
+	$search_task_ref="";
+	$search_task_label="";
 }
 if (empty($search_status)) $search_status=1;
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -93,7 +105,10 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status);
+$morewherefilter='';
+if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref, 0, 1);
+if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label, 0, 1);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
@@ -126,7 +141,13 @@ $listofstatus=array(-1=>'&nbsp;');
 foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
 print $form->selectarray('search_status', $listofstatus, $search_status);
 print '</td>';
-print '<td class="liste_titre" colspan="7">';
+print '<td class="liste_titre">';
+print '<input type="text" class="flat" name="search_task_ref" value="'.$search_task_ref.'" size="4">';
+print '</td>';
+print '<td class="liste_titre">';
+print '<input type="text" class="flat" name="search_task_label" value="'.$search_task_label.'" size="8">';
+print '</td>';
+print '<td class="liste_titre" colspan="5">';
 print '&nbsp;';
 print '<td class="liste_titre nowrap" align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
