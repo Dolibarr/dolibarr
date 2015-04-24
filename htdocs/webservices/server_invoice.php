@@ -102,7 +102,6 @@ $server->wsdl->addComplexType(
     	'total' => array('name'=>'total','type'=>'xsd:double'),
         'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
         'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
-        'payment_mode_id' => array('name'=>'payment_mode_id','type'=>'xsd:string'),
         // From product
         'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
         'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
@@ -160,6 +159,7 @@ $server->wsdl->addComplexType(
         'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
         'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
+    	'payment_mode_id' => array('name'=>'payment_mode_id','type'=>'xsd:string'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
         'total_net' => array('name'=>'type','type'=>'xsd:double'),
         'total_vat' => array('name'=>'type','type'=>'xsd:double'),
