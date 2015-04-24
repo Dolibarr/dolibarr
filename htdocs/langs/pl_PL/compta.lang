@@ -29,6 +29,7 @@ ReportTurnover=Obrót
 PaymentsNotLinkedToInvoice=Płatności związane z wszelkich faktur, więc nie są związane z jakąkolwiek osobą trzecią
 PaymentsNotLinkedToUser=Płatności związane z dowolnego użytkownika
 Profit=Zysk
+AccountingResult=Accounting result
 Balance=Saldo
 Debit=Rozchody
 Credit=Kredyt

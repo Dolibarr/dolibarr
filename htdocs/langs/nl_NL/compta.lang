@@ -29,6 +29,7 @@ ReportTurnover=Omzet
 PaymentsNotLinkedToInvoice=Betalingen niet gekoppeld aan een factuur, dus niet gekoppeld aan een derde partij
 PaymentsNotLinkedToUser=Betalingen niet gekoppeld aan een gebruiker
 Profit=Winst
+AccountingResult=Accounting result
 Balance=Saldo
 Debit=Debet
 Credit=Credit

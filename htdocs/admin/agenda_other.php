@@ -133,7 +133,7 @@ print '<tr '.$bc[$var].'>'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right" class="nowrap">'."\n";
-print $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), 1);
+$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), 1);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS

@@ -29,6 +29,7 @@ ReportTurnover=Obrat
 PaymentsNotLinkedToInvoice=Platby nesúvisiace s akoukoľvek faktúru, takže nie sú spojené žiadne tretej strane
 PaymentsNotLinkedToUser=Platby nesúvisiace všetkých užívateľov
 Profit=Zisk
+AccountingResult=Accounting result
 Balance=Zostatok
 Debit=Debet
 Credit=Úver

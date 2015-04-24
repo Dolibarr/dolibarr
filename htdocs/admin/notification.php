@@ -33,6 +33,7 @@ $langs->load("orders");
 $langs->load("propal");
 $langs->load("bills");
 $langs->load("errors");
+$langs->load("mails");
 
 // Security check
 if (!$user->admin)
@@ -76,7 +77,9 @@ if ($action == 'setvalue' && $user->admin)
  *	View
  */
 
-llxHeader();
+$form=new Form($db);
+
+llxHeader('',$langs->trans("NotificationSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
@@ -132,9 +135,19 @@ foreach($listofnotifiedevents as $notifiedevent)
     print '<td>'.$elementLabel.'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
     print '<td>'.$label.'</td>';
+    print '<td>';
     $param='NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'];
-    print '<td><input type="email" size="32" name="'.$param.'" value="'.dol_escape_htmltag(GETPOST($param)?GETPOST($param,'alpha'):$conf->global->$param).'">';
-	if (! empty($conf->global->$param) && ! isValidEmail($conf->global->$param)) print ' '.img_warning($langs->trans("ErrorBadEMail"));
+    $value=GETPOST($param)?GETPOST($param,'alpha'):$conf->global->$param;
+    $s='<input type="text" size="32" name="'.$param.'" value="'.dol_escape_htmltag($value).'">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
+    $arrayemail=explode(',',$value);
+	$showwarning=0;
+	foreach($arrayemail as $key=>$valuedet)
+	{
+		$valuedet=trim($valuedet);
+		if (! empty($valuedet) && ! isValidEmail($valuedet)) $showwarning++;
+	}
+    if ((! empty($conf->global->$param)) && $showwarning) $s.=' '.img_warning($langs->trans("ErrorBadEMail"));
+    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
     print '</td>';
     print '</tr>';
 }

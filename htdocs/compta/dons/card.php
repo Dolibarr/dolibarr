@@ -500,7 +500,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	print $form->form_modes_reglement(null, $don->modepaiementid,'none');
+	$form->form_modes_reglement(null, $don->modepaiementid,'none');
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';

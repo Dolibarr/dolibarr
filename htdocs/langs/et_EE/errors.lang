@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Mooduli seadistamine paistab olevat lõpule viimata.
 ErrorBadMask=Maski viga
 ErrorBadMaskFailedToLocatePosOfSequence=Viga: mask on järjekorranumbrita
 ErrorBadMaskBadRazMonth=Viga: halb lähteväärtus
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Viga: vali vähemalt üks sissekanne
 ErrorProductWithRefNotExist=Toodet viitega '<i>%s</i>' ei ole olemas
 ErrorDeleteNotPossibleLineIsConsolidated=Kustutamine ei ole võimalik, kuna kirje on seotud juba vastavusse viidud pangaülekandega
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Kohustuslikud seadistusparameetrid on määratlemata

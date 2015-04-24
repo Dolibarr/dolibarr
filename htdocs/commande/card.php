@@ -271,8 +271,7 @@ if (empty($reshook))
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0)
-					$error ++;
+				if ($ret < 0) $error++;
 
 				if (! $error)
 				{
@@ -365,10 +364,10 @@ if (empty($reshook))
 			} else {
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-				if ($ret < 0)
-					$error ++;
+				if ($ret < 0) $error++;
 
-				if (! $error) {
+				if (! $error)
+				{
 					$object_id = $object->create($user);
 
 					// If some invoice's lines already known
@@ -1124,8 +1123,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)

@@ -42,3 +42,5 @@ NoneOrBatchFileNeverRan=Ingen eller parti <b>%s</b> sprang inte nyligen
 SentToSuppliers=Skickas till leverantörer
 ListOfSupplierOrders=Lista över leverantörsorder
 MenuOrdersSupplierToBill=Leverantörs order att fakturera
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list

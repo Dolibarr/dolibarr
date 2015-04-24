@@ -14,8 +14,8 @@ URLToLaunchCronJobs=Gerekliyse, Cron işlerini denetleyen ve başlatan İnternet
 OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
 KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
 FileToLaunchCronJobs=Cron işlerini başlatacak komut satırı
-CronExplainHowToRunUnix=Unix ortamında her dakika Komut satırını çalıştırmak için cron sekmesini kullanmalısınız
-CronExplainHowToRunWin=Microsoft (tm) Windows ortamında her dakika Komut satırı çalıştırmak için Planlı görev araçlarını kullanabilirsiniz
+CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir çalıştırmak için kron sekmesi girişini kullanmalısınız
+CronExplainHowToRunWin=Mikrosot (tm) Windows ortamında komut satırını her 5 dakikada bir çalıştırmak için Planlanmış görev araçlarını kullanmalısınız
 # Menu
 CronJobs=Planlı işler
 CronListActive=Etkin/programlı işler listesi

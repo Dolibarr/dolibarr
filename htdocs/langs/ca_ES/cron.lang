@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL per llançar les tasques automàtiques
 OrToLaunchASpecificJob=O per llançar una tasca específica
 KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques automàtiques
 FileToLaunchCronJobs=Ordre per llançar les tasques automàtiques
-CronExplainHowToRunUnix=En un entorn Unix pot parametritzar crontab per executar aquesta comanda cada minut
-CronExplainHowToRunWin=En un entorn Microsoft (tm) Windows pot utilitzar el planificador de tasques per llançar aquesta comanda cada minut
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Tasques programades
 CronListActive=List of active/scheduled jobs

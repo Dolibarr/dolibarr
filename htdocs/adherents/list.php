@@ -152,7 +152,7 @@ $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
-	if ($resql) $nbtotalofrecords = $db->num_rows($result);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
 }
 // Add order and limit

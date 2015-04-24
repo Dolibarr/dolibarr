@@ -361,6 +361,7 @@ if (! empty($conf->use_javascript_ajax))
 		foreach ($showextcals as $val)
 		{
 			$htmlname = dol_string_nospecial($val['name']);
+			$htmlname = dol_string_nospecial($htmlname,'_',array("\.","#"));
 			$s.='<script type="text/javascript">' . "\n";
 			$s.='jQuery(document).ready(function () {' . "\n";
 			$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
@@ -1144,7 +1145,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 	$ponct=($event->date_start_in_calendar == $event->date_end_in_calendar);
 
                     // Define $color (Hex string like '0088FF') and $cssclass of event
-                    $color=-1; $cssclass=''; $colorindex=-1;
+                    $color=-1; $colorindex=-1;
        				if (in_array($user->id, $keysofuserassigned))
 					{
 						$nummytasks++; $cssclass='family_mytasks';

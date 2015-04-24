@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Opsætning af modulet ser ud til at være uncomplete
 ErrorBadMask=Fejl på maske
 ErrorBadMaskFailedToLocatePosOfSequence=Fejl, maske uden loebenummeret
 ErrorBadMaskBadRazMonth=Fejl, dårlig reset værdi
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Fejl. Vælg mindst én post.
 ErrorProductWithRefNotExist=Produkt med reference <i>'%s'</i> findes ikke
 ErrorDeleteNotPossibleLineIsConsolidated=Slet ikke muligt, fordi record er forbundet med en bank transation der er forsonet
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Empty result '%s'
 ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

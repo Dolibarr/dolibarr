@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Inställning av modul ser ut att vara ofullständig.
 ErrorBadMask=Fel på masken
 ErrorBadMaskFailedToLocatePosOfSequence=Fel, mask utan löpnummer
 ErrorBadMaskBadRazMonth=Fel, dåligt återställningsvärde
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Error. Välj minst en post.
 ErrorProductWithRefNotExist=Produkt med referens <i>&quot;%s&quot;</i> existerar inte
 ErrorDeleteNotPossibleLineIsConsolidated=Bort icke möjlig, eftersom post är kopplad till en bank Kontoinformation som blidkades
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Tomt resultat '%s'
 ErrorPriceExpression22=Negativt resultat '%s'
 ErrorPriceExpressionInternal=Internt fel '%s'
 ErrorPriceExpressionUnknown=Okänt fel '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriska inställningsparametrarna har ännu inte definierat

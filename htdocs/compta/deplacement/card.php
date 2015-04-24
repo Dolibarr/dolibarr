@@ -252,7 +252,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-    print $form->select_type_fees(GETPOST('type','int'),'type',1);
+    $form->select_type_fees(GETPOST('type','int'),'type',1);
     print '</td></tr>';
 
     print "<tr>";
@@ -344,7 +344,7 @@ else if ($id)
             // Type
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-            print $form->select_type_fees(GETPOST('type','int')?GETPOST('type','int'):$object->type,'type',0);
+            $form->select_type_fees(GETPOST('type','int')?GETPOST('type','int'):$object->type,'type',0);
             print '</td></tr>';
 
             // Who

@@ -488,6 +488,12 @@ function createProductOrService($authentication,$product)
         $error++; $errorcode='KO'; $errorlabel="You must choose between price or price_net to provide price.";
     }
 
+    if ($product['barcode'] && !$product['barcode_type'])
+    {
+	$errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+    }
+
+
 
     if (! $error)
     {
@@ -508,6 +514,12 @@ function createProductOrService($authentication,$product)
         $newobject->tva_tx=$product['vat_rate'];
         $newobject->price_base_type=$product['price_base_type'];
         $newobject->date_creation=$now;
+
+	if ($product['barcode']) 
+	{
+		$newobject->barcode = $product['barcode'];
+		$newobject->barcode_type = $product['barcode_type'];
+	}
 
         $newobject->stock_reel=$product['stock_real'];
         $newobject->pmp=$product['pmp'];
@@ -606,6 +618,11 @@ function updateProductOrService($authentication,$product)
     }
 
 
+    if ($product['barcode'] && !$product['barcode_type'])
+    {
+        $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+    }
+  
     if (! $error)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -627,6 +644,12 @@ function updateProductOrService($authentication,$product)
         $newobject->tva_tx=$product['vat_rate'];
         $newobject->price_base_type=$product['price_base_type'];
         $newobject->date_creation=$now;
+
+        if ($product['barcode']) 
+        {
+                $newobject->barcode = $product['barcode'];
+                $newobject->barcode_type = $product['barcode_type'];
+        }
 
         $newobject->stock_reel=$product['stock_real'];
         $newobject->pmp=$product['pmp'];

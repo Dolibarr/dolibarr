@@ -219,7 +219,7 @@ if ($conf->facture->enabled)
 		print '<input type="hidden" name="constname" value="ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS">';
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
-		print $form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'constvalue_ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
+		$form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'constvalue_ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 		print '</td><td align="center" width="80">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 		print '</td>';

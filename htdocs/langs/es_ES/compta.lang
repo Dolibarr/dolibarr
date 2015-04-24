@@ -29,6 +29,7 @@ ReportTurnover=Volumen de ventas
 PaymentsNotLinkedToInvoice=Pagos vinculados a ninguna factura, por lo que ninguún tercero
 PaymentsNotLinkedToUser=Pagos no vinculados a un usuario
 Profit=Beneficio
+AccountingResult=Resultado contable
 Balance=Saldo
 Debit=Debe
 Credit=Haber

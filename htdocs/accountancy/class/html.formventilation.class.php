@@ -50,10 +50,6 @@ class FormVentilation extends Form
 	 */
 	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey='')
 	{
-		global $langs;
-
-		$date_array = array ();
-
 		$sql  = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
 
@@ -100,7 +96,7 @@ class FormVentilation extends Form
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array())
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$out = '';
 
@@ -161,7 +157,7 @@ class FormVentilation extends Form
 	 */
 	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array())
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$out = '';
 
@@ -217,7 +213,7 @@ class FormVentilation extends Form
 	 */
 	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array())
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$out = '';
 

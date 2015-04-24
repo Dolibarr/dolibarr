@@ -14,8 +14,8 @@ URLToLaunchCronJobs=URL để kiểm tra và khởi động công việc cron n�
 OrToLaunchASpecificJob=Hoặc để kiểm tra và khởi động một công việc cụ thể
 KeyForCronAccess=Khóa bảo mật cho URL để khởi động công việc cron
 FileToLaunchCronJobs=Dòng lệnh để khởi động công việc cron
-CronExplainHowToRunUnix=Về môi trường Unix bạn nên sử dụng crontab để chạy dòng lệnh mỗi phút
-CronExplainHowToRunWin=Trên Microsoft (tm) Windows environement bạn có thể sử dụng công cụ nhiệm vụ theo lịch trình để chạy dòng lệnh mỗi phút
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 # Menu
 CronJobs=Việc theo lịch trình
 CronListActive=List of active/scheduled jobs

@@ -58,8 +58,9 @@ OrderSentByEMail=Đơn đặt hàng %s gửi Thư điện tử
 InvoiceSentByEMail=Hóa đơn của khách hàng %s gửi Thư điện tử
 SupplierOrderSentByEMail=Để nhà cung cấp %s gửi Thư điện tử
 SupplierInvoiceSentByEMail=Nhà cung cấp hóa đơn %s gửi bằng thư điện tử
-ShippingSentByEMail=Vận chuyển %s gửi thư điện tử
-ShippingValidated= Vận chuyển %s xác nhận
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Bên thứ ba tạo ra
 DateActionPlannedStart= Ngày bắt đầu lên kế hoạch
 DateActionPlannedEnd= Ngày kết thúc kế hoạch
@@ -68,7 +69,7 @@ DateActionDoneEnd= Bất ngày cuối
 DateActionStart= Ngày bắt đầu
 DateActionEnd= Ngày kết thúc
 AgendaUrlOptions1=Bạn cũng có thể thêm các thông số sau đây để lọc đầu ra:
-AgendaUrlOptions2=<b>login =%s</b> ​​để hạn chế sản lượng để hành động được tạo ra bởi, phân định hoặc thực hiện bằng cách sử dụng <b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>Logina =%s</b> ​​để hạn chế sản lượng để hành động thuộc sở hữu của một người dùng <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> ​​để hạn chế sản lượng để hành động được gán cho người dùng <b>%s</b>.
 AgendaUrlOptionsProject=<b>dự án = PROJECT_ID</b> để hạn chế sản lượng để hành động liên quan đến dự án <b>PROJECT_ID.</b>

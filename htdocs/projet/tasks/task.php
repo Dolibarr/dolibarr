@@ -91,12 +91,15 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
-		$result=$object->update($user);
-
-		if ($result < 0)
+		if (! $error)
 		{
-		    setEventMessages($object->error,$object->errors,'errors');
+			$result=$object->update($user);
+			if ($result < 0)
+			{
+			    setEventMessages($object->error,$object->errors,'errors');
+			}
 		}
 	}
 	else

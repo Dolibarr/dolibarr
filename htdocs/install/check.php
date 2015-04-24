@@ -531,9 +531,11 @@ $("div#AShowChoices a").click(function() {
 
 });
 
+/*
 $(".runupgrade").click(function() {
 	return confirm("'.dol_escape_js($langs->transnoentitiesnoconv("WarningUpgrade"), 0, 1).'");
 });
+*/
 
 </script>';
 

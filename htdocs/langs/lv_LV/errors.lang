@@ -91,6 +91,8 @@ ErrorModuleSetupNotComplete=Setup moduļa izskatās, ka uncomplete. Iet uz Setup
 ErrorBadMask=Kļūda masku
 ErrorBadMaskFailedToLocatePosOfSequence=Kļūda, maska ​​bez kārtas numuru
 ErrorBadMaskBadRazMonth=Kļūdas, slikta reset vērtība
+ErrorMaxNumberReachForThisMask=Max number reach for this mask
+ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=Kļūda. Izvēlieties vismaz vienu ierakstu.
 ErrorProductWithRefNotExist=Preces ar atsauci '<i>%s</i>' neeksistē
 ErrorDeleteNotPossibleLineIsConsolidated=Izdzēst nav iespējams, jo ieraksts ir saistīts ar bankas darījumu summa, kas tiek conciliated
@@ -156,6 +158,8 @@ ErrorPriceExpression21=Nav rezultāta '%s'
 ErrorPriceExpression22=Negatīvs rezultāts '%s'
 ErrorPriceExpressionInternal=Iekšēja kļūda '%s' 
 ErrorPriceExpressionUnknown=Nezināma kļūda '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas

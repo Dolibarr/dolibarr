@@ -155,6 +155,7 @@ MigrationFinished=Muuttoliike valmis
 LastStepDesc=<strong>Viimeinen askel:</strong> Määritä tässä käyttäjätunnuksen ja salasanan aiot käyttää yhteyden ohjelmisto. Älä löysä tämä on tilin hallinnoida kaikkia muita.
 ActivateModule=Aktivoi moduuli %s
 ShowEditTechnicalParameters=Klikkaa tästä näyttääksesi/muuttaaksesi edistyneemmät parametrit (asiantuntija tila)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Päivitä aika sekunneissa
 MigrationActioncommElement=Päivitä tiedot toimista
 MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
 MigrationCategorieAssociation=Kategorioiden siirto 
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Näytä ei saatavilla olevat valinnat
 HideNotAvailableOptions=Piilota ei saatavilla olevat valinnat

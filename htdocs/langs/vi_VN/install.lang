@@ -155,6 +155,7 @@ MigrationFinished=Di cư đã hoàn thành
 LastStepDesc=<strong>Bước cuối cùng:</strong> Xác định đây đăng nhập và mật khẩu bạn có kế hoạch sử dụng để kết nối với phần mềm. Đừng mất này vì nó là tài khoản để quản lý tất cả những người khác.
 ActivateModule=Kích hoạt module %s
 ShowEditTechnicalParameters=Click vào đây để hiển thị các thông số tiên tiến / chỉnh sửa (chế độ chuyên môn)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 
 #########
 # upgrade
@@ -206,6 +207,7 @@ MigrationProjectTaskTime=Cập nhật dành thời gian trong vài giây
 MigrationActioncommElement=Cập nhật dữ liệu về các hoạt động
 MigrationPaymentMode=Di chuyển dữ liệu cho phương thức thanh toán
 MigrationCategorieAssociation=Di chuyển các loại
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Hiển thị tùy chọn không có sẵn
 HideNotAvailableOptions=Ẩn các tùy chọn không có sẵn

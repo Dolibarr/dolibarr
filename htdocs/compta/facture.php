@@ -563,10 +563,12 @@ if (empty($reshook))
 			// Boucle sur chaque taux de tva
 			$i = 0;
 			foreach ($object->lines as $line) {
-				$amount_ht [$line->tva_tx] += $line->total_ht;
-				$amount_tva [$line->tva_tx] += $line->total_tva;
-				$amount_ttc [$line->tva_tx] += $line->total_ttc;
-				$i ++;
+				if($line->total_ht!=0) { // no need to create discount if amount is null
+					$amount_ht [$line->tva_tx] += $line->total_ht;
+					$amount_tva [$line->tva_tx] += $line->total_tva;
+					$amount_ttc [$line->tva_tx] += $line->total_ttc;
+					$i ++;
+				}
 			}
 
 			// Insert one discount by VAT rate category
@@ -583,6 +585,7 @@ if (empty($reshook))
 			$discount->fk_facture_source = $object->id;
 
 			$error = 0;
+
 			foreach ($amount_ht as $tva_tx => $xxx) {
 				$discount->amount_ht = abs($amount_ht [$tva_tx]);
 				$discount->amount_tva = abs($amount_tva [$tva_tx]);
@@ -633,7 +636,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-		if ($ret < 0) $error ++;
+		if ($ret < 0) $error++;
 
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
@@ -1673,8 +1676,7 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
 			// Actions on extra fields (by external module or standard code)
@@ -2733,7 +2735,7 @@ if ($action == 'create')
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
 		{
-			if ($object->statut == 0 && $object->type != TYPE_CREDIT_NOTE && $object->type != TYPE_DEPOSIT)
+			if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT)
 				print ' (' . $addabsolutediscount . ')<br>';
 			else
 				print '. ';
