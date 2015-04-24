@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=ソースとターゲットの銀行口座は異�
 ErrorBadThirdPartyName=サードパーティの名前の値が正しくありません
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=顧客コードの不正な構文
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=顧客コードが必要です
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=顧客コードは既に使用され
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascriptがこの機能が動作しているた�
 ErrorPasswordsMustMatch=両方入力したパスワードは、互いに一致している必要があります
 ErrorContactEMail=技術的なエラーが発生しました。 、次の電子メール<b>%s</b>に管理者に連絡してenはエラーコードメッセージで<b>%s、</b>またはこのページの画面コピーを追加することにより、さらに優れたを提供してください。
 ErrorWrongValueForField=フィールド番号<b>%s</b>の間違った値（値<b>'%s'は</b>正規表現のルール<b>%s</b>一致<b>し</b>ません）
-ErrorFieldValueNotIn=フィールド番号<b>%s</b>の間違った値（値<b>'%s'は、</b>テーブルの<b>%s</b>のフィールド<b>%s</b>に使用可能な値ではありません）
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=フィールド番号<b>%s</b>のために間違った値（値<b>&quot;%s&quot;は%s</b>既存のREFではありません）
 ErrorsOnXLines=<b>%s</b>ソース行のエラー
 ErrorFileIsInfectedWithAVirus=ウイルス対策プログラムがファイルを検証することができませんでした（ファイルがウイルスに感染されるかもしれません）
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

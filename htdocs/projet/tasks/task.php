@@ -110,17 +110,14 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
 {
-	if ($object->fetch($id,$ref) >= 0 )
+	if ($object->fetch($id,$ref) >= 0)
 	{
-		$result=$projectstatic->fetch($object->fk_projet);
-		if (! empty($projectstatic->socid))
-		{
-			$projectstatic->societe->fetch($projectstatic->socid);
-		}
+		$result=$projectstatic->fetch($object->fk_project);
+		$projectstatic->fetch_thirdparty();
 
 		if ($object->delete($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id);
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
 			exit;
 		}
 		else

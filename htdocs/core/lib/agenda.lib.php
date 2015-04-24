@@ -140,10 +140,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		if (empty($conf->dol_use_jmobile)) print ' - ';
 		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("AgendaShowBirthdayEvents").' <input type="checkbox" id="check_birthday" name="check_birthday"></td></tr>';
-		print '</table>';
-		print '</td>';
 	}
 
 	// Hooks

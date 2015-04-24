@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Dodavatelé
-Supplier=Dodavatel
 AddSupplier=Create a supplier
 SupplierRemoved=Dodavatel odstraní
 SuppliersInvoice=Dodavatelé faktura
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Dodavatel faktury a platby
 ExportDataset_fournisseur_3=Dodavatel objednávky a objednávka linky
 ApproveThisOrder=Schválit tuto objednávku
 ConfirmApproveThisOrder=Jste si jisti, že chcete schválit pořadí <b>%s?</b>
-DenyingThisOrder=Popírat tuto objednávku
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Jste si jisti, že chcete popírat objednávky <b>%s?</b>
 ConfirmCancelThisOrder=Jste si jisti, že chcete zrušit tuto objednávku <b>%s?</b>
 AddCustomerOrder=Vytvoření objednávky zákazníka
@@ -44,3 +43,4 @@ ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

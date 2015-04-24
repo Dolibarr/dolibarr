@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Leverandører
-Supplier=Leverandør
 AddSupplier=Create a supplier
 SupplierRemoved=Leverandør fjernet
 SuppliersInvoice=Leverandører faktura
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Leverandør fakturaer og betalinger
 ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Godkende denne ordre
 ConfirmApproveThisOrder=Er du sikker på at du vil godkende denne ordre?
-DenyingThisOrder=Benægte denne ordre
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Er du sikker på at du vil benægte denne ordre?
 ConfirmCancelThisOrder=Er du sikker på du vil annullere denne ordre?
 AddCustomerOrder=Opret kunde for
@@ -44,3 +43,4 @@ ListOfSupplierOrders=Liste over leverandør ordrer
 MenuOrdersSupplierToBill=Leverandør ordrer der kan faktureres
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Tedarikçiler
-Supplier=Tedarikçi
 AddSupplier=Bir tedarikçi oluştur
 SupplierRemoved=Tedarikçi kaldırıldı
 SuppliersInvoice=Tedarikçi faturası
@@ -44,3 +43,4 @@ ListOfSupplierOrders=Tedarikçi siparişleri listesi
 MenuOrdersSupplierToBill=Faturalanacak tedarikçi siparişleri
 NbDaysToDelivery=Gün olarak teslim süresi
 DescNbDaysToDelivery=Sipariş ürün listesindeki en uzun teslim süresi
+UseDoubleApproval=İkili onay kullanın (ikinci onay özel izinli herhangi bir kullanıcı tarafından yapılabilir)

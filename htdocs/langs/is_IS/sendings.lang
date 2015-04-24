@@ -2,6 +2,7 @@
 RefSending=Tilv. sendingunni
 Sending=Sendingunni
 Sendings=Sendingar
+AllSendings=All Shipments
 Shipment=Sendingunni
 Shipments=Sendingar
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Magn röð
 QtyShipped=Magn flutt
 QtyToShip=Magn til skip
 QtyReceived=Magn móttekin
-KeepToShip=Halda til skip
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Aðrar sendingar fyrir þessari röð
 DateSending=Date senda til
 DateSendingShort=Date senda til

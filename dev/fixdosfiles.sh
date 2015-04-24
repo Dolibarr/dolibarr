@@ -10,6 +10,7 @@
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
+    echo "Detect and fix files ending with bad ending chars (must be LF)"
 	echo "Usage: fixdosfiles.sh [list|fix]"
 fi
 

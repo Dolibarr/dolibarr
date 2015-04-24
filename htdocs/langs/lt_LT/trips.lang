@@ -1,22 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-Trip=Išjungimas
-Trips=Išjungimai
-TripsAndExpenses=Išjungimai ir išlaidos
-TripsAndExpensesStatistics=Išjungimų ir išlaidų statistika
-TripCard=Išjungimo kortelė
-AddTrip=Pridėti išjungimą
-ListOfTrips=Išjungimų sąrašas
+ExpenseReport=Išlaidų ataskaita
+ExpenseReports=Išlaidų ataskaitos
+Trip=Išlaidų ataskaita
+Trips=Išlaidų ataskaitos
+TripsAndExpenses=Išlaidų ataskaitos
+TripsAndExpensesStatistics=Išlaidų ataskaitų statistika
+TripCard=Išlaidų ataskaitos kortelė
+AddTrip=Sukurti išlaidų ataskaitą
+ListOfTrips=Išlaidų ataskaitų sąrašas
 ListOfFees=Įmokų sąrašas
-NewTrip=Naujas išjungimas
-CompanyVisited=aplankyta įmonė/organizacija
+NewTrip=Nauja išlaidų ataskaita
+CompanyVisited=Aplankyta įmonė/organizacija
 Kilometers=Kilometrų
-FeesKilometersOrAmout=Kilometrų kiekis
-DeleteTrip=Ištrinti išjungimą
-ConfirmDeleteTrip=Ar tikrai norite ištrinti šį išjungimą ?
+FeesKilometersOrAmout=Suma arba Kilometrai
+DeleteTrip=Ištrinti išlaidų ataskaitą
+ConfirmDeleteTrip=Ar tikrai norite ištrinti šią išlaidų ataskaitą ?
+ListTripsAndExpenses=Išlaidų ataskaitų sąrašas
+ListToApprove=Laukiama patvirtinimo
+ExpensesArea=Išlaidų ataskaitų sritis
+SearchATripAndExpense=Išlaidų ataskaitos paieška
+ClassifyRefunded=Klasifikuoti "Grąžinta"
+ExpenseReportWaitingForApproval=Nauja išlaidų ataskaita buvo pateikta patvirtinimui
+ExpenseReportWaitingForApprovalMessage=Nauja išlaidų ataskaita buvo pateikta ir laukia patvirtinimo.\n- Vartotojas: %s\n- Laikotarpis:%s \nSpauskite čia norėdami patvirtinti: %s
+TripId=Išlaidų ataskaitos ID
+AnyOtherInThisListCanValidate=Asmuo informuojamas patvirtinimui.
+TripSociete=Informacijos įmonė
+TripSalarie=Informacijos vartotojas
+TripNDF=Informacijos išlaidų ataskaiata
+DeleteLine=Ištrinti išlaidų taskaitos eilutę
+ConfirmDeleteLine=Ar tikrai norite ištrinti šią eilutę ?
+PDFStandardExpenseReports=Standartinis šablonas PDF dokumento išlaidų ataskaitoje generavimui
+ExpenseReportLine=Išlaidų ataskaitos eilutė
 TF_OTHER=Kitas
+TF_TRANSPORTATION=Transportas
 TF_LUNCH=Pietūs
-TF_TRIP=Išjungimas
-ListTripsAndExpenses=Išjungimų ir išlaidų sąrašas
-ExpensesArea=Išjungimų ir išlaidų sritis
-SearchATripAndExpense=Ieškoti išjungimo ir išlaidų
-ClassifyRefunded=Classify 'Refunded'
+TF_METRO=Metro
+TF_TRAIN=Traukinys
+TF_BUS=Autobusas
+TF_CAR=Automobilis
+TF_PEAGE=Mokamas
+TF_ESSENCE=Kuras
+TF_HOTEL=Hostelis
+TF_TAXI=Taksi
+
+ErrorDoubleDeclaration=Jūs deklaravote kitą išlaidų ataskaitą panašiame laiko periode.
+ListTripsAndExpenses=Išlaidų ataskaitų sąrašas
+AucuneNDF=Pagal šį kriterijų nerasta išlaidų ataskaitos
+AucuneLigne=Dar nėra deklaruotos išlaidų ataskaitos
+AddLine=Pridėti eilutę
+AddLineMini=Pridėti
+
+Date_DEBUT=Laikotarpio pradžia
+Date_FIN=Laikotarpio pabaiga
+ModePaiement=Mokėjimo būdas
+Note=Pranešimas
+Project=Projektas
+
+VALIDATOR=Vartotojas patvirtinimo informavimui
+VALIDOR=Patvirtinta
+AUTHOR=Įrašyta
+AUTHORPAIEMENT=Apmokėta
+REFUSEUR=Atmesta
+CANCEL_USER=Nutraukta
+
+MOTIF_REFUS=Priežastis
+MOTIF_CANCEL=Priežastis
+
+DATE_REFUS=Atmetimo data
+DATE_SAVE=Patvirtinimo data
+DATE_VALIDE=Patvirtinimo data
+DATE_CANCEL=Nutraukimo data
+DATE_PAIEMENT=Mokėjimo data
+
+TO_PAID=Mokėti
+BROUILLONNER=Atidaryti iš naujo
+SendToValid=Siųsti patvirtinimui
+ModifyInfoGen=Redaguoti
+ValidateAndSubmit=Įvertinti ir pateikti tvirtinimui
+
+NOT_VALIDATOR=Jums neleidžiama patvirtinti šią išlaidų ataskaitą
+NOT_AUTHOR=Jūs nesate šios išlaidų ataskaitos autorius. Operacija nutraukta.
+
+RefuseTrip=Atmesti išlaidų ataskaitą
+ConfirmRefuseTrip=Ar tikrai norite atmesti šią išlaidų ataskaitą ?
+
+ValideTrip=Patvirtinti išlaidų ataskaitą
+ConfirmValideTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
+
+PaidTrip=Apmokėti išlaidų ataskaitą
+ConfirmPaidTrip=Ar tikrai norite pakeisti šios išlaidų ataskaitos būklę į "Apmokėta" ?
+
+CancelTrip=Nutraukti išlaidų ataskaitą
+ConfirmCancelTrip=Ar tikrai norite nutraukti šią išlaidų ataskaitą ?
+
+BrouillonnerTrip=Išlaidų ataskaitos būklę grąžinti į "Projektas"
+ConfirmBrouillonnerTrip=Ar tikrai norite grąžinti šios išlaidų ataskaitos būklę į "Projektas" ?
+
+SaveTrip=Patvirtinti išlaidų ataskaitą
+ConfirmSaveTrip=Ar tikrai norite patvirtinti šią išlaidų ataskaitą ?
+
+NoTripsToExportCSV=Už šį laikotarpį nėra išlaidų ataskaitų eksportui

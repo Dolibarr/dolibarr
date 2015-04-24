@@ -8,10 +8,13 @@ SharedProject=مشاريع مشتركة
 PrivateProject=اتصالات من المشروع
 MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
 ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
+ProjectsPublicTaskDesc=This view presents all projects and tasks you are allowed to read.
 ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
 MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
+OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=مشاريع المنطقة
 NewProject=مشروع جديد
 AddProject=إنشاء مشروع
@@ -29,6 +32,8 @@ NoProject=لا يعرف أو المملوكة للمشروع
 NbOpenTasks=ملاحظة : من مهام فتح
 NbOfProjects=ملاحظة : للمشاريع
 TimeSpent=الوقت الذي تستغرقه
+TimeSpentByYou=Time spent by you
+TimeSpentByUser=Time spent by user
 TimesSpent=قضى وقتا
 RefTask=المرجع. مهمة
 LabelTask=علامة مهمة
@@ -67,7 +72,8 @@ ListSupplierOrdersAssociatedProject=قائمة الموردين الأوامر �
 ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبطة بالمشروع.
 ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
 ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
-ListTripAssociatedProject=قائمة من الرحلات والنفقات المرتبطة بالمشروع
+ListExpenseReportsAssociatedProject=List of expense reports associated with the project
+ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
 ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
 ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
@@ -126,10 +132,15 @@ AddElement=Link to element
 UnlinkElement=Unlink element
 # Documents models
 DocumentModelBaleine=وهناك مشروع كامل لنموذج التقرير (logo...)
-PlannedWorkload = Planned workload
-WorkloadOccupation= Workload affectation
+PlannedWorkload=Planned workload
+PlannedWorkloadShort=Workload
+WorkloadOccupation=Workload assignation
 ProjectReferers=Refering objects
 SearchAProject=Search a project
 ProjectMustBeValidatedFirst=Project must be validated first
 ProjectDraft=Draft projects
 FirstAddRessourceToAllocateTime=Associate a ressource to allocate time
+InputPerDay=Input per day
+InputPerWeek=Input per week
+InputPerAction=Input per action
+TimeAlreadyRecorded=Time spent already recorded for this task/day and user %s

@@ -953,7 +953,7 @@ class Societe extends CommonObject
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
-     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof.
+     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
@@ -1008,7 +1008,7 @@ class Societe extends CommonObject
             {
                 $this->error='Fetch several records found for ref='.$ref;
                 dol_syslog($this->error, LOG_ERR);
-                $result = -1;
+                $result = -2;
             }
             if ($num)
             {
@@ -1128,17 +1128,15 @@ class Societe extends CommonObject
                	$this->fetch_optionals($this->id,$extralabels);
             }
             else
-            {
-                $this->error='Fetch no third party found for id='.$rowid;
-                dol_syslog($this->error, LOG_ERR);
-                $result = -2;
+			{
+                $result = 0;
             }
 
             $this->db->free($resql);
         }
         else
-        {
-            $this->error=$this->db->error();
+		{
+            $this->error=$this->db->lasterror();
             $result = -3;
         }
 
@@ -1158,11 +1156,20 @@ class Societe extends CommonObject
      * 	@param		boolean		$case		Case sensitive (true/false)
      * 	@param		boolean		$similar	Add test if string inside name into database, or name into database inside string. Do not use this: Not compatible with other database.
      * 	@param		string		$clause		Clause for filters
-     * 	@return		array		Array of thirdparties object
+     * 	@return		array|int				<0 if KO, array of thirdparties object if OK
      */
     function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
     {
     	$thirdparties = array();
+
+    	dol_syslog("searchByName name=".$name." type=".$type." exact=".$exact);
+
+    	// Check parameter
+    	if (empty($name))
+    	{
+    		$this->errors[]='ErrorBadValueForParameter';
+    		return -1;
+    	}
 
     	// Generation requete recherche
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -1242,7 +1249,7 @@ class Societe extends CommonObject
     	}
     	else
     	{
-    		$this->error=$this->db->error().' sql='.$sql;
+    		$this->error=$this->db->lasterror();
     		return -1;
     	}
     }
@@ -3149,7 +3156,7 @@ class Societe extends CommonObject
 		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		*/
-		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";	// Not a draft
@@ -3160,8 +3167,18 @@ class Societe extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$obj=$this->db->fetch_object($resql);
-   			return ($obj->amount);
+			$outstandingBill = 0;
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$facturestatic=new Facture($this->db);
+			while($obj=$this->db->fetch_object($resql)) {
+				$facturestatic->id=$obj->rowid;
+				$paiement = $facturestatic->getSommePaiement();
+				$creditnotes = $facturestatic->getSumCreditNotesUsed();
+				$deposits = $facturestatic->getSumDepositsUsed();
+				
+				$outstandingBill+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
+   			}
+   			return $outstandingBill;
 		}
 		else
 			return 0;

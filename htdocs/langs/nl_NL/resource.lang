@@ -22,8 +22,8 @@ GotoDate=Ga naar datum
 
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource met succes gecreeerd 
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
+RessourceLineSuccessfullyDeleted=Resource lijn succesvol verwijderd
+RessourceLineSuccessfullyUpdated=Resource lijn succesvol bijgewerkt
 ResourceLinkedWithSuccess=Resource met succes gekoppeld
 
 TitleResourceCard=Resource kaart

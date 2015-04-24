@@ -189,7 +189,9 @@ else {
 	$nbrows=ROWS_2;
 	$enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
 	if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,'98%');
+	$toolbarname='dolibarr_details';
+	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
+	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
 	$doleditor->Create();
 	?>
 	</td>

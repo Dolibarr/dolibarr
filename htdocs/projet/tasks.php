@@ -350,7 +350,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</form>';
 
 }
-else
+else if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
@@ -412,7 +412,7 @@ else
 	}
 
 	print '<table id="tablelines" class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre nodrag nodrop">';
 	// print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="100">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';

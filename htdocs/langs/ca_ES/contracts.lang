@@ -19,6 +19,7 @@ ServiceStatusLateShort=Expirat
 ServiceStatusClosed=Tancat
 ServicesLegend=Llegenda per als serveis
 Contracts=Contractes
+ContractsAndLine=Contracts and line of contracts
 Contract=Contracte
 NoContracts=Sense contractes
 MenuServices=Serveis

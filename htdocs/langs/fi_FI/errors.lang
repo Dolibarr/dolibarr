@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Lähde ja tavoitteet pankkitilit on erilainen.
 ErrorBadThirdPartyName=Bad arvo kolmannen osapuolen nimi
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntaksi asiakas-koodi
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Asiakas-koodi tarvitaan
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Asiakas-koodi on jo käytetty
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript ei saa keskeytyä, on tämä ominaisuus 
 ErrorPasswordsMustMatch=Molemmat kirjoittaa salasanat on vastattava toisiaan
 ErrorContactEMail=Tekninen virhe. Ota yhteys järjestelmänvalvojaan jälkeen sähköpostin <b>%s</b> en antaa virhekoodi <b>%s</b> viesti, tai jopa paremmin lisäämällä näytön kopion tästä sivusta.
 ErrorWrongValueForField=Väärä arvo kentän numero <b>%s</b> (arvo <b>"%s"</b> ei vastaa regex sääntö <b>%s)</b>
-ErrorFieldValueNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei ole arvoa käytettävissä tulee kenttään <b>%s</b> taulukon <b>%s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei <b>%s</b> olemassa ref)
 ErrorsOnXLines=Virheet <b>%s</b> lähde linjat
 ErrorFileIsInfectedWithAVirus=Virustentorjuntaohjelma ei voinut tarkistaa tiedoston (tiedosto saattaa olla tartunnan virus)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

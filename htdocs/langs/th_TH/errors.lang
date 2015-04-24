@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be differen
 ErrorBadThirdPartyName=Bad value for third party name
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Customer code already used
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript must not be disabled to have this featur
 ErrorPasswordsMustMatch=Both typed passwords must match each other
 ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
 ErrorWrongValueForField=Wrong value for field number <b>%s</b> (value '<b>%s</b>' does not match regex rule <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a <b>%s</b> existing ref)
 ErrorsOnXLines=Errors on <b>%s</b> source record(s)
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

@@ -2,6 +2,7 @@
 RefSending=Ref. náklad
 Sending=Náklad
 Sendings=Zásilky
+AllSendings=All Shipments
 Shipment=Náklad
 Shipments=Zásilky
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Množství objednat
 QtyShipped=Množství odesláno
 QtyToShip=Množství na loď
 QtyReceived=Množství přijaté
-KeepToShip=Mějte na loď
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Další zásilky pro tuto objednávku
 DateSending=Datum odeslání, aby
 DateSendingShort=Datum odeslání, aby

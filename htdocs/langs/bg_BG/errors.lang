@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Източника и целите на банк�
 ErrorBadThirdPartyName=Неправилна стойност за името на трета страна
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad синтаксис за код на клиента
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Клиентите изисква код
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Клиентът код вече се използва
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript не трябва да бъдат хор
 ErrorPasswordsMustMatch=Двете машинописни пароли трябва да съвпадат помежду си
 ErrorContactEMail=Техническа грешка. Моля, свържете се с администратора след имейл <b>%s</b> EN предоставят на <b>%s</b> код на грешка в съобщението си, или още по-добре чрез добавяне на екран копие на тази страница.
 ErrorWrongValueForField=Грешна стойност за номер на полето <b>%s (&quot;%s&quot;</b> стойността не съответства на регулярни изрази върховенството <b>%s)</b>
-ErrorFieldValueNotIn=Грешна стойност за <b>%s</b> номер на полето (стойност <b>&quot;%s&quot;</b> не е стойност в полеви <b>%s</b> трапезни <b>%s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Грешна стойност за номер на полето <b>%s (&quot;%s</b> стойност не е <b>%s</b> съществуващия код)
 ErrorsOnXLines=Грешки на <b>%s</b> изходни линии
 ErrorFileIsInfectedWithAVirus=Антивирусна програма не е в състояние да валидира файла (файл може да бъде заразен с вирус)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Задължителни параметри на настройката все още не са определени

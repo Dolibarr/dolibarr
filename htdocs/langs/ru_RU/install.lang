@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - install
-InstallEasy=Мы постарались сделать Dolibarr настройки настолько прост, насколько это возможно. Просто следуйте инструкциям, шаг за шагом.
+InstallEasy=Мы постарались сделать установку Dolibarr настолько простой, насколько это возможно. Просто следуйте инструкциям по установке, шаг за шагом.
 MiscellaneousChecks=Условия проверки
 DolibarrWelcome=Добро пожаловать на Dolibarr
 ConfFileExists=Файл <b>конфигурации %s</b> существует.
 ConfFileDoesNotExists=Файл <b>конфигурации %s</b> не существует!
 ConfFileDoesNotExistsAndCouldNotBeCreated=Файл <b>конфигурации %s</b> не существует и не может быть создан!
 ConfFileCouldBeCreated=Файл <b>конфигурации %s</b> может быть создан.
-ConfFileIsNotWritable=Файл <b>конфигурации %s</b> не для записи. Проверка разрешений. Для первой установки, Ваш веб-сервер должен быть предоставлен чтобы иметь возможность писать в этом файле конфигурации во время процесса ( "Chmod 666", например, Unix подобные ОС).
-ConfFileIsWritable=Файл <b>конфигурации %s</b> на запись.
+ConfFileIsNotWritable=Файл <b>конфигурации %s</b> недоступен для записи. Проверьте права доступа. Для первой установки, Ваш веб-сервер должен быть предоставлен чтобы иметь права доступа для записи в этот файл во время всего процесса установки ( Используйте команду "сhmod" в ОС типа Unix, c маской 666).
+ConfFileIsWritable=Файл <b>конфигурации %s</b> доступен для записи.
 ConfFileReload=Перезагрузить всю информацию из файла конфигурации.
-PHPSupportSessions=Это PHP поддерживает сессии.
-PHPSupportPOSTGETOk=Это PHP поддерживает переменные POST и GET.
-PHPSupportPOSTGETKo=Можно настроить ваш PHP не поддерживает переменные и POST или GET. Проверьте параметр <b>variables_order</b> в php.ini.
-PHPSupportGD=Эта поддержка PHP GD графические функции.
-PHPSupportUTF8=Эта поддержка UTF8 PHP функций.
-PHPMemoryOK=Ваш PHP макс сессии памяти установлен <b>в %s.</b> Это должно быть достаточно.
+PHPSupportSessions=Эта версия PHP поддерживает сессии.
+PHPSupportPOSTGETOk=Эта версия PHP поддерживает переменные POST и GET.
+PHPSupportPOSTGETKo=Возможно,  ваша версия PHP не поддерживает переменные и POST или GET. Проверьте параметр <b>variables_order</b> в php.ini.
+PHPSupportGD=Эта версия PHP  поддерживает библиотеку.
+PHPSupportUTF8=Эта версия PHP поддерживает UTF8 функции.
+PHPMemoryOK= Максимально допустимый размер памяти для сессии установлен <b>в %s.</b> Это должно быть достаточно.
 PHPMemoryTooLow=Ваш PHP макс сессии памяти установлен <b>в %s</b> байт. Это должно быть слишком низким. Измените свой <b>php.ini</b> установить параметр <b>memory_limit,</b> по крайней <b>мере %s</b> байт.
 Recheck=Нажмите здесь для более significative тест
 ErrorPHPDoesNotSupportSessions=Ваш PHP установки не поддерживает сессии. Эта функция требует, чтобы Dolibarr работает. Проверьте настройки PHP.
@@ -111,7 +111,7 @@ FreshInstall=Свежие установить
 FreshInstallDesc=Используйте этот режим, если это ваш первый установке. Если нет, то этот режим можно восстановить предыдущий неполной установке, но если вы хотите обновить версию, выберите "Обновить" режиме.
 Upgrade=Обновление
 UpgradeDesc=Используйте этот режим, если вы заменили старый Dolibarr файлы с файлами из новой версии. Это позволит обновить базу данных и данных.
-Start=Начало
+Start=Главная
 InstallNotAllowed=Установка не разрешено <b>conf.php</b> разрешений
 NotAvailable=Не имеется
 YouMustCreateWithPermission=Вы должны создать файл %s и установить запись по этому вопросу для веб-сервера во время установки.
@@ -154,8 +154,9 @@ MigrationShippingDelivery2=Oppgrader lagring av shipping 2
 MigrationFinished=Миграция завершена
 LastStepDesc=<strong>Последний шаг:</strong> Определить здесь Логин и пароль, которые вы планируете использовать для подключения к программному обеспечению. Как не потерять эту, как это внимание, чтобы управлять всеми другими.
 ActivateModule=Активировать модуль %s
-ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+ShowEditTechnicalParameters=Показать расширенные параметры (для опытных пользователей)
+WarningUpgrade=Предупреждение!\nВы уже сделали резервную копию вашей БД?\nМы рекомендуем вам сделать это. Например, в случае каких-то ошибок в СУБД (например, в mysql версии 5.5.40), часть данных или таблиц может быть потеряна в результате этого действия. Сделайте резервную копию вашей БД прямо сейчас, перед запуском процесса миграции. \nНажмите ОК для запуска процесса миграции.. 
+ErrorDatabaseVersionForbiddenForMigration=Версия вашей СУБД %s. Она содержит критическую ошибку, которая приводит к потере данных, если вы меняете структуру БД, как это требуется в процессе миграции. По этой причине, перенос не будет осуществлён до момента, пока вы не обновите вашу СУБД до работоспособной версии (версии с критическими ошибками %s)
 
 #########
 # upgrade
@@ -207,7 +208,7 @@ MigrationProjectTaskTime=Oppdater tid i sekunder
 MigrationActioncommElement=Обновление данных о действиях
 MigrationPaymentMode=Миграция данных для оплаты режим
 MigrationCategorieAssociation=Миграция категорий
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Перенос событий для добавления владельца в таблицу присваиванья
 
 ShowNotAvailableOptions=Показать недоступные опции
 HideNotAvailableOptions=Скрыть недоступные опции

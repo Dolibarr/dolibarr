@@ -1,9 +1,6 @@
-# Dolibarr language file - en_NZ - companies
-# This file contains only line that must differs from en_US
+# Dolibarr language file - Source file is en_US - companies
 VATIsUsed=GST is used
 VATIsNotUsed=GST is not used
 VATIntra=GST number
 VATIntraShort=GST number
 VATIntraVeryShort=GST
-VATIntraSyntaxIsValid=Syntax is valid
-VATIntraValueIsValid=Value is valid

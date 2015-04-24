@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,7 +353,6 @@ if (! empty($conf->use_javascript_ajax))
 	$s='';
 	$s.='<script type="text/javascript">' . "\n";
 	$s.='jQuery(document).ready(function () {' . "\n";
-	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
 	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
 	$s.='jQuery(".family_birthday").toggle();' . "\n";
 	if ($action=="show_week" || $action=="show_month" || empty($action))
@@ -366,18 +366,20 @@ if (! empty($conf->use_javascript_ajax))
 	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 	if (is_array($showextcals) && count($showextcals) > 0)
 	{
+		$s.='<script type="text/javascript">' . "\n";
+		$s.='jQuery(document).ready(function () {
+				jQuery("table input[name^=\"check_ext\"]").click(function() {
+					var name = $(this).attr("name");
+
+					jQuery(".family_ext" + name.replace("check_ext", "")).toggle();
+				});
+			});' . "\n";
+		$s.='</script>' . "\n";
+
 		foreach ($showextcals as $val)
 		{
 			$htmlname = md5($val['name']);
-			$s.='<script type="text/javascript">' . "\n";
-			$s.='jQuery(document).ready(function () {' . "\n";
-			$s.='		jQuery("#check_ext' . $htmlname . '").click(function() {';
-			$s.=' 		/* alert("'.$htmlname.'"); */';
-			$s.=' 		jQuery(".family_ext' . $htmlname . '").toggle();';
-			$s.='		});' . "\n";
-			$s.='});' . "\n";
-			$s.='</script>' . "\n";
-			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val['name'] . ' &nbsp; </div>';
 		}
 	}
 	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';

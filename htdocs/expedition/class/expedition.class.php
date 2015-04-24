@@ -178,8 +178,6 @@ class Expedition extends CommonObject
 
 		$now=dol_now();
 
-		if (empty($this->model_pdf)) $this->model_pdf=$conf->global->EXPEDITION_ADDON_PDF;
-
 		require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
 
@@ -1037,7 +1035,7 @@ class Expedition extends CommonObject
 								}
 								if (file_exists($dir))
 								{
-									if (!dol_delete_dir($dir))
+									if (!dol_delete_dir_recursive($dir))
 									{
 										$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
 										return 0;

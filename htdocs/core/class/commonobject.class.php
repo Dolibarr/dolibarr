@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
@@ -36,7 +36,7 @@ abstract class CommonObject
 {
     public $db;
     public $error;
-    public $errors;
+    public $errors=array();			// Array use for errors
     public $canvas;                // Contains canvas name if it is
 	public $context=array();		// Use to pass context information
 

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Suplier langganan
-Supplier=Suplier
 AddSupplier=Create a supplier
 SupplierRemoved=Suplier dihapus
 SuppliersInvoice=Invoice suplier
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Supplier invoices and payments
 ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Setujui pesanan
 ConfirmApproveThisOrder=Are you sure you want to approve order <b>%s</b> ?
-DenyingThisOrder=Tolak pesanan
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Are you sure you want to deny this order <b>%s</b> ?
 ConfirmCancelThisOrder=Are you sure you want to cancel this order <b>%s</b> ?
 AddCustomerOrder=Buat pesanan pelanggan
@@ -44,3 +43,4 @@ ListOfSupplierOrders=Daftar pesanan suplier
 MenuOrdersSupplierToBill=Pesanan suplier menjadi invoice
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

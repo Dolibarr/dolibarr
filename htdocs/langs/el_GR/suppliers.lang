@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Προμηθευτές
-Supplier=Προμηθευτής
 AddSupplier=Δημιουργία προμηθευτή
 SupplierRemoved=Ο προμηθευτής αφαιρέθηκε
 SuppliersInvoice=Τιμολόγιο προμηθευτή
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Τιμολόγια και πληρωμές προμ�
 ExportDataset_fournisseur_3=Παραγγελίες σε προμηθευτές και σειρά γραμμών
 ApproveThisOrder=Έγκριση της παραγγελίας
 ConfirmApproveThisOrder=Είστε σίγουροι ότι θέλετε να εγκρίνετε την παραγγελία <b>%s</b> ;
-DenyingThisOrder=Άρνηση της παραγγελίας
+DenyingThisOrder=Απόρριψη παραγγελίας
 ConfirmDenyingThisOrder=Είστε σίγουροι ότι θέλετε να αρνηθείτε την παραγγελία <b>%s</b> ;
 ConfirmCancelThisOrder=Είστε σίγουροι ότι θέλετε να ακυρώσετε την παραγγελία <b>%s</b> ;
 AddCustomerOrder=Δημιουργία παραγγελίας πελάτη
@@ -43,4 +42,5 @@ SentToSuppliers=Αποστολή σε προμηθευτές
 ListOfSupplierOrders=Λίστα παραγγελιών των προμηθευτών
 MenuOrdersSupplierToBill=Παραγγελίες προμηθευτών για τιμολόγηση
 NbDaysToDelivery=Καθυστέρηση παράδοσης σε ημέρες
-DescNbDaysToDelivery=The biggest delay is display among order product list
+DescNbDaysToDelivery=Η μεγαλύτερη καθυστέρηση εμφανίζετε μεταξύ παραγγελίας και τη λίστα των προϊόντων
+UseDoubleApproval=Χρησιμοποιήστε διπλή έγκριση (η δεύτερη έγκριση μπορεί να γίνει από οποιονδήποτε χρήστη με ειδική άδεια)

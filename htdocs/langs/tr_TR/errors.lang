@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Kaynak ve hedef banka hesapları farklı olmalıd
 ErrorBadThirdPartyName=Üçüncü parti adı için hatalı değer
 ErrorProdIdIsMandatory=Bu %s zorunludur
 ErrorBadCustomerCodeSyntax=Hatalı müşteri kodu
-ErrorBadBarCodeSyntax=Bar kodu için hatalı sözdizimi
+ErrorBadBarCodeSyntax=Barkod için hatalı sözdizimi. Belki hatalı bir barkod türü ayarladınız ya da taranan değerle eşleşmeyen barkod numaralandırma maskesi tanımladınız.
 ErrorCustomerCodeRequired=Müşteri kodu gereklidir
 ErrorBarCodeRequired=Bar kod gerekli
 ErrorCustomerCodeAlreadyUsed=Müşteri kodu zaten kullanılmış
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Bu özelliğin çalışması için Javascript engel
 ErrorPasswordsMustMatch=Her iki yazdığınız şifrenin birbiriyle eşleşmesi gerekir
 ErrorContactEMail=Teknik bir hata oluştu. Lütfen, aşağıdaki <b>%s</b> Eposta ile yöneticiye danışın, mesajınızda <b>%s</b> hata kodunu belirtin ve hatta bir ekran görünümünü de eklerseniz daha iyi olur.
 ErrorWrongValueForField=<b>%s</b> alan numarası için yanlış değer ('<b>%s</b>' değeri '<b>%s</b>' regex kuralı ile uyuşmuyor)
-ErrorFieldValueNotIn=<b>%s</b> alan numarası için yanlış değer ('<b>%s</b>' değeri <b>%s</b> tablosunun <b>%s</b> alanı için uygun bir değer değildir)
+ErrorFieldValueNotIn=<b>%s</b> alan sayısı için hatalı değer ('<b>%s</b>' değeri <b>%s</b> = <b>%s</b> tablosundaki <b>%s</b> alanı içinde mevcut değil)
 ErrorFieldRefNotIn=Alan numarası <b>%s</b> için yanlış değer (değer <b>'%s'</b> bir <b>%s</b> ref mevcut değildir)
 ErrorsOnXLines=<b>%</b> kaynak satırlarındaki hatalar
 ErrorFileIsInfectedWithAVirus=Virüs koruma programı dosyayı doğrulayamıyor (dosyaya bir virüs bulaşmış olabilir)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Eksi sonuç '%s'
 ErrorPriceExpressionInternal=İç hata '%s'
 ErrorPriceExpressionUnknown=Bilinmeyen hata '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Kaynak ve hedef depolar farklı olmalı
-ErrorTryToMakeMoveOnProductRequiringBatchData=Hata, parti/seri bilgisi gerektiren ürün için parti/seri bilgisi olmadan stok hareketi yapılmaya çalışılıyor.
+ErrorTryToMakeMoveOnProductRequiringBatchData=Hata, parti/seri numarası gerektiren bir ürün için parti/seri numarası olmadan bir stok hareketi yapılmaya çalışılıyor.
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Bütün kayıtlı kabuller, bu eylemin yapılmasına izin verilmeden önce doğrulanmalıdır (onaylanmış ya da reddedilmiş)
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Bütün kayıtlı kabuller, bu eylemin yapılmasına izin verilmeden önce doğrulanmalıdır (onaylanmış)
+ErrorGlobalVariableUpdater0=HTTP isteğinde '%s' hatası
+ErrorGlobalVariableUpdater1=Geçersiz JSON biçimi '%s'
+ErrorGlobalVariableUpdater2=Parametre '%s' eksik
+ErrorGlobalVariableUpdater3=İstenen veri sonuçta bulunamadı
+ErrorGlobalVariableUpdater4=SOAP istemcisinde '%s' hatası
+ErrorGlobalVariableUpdater5=Seçilmiş genel değişken yok
+ErrorFieldMustBeANumeric=<b>%s</b> alanı sayısal bir değer olmalıdır
+ErrorFieldMustBeAnInteger=<b>%s</b> alanı tamsayı olmalıdır
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

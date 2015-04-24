@@ -23,4 +23,6 @@ GoodStatusDeclaration=Указанные выше товары получены 
 Deliverer=Доставщик:
 Sender=Отправитель
 Recipient=Получатель
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Возможно к отправке
+NonShippable=Не возможно к отправке

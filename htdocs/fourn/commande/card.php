@@ -1608,7 +1608,7 @@ elseif (! empty($object->id))
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new	Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
+				$text.=$notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid);
 			}
 
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
@@ -1643,8 +1643,16 @@ elseif (! empty($object->id))
 					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
 			);
 		}
+		$text=$langs->trans("ConfirmApproveThisOrder",$object->ref);
+		if (! empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+			$notify=new	Notify($db);
+			$text.='<br>';
+			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
+		}
 
-		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder",$object->ref),"confirm_approve", $formquestion, 1, 1, 240);
+		print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_approve", $formquestion, 1, 1, 240);
 
 	}
 
@@ -2181,8 +2189,13 @@ elseif (! empty($object->id))
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
+
+		$object->fetch_projet();
 		// Tableau des substitutions
 		$formmail->substit['__ORDERREF__']=$object->ref;
+		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
+		$formmail->substit['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';

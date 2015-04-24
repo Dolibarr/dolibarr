@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Piegādātāji
-Supplier=Piegādātājs
 AddSupplier=Izveidot piegādātāju
 SupplierRemoved=Piegādātājs izņem
 SuppliersInvoice=Piegādātāji rēķins
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Piegādātāju rēķiniem un maksājumiem
 ExportDataset_fournisseur_3=Piegādātājs pasūtījumus un pasūtījumu līnijas
 ApproveThisOrder=Apstiprināt šo pasūtījumu
 ConfirmApproveThisOrder=Vai jūs tiešām vēlaties apstiprināt pasūtījumu <b>%s?</b>
-DenyingThisOrder=Liedzot šo pasūtījumu
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Vai jūs tiešām vēlaties aizliegt šo pasūtījumu <b>%s</b> ?
 ConfirmCancelThisOrder=Vai esat pārliecināts, ka vēlaties atcelt šo pasūtījumu <b>%s</b> ?
 AddCustomerOrder=Izveidot klienta pasūtījumu
@@ -42,5 +41,6 @@ NoneOrBatchFileNeverRan=Neviens vai partijas <b>%s</b> ne skrēja nesen
 SentToSuppliers=Nosūtīti uz piegādātājiem
 ListOfSupplierOrders=Saraksts ar piegādātāju pasūtījumiem
 MenuOrdersSupplierToBill=Supplier orders to invoice
-NbDaysToDelivery=Delivery delay in days
+NbDaysToDelivery=Piegādes kavēšanās dienās
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Heimild og markmið bankareikninga verður að ve
 ErrorBadThirdPartyName=Bad gildi fyrir þriðja aðila Nafn
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad setningafræði fyrir kóða viðskiptavina
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Viðskiptavinur númer sem þarf
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Viðskiptavinur sem notaður er þegar
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript þarf ekki að vera óvirkur til að haf
 ErrorPasswordsMustMatch=Bæði tegund lykilorð verður að samsvara hvor öðrum
 ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til að fylgja email <b>%s</b> en veita merkjamál villa <b>%s</b> í skilaboðin, eða jafnvel enn betri með því að bæta skjár afrit af þessari síðu.
 ErrorWrongValueForField=Wrong gildi fyrir reitinn <b>númer %s </b> (gildi <b>' %s '</b> er ekki það sama ríkisstjóratíð <b>reglu %s )</b>
-ErrorFieldValueNotIn=Rangt gildi fyrir sviði númer <b>%s ('%s</b> &quot;gildi er ekki gildi í boði í <b>​​%s</b> svið <b>%s</b> borð)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Rangt gildi fyrir sviði númer <b>%s</b> ('á <b>%s</b> &quot;gildi er ekki <b>%s</b> núverandi dómari)
 ErrorsOnXLines=Villur <b>á %s </b> uppspretta línur
 ErrorFileIsInfectedWithAVirus=The antivirus program was not 'fær til setja í gildi the skrá (skrá gæti verið sýkt af veiru)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

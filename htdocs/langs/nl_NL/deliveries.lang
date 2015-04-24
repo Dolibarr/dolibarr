@@ -24,3 +24,5 @@ Deliverer=Bezorger:
 Sender=Afzender
 Recipient=Ontvanger
 ErrorStockIsNotEnough=Er is niet genoeg voorraad
+Shippable=Zendklaar
+NonShippable=Niet verzendbaar

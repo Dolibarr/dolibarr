@@ -2,6 +2,7 @@
 RefSending=号。装船
 Sending=装船
 Sendings=出货
+AllSendings=All Shipments
 Shipment=装船
 Shipments=出货
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=订购数量
 QtyShipped=出货数量
 QtyToShip=出货数量
 QtyReceived=收到的数量
-KeepToShip=保持对船舶
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=这个命令的其他货物
 DateSending=为了发送日期
 DateSendingShort=为了发送日期

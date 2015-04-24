@@ -7,6 +7,7 @@
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Marcos García            <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,32 +161,14 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 				$object->date_echeance = $object->calculate_date_lim_reglement();
 
 			if ($_POST['origin'] && $_POST['originid']) {
-				$object->origin = $_POST['origin'];
-				$object->origin_id = $orders_id[$ii];
 				$object->linked_objects = $orders_id;
 				$id = $object->create($user);
 
 				if ($id > 0) {
 					foreach ( $orders_id as $origin => $origin_id ) {
-						$origin_id = (! empty($origin_id) ? $origin_id : $object->origin_id);
-						$db->begin();
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "element_element (";
-						$sql .= "fk_source";
-						$sql .= ", sourcetype";
-						$sql .= ", fk_target";
-						$sql .= ", targettype";
-						$sql .= ") VALUES (";
-						$sql .= $origin_id;
-						$sql .= ", '" . $object->origin . "'";
-						$sql .= ", " . $id;
-						$sql .= ", '" . $object->element . "'";
-						$sql .= ")";
+						$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
 
-						if ($db->query($sql)) {
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
+						$object->add_object_linked($_POST['origin'], $origin_id);
 					}
 
 					while ( $ii < $nn ) {
@@ -577,7 +560,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs)) {
 		print '<div align="right">';
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 		print '<input type="hidden" name="action" value="create">';
-		print '<input type="hidden" name="origin" value="commande"><br>';
+		print '<input type="hidden" name="origin" value="order_supplier"><br>';
 		// print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
 		print '<input type="submit" class="butAction" value="' . $langs->trans("GenerateBill") . '">';
 		print '</div>';

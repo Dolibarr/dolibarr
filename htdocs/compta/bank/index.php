@@ -129,7 +129,7 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print '</table>';
@@ -178,7 +178,7 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print '</table>';
@@ -241,7 +241,7 @@ if (! $found)
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' '.$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
 print "</table>";

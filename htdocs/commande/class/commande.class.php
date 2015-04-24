@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
@@ -60,7 +60,7 @@ class Commande extends CommonOrder
     var $ref_int;
     var $contactid;
     var $fk_project;
-    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+    var $statut;		// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Delivered=Sent/Received, billed or not)
     var $facturee;		// deprecated
     var $billed;		// billed or not
 
@@ -109,6 +109,11 @@ class Commande extends CommonOrder
     // Pour board
     var $nbtodo;
     var $nbtodolate;
+
+     /**
+     * ERR Not engouch stock
+     */
+    const STOCK_NOT_ENOUGH_FOR_ORDER = -3;
 
 
     /**
@@ -294,7 +299,7 @@ class Commande extends CommonOrder
             // Rename directory if dir was a temporary ref
             if (preg_match('/^[\(]?PROV/i', $this->ref))
             {
-            	// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+            	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
                 // in order not to lose the attachments
                 $oldref = dol_sanitizeFileName($this->ref);
                 $newref = dol_sanitizeFileName($num);
@@ -432,7 +437,7 @@ class Commande extends CommonOrder
         global $conf,$langs;
         $error=0;
 
-        if ($this->statut != 3)
+        if ($this->statut != -1 && $this->statut != 3)
         {
         	dol_syslog(get_class($this)."::set_reopen order has not status closed", LOG_WARNING);
             return 0;
@@ -456,7 +461,7 @@ class Commande extends CommonOrder
         else
         {
             $error++;
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             dol_print_error($this->db);
         }
 
@@ -745,8 +750,11 @@ class Commande extends CommonOrder
                     );
                     if ($result < 0)
                     {
-                        $this->error=$this->db->lasterror();
-                        dol_print_error($this->db);
+                    	if ($result != self::STOCK_NOT_ENOUGH_FOR_ORDER)
+                    	{
+                        	$this->error=$this->db->lasterror();
+                        	dol_print_error($this->db);
+                    	}
                         $this->db->rollback();
                         return -1;
                     }
@@ -1185,10 +1193,12 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty)
+				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
-					return -3;
+					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}
 			}
 

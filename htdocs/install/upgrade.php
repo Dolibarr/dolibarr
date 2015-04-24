@@ -19,9 +19,11 @@
  * Upgrade scripts can be ran from command line with syntax:
  *
  * cd htdocs/install
- * php upgrade.php 3.4.0 3.5.0
+ * php upgrade.php 3.4.0 3.5.0 [dirmodule|ignoredbversion]
  * php upgrade2.php 3.4.0 3.5.0
  *
+ * Option 'dirmodule' allows to provide a path for an external module, so we migrate from command line a script from a module.
+ * Option 'ignoredbversion' allows to run migration even if database is a bugged database version.
  * Return code is 0 if OK, >0 if error
  */
 
@@ -47,7 +49,7 @@ $ok = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(120);
+@set_time_limit(300);
 error_reporting($err);
 
 
@@ -55,7 +57,8 @@ $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
-$versionmodule=GETPOST("versionmodule",'',3)?GETPOST("versionmodule",'',3):(empty($argv[3])?'':$argv[3]);
+$dirmodule=((GETPOST("dirmodule",'',3) && GETPOST("dirmodule",'',3) != 'ignoredbversion'))?GETPOST("dirmodule",'',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
+$ignoredbversion=(GETPOST('ignoredbversion','',3)=='ignoredbversion')?GETPOST('ignoredbversion','',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
 
 $langs->load("admin");
 $langs->load("install");
@@ -191,31 +194,34 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         }
 
         // Test database version is not forbidden for migration
-		$dbversion_disallowed=array(
-			array('type'=>'mysql','version'=>array(5,5,40)),
-			array('type'=>'mysqli','version'=>array(5,5,40))
-			//,array('type'=>'mysql','version'=>array(5,5,41)),
-			//array('type'=>'mysqli','version'=>array(5,5,41))
-		);
-		$listofforbiddenversion='';
-		foreach ($dbversion_disallowed as $dbversion_totest)
-		{
-			if ($dbversion_totest['type'] == $db->type) $listofforbiddenversion.=($listofforbiddenversion?', ':'').join('.',$dbversion_totest['version']);
-		}
-		foreach ($dbversion_disallowed as $dbversion_totest)
-		{
-	        //print $db->type.' - '.join('.',$versionarray).' - '.versioncompare($dbversion_totest['version'],$versionarray)."<br>\n";
-	        if ($dbversion_totest['type'] == $db->type
-	        	&& (versioncompare($dbversion_totest['version'],$versionarray) == 0 || versioncompare($dbversion_totest['version'],$versionarray)<=-4 || versioncompare($dbversion_totest['version'],$versionarray)>=4)
-	        )
-	        {
-	        	// Warning: database version too low.
-	        	print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration",join('.',$versionarray),$listofforbiddenversion)."</div></td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
-	        	dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration",join('.',$versionarray),$listofforbiddenversion));
-	        	$ok=0;
-	        	break;
-	        }
-		}
+        if (empty($ignoredbversion))
+        {
+			$dbversion_disallowed=array(
+				array('type'=>'mysql','version'=>array(5,5,40)),
+				array('type'=>'mysqli','version'=>array(5,5,40)) //,
+				//array('type'=>'mysql','version'=>array(5,5,41)),
+				//array('type'=>'mysqli','version'=>array(5,5,41))
+			);
+			$listofforbiddenversion='';
+			foreach ($dbversion_disallowed as $dbversion_totest)
+			{
+				if ($dbversion_totest['type'] == $db->type) $listofforbiddenversion.=($listofforbiddenversion?', ':'').join('.',$dbversion_totest['version']);
+			}
+			foreach ($dbversion_disallowed as $dbversion_totest)
+			{
+		        //print $db->type.' - '.join('.',$versionarray).' - '.versioncompare($dbversion_totest['version'],$versionarray)."<br>\n";
+		        if ($dbversion_totest['type'] == $db->type
+		        	&& (versioncompare($dbversion_totest['version'],$versionarray) == 0 || versioncompare($dbversion_totest['version'],$versionarray)<=-4 || versioncompare($dbversion_totest['version'],$versionarray)>=4)
+		        )
+		        {
+		        	// Warning: database version too low.
+		        	print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration",join('.',$versionarray),$listofforbiddenversion)."</div></td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
+		        	dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration",join('.',$versionarray),$listofforbiddenversion));
+		        	$ok=0;
+		        	break;
+		        }
+			}
+        }
     }
 
     // Force l'affichage de la progression
@@ -370,7 +376,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     if ($ok)
     {
         $dir = "mysql/migration/";		// We use mysql migration scripts whatever is database driver
-		if (! empty($versionmodule)) $dir=dol_buildpath('/'.$versionmodule.'/sql/',0);
+		if (! empty($dirmodule)) $dir=dol_buildpath('/'.$dirmodule.'/sql/',0);
 
 		// Clean last part to exclude minor version x.y.z -> x.y
         $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.0',$versionfrom);
@@ -475,7 +481,7 @@ $ret=0;
 if (! $ok && isset($argv[1])) $ret=1;
 dol_syslog("Exit ".$ret);
 
-pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $versionmodule),$setuplang);
+pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule),$setuplang);
 
 if ($db->connected) $db->close();
 

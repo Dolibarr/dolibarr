@@ -15,7 +15,7 @@ JournalFinancial=Finansiella journaler
 Exports=Export
 Export=Export
 Modelcsv=Modell av export
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+OptionsDeactivatedForThisExportModel=För denna exportmodell är tillval inaktiverade
 Selectmodelcsv=Välj en modell av export
 Modelcsv_normal=Klassisk export
 Modelcsv_CEGID=Export mot CEGID Expert
@@ -68,7 +68,7 @@ Lineofinvoice=Line of faktura
 VentilatedinAccount=Ventilerade framgångsrikt i redovisningskonto
 NotVentilatedinAccount=Inte ventilerad i redovisningskonto
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Kolumnseparator i exportfil
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Antal element att vara uppdelning framgår av sidan (max rekommenderad: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Börja sortering av nedbrytnings sidor "Måste uppdelning" av de senaste element

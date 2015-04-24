@@ -156,6 +156,7 @@ LastStepDesc=<strong>Последна стъпка:</strong> Определет�
 ActivateModule=Активиране на модул %s
 ShowEditTechnicalParameters=Натиснете тук за да покажете/редактирате параметрите за напреднали (експертен режим)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
 
 #########
 # upgrade

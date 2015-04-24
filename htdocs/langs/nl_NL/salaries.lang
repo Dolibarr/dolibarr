@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Boekhoudkundige code voor salarissen betalingen
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=boekhoudkundige code voor financiële last
+Salary=Salaris
+Salaries=Salarissen
+Employee=Werknemer
+NewSalaryPayment=Nieuwe salarisbetaling
+SalaryPayment=Salarisbetaling
+SalariesPayments=Salarissen betalingen
+ShowSalaryPayment=Toon salarisbetaling
+THM=Gemiddelde uurprijs
+TJM=Gemiddelde dagprijs
+CurrentSalary=Huidige salaris

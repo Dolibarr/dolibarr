@@ -2,6 +2,7 @@
 RefSending=کد عکس. حمل
 Sending=حمل
 Sendings=حمل و نقل
+AllSendings=All Shipments
 Shipment=حمل
 Shipments=حمل و نقل
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=تعداد سفارش داده شده
 QtyShipped=تعداد حمل
 QtyToShip=تعداد به کشتی
 QtyReceived=تعداد دریافت
-KeepToShip=نگه دارید به کشتی
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=دیگر محموله برای این منظور
 DateSending=عضویت جهت ارسال
 DateSendingShort=عضویت جهت ارسال

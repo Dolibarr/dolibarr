@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=مداخله اعتبار
 Notify_FICHINTER_SENTBYMAIL=مداخله با پست
 Notify_BILL_VALIDATE=صورت حساب به مشتری اعتبار
 Notify_BILL_UNVALIDATE=صورت حساب به مشتری unvalidated
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=منظور تامین کننده تایید
 Notify_ORDER_SUPPLIER_REFUSE=منظور تامین کننده خودداری کرد
 Notify_ORDER_VALIDATE=سفارش مشتری معتبر
@@ -28,7 +29,7 @@ Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری با پست
 Notify_BILL_PAYED=صورت حساب به مشتری غیر انتفایی
 Notify_BILL_CANCEL=صورت حساب به مشتری لغو
 Notify_BILL_SENTBYMAIL=صورت حساب به مشتری با پست
-Notify_ORDER_SUPPLIER_VALIDATE=منظور تامین کننده معتبر
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_SENTBYMAIL=منظور تامین کننده با پست
 Notify_BILL_SUPPLIER_VALIDATE=فاکتور تامین کننده معتبر
 Notify_BILL_SUPPLIER_PAYED=فاکتور تامین کننده غیر انتفایی
@@ -47,19 +48,20 @@ Notify_PROJECT_CREATE=ایجاد پروژه
 Notify_TASK_CREATE=وظیفه ایجاد
 Notify_TASK_MODIFY=وظیفه اصلاح شده
 Notify_TASK_DELETE=وظیفه حذف
-SeeModuleSetup=See module setup
+SeeModuleSetup=See setup of module %s
 NbOfAttachedFiles=تعداد فایل های پیوست / اسناد
 TotalSizeOfAttachedFiles=اندازه کل فایل های پیوست / اسناد
 MaxSize=حداکثر اندازه
 AttachANewFile=ضمیمه کردن فایل جدید / سند
 LinkedObject=شی مرتبط
 Miscellaneous=متفرقه
-NbOfActiveNotifications=تعداد اطلاعیه ها
+NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=این یک پست تست است. دو خط با بازگشت نورد جدا شده است. __SIGNATURE__
 PredefinedMailTestHtml=این ایمیل <b>آزمون</b> (آزمون کلمه باید در پررنگ باشد) است. <br> دو خط با بازگشت نورد جدا شده است. <br><br> __SIGNATURE__
 PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ شما در اینجا خواهید دید فاکتور __ FACREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ ما می خواهیم به شما هشدار می دهند که فاکتور __ FACREF__ به نظر می رسد که غیر انتفایی نیست. پس این فاکتور در پیوست است دوباره، به عنوان یک یادآوری. __PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendProposal=__CONTACTCIVNAME__ شما در اینجا خواهید دید پیشنهاد تجاری __ PROPREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
+PredefinedMailContentSendAskPriceSupplier=__CONTACTCIVNAME__\n\nYou will find here the price request __ASKREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendOrder=__CONTACTCIVNAME__ شما در اینجا خواهید دید که منظور __ ORDERREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ شما در اینجا خواهید دید منظور ما __ ORDERREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
 PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ شما در اینجا خواهید دید فاکتور __ FACREF__ __ PERSONALIZED__Sincerely __ SIGNATURE__
@@ -169,6 +171,7 @@ EMailTextInvoiceValidated=صورتحساب٪ s را دارای اعتبار بو
 EMailTextProposalValidated=این پیشنهاد از٪ s دارای اعتبار بوده است.
 EMailTextOrderValidated=منظور از٪ s دارای اعتبار بوده است.
 EMailTextOrderApproved=منظور از٪ s تایید شده است.
+EMailTextOrderValidatedBy=The order %s has been recorded by %s.
 EMailTextOrderApprovedBy=منظور از٪ s شده توسط٪ s تایید شده است.
 EMailTextOrderRefused=منظور از٪ s رد شده است.
 EMailTextOrderRefusedBy=منظور از٪ s شده توسط٪ s خودداری کرد.
@@ -200,6 +203,7 @@ NewKeyWillBe=کلید جدید را برای ورود به نرم افزار خ�
 ClickHereToGoTo=برای رفتن به٪ s اینجا را کلیک کنید
 YouMustClickToChange=با این حال شما باید اول بر روی لینک زیر کلیک کنید تا اعتبار این تغییر رمز عبور
 ForgetIfNothing=اگر شما این تغییر را درخواست نکرده، فقط این ایمیل را فراموش کرده ام. اعتبار نامه های شما امن نگهداری می شود.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=اضافه کردن ورودی در تقویم از٪ s

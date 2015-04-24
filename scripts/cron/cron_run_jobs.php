@@ -127,9 +127,9 @@ if(is_array($object->lines) && (count($object->lines)>0))
 		// Loop over job
 		foreach($object->lines as $line)
 		{
-
-			//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
-			if (($line->datenextrun < $now) && $line->dateend < $now){
+			//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
+			if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
+			{
 				$cronjob=new Cronjob($db);
 				$result=$cronjob->fetch($line->id);
 				if ($result<0) {

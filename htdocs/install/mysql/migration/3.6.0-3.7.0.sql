@@ -27,6 +27,9 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_REOPEN','Intervention opened','Executed when a intervention is re-opened','ficheinter',19);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_CLOSE','Customer order classify delivered','Executed when a customer order is set delivered','commande',5);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_CLASSIFY_BILLED','Customer order classify billed','Executed when a customer order is set to billed','commande',5);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_CANCEL','Customer order canceled','Executed when a customer order is canceled','commande',5);
 
 -- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_signature DROP NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_contrat ALTER COLUMN fk_commercial_suivi DROP NOT NULL;
@@ -204,8 +207,9 @@ UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELE
 -- fk_user_author
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_user_author (fk_user_author);
 UPDATE llx_product_price set fk_user_author = null where fk_user_author = 0;
+UPDATE llx_product_price set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREIGN KEY (fk_user_author) REFERENCES  llx_user (rowid);
--- fk_user_author
+-- fk_product
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
 DELETE from llx_product_price where fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
@@ -1165,8 +1169,6 @@ UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
-
-
 -- Module AskPriceSupplier --
 CREATE TABLE llx_askpricesupplier (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -1253,3 +1255,9 @@ CREATE TABLE llx_askpricesupplierdet_extrafields (
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=innodb;
 -- End Module AskPriceSupplier --
+
+-- IVORY COST (id country=21)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (212, 21,  '18','0',7.5,2,0,0,'IVA standard rate',1);
+
+ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;

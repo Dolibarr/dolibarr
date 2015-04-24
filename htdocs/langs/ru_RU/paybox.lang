@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=PayBox модуль настройки
+PayBoxSetup=Настройка модуля PayBox 
 PayBoxDesc=Этот модуль предложить страниц, чтобы платеж по <a href="http://www.paybox.com" target="_blank">Paybox</a> клиентами. Это может быть использовано для свободного платежа или за плату по тому или иному объекту Dolibarr (счетов-фактур, порядка, ...)
 FollowingUrlAreAvailableToMakePayments=После URL, можно предложить страницу к клиенту сделать платеж по Dolibarr объектов
 PaymentForm=Форма оплаты
@@ -10,10 +10,10 @@ ToComplete=Для завершения
 YourEMail=Электронная почта для подтверждения оплаты
 Creditor=Кредитор
 PaymentCode=Код платежа
-PayBoxDoPayment=Перейти на оплату
+PayBoxDoPayment=Перейти к оплате
 YouWillBeRedirectedOnPayBox=Вы будете перенаправлены по обеспеченным Paybox страницу для ввода данных кредитной карточки
 PleaseBePatient=Пожалуйста, будьте терпеливы
-Continue=Следующий
+Continue=Далее
 ToOfferALinkForOnlinePayment=URL-адрес для оплаты %s
 ToOfferALinkForOnlinePaymentOnOrder=URL предложить %s онлайн платежей пользовательский интерфейс для заказа
 ToOfferALinkForOnlinePaymentOnInvoice=URL предложить %s онлайн платежей пользовательский интерфейс для счета
@@ -32,9 +32,9 @@ VendorName=Имя поставщика
 CSSUrlForPaymentForm=CSS-стилей URL для оплаты форме
 MessageOK=Сообщение на странице проверки возвращение оплаты
 MessageKO=Сообщение на странице отменен возврат оплаты
-NewPayboxPaymentReceived=New Paybox payment received
-NewPayboxPaymentFailed=New Paybox payment tried but failed
-PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)
-PAYBOX_PBX_SITE=Value for PBX SITE
-PAYBOX_PBX_RANG=Value for PBX Rang
-PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+NewPayboxPaymentReceived=Новый платёж Paybox поулчен.
+NewPayboxPaymentFailed=Попытка нового платежа Paybox не удалась
+PAYBOX_PAYONLINE_SENDEMAIL=Адрес электронной почты, куда будет высылаться уведомление о платеже (успешном или нет)
+PAYBOX_PBX_SITE=Значение PBX SITE
+PAYBOX_PBX_RANG=Значение PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Значение PBX ID

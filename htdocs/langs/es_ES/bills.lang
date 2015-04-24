@@ -74,8 +74,9 @@ PaymentsAlreadyDone=Pagos efectuados
 PaymentsBackAlreadyDone=Reembolsos ya efectuados
 PaymentRule=Forma de pago
 PaymentMode=Forma de pago
+PaymentTerm=Condición de pago
 PaymentConditions=Condiciones de pago
-PaymentConditionsShort=Condiciones pago
+PaymentConditionsShort=Condiciones de pago
 PaymentAmount=Importe pago
 ValidatePayment=Validar este pago
 PaymentHigherThanReminderToPay=Pago superior al resto a pagar
@@ -293,8 +294,11 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma del importe de los 2 nuevos descuen
 ConfirmRemoveDiscount=¿Está seguro de querer eliminar este descuento?
 RelatedBill=Factura asociada
 RelatedBills=Facturas asociadas
+RelatedCustomerInvoices=Facturas a clientes asociadas
+RelatedSupplierInvoices=Facturas de proveedores asociadas
 LatestRelatedBill=Última factura relacionada
 WarningBillExist=Atención, ya existe al menos una factura
+MergingPDFTool=Herramienta de fusión PDF
 
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepción

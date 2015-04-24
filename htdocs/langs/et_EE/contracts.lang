@@ -19,6 +19,7 @@ ServiceStatusLateShort=Aegunud
 ServiceStatusClosed=Suletud
 ServicesLegend=Teenuste legend
 Contracts=Lepingud
+ContractsAndLine=Contracts and line of contracts
 Contract=Leping
 NoContracts=Lepinguid pole
 MenuServices=Teenused

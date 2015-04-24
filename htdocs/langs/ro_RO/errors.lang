@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Sursa obiective şi conturi bancare trebuie să f
 ErrorBadThirdPartyName=Bad valoarea de terţă parte nume
 ErrorProdIdIsMandatory=%s este obligatoriu
 ErrorBadCustomerCodeSyntax=Bad sintaxă pentru codul de client
-ErrorBadBarCodeSyntax=Bad sintaxă pentru furnizor cod
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Clientul codul necesar
 ErrorBarCodeRequired=Cod de bare cerut
 ErrorCustomerCodeAlreadyUsed=Clientul codul folosit deja
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivate pentru a 
 ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
 ErrorContactEMail=O eroare de tehnică avut loc. Vă rugăm, contactaţi administratorul de a urma <b>%s</b> de e-mail ro oferi <b>%s</b> cod de eroare în mesajul Dvs., sau chiar mai bine prin adăugarea o copie ecran a acestei pagini.
 ErrorWrongValueForField=Valoarea greşit pentru <b>%s</b> numărul de câmp (valoarea <b>"%s"</b> nu se potriveste cu regula <b>%s</b> regex)
-ErrorFieldValueNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoare nu este o valoare disponibile în <b>%s</b> teren de <b>%s</b> de masă)
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoarea nu este o ref <b>%s</b> existente)
 ErrorsOnXLines=Erori pe liniile sursă <b>%s</b>
 ErrorFileIsInfectedWithAVirus=Programul antivirus nu a validet fisierul (fisierul ar putea fi infectat cu un virus)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Rezultat negativ '%s'
 ErrorPriceExpressionInternal=Eroare internă '%s'
 ErrorPriceExpressionUnknown=Eroare Necunoscută '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

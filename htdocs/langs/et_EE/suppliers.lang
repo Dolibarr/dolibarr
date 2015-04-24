@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Hankijad
-Supplier=Hankija
 AddSupplier=Create a supplier
 SupplierRemoved=Hankija kustutatud
 SuppliersInvoice=Ostuarved
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Ostuarved ja maksed
 ExportDataset_fournisseur_3=Ostutellimused ja tellimuste read
 ApproveThisOrder=KIida see tellimuse heaks
 ConfirmApproveThisOrder=Kas oled täiesti kindel, et soovid heaks kiita tellimuse <b>%s</b> ?
-DenyingThisOrder=Lükka tellimus tagasi
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Kas oled täiesti kindel, et soovid tagasi lükata tellimuse <b>%s</b> ?
 ConfirmCancelThisOrder=Kas oled täiesti kindel, et soovid tühistada telllimuse <b>%s</b> ?
 AddCustomerOrder=Loo müügitellimus
@@ -44,3 +43,4 @@ ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
 NbDaysToDelivery=Delivery delay in days
 DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

@@ -81,7 +81,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$fk_commandefourndet = "fk_commandefourndet_".$reg[1];
 			if (GETPOST($ent,'int') > 0)
 			{
-				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'));
+				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 			}
 			else
 			{
@@ -98,35 +98,37 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 			$lot = "lot_number_".$reg[1]."_".$reg[2];
 			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1]."_".$reg[2].'month'], $_POST['dluo_'.$reg[1]."_".$reg[2].'day'], $_POST['dluo_'.$reg[1]."_".$reg[2].'year']);
 			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1]."_".$reg[2].'month'], $_POST['dlc_'.$reg[1]."_".$reg[2].'day'], $_POST['dlc_'.$reg[1]."_".$reg[2].'year']);
-
+            $fk_commandefourndet = "fk_commandefourndet_".$reg[1]."_".$reg[2];
 			if (! (GETPOST($ent,'int') > 0))
 			{
 				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 				$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
-		}
+    		}
 			if (!((GETPOST($qty) > 0 ) && ( $_POST[$lot]  or $dDLUO or $dDLC) ))
 			{
 				dol_syslog('No dispatch for line '.$key.' as qty is not set or eat-by date are not set');
 				$text = $langs->transnoentities('atleast1batchfield').', '.$langs->transnoentities('Line').'' .($reg[1]-1);
 				setEventMessage($langs->trans('ErrorFieldRequired',$text), 'errors');
-			} else {
-				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot));
-		}
+			} 
+			else 
+			{
+				$result = $commande->DispatchProduct($user, GETPOST($prod,'int'),GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+    		}
 
 		}
 
 	}
 
-	if (! $notrigger)
+	if (! $notrigger && ($result >= 0))
 	{
 		global $conf, $langs, $user;
-        // Call trigger
-        $result=$commande->call_trigger('ORDER_SUPPLIER_DISPATCH',$user);
+        // Call trigger		
+        $result = $commande->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
         // End call triggers
 	}
 
-	if ($result > 0)
+	if ($result >= 0)
 	{
 		$db->commit();
 
@@ -138,6 +140,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 		$db->rollback();
 
 		$mesg='<div class="error">'.$langs->trans($commande->error).'</div>';
+		setEventMessage($mesg);
 	}
 }
 

@@ -2,6 +2,7 @@
 RefSending=Ref. de Envio
 Sending=Envio
 Sendings=Envios
+AllSendings=All Shipments
 Shipment=Envio
 Shipments=Envios
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=Quant. Pedida
 QtyShipped=Quant. Enviada
 QtyToShip=Quant. a Enviar
 QtyReceived=Quant. Recebida
-KeepToShip=Manter por Enviar
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=Outros Envios deste Pedido
 DateSending=Data de Expedição
 DateSendingShort=Data de Expedição

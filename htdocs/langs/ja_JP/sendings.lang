@@ -2,6 +2,7 @@
 RefSending=REF。出荷
 Sending=出荷
 Sendings=出荷
+AllSendings=All Shipments
 Shipment=出荷
 Shipments=出荷
 ShowSending=Show Sending
@@ -23,7 +24,7 @@ QtyOrdered=数量は、注文された
 QtyShipped=個数出荷
 QtyToShip=出荷する数量
 QtyReceived=個数は、受信した
-KeepToShip=出荷できるようにしておく
+KeepToShip=Remain to ship
 OtherSendingsForSameOrder=このため、他の出荷
 DateSending=オーダーを送信した日付
 DateSendingShort=オーダーを送信した日付

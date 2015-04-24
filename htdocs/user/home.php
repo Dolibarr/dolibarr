@@ -161,7 +161,7 @@ if ($resql)
         {
 			if (! empty($conf->multicompany->enabled))
 	        {
-	        	if ($obj->admin && ! $obj->entity)
+	        	if (empty($obj->entity))
 	        	{
 	        		print ' ('.$langs->trans("AllEntities").')';
 	        	}

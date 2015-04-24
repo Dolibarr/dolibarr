@@ -19,6 +19,7 @@ ServiceStatusLateShort=Završen
 ServiceStatusClosed=Zatvoren
 ServicesLegend=Knjiga usluga
 Contracts=Ugovori
+ContractsAndLine=Contracts and line of contracts
 Contract=Ugovor
 NoContracts=Nema ugovora
 MenuServices=Usluge

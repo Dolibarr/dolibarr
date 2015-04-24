@@ -8,6 +8,11 @@ VersionExperimental=تجربی
 VersionDevelopment=توسعه
 VersionUnknown=ناشناخته
 VersionRecommanded=توصیه شده
+FileCheck=Files Integrity
+FilesMissing=Missing Files
+FilesUpdated=بروزرسانی فایلها
+FileCheckDolibarr=Check Dolibarr Files Integrity
+XmlNotFound=Xml File of Dolibarr Integrity Not Found
 SessionId=جلسه ID
 SessionSaveHandler=هندلر برای صرفه جویی در جلسات
 SessionSavePath=محلی سازی را وارد نمایید و ذخیره سازی
@@ -137,7 +142,7 @@ Box=جعبه
 Boxes=جعبه
 MaxNbOfLinesForBoxes=حداکثر تعداد خطوط برای جعبه
 PositionByDefault=به طور پیش فرض منظور
-Position=Position
+Position=موقعیت
 MenusDesc=مدیران منوها محتوا از 2 میله منو (نوار افقی و نوار عمودی) را تعریف کنیم.
 MenusEditorDesc=ویرایشگر منو به شما اجازه تعریف نوشته های شخصی در منوها. استفاده از آن را به دقت برای جلوگیری از ساخت dolibarr نوشته های ناپایدار و منو برای همیشه غیر قابل دسترس. <br> برخی از ماژول اضافه کردن ورودی در منو (در منو <b>همه</b> در اغلب موارد). اگر برخی از این نوشته های به اشتباه حذف خواهند، شما می توانید آنها را غیر فعال و reenabling ماژول بازگرداند.
 MenuForUsers=منو برای کاربران
@@ -292,10 +297,11 @@ MenuHandlers=گرداننده منو
 MenuAdmin=ویرایشگر منو
 DoNotUseInProduction=آیا در استفاده از تولید نیست
 ThisIsProcessToFollow=این راه اندازی به فرآیند است:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
 StepNb=مرحله٪ s را
 FindPackageFromWebSite=پیدا کردن یک بسته است که ویژگی فراهم می کند شما می خواهید (به عنوان مثال در وب سایت رسمی٪ بازدید کنندگان).
-DownloadPackageFromWebSite=Download package %s.
-UnpackPackageInDolibarrRoot=باز کردن فایل بسته به پوشه ریشه Dolibarr <b>هست٪ s</b>
+DownloadPackageFromWebSite=دانلود بسته %s.
+UnpackPackageInDolibarrRoot=Unpack package file into directory dedicated to external modules: <b>%s</b>
 SetupIsReadyForUse=نصب به پایان رسید و Dolibarr آماده استفاده است با این بخش جدید است.
 NotExistsDirect=ریشه جایگزین تعریف نشده است. <br>
 InfDirAlt=از آنجا که نسخه 3 این امکان وجود دارد که تعریف کند directory.This ریشه جایگزین شما اجازه می دهد برای ذخیره، همان محل، پلاگین ها و قالب های سفارشی. <br> (: سفارشی به عنوان مثال) فقط یک پوشه در ریشه Dolibarr ایجاد کنید. <br>
@@ -304,7 +310,7 @@ YouCanSubmitFile=ماژول را انتخاب کنید:
 CurrentVersion=نسخه فعلی Dolibarr
 CallUpdatePage=برو به صفحه ای که به روز رسانی ساختار بانک اطلاعاتی و دادهها:٪ است.
 LastStableVersion=آخرین نسخه پایدار
-UpdateServerOffline=Update server offline
+UpdateServerOffline=بروزرسانی آفلاین سرور
 GenericMaskCodes=شما می توانید ماسک شماره را وارد کنید. در این ماسک، تگ های زیر می تواند مورد استفاده قرار گیرد: <br> <b>{000000}</b> مربوط به تعداد خواهد شد که در هر یک از٪ s را افزایش مییابد. به عنوان بسیاری از صفر را وارد کنید به عنوان طول مورد نظر از ضد. شمارنده خواهد شد صفر از سمت چپ به منظور به صفر کرده اند و بسیاری از ماسک به پایان رسید. <br> <b>{000.000 +000}</b> همان قبلی است اما جبران مربوطه را به شماره در سمت راست علامت + شروع به کار رفته در اولین٪ است. <br> <b>{000000 @ X}</b> همان قبلی است اما شمارنده به صفر زمانی که ماه X برسد (x بین 1 و 12، و یا 0 به استفاده از ماه های اولیه سال مالی تعیین شده در تنظیمات خود را، و یا 99 به صفر هر ماه ). اگر این گزینه استفاده می شود و x است 2 یا بالاتر، و سپس دنباله {YY} {میلی متر} یا {تاریخ برای ورود yyyy} {میلی متر} نیز مورد نیاز است. <br> <b>{تولد}</b> روز (01 تا 31). <br> <b>{میلی متر}</b> ماه (01 تا 12). <br> <b>{YY}، {تاریخ برای ورود yyyy}</b> یا <b>{Y}</b> سال بیش از 2، 4 و یا 1 عدد. <br>
 GenericMaskCodes2=<b>{CCCC}</b> کد مشتری در تعداد کاراکتر <br> <b>{cccc000}</b> کد مشتری در تعداد کاراکتر توسط شمارنده اختصاص داده شده برای مشتری است. این مبارزه اختصاص داده شده به مشتری است که در همان زمان از مبارزه جهانی بازنشانی کنید. <br> <b>{TTTT}</b> کد از نوع thirdparty در تعداد شخصیت (نگاه کنید به انواع فرهنگ لغت-thirdparty). <br>
 GenericMaskCodes3=تمام شخصیت های دیگر در ماسک دست نخورده باقی خواهد ماند. <br> فضاهای امکان پذیر نیست. <br>
@@ -384,6 +390,7 @@ ExtrafieldSeparator=تفکیک کننده
 ExtrafieldCheckBox=جعبه
 ExtrafieldRadio=دکمه های رادیویی
 ExtrafieldCheckBoxFromList= Checkbox from table
+ExtrafieldLink=Link to an object
 ExtrafieldParamHelpselect=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ... <br><br> به منظور داشتن لیست بسته به نوع دیگر: <br> 1، VALUE1 | parent_list_code: parent_key <br> 2، VALUE2 | parent_list_code: parent_key
 ExtrafieldParamHelpcheckbox=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ...
 ExtrafieldParamHelpradio=فهرست پارامترها را به مانند کلید، ارزش است <br><br> به عنوان مثال: <br> 1، VALUE1 <br> 2، VALUE2 <br> 3، value3 <br> ...
@@ -391,7 +398,7 @@ ExtrafieldParamHelpsellist=لیست پارامترها می آید از یک ج�
 ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=کتابخانه مورد استفاده برای ساخت PDF
 WarningUsingFPDF=اخطار: <b>conf.php</b> شما شامل <b>dolibarr_pdf_force_fpdf</b> بخشنامه <b>= 1.</b> این به این معنی شما استفاده از کتابخانه FPDF برای تولید فایل های PDF. این کتابخانه قدیمی است و بسیاری از ویژگی های (یونیکد، شفافیت تصویر، زبان سیریلیک، عربی و آسیایی، ...) را پشتیبانی نمی کند، بنابراین شما ممکن است خطا در PDF نسل را تجربه کنند. <br> برای حل این و دارای پشتیبانی کامل از PDF نسل، لطفا دانلود کنید <a href="http://www.tcpdf.org/" target="_blank">کتابخانه TCPDF</a> ، پس از آن اظهار نظر و یا حذف خط <b>$ dolibarr_pdf_force_fpdf = 1،</b> و اضافه کردن به جای <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir'</b>
-LocalTaxDesc=برخی از کشورها 2 یا 3 مالیات در هر خط فاکتور اعمال می شود. اگر این مورد است، نوع مالیات دوم و سوم و نرخ آن را انتخاب کنید. نوع ممکن است: <br> 1: مالیات های محلی اعمال می شود بر روی محصولات و خدمات بدون مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مالیات های محلی به کار گرفته نمی شود) <br> 2: مالیات های محلی اعمال می شود بر روی محصولات و خدمات قبل از مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مقدار + localtax محاسبه) <br> 3: مالیات های محلی اعمال می شود بر روی محصولات بدون مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مالیات های محلی به کار گرفته نمی شود) <br> 4: مالیات های محلی اعمال می شود بر روی محصولات قبل از مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مقدار + localtax محاسبه) <br> 5: مالیات های محلی اعمال می شود در خدمات بدون مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مالیات های محلی به کار گرفته نمی شود) <br> 6: مالیات های محلی اعمال می شود در مورد خدمات قبل از مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مقدار + localtax محاسبه)
+LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (vat is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
 SMS=SMS
 LinkToTestClickToDial=شماره تلفن را وارد کنید تماس بگیرید برای نشان دادن یک لینک برای تست آدرس ClickToDial برای <strong>کاربر٪ s را</strong>
 RefreshPhoneLink=تازه کردن لینک
@@ -489,29 +496,37 @@ Module500Name=هزینه های ویژه (مالیاتی، کمک های اجت�
 Module500Desc=مدیریت هزینه های خاص مانند مالیات، مشارکت اجتماعی، سود سهام و حقوق
 Module510Name=حقوق
 Module510Desc=مدیریت کارکنان حقوق و پرداخت
+Module520Name=Loan
+Module520Desc=Management of loans
 Module600Name=اطلاعیه ها
 Module600Desc=Send EMail notifications on some Dolibarr business events to third-party contacts (setup defined on each thirdparty)
 Module700Name=کمک های مالی
 Module700Desc=مدیریت کمک مالی
+Module770Name=Expense Report
+Module770Desc=Management and claim expense reports (transportation, meal, ...)
+Module1120Name=Supplier commercial proposal
+Module1120Desc=Request supplier commercial proposal and prices
 Module1200Name=اخوندک
 Module1200Desc=ادغام آخوندک
 Module1400Name=حسابداری
 Module1400Desc=مدیریت حسابداری (احزاب دو)
-Module1780Name=دسته بندی ها
-Module1780Desc=مدیریت گروه (محصولات، تامین کنندگان و مشتریان)
+Module1520Name=ساخت سند
+Module1520Desc=Mass mail document generation
+Module1780Name=Tags/Categories
+Module1780Desc=Create tags/category (products, customers, suppliers, contacts or members)
 Module2000Name=ویرایشگر WYSIWYG
 Module2000Desc=اجازه می دهد به ویرایش برخی از متن با استفاده از ویرایشگر پیشرفته
-Module2200Name=Dynamic Prices
+Module2200Name=قیمت های پویا.
 Module2200Desc=Enable the usage of math expressions for prices
 Module2300Name=cron را
-Module2300Desc=وظیفه مدیریت برنامه ریزی
+Module2300Desc=Scheduled job management
 Module2400Name=دستور کار
 Module2400Desc=رویدادهای / وظایف و مدیریت برنامه
 Module2500Name=الکترونیکی مدیریت محتوا
 Module2500Desc=ذخیره و به اشتراک اسناد
 Module2600Name=سرویس دهنده وب
 Module2600Desc=فعال کردن Dolibarr خدمات وب سرور
-Module2650Name=WebServices (client)
+Module2650Name=وب سروسی ها ( کلاینت)
 Module2650Desc=Enable the Dolibarr web services client (Can be used to push data/requests to external servers. Supplier orders supported only for the moment)
 Module2700Name=Gravatar در
 Module2700Desc=استفاده از سرویس آنلاین Gravatar در (www.gravatar.com) برای نشان دادن عکس از کاربران / کاربران (که با ایمیل های خود را). نیاز به دسترسی به اینترنت
@@ -526,8 +541,8 @@ Module6000Name=گردش کار
 Module6000Desc=مدیریت گردش کار
 Module20000Name=Leave Requests management
 Module20000Desc=Declare and follow employees leaves requests
-Module39000Name=Product batch
-Module39000Desc=Batch or serial number, eat-by and sell-by date management on products
+Module39000Name=Product lot
+Module39000Desc=Lot or serial number, eat-by and sell-by date management on products
 Module50000Name=خزانه
 Module50000Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با خزانه
 Module50100Name=نقطه ای از فروش
@@ -544,8 +559,6 @@ Module59000Name=حاشیه
 Module59000Desc=ماژول برای مدیریت حاشیه
 Module60000Name=کمیسیون ها
 Module60000Desc=ماژول برای مدیریت کمیسیون
-Module150010Name=شماره بچ، غذا خوردن، بر اساس تاریخ و فروش بر اساس تاریخ
-Module150010Desc=تعداد دسته، غذا خوردن، بر اساس تاریخ و فروش توسط مدیریت تاریخ برای محصول
 Permission11=خوانده شده فاکتورها مشتری
 Permission12=ایجاد / اصلاح صورت حساب مشتری
 Permission13=صورت حساب مشتری Unvalidate
@@ -631,7 +644,7 @@ Permission181=خوانده شده سفارشات کالا
 Permission182=ایجاد / تغییر سفارشات کالا
 Permission183=اعتبارسنجی سفارشات کالا
 Permission184=تصویب سفارشات کالا
-Permission185=سفارشات تامین کننده نظم
+Permission185=Order or cancel supplier orders
 Permission186=دریافت سفارشات کالا
 Permission187=نزدیک سفارشات کالا
 Permission188=لغو سفارشات کالا
@@ -703,6 +716,11 @@ Permission510=خوانده شده حقوق
 Permission512=ایجاد / اصلاح حقوق
 Permission514=حذف حقوق
 Permission517=حقوق صادرات
+Permission520=Read Loans
+Permission522=Create/modify loans
+Permission524=Delete loans
+Permission525=Access loan calculator
+Permission527=Export loans
 Permission531=خوانده شده خدمات
 Permission532=ایجاد / اصلاح خدمات
 Permission534=حذف خدمات
@@ -711,6 +729,13 @@ Permission538=خدمات صادرات
 Permission701=خوانده شده
 Permission702=ایجاد / تغییر کمک های مالی
 Permission703=حذف کمک های مالی
+Permission771=Read expense reports (own and his subordinates)
+Permission772=Create/modify expense reports
+Permission773=Delete expense reports
+Permission774=Read all expense reports (even for user not subordinates)
+Permission775=Approve expense reports
+Permission776=Pay expense reports
+Permission779=Export expense reports
 Permission1001=خوانده شده سهام
 Permission1002=Create/modify warehouses
 Permission1003=Delete warehouses
@@ -728,6 +753,7 @@ Permission1185=تصویب سفارشات کالا
 Permission1186=سفارشات تامین کننده نظم
 Permission1187=اذعان دریافت سفارشات کالا
 Permission1188=حذف سفارشات کالا
+Permission1190=Approve (second approval) supplier orders
 Permission1201=دریافت نتیجه شده از صادرات
 Permission1202=ایجاد / اصلاح صادرات
 Permission1231=خوانده شده فاکتورها منبع
@@ -740,10 +766,10 @@ Permission1237=سفارشات عرضه کننده کالا صادرات و مش�
 Permission1251=اجرای واردات انبوه از داده های خارجی به پایگاه داده (بار داده ها)
 Permission1321=فاکتورها صادرات به مشتریان، ویژگی ها و پرداخت ها
 Permission1421=سفارشات صادرات مشتری و ویژگی های
-Permission23001 = به نشانه خوانده شدن برنامه ریزی شده کار
-Permission23002 = ایجاد / بروز رسانی برنامه ریزی شده کار
-Permission23003 = حذف کار برنامه ریزی شده
-Permission23004 = اجرای کار برنامه ریزی شده
+Permission23001=Read Scheduled job
+Permission23002=Create/update Scheduled job
+Permission23003=Delete Scheduled job
+Permission23004=Execute Scheduled job
 Permission2401=دفعات بازدید: اقدامات (رویدادها و وظایف) مرتبط با حساب کاربری خود
 Permission2402=ایجاد / اصلاح اعمال (رویدادها و وظایف) به حساب او در ارتباط است
 Permission2403=حذف اقدامات (رویدادها و وظایف) مرتبط با حساب کاربری خود
@@ -790,7 +816,7 @@ DictionaryOrderMethods=مرتب سازی بر روش
 DictionarySource=منبع از پیشنهادات / سفارشات
 DictionaryAccountancyplan=نمودار حساب
 DictionaryAccountancysystem=مدل برای نمودار حساب
-DictionaryEMailTemplates=Emails templates
+DictionaryEMailTemplates=الگوهای ایمیل
 SetupSaved=راه اندازی نجات داد
 BackToModuleList=بازگشت به لیست ماژول ها
 BackToDictionaryList=برگشت به فهرست واژه نامه ها
@@ -826,12 +852,12 @@ LocalTax2IsUsedDescES= نرخ RE به طور پیش فرض هنگام ایجاد
 LocalTax2IsNotUsedDescES= به طور پیش فرض IRPF پیشنهاد 0. پایان حکومت است.
 LocalTax2IsUsedExampleES= در اسپانیا، مترجمان آزاد و مستقل حرفه ای که ارائه خدمات و شرکت های که انتخاب کرده اند نظام مالیاتی از ماژول های.
 LocalTax2IsNotUsedExampleES= در اسپانیا آنها bussines به سیستم مالیاتی از ماژول های موضوع نیست.
-CalcLocaltax=گزارش ها
-CalcLocaltax1ES=فروش - خرید
+CalcLocaltax=Reports on local taxes
+CalcLocaltax1=Sales - Purchases
 CalcLocaltax1Desc=گزارش مالیات های محلی با تفاوت بین localtaxes فروش و localtaxes خرید محاسبه
-CalcLocaltax2ES=خرید
+CalcLocaltax2=Purchases
 CalcLocaltax2Desc=گزارش مالیات های محلی هستند که مجموع localtaxes خرید
-CalcLocaltax3ES=فروش
+CalcLocaltax3=Sales
 CalcLocaltax3Desc=گزارش مالیات های محلی هستند که مجموع localtaxes فروش
 LabelUsedByDefault=برچسب استفاده می شود به طور پیش فرض اگر هیچ ترجمه ای برای کد یافت
 LabelOnDocuments=برچسب در اسناد
@@ -991,14 +1017,14 @@ NoEventOrNoAuditSetup=هیچ رویداد امنیتی ثبت نشده است. �
 NoEventFoundWithCriteria=هیچ رویداد امنیتی شده است برای چنین معیارهای جستجو در بر داشت.
 SeeLocalSendMailSetup=مشاهده راه اندازی از sendmail محلی خود
 BackupDesc=برای ایجاد یک پشتیبان کامل از Dolibarr، شما باید:
-BackupDesc2=* ذخیره محتوای دایرکتوری اسناد <b>(٪)</b> که شامل تمام فایل های آپلود و تولید (شما می توانید فایل های فشرده به عنوان مثال را).
-BackupDesc3=* ذخیره محتوای پایگاه داده خود را به یک فایل روگرفت. برای این کار، شما می توانید زیر دستیار استفاده کنید.
+BackupDesc2=Save content of documents directory (<b>%s</b>) that contains all uploaded and generated files (you can make a zip for example).
+BackupDesc3=Save content of your database (<b>%s</b>) into a dump file. For this, you can use following assistant.
 BackupDescX=دایرکتوری آرشیو شده باید در یک مکان امن ذخیره می شود.
 BackupDescY=فایل روگرفت تولید باید در یک مکان امن ذخیره می شود.
 BackupPHPWarning=پشتیبان گیری می توانید با این روش نمی توان guaranted. ترجیح می دهند قبل
 RestoreDesc=برای بازگرداندن یک نسخه پشتیبان تهیه Dolibarr، شما باید:
-RestoreDesc2=* بازگرداندن فایل آرشیو (فایل زیپ به عنوان مثال) از اسناد دایرکتوری برای استخراج درخت فایل در اسناد دایرکتوری از یک نصب جدید Dolibarr و یا به این directoy اسناد فعلی <b>(از٪ s).</b>
-RestoreDesc3=* بازگرداندن داده ها، از یک فایل روگرفت پشتیبان گیری، به پایگاه داده از نصب جدید Dolibarr و یا به پایگاه داده از نصب در حال حاضر. اخطار، یک بار بازگرداندن به پایان رسید، شما باید وارد شوید / رمز عبور، که وجود داشته است هنگامی که پشتیبان گیری ساخته شده برای اتصال دوباره استفاده کنید. برای بازگرداندن پایگاه داده پشتیبان گیری به این نصب و راه اندازی در حال حاضر، شما می توانید این دستیار دنبال کنید.
+RestoreDesc2=Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
+RestoreDesc3=Restore the data, from a backup dump file, into the database of the new Dolibarr installation or into the database of this current installation (<b>%s</b>). Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore a backup database into this current installation, you can follow this assistant.
 RestoreMySQL=واردات خروجی زیر
 ForcedToByAModule= این قانون توسط یک ماژول فعال <b>به٪ s</b> اجباری
 PreviousDumpFiles=فایل روگرفت پایگاه داده پشتیبان گیری می کند
@@ -1025,6 +1051,8 @@ MAIN_PROXY_PASS=رمز عبور به استفاده از پروکسی سرور
 DefineHereComplementaryAttributes=تعریف در اینجا تمام صفات، در حال حاضر به طور پیش فرض در دسترس نیست، و این که شما می خواهید برای٪ s پشتیبانی می شود.
 ExtraFields=ویژگی های مکمل
 ExtraFieldsLines=ویژگی های مکمل (خط)
+ExtraFieldsSupplierOrdersLines=Complementary attributes (order lines)
+ExtraFieldsSupplierInvoicesLines=Complementary attributes (invoice lines)
 ExtraFieldsThirdParties=ویژگی های مکمل (thirdparty)
 ExtraFieldsContacts=ویژگی های مکمل (تماس / آدرس)
 ExtraFieldsMember=ویژگی های مکمل (عضو)
@@ -1087,7 +1115,7 @@ ModuleCompanyCodeAquarium=بازگشت یک کد حسابداری ساخته ش�
 ModuleCompanyCodePanicum=بازگشت یک کد حسابداری خالی است.
 ModuleCompanyCodeDigitaria=کد حسابداری بستگی به کد های شخص ثالث. کد از شخصیت "C" در مقام اول و پس از آن 5 حرف اول کد های شخص ثالث تشکیل شده است.
 UseNotifications=استفاده از اطلاعیه
-NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one third party at time.<br>* or by setting a global target email address on module setup page.
+NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one contact at time.<br>* or by setting global target email addresses in module setup page.
 ModelModules=اسناد قالب
 DocumentModelOdt=تولید اسناد از OpenDocuments قالب (. ODT و یا فایل های ODS برای آفیس اپن سورس کنند، KOffice، TextEdit، ...)
 WatermarkOnDraft=تعیین میزان مد آب در پیش نویس سند
@@ -1152,6 +1180,13 @@ UseOptionLineIfNoQuantity=یک خط از محصول / خدمات با مقدار
 FreeLegalTextOnProposal=متن رایگان در طرح های تجاری
 WatermarkOnDraftProposal=تعیین میزان مد آب در پیش نویس طرح تجاری (هیچ اگر خالی)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
+##### AskPriceSupplier #####
+AskPriceSupplierSetup=Price requests suppliers module setup
+AskPriceSupplierNumberingModules=Price requests suppliers numbering models
+AskPriceSupplierPDFModules=Price requests suppliers documents models
+FreeLegalTextOnAskPriceSupplier=Free text on price requests suppliers
+WatermarkOnDraftAskPriceSupplier=Watermark on draft price requests suppliers (none if empty)
+BANK_ASK_PAYMENT_BANK_DURING_ASKPRICESUPPLIER=Ask for bank account destination of price request
 ##### Orders #####
 OrdersSetup=راه اندازی مدیریت سفارش
 OrdersNumberingModules=سفارشات شماره مدل
@@ -1301,6 +1336,8 @@ LDAPFieldCountry=کشور
 LDAPFieldCountryExample=به عنوان مثال: ج
 LDAPFieldDescription=توصیف
 LDAPFieldDescriptionExample=به عنوان مثال: توضیحات
+LDAPFieldNotePublic=Public Note
+LDAPFieldNotePublicExample=Example : publicnote
 LDAPFieldGroupMembers= اعضای گروه
 LDAPFieldGroupMembersExample= به عنوان مثال: uniqueMember
 LDAPFieldBirthdate=تاریخ تولد
@@ -1383,7 +1420,7 @@ BarcodeDescUPC=بارکد از نوع UPC
 BarcodeDescISBN=بارکد از نوع ISBN
 BarcodeDescC39=بارکد از نوع C39
 BarcodeDescC128=بارکد از نوع C128
-GenbarcodeLocation=تولید کد نوار ابزار خط فرمان (استفاده شده توسط موتور داخلی برای برخی از انواع بارکد)
+GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types). Must be compatible with "genbarcode".<br>For example: /usr/local/bin/genbarcode
 BarcodeInternalEngine=موتور داخلی
 BarCodeNumberManager=مدیر به صورت خودکار تعریف اعداد بارکد
 ##### Prelevements #####
@@ -1501,9 +1538,10 @@ CashDeskThirdPartyForSell=Default generic third party to use for sells
 CashDeskBankAccountForSell=پیش فرض حساب استفاده برای دریافت پرداخت های نقدی
 CashDeskBankAccountForCheque= پیش فرض حساب استفاده برای دریافت پرداخت توسط چک
 CashDeskBankAccountForCB= پیش فرض حساب استفاده برای دریافت پرداخت توسط کارت های اعتباری
-CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale
+CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale (if "no", stock decrease is done for each sell done from POS, whatever is option set into module Stock).
 CashDeskIdWareHouse=Force and restrict warehouse to use for stock decrease
 StockDecreaseForPointOfSaleDisabled=Stock decrease from Point Of Sale disabled
+StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatible with lot management
 CashDeskYouDidNotDisableStockDecease=You did not disable stock decrease when making a sell from Point Of Sale. So a warehouse is required.
 ##### Bookmark #####
 BookmarkSetup=راه اندازی ماژول چوب الف
@@ -1529,6 +1567,7 @@ SuppliersSetup=تامین کننده راه اندازی ماژول
 SuppliersCommandModel=قالب کامل جهت عرضه کننده کالا (logo. ..)
 SuppliersInvoiceModel=قالب کامل منبع فاکتور (logo. ..)
 SuppliersInvoiceNumberingModel=فاکتورها تامین کننده شماره مدل
+IfSetToYesDontForgetPermission=If set to yes, don't forget to provide permissions to groups or users allowed for the second approval
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=راه اندازی ماژول GeoIP با Maxmind
 PathToGeoIPMaxmindCountryDataFile=مسیر فایل حاوی Maxmind آی پی به ترجمه کشور است. <br> مثال: <br> / usr / محلی / سهم / GeoIP با / GeoIP.dat <br> / usr / اشتراک / GeoIP با / GeoIP.dat
@@ -1569,3 +1608,17 @@ SortOrder=Sort order
 Format=قالب
 TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both customers and suppliers payment type
 IncludePath=Include path (defined into variable %s)
+ExpenseReportsSetup=Setup of module Expense Reports
+TemplatePDFExpenseReports=Document templates to generate expense report document
+NoModueToManageStockDecrease=No module able to manage automatic stock decrease has been activated. Stock decrease will be done on manual input only.
+NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.
+YouMayFindNotificationsFeaturesIntoModuleNotification=You may find options for EMail notifications by enabling and configuring the module "Notification".
+ListOfNotificationsPerContact=List of notifications per contact*
+ListOfFixedNotifications=List of fixed notifications
+GoOntoContactCardToAddMore=Go on the tab "Notifications" of a thirdparty contact to add or remove notifications for contacts/addresses
+Threshold=Threshold
+BackupDumpWizard=Wizard to build database backup dump file
+SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
+SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
+InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
+ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br>- <strong>$dolibarr_main_url_root_alt</strong> enabled to value <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> enabled to value <strong>"%s/custom"</strong>

@@ -1,22 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-Trip=Déplacement
-Trips=Déplacements
-TripsAndExpenses=Note de frais
+ExpenseReport=Note de frais
+ExpenseReports=Notes de frais
+Trip=Notes de frais
+Trips=Note de frais
+TripsAndExpenses=Notes de frais
 TripsAndExpensesStatistics=Statistiques notes de frais
-TripCard=Fiche frais
+TripCard=Fiche note de frais
 AddTrip=Créer note de frais
-ListOfTrips=Liste des frais
+ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée
 Kilometers=Kilomètres
 FeesKilometersOrAmout=Montant ou kilomètres
-DeleteTrip=Supprimer déplacement
+DeleteTrip=Supprimer les notes de frais / déplacements
 ConfirmDeleteTrip=Êtes-vous sûr de vouloir supprimer cette note de frais ?
-TF_OTHER=Autre
-TF_LUNCH=Repas
-TF_TRIP=Déplacement
 ListTripsAndExpenses=Liste des notes de frais
+ListToApprove=En attente d'approbation
 ExpensesArea=Espace notes de frais
 SearchATripAndExpense=Rechercher une note de frais
 ClassifyRefunded=Classer 'Remboursé'
+ExpenseReportWaitingForApproval=Une nouvelle note de frais a été soumise pour approbation
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
+TripId=Id note de frais
+AnyOtherInThisListCanValidate=Person to inform for validation.
+TripSociete=Information société
+TripSalarie=Informations utilisateur
+TripNDF=Informations note de frais
+DeleteLine=Effacer une ligne de note de frais
+ConfirmDeleteLine=Are you sure you want to delete this line ?
+PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+ExpenseReportLine=Expense report line
+TF_OTHER=Autre
+TF_TRANSPORTATION=Transport
+TF_LUNCH=Repas
+TF_METRO=Métro
+TF_TRAIN=Train
+TF_BUS=Bus
+TF_CAR=Voiture
+TF_PEAGE=Péage
+TF_ESSENCE=Carburant
+TF_HOTEL=Hôtel
+TF_TAXI=Taxi
+
+ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
+ListTripsAndExpenses=Liste des notes de frais
+AucuneNDF=Pas de note de frais trouvées avec ces critères
+AucuneLigne=Aucune note de frais déclarée
+AddLine=Ajout nouvelle ligne
+AddLineMini=Ajouter
+
+Date_DEBUT=Date début
+Date_FIN=Date fin
+ModePaiement=Mode de paiement
+Note=Note
+Project=Projet
+
+VALIDATOR=Utilisateur à informer pour approbation
+VALIDOR=Approuvé par
+AUTHOR=Enregistré par
+AUTHORPAIEMENT=Payé par
+REFUSEUR=Refusé par
+CANCEL_USER=Annulé par
+
+MOTIF_REFUS=Motif
+MOTIF_CANCEL=Motif
+
+DATE_REFUS=Date refus
+DATE_SAVE=Date validation
+DATE_VALIDE=Date validation
+DATE_CANCEL=Date annulation
+DATE_PAIEMENT=Payment date
+
+TO_PAID=Payer
+BROUILLONNER=Reopen
+SendToValid=Sent to approve
+ModifyInfoGen=Edit
+ValidateAndSubmit=Validate and submit for approval
+
+NOT_VALIDATOR=You are not allowed to approve this expense report
+NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+
+RefuseTrip=Deny an expense report
+ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+
+ValideTrip=Approuver note de frais
+ConfirmValideTrip=Êtes-vous sûr de vouloir approuver cette note de frais ?
+
+PaidTrip=Payer note de frais
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+
+CancelTrip=Annuler note de frais
+ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+
+BrouillonnerTrip=Move back expense report to status "Draft"n
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+
+SaveTrip=Validate expense report
+ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+
+NoTripsToExportCSV=Pas de note de frais à exporter dans cette période

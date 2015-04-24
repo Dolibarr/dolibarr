@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=منبع و اهداف حساب های بانکی
 ErrorBadThirdPartyName=ارزش بد برای نام شخص ثالث
 ErrorProdIdIsMandatory=٪ بازدید کنندگان الزامی است
 ErrorBadCustomerCodeSyntax=نحو بد برای کد مشتری
-ErrorBadBarCodeSyntax=نحو بد بارکد
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=کد مشتریان مورد نیاز
 ErrorBarCodeRequired=کد نوار مورد نیاز
 ErrorCustomerCodeAlreadyUsed=کد مشتری در حال حاضر استفاده می شود
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=جاوا اسکریپت نمی باید غیر فع
 ErrorPasswordsMustMatch=هر دو کلمه عبور تایپ شده باید با یکدیگر مطابقت
 ErrorContactEMail=یک خطای فنی رخ داد. لطفا، با مدیر سایت تماس به زیر ایمیل <b>از٪ s</b> EN ارائه کد <b>خطا٪ s</b> در پیام خود، و یا حتی بهتر با اضافه کردن یک کپی روی صفحه نمایش از این صفحه.
 ErrorWrongValueForField=ارزش اشتباه برای تعداد <b>فیلد٪ s</b> (مقدار <b>«٪ s» به</b> عبارت منظم حکومت <b>از٪ s</b> مطابقت ندارد)
-ErrorFieldValueNotIn=ارزش اشتباه برای تعداد <b>فیلد٪ s</b> (مقدار <b>«٪ s»</b> است مقدار موجود در <b>فیلد٪ s را</b> از <b>جدول٪ نیست)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=ارزش اشتباه برای تعداد <b>فیلد٪ s</b> (مقدار <b>«٪ s»</b> است <b>از٪ s</b> کد عکس موجود نیست)
 ErrorsOnXLines=خطا <b>در٪ s را</b> ثبت منبع (ها)
 ErrorFileIsInfectedWithAVirus=برنامه آنتی ویروس قادر به اعتبار فایل (فایل ممکن است توسط یک ویروس آلوده)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=پارامترهای راه اندازی اجباری هنوز تعریف نشده

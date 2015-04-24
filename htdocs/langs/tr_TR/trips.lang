@@ -1,22 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-Trip=Gezi
-Trips=Geziler
-TripsAndExpenses=Geziler ve giderler
-TripsAndExpensesStatistics=Gezi ve gider istatistikleri
-TripCard=Gezi kartı
-AddTrip=Gezi ekle
-ListOfTrips=Gezi listesi
+ExpenseReport=Gider raporu
+ExpenseReports=Gider raporları
+Trip=Gider raporu
+Trips=Gider raporları
+TripsAndExpenses=Giderler raporları
+TripsAndExpensesStatistics=Gider raporları istatistkleri
+TripCard=Gider raporu kartı
+AddTrip=Gider raporu oluştur
+ListOfTrips=Gider raporu listesi
 ListOfFees=Ücretler listesi
-NewTrip=Yeni gezi
+NewTrip=Yeni gider raporu
 CompanyVisited=Ziyaret edilen firma/kuruluş
 Kilometers=Kilometre
 FeesKilometersOrAmout=Tutar ya da kilometre
-DeleteTrip=Gezi sil
-ConfirmDeleteTrip=Bu geziyi silmek istediğinizden emin misiniz?
-TF_OTHER=Diğer
-TF_LUNCH=Öğle yemeği
-TF_TRIP=Gezi
-ListTripsAndExpenses=Geziler ve giderler listesi
-ExpensesArea=Geziler ve giderler alanı
-SearchATripAndExpense=Bir gezi ve gider ara
+DeleteTrip=Gider raporu sil
+ConfirmDeleteTrip=Bu gider raporunu silmek istediğinizden emin misiniz?
+ListTripsAndExpenses=Giderler raporları listesi
+ListToApprove=Onay bekliyor
+ExpensesArea=Gider raporları alanı
+SearchATripAndExpense=Bir gider raporu ara
 ClassifyRefunded=Sınıflandırma 'İade edildi'
+ExpenseReportWaitingForApproval=Onay için yeni bir gider raporu sunulmuştur
+ExpenseReportWaitingForApprovalMessage=Yeni bir gider raporu sunulmuş olup onay için beklemektedir.\n- Kullanıcı: %s\n- Dönem: %s\nDoğrulamak için buraya tıklayın: %s
+TripId=Gider raporu kimliği
+AnyOtherInThisListCanValidate=Doğrulama için bilgilendirilecek kişi
+TripSociete=Firma bilgisi
+TripSalarie=Kullanıcı bilgisi
+TripNDF=Gider raporu bilgileri
+DeleteLine=Gider raporundan bir satır sil
+ConfirmDeleteLine=Bu satırı silmek istediğinizden emin misiniz?
+PDFStandardExpenseReports=Bu gider raporu için PDF belgesi oluşturulacak standart şablon
+ExpenseReportLine=Gider rapor satırı
+TF_OTHER=Diğer
+TF_TRANSPORTATION=Nakliye
+TF_LUNCH=Öğle yemeği
+TF_METRO=Metro
+TF_TRAIN=Tren
+TF_BUS=Otobüs
+TF_CAR=Araba
+TF_PEAGE=Geçiş parası
+TF_ESSENCE=Yakıt
+TF_HOTEL=Hostel
+TF_TAXI=Taksi
+
+ErrorDoubleDeclaration=Benzer bir tarih aralığı için başka bir gider raporu bildirdiniz.
+ListTripsAndExpenses=Giderler raporları listesi
+AucuneNDF=Bu kriter uyan hiç gider raporu bulunamadı
+AucuneLigne=Bildirilen hiç gider raporu yok
+AddLine=Satır ekle
+AddLineMini=Ekle
+
+Date_DEBUT=Dönem tarihi başı
+Date_FIN=Dönem tarihi sonu
+ModePaiement=Ödeme biçimi
+Note=Not
+Project=Proje
+
+VALIDATOR=Onama için bilgilendirilecek kullanıcı
+VALIDOR=Onaylayan
+AUTHOR=Kaydeden
+AUTHORPAIEMENT=Ödeyen
+REFUSEUR=Reddeden
+CANCEL_USER=İptal eden
+
+MOTIF_REFUS=Neden
+MOTIF_CANCEL=Neden
+
+DATE_REFUS=Ret tarihi
+DATE_SAVE=Onay tarihi
+DATE_VALIDE=Onay tarihi
+DATE_CANCEL=İptal etme tarihi
+DATE_PAIEMENT=Ödeme tarihi
+
+TO_PAID=Öde
+BROUILLONNER=Yeniden aç
+SendToValid=Onay için gönder
+ModifyInfoGen=Düzenle
+ValidateAndSubmit=Doğrula ve onay için gönder
+
+NOT_VALIDATOR=Bu gider raporunu onaylama yetiniz yok
+NOT_AUTHOR=Bu gider raporunu yazan siz değilsiniz. İşlem iptal edildi.
+
+RefuseTrip=Bir gider raporu reddet
+ConfirmRefuseTrip=Bu gider raporunu reddetmek istediğinizden emin misiniz?
+
+ValideTrip=Gider raporunu onayla
+ConfirmValideTrip=Bu gider raporunu onaylamak istediğinizden emin misiniz?
+
+PaidTrip=Bir gider raporu öde
+ConfirmPaidTrip=Bu gider raporunun durumunu "Ödendi" olarak değiştirmek istediğinizden emin misiniz?
+
+CancelTrip=Bir gider raporu iptal et
+ConfirmCancelTrip=Bu gider raporunu iptal etmek istediğinizden emin misiniz?
+
+BrouillonnerTrip=Gider raporun geri "Taslak" durumuna döndür
+ConfirmBrouillonnerTrip=Bu gider raporunu "Taslak" durumuna döndürmek istediğinizden emin misiniz?
+
+SaveTrip=Gider raporunu doğrula
+ConfirmSaveTrip=Bu gider raporunu doğrulamak istediğinizden emin misiniz?
+
+NoTripsToExportCSV=Bu dönem için dışaaktarılacak gider raporu yok.

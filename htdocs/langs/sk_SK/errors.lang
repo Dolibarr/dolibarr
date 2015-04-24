@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Zdrojovej a cieľovej bankové účty musí byť 
 ErrorBadThirdPartyName=Nesprávna hodnota pre tretie strany menom
 ErrorProdIdIsMandatory=%s je povinné
 ErrorBadCustomerCodeSyntax=Bad syntaxe pre zákazníka kódu
-ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Zákazník požadoval kód
 ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Zákaznícky kód už používaný
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Javascript musí byť vypnutá, že táto funkcia p
 ErrorPasswordsMustMatch=Obaja napísaný hesla sa musia zhodovať sa navzájom
 ErrorContactEMail=Technické chybe. Prosím, obráťte sa na správcu, aby e-mailovú <b>%s</b> en poskytovať <b>%s</b> kód chyby v správe, alebo ešte lepšie pridaním obrazovky kópiu tejto stránky.
 ErrorWrongValueForField=Chybná hodnota <b>%s</b> číslo poľa (hodnota <b>&quot;%s</b> 'nezodpovedá regex pravidiel <b>%s)</b>
-ErrorFieldValueNotIn=Chybná hodnota <b>%s</b> číslo poľa (hodnota <b>&quot;%s</b> 'nie je dostupná hodnota do poľa <b>%s</b> stolových <b>%s)</b>
+ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Chybná hodnota <b>%s</b> číslo poľa (hodnota <b>&quot;%s&quot;</b> nie je <b>%s</b> existujúce ref)
 ErrorsOnXLines=Chyby na <b>%s</b> zdrojovom zázname (s)
 ErrorFileIsInfectedWithAVirus=Antivírusový program nebol schopný overiť súbor (súbor môže byť napadnutý vírusom)
@@ -159,7 +159,17 @@ ErrorPriceExpression22=Negative result '%s'
 ErrorPriceExpressionInternal=Internal error '%s'
 ErrorPriceExpressionUnknown=Unknown error '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without batch/serial information, on a product requiring batch/serial information
+ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
+ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
+ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
+ErrorGlobalVariableUpdater2=Missing parameter '%s'
+ErrorGlobalVariableUpdater3=The requested data was not found in result
+ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
+ErrorGlobalVariableUpdater5=No global variable selected
+ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
+ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametre sú doteraz stanovené

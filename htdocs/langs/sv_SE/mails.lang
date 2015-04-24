@@ -139,3 +139,5 @@ ListOfNotificationsDone=Lista alla e-postmeddelanden skickas
 MailSendSetupIs=Konfiguration av e-post att skicka har ställts in till "% s". Detta läge kan inte användas för att skicka massutskick.
 MailSendSetupIs2=Du måste först gå, med ett administratörskonto, i meny% Shome - Setup - e-post% s för att ändra parameter <strong>'% s'</strong> för att använda läget "% s". Med det här läget kan du ange inställningar för SMTP-servern från din internetleverantör och använda Mass mejla funktionen.
 MailSendSetupIs3=Om du har några frågor om hur man ställer in din SMTP-server, kan du be att% s.
+YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
+NbOfTargetedContacts=Current number of targeted contact emails

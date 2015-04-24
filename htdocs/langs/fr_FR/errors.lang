@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Les comptes source et destination doivent être d
 ErrorBadThirdPartyName=Nom de tiers incorrect
 ErrorProdIdIsMandatory=Le %s est obligatoire
 ErrorBadCustomerCodeSyntax=La syntaxe du code client est incorrecte
-ErrorBadBarCodeSyntax=Mauvaise syntaxe pour le code-barre
+ErrorBadBarCodeSyntax=Mauvaise syntaxe pour le code barre. Peut être que vous avez défini un mauvais type de code-barres ou que vous avez défini un masque de code à barres pour la numérotation qui ne correspond pas à la valeur scannée.
 ErrorCustomerCodeRequired=Code client obligatoire
 ErrorBarCodeRequired=Code-barre requis
 ErrorCustomerCodeAlreadyUsed=Code client déjà utilisé
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Le javascript ne doit pas être désactivé pour qu
 ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre
 ErrorContactEMail=Une erreur technique est apparue. Merci de contacter l'administrateur à l'email suivant <b>%s</b> en lui indiquant le code erreur <b>%s</b> dans votre message ou mieux en fournissant une copie d'écran de cette page.
 ErrorWrongValueForField=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' ne respecte pas la règle <b>%s</b>)
-ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeure présente dans le champ <b>%s</b> de la table <b>%s</b>)
+ErrorFieldValueNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une valeur présente dans le champ <b>%s</b> de la table <b>%s</b> = <b>%s</b>)
 ErrorFieldRefNotIn=Mauvaise valeur pour le champ numéro <b>%s</b> (la valeur '<b>%s</b>' n'est pas une référence existante comme <b>%s</b>)
 ErrorsOnXLines=Erreurs sur <b>%s</b> enregistrement(s) source
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
@@ -160,6 +160,16 @@ ErrorPriceExpressionInternal=Erreur interne '%s'
 ErrorPriceExpressionUnknown=Erreur inconnue '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
 ErrorTryToMakeMoveOnProductRequiringBatchData=Erreur, vous essayez de faire un mouvement sans lot/numéro de série, sur un produit qui exige un lot/numéro de série.
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Toutes les réceptions enregistrées doivent d'abord être vérifiées (approuvées ou refusées) avant d'être autorisé à faire cette action
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Toutes les réceptions enregistrées doivent d'abord être vérifiées (approuvées) avant d'être autorisé à faire cette action
+ErrorGlobalVariableUpdater0=La requête HTTP a échoué avec l'erreur '%s'
+ErrorGlobalVariableUpdater1=Format JSON invalide '%s'
+ErrorGlobalVariableUpdater2=Paramètre manquant '%s'
+ErrorGlobalVariableUpdater3=La donnée recherché n'a pas été trouvée
+ErrorGlobalVariableUpdater4=Le client SOAP a échoué avec l'erreur '%s'
+ErrorGlobalVariableUpdater5=Pas de variable globale
+ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
+ErrorFieldMustBeAnInteger=Le champ <b>%s</b> doit être un numérique
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

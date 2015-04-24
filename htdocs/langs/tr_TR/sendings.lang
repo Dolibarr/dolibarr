@@ -2,6 +2,7 @@
 RefSending=Sevkiyat ref.
 Sending=Sevkiyat
 Sendings=Sevkiyatlar
+AllSendings=Tüm sevkiyatlar
 Shipment=Sevkiyat
 Shipments=Sevkiyatlar
 ShowSending=Gönderimi göster
@@ -23,7 +24,7 @@ QtyOrdered=Sipariş mikt.
 QtyShipped=Sevkedilen mikt.
 QtyToShip=Sevk edilecek mikt.
 QtyReceived=Alınan mikt.
-KeepToShip=Sevkiyat için tut
+KeepToShip=Gönderilmek için kalır
 OtherSendingsForSameOrder=Bu sipariş için diğer sevkiyatlar
 DateSending=Sipariş gönderme tarihi
 DateSendingShort=Sipariş gönderme tarihi

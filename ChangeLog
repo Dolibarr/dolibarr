@@ -2,6 +2,12 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
+Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
+You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
+Upgrading to any other version or database system is abolutely required BEFORE trying to
+make a migration.
+
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
@@ -130,6 +136,7 @@ For translators:
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
+- New: Syslog module can be set to use ChromePHP plugin to output log server into browser console.
 - New: Add a css style "cursorpointer".
 - New: Select list of users can return user into hierarchy.
 - New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
@@ -171,6 +178,7 @@ Dolibarr better:
 - A lot of pages called liste.php were renamed into list.php
 - If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
   warehouse module and your Point Of Sale module if you use one.
+- Replaced USER_UPDATE_SESSION trigger with an updateSession hook
 
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service
@@ -194,12 +202,20 @@ Dolibarr better:
 - Fix: [ bug #1827 ] Tax reports gives incorrect amounts when using external modules that create lines with special codes
 - Fix: [ bug #1822 ] SQL error in clientfourn.php report with PostgreSQL
 - Fix: [ bug #1832 ] SQL error when adding a product with no price defined to an object
+- Fix: [ bug #1833 ] user permissions in contact/note.php not working
 - Fix: [ bug #1826 ] Supplier payment types are not translated into fourn/facture/paiement.php
 - Fix: [ bug #1830 ] Salaries payment only allows checking accounts
 - Fix: [ bug #1825 ] External agenda: hide/show checkbox doesn't work
 - Fix: [ bug #1790 ] Email form behaves in an unexpected way when pressing Enter key
 - Fix: Bad SEPA xml file creation
 - Fix: [ bug #1892 ] PHP Fatal error when using USER_UPDATE_SESSION trigger and adding a supplier invoice payment
+- Fix: Showing system error if not enough stock of product into orders creation with lines
+- Fix: [ bug #2543 ] Untranslated "Contract" origin string when creating an invoice from a contract
+- Fix: [ bug #2534 ] SQL error when editing a supplier invoice line
+- Fix: [ bug #2535 ] Untranslated string in "Linked objects" page of a project
+- Fix: [ bug #2545 ] Missing object_margin.png in Amarok theme
+- Fix: [ bug #2542 ] Contracts store localtax preferences
+- Fix: Bad permission assignments for stock movements actions
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -367,6 +383,11 @@ Fix: [ bug #1757 ] Sorting breaks product/service statistics
 Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
 Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
 Fix: [ bug #1846 ] Browser IE11 not detected
+Fix: [ bug #1906 ] Deplacement does not allow translated decimal format
+Fix: [ bug #1905 ] Custom deplacement types do not get translated in deplacement card
+Fix: [ bug #2583 ] Unable to create a bank transfer with localized numbers
+Fix: [ bug #2577 ] Incorrect invoice status in "Linked objects" page of a project
+Fix: [ bug #2576 ] Unable to edit a dictionary entry that has # in its ref
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

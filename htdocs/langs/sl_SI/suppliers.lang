@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Dobavitelji
-Supplier=Dobavitelj
 AddSupplier=Ustvari dobavitelja
 SupplierRemoved=Dobavitelj odstranjen
 SuppliersInvoice=Računi dobavitelja
@@ -44,3 +43,4 @@ ListOfSupplierOrders=Seznam naročil dobaviitelja
 MenuOrdersSupplierToBill=Zaračunavanje naročil dobavitelja
 NbDaysToDelivery=Zakasnitev dobave v dnevih
 DescNbDaysToDelivery=Največja zakasnitev je prikazana med seznami naročenih proizvodov
+UseDoubleApproval=Uporabi dvojno potrjevanje (drugo potrditev lahko izvrši katerikoli uporabnik z dodeljenim dovoljenjem)

@@ -1,10 +1,9 @@
 # ProductBATCH language file - en_US - ProductBATCH
-CHARSET= UTF-8
-ManageLotSerial=Manage lot or serial
-ProductStatusOnBatch=Managed
-ProductStatusNotOnBatch=Not Managed
-ProductStatusOnBatchShort=Managed
-ProductStatusNotOnBatchShort=Not Managed
+ManageLotSerial=Use batch/serial number
+ProductStatusOnBatch=Yes (Batch/serial required)
+ProductStatusNotOnBatch=No (Batch/serial not used)
+ProductStatusOnBatchShort=Yes
+ProductStatusNotOnBatchShort=No
 Batch=Batch/Serial
 atleast1batchfield=Eat-by date or Sell-by date or Batch number
 batch_number=Batch/Serial number
@@ -19,3 +18,4 @@ printQty=Qty: %d
 AddDispatchBatchLine=Add a line for Shelf Life dispatching
 BatchDefaultNumber=Undefined
 WhenProductBatchModuleOnOptionAreForced=When module Batch/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=This product does not use batch/serial number

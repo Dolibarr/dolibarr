@@ -413,7 +413,8 @@ class ActionComm extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($this->db->num_rows($resql))
+        	$num=$this->db->num_rows($resql);
+            if ($num)
             {
                 $obj = $this->db->fetch_object($resql);
 
@@ -469,13 +470,15 @@ class ActionComm extends CommonObject
                 $this->elementtype			= $obj->elementtype;
             }
             $this->db->free($resql);
-            return 1;
         }
         else
         {
             $this->error=$this->db->lasterror();
             return -1;
         }
+
+        return $num;
+
     }
 
 

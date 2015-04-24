@@ -229,7 +229,7 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if (empty($user->entity) && $debug) {} // to force for superadmin
+if ((empty($user->entity) || $user->admin) && $debug) {} // to force for superadmin
 else $sql.= " AND visible = 1";			// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
 $sql.= " ORDER BY entity, name ASC";
 
