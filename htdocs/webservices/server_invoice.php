@@ -250,6 +250,18 @@ $server->register(
     $styleuse,
     'WS to create an invoice'
 );
+$server->register(
+    'updateInvoice',
+    // Entry values
+    array('authentication'=>'tns:authentication','invoice'=>'tns:invoice'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+    $ns,
+    $ns.'#updateInvoice',
+    $styledoc,
+    $styleuse,
+    'WS to update an invoice'
+);
 
 
 /**
@@ -387,7 +399,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	if (! $error && empty($idthirdparty))
 	{
 		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
+		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter idthirdparty is not provided';
 	}
 
 	if (! $error)
@@ -460,7 +472,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			    		'status'=> $invoice->statut,
 			    		'close_code' => $invoice->close_code?$invoice->close_code:'',
 			    		'close_note' => $invoice->close_note?$invoice->close_note:'',
-					'payment_mode_id' => $invoice->mode_reglement_id?$invoice->mode_reglement_id:'',
+			    		'payment_mode_id' => $invoice->mode_reglement_id?$invoice->mode_reglement_id:'',
 			    		'lines' => $linesresp
 			    	);
 			    }
@@ -503,7 +515,8 @@ function createInvoice($authentication,$invoice)
 
     $now=dol_now();
 
-    dol_syslog("Function: createInvoiceForThirdParty login=".$authentication['login']);
+    dol_syslog("Function: createInvoice login=".$authentication['login']." id=".$invoice->id.
+    		", ref=".$invoice->ref.", ref_ext=".$invoice->ref_ext);
 
     if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -513,6 +526,11 @@ function createInvoice($authentication,$invoice)
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
+    // Check parameters
+    if (empty($invoice['id']) && empty($invoice['ref']) && empty($invoice['ref_ext']))	{
+    	$error++; $errorcode='KO'; $errorlabel="Invoice id or ref or ref_ext is mandatory.";
+    }
+    
     if (! $error)
     {
         $newobject=new Facture($db);
@@ -599,6 +617,99 @@ function createInvoice($authentication,$invoice)
     }
 
     return $objectresp;
+}
+
+/**
+ * Uddate an invoice, only change the state of an invoice
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	Facture		$invoice			Invoice
+ * @return	array							Array result
+ */
+function updateInvoice($authentication,$invoice)
+{
+	global $db,$conf,$langs;
+
+	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice->id.
+    		", ref=".$invoice->ref.", ref_ext=".$invoice->ref_ext);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+
+	// Check parameters
+	if (empty($invoice['id']) && empty($invoice['ref']) && empty($invoice['ref_ext']))	{
+		$error++; $errorcode='KO'; $errorlabel="Invoice id or ref or ref_ext is mandatory.";
+	}
+	
+	if (! $error)
+	{
+		$objectfound=false;
+	
+		$object=new Facture($db);
+		$result=$object->fetch($invoice['id'],$invoice['ref'],$invoice['ref_ext'], '');
+	
+		if (!empty($object->id)) {
+	
+			$objectfound=true;
+	
+			$db->begin();
+	
+			if (isset($invoice['status']))
+			{
+				if ($invoice['status'] == 0)  $result=$object->set_draft($fuser);
+				if ($invoice['status'] == 1)
+				{
+					$result=$object->validate($fuser);
+						
+					if ($result	>= 0)
+					{
+						// Define output language
+						$outputlangs = $langs;
+						$order->generateDocument($invoice->modelpdf, $outputlangs);		
+					}
+				}
+				if ($invlice['status'] == 2)
+				{
+					$result = $object->set_paid($fuser,$invoice->close_code,$invoice->close_note);			
+				}
+				if ($invoice['status'] == 3)  $result=$object->set_canceled($fuser,$invoice->close_code,$invoice->close_note);
+			}
+		}
+	
+		if ((! $error) && ($objectfound))
+		{
+			$db->commit();
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id,
+					'ref'=>$object->ref,
+					'ref_ext'=>$object->ref_ext
+			);
+		}
+		elseif ($objectfound)
+		{
+			$db->rollback();
+			$error++;
+			$errorcode='KO';
+			$errorlabel=$object->error;
+		} else {
+			$error++;
+			$errorcode='NOT_FOUND';
+			$errorlabel='Invoice id='.$invoice['id'].' ref='.$invoice['ref'].' ref_ext='.$invoice['ref_ext'].' cannot be found';
+		}
+	}
+	
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+	
+	return $objectresp;
 }
 
 // Return the results.
