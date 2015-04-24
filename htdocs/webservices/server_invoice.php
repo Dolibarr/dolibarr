@@ -243,12 +243,24 @@ $server->register(
     // Entry values
     array('authentication'=>'tns:authentication','invoice'=>'tns:invoice'),
     // Exit values
-    array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),
+    array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
     $ns,
     $ns.'#createInvoice',
     $styledoc,
     $styleuse,
     'WS to create an invoice'
+);
+$server->register(
+		'createInvoiceFromOrder',
+		// Entry values
+		array('authentication'=>'tns:authentication','invoice'=>'tns:invoice'),
+		// Exit values
+		array('result'=>'tns:result','invoice'=>'tns:invoice'),
+		$ns,
+		$ns.'#createInvoiceFromOrder',
+		$styledoc,
+		$styleuse,
+		'WS to create an invoice from an order'
 );
 $server->register(
     'updateInvoice',
@@ -599,7 +611,8 @@ function createInvoice($authentication,$invoice)
         if (! $error)
         {
             $db->commit();
-            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,
+            		'ref'=>$newobject->ref,'ref_ext'=>$newobject->ref_ext);
         }
         else
         {
@@ -617,6 +630,101 @@ function createInvoice($authentication,$invoice)
     }
 
     return $objectresp;
+}
+
+/**
+ * Create an invoice from an order
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	string      $id_order			id of order to copy invoice from
+ * @param	string      $ref_order			ref of order to copy invoice from
+ * @param	string      $ref_ext_order		ref_ext of order to copy invoice from
+ * @param	string      $id_invoice			invoice id
+ * @param	string      $ref_invoice		invoice ref
+ * @param	string      $ref_ext_invoice	invoice ref_ext
+ * @return	array							Array result
+ */
+function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $ref_ext_order='', 
+		$id_invoice='', $ref_invoice='', $ref_ext_invoice='')
+{
+	global $db,$conf,$langs;
+
+	$now=dol_now();
+
+	dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
+			", ref=".$ref_order.", ref_ext=".$ref_ext_order);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+
+	// Check parameters
+	if (empty($id_order) && empty($ref_order) && empty($ref_ext_order))	{
+		$error++; $errorcode='KO'; $errorlabel="order id or ref or ref_ext is mandatory.";
+	} else if (empty($id_invoice) && empty($ref_invoice) && empty($ref_ext_invoice))	{
+		$error++; $errorcode='KO'; $errorlabel="invoice id or ref or ref_ext is mandatory.";
+	}
+	
+	//////////////////////
+	if (! $error)
+	{
+		$fuser->getrights();
+	
+		if ($fuser->rights->commande->lire)
+		{
+			$order=new Commande($db);
+			$result=$order->fetch($id,$ref,$ref_ext);
+			if ($result > 0)
+			{
+				// Security for external user
+				if( $socid && ( $socid != $order->socid) )
+				{
+					$error++;
+					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.'User does not have permission for this request';
+				}
+	
+				if(!$error)
+				{
+					
+					$newobject=new Facture($db);
+					$result = $newobject->createFromOrder($order);
+					
+					if ($result < 0)
+					{
+						$error++;
+						dol_syslog("Webservice server_invoice:: invoice creation from order failed", LOG_ERR);
+					}
+					
+				}
+			}
+			else
+			{
+				$error++;
+				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id_order.' nor ref='.$ref_order.' nor ref_ext='.$ref_ext_order;
+			}
+		}
+		else
+		{
+			$error++;
+			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+		}
+	}
+	
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+	else
+	{
+		$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''),'invoice'=>$newobject);
+		
+	}
+	
+	return $objectresp;
 }
 
 /**
