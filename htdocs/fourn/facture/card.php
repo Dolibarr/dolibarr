@@ -1788,8 +1788,8 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td>';
-        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer)).'</td>';
+        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
 
         /*
          * List of payments
