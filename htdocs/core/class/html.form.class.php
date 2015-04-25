@@ -74,7 +74,7 @@ class Form
      * Output key field for an editable field
      *
      * @param   string	$text			Text of label or key to translate
-     * @param   string	$htmlname		Name of select field
+     * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
      * @param   string	$preselected	Name of Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
@@ -167,11 +167,11 @@ class Form
                 }
                 else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
                 {
-                    $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
+                    $ret.=$this->select_date($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
                 }
-                else if ($typeofdata == 'datehourpicker')
+                else if ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
                 {
-                	$ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname,1,1);
+                    $ret.=$this->select_date($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
                 }
                 else if (preg_match('/^select;/',$typeofdata))
                 {
@@ -191,14 +191,14 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
-                {
+                //if ($typeofdata != 'day' && $typeofdata != 'dayhour' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
+                //{
                 	$ret.='<td align="left">';
                 	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
                 	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
-                }
+                //}
                 $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
@@ -208,7 +208,7 @@ class Form
                 elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-                elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
+                elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
                 else if (preg_match('/^select;/',$typeofdata))
                 {
                     $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
@@ -1332,7 +1332,7 @@ class Form
 		            $nodatarole=($comboenhancement?' data-role="none"':'');
 		        }
 
-                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
+                $out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
 				if ($show_every) $out.= '<option value="-2"'.(($selected==-2)?' selected="selected"':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -3475,32 +3475,32 @@ class Form
      *    @return	void
      *    @see		select_date
      */
-    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0)
+    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $noouput=0)
     {
         global $langs;
 
+        $ret='';
+
         if ($htmlname != "none")
         {
-            print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
-            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            print $this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            $ret.='<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+            $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
+            $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            $ret.='<tr><td>';
+            $ret.=$this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname);
+            $ret.='</td>';
+            $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            $ret.='</tr></table></form>';
         }
         else
         {
-            if ($selected)
-            {
-                $this->load_cache_types_paiements();
-                print $this->cache_types_paiements[$selected]['label'];
-            } else {
-                print "&nbsp;";
-            }
+        	if ($displayhour) $ret.=dol_print_date($selected,'dayhour');
+        	else $ret.=dol_print_date($selected,'day');
         }
+
+        if (empty($noouput)) print $ret;
+        return $ret;
     }
 
 
@@ -4776,7 +4776,7 @@ class Form
                 $nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
-            $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
+            $out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
 
         	$num = $this->db->num_rows($resql);
             $i = 0;

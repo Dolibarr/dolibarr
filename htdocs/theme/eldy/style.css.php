@@ -97,7 +97,7 @@ $colorbackvmenu1b=($colred+5).','.($colgreen+6).','.($colblue+7);        // vmen
 $colorbackvmenu2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktitle1=($colred-5).','.($colgreen-5).','.($colblue-5);    // title of array
 $colorbacktitle2=($colred-15).','.($colgreen-15).','.($colblue-15);
-$colorbacktabcard1=($colred+15).','.($colgreen+16).','.($colblue+17);  // card
+$colorbacktabcard1='255,255,255';  // card
 $colorbacktabcard2=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacktabactive=($colred-15).','.($colgreen-15).','.($colblue-15);
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -106,7 +106,7 @@ $colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+roun
 $colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
 $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
-$colorbackbody='#f9f9f9';
+$colorbackbody='#f3f3f3';
 $colortext='40,40,40';
 $fontsize='12';
 $fontsizesmaller='11';
@@ -121,10 +121,10 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_VERMENU_BACK2='240,240,240';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
     $conf->global->THEME_ELDY_BACKTITLE2='230,230,230';
+    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
     $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
-    $conf->global->THEME_ELDY_BACKTABCARD1='234,234,234';
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_BACKBODY='#f9f9f9;';
+    $conf->global->THEME_ELDY_BACKBODY='#f3f3f3;';
     $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
@@ -168,10 +168,6 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
 $colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 
-// Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
-$colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
-$colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
-
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
@@ -188,7 +184,7 @@ else { $colortexttitle='444'; $colorshadowtitle='FFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFF'; }
-else { $colortextbacktab='444'; }
+else { $colortextbacktab='111'; }
 
 
 $usecss3=true;
@@ -552,6 +548,7 @@ margin : 0px auto;
 
 #pictotitle {
 	margin-right: 8px;
+	margin-bottom: 4px;
 }
 
 
@@ -1010,7 +1007,7 @@ div.vmenu, td.vmenu {
 	<?php } ?>
 }
 
-.menu_contenu { padding-top: 1px; }
+.menu_contenu { padding-top: 3px; padding-top: 2px; }
 #menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
@@ -1407,11 +1404,12 @@ div.tabBar {
     -moz-border-radius:6px;
     -webkit-border-radius: 6px;
 	border-radius: 6px;
-    border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
-    border-left: 1px solid #BBB;
-    border-top: 1px solid #CCC;
+    border-right: 1px solid #AAA;
+    border-bottom: 1px solid #AAA;
+    border-left: 1px solid #AAA;
+    border-top: 1px solid #BBB;
 	width: auto;
+/*
 <?php if ($usecss3) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(<?php echo $colorbacktabcard1; ?>, 0.5) 25%, rgba(<?php echo $colorbacktabcard2; ?>, 0.5) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(<?php echo $colorbacktabcard1; ?>, 0.5) 25%, rgba(<?php echo $colorbacktabcard2; ?>, 0.5) 100%);
@@ -1421,6 +1419,8 @@ div.tabBar {
 <?php } else { ?>
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 <?php } ?>
+*/
+	background: rgb(<?php echo $colorbacktabcard1; ?>);
 <?php if (empty($dol_optimize_smallscreen)) { ?>
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -1452,7 +1452,6 @@ a.tabTitle {
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
 	padding: 5px 12px 5px;
-	/*	padding: 3px 6px 2px 6px;*/
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -1461,15 +1460,19 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	-webkit-border-radius:6px 6px 0px 0px;
 	border-radius:6px 6px 0px 0px;
 
+/*
 	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+*/
 
 	border-bottom: none;
+/*
 	border-right: 1px solid #BBB;
 	border-left: 1px solid #BBB;
 	border-top: 1px solid #CCC;
-
+*/
+/*
 <?php if ($usecss3) { ?>
     background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
     background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
@@ -1478,27 +1481,39 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbackvmenu1; ?>) 35%, rgb(<?php echo $colorbackvmenu2; ?>) 100%);
 <?php } ?>
 	background-image: none !important;
+*/
+	background: rgb(<?php echo $colorbackvmenu2; ?>);
+
+	border-right: 1px solid #BBB;
+	border-left: 1px solid #BBB;
+	border-top: 1px solid #CCC;
+	margin: 0 0.2em 0 0.2em !important;
+	color: #444;
 }
 
 .tabactive {
+/*
 <?php if ($usecss3) { ?>
-/*    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important; */
 	background: rgba(<?php echo $colorbacktabcard2; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbacktabactive; ?>)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 <?php } ?>
+*/
 	/*background-image: none !important; */
-	color: #<?php echo $colortextbacktab; ?>;
+	color: #<?php echo $colortextbacktab; ?> !important;
+	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
+	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	margin-bottom: 0 0.2em 0 0.2em !important;
+	border-right: 1px solid #AAA !important;
+	border-left: 1px solid #AAA !important;
+	border-top: 1px solid #BBB !important;
 }
 a.tab:hover
 {
 	background: rgba(<?php echo $colorbacktabcard1; ?>, 0.5)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 	color: #<?php echo $colortextbacktab; ?>;
-}
-a.tab:link, a.tab:visited
-{
-	/* color: #888; */
-	/* font-weight: normal !important; */
 }
 a.tabimage {
     color: #434956;
@@ -1693,6 +1708,10 @@ End bootstrap */
 	margin: 0px !important;
 	padding: 0px !important;
 }
+tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
+{
+	border: 0px;
+}
 
 .notopnoleft {
 	border-collapse: collapse;
@@ -1718,6 +1737,13 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 	border: 1px solid #D0D0D0;
 	border-collapse: collapse;
 	padding: 1px 2px 1px 3px;			/* t r b l */
+}
+
+.border tbody tr, .border tbody tr td {
+	height: 20px;
+}
+div.tabBar table.border tr {
+	height: 20px;
 }
 
 table.border td, div.border div div.tagtd {
@@ -1753,11 +1779,6 @@ table.noborder, table.formdoc, div.noborder {
 	border-right-color: #CCC;
 	border-right-style: solid;
 
-/*
-	border-bottom-width: 1px;
-	border-bottom-color: #BBBBBB;
-	border-bottom-style: solid;
-*/
 	border-left-width: 1px;
 	border-left-color: #CCC;
 	border-left-style: solid;
@@ -1798,10 +1819,21 @@ table.nobordernopadding tr {
 	border: 0px !important;
 	padding: 0px 0px !important;
 }
-table.nobordernopadding td {
-	border: 0px !important;
-	padding: 0px 0px !important;
+table.nobordernopadding tr td {
+	border: 0px;
+	padding: 0 3px 0 0 !important;
 }
+table.border tr td table.nobordernopadding tr td {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+td.borderright {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-right-width: 1px !important;
+	border-right-color: #BBB !important;
+	border-right-style: solid !important;
+}
+
 
 /* For lists */
 
@@ -1921,9 +1953,12 @@ table.liste td {
 
 	background-color: #f9f9f9;
 }
-tr.pair td, tr.impair td {
+tr.pair td, tr.impair td, form.impair div.tagtd, form.pair div.tagtd {
     padding: 5px 2px;
     border-bottom: 1px solid #ddd;
+}
+tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
+    border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
 	vertical-align: middle;
@@ -1952,11 +1987,14 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
 }
+tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
+{
+	border-bottom: 1px solid #FDFFFF;
+}
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
     font-family: <?php print $fontlist ?>;
     font-weight: bold;
-    border-bottom: 1px solid #FDFFFF;
 	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     vertical-align: middle;
 }
