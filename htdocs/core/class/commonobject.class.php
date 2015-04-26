@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
@@ -48,21 +48,6 @@ abstract class CommonObject
     public $error;
 
     /**
-     * @var string[]	Array of error strings
-     */
-    public $errors=array();
-
-    /**
-     * @var string		Can be used to pass information when only object is provied to method
-     */
-    public $context=array();
-
-    /**
-     * @var string		Contains canvas name if record is an alternative canvas record
-     */
-    public $canvas;
-
-    /**
      * @var string		Key value used to track if data is coming from import wizard
      */
     public $import_key;
@@ -89,7 +74,23 @@ abstract class CommonObject
 
 
 
-    // Following var are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
+    // Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
+
+	/**
+     * @var string[]	Array of error strings
+     */
+    public $errors=array();
+
+    /**
+     * @var string		Can be used to pass information when only object is provided to method
+     */
+    public $context=array();
+
+    /**
+     * @var string		Contains canvas name if record is an alternative canvas record
+     */
+    public $canvas;
+
 
     public $name;
     public $lastname;
