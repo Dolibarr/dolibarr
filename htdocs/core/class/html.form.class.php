@@ -3467,15 +3467,16 @@ class Form
     /**
      *    Show a form + html select a date
      *
-     *    @param	string		$page        Page
-     *    @param	string		$selected    Date preselected
-     *    @param    string		$htmlname    Html name of date input fields or 'none'
-     *    @param    int			$displayhour Display hour selector
-     *    @param    int			$displaymin	 Display minutes selector
+     *    @param	string		$page        	Page
+     *    @param	string		$selected    	Date preselected
+     *    @param    string		$htmlname    	Html name of date input fields or 'none'
+     *    @param    int			$displayhour 	Display hour selector
+     *    @param    int			$displaymin		Display minutes selector
+     *    @param	int			$nooutput		1=No print output, return string
      *    @return	void
      *    @see		select_date
      */
-    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $noouput=0)
+    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
     {
         global $langs;
 
@@ -3499,7 +3500,7 @@ class Form
         	else $ret.=dol_print_date($selected,'day');
         }
 
-        if (empty($noouput)) print $ret;
+        if (empty($nooutput)) print $ret;
         return $ret;
     }
 
