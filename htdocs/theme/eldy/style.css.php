@@ -1960,6 +1960,9 @@ tr.pair td, tr.impair td, form.impair div.tagtd, form.pair div.tagtd {
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
+td.nobottom, td.nobottom {
+    border-bottom: 0px !important;
+}
 div.liste_titre .tagtd {
 	vertical-align: middle;
 }
