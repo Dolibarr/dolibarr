@@ -9,6 +9,12 @@ Upgrading to any other version or database system is abolutely required BEFORE t
 make a migration.
 
 
+***** ChangeLog for 3.7.1 compared to 3.7.* *****
+- Fix: Bug in the new photo system
+- Fix: Error management
+- Fix: [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
+- Fix: [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
+
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
 - New: Match other auth system: Login can be done entering login or user 
