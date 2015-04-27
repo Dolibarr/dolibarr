@@ -53,6 +53,7 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 $errmsg='';
+$errmsgs=array();
 
 $defaultdelay=1;
 $defaultdelayunit='y';
@@ -282,7 +283,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             $error++;
             $errmsg=$object->error;
-	        setEventMessage($object->errors, 'errors');
+	        setEventMessages($object->error,$object->errors, 'errors');
         }
 
         if (! $error)
@@ -319,12 +320,14 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 					{
                         $error++;
                         $errmsg=$acct->error;
+                        $errmsgs=$acct->errors;
                     }
                 }
                 else
 				{
                     $error++;
                     $errmsg=$acct->error;
+                    $errmsgs=$acct->errors;
                 }
             }
 
@@ -352,6 +355,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                if ($result <= 0)
 	                {
 	                    $errmsg=$customer->error;
+	                    $errmsgs=$acct->errors;
 	                    $error++;
 	                }
                 }
@@ -378,6 +382,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                if ($result <= 0)
 	                {
 	                    $errmsg=$invoice->error;
+	                    $errmsgs=$invoice->errors;
 	                    $error++;
 	                }
                 }
@@ -409,6 +414,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
    	                if ($result <= 0)
 	                {
 	                    $errmsg=$invoice->error;
+	                    $errmsgs=$invoice->errors;
 	                    $error++;
 	                }
                 }
@@ -435,6 +441,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         if (! $paiement_id > 0)
                         {
                             $errmsg=$paiement->error;
+                            $errmsgs=$paiement->errors;
                             $error++;
                         }
                     }
@@ -446,7 +453,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
-	                        setEventMessage($paiement->errors, 'errors');
+                            $errmsgs=$paiement->errors;
+	                        setEventMessages($paiement->error, $paiement->errors, 'errors');
                             $error++;
                         }
                     }
@@ -487,8 +495,6 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 						//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 
 	                    $invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-
                     }
                 }
             }
@@ -514,7 +520,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
 
                 $result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
-                if ($result < 0) $errmsg=$object->error;
+                if ($result < 0)
+                {
+                	$errmsg=$object->error;
+                }
             }
 
             $_POST["cotisation"]='';
@@ -692,7 +701,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    dol_htmloutput_errors($errmsg);
+    dol_htmloutput_errors($errmsg,$errmsgs);
 
 
     /*
