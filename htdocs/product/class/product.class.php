@@ -3170,9 +3170,12 @@ class Product extends CommonObject
 	function is_photo_available($sdir)
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+		
+		global $conf;
 
 		$dir = $sdir;
-		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos/";
+		else $dir .= '/'.dol_sanitizeFileName($this->ref).'/';
 
 		$nbphoto=0;
 
