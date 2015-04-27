@@ -42,6 +42,11 @@ Dolibarr better:
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
 - All fields "fk_societe" were renamed into "fk_soc".
 
+***** ChangeLog for 3.7.1 compared to 3.7.* *****
+- Fix: Bug in the new photo system
+- Fix: Error management
+- Fix: [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
+- Fix: [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
