@@ -839,7 +839,8 @@ if (empty($reshook))
 	}
 
 	// Mise a jour d'une ligne dans la propale
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('save') == $langs->trans("Save")) {
+	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('save'))
+	{
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx')))
@@ -947,7 +948,8 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel'))
+	{
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
