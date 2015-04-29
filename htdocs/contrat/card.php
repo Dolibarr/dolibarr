@@ -1302,19 +1302,28 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
-                        print $productstatic->getNomUrl(1,'',20);
+                        $text = $productstatic->getNomUrl(1,'',20);
                         if ($objp->label)
                         {
-                        	print ' - ';
+                        	$text .= ' - ';
                         	$productstatic->ref=$objp->label;
-                        	print $productstatic->getNomUrl(0,'',16);
+                        	$text .= $productstatic->getNomUrl(0,'',16);
                         }
-                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) && !empty($objp->description))
-                            print '<br>'.dol_nl2br($objp->description);
+                        $description = $objp->description;
+
+	                    // Add description in form
+						if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+						{
+							$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							$description = '';	// Already added into main visible desc
+						}
+
+                        echo $form->textwithtooltip($text,$description,3,'','',$cursorline,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+
                         print '</td>';
                     }
                     else
-                    {
+					{
                         print "<td>".dol_htmlentitiesbr($objp->description)."</td>\n";
                     }
                     // TVA
