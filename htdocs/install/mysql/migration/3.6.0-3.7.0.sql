@@ -63,6 +63,8 @@ INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
 ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
+ALTER TABLE llx_user ADD COLUMN fk_socpeople_associate integer DEFAULT 0 AFTER fk_socpeople;
+
 
 -- Add module accounting Expert
 --ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert -> Line should be added into file sql/x.y.z-a.b.c.sql of module. 
