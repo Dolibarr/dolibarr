@@ -827,11 +827,11 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
     $search_name = GETPOST("search_name",'alpha');
 
     if (! $sortorder) $sortorder="ASC";
-    if (! $sortfield) $sortfield="p.lastname";
+    if (! $sortfield) $sortfield="u.lastname";
 
     $i=-1;
 
-    $contactstatic = new Contact($db);
+    $userstatic = new User($db);
 
     if (! empty($conf->clicktodial->enabled))
     {
@@ -866,18 +866,18 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhonePro"),$_SERVER["PHP_SELF"],"p.phone","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"p.phone_mobile","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"u.lastname","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"u.job","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PhonePro"),$_SERVER["PHP_SELF"],"u.office_phone","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PhoneMobile"),$_SERVER["PHP_SELF"],"u.user_mobile","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"u.office_fax","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"u.email","",$param,'',$sortfield,$sortorder);
     if (! empty($conf->skype->enabled))
     {
 		$colspan++;
 		print '<td>'.$langs->trans("Skype").'</td>';
     }
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"u.statut","",$param,'',$sortfield,$sortorder);
     // Copy to clipboard
     print "<td>&nbsp;</td>";
     // Add to agenda
@@ -933,15 +933,15 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
     print "</tr>";
 
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
-    $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-    $sql .= " WHERE p.fk_soc = ".$object->id;
-    if ($search_status!='' && $search_status != '-1') $sql .= " AND p.statut = ".$db->escape($search_status);
-    if ($search_name)       $sql .= " AND (p.lastname LIKE '%".$db->escape($search_name)."%' OR p.firstname LIKE '%".$db->escape($search_name)."%')";
+    $sql = "SELECT u.rowid, u.lastname, u.firstname, u.job, u.office_phone, u.user_mobile, u.office_fax, u.email, u.skype, u.statut, u.fk_country AS country_id";
+	$sql .= ", u.civility as civility_id, u.address, u.zip, u.town";
+    $sql .= " FROM ".MAIN_DB_PREFIX."user AS u";
+    $sql .= " WHERE u.fk_socpeople_associate = ".$object->id;
+    if ($search_status!='' && $search_status != '-1') $sql .= " AND u.statut = ".$db->escape($search_status);
+    if ($search_name) $sql .= " AND (u.lastname LIKE '%".$db->escape($search_name)."%' OR u.firstname LIKE '%".$db->escape($search_name)."%')";
     $sql.= " ORDER BY $sortfield $sortorder";
 
-    dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
+    dol_syslog('core/lib/company.lib.php :: show_users', LOG_DEBUG);
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 
@@ -957,27 +957,26 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
             print "<tr ".$bc[$var].">";
 
             print '<td>';
-            $contactstatic->id = $obj->rowid;
-            $contactstatic->statut = $obj->statut;
-            $contactstatic->lastname = $obj->lastname;
-            $contactstatic->firstname = $obj->firstname;
-            $contactstatic->civility_id = $obj->civility_id;
-            print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
+            $userstatic->id = $obj->rowid;
+            $userstatic->statut = $obj->statut;
+            $userstatic->lastname = $obj->lastname;
+            $userstatic->firstname = $obj->firstname;
+            print $userstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
             print '</td>';
 
-            print '<td>'.$obj->poste.'</td>';
+            print '<td>'.$obj->job.'</td>';
 
             $country_code = getCountry($obj->country_id, 'all');
 
             // Lien click to dial
             print '<td>';
-            print dol_print_phone($obj->phone,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
+            print dol_print_phone($obj->office_phone,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
+            print dol_print_phone($obj->user_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX');
+            print dol_print_phone($obj->office_fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX');
             print '</td>';
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
@@ -990,7 +989,7 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
             }
 
             // Status
-			print '<td>'.$contactstatic->getLibStatut(5).'</td>';
+			print '<td>'.$userstatic->getLibStatut(5).'</td>';
 
             print '<td align="center">';
             if (! empty($conf->use_javascript_ajax))
@@ -998,7 +997,7 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
        			// Copy to clipboard
 				$coords = '';
 				if (!empty($object->name))   $coords .= $object->name."<br>";
-				$coords .= $contactstatic->getFullName($langs,1).' ';
+				$coords .= $userstatic->getFullName($langs,1).' ';
 				$coords .= "<br>";
 				if (!empty($obj->address))
 				{
@@ -1021,6 +1020,7 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
             }
             print '</td>';
 
+			// TODO agenda dont care about event from here - link is right but still associate wrong object
             // Add to agenda
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
@@ -1031,16 +1031,16 @@ function show_users($conf,$langs,$db,$object,$backtopage='')
                 //	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
                 //	print '</a> ';
                 //}
-                print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&userid='.$obj->rowid.'&contactid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
 
             // Edit
-            if ($user->rights->societe->contact->creer)
+            if ($user->rights->user->user->creer)
             {
                 print '<td align="right">';
-                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
+                print '<a href="'.DOL_URL_ROOT.'/user/card.php?action=edit&amp;id='.$obj->rowid.'&amp;backtopage='.urlencode($backtopage).'">';
                 print img_edit();
                 print '</a></td>';
             }

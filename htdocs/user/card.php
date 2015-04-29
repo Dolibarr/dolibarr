@@ -492,6 +492,12 @@ if ($action == 'update' && ! $_POST["cancel"])
                 {
                 	$_SESSION["dol_login"]=$object->login;	// Set new login to avoid disconnect at next page
                 }
+				
+				if (!empty($backtopage))
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
             }
             else
             {
@@ -1717,6 +1723,7 @@ else
         	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
+			if (!empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
 
