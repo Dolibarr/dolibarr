@@ -54,6 +54,7 @@ create table llx_user
   module_compta     smallint DEFAULT 1,
   fk_societe        integer,
   fk_socpeople      integer,
+  fk_socpeople_associate      integer DEFAULT 0,
   fk_member         integer,
   fk_user           integer,               -- Hierarchic parent
   note              text DEFAULT NULL,

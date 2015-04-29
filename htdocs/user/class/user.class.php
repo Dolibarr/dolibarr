@@ -60,6 +60,8 @@ class User extends CommonObject
 	var $admin;
 	var $login;
 	var $entity;
+	var $fk_socpeople_associate;
+	var $contact_associate;
 
 	//! Clear password in memory
 	var $pass;
@@ -168,7 +170,7 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
-		$sql.= " u.ref_int, u.ref_ext";
+		$sql.= " u.ref_int, u.ref_ext, u.fk_socpeople_associate";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
 		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
@@ -248,6 +250,9 @@ class User extends CommonObject
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
+				$this->fk_socpeople_associate= $obj->fk_socpeople_associate;
+
+				$this->contact_associate = $this->fetch_contact_associate($this->fk_socpeople_associate);
 
 				// Retreive all extrafield for thirdparty
 				// fetch optionals attributes and labels
@@ -303,6 +308,24 @@ class User extends CommonObject
 
 		return 1;
 	}
+
+	/**
+     *		Get the associate contact to user
+     *
+     *		@param	int		$contactid      Id of contact. Use this->fk_socpeople_associate if empty.
+     *		@return	int						<0 if KO, >0 if OK
+     */
+    function fetch_contact_associate($contactid='')
+    {
+    	if (empty($contactid)) $contactid=$this->fk_socpeople_associate;
+
+    	if (empty($contactid)) return 0;
+
+        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+        $contact = new Contact($this->db);
+        $result=$contact->fetch($contactid);
+        return $contact;
+    }
 
 	/**
 	 *  Add a right to the user
@@ -1146,6 +1169,7 @@ class User extends CommonObject
 		$this->town			= empty($this->town)?'':$this->town;
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
+		$this->fk_socpeople_associate = (int) $this->fk_socpeople_associate;
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1187,6 +1211,7 @@ class User extends CommonObject
 		if (isset($this->salaryextra) || $this->salaryextra != '') $sql.= ", salaryextra= ".($this->salaryextra != ''?"'".$this->db->escape($this->salaryextra)."'":"null");
 		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->entity."'";
+		$sql.= ", fk_socpeople_associate = ".$this->fk_socpeople_associate;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
