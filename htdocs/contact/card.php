@@ -1140,6 +1140,13 @@ else
 
         	print show_actions_done($conf,$langs,$db,$objsoc,$object);
 		}
+
+		// Users list -- SOCIETE_DISABLE_CONTACTS
+        if (empty($conf->global->CONTACT_DISABLE_USERS))
+        {
+            $result=show_users($conf,$langs,$db,$object,dol_buildpath('contact/card.php?id='.$object->id,1));
+        }
+		
     }
 }
 

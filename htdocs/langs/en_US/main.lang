@@ -365,6 +365,7 @@ ActionDoneShort=Finished
 ActionUncomplete=Uncomplete
 CompanyFoundation=Company/Foundation
 ContactsForCompany=Contacts for this third party
+ContactsForUser=Contacts for this user
 ContactsAddressesForCompany=Contacts/addresses for this third party
 AddressesForCompany=Addresses for this third party
 ActionsOnCompany=Events about this third party

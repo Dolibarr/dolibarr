@@ -46,6 +46,8 @@ $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
+$fk_socpeople_associate = GETPOST('fk_socpeople_associate', 'int', 0);
+$backtopage = GETPOST('backtopage','alpha');
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -187,6 +189,7 @@ if ($action == 'add' && $canadduser)
     if (!$error) {
         $object->lastname		= GETPOST("lastname",'alpha');
         $object->firstname	    = GETPOST("firstname",'alpha');
+        $object->fk_socpeople_associate	    = GETPOST("fk_socpeople_associate",'int');
         $object->login		    = GETPOST("login",'alpha');
         $object->admin		    = GETPOST("admin",'alpha');
         $object->office_phone	= GETPOST("office_phone",'alpha');
@@ -246,9 +249,17 @@ if ($action == 'add' && $canadduser)
             }
 
             $db->commit();
-
-            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-            exit;
+	
+			if (!empty($backtopage))
+			{
+				header("Location: ".$backtopage);
+				exit;
+			}
+			else 
+			{
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+            	exit;	
+			}
         }
         else
         {
@@ -335,6 +346,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
+            $object->fk_socpeople_associate	= GETPOST("fk_socpeople_associate",'int');
             $object->login		= GETPOST("login",'alpha');
             $object->pass		= GETPOST("password");
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
@@ -396,7 +408,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 		                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
 	                }
 	                else
-	              {
+	              	{
 		              setEventMessage($object->error, 'errors');
 	                }
 	            }
@@ -480,6 +492,12 @@ if ($action == 'update' && ! $_POST["cancel"])
                 {
                 	$_SESSION["dol_login"]=$object->login;	// Set new login to avoid disconnect at next page
                 }
+				
+				if (!empty($backtopage))
+				{
+					header("Location: ".$backtopage);
+					exit;
+				}
             }
             else
             {
@@ -709,6 +727,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
+	if (!empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
     if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
@@ -743,6 +762,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<input size="30" type="text" name="firstname" value="'.GETPOST('firstname').'">';
     }
     print '</td></tr>';
+    
+    // Firstname
+    print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
+    print '<td>';
+    print '';
+    print '</td></tr>';
+	
+	// Contactname
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+	{
+		print '<tr><td><label for="fk_socpeople_associate">'.$langs->trans("Contact").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+        print $form->selectcontacts('', ($fk_socpeople_associate ? $fk_socpeople_associate : ''), 'fk_socpeople_associate', 1);
+        print '</td></tr>';
+	}
 
     // Position/Job
     print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
@@ -1169,7 +1202,20 @@ else
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td colspan="2">'.$object->firstname.'</td>';
             print '</tr>'."\n";
-
+			
+			
+			if (empty($conf->global->CONTACT_DISABLE_USERS))
+            {
+                if ($object->contact_associate->id)
+                {
+                    // Contactname
+		            print '<tr><td valign="top">'.$langs->trans("Contact").'</td>';
+		            print '<td colspan="2">'.$object->contact_associate->getNomUrl(1).'</td>';
+		            print '</tr>'."\n";
+                }
+            }
+			
+			
             // Position/Job
             print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
             print '<td colspan="2">'.$object->job.'</td>';
@@ -1677,6 +1723,7 @@ else
         	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
+			if (!empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
 
@@ -1729,6 +1776,13 @@ else
                 print $object->firstname;
             }
             print '</td></tr>';
+
+			if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+			{
+				print '<tr><td><label for="fk_socpeople_associate">'.$langs->trans("Contact").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+	            print $form->selectcontacts('', ($object->contact_associate->id ? $object->contact_associate->id : ''), 'fk_socpeople_associate', 1);
+	            print '</td></tr>';
+			}
 
             // Position/Job
             print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
