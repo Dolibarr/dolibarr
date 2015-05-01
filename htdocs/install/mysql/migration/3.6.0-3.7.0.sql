@@ -1182,3 +1182,13 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;
 
 INSERT INTO llx_const (name, value, type, note, visible, entity) values ('PRODUCT_USE_OLD_PATH_FOR_PHOTO','1','chaine','Use old path for products images',1,1);
+
+-- Contact sales representatives
+CREATE TABLE llx_socpeople_sales_representatives
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_socpeople  integer,
+  fk_user       integer
+)ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_sales_representatives ADD UNIQUE INDEX uk_contact_sales_representatives (fk_socpeople, fk_user);

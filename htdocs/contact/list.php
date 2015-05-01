@@ -40,6 +40,10 @@ $contactid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
+$search_sale  = GETPOST("search_sale");
+// If the internal user must only see his contacts, force searching by him
+if (!$user->rights->societe->contact->lire && !$contactid) $search_sale = $user->id;
+
 $search_firstlast_only=GETPOST("search_firstlast_only");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
@@ -99,6 +103,7 @@ else if ($type == "o")
 
 if (GETPOST('button_removefilter_x') || GETPOST('button_removefilter'))	// Both tests are required to be compatible with all browsers
 {
+	$search_sale="";
     $search_firstlast_only="";
     $search_lastname="";
     $search_firstname="";
@@ -133,12 +138,15 @@ $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.poste, p.email, p.skype,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " co.code as country_code";
+if ((!$user->rights->societe->contact->lire && !$socid) || $search_sale) $sql .= ", ssr.fk_socpeople, ssr.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his contacts)
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+if ((!$user->rights->societe->contact->lire && !$socid) || $search_sale) $sql.= ", ".MAIN_DB_PREFIX."socpeople_sales_representatives as ssr"; // We need this table joined to the select in order to filter by sale
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON p.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= ' WHERE p.entity IN ('.getEntity('societe', 1).')';
+if ((!$user->rights->societe->contact->lire && !$socid) || $search_sale) $sql.= " AND p.rowid = ssr.fk_socpeople";
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
@@ -147,6 +155,8 @@ if (! empty($userid))    // propre au commercial
 {
     $sql .= " AND p.fk_user_creat=".$db->escape($userid);
 }
+
+if ($search_sale) $sql.= " AND p.rowid = ssr.fk_socpeople";		// Join for the needed table to filter by sale
 
 // Filter to exclude not owned private contacts
 if ($search_priv != '0' && $search_priv != '1')
@@ -161,6 +171,12 @@ else
 
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
+
+// Insert sale filter
+if ($search_sale)
+{
+	$sql .= " AND ssr.fk_user = ".$search_sale;
+}
 
 if ($search_firstlast_only) {
     $sql .= natural_search(array('p.lastname','p.firstname'), $search_firstlast_only);
@@ -259,6 +275,7 @@ if ($result)
     $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
     if (!empty($search_categ)) $param.='&search_categ='.$search_categ;
+	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
     if ($search_status != '') $param.='&amp;search_status='.$search_status;
     if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
@@ -279,6 +296,12 @@ if ($result)
     	$moreforfilter.=$formother->select_categories(4,$search_categ,'search_categ',1);
     	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     }
+	// If the user can view contact other than his'
+ 	if ($user->rights->societe->contact->lire || $socid)
+ 	{
+	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+ 	}
     if ($moreforfilter)
     {
     	print '<div class="liste_titre">';
