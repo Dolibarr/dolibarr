@@ -218,7 +218,7 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 		$subject = $langs->trans("ExpenseReportWaitingForApproval");
 
 		// CONTENT
-		$link = $urlwithroot.'/expenserecord/card.php?id='.$object->id;
+		$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 		$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
 
 		// Rebuild pdf
