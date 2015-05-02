@@ -34,6 +34,7 @@ if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/vendor/autoload.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
+require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Enable and test if module Api is enabled
@@ -46,11 +47,15 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
+use Luracast\Restler\Defaults;
+
+
 $api = new DolibarrApi($db);
 
-$api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
 $api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
+$api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
+$api->r->addAuthenticationClass('DolibarrApiAccess','');
 
 $modulesdir = dolGetModulesDirs();
 foreach ($modulesdir as $dir)

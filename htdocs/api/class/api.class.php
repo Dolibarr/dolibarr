@@ -16,6 +16,8 @@
  */
 
 use Luracast\Restler\Restler;
+use Luracast\Restler\RestException;
+
 
 /**
  * Class for API
@@ -78,13 +80,61 @@ class DolibarrApi {
 
 /**
  * API init
- * This class exists to show 200 code when request url root /api/
  *
  */
 class DolibarrApiInit extends DolibarrApi {
 
 	function __construct() {
 
+	}
+	
+	/**
+	 * Log user with login and password
+	 * @todo : to finish!
+	 * 
+	 * @param string $login
+	 * @param string $password
+	 * @param int $entity
+	 * @throws RestException
+	 */
+	public function login($login, $password, $entity = '') {
+
+		// Authentication mode
+		if (empty($dolibarr_main_authentication))
+			$dolibarr_main_authentication = 'http,dolibarr';
+		// Authentication mode: forceuser
+		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user))
+			$dolibarr_auto_user = 'auto';
+		// Set authmode
+		$authmode = explode(',', $dolibarr_main_authentication);
+
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
+		$login = checkLoginPassEntity($login, $password, $entity, $authmode);
+		if (empty($login))
+		{
+			throw new RestException(403, 'Access denied');
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Welcome ' . $login
+			)
+		);
+	}
+
+	/**
+	 * @access protected
+	 * @class  DolibarrApiAccess {@requires admin}
+	 */
+	public function status() {
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+		return array(
+			'success' => array(
+				'code' => 200,
+				'dolibarr_version' => DOL_VERSION
+			)
+		);
 	}
 
 }
