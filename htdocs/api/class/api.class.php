@@ -74,7 +74,7 @@ class DolibarrApi {
 
 		unset($object->db);
 
-		return array($object);
+		return $object;
     }
     
 }

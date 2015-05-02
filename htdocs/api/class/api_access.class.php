@@ -3,8 +3,8 @@
 use \Luracast\Restler\iAuthenticate;
 use \Luracast\Restler\Resources;
 use \Luracast\Restler\Defaults;
+use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
  * Description of DolibarrApiAccess
@@ -16,14 +16,24 @@ class DolibarrApiAccess implements iAuthenticate
 	const REALM = 'Restricted Dolibarr API';
 	
 	/**
-	 * @var string $requires	role required by API method		user / external / admin	
+	 * @var array $requires	role required by API method		user / external / admin	
 	 */
-	public static $requires = 'user';
+	public static $requires = array('user','external','admin');
 	
 	/**
 	 * @var string $role		user role
 	 */
     public static $role = 'user';
+	
+	/**
+	 * @var array	$user_perms	Permission of loggued user 
+	 @todo
+	public static $user_perms = array();
+	
+	public static $required_perms = '';
+	 * *
+	 */
+	
 	
 	/**
 	 * Check access
@@ -33,15 +43,13 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
     {
 		global $db;
-		
+
 		//@todo hardcoded api_key=>role for brevity
 		//
 		$stored_key = '';
 		
 		$userClass = Defaults::$userIdentifierClass;
 		
-		// for dev @todo : remove this!
-		static::$role = 'user';
 		
 		if (isset($_GET['api_key'])) {
 			// @todo : check from database
@@ -50,9 +58,8 @@ class DolibarrApiAccess implements iAuthenticate
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
 
-			$result=$db->query($sql);
 			
-			if ($result)
+			if ($db->query($sql))
 			{
 				if ($db->num_rows($result))
 				{
@@ -61,6 +68,9 @@ class DolibarrApiAccess implements iAuthenticate
 					$stored_key = $obj->api_key;
 				}
 			}
+			else {
+				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
+			}
 
 			if ( $stored_key != $_GET['api_key']) {
 				$userClass::setCacheIdentifier($_GET['api_key']);
@@ -68,7 +78,11 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 			
 			$fuser = new User($db);
-			$result = $fuser->fetch('',$login);
+			if(! $fuser->fetch('',$login)) {
+				throw new RestException(503, 'Error when fetching user :'.$fuser->error);
+			}
+			$fuser->getrights();
+			static::$user_perms = $fuser->rights;
 			
 			if($fuser->societe_id)
 				static::$role = 'external';
@@ -80,10 +94,10 @@ class DolibarrApiAccess implements iAuthenticate
 		{
 			return false;
 		}
-		
+
         $userClass::setCacheIdentifier(static::$role);
         Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-        return static::$requires == static::$role || static::$role == 'admin';
+        return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
 	}
 	
 	public function __getWWWAuthenticateString()
@@ -96,12 +110,14 @@ class DolibarrApiAccess implements iAuthenticate
      */
     public static function verifyAccess(array $m)
     {
-        $requires =
-            isset($m['class']['DolibarrApiAccess']['properties']['requires'])
+        $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
                 ? $m['class']['DolibarrApiAccess']['properties']['requires']
                 : false;
+		
+		
         return $requires
-            ? static::$role == 'admin' || static::$role == $requires
+            ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
+		
     }
 }

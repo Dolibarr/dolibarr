@@ -23,7 +23,9 @@
  * API class for thirdparty object
  *
  * @smart-auto-routing false
- * @access protected
+ * @access protected 
+ * @class  DolibarrApiAccess {@requires user,external}
+ * 
  *
  */
 class ThirdpartyApi extends DolibarrApi {
@@ -59,6 +61,7 @@ class ThirdpartyApi extends DolibarrApi {
      * @url	GET thirdparty/{id}
      * @param 	int 	$id ID of thirdparty
      * @return 	array|mixed data without useless information
+	 * 
      * @throws 	RestException
      */
     function get($id)
