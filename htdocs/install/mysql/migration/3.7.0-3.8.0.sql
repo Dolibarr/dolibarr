@@ -602,6 +602,10 @@ ALTER TABLE llx_user DROP INDEX idx_user_fk_societe;
 ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER;
 ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
 
+-- API module
+ALTER TABLE llx_user ADD api_key VARCHAR(128) DEFAULT NULL AFTER pass_temp;
+ALTER TABLE llx_user ADD INDEX idx_user_api_key (api_key);
+
 
 
 
