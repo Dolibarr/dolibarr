@@ -36,6 +36,16 @@ require_once DOL_DOCUMENT_ROOT.'/includes/restler/vendor/autoload.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Enable and test if module Api is enabled
+if (empty($conf->global->MAIN_MODULE_API))
+{
+    $langs->load("admin");
+    dol_syslog("Call Dolibarr API interfaces with module disabled");
+    print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
+    print $langs->trans("ToActivateModule");
+    exit;
+}
+
 $api = new DolibarrApi($db);
 
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
