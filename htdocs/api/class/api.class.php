@@ -18,6 +18,7 @@
 use Luracast\Restler\Restler;
 use Luracast\Restler\RestException;
 
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
  * Class for API
@@ -84,20 +85,25 @@ class DolibarrApi {
  */
 class DolibarrApiInit extends DolibarrApi {
 
+	
+	
 	function __construct() {
-
+		global $db;
+		$this->db = $db;
 	}
 	
 	/**
-	 * Log user with login and password
+	 * Login
+	 * 
+	 * Log user with username and password
 	 * @todo : to finish!
 	 * 
-	 * @param string $login
-	 * @param string $password
-	 * @param int $entity
-	 * @throws RestException
+	 * @param string $login			Username
+	 * @param string $password		User password
+	 * @param int $entity			User entity
+	 * @throws RestException	
 	 */
-	public function login($login, $password, $entity = '') {
+	public function login($login, $password, $entity = 0) {
 
 		// Authentication mode
 		if (empty($dolibarr_main_authentication))
@@ -114,10 +120,27 @@ class DolibarrApiInit extends DolibarrApi {
 		{
 			throw new RestException(403, 'Access denied');
 		}
-
+		
+		// Generate token for user
+		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
+		
+		// We store API token into database
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+		$sql.= " SET api_key = '".$this->db->escape($token)."'";
+		$sql.= " WHERE login = '".$this->db->escape($login)."'";
+		
+		dol_syslog(get_class($this)."::login", LOG_DEBUG);	// No log
+		$result = $this->db->query($sql);
+		if (!$result)
+		{
+			throw new RestException(500, 'Error when updating user :'.$this->db->error_msg);
+		}
+		
+		//return token
 		return array(
 			'success' => array(
 				'code' => 200,
+				'token' => $token,
 				'message' => 'Welcome ' . $login
 			)
 		);
@@ -127,7 +150,7 @@ class DolibarrApiInit extends DolibarrApi {
 	 * @access protected
 	 * @class  DolibarrApiAccess {@requires admin}
 	 */
-	public function status() {
+	function status() {
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 		return array(
 			'success' => array(

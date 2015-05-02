@@ -23,6 +23,7 @@
  * API class for thirdparty object
  *
  * @smart-auto-routing false
+ * @access protected
  *
  */
 class ThirdpartyApi extends DolibarrApi {

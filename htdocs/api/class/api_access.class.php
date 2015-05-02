@@ -14,48 +14,72 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class DolibarrApiAccess implements iAuthenticate
 {
 	const REALM = 'Restricted Dolibarr API';
-	const TEST_KEY = 'changeme';
 	
 	/**
-	 *
-	 * @var string $role		user / external / admin
-	 * @var string $requires	
+	 * @var string $requires	role required by API method		user / external / admin	
 	 */
 	public static $requires = 'user';
+	
+	/**
+	 * @var string $role		user role
+	 */
     public static $role = 'user';
 	
+	/**
+	 * Check access
+	 * 
+	 * @return boolean
+	 */
 	public function __isAllowed()
     {
+		global $db;
 		
 		//@todo hardcoded api_key=>role for brevity
 		//
-        $roles = array('123' => 'user', '456' => 'external', '789' => 'admin');
+		$stored_key = '';
 		
 		$userClass = Defaults::$userIdentifierClass;
 		
 		// for dev @todo : remove this!
 		static::$role = 'user';
 		
-		if( isset($_GET['test_key'])) {
-			if( ! $_GET['test_key'] == DolibarrApiAccess::TEST_KEY) {
-				$userClass::setCacheIdentifier($_GET['test_key']);
-				return false;
-			}
-		}
-		elseif (isset($_GET['api_key'])) {
+		if (isset($_GET['api_key'])) {
 			// @todo : check from database
-			if (!array_key_exists($_GET['api_key'], $roles)) {
+			$sql = "SELECT u.login, u.datec, u.api_key, ";
+			$sql.= " u.tms as date_modification, u.entity";
+			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
+
+			$result=$db->query($sql);
+			
+			if ($result)
+			{
+				if ($db->num_rows($result))
+				{
+					$obj = $db->fetch_object($result);
+					$login = $obj->login;
+					$stored_key = $obj->api_key;
+				}
+			}
+
+			if ( $stored_key != $_GET['api_key']) {
 				$userClass::setCacheIdentifier($_GET['api_key']);
 				return false;
 			}
-			static::$role = $roles[$_GET['api_key']];
+			
+			$fuser = new User($db);
+			$result = $fuser->fetch('',$login);
+			
+			if($fuser->societe_id)
+				static::$role = 'external';
+			
+			if($fuser->admin)
+				static::$role = 'admin';
         }
 		else
 		{
 			return false;
 		}
-		
-		
 		
         $userClass::setCacheIdentifier(static::$role);
         Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
@@ -64,7 +88,7 @@ class DolibarrApiAccess implements iAuthenticate
 	
 	public function __getWWWAuthenticateString()
     {
-        return 'Query name="api_key"';
+        return '';
     }
 	
 	/**
