@@ -237,8 +237,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Activate a contract line
 	 *
-	 *  @param	User		$user       Objet User qui active le contrat
-	 *  @param  int			$line_id    Id de la ligne de detail a activer
+	 *  @param	User		$user       Objet User who activate contract
+	 *  @param  int			$line_id    Id of line to activate
 	 *  @param  int			$date       Date d'ouverture
 	 *  @param  int|string	$date_end   Date fin prevue
 	 * 	@param	string		$comment	A comment typed by user
@@ -284,9 +284,9 @@ class Contrat extends CommonObject
 	/**
 	 *  Close a contract line
 	 *
-	 *  @param	User		$user       Objet User qui active le contrat
-	 *  @param  int			$line_id    Id de la ligne de detail a activer
-	 *  @param  int			$date_end	Date fin
+	 *  @param	User		$user       Objet User who close contract
+	 *  @param  int			$line_id    Id of line to close
+	 *  @param  int			$date_end	Date end
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
@@ -576,7 +576,7 @@ class Contrat extends CommonObject
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					return -3;
 				}
 
@@ -599,7 +599,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Load lignes array into this->lines
+	 *  Load lines array into this->lines
 	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
@@ -624,7 +624,7 @@ class Contrat extends CommonObject
 		$this->lines=array();
 
 		// Selectionne les lignes contrats liees a un produit
-		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
+		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref,";
 		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql.= " d.total_ht,";
 		$sql.= " d.total_tva,";
@@ -684,10 +684,12 @@ class Contrat extends CommonObject
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
 				$line->fk_unit           = $objp->fk_unit;
 
-				$line->ref				= $objp->ref;
-				$line->libelle			= $objp->label;        // Label produit
-				$line->label			= $objp->label;        // For backward compatibility
-				$line->product_desc		= $objp->product_desc; // Description produit
+				$line->ref				= $objp->product_ref;			// deprecated
+				$line->label			= $objp->product_label;         // deprecated
+				$line->libelle			= $objp->product_label;         // deprecated
+				$line->product_ref		= $objp->product_ref;   // Ref product
+				$line->product_desc		= $objp->product_desc;  // Description product
+				$line->product_label	= $objp->product_label; // Label product
 
 				$line->description		= $objp->description;
 
@@ -2339,7 +2341,10 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " t.fk_contrat,";
 		$sql.= " t.fk_product,";
 		$sql.= " t.statut,";
-		$sql.= " t.label,";
+		$sql.= " t.label,";			// This field is not used. Only label of product
+		$sql.= " p.ref as product_ref,";
+		$sql.= " p.label as product_label,";
+		$sql.= " p.description as product_desc,";
 		$sql.= " t.description,";
 		$sql.= " t.date_commande,";
 		$sql.= " t.date_ouverture_prevue as date_ouverture_prevue,";
@@ -2368,7 +2373,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " t.fk_user_cloture,";
 		$sql.= " t.commentaire,";
 		$sql.= " t.fk_unit";
-		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
+		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
 		if ($ref) $sql.= " WHERE t.rowid = '".$this->db->escape($ref)."'";
 
@@ -2387,7 +2392,10 @@ class ContratLigne extends CommonObjectLine
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->fk_product = $obj->fk_product;
 				$this->statut = $obj->statut;
-				$this->label = $obj->label;
+				$this->product_ref = $obj->product_ref;
+				$this->product_label = $obj->product_label;
+				$this->product_description = $obj->product_description;
+				$this->label = $obj->label;					// deprecated. We do not use this field. Only ref and label of product, and description of contract line
 				$this->description = $obj->description;
 				$this->date_commande = $this->db->jdate($obj->date_commande);
 				$this->date_ouverture_prevue = $this->db->jdate($obj->date_ouverture_prevue);

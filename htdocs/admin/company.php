@@ -543,7 +543,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%"><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-    print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',1) . '</td></tr>';
+    print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',0,1) . '</td></tr>';
 
     print "</table>";
 
