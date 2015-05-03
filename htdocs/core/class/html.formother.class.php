@@ -773,20 +773,22 @@ class FormOther
     }
 
     /**
-     *    	Return HTML combo list of month
+     *      Return HTML combo list of month
      *
-     *    	@param	string		$selected          Preselected value
-     *    	@param  string		$htmlname          Nom de la zone select
-     *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	string
+     *      @param  string      $selected          Preselected value
+     *      @param  string      $htmlname          Name of HTML select object
+     *      @param  int         $useempty          Show empty in list
+     *      @param  int         $longlabel         Show long label
+     *      @return string
      */
-    function select_month($selected='',$htmlname='monthid',$useempty=0)
+    function select_month($selected='',$htmlname='monthid',$useempty=0,$longlabel=0)
     {
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        $montharray = monthArray($langs, 1);	// Get array
+        if ($longlabel) $montharray = monthArray($langs, 0);	// Get array
+        else $montharray = monthArray($langs, 1);
 
         $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
