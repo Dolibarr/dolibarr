@@ -775,10 +775,10 @@ class FormOther
     /**
      *      Return HTML combo list of month
      *
-     *      @param	string		$selected          Preselected value
-     *      @param  string		$htmlname          Name of HTML select object
-     *      @param  int			$useempty          Show empty in list
-     *      @param  int			$longlabel         Show long label
+     *      @param	string      $selected          Preselected value
+     *      @param  string      $htmlname          Name of HTML select object
+     *      @param  int         $useempty          Show empty in list
+     *      @param  int         $longlabel         Show long label
      *      @return	string
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0,$longlabel=0)
