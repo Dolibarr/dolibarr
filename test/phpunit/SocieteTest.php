@@ -365,7 +365,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $localobject=new Societe($this->savdb);
         $result=$localobject->fetch($id);
 
-        $result=$localobject->delete($id);
+        $result=$localobject->delete($id, $user);
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 

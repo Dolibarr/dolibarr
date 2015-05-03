@@ -31,8 +31,62 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-class pdf_standardlabel extends CommonStickerGenerator
+class pdf_tcpdflabel extends CommonStickerGenerator
 {
+	// define 1d barcode style
+	private $_style1d = array(
+					'position' => '',
+					'align' => 'C',
+					'stretch' => false,
+					'fitwidth' => true,
+					'cellfitalign' => '',
+					'border' => false,
+					'hpadding' => 'auto',
+					'vpadding' => 'auto',
+					'fgcolor' => array(0,0,0),
+					'bgcolor' => false,
+					'text' => true,
+					'font' => 'helvetica',
+					'fontsize' => 8,
+					'stretchtext' => 4
+	);
+	
+	// set style for 2d barcode
+	private $_style2d = array(
+					'border' => false,
+					'vpadding' => 'auto',
+					'hpadding' => 'auto',
+					'fgcolor' => array(0,0,0),
+					'bgcolor' => false,
+					'module_width' => 1, // width of a single module in points
+					'module_height' => 1 // height of a single module in points
+	);
+	
+	private $_align2d = 'N';
+	
+	private $_xres = 0.4;
+	
+	/**
+	 * write barcode to pdf
+	 * 
+	 * @param PDF	  $pdf		  PDF reference
+	 * @param string  $code		   code to print
+	 * @param string  $encoding	   type of barcode
+	 * @param boolean $is2d		   true if 2d barcode
+	 * @param int	  $x		   x position in user units 
+	 * @param int	  $y		   y position in user units
+	 * @param int	  $w		   width in user units
+	 * @param int	  $h		   height in user units
+	 */	   
+	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h) 
+	{
+		if ($is2d) {
+			$pdf->write2DBarcode($code, $encoding, $x, $y, $w, $h, $this->_style2d, $this->_align2d);
+		} else {
+			$pdf->write1DBarcode($code, $encoding, $x, $y, $w, $h, $this->_xres, $this->_style1d);
+		}
+	}
+	
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
@@ -41,31 +95,19 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param) {
-		// use this method in future refactoring
-	}
-	
-	/**
-	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
-	 * - %LOGO% is replace with company logo
-	 * - %PHOTO% is replace with photo provided as parameter
-	 *
-	 * @param	PDF			$pdf			PDF reference
-	 * @param	string		$textleft		Text left
-	 * @param	string		$header			Header
-	 * @param	string		$footer			Footer
-	 * @param	Translate	$outputlangs	Output langs
-	 * @param	string		$textright		Text right
-	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
-	 * @return	void
-	 */
-	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
+	function addSticker(&$pdf,$outputlangs,$param) 
 	{
-		global $mysoc,$conf,$langs;
-		global $forceimgscalewidth,$forceimgscaleheight;
-
-		$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
-		$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
+		global $mysoc,$conf;
+		
+		$textleft = $param['textleft'];
+		$header = $param['textheader'];
+		$footer = $param['textfooter'];
+		$textright = $param['textright'];
+		$code = $param['code'];
+		$encoding = $param['encoding'];
+		$is2d = $param['is2d'];
+		
+		
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -90,87 +132,89 @@ class pdf_standardlabel extends CommonStickerGenerator
 			}
 		}
 
-		// Define photo
-		if (! empty($photo))
-		{
-			if (! is_readable($photo)) $photo='';
-		}
-
-		// Define background image
-		$backgroundimage='';
-
-		// Print lines
-		if ($this->code == "CARD")
-		{
-			$this->Tformat=$this->_Avery_Labels["CARD"];
-			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
-			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
-		}
-
-		// Background
-		if ($backgroundimage)
-		{
-			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
-		}
-
-		$xleft=2; $ytop=2;
+		$xleft = 2; 
+		$ytop = 2;
 
 		// Top
 		if ($header!='')
 		{
-			if ($this->code == "CARD")
-			{
-				$pdf->SetDrawColor(128,128,128);
-				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1); // Only 1 mm and not ytop for top text
-				$pdf->SetDrawColor(0,0,0);
-			}
 			$pdf->SetXY($_PosX+$xleft, $_PosY+1); // Only 1 mm and not ytop for top text
 			$pdf->Cell($this->_Width-2*$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
 		}
 
-
-		$ytop+=(empty($header)?0:(1+$this->_Line_Height));
+		$ytop += (empty($header)?0:(1+$this->_Line_Height));
 
 		// Define widthtouse and heighttouse
-		$maxwidthtouse=round(($this->_Width - 2*$xleft)*$imgscalewidth); $maxheighttouse=round(($this->_Height - 2*$ytop)*$imgscaleheight);
-		$defaultratio=($maxwidthtouse/$maxheighttouse);
-		$widthtouse=$maxwidthtouse; $heighttouse=0;		// old value for image
-		$tmp=dol_getImageSize($photo, false);
-		if ($tmp['height'])
-		{
-			$imgratio=$tmp['width']/$tmp['height'];
-			if ($imgratio >= $defaultratio) { $widthtouse = $maxwidthtouse; $heighttouse = round($widthtouse / $imgratio); }
-			else { $heightouse = $maxheighttouse; $widthtouse = round($heightouse * $imgratio); }
-		}
+		$pageMargins = $pdf->getMargins();
+		$maxwidthtouse = round($this->_Width - 2*$xleft);
+		$maxheighttouse = round($this->_Height - 2*$ytop);
+		$maxheighttouse -= (empty($footer)?0:(1+$this->_Line_Height));
+		$defaultratio = ($maxwidthtouse/$maxheighttouse);
+		$widthtouse = $maxwidthtouse;
+		$heighttouse = $maxheighttouse;
+		$logoHeight = $heighttouse;
+		$logoWidth = $heighttouse;
+		
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
 
 		// Center
 		if ($textright=='')	// Only a left part
 		{
 			// Output left area
-			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
+			else if ($code && !empty($encoding)) 
+			{
+				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
+			}
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 		}
-		else if ($textleft!='' && $textright!='')	//
+		else if ($textleft!='' && $textright!='')	// left and right part
 		{
-			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
+			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%') )	 // left part logo/barcode right part text
 			{
-				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				$pdf->SetXY($_PosX+$xleft+$widthtouse+1, $_PosY+$ytop);
-				$pdf->MultiCell($this->_Width-$xleft-$xleft-$widthtouse-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, 0);
+				else if ($code && !empty($encoding)) 
+				{
+					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse/2, $heighttouse);
+				}
+				$pdf->SetXY($_PosX+($widthtouse/2), $_PosY+$ytop);
+				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-			else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
+			else if (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
 			{
-				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, 0);
+				else if ($code && !empty($encoding)) 
+				{
+					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+($widthtouse/2), $_PosY+$ytop, $widthtouse/2, $heighttouse);
+				}
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
-				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+				$pdf->MultiCell($widthtouse/2, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+			}
+			else if ($textleft == '%LOGO%')	 // left part logo right part text/barcode
+			{
+				if ($logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, 0, $logoHeight);
+				if ($code && !empty($encoding))
+				{
+					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft+$logoWidth+1, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
+				} else {
+					$pdf->SetXY($_PosX+$xleft+$logoWidth+1, $_PosY+$ytop);
+					$pdf->MultiCell($widthtouse-$logoWidth1-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				}				
+			}
+			else if ($textright == '%LOGO%')  // right part logo left part text/barcode
+			{
+				if ($logo) $pdf->Image($logo, $_PosX+$xleft+$widthtouse-$logoWidth+1, $_PosY+$ytop, 0, $logoHeight);
+				if ($code && !empty($encoding))
+				{
+					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$xleft, $_PosY+$ytop, $widthtouse-$logoWidth-1, $heighttouse);
+				} else {
+					$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
+					$pdf->MultiCell($widthtouse-$logoWidth-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+				}				
 			}
 			else	// text on halft left and text on half right
 			{
@@ -183,8 +227,11 @@ class pdf_standardlabel extends CommonStickerGenerator
 		else	// Only a right part
 		{
 			// Output right area
-			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, 0, $logoHeight);
+			else if ($code && !empty($encoding)) 
+			{
+				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
+			}
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
@@ -195,12 +242,6 @@ class pdf_standardlabel extends CommonStickerGenerator
 		// Bottom
 		if ($footer!='')
 		{
-			if ($this->code == "CARD")
-			{
-				$pdf->SetDrawColor(128,128,128);
-				$pdf->Line($_PosX, $_PosY+$this->_Height-$this->_Line_Height-2, $_PosX+$this->_Width, $_PosY+$this->_Height-$this->_Line_Height-2);
-				$pdf->SetDrawColor(0,0,0);
-			}
 			$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
 		}
@@ -306,7 +347,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		foreach($arrayofrecords as $val)
 		{
 			// imprime le texte specifique sur la carte
-			$this->Add_PDF_label($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
+			$this->addSticker($pdf, $outputlangs, $val);
 		}
 
 		//$pdf->SetXY(10, 295);

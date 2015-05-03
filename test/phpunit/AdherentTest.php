@@ -416,7 +416,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertNull($localobject->fk_soc);
 
         //Now we remove the third party
-        $result = $thirdparty->delete($thirdparty->id);
+        $result = $thirdparty->delete($thirdparty->id,$user);
         $this->assertEquals($result, 1);
 
         return $localobject;

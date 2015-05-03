@@ -81,8 +81,8 @@ class modAdherent extends DolibarrModules
         $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");
         $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %FIRSTNAME%,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée","Mail de validation de cotisation");
         $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine","Reçu de votre cotisation","Sujet du mail de validation de cotisation");
-        $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprimé sur le haut de la carte adhérent");
-        $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprimé sur le bas de la carte adhérent");
+        $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%YEAR%","Texte imprimé sur le haut de la carte adhérent");
+        $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","%COMPANY%","Texte imprimé sur le bas de la carte adhérent");
         $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%FULLNAME%\r\nID: %ID%\r\n%EMAIL%\r\n%ADDRESS%\r\n%ZIP% %TOWN%\r\n%COUNTRY%","Text to print on member cards");
         $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
         $this->const[31] = array("ADHERENT_BANK_USE_AUTO","yesno","","Insertion automatique des cotisations dans le compte banquaire");
