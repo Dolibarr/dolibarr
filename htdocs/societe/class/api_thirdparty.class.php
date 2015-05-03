@@ -85,18 +85,67 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Fetch a list of thirdparties
      *
-     * @url	GET /thirdparties/list
+     * @url	GET /thirdparties/
      *
      * @return array Array of thirdparty objects
      */
     function getList() {
+        global $db, $conf;
+        
+        $obj_ret = array();
+        
+        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+            
+        // If the internal user must only see his customers, force searching by him
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
-		$result = $this->company->fetch_all($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Thirdparties not found');
+        $sql = "SELECT s.rowid";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+        
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+        $sql.= " WHERE s.fk_stcomm = st.id";
+        //$sql.= " AND s.client IN (1, 3)";
+        $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
+        if ($socid) $sql.= " AND s.rowid = ".$socid;
+        if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        
+        // Insert sale filter
+        if ($search_sale > 0)
+        {
+            $sql .= " AND sc.fk_user = ".$search_sale;
+        }
+        
+        $nbtotalofrecords = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $result = $db->query($sql);
+            $nbtotalofrecords = $db->num_rows($result);
         }
 
-		return $this->cleanObjectDatas($this->company->lines);
+        $sql.= $db->order($sortfield,$sortorder);
+        $sql.= $db->plimit($conf->liste_limit +1, $offset);
+
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            while ($i < min($num,$conf->liste_limit))
+            {
+                $obj = $db->fetch_object($result);
+                $soc_static = new Societe($db);
+                if($soc_static->fetch($obj->rowid)) {
+                    $obj_ret[] = parent::_cleanObjectDatas($soc_static);
+                }
+                $i++;
+            }
+        }
+        if( ! count($obj_ret)) {
+            throw new RestException(404, 'Thirdparties not found');
+        }
+		return $obj_ret;
 
     }
     /**
