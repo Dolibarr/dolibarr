@@ -90,7 +90,9 @@ class ThirdpartyApi extends DolibarrApi {
     }
 
     /**
-     * Fetch a list of thirdparties
+     * List thirdparties
+     * 
+     * Get a list of thirdparties
      *
      * @url	GET /thirdparties/
      * 

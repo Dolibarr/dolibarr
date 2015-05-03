@@ -88,19 +88,29 @@ foreach ($modulesdir as $dir)
                     /*
                      * If exists, load the API class for enable module
                      *
-                     * Search a file api_<object>.class.php into /htdocs/<module>/class directory
+                     * Search files named api_<object>.class.php into /htdocs/<module>/class directory
                      *
                      * @todo : take care of externals module!
-                     * @todo : use getElementProperties() function
+                     * @todo : use getElementProperties() function ?
                      */
-                    $file = DOL_DOCUMENT_ROOT.'/'.$part."/class/api_".$obj.".class.php";
-
-                    $classname = ucwords($obj).'Api';
-                    if (file_exists($file))
+                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$part.'/class/';
+                        
+                    $handle_part=@opendir(dol_osencode($dir_part));
+                    if (is_resource($handle_part))
                     {
-                        require_once $file;
-                        $api->r->addAPIClass($classname,'');
+                        while (($file_searched = readdir($handle_part))!==false)
+                        {
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
+                            {
+                                $classname=$reg[1];
+                                $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
+                                require_once $dir_part.$file_searched;
+                                if(class_exists($classname))
+                                    $api->r->addAPIClass($classname,'');
+                            }
+                        }
                     }
+
                 }
             }
         }
