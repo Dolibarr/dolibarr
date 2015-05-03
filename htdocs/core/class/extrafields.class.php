@@ -107,7 +107,7 @@ class ExtraFields
 	 *  @param  string	$label              label of attribute
 	 *  @param  int		$type               Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param  int		$pos                Position of attribute
-	 *  @param  int		$size               Size/length of attribute
+	 *  @param  string	$size               Size/length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
@@ -128,7 +128,7 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
 		{
-			$result=$this->create($attrname,$type,$size,$elementtype, $unique, $required, $default_value, $param, $perms, $list);
+			$result=$this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list);
 		}
 		$err1=$this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
@@ -156,7 +156,7 @@ class ExtraFields
 	 *
 	 *	@param	string	$attrname			code of attribute
 	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
-	 *  @param	int		$length				Size/length of attribute
+	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
@@ -233,7 +233,7 @@ class ExtraFields
 	 *	@param	string			$label			label of attribute
 	 *  @param	int				$type			Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
-	 *  @param	int				$size			Size/length of attribute
+	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
 	 *  @param	int				$unique			Is field unique or not
 	 *  @param	int				$required		Is field required or not
