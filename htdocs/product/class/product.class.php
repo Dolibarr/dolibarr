@@ -2815,16 +2815,16 @@ class Product extends CommonObject
 	/**
 	 *  Return all Father products fo current product
 	 *
-	 *  @return 	array prod
+	 *  @return 	array 		Array of product
 	 *  @see		getParent
 	 */
 	function getFather()
 	{
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND pa.fk_product_fils=".$this->id;
+		$sql.= " AND pa.fk_product_fils = ".$this->id;
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -2832,8 +2832,11 @@ class Product extends CommonObject
 			$prods = array ();
 			while ($record = $this->db->fetch_array($res))
 			{
-				$prods[$record['id']]['id'] =  $record['rowid'];
-				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
+				$prods[$record['id']]['id'] = $record['rowid'];
+				$prods[$record['id']]['ref'] = $record['ref'];
+				$prods[$record['id']]['label'] = $record['label'];
+				$prods[$record['id']]['qty'] = $record['qty'];
+				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
 			}
 			return $prods;
@@ -2854,7 +2857,7 @@ class Product extends CommonObject
 	 */
 	function getParent()
 	{
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
@@ -3409,7 +3412,7 @@ class Product extends CommonObject
 	function is_photo_available($sdir)
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
-		
+
 		global $conf;
 
 		$dir = $sdir;

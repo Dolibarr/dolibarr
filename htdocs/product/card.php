@@ -1712,14 +1712,15 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         if (is_array($otherprop) && count($otherprop))
         {
         	$var=!$var;
-        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+        	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
         	$html .= '</td></tr>';
         }
         else
        {
-        	$html .= "<tr ".$bc[!$var]."><td>";
+        	$html .= '<tr><td style="width: 200px;">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
         	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
@@ -1737,14 +1738,15 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         if (is_array($othercom) && count($othercom))
         {
         	$var=!$var;
-        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+        	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
         	$html .= '</td></tr>';
         }
         else
 		{
-        	$html .= "<tr ".$bc[!$var]."><td>";
+        	$html .= '<tr><td style="width: 200px;">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
         	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
@@ -1762,14 +1764,15 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	if (is_array($otherinvoice) && count($otherinvoice))
     	{
     		$var=!$var;
-    		$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
+    		$html .= '<tr><td style="width: 200px;">';
     		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
     		$html .= '</td></tr>';
     	}
     	else
     	{
-    		$html .= "<tr ".$bc[!$var]."><td>";
+    		$html .= '<tr><td style="width: 200px;">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
     		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
@@ -1784,7 +1787,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
 	    print load_fiche_titre($langs->trans("Add"),'','');
 
-    	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
+    	$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
     	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
     	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
     	$html .= '</td></tr>';

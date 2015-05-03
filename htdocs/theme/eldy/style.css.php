@@ -172,15 +172,15 @@ $colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 $tmppart=explode(',',$colorbackhmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) $colortextbackhmenu='FFF';
-else $colortextbackhmenu='444';
+else $colortextbackhmenu='222';
 $tmppart=explode(',',$colorbackvmenu1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) { $colortextbackvmenu='FFF'; }
-else { $colortextbackvmenu='444'; }
+else { $colortextbackvmenu='222'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='888'; }
-else { $colortexttitle='444'; $colorshadowtitle='FFF'; }
+else { $colortexttitle='222'; $colorshadowtitle='FFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFF'; }
