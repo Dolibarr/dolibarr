@@ -194,7 +194,7 @@ class modTcpdfbarcode extends ModeleBarCode
      * @param   string $dolEncodingType dolibarr barcode encoding type	
      * @return	string tcpdf encoding type
      */
-    private function getTcpdfEncodingType($dolEncodingType)
+    public function getTcpdfEncodingType($dolEncodingType)
     {
         $tcpdf1dEncodingTypes = array(
                         'C39' => 'C39',
