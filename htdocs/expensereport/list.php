@@ -41,6 +41,8 @@ $result = restrictedArea($user, 'expensereport','','');
 
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
+$search_amount_ht = GETPOST('search_amount_ht','alpha');
+$search_amount_ttc = GETPOST('search_amount_ttc','alpha');
 $search_status = GETPOST('search_status','int');
 $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
@@ -51,6 +53,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 {
 	$search_ref="";
 	$search_user="";
+	$search_amount_ht="";
+	$search_amount_ttc="";
 	$search_status="";
 	$month_start="";
 	$year_start="";
@@ -126,6 +130,15 @@ else if ($year_end > 0)
 {
 	$sql.= " AND d.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,false))."' AND '".$db->idate(dol_get_last_day($year_end,12,false))."'";
 }
+// Amount
+if ($search_amount_ht != '')
+{
+    $sql.= natural_search('d.total_ht', $search_amount_ht, 1);
+}
+if ($search_amount_ttc != '')
+{
+    $sql.= natural_search('d.total_ttc', $search_amount_ttc, 1);
+}
 // User
 if ($search_name)
 {
@@ -194,9 +207,13 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 
+	// Amount with no taxe
+	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
+	
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	
+	// Amount with all taxes
+	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
 
 	// Status
 	print '<td class="liste_titre" align="right">';
