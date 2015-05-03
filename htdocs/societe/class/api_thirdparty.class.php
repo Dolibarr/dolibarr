@@ -94,7 +94,7 @@ class ThirdpartyApi extends DolibarrApi {
      * 
      * Get a list of thirdparties
      *
-     * @url	GET /thirdparties/
+     * @url	GET /thirdparty/list
      * 
      * @param   int     $mode       Set to 1 to show only customers 
      *                              Set to 2 to show only prospects
@@ -183,7 +183,7 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Show customers
      * 
-     * @url GET /thirdparties/customers
+     * @url GET /thirdparty/list/customers
      * 
      * @return array    List of customers
      */
@@ -194,7 +194,7 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Show prospects
      * 
-     * @url GET /thirdparties/prospects
+     * @url GET /thirdparty/list/prospects
      * 
      * @return array    List of prospects
      */
@@ -205,7 +205,7 @@ class ThirdpartyApi extends DolibarrApi {
      /**
      * Show other
      * 
-     * @url GET /thirdparties/others
+     * @url GET /thirdparty/list/others
      * 
      * @return array    List of thirpdparties who are not customer neither prospect
      */
