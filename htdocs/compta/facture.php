@@ -1414,7 +1414,11 @@ if (empty($reshook))
 						$model=$object->modelpdf;
 						$ret = $object->fetch($id); // Reload to get new records
 
-						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						if ($result < 0)
+						{
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
 					}
 
 					unset($_POST['prod_entry_mode']);

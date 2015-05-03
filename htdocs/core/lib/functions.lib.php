@@ -1649,7 +1649,7 @@ function isValidEmail($address, $acceptsupervisorkey=0)
 /**
  *  Return true if phone number syntax is ok
  *  TODO Decide what to do with this
- *  
+ *
  *  @param	string		$phone		phone (Ex: "0601010101")
  *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
@@ -2474,10 +2474,11 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
  *
  *	@param	 	DoliDB	$db      	Database handler
  *	@param  	mixed	$error		String or array of errors strings to show
+ *  @param		array	$errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors
  */
-function dol_print_error($db='',$error='')
+function dol_print_error($db='',$error='',$errors=null)
 {
 	global $conf,$langs,$argv;
 	global $dolibarr_main_prod;
@@ -2550,12 +2551,15 @@ function dol_print_error($db='',$error='')
 		$syslog.=", db_error=".$db->lasterror();
 	}
 
-	if ($error)
+	if ($error || $errors)
 	{
 		$langs->load("errors");
 
-		if (is_array($error)) $errors=$error;
-		else $errors=array($error);
+		// Merge all into $errors array
+		if (is_array($error) && is_array($errors)) $errors=array_merge($error,$errors);
+		elseif (is_array($error)) $errors=$error;
+		elseif (is_array($errors)) $errors=array_merge(array($error),$errors);
+		else $errors=array_merge(array($error));
 
 		foreach($errors as $msg)
 		{
@@ -2564,7 +2568,7 @@ function dol_print_error($db='',$error='')
 			{
 				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
 			}
-			else                            // Mode CLI
+			else                        // Mode CLI
 			{
 				$out.='> '.$langs->transnoentities("Message").":\n".$msg."\n" ;
 			}

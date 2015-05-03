@@ -3504,7 +3504,7 @@ class Facture extends CommonInvoice
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *	@param	string		$modele			Force template to use ('' to not force)
+	 *	@param	string		$modele			Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
 	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
@@ -3532,22 +3532,24 @@ class Facture extends CommonInvoice
 
 		$modelpath = "core/modules/facture/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$result=$this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+		return $result;
 	}
 
 	/**
 	 * Gets the smallest reference available for a new cycle
 	 *
 	 * @return int >= 1 if OK, -1 if error
-	 *
-	 *
 	 */
 	function newCycle()
 	{
-		$sql = 'SELECT max(situation_cycle_ref) FROM ' . MAIN_DB_PREFIX . 'facture';
+		$sql = 'SELECT max(situation_cycle_ref) FROM ' . MAIN_DB_PREFIX . 'facture as f';
+		$sql.= " WHERE f.entity in (".getEntity('facture').")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($resql->num_rows > 0) {
+			if ($resql->num_rows > 0)
+			{
 				$res = $this->db->fetch_array($resql);
 				$ref = $res['max(situation_cycle_ref)'];
 				$ref++;
@@ -3557,7 +3559,7 @@ class Facture extends CommonInvoice
 			$this->db->free($resql);
 			return $ref;
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 			return -1;
 		}

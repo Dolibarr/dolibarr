@@ -3406,13 +3406,13 @@ abstract class CommonObject
 	/**
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
-	 * @param string $modelspath Relative folder where models are placed
-	 * @param string $modele Model to use
-	 * @param Translate $outputlangs Language to use
-	 * @param int $hidedetails 1 to hide details. 0 by default
-	 * @param int $hidedesc 1 to hide product description. 0 by default
-	 * @param int $hideref 1 to hide product reference. 0 by default
-	 * @return int 1 if OK -1 if not OK
+	 * @param 	string 		$modelspath 	Relative folder where generators are placed
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf') for example.
+	 * @param 	Translate 	$outputlangs 	Language to use
+	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
+	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
+	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
+	 * @return 	int 						>0 if OK, <0 if KO
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref)
 	{
@@ -3426,7 +3426,7 @@ abstract class CommonObject
 		@set_time_limit(120);
 		error_reporting($err);
 
-		// If selected modele is a filename template (then $modele="modelname:filename")
+		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
 		$tmp=explode(':',$modele,2);
 		if (! empty($tmp[1]))
 		{
@@ -3456,13 +3456,54 @@ abstract class CommonObject
 			if ($filefound) break;
 		}
 
-		// Charge le modele
+		// If generator was found
 		if ($filefound)
 		{
 			require_once $file;
 
 			$obj = new $classname($this->db);
 			//$obj->message = $message;
+
+			// If generator is ODT, we must have srctemplatepath defined, if not we set it.
+			if ($obj->type == 'odt' && empty($srctemplatepath))
+			{
+				$varfortemplatedir=$obj->scandir;
+				if ($varfortemplatedir && ! empty($conf->global->$varfortemplatedir))
+				{
+					$dirtoscan=$conf->global->$varfortemplatedir;
+
+					$listoffiles=array();
+
+					// Now we add first model found in directories scanned
+	                $listofdir=explode(',',$dirtoscan);
+	                foreach($listofdir as $key=>$tmpdir)
+	                {
+	                    $tmpdir=trim($tmpdir);
+	                    $tmpdir=preg_replace('/DOL_DATA_ROOT/',DOL_DATA_ROOT,$tmpdir);
+	                    if (! $tmpdir) { unset($listofdir[$key]); continue; }
+	                    if (is_dir($tmpdir))
+	                    {
+	                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
+	                        if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
+	                    }
+	                }
+
+	                if (count($listoffiles))
+	                {
+	                	foreach($listoffiles as $record)
+	                    {
+	                    	$srctemplatepath=$record['fullname'];
+	                    	break;
+	                    }
+	                }
+				}
+
+				if (empty($srctemplatepath))
+				{
+					$this->error='ErrorGenerationAskedForOdtTemplateWithNoSrcFileFound';
+					return -1;
+				}
+			}
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
@@ -3483,14 +3524,15 @@ abstract class CommonObject
 			else
 			{
 				$outputlangs->charset_output=$sav_charset_output;
-				dol_print_error($this->db,"Error generating document for ".__CLASS__.". Error: ".$obj->error);
+				dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
 				return -1;
 			}
 
 		}
 		else
 		{
-			dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
+			$this->error=$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+			dol_print_error('',$this->error);
 			return -1;
 		}
 	}
