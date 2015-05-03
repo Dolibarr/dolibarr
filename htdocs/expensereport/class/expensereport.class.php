@@ -1693,10 +1693,10 @@ class ExpenseReportLine
  *    Retourne la liste deroulante des differents etats d'une note de frais.
  *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
  *
- *    @param    int		$selected    	etat pre-selectionne
+ *    @param    int		$selected    	preselect status
  *    @param	string	$htmlname		Name of HTML select
  *    @param	int		$useempty		1=Add empty line
- *    @return	string					HTML select with sattus
+ *    @return	string					HTML select with status
  */
 function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1)
 {
