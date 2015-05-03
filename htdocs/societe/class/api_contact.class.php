@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,6 +93,7 @@ class ContactApi extends DolibarrApi
 	 * 
 	 * Get a list of contacts
 	 *
+	 * @url	GET /contact/list
 	 * @url	GET /contact/list/{socid}
 	 * @url	GET	/thirdparty/{socid}/contacts
 	 * 
@@ -164,23 +164,22 @@ class ContactApi extends DolibarrApi
 
 			$sql.= $db->plimit($limit + 1, $offset);
 		}
-
 		$result = $db->query($sql);
 		if ($result)
 		{
 			$num = $db->num_rows($result);
-			while ($i < min($num, $conf->liste_limit))
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				$soc_static = new Contact($db);
-				if ($soc_static->fetch($obj->rowid))
+				$contact_static = new Contact($db);
+				if ($contact_static->fetch($obj->rowid))
 				{
-					$obj_ret[] = parent::_cleanObjectDatas($soc_static);
+					$obj_ret[] = parent::_cleanObjectDatas($contact_static);
 				}
 				$i++;
 			}
-		} else
-		{
+		} 
+		else {
 			throw new RestException(503, 'Error when retreive contacts : ' . $sql);
 		}
 		if (!count($obj_ret))

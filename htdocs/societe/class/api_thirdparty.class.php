@@ -96,14 +96,18 @@ class ThirdpartyApi extends DolibarrApi {
      *
      * @url	GET /thirdparties/
      * 
-     * @param   int     $only_customer      Set to 1 to show only customers
-     * @param   int     $only_prospect      Set to 1 to show only prospects
-     * @param   int     $only_others        Set to 1 to show only those are not customer neither prospect
+     * @param   int     $mode       Set to 1 to show only customers 
+     *                              Set to 2 to show only prospects
+     *                              Set to 3 to show only those are not customer neither prospect
+     * @param   string  $sortfield  Sort field
+     * @param   string  $sortorder  Sort order
+     * @param   int     $limit      Limit for list
+     * @param   int     $page       Page number
      * 
      *
      * @return array Array of thirdparty objects
      */
-    function getList($only_customer=0,$only_prospect=0,$only_others=0) {
+    function getList($mode, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -120,9 +124,9 @@ class ThirdpartyApi extends DolibarrApi {
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql.= " WHERE s.fk_stcomm = st.id";
-        if ($only_customer) $sql.= " AND s.client IN (1, 3)";
-        if ($only_prospect) $sql.= " AND s.client IN (2, 3)";
-        if ($only_others) $sql.= " AND s.client IN (0)";
+        if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
+        if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
+        if ($mode == 3) $sql.= " AND s.client IN (0)";
         $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
         if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -141,14 +145,23 @@ class ThirdpartyApi extends DolibarrApi {
             $nbtotalofrecords = $db->num_rows($result);
         }
 
-        $sql.= $db->order($sortfield,$sortorder);
-        $sql.= $db->plimit($conf->liste_limit +1, $offset);
+        $sql.= $db->order($sortfield, $sortorder);
 
-        $result = $db->query($sql);
+        if ($limit) {
+            if ($page < 0)
+            {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql.= $db->plimit($limit + 1, $offset);
+        }
+
+		$result = $db->query($sql);
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num,$conf->liste_limit))
+            while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);
@@ -157,6 +170,9 @@ class ThirdpartyApi extends DolibarrApi {
                 }
                 $i++;
             }
+        }
+        else {
+            throw new RestException(503, 'Error when retrieve thirdparties : ' . $sql);
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'Thirdparties not found');
