@@ -4407,13 +4407,15 @@ class Form
      *	@param	array	$selected		Array with key+value preselected
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
-     *	@param  string	$option         Valeur de l'option en fonction du type choisi
+     *	@param  string	$morecss        Add more css style
      *	@param  int		$translate		Translate and encode value
-     *  @param	int		$width			Force width of select box. May be used only when using jquery couch.
+     *  @param	int		$width			Force width of select box. May be used only when using jquery couch. Example: 250, 95%
+     *  @param	string	$moreattrib		Add more options on select component. Example: 'disabled="disabled"'
+     *  @param	string	$elemtype		Type of element we show ('category', ...)
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0, $width=0)
+    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
     {
     	global $conf, $langs;
 
@@ -4423,8 +4425,36 @@ class Form
     		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
    			print '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
     			<script type="text/javascript">
+	    			function formatResult(record) {'."\n";
+						if ($elemtype == 'category')
+						{
+							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+						}
+						else
+						{
+							print 'return record.text;';
+						}
+			print '	};
+    				function formatSelection(record) {'."\n";
+						if ($elemtype == 'category')
+						{
+							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+						}
+						else
+						{
+							print 'return record.text;';
+						}
+			print '	};
 	    			$(document).ready(function () {
     					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+							// Specify format function for dropdown item
+							formatResult: formatResult,
+    					 	templateResult: formatResult,		/* For 4.0 */
+							// Specify format function for selected item
+							formatSelection: formatSelection,
+    					 	templateResult: formatSelection		/* For 4.0 */
     					});
     				});
     			</script>';
@@ -4433,7 +4463,7 @@ class Form
     	// Try also magic suggest
 
     	// Add data-role="none" to disable jmobile decoration
-    	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
+    	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple="multiple" name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/',$width)?$width:$width.'px').'"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
@@ -4460,6 +4490,49 @@ class Form
 
     	return $out;
     }
+
+
+	/**
+	 * 	Render list of categories linked to object with id $id and type $type
+	 *
+	 * 	@param		int		$id				Id of object
+ 	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+ 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Use text with link
+	 * 	@return		mixed					Array of category objects or < 0 if KO
+	 */
+	function showCategories($id, $type, $rendermode=0)
+	{
+		global $db;
+
+		$cat = new Categorie($db);
+		$categories = $cat->containing($id, $type);
+
+		if ($rendermode == 1)
+		{
+			$toprint = array();
+			foreach($categories as $c)
+			{
+				$ways = $c->print_all_ways();
+				foreach($ways as $way)
+				{
+					$toprint[] = img_object('','category').' '.$way;
+				}
+			}
+			return implode('<br>', $toprint);
+		}
+
+		if ($rendermode == 0)
+		{
+			$cate_arbo = $this->select_all_categories(0, '', 'parent', 64, 0, 1);
+			foreach($categories as $c) {
+				$arrayselected[] = $c->id;
+			}
+
+			return $this->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%', 'disabled="disabled"', 'category');
+		}
+
+		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
+	}
 
 
     /**

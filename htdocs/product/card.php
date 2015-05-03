@@ -1174,7 +1174,7 @@ else
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
-            print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
+            //print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
@@ -1182,6 +1182,12 @@ else
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="canvas" value="'.$object->canvas.'">';
+
+            $head=product_prepare_head($object);
+            $titre=$langs->trans("CardProduct".$object->type);
+            $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+            dol_fiche_head($head, 'card', $titre, 0, $picto);
+
             print '<table class="border allwidth">';
 
             // Ref
@@ -1374,7 +1380,7 @@ else
 			foreach($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 
 	        // Units
@@ -1409,9 +1415,9 @@ else
                 print '</td></tr>';
 
                 print '</table>';
-
-                print '<br>';
             //}
+
+            dol_fiche_end();
 
             print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1688,16 +1694,8 @@ else
             print '<!-- End show Note --> '."\n";
 
 			// Categories
-			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cat = new Categorie($db);
-			$categories = $cat->containing($object->id,0);
-			$catarray = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
-
-			$toprint = array();
-			foreach($categories as $c) {
-				$toprint[] = $catarray[$c->id];
-			}
-			print implode('<br>', $toprint);
+			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->showCategories($object->id,'product');
 			print "</td></tr>";
 
             print "</table>\n";

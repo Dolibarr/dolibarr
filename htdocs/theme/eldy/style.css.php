@@ -3054,11 +3054,23 @@ a span.select2-chosen
 .select2-container .select2-choice {
 	background-image: none;
 }
+.select2-choices .select2-search-choice {
+  border: 1px solid #aaa !important;
+}
 .select2-results .select2-no-results, .select2-results .select2-searching, .select2-results .select2-ajax-error, .select2-results .select2-selection-limit
 {
 	background: #FFFFFF;
 }
-
+.select2-container-multi.select2-container-disabled .select2-choices {
+	background-color: #FFFFFF;
+	background-image: none;
+	border: none;
+	cursor: default;
+}
+.select2-container-multi .select2-choices .select2-search-choice {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
 
 /* ============================================================================== */
 /*  JMobile                                                                       */

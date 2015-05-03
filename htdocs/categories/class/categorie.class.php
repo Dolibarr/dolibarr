@@ -1064,11 +1064,11 @@ class Categorie extends CommonObject
 	 */
 	function print_all_ways($sep = " &gt;&gt; ", $url='')
 	{
-		$ways = array ();
+		$ways = array();
 
 		foreach ($this->get_all_ways() as $way)
 		{
-			$w = array ();
+			$w = array();
 			foreach ($way as $cat)
 			{
 				if ($url == '')
