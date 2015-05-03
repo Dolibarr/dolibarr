@@ -249,9 +249,9 @@ if ($resql)
 		print '<tr class="liste_total">';
 		print '<td colspan="4">'.$langs->trans("Total").'</td>';
 
-		print '<td style="text-align:right;">'.$total_total_ht.'</td>';
-		print '<td style="text-align:right;">'.$total_total_tva.'</td>';
-		print '<td style="text-align:right;">'.$total_total_ttc.'</td>';
+		print '<td style="text-align:right;">'.price($total_total_ht).'</td>';
+		print '<td style="text-align:right;">'.price($total_total_tva).'</td>';
+		print '<td style="text-align:right;">'.price($total_total_ttc).'</td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '</tr>';
