@@ -121,7 +121,7 @@ $thirdparty_fields= array(
     	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
     	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string'));
 
-//Retreive all extrafield for thirdsparty
+// Retrieve all extrafields for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
@@ -329,7 +329,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 						'note_private' => $thirdparty->note_private,
 						'note_public' => $thirdparty->note_public);
 
-				//Retreive all extrafield for thirdsparty
+				// Retrieve all extrafields for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
 				$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
@@ -445,7 +445,7 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->canvas=$thirdparty['canvas'];
         $newobject->particulier=$thirdparty['individual'];
 
-        //Retreive all extrafield for thirdsparty
+        // Retrieve all extrafields for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
         $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
@@ -576,7 +576,7 @@ function updateThirdParty($authentication,$thirdparty)
 
 			$object->canvas=$thirdparty['canvas'];
 
-			//Retreive all extrafield for thirdsparty
+			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
 			$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
