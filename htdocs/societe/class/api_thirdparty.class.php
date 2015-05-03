@@ -31,8 +31,7 @@
 class ThirdpartyApi extends DolibarrApi {
     
     static $FIELDS = array(
-        'name',
-        'email'
+        'name'
     );
 
     /**
@@ -48,9 +47,13 @@ class ThirdpartyApi extends DolibarrApi {
      */
     function __construct()
     {
-		global $db;
+		global $db, $conf;
 		$this->db = $db;
         $this->company = new Societe($this->db);
+        
+        if (! empty($conf->global->SOCIETE_MAIL_REQUIRED)) {
+            static::$FIELDS[] = 'email';
+        }
     }
 
     /**
@@ -146,48 +149,89 @@ class ThirdpartyApi extends DolibarrApi {
             throw new RestException(404, 'Thirdparties not found');
         }
 		return $obj_ret;
-
     }
+    
     /**
      * Create thirdparty object
      *
      * @url	POST thirdparty/
-     * @param type $request_data
-     * @return type
+     * @param array $request_data
+     * @return int  ID of thirdparty
      */
     function post($request_data = NULL)
     {
-        return $this->company->create($this->_validate($request_data));
+        if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			throw new RestException(401);
+		}
+        // Check mandatory fields
+        $result = $this->_validate($request_data);
+        
+        foreach($request_data as $field => $value) {
+            $this->company->$field = $value;
+        }
+        return $this->company->create(DolibarrApiAccess::$user);
     }
 
     /**
      * Update thirdparty
      *
      * @url	PUT thirdparty/{id}
-     * @param type $id
-     * @param type $request_data
-     * @return type$this->company
+     * @param int   $id             Id of thirdparty to update
+     * @param array $request_data   Datas   
+     * @return int 
      */
     function put($id, $request_data = NULL)
     {
-        return $this->company->update($id, $this->_validate($request_data));
+        if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			throw new RestException(401);
+		}
+        
+        $result = $this->company->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Thirdparty not found');
+        }
+		
+		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+        foreach($request_data as $field => $value) {
+            $this->company->$field = $value;
+        }
+        
+        if($this->company->update($id, DolibarrApiAccess::$user,1,'','','update'))
+            return $this->get ($id);
+        
+        return false;
     }
     
     /**
      * Delete thirdparty
      *
      * @url	DELETE thirdparty/{id}
-     * @param type $id
+     * @param int $id
      * @return type
      */
     function delete($id)
     {
+        if(! DolibarrApiAccess::$user->rights->societe->supprimer) {
+			throw new RestException(401);
+		}
+        $result = $this->company->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Thirdparty not found');
+        }
+		
+		if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+        
         return $this->company->delete($id);
     }
     
     /**
      * Validate fields before create or update object
-     * @param type $data
+     * @param array $data
      * @return array
      * @throws RestException
      */
