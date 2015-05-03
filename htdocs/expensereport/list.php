@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
 $search_amount_ttc = GETPOST('search_amount_ttc','alpha');
-$search_status = GETPOST('search_status','int');
+$search_status = (GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));
 $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
 $month_end    = GETPOST("month_end","int");
@@ -61,6 +61,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$month_end="";
 	$year_end="";
 }
+
+if ($search_status == '') $search_status=-1;
+if ($search_user == '') $search_user=-1;
 
 /*
  * View
@@ -90,17 +93,16 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
+$sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
+$sql.= " WHERE d.entity = ".$conf->entity;
 
-// Where
+// Ref
 if(!empty($search_ref)){
-	$sql.= " WHERE d.ref LIKE '%".$db->escape($search_ref)."%'";
-}else{
-	$sql.= " WHERE 1 = 1";
+	$sql.= " AND d.ref LIKE '%".$db->escape($search_ref)."%'";
 }
 // Date Start
 if ($month_start > 0)
@@ -140,12 +142,16 @@ if ($search_amount_ttc != '')
     $sql.= natural_search('d.total_ttc', $search_amount_ttc, 1);
 }
 // User
-if ($search_name)
+if ($search_user != '' && $search_user >= 0)
 {
-    $sql .= natural_search('u.lastname', $search_name);
+	$sql.= " AND u.rowid = '".$db->escape($search_user)."'";
 }
 // Status
-if($search_status != '') $sql.= " AND d.fk_statut = '".$search_status."'";
+if ($search_status != '' && $search_status >= 0)
+{
+	if (strstr($search_status, ',')) $sql.=" AND d.fk_statut IN (".$db->escape($search_status).")";
+	else $sql.=" AND d.fk_statut = ".$search_status;
+}
 
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
@@ -163,11 +169,17 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
-
 	$i = 0;
-	print_barre_liste($langs->trans("ListTripsAndExpenses"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	$param="";
+	if ($search_ref)			$param.="&search_ref=".$search_ref;
+	if ($search_user)			$param.="&search_user=".$search_user;
+	if ($search_amount_ht)		$param.="&search_amount_ht=".$search_amount_ht;
+	if ($search_amount_ttc)		$param.="&search_amount_ttc=".$search_amount_ttc;
+	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
+	
+	print_barre_liste($langs->trans("ListTripsAndExpenses"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","",$param,'',$sortfield,$sortorder);
