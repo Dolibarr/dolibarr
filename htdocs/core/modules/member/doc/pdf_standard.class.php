@@ -2,8 +2,8 @@
 /* Copyright (C) 2003 Steve Dillon
  * Copyright (C) 2003 Laurent Passebecq
  * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
+ * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/member/doc/pdf_standard.class.php
- *	\ingroup    member
- *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *	\file		htdocs/core/modules/member/doc/pdf_standard.class.php
+ *	\ingroup	member
+ *	\brief		Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -37,37 +37,37 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   PDF         $pdf            PDF reference
-	 * @param   Translate  	$outputlangs    Output langs
-	 * @param   array     	$param          Associative array containing label content and optional parameters
-	 * @return  void
+	 * @param	PDF			$pdf			PDF reference
+	 * @param	Translate	$outputlangs	Output langs
+	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @return	void
 	 */
 	function addSticker(&$pdf,$outputlangs,$param) {
-        // use this method in future refactoring
-    }
-    
-    /**
+		// use this method in future refactoring
+	}
+	
+	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param    PDF	    $pdf		    PDF
-	 * @param    string     $textleft       Text left
-	 * @param    string     $header         Header
-	 * @param    string     $footer         Footer
-	 * @param    Translate  $outputlangs    Output langs
-	 * @param    string     $textright      Text right
-	 * @param    int        $idmember       Id member
-	 * @param    string     $photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
-	 * @return   void
+	 * @param	 PDF		$pdf			PDF
+	 * @param	 string		$textleft		Text left
+	 * @param	 string		$header			Header
+	 * @param	 string		$footer			Footer
+	 * @param	 Translate	$outputlangs	Output langs
+	 * @param	 string		$textright		Text right
+	 * @param	 int		$idmember		Id member
+	 * @param	 string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
+	 * @return	 void
 	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photo='')
 	{
 		global $mysoc,$conf,$langs;
 		global $forceimgscalewidth,$forceimgscaleheight;
 
-	 	$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
-	 	$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
+		$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
+		$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -235,9 +235,9 @@ class pdf_standard extends CommonStickerGenerator
 	 *
 	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
-     *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param	string		$mode				Tell if doc module is called for 'member', ...
-	 *	@return	int     						1=OK, 0=KO
+	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
+	 *	@return	int								1=OK, 0=KO
 	 */
 	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$mode='member')
 	{
@@ -261,8 +261,8 @@ class pdf_standard extends CommonStickerGenerator
 
 		if (empty($mode) || $mode == 'member')
 		{
-	        $title=$outputlangs->transnoentities('MembersCards');
-	        $keywords=$outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
+			$title=$outputlangs->transnoentities('MembersCards');
+			$keywords=$outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
 			$outputdir=$conf->adherent->dir_temp;
 		}
 		else
@@ -284,14 +284,14 @@ class pdf_standard extends CommonStickerGenerator
 			}
 		}
 
-        $pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
+		$pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
 
-        if (class_exists('TCPDF'))
-        {
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-        }
-        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+		if (class_exists('TCPDF'))
+		{
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
+		}
+		$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
 		$pdf->SetTitle($title);
 		$pdf->SetSubject($title);
@@ -344,7 +344,7 @@ class pdf_standard extends CommonStickerGenerator
 		$type=dol_mimetype($filename);
 
 		//if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)       header('Content-Type: '.$type);
+		if ($type)		 header('Content-Type: '.$type);
 		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 		else header('Content-Disposition: inline; filename="'.$filename.'"');
 

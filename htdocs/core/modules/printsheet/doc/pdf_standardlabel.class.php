@@ -2,8 +2,8 @@
 /* Copyright (C) 2003 Steve Dillon
  * Copyright (C) 2003 Laurent Passebecq
  * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
+ * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -21,9 +21,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
- *	\ingroup    core
- *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *	\file		htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
+ *	\ingroup	core
+ *	\brief		Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -33,41 +33,41 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
  */
 class pdf_standardlabel extends CommonStickerGenerator
 {
-    /**
+	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   PDF         $pdf            PDF reference
-	 * @param   Translate  	$outputlangs    Output langs
-	 * @param   array     	$param          Associative array containing label content and optional parameters
-	 * @return  void
+	 * @param	PDF			$pdf			PDF reference
+	 * @param	Translate	$outputlangs	Output langs
+	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @return	void
 	 */
 	function addSticker(&$pdf,$outputlangs,$param) {
-        // use this method in future refactoring
-    }
-    
+		// use this method in future refactoring
+	}
+	
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param   PDF	        $pdf		    PDF reference
-	 * @param   string		$textleft       Text left
-	 * @param   string     	$header         Header
-	 * @param   string     	$footer         Footer
-	 * @param   Translate  	$outputlangs    Output langs
-	 * @param   string     	$textright      Text right
-	 * @param   string     	$photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
-	 * @return  void
+	 * @param	PDF			$pdf			PDF reference
+	 * @param	string		$textleft		Text left
+	 * @param	string		$header			Header
+	 * @param	string		$footer			Footer
+	 * @param	Translate	$outputlangs	Output langs
+	 * @param	string		$textright		Text right
+	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
+	 * @return	void
 	 */
 	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
 		global $mysoc,$conf,$langs;
 		global $forceimgscalewidth,$forceimgscaleheight;
 
-	 	$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
-	 	$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
+		$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
+		$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
 
-	 	// We are in a new page, then we must add a page
+		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
 			$pdf->AddPage();
 		}
@@ -224,121 +224,121 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 
 
-    /**
-     *  Function to build PDF on disk, then output on HTTP strem.
-     *
-     *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
-     *  @param  Translate	$outputlangs     	Lang object for output language
-     *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	/**
+	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *
+	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	Translate	$outputlangs		Lang object for output language
+	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
-     *  @return int             				1=OK, 0=KO
-     */
-    function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='')
-    {
-        global $user,$conf,$langs,$mysoc,$_Avery_Labels;
+	 *	@return int								1=OK, 0=KO
+	 */
+	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='')
+	{
+		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
-        $this->code=$srctemplatepath;
-        $this->Tformat = $_Avery_Labels[$this->code];
-        if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
-        $this->type = 'pdf';
-        $this->format = $this->Tformat['paper-size'];
+		$this->code=$srctemplatepath;
+		$this->Tformat = $_Avery_Labels[$this->code];
+		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
+		$this->type = 'pdf';
+		$this->format = $this->Tformat['paper-size'];
 
-        if (! is_object($outputlangs)) $outputlangs=$langs;
+		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-        $outputlangs->load("main");
-        $outputlangs->load("dict");
-        $outputlangs->load("companies");
-        $outputlangs->load("admin");
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("admin");
 
-        $title=$outputlangs->transnoentities('Labels');
-        $keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);
+		$title=$outputlangs->transnoentities('Labels');
+		$keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);
 
-        $dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
-        $filename='tmp_address_sheet.pdf';
-        $file = $dir."/".$filename;
+		$dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
+		$filename='tmp_address_sheet.pdf';
+		$file = $dir."/".$filename;
 
-        if (! file_exists($dir))
-        {
-            if (dol_mkdir($dir) < 0)
-            {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                return 0;
-            }
-        }
+		if (! file_exists($dir))
+		{
+			if (dol_mkdir($dir) < 0)
+			{
+				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				return 0;
+			}
+		}
 
-        $pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
+		$pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
 
-        if (class_exists('TCPDF'))
-        {
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-        }
-        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+		if (class_exists('TCPDF'))
+		{
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
+		}
+		$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-        $pdf->SetTitle($title);
-        $pdf->SetSubject($title);
-        $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-        $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-        $pdf->SetKeyWords($keywords);
-        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+		$pdf->SetTitle($title);
+		$pdf->SetSubject($title);
+		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetKeyWords($keywords);
+		if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-        $pdf->SetMargins(0,0);
-        $pdf->SetAutoPageBreak(false);
+		$pdf->SetMargins(0,0);
+		$pdf->SetAutoPageBreak(false);
 
-        $this->_Metric_Doc = $this->Tformat['metric'];
-        // Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
-        $posX=1;
-        $posY=1;
-        if ($posX > 0) $posX--; else $posX=0;
-        if ($posY > 0) $posY--; else $posY=0;
-        $this->_COUNTX = $posX;
-        $this->_COUNTY = $posY;
-        $this->_Set_Format($pdf, $this->Tformat);
-
-
-        $pdf->Open();
-        $pdf->AddPage();
+		$this->_Metric_Doc = $this->Tformat['metric'];
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		$posX=1;
+		$posY=1;
+		if ($posX > 0) $posX--; else $posX=0;
+		if ($posY > 0) $posY--; else $posY=0;
+		$this->_COUNTX = $posX;
+		$this->_COUNTY = $posY;
+		$this->_Set_Format($pdf, $this->Tformat);
 
 
-        // Add each record
-        foreach($arrayofrecords as $val)
-        {
-            // imprime le texte specifique sur la carte
-            $this->Add_PDF_label($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
-        }
-
-        //$pdf->SetXY(10, 295);
-        //$pdf->Cell($this->_Width, $this->_Line_Height, 'XXX',0,1,'C');
+		$pdf->Open();
+		$pdf->AddPage();
 
 
-        // Output to file
-        $pdf->Output($file,'F');
+		// Add each record
+		foreach($arrayofrecords as $val)
+		{
+			// imprime le texte specifique sur la carte
+			$this->Add_PDF_label($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
+		}
 
-        if (! empty($conf->global->MAIN_UMASK))
-            @chmod($file, octdec($conf->global->MAIN_UMASK));
+		//$pdf->SetXY(10, 295);
+		//$pdf->Cell($this->_Width, $this->_Line_Height, 'XXX',0,1,'C');
+
+
+		// Output to file
+		$pdf->Output($file,'F');
+
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 
 
-        // Output to http stream
-        clearstatcache();
+		// Output to http stream
+		clearstatcache();
 
-        $attachment=true;
-        if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-        $type=dol_mimetype($filename);
+		$attachment=true;
+		if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+		$type=dol_mimetype($filename);
 
-        //if ($encoding)   header('Content-Encoding: '.$encoding);
-        if ($type)       header('Content-Type: '.$type);
-        if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-        else header('Content-Disposition: inline; filename="'.$filename.'"');
+		//if ($encoding)   header('Content-Encoding: '.$encoding);
+		if ($type)		 header('Content-Type: '.$type);
+		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+		else header('Content-Disposition: inline; filename="'.$filename.'"');
 
-        // Ajout directives pour resoudre bug IE
-        header('Cache-Control: Public, must-revalidate');
-        header('Pragma: public');
+		// Ajout directives pour resoudre bug IE
+		header('Cache-Control: Public, must-revalidate');
+		header('Pragma: public');
 
-        readfile($file);
+		readfile($file);
 
-        return 1;
-    }
+		return 1;
+	}
 }

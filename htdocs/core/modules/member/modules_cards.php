@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004	   Eric Seigne			<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009 Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/member/modules_cards.php
- *	\ingroup    member
- *	\brief      File of parent class of document generator for members cards.
+ *	\file		htdocs/core/modules/member/modules_cards.php
+ *	\ingroup	member
+ *	\brief		File of parent class of document generator for members cards.
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -38,11 +38,11 @@ class ModelePDFCards
 
 
 	/**
-	 *  Return list of active generation modules
+	 *	Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *	@param	DoliDB	$db					Database handler
+	 *	@param	integer	$maxfilenamelength	Max length of value to show
+	 *	@return	array						List of templates
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
 	{
@@ -62,13 +62,13 @@ class ModelePDFCards
 /**
  *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
  *
- *	@param	DoliDB		$db  			Database handler
- *	@param  array		$arrayofmembers	Array of members
+ *	@param	DoliDB		$db				Database handler
+ *	@param	array		$arrayofmembers	Array of members
  *	@param	string		$modele			Force modele to use ('' to not force)
  *	@param	Translate	$outputlangs	Object langs to use for translation
- *  @param	string		$outputdir		Output directory
- *  @param  string      $template       pdf generenate document class to use default 'standard'
- *	@return int        					<0 if KO, >0 if OK
+ *	@param	string		$outputdir		Output directory
+ *	@param	string		$template		pdf generenate document class to use default 'standard'
+ *	@return int							<0 if KO, >0 if OK
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir='', $template='standard')
 {
@@ -118,7 +118,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		foreach(array('doc','pdf') as $prefix)
 		{
 			$file = $prefix."_".$template.".class.php";
-	
+			
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
 			if (file_exists($file))
