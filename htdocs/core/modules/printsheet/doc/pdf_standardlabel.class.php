@@ -20,45 +20,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Inspire de PDF_Label
- * PDF_Label - PDF label editing
- * @package PDF_Label
- * @author Laurent PASSEBECQ <lpasseb@numericable.fr>
- * @copyright 2003 Laurent PASSEBECQ
- * disponible ici : http://www.fpdf.org/fr/script/script29.php
- */
-
-//-------------------------------------------------------------------
-// VERSIONS :
-// 1.0  : Initial release
-// 1.1  : +	: Added unit in the constructor
-//	  + : Now Positions start @ (1,1).. then the first image @top-left of a page is (1,1)
-//	  + : Added in the description of a label :
-//		font-size	: defaut char size (can be changed by calling Set_Char_Size(xx);
-//		paper-size	: Size of the paper for this sheet (thanx to Al Canton)
-//		metric		: type of unit used in this description
-//				  You can define your label properties in inches by setting metric to 'in'
-//				  and printing in millimiter by setting unit to 'mm' in constructor.
-//	  Added some labels :
-//	        5160, 5161, 5162, 5163,5164 : thanx to Al Canton : acanton@adams-blake.com
-//		8600 						: thanx to Kunal Walia : kunal@u.washington.edu
-//	  + : Added 3mm to the position of labels to avoid errors
-////////////////////////////////////////////////////
-
 /**
  *	\file       htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
  *	\ingroup    core
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/pdf_label.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-class pdf_standardlabel extends pdf_label
+class pdf_standardlabel extends CommonStickerGenerator
 {
-
+    /**
+	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
+	 *
+	 * @param   PDF        &$pdf            PDF reference
+	 * @param   Translate  	$outputlangs    Output langs
+	 * @param   array     	$param          Associative array containing label content and optional parameters
+	 * @return  void
+	 */
+	function addSticker(&$pdf,$outputlangs,$param) {
+        // use this method in future refactoring
+    }
+    
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
@@ -73,7 +59,7 @@ class pdf_standardlabel extends pdf_label
 	 * @param   string     	$photo    		Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return  void
 	 */
-	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
+	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
 		global $mysoc,$conf,$langs;
 		global $forceimgscalewidth,$forceimgscaleheight;
@@ -320,7 +306,7 @@ class pdf_standardlabel extends pdf_label
         foreach($arrayofrecords as $val)
         {
             // imprime le texte specifique sur la carte
-            $this->Add_PDF_card($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
+            $this->Add_PDF_label($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
         }
 
         //$pdf->SetXY(10, 295);
