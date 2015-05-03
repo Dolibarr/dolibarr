@@ -30,6 +30,10 @@
  */
 class ThirdpartyApi extends DolibarrApi {
     
+    /**
+     *
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     */
     static $FIELDS = array(
         'name'
     );
@@ -89,10 +93,15 @@ class ThirdpartyApi extends DolibarrApi {
      * Fetch a list of thirdparties
      *
      * @url	GET /thirdparties/
+     * 
+     * @param   int     $only_customer      Set to 1 to show only customers
+     * @param   int     $only_prospect      Set to 1 to show only prospects
+     * @param   int     $only_others        Set to 1 to show only those are not customer neither prospect
+     * 
      *
      * @return array Array of thirdparty objects
      */
-    function getList() {
+    function getList($only_customer=0,$only_prospect=0,$only_others=0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -109,7 +118,9 @@ class ThirdpartyApi extends DolibarrApi {
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql.= " WHERE s.fk_stcomm = st.id";
-        //$sql.= " AND s.client IN (1, 3)";
+        if ($only_customer) $sql.= " AND s.client IN (1, 3)";
+        if ($only_prospect) $sql.= " AND s.client IN (2, 3)";
+        if ($only_others) $sql.= " AND s.client IN (0)";
         $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
         if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -149,6 +160,39 @@ class ThirdpartyApi extends DolibarrApi {
             throw new RestException(404, 'Thirdparties not found');
         }
 		return $obj_ret;
+    }
+    
+    /**
+     * Show customers
+     * 
+     * @url GET /thirdparties/customers
+     * 
+     * @return array    List of customers
+     */
+    function getListCustomers() {
+        return $this->getList(1);
+    }
+    
+    /**
+     * Show prospects
+     * 
+     * @url GET /thirdparties/prospects
+     * 
+     * @return array    List of prospects
+     */
+    function getListProspects() {
+        return $this->getList('',1);
+    }
+    
+     /**
+     * Show other
+     * 
+     * @url GET /thirdparties/others
+     * 
+     * @return array    List of thirpdparties who are not customer neither prospect
+     */
+    function getListOthers() {
+        return $this->getList('','',1);
     }
     
     /**
