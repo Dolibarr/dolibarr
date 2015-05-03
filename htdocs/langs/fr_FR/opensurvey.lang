@@ -62,5 +62,5 @@ ErrorOpenSurveyOneChoice=Saisissez au moins un choix
 ErrorOpenSurveyDateFormat=La date doit avoir le format YYYY-MM-DD
 ErrorInsertingComment=Il y a eu une erreur à l'enregistrement de votre commentaire
 MoreChoices=Entrez plus de choix pour les votants
-SurveyExpiredInfo=Le délai de cote de ce sondage a expiré.
+SurveyExpiredInfo=L'heure des votes de ce sondage a expiré.
 EmailSomeoneVoted=%s a rempli une ligne.\nVous pouvez trouver le sondage via le lien:\n%s

@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configuració del mòdul workflow
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
+WorkflowDesc=Aquest modul li permet canviar el comportament de les accions automàticament en l'aplicació. De forma predeterminada, el workflow esta obert (configuri segons les seves necessitats). Activi les accions automàtiques que li interessin.
 ThereIsNoWorkflowToModify=No hi ha workflow modificable per als mòduls que té activats.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear una comanda de client automàticament a la signatura d'un pressupost
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear una factura a client automàticament a la signatura d'un pressupost
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a client automàticament a la validació d'un contracte
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear una factura a client automàticament al tancament d'una comanda de client
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar com facturat el pressupost quan la comanda de client relacionada es classifiqui com pagada
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificar com facturades les comanda(es) quan la factura relacionada es classifiqui com a pagada
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificar com a facturades les comanda(es) de clients relacionats quan la factura sigui validada
