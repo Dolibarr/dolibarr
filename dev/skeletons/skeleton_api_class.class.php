@@ -92,11 +92,15 @@ class SkeletonApi extends DolibarrApi {
      *
      * @url	GET /skeletons/
      * 
-     * 
+     * @param int		$mode		Use this param to filter list
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
      *
      * @return array Array of skeleton objects
      */
-    function getList() {
+    function getList($mode, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -113,9 +117,11 @@ class SkeletonApi extends DolibarrApi {
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql.= " WHERE s.fk_stcomm = st.id";
-        if ($only_customer) $sql.= " AND s.client IN (1, 3)";
-        if ($only_prospect) $sql.= " AND s.client IN (2, 3)";
-        if ($only_others) $sql.= " AND s.client IN (0)";
+        
+		// Example of use $mode
+        //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
+        //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
+
         $sql.= ' AND s.entity IN ('.getEntity('skeleton', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socid) $sql.= " AND s.fk_soc = ".$socid;
@@ -134,25 +140,36 @@ class SkeletonApi extends DolibarrApi {
             $nbtotalofrecords = $db->num_rows($result);
         }
 
-        $sql.= $db->order($sortfield,$sortorder);
-        $sql.= $db->plimit($conf->liste_limit +1, $offset);
+        $sql.= $db->order($sortfield, $sortorder);
+        if ($limit)	{
+            if ($page < 0)
+            {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql.= $db->plimit($limit + 1, $offset);
+        }
 
         $result = $db->query($sql);
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($num,$conf->liste_limit))
+            while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
-                $soc_static = new Skeleton($db);
-                if($soc_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($soc_static);
+                $skeleton_static = new Skeleton($db);
+                if($skeleton_static->fetch($obj->rowid)) {
+                    $obj_ret[] = parent::_cleanObjectDatas($skeleton_static);
                 }
                 $i++;
             }
         }
+        else {
+            throw new RestException(503, 'Error when retrieve skeleton list');
+        }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'Thirdparties not found');
+            throw new RestException(404, 'No skeleton found');
         }
 		return $obj_ret;
     }
