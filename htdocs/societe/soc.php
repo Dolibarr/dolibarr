@@ -169,7 +169,7 @@ if (empty($reshook))
 
 				if (!$errors) {
 					//We finally remove the old thirdparty
-					if ($soc_origin->delete($soc_origin->id) < 1) {
+					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
 						$db->rollback();
 						$errors++;
 					}
@@ -598,7 +598,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
     {
         $object->fetch($socid);
-        $result = $object->delete($socid);
+        $result = $object->delete($socid, $user);
 
         if ($result > 0)
         {

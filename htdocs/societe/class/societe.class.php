@@ -1294,12 +1294,14 @@ class Societe extends CommonObject
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
-     *    @param	int		$id     Id of third party to delete
+     *    @param	int		$id             Id of third party to delete
+     *    @param    User    $user           User who ask to delete thirparty
+     *    @param    int		$call_trigger   0=No, 1=yes
      *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
      */
-    function delete($id)
+    function delete($id, $user='', $call_trigger=1)
     {
-        global $user, $langs, $conf;
+        global $langs, $conf;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1314,10 +1316,14 @@ class Societe extends CommonObject
 		{
             $this->db->begin();
 
-            // Call trigger
-            $result=$this->call_trigger('COMPANY_DELETE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
+            // User is mandatory for trigger call
+            if ($user && $call_trigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('COMPANY_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (! $error)
 			{

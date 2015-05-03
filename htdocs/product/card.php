@@ -58,6 +58,7 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type','int');
 $action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
+$cancel=GETPOST('cancel');
 $confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -97,6 +98,8 @@ $hookmanager->initHooks(array('productcard','globalcard'));
 /*
  * Actions
  */
+
+if ($cancel) $action = '';
 
 $createbarcode=empty($conf->barcode->enabled)?0:1;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) $createbarcode=0;
@@ -520,19 +523,45 @@ if (empty($reshook))
     }
 
 
-    // Add product into proposal
-    if ($object->id > 0 && $action == 'addinpropal')
+    // Add product into object
+    if ($object->id > 0 && $action == 'addin')
     {
-        $propal = new Propal($db);
-        $result=$propal->fetch(GETPOST('propalid'));
-        if ($result <= 0)
+        if (GETPOST('propalid') > 0)
         {
-            dol_print_error($db,$propal->error);
-            exit;
+        	$propal = new Propal($db);
+	        $result=$propal->fetch(GETPOST('propalid'));
+	        if ($result <= 0)
+	        {
+	            dol_print_error($db,$propal->error);
+	            exit;
+	        }
+	        $thirpdartyid = $propal->socid;
+        }
+        elseif (GETPOST('commandeid') > 0)
+        {
+            $commande = new Commande($db);
+	        $result=$commande->fetch(GETPOST('commandeid'));
+	        if ($result <= 0)
+	        {
+	            dol_print_error($db,$commande->error);
+	            exit;
+	        }
+	        $thirpdartyid = $commande->socid;
+        }
+        elseif (GETPOST('factureid') > 0)
+        {
+    	    $facture = new Facture($db);
+	        $result=$facture->fetch(GETPOST('factureid'));
+	        if ($result <= 0)
+	        {
+	            dol_print_error($db,$facture->error);
+	            exit;
+	        }
+	        $thirpdartyid = $facture->socid;
         }
 
         $soc = new Societe($db);
-        $result=$soc->fetch($propal->socid);
+        $result=$soc->fetch($thirpdartyid);
         if ($result <= 0)
         {
             dol_print_error($db,$soc->error);
@@ -589,254 +618,116 @@ if (empty($reshook))
             }
         }
 
-        $result = $propal->addline(
-            $desc,
-            $pu_ht,
-            GETPOST('qty'),
-            $tva_tx,
-            $localtax1_tx, // localtax1
-            $localtax2_tx, // localtax2
-            $object->id,
-            GETPOST('remise_percent'),
-            $price_base_type,
-            $pu_ttc,
-	        0,
-	        0,
-	        -1,
-	        0,
-	        0,
-	        0,
-	        0,
-	        '',
-	        '',
-	        '',
-	        0,
-	        $object->fk_unit
-        );
-        if ($result > 0)
+        if (GETPOST('propalid') > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
-            return;
+	        $result = $propal->addline(
+	            $desc,
+	            $pu_ht,
+	            GETPOST('qty'),
+	            $tva_tx,
+	            $localtax1_tx, // localtax1
+	            $localtax2_tx, // localtax2
+	            $object->id,
+	            GETPOST('remise_percent'),
+	            $price_base_type,
+	            $pu_ttc,
+		        0,
+		        0,
+		        -1,
+		        0,
+		        0,
+		        0,
+		        0,
+		        '',
+		        '',
+		        '',
+		        0,
+		        $object->fk_unit
+	        );
+	        if ($result > 0)
+	        {
+	            header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
+	            return;
+	        }
+
+        	setEventMessage($langs->trans("ErrorUnknown").": $result", 'errors');
         }
-
-        setEventMessage($langs->trans("ErrorUnknown").": $result", 'errors');
-    }
-
-    // Add product into order
-    if ($object->id > 0 && $action == 'addincommande')
-    {
-        $commande = new Commande($db);
-        $result=$commande->fetch(GETPOST('commandeid'));
-        if ($result <= 0)
+        elseif (GETPOST('commandeid') > 0)
         {
-            dol_print_error($db,$commande->error);
-            exit;
+            $result =  $commande->addline(
+	            $desc,
+	            $pu_ht,
+	            GETPOST('qty'),
+	            $tva_tx,
+	            $localtax1_tx, // localtax1
+	            $localtax2_tx, // localtax2
+	            $object->id,
+	            GETPOST('remise_percent'),
+	            '',
+	            '',
+	            $price_base_type,
+	            $pu_ttc,
+		        '',
+		        '',
+		        0,
+		        -1,
+		        0,
+		        0,
+		        null,
+		        0,
+		        '',
+		        0,
+		        $object->fk_unit
+	        );
+
+	        if ($result > 0)
+	        {
+	            header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".$commande->id);
+	            exit;
+	        }
         }
-
-        $soc = new Societe($db);
-        $result=$soc->fetch($commande->socid);
-        if ($result <= 0)
-        {
-            dol_print_error($db,$soc->error);
-            exit;
-        }
-
-        $desc = $object->description;
-
-        $tva_tx = get_default_tva($mysoc, $soc, $object->id);
-        $localtax1_tx= get_localtax($tva_tx, 1, $soc);
-        $localtax2_tx= get_localtax($tva_tx, 2, $soc);
-
-
-        $pu_ht = $object->price;
-        $pu_ttc = $object->price_ttc;
-        $price_base_type = $object->price_base_type;
-
-        // If multiprice
-        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-        {
-            $pu_ht = $object->multiprices[$soc->price_level];
-            $pu_ttc = $object->multiprices_ttc[$soc->price_level];
-            $price_base_type = $object->multiprices_base_type[$soc->price_level];
-        }
-    	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		elseif (GETPOST('factureid') > 0)
 		{
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+	        $result = $facture->addline(
+	            $desc,
+	            $pu_ht,
+	            GETPOST('qty'),
+	            $tva_tx,
+	            $localtax1_tx,
+	            $localtax2_tx,
+	            $object->id,
+	            GETPOST('remise_percent'),
+	            '',
+	            '',
+	            '',
+	            '',
+	            '',
+	            $price_base_type,
+	            $pu_ttc,
+		        Facture::TYPE_STANDARD,
+		        -1,
+		        0,
+		        '',
+		        0,
+		        0,
+		        null,
+		        0,
+		        '',
+		        0,
+		        100,
+		        '',
+		        $object->fk_unit
+	        );
 
-			$prodcustprice = new Productcustomerprice($db);
-
-			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
-
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-			if ($result) {
-				if (count($prodcustprice->lines) > 0) {
-					$pu_ht = price($prodcustprice->lines [0]->price);
-					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
-					$price_base_type = $prodcustprice->lines [0]->price_base_type;
-					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
-				}
-			}
+	        if ($result > 0)
+	        {
+	            header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
+	            exit;
+	        }
 		}
-        // On reevalue prix selon taux tva car taux tva transaction peut etre different
-        // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $object->tva_tx)
-        {
-            if ($price_base_type != 'HT')
-            {
-                $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-            }
-            else
-            {
-                $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
-            }
-        }
-
-        $result =  $commande->addline(
-            $desc,
-            $pu_ht,
-            GETPOST('qty'),
-            $tva_tx,
-            $localtax1_tx, // localtax1
-            $localtax2_tx, // localtax2
-            $object->id,
-            GETPOST('remise_percent'),
-            '',
-            '',
-            $price_base_type,
-            $pu_ttc,
-	        '',
-	        '',
-	        0,
-	        -1,
-	        0,
-	        0,
-	        null,
-	        0,
-	        '',
-	        0,
-	        $object->fk_unit
-        );
-
-        if ($result > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/commande/card.php?id=".$commande->id);
-            exit;
-        }
-    }
-
-    // Add product into invoice
-    if ($object->id > 0 && $action == 'addinfacture' && $user->rights->facture->creer)
-    {
-        $facture = New Facture($db);
-        $result=$facture->fetch(GETPOST('factureid'));
-        if ($result <= 0)
-        {
-            dol_print_error($db,$facture->error);
-            exit;
-        }
-
-        $soc = new Societe($db);
-        $soc->fetch($facture->socid);
-        if ($result <= 0)
-        {
-            dol_print_error($db,$soc->error);
-            exit;
-        }
-
-        $desc = $object->description;
-
-        $tva_tx = get_default_tva($mysoc, $soc, $object->id);
-        $localtax1_tx= get_localtax($tva_tx, 1, $soc);
-        $localtax2_tx= get_localtax($tva_tx, 2, $soc);
-
-        $pu_ht = $object->price;
-        $pu_ttc = $object->price_ttc;
-        $price_base_type = $object->price_base_type;
-
-        // If multiprice
-        if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-        {
-            $pu_ht = $object->multiprices[$soc->price_level];
-            $pu_ttc = $object->multiprices_ttc[$soc->price_level];
-            $price_base_type = $object->multiprices_base_type[$soc->price_level];
-        }
-    	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-		{
-			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-
-			$prodcustprice = new Productcustomerprice($db);
-
-			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
-
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-			if ($result) {
-				if (count($prodcustprice->lines) > 0) {
-					$pu_ht = price($prodcustprice->lines [0]->price);
-					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
-					$price_base_type = $prodcustprice->lines [0]->price_base_type;
-					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
-				}
-			}
-		}
-        // On reevalue prix selon taux tva car taux tva transaction peut etre different
-        // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $object->tva_tx)
-        {
-            if ($price_base_type != 'HT')
-            {
-                $pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
-            }
-            else
-            {
-                $pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
-            }
-        }
-
-        $result = $facture->addline(
-            $desc,
-            $pu_ht,
-            GETPOST('qty'),
-            $tva_tx,
-            $localtax1_tx,
-            $localtax2_tx,
-            $object->id,
-            GETPOST('remise_percent'),
-            '',
-            '',
-            '',
-            '',
-            '',
-            $price_base_type,
-            $pu_ttc,
-	        Facture::TYPE_STANDARD,
-	        -1,
-	        0,
-	        '',
-	        0,
-	        0,
-	        null,
-	        0,
-	        '',
-	        0,
-	        100,
-	        '',
-	        $object->fk_unit
-        );
-
-        if ($result > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
-            exit;
-        }
     }
 }
 
-if (GETPOST("cancel") == $langs->trans("Cancel"))
-{
-    $action = '';
-    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-    exit;
-}
 
 
 /*
@@ -1174,7 +1065,7 @@ else
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
-            print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
+            //print_fiche_titre($langs->trans('Modify').' '.$type.' : '.(is_object($object->oldcopy)?$object->oldcopy->ref:$object->ref), "");
 
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
@@ -1182,6 +1073,12 @@ else
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="canvas" value="'.$object->canvas.'">';
+
+            $head=product_prepare_head($object);
+            $titre=$langs->trans("CardProduct".$object->type);
+            $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+            dol_fiche_head($head, 'card', $titre, 0, $picto);
+
             print '<table class="border allwidth">';
 
             // Ref
@@ -1374,7 +1271,7 @@ else
 			foreach($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 
 	        // Units
@@ -1409,9 +1306,9 @@ else
                 print '</td></tr>';
 
                 print '</table>';
-
-                print '<br>';
             //}
+
+            dol_fiche_end();
 
             print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1688,16 +1585,8 @@ else
             print '<!-- End show Note --> '."\n";
 
 			// Categories
-			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cat = new Categorie($db);
-			$categories = $cat->containing($object->id,0);
-			$catarray = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
-
-			$toprint = array();
-			foreach($categories as $c) {
-				$toprint[] = $catarray[$c->id];
-			}
-			print implode('<br>', $toprint);
+			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print $form->showCategories($object->id,'product');
 			print "</td></tr>";
 
             print "</table>\n";
@@ -1817,42 +1706,24 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
         $langs->load("propal");
 
-        $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftProposals").'</td>';
-        $html .= '</tr><tr>';
-        $html .= '<td valign="top">';
-
         $var=true;
         $otherprop = $propal->liste_array(2,1,0);
-        $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-        $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        $html .= '<table class="nobordernopadding" width="100%">';
+
         if (is_array($otherprop) && count($otherprop))
         {
         	$var=!$var;
-        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
-        	$html .= '<input type="hidden" name="action" value="addinpropal">';
-        	$html .= $langs->trans("Proposals").'</td><td colspan="2">';
+        	$html .= '<tr><td style="width: 200px;">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
-        	$html .= '</td></tr>';
-        	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-        	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-        	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-        	$html .= '</td><td align="right">';
-        	$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
         	$html .= '</td></tr>';
         }
         else
-        {
-        	$html .= "<tr ".$bc[!$var]."><td>";
+       {
+        	$html .= '<tr><td style="width: 200px;">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
         	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
-        $html .= '</table>';
-        $html .= '</form>';
-
-        $html .= '</td>';
-        $html .= '</tr>';
     }
 
     // Commande
@@ -1862,42 +1733,23 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
         $langs->load("orders");
 
-        $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftOrders").'</td>';
-        $html .= '</tr><tr>';
-        $html .= '<td valign="top">';
-
         $var=true;
         $othercom = $commande->liste_array(2, 1, null);
-        $html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-        $html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        $html .= '<table class="nobordernopadding" width="100%">';
         if (is_array($othercom) && count($othercom))
         {
         	$var=!$var;
-        	$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
-        	$html .= '<input type="hidden" name="action" value="addincommande">';
-        	$html .= $langs->trans("Orders").'</td><td colspan="2">';
+        	$html .= '<tr><td style="width: 200px;">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
-        	$html .= '</td></tr>';
-        	$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-        	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-        	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-        	$html .= '</td><td align="right">';
-        	$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
         	$html .= '</td></tr>';
         }
         else
 		{
-        	$html .= "<tr ".$bc[!$var]."><td>";
+        	$html .= '<tr><td style="width: 200px;">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
         	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
-        $html .= '</table>';
-        $html .= '</form>';
-
-        $html .= '</td>';
-        $html .= '</tr>';
     }
 
     // Factures
@@ -1907,51 +1759,48 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
     	$langs->load("bills");
 
-    	$html .= '<tr class="liste_titre">';
-    	$html .= '<td class="liste_titre">'.$langs->trans("AddToDraftInvoices").'</td>';
-        $html .= '</tr><tr>';
-    	$html .= '<td valign="top">';
-
     	$var=true;
     	$otherinvoice = $invoice->liste_array(2, 1, null);
-    	$html .= '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-    	$html .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	$html .= '<table class="nobordernopadding" width="100%">';
     	if (is_array($otherinvoice) && count($otherinvoice))
     	{
     		$var=!$var;
-    		$html .= '<tr '.$bc[$var].'><td style="width: 200px;">';
-    		$html .= '<input type="hidden" name="action" value="addinfacture">';
-    		$html .= $langs->trans("Invoice").'</td><td colspan="2">';
+    		$html .= '<tr><td style="width: 200px;">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
-    		$html .= '</td></tr>';
-    		$html .= '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Quantity").' ';
-    		$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
-    		$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
-    		$html .= '</td><td align="right">';
-    		$html .= '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
     		$html .= '</td></tr>';
     	}
     	else
     	{
-    		$html .= "<tr ".$bc[!$var]."><td>";
+    		$html .= '<tr><td style="width: 200px;">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
     		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
-    	$html .= '</table>';
-    	$html .= '</form>';
-
-    	$html .= '</td>';
-    	$html .= '</tr>';
     }
 
     //If any text is going to be printed, then we show the table
     if (!empty($html))
     {
-        print '<table width="100%" class="noborder">';
+	    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<input type="hidden" name="action" value="addin">';
+
+	    print load_fiche_titre($langs->trans("Add"),'','');
+
+    	$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
+    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+    	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
+    	$html .= '</td></tr>';
+
+    	print '<table width="100%" class="border">';
         print $html;
         print '</table>';
-        print '<br>';
+
+        print '<div class="center">';
+        print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+        print '</div>';
+
+        print '</form>';
     }
 }
 

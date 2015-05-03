@@ -1539,7 +1539,7 @@ class Commande extends CommonOrder
 
                 if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
-                // Retreive all extrafield for invoice
+                // Retrieve all extrafields for invoice
                 // fetch optionals attributes and labels
                 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
