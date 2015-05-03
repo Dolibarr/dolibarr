@@ -123,7 +123,7 @@ if ($action == 'builddoc')
 		$code=$forbarcode;
 		$generator=$stdobject->barcode_type_coder;				// coder (loaded by fetch_barcode). Engine.
 		$encoding=strtoupper($stdobject->barcode_type_code);	// code (loaded by fetch_barcode). Example 'ean', 'isbn', ...
-		$barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		
 
 		$diroutput=$conf->barcode->dir_temp;
 		dol_mkdir($diroutput);
@@ -142,27 +142,36 @@ if ($action == 'builddoc')
 	        $result=@include_once $newdir.$generator.'.modules.php';
 	        if ($result) break;
 	    }
-
-	    // Load barcode class
-	    $classname = "mod".ucfirst($generator);
-	    $module = new $classname($db);
-	    if ($module->encodingIsSupported($encoding))
-	    {
-	    	dol_delete_file($barcodeimage);
-	    	// File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
-	        $result=$module->writeBarCode($code,$encoding,'Y',4);
-
-	        if ($result <= 0 || ! dol_is_file($barcodeimage))
-	        {
-	        	$error++;
-	        	setEventMessage('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), 'errors');
-	        }
-	    }
-	    else
-		{
-	    	$error++;
-	    	setEventMessage("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, 'errors');
-	    }
+        
+        // Load barcode class for generating barcode image
+        $classname = "mod".ucfirst($generator);
+        $module = new $classname($db);
+        if ($generator != 'tcpdfbarcode') {
+            $template = 'standardlabel';
+            $is2d = false;
+            if ($module->encodingIsSupported($encoding))
+            {
+                $barcodeimage=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+                dol_delete_file($barcodeimage);
+                // File is created with full name $barcodeimage = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+                $result=$module->writeBarCode($code,$encoding,'Y',4);
+            
+                if ($result <= 0 || ! dol_is_file($barcodeimage))
+                {
+                    $error++;
+                    setEventMessage('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), 'errors');
+                }
+            }
+            else
+            {
+                $error++;
+                setEventMessage("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, 'errors');
+            }
+        } else {
+            $template = 'tcpdflabel';
+            $encoding = $module->getTcpdfEncodingType($encoding); //convert to TCPDF compatible encoding types
+            $is2d = $module->is2d;
+        }
 	}
 
 	if (! $error)
@@ -188,11 +197,12 @@ if ($action == 'builddoc')
 		// For labels
 		if ($mode == 'label')
 		{
-			$txtforsticker="%PHOTO%";
-			$textleft=make_substitutions($txtforsticker, $substitutionarray);
-			$textheader='';
-			$textfooter='';
-			$textright='';
+			
+		    $txtforsticker="%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
+			$textleft=make_substitutions((empty($conf->global->BARCODE_LABEL_LEFT_TEXT)?$txtforsticker:$conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
+			$textheader=make_substitutions((empty($conf->global->BARCODE_LABEL_HEADER_TEXT)?'':$conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
+			$textfooter=make_substitutions((empty($conf->global->BARCODE_LABEL_FOOTER_TEXT)?'':$conf->global->BARCODE_LABEL_FOOTER_TEXT), $substitutionarray);
+			$textright=make_substitutions((empty($conf->global->BARCODE_LABEL_RIGHT_TEXT)?'':$conf->global->BARCODE_LABEL_RIGHT_TEXT), $substitutionarray);
 			$forceimgscalewidth=(empty($conf->global->BARCODE_FORCEIMGSCALEWIDTH)?1:$conf->global->BARCODE_FORCEIMGSCALEWIDTH);
 			$forceimgscaleheight=(empty($conf->global->BARCODE_FORCEIMGSCALEHEIGHT)?1:$conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
 
@@ -203,6 +213,9 @@ if ($action == 'builddoc')
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
+				    'code'=>$code,
+				    'encoding'=>$encoding,
+				    'is2d'=>$is2d,
 					'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
 				);
 			}
@@ -222,7 +235,7 @@ if ($action == 'builddoc')
 			{
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs, $diroutput);
+			if (! $mesg) $result=members_label_pdf_create($db, $arrayofmembers, $modellabel, $outputlangs, $diroutput, $template);
 		}
 
 		if ($result <= 0)

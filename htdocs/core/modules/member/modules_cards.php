@@ -65,10 +65,12 @@ class ModelePDFCards
  *	@param	DoliDB		$db  			Database handler
  *	@param  array		$arrayofmembers	Array of members
  *	@param	string		$modele			Force modele to use ('' to not force)
- *	@param	Translate	$outputlangs	Objet langs to use for translation
+ *	@param	Translate	$outputlangs	Object langs to use for translation
+ *  @param	string		$outputdir		Output directory
+ *  @param  string      $template       pdf generenate document class to use default 'standard'
  *	@return int        					<0 if KO, >0 if OK
  */
-function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
+function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir='', $template='standard')
 {
 	global $conf,$langs;
 	$langs->load("members");
@@ -97,13 +99,12 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 		}
 	}
 	else $code=$modele;
-	$modele='standard';
-	
+		
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
+	$tmp=explode(':',$template,2);
 	if (! empty($tmp[1]))
 	{
-		$modele=$tmp[0];
+		$template=$tmp[0];
 		$srctemplatepath=$tmp[1];
 	}
 	else $srctemplatepath=$code;
@@ -116,14 +117,14 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 	{
 		foreach(array('doc','pdf') as $prefix)
 		{
-			$file = $prefix."_".$modele.".class.php";
+			$file = $prefix."_".$template.".class.php";
 	
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
 			if (file_exists($file))
 			{
 				$filefound=1;
-				$classname=$prefix.'_'.$modele;
+				$classname=$prefix.'_'.$template;
 				break;
 			}
 		}
