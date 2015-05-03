@@ -108,7 +108,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   PDF        &$pdf            PDF reference
+	 * @param   PDF         $pdf            PDF reference
 	 * @param   Translate  	$outputlangs    Output langs
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
@@ -119,7 +119,7 @@ abstract class CommonStickerGenerator
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
 	 *
-	 * @param    PDF       &$pdf   PDF reference
+	 * @param    PDF        $pdf   PDF reference
 	 * @param    int        $pt    point
 	 * @return   void
 	 */
@@ -135,7 +135,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * protected Print dot line
 	 *
-	 * @param	PDF    &$pdf                PDF reference
+	 * @param	PDF     $pdf                PDF reference
 	 * @param 	int		$x1					X1
 	 * @param 	int		$y1					Y1
 	 * @param 	int		$x2					X2
@@ -176,7 +176,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * protected Function realisant une croix aux 4 coins des cartes
 	 *
-	 * @param PDF  &$pdf   PDF reference
+	 * @param PDF   $pdf                PDF reference
 	 * @param int   $x1					X1
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
@@ -247,7 +247,7 @@ abstract class CommonStickerGenerator
 	/**
 	 * protected Set format
 	 *
-	 * @param    PDF      &$pdf     PDF reference
+	 * @param    PDF       $pdf     PDF reference
 	 * @param    string    $format  Format
 	 * @return   void
 	 */

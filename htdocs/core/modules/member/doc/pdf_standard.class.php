@@ -37,7 +37,7 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   PDF        &$pdf            PDF reference
+	 * @param   PDF         $pdf            PDF reference
 	 * @param   Translate  	$outputlangs    Output langs
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
@@ -51,7 +51,7 @@ class pdf_standard extends CommonStickerGenerator
 	 * - %LOGO% is replace with company logo
 	 * - %PHOTO% is replace with photo provided as parameter
 	 *
-	 * @param    PDF	    &$pdf		    PDF
+	 * @param    PDF	    $pdf		    PDF
 	 * @param    string     $textleft       Text left
 	 * @param    string     $header         Header
 	 * @param    string     $footer         Footer
