@@ -604,4 +604,12 @@ ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
 
 
 
+-- Contact sales representatives
+CREATE TABLE llx_socpeople_sales_representatives
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_socpeople  integer,
+  fk_user       integer
+)ENGINE=innodb;
 
+ALTER TABLE llx_socpeople_sales_representatives ADD UNIQUE INDEX uk_contact_sales_representatives (fk_socpeople, fk_user);
