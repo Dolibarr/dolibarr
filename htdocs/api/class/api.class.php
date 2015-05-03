@@ -66,17 +66,48 @@ class DolibarrApi {
      * Clean sensible object datas
      * @var object $object	Object to clean
      * @return	array	Array of cleaned object properties
-     *
+     * 
      * @todo use an array for properties to clean
      *
      */
-    protected function cleanObjectDatas($object){
+    protected function _cleanObjectDatas($object){
 
 		unset($object->db);
 
 		return $object;
     }
-    
+	
+	/**
+	 * Check user access to a resource
+	 * 
+	 * Check access by user to a given resource
+	 * 
+	 * @param string	$resource		element to check
+	 * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+	 * @param type		$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @throws RestException
+	 */
+	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
+		
+		// Features/modules to check
+		$featuresarray = array($resource);
+		if (preg_match('/&/', $resource)) { 
+			$featuresarray = explode("&", $resource); 
+		}
+		else if (preg_match('/\|/', $resource)) { 
+			$featuresarray = explode("|", $resource); 
+		}
+
+		// More subfeatures to check
+		if (! empty($feature2)) { 
+			$feature2 = explode("|", $feature2);
+		}
+
+		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
+	}
 }
 
 /**

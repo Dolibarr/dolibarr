@@ -26,14 +26,10 @@ class DolibarrApiAccess implements iAuthenticate
     public static $role = 'user';
 	
 	/**
-	 * @var array	$user_perms	Permission of loggued user 
-	 @todo
-	public static $user_perms = array();
-	
-	public static $required_perms = '';
-	 * *
+	 * @var User		$user	Permission of loggued user 
 	 */
-	
+	public static $user = '';
+	 
 	
 	/**
 	 * Check access
@@ -44,8 +40,6 @@ class DolibarrApiAccess implements iAuthenticate
     {
 		global $db;
 
-		//@todo hardcoded api_key=>role for brevity
-		//
 		$stored_key = '';
 		
 		$userClass = Defaults::$userIdentifierClass;
@@ -82,7 +76,7 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error);
 			}
 			$fuser->getrights();
-			static::$user_perms = $fuser->rights;
+			static::$user = $fuser;
 			
 			if($fuser->societe_id)
 				static::$role = 'external';
