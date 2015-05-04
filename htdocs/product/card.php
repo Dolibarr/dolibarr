@@ -187,7 +187,7 @@ if (empty($reshook))
 	        $units = GETPOST('units', 'int');
 
             $object->ref                   = $ref;
-            $object->label               = GETPOST('libelle');
+            $object->label                 = GETPOST('label');
             $object->price_base_type       = GETPOST('price_base_type');
 
             if ($object->price_base_type == 'TTC')
@@ -315,7 +315,7 @@ if (empty($reshook))
             	$object->oldcopy=dol_clone($object);
 
                 $object->ref                    = $ref;
-                $object->label                  = GETPOST('libelle');
+                $object->label                  = GETPOST('label');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
             	$object->url					= GETPOST('url');
                 $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
@@ -822,7 +822,7 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('libelle')).'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
 
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
