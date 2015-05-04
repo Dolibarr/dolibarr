@@ -46,7 +46,7 @@ class SkeletonApi extends DolibarrApi {
     /**
      * Constructor
      *
-     * @url	skeleton/
+     * @url     GET skeleton/
      * 
      */
     function __construct()
