@@ -37,7 +37,7 @@ class ProductApi extends DolibarrApi {
      */
     static $FIELDS = array(
         'ref',
-        'libelle'       // @todo : marked deprecated but stille in use instead of label
+        'label' 
     );
 
     /**
