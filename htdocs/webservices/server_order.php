@@ -961,7 +961,9 @@ function updateOrder($authentication,$order)
 			$db->commit();
 			$objectresp=array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'id'=>$object->id
+					'id'=>$object->id,
+					'ref'=>$object->ref,
+					'ref_ext'=>$object->ref_ext
 			);
 		}
 		elseif ($objectfound)
