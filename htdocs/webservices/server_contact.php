@@ -273,7 +273,7 @@ function getContact($authentication,$id,$ref_ext)
 	        ){
             	$contact_result_fields =array(
 	            	'id' => $contact->id,
-			'ref_ext' => $contact->ref_ext,
+	            	'ref_ext' => $contact->ref_ext,
 	            	'lastname' => $contact->lastname,
 	            	'firstname' => $contact->firstname,
 	            	'address' => $contact->address,
@@ -336,7 +336,7 @@ function getContact($authentication,$id,$ref_ext)
          else
          {
              $error++;
-             $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+             $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref_ext='.$ref_ext;
          }
     }
 
