@@ -169,7 +169,7 @@ if (empty($reshook))
     {
         $error=0;
 
-        if (! GETPOST('libelle'))
+        if (! GETPOST('label'))
         {
             setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), 'errors');
             $action = "create";
