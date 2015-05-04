@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
@@ -229,11 +229,13 @@ if ($user->rights->categorie->creer)
 
 		print_fiche_titre($langs->trans("CreateCat"));
 
+		dol_fiche_head('');
+
 		print '<table width="100%" class="border">';
 
 		// Ref
 		print '<tr>';
-		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
@@ -257,9 +259,11 @@ if ($user->rights->categorie->creer)
 
 		print '</table>';
 
-		print '<br><div class="center">';
+		dol_fiche_end('');
+
+		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</div>';
 
