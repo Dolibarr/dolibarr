@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Valider intervention
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Valider regningen
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Leverandør for godkendt
 Notify_ORDER_SUPPLIER_REFUSE=Leverandør For nægtes
 Notify_ORDER_VALIDATE=Kundeordre valideret

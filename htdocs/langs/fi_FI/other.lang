@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Validate interventioelimen
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Validate bill
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Toimittaja jotta hyväksytty
 Notify_ORDER_SUPPLIER_REFUSE=Toimittaja jotta evätty
 Notify_ORDER_VALIDATE=Asiakas tilaa validoitu

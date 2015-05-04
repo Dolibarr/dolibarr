@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Eingriff freigegeben
 Notify_FICHINTER_SENTBYMAIL=Service per E-Mail versendet
 Notify_BILL_VALIDATE=Rechnung freigegeben
 Notify_BILL_UNVALIDATE=Rechnung nicht freigegeben
-Notify_ORDER_SUPPLIER_VALIDATE=freigegebene Lieferantenbestellung
 Notify_ORDER_SUPPLIER_APPROVE=Lieferantenbestellung freigegeben
 Notify_ORDER_SUPPLIER_REFUSE=Lieferantenbestellung abgelehnt
 Notify_ORDER_VALIDATE=Kundenbestellung freigegeben

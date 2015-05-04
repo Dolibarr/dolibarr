@@ -296,7 +296,7 @@ CurrencyThousandthSingTND=millime
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campagne Publipostage
-DemandReasonTypeSRC_CAMP_EMAIL=Campagne EMailing
+DemandReasonTypeSRC_CAMP_EMAIL=Campagne d'emailing
 DemandReasonTypeSRC_CAMP_PHO=Campagne Téléphonique
 DemandReasonTypeSRC_CAMP_FAX=Campagne Fax
 DemandReasonTypeSRC_COMM=Contact commercial
