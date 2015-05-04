@@ -95,8 +95,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($action == 'confirm_merge' && $confirm == 'yes') {
-
+	if ($action == 'confirm_merge' && $confirm == 'yes')
+	{
 		$errors = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
@@ -2291,7 +2291,11 @@ else
 			$formmail->fromid   = $user->id;
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID))
+			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+			{
+				$formmail->trackid='thi'.$object->id;
+			}
+			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 			{
 				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);

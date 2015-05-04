@@ -308,7 +308,7 @@ else
 
 			// Value
 			print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
-			print empty($calcproducts['value'])?'0':$calcproducts['value'];
+			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
 
 			// Last movement
@@ -387,8 +387,8 @@ else
 			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
-			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
+			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
+			if ($user->rights->stock->creer)            print_liste_field_titre('');
 			print "</tr>";
 
 			$totalunit=0;
