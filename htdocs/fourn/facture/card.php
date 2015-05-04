@@ -690,7 +690,7 @@ if (empty($reshook))
 	        {
 	            $result=$productsupplier->fetch($idprod);
 
-	            $label = $productsupplier->libelle;
+	            $label = $productsupplier->label;
 
 	            $desc = $productsupplier->description;
 	            if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);

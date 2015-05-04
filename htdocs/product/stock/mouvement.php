@@ -454,7 +454,7 @@ if ($resql)
     print '</td>';
     // Product label
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
+    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->label:$search_product).'">';
     print '</td>';
     // Batch
 	if (! empty($conf->productbatch->enabled))
