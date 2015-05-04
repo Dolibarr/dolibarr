@@ -44,7 +44,7 @@ class modPrinting extends DolibarrModules
     function  __construct($db)
     {
         $this->db = $db ;
-        $this->numero = 112000;
+        $this->numero = 64000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
         $this->family = "other";
@@ -94,7 +94,7 @@ class modPrinting extends DolibarrModules
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
         $r++;
-        $this->rights[$r][0] = 112001;
+        $this->rights[$r][0] = 64001;
         $this->rights[$r][1] = 'Printing';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
