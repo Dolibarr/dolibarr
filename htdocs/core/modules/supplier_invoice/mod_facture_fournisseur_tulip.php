@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,6 +125,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 			$this->error='NotConfigured';
 			return 0;
 		}
+		$objsoc->code_client = $objsoc->code_fournisseur;
 
 	    //Supplier invoices take invoice date instead of creation date for the mask
 		$numFinal=get_next_value($db,$mask,'facture_fourn','ref','',$objsoc,$object->date);
