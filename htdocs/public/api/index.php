@@ -76,13 +76,17 @@ foreach ($modulesdir as $dir)
 
                 // Defined if module is enabled
                 $enabled=true;
-                $part=$obj=strtolower(preg_replace('/^mod/i','',$modulename));
+                $module=$part=$obj=strtolower(preg_replace('/^mod/i','',$modulename));
                 //if ($part == 'propale') $part='propal';
-                if ($part == 'societe') {
+                if ($module == 'societe') {
 					$obj = 'thirdparty';
 				}
-                if (empty($conf->$part->enabled)) $enabled=false;
-
+                if ($module == 'categorie') { 
+                    $part = 'categories';
+					$obj = 'category';
+				}
+                if (empty($conf->$module->enabled)) $enabled=false;
+                
                 if ($enabled)
                 {
                     /*

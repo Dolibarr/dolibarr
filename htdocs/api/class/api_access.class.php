@@ -26,7 +26,7 @@ class DolibarrApiAccess implements iAuthenticate
     public static $role = 'user';
 	
 	/**
-	 * @var User		$user	Permission of loggued user 
+	 * @var User		$user	Loggued user 
 	 */
 	public static $user = '';
 	 
@@ -43,16 +43,13 @@ class DolibarrApiAccess implements iAuthenticate
 		$stored_key = '';
 		
 		$userClass = Defaults::$userIdentifierClass;
-		
-		
+				
 		if (isset($_GET['api_key'])) {
-			// @todo : check from database
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql.= " u.tms as date_modification, u.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
-
-			
+	
 			if ($db->query($sql))
 			{
 				if ($db->num_rows($result))
