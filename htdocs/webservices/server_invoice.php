@@ -343,6 +343,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 				    	'id' => $invoice->id,
 			   			'ref' => $invoice->ref,
 			        	'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
+			        	'thirdparty_id' => $invoice->socid,
 			        	'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
 			        	'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
 			        	'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
