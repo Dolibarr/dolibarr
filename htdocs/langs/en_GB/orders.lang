@@ -2,3 +2,4 @@
 StatusOrderOnProcessShort=Ordered
 StatusOrderOnProcess=Ordered - Standby reception
 ApproveOrder=Approve order
+LastOrders=Last %s customer orders

@@ -14,6 +14,7 @@ MyTasksDesc=このビューは、連絡先の（種類は何でも）がプロ�
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=このビューには、読み取りを許可されているすべてのプロジェクトやタスクを示します。
 TasksDesc=このビューは、すべてのプロジェクトとタスク（あなたのユーザー権限はあなたに全てを表示する権限を付与）を提示します。
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=プロジェクトエリア
 NewProject=新しいプロジェクト
 AddProject=Create project

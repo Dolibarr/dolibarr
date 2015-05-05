@@ -14,6 +14,7 @@ MyTasksDesc=Aquesta vista es limita als projectes i tasques en què vostè és u
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Aquesta vista mostra tots els projectes i tasques en els que vostè té dret a tenir visibilitat.
 TasksDesc=Aquesta vista mostra tots els projectes i tasques (les sevas autoritzacions li ofereixen una visió completa).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Àrea projectes
 NewProject=Nou projecte
 AddProject=Create project

@@ -294,10 +294,11 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma del importe de los 2 nuevos descuen
 ConfirmRemoveDiscount=¿Está seguro de querer eliminar este descuento?
 RelatedBill=Factura asociada
 RelatedBills=Facturas asociadas
-RelatedCustomerInvoices=Related customer invoices
-RelatedSupplierInvoices=Related supplier invoices
+RelatedCustomerInvoices=Facturas a clientes asociadas
+RelatedSupplierInvoices=Facturas de proveedores asociadas
 LatestRelatedBill=Última factura relacionada
 WarningBillExist=Atención, ya existe al menos una factura
+MergingPDFTool=Herramienta de fusión PDF
 
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepción

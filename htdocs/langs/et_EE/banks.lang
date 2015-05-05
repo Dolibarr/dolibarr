@@ -163,3 +163,5 @@ LabelRIB=BAN silt
 NoBANRecord=BAN kirje puudub
 DeleteARib=Kustuta BAN kirje
 ConfirmDeleteRib=Kas oled täiesti kindel, et soovid selle BAN kirje kustutada?
+StartDate=Start date
+EndDate=End date

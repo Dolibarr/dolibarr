@@ -43,4 +43,4 @@ ListOfSupplierOrders=Listado de pedidos a proveedor
 MenuOrdersSupplierToBill=Pedidos a proveedor a facturar
 NbDaysToDelivery=Tiempo de entrega en días
 DescNbDaysToDelivery=El plazo mayor se visualiza el el listado de pedidos de productos
-UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)
+UseDoubleApproval=Usar aprobación doble (la segunda aprobación puede ser realizada por un usuario con el permiso dedicado)

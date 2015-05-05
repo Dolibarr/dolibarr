@@ -50,4 +50,4 @@ ArcticNumRefModelError=Activare nereuşită
 PacificNumRefModelDesc1=Numărul retrimis sub forma%syymm-nnnn unde yy este anul, mm este luna şi NNNN este o secvenţă continuă  şi niciodată  0
 PacificNumRefModelError=O fişă de intervenţie începând cu $syymm există deja şi nu este compatibilă cu acest model al succesiunii. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
 PrintProductsOnFichinter=Printează produsele pe fişa intervenţiei
-PrintProductsOnFichinterDetails=pentru intervenţiile generate din comenzi
+PrintProductsOnFichinterDetails=interventions generated from orders

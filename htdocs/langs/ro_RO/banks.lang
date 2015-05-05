@@ -163,3 +163,5 @@ LabelRIB=Etichetă BAN
 NoBANRecord=Nicio înregistrare BAN
 DeleteARib=Ștergeți înregistrarea BAN
 ConfirmDeleteRib=Sigur doriţi să ştergeţi  această înregistrare BAN ?
+StartDate=Start date
+EndDate=End date

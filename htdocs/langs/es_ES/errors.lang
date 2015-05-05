@@ -160,13 +160,16 @@ ErrorPriceExpressionInternal=Error interno '%s'
 ErrorPriceExpressionUnknown=Error desconocido '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Los almacenes de origen y destino deben de ser diferentes
 ErrorTryToMakeMoveOnProductRequiringBatchData=Error, intenta hacer un movimiento de stock sin indicar lote/serie, en un producto que requiere de lote/serie
-ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Todas las recepciones deben verificarse primero antes para poder reallizar esta acción
-ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
-ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
-ErrorGlobalVariableUpdater2=Missing parameter '%s'
-ErrorGlobalVariableUpdater3=The requested data was not found in result
-ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
-ErrorGlobalVariableUpdater5=No global variable selected
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Todas las recepciones deben verificarse primero (aprobadas o denegadas) antes para poder reallizar esta acción
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Todas las recepciones deben verificarse primero (aprobadas) antes para poder reallizar esta acción
+ErrorGlobalVariableUpdater0=Petición HTTP fallada con error '%s'
+ErrorGlobalVariableUpdater1=Formato JSON '%s' inválido
+ErrorGlobalVariableUpdater2=Falta el parámetro '%s'
+ErrorGlobalVariableUpdater3=No han sido encontrados los datos solicitados
+ErrorGlobalVariableUpdater4=El cliente SOAP ha fallado con el error '%s'
+ErrorGlobalVariableUpdater5=Sin variable global seleccionada
+ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
+ErrorFieldMustBeAnInteger=El campo <b>%s</b> debe de ser un entero
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

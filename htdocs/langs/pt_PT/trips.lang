@@ -1,30 +1,30 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
+ExpenseReport=Relatório de despesas
+ExpenseReports=Relatórios de despesas
+Trip=Relatório de Despesas
+Trips=Relatórios de Despesas
+TripsAndExpenses=Relatório de Despesas
+TripsAndExpensesStatistics=Estatísticas dos Relatórios de Despesas
 TripCard=Expense report card
 AddTrip=Create expense report
-ListOfTrips=List of expense report
+ListOfTrips=Lista de relatório de despesas
 ListOfFees=Lista de Taxas
-NewTrip=New expense report
+NewTrip=Novo relatório de despesas
 CompanyVisited=Empresa/Instituição Visitada
 Kilometers=Quilómetros
 FeesKilometersOrAmout=Quantidade de Quilómetros
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
+DeleteTrip=Apagar relatório de despesas
+ConfirmDeleteTrip=Tem a certeza que deseja apagar este relatório de despesas?
+ListTripsAndExpenses=Lista de relatórios de despesas
+ListToApprove=A aguardar aprovação
 ExpensesArea=Expense reports area
 SearchATripAndExpense=Search an expense report
-ClassifyRefunded=Classify 'Refunded'
+ClassifyRefunded=Classificar 'Reembolsado'
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
+TripSociete=Informação da Empresa
 TripSalarie=Informations user
 TripNDF=Informations expense report
 DeleteLine=Delete a ligne of the expense report
@@ -32,53 +32,51 @@ ConfirmDeleteLine=Are you sure you want to delete this line ?
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
 TF_OTHER=Outro
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Meio de Transporte
 TF_LUNCH=Alimentação
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
+TF_TRAIN=Comboio
+TF_BUS=Autocarro
+TF_CAR=Carro
+TF_PEAGE=Portagem
+TF_ESSENCE=Combustível
 TF_HOTEL=Hostel
-TF_TAXI=Taxi
+TF_TAXI=Táxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
+ListTripsAndExpenses=Lista de relatórios de despesas
 AucuneNDF=No expense reports found for this criteria
 AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+AddLine=Adicione uma linha
+AddLineMini=Adicionar
 
 Date_DEBUT=Period date start
 Date_FIN=Period date end
 ModePaiement=Payment mode
-Note=Note
-Project=Project
+Note=Nota
+Project=Projeto
 
 VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDOR=Aprovado por
+AUTHOR=Registado por
+AUTHORPAIEMENT=Pago por
+REFUSEUR=Negado por
+CANCEL_USER=Cancelado por
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Motivo
+MOTIF_CANCEL=Motivo
 
 DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_SAVE=Data da validação
+DATE_VALIDE=Data da validação
+DATE_CANCEL=Data do cancelamento
+DATE_PAIEMENT=Data de pagamento
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+TO_PAID=Pagar
+BROUILLONNER=Reabrir
+SendToValid=Enviar para aprovação
+ModifyInfoGen=Editar
+ValidateAndSubmit=Validar e submeter para aprovação 
 
 NOT_VALIDATOR=You are not allowed to approve this expense report
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
@@ -86,41 +84,19 @@ NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 RefuseTrip=Deny an expense report
 ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
 
-ValideTrip=Approve expense report
+ValideTrip=Aprovar relatório de despesas
 ConfirmValideTrip=Are you sure you want to approve this expense report ?
 
-PaidTrip=Pay an expense report
+PaidTrip=Pagar um relatório de despesas
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
-CancelTrip=Cancel an expense report
+CancelTrip=Cancelar um relatório de despesas
 ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
 BrouillonnerTrip=Move back expense report to status "Draft"n
 ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
 
-SaveTrip=Validate expense report
+SaveTrip=Validar relatório de despesas
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
-
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=nenhum relatório de despesas para exportar para este período.

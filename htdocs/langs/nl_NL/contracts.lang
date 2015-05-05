@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Contractenoverzicht
 ListOfContracts=Contractenlijst
-LastModifiedContracts=Last %s modified contracts
+LastModifiedContracts=Laatste %s gewijzigde contracten
 AllContracts=Alle contracten
 ContractCard=Contractendetails
 ContractStatus=Contractstatus
@@ -19,7 +19,7 @@ ServiceStatusLateShort=verlopen
 ServiceStatusClosed=Gesloten
 ServicesLegend=Dienstenlegenda
 Contracts=Contracten
-ContractsAndLine=Contracts and line of contracts
+ContractsAndLine=Contracten en lijn van de contracten
 Contract=Contract
 NoContracts=Geen contracten
 MenuServices=Diensten
@@ -28,7 +28,7 @@ MenuRunningServices=Actieve diensten
 MenuExpiredServices=Verlopen diensten
 MenuClosedServices=Gesloten diensten
 NewContract=Nieuw contract
-AddContract=Create contract
+AddContract=Nieuw contract
 SearchAContract=Zoek een contract
 DeleteAContract=Verwijder een contract
 CloseAContract=Sluit een contract
@@ -54,7 +54,7 @@ ListOfRunningContractsLines=Lijst van de lopende contractregels
 ListOfRunningServices=Lijst van lppende diensten
 NotActivatedServices=Inactieve diensten (onder gevalideerde contracten)
 BoardNotActivatedServices=Diensten te activeren onder gevalideerde contracten
-LastContracts=Last %s contracts
+LastContracts=Laatste %s contracten
 LastActivatedServices=Laatste %s geactiveerd diensten
 LastModifiedServices=Laatste %s bewerkte diensten
 EditServiceLine=Bewerk dienstenregel
@@ -92,7 +92,7 @@ ListOfServicesToExpire=Lijst van Diensten te vervallen
 NoteListOfYourExpiredServices=Deze lijst bevat alleen de diensten van contracten voor relatiesdie zijn gekoppeld aan een vertegenwoordiger.
 StandardContractsTemplate=Standaard contracten sjabloon
 ContactNameAndSignature=Voor %s, naam en handtekening:
-OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
+OnlyLinesWithTypeServiceAreUsed=Alleen lijnen met type "Service" zullen worden gekloond.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertegenwoordiger ondertekening contract

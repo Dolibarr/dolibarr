@@ -297,10 +297,11 @@ MenuHandlers=گرداننده منو
 MenuAdmin=ویرایشگر منو
 DoNotUseInProduction=آیا در استفاده از تولید نیست
 ThisIsProcessToFollow=این راه اندازی به فرآیند است:
+ThisIsAlternativeProcessToFollow=This is an alternative setup to process:
 StepNb=مرحله٪ s را
 FindPackageFromWebSite=پیدا کردن یک بسته است که ویژگی فراهم می کند شما می خواهید (به عنوان مثال در وب سایت رسمی٪ بازدید کنندگان).
 DownloadPackageFromWebSite=دانلود بسته %s.
-UnpackPackageInDolibarrRoot=باز کردن فایل بسته به پوشه ریشه Dolibarr <b>هست٪ s</b>
+UnpackPackageInDolibarrRoot=Unpack package file into directory dedicated to external modules: <b>%s</b>
 SetupIsReadyForUse=نصب به پایان رسید و Dolibarr آماده استفاده است با این بخش جدید است.
 NotExistsDirect=ریشه جایگزین تعریف نشده است. <br>
 InfDirAlt=از آنجا که نسخه 3 این امکان وجود دارد که تعریف کند directory.This ریشه جایگزین شما اجازه می دهد برای ذخیره، همان محل، پلاگین ها و قالب های سفارشی. <br> (: سفارشی به عنوان مثال) فقط یک پوشه در ریشه Dolibarr ایجاد کنید. <br>
@@ -397,7 +398,7 @@ ExtrafieldParamHelpsellist=لیست پارامترها می آید از یک ج�
 ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=کتابخانه مورد استفاده برای ساخت PDF
 WarningUsingFPDF=اخطار: <b>conf.php</b> شما شامل <b>dolibarr_pdf_force_fpdf</b> بخشنامه <b>= 1.</b> این به این معنی شما استفاده از کتابخانه FPDF برای تولید فایل های PDF. این کتابخانه قدیمی است و بسیاری از ویژگی های (یونیکد، شفافیت تصویر، زبان سیریلیک، عربی و آسیایی، ...) را پشتیبانی نمی کند، بنابراین شما ممکن است خطا در PDF نسل را تجربه کنند. <br> برای حل این و دارای پشتیبانی کامل از PDF نسل، لطفا دانلود کنید <a href="http://www.tcpdf.org/" target="_blank">کتابخانه TCPDF</a> ، پس از آن اظهار نظر و یا حذف خط <b>$ dolibarr_pdf_force_fpdf = 1،</b> و اضافه کردن به جای <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir'</b>
-LocalTaxDesc=برخی از کشورها 2 یا 3 مالیات در هر خط فاکتور اعمال می شود. اگر این مورد است، نوع مالیات دوم و سوم و نرخ آن را انتخاب کنید. نوع ممکن است: <br> 1: مالیات های محلی اعمال می شود بر روی محصولات و خدمات بدون مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مالیات های محلی به کار گرفته نمی شود) <br> 2: مالیات های محلی اعمال می شود بر روی محصولات و خدمات قبل از مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مقدار + localtax محاسبه) <br> 3: مالیات های محلی اعمال می شود بر روی محصولات بدون مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مالیات های محلی به کار گرفته نمی شود) <br> 4: مالیات های محلی اعمال می شود بر روی محصولات قبل از مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مقدار + localtax محاسبه) <br> 5: مالیات های محلی اعمال می شود در خدمات بدون مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مالیات های محلی به کار گرفته نمی شود) <br> 6: مالیات های محلی اعمال می شود در مورد خدمات قبل از مالیات بر ارزش افزوده (مالیات بر ارزش افزوده بر مقدار + localtax محاسبه)
+LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (vat is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
 SMS=SMS
 LinkToTestClickToDial=شماره تلفن را وارد کنید تماس بگیرید برای نشان دادن یک لینک برای تست آدرس ClickToDial برای <strong>کاربر٪ s را</strong>
 RefreshPhoneLink=تازه کردن لینک
@@ -540,8 +541,8 @@ Module6000Name=گردش کار
 Module6000Desc=مدیریت گردش کار
 Module20000Name=Leave Requests management
 Module20000Desc=Declare and follow employees leaves requests
-Module39000Name=Product batch
-Module39000Desc=Batch or serial number, eat-by and sell-by date management on products
+Module39000Name=Product lot
+Module39000Desc=Lot or serial number, eat-by and sell-by date management on products
 Module50000Name=خزانه
 Module50000Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با خزانه
 Module50100Name=نقطه ای از فروش
@@ -558,8 +559,6 @@ Module59000Name=حاشیه
 Module59000Desc=ماژول برای مدیریت حاشیه
 Module60000Name=کمیسیون ها
 Module60000Desc=ماژول برای مدیریت کمیسیون
-Module150010Name=شماره بچ، غذا خوردن، بر اساس تاریخ و فروش بر اساس تاریخ
-Module150010Desc=تعداد دسته، غذا خوردن، بر اساس تاریخ و فروش توسط مدیریت تاریخ برای محصول
 Permission11=خوانده شده فاکتورها مشتری
 Permission12=ایجاد / اصلاح صورت حساب مشتری
 Permission13=صورت حساب مشتری Unvalidate
@@ -853,12 +852,12 @@ LocalTax2IsUsedDescES= نرخ RE به طور پیش فرض هنگام ایجاد
 LocalTax2IsNotUsedDescES= به طور پیش فرض IRPF پیشنهاد 0. پایان حکومت است.
 LocalTax2IsUsedExampleES= در اسپانیا، مترجمان آزاد و مستقل حرفه ای که ارائه خدمات و شرکت های که انتخاب کرده اند نظام مالیاتی از ماژول های.
 LocalTax2IsNotUsedExampleES= در اسپانیا آنها bussines به سیستم مالیاتی از ماژول های موضوع نیست.
-CalcLocaltax=گزارش ها
-CalcLocaltax1ES=فروش - خرید
+CalcLocaltax=Reports on local taxes
+CalcLocaltax1=Sales - Purchases
 CalcLocaltax1Desc=گزارش مالیات های محلی با تفاوت بین localtaxes فروش و localtaxes خرید محاسبه
-CalcLocaltax2ES=خرید
+CalcLocaltax2=Purchases
 CalcLocaltax2Desc=گزارش مالیات های محلی هستند که مجموع localtaxes خرید
-CalcLocaltax3ES=فروش
+CalcLocaltax3=Sales
 CalcLocaltax3Desc=گزارش مالیات های محلی هستند که مجموع localtaxes فروش
 LabelUsedByDefault=برچسب استفاده می شود به طور پیش فرض اگر هیچ ترجمه ای برای کد یافت
 LabelOnDocuments=برچسب در اسناد
@@ -1018,14 +1017,14 @@ NoEventOrNoAuditSetup=هیچ رویداد امنیتی ثبت نشده است. �
 NoEventFoundWithCriteria=هیچ رویداد امنیتی شده است برای چنین معیارهای جستجو در بر داشت.
 SeeLocalSendMailSetup=مشاهده راه اندازی از sendmail محلی خود
 BackupDesc=برای ایجاد یک پشتیبان کامل از Dolibarr، شما باید:
-BackupDesc2=* ذخیره محتوای دایرکتوری اسناد <b>(٪)</b> که شامل تمام فایل های آپلود و تولید (شما می توانید فایل های فشرده به عنوان مثال را).
-BackupDesc3=* ذخیره محتوای پایگاه داده خود را به یک فایل روگرفت. برای این کار، شما می توانید زیر دستیار استفاده کنید.
+BackupDesc2=Save content of documents directory (<b>%s</b>) that contains all uploaded and generated files (you can make a zip for example).
+BackupDesc3=Save content of your database (<b>%s</b>) into a dump file. For this, you can use following assistant.
 BackupDescX=دایرکتوری آرشیو شده باید در یک مکان امن ذخیره می شود.
 BackupDescY=فایل روگرفت تولید باید در یک مکان امن ذخیره می شود.
 BackupPHPWarning=پشتیبان گیری می توانید با این روش نمی توان guaranted. ترجیح می دهند قبل
 RestoreDesc=برای بازگرداندن یک نسخه پشتیبان تهیه Dolibarr، شما باید:
-RestoreDesc2=* بازگرداندن فایل آرشیو (فایل زیپ به عنوان مثال) از اسناد دایرکتوری برای استخراج درخت فایل در اسناد دایرکتوری از یک نصب جدید Dolibarr و یا به این directoy اسناد فعلی <b>(از٪ s).</b>
-RestoreDesc3=* بازگرداندن داده ها، از یک فایل روگرفت پشتیبان گیری، به پایگاه داده از نصب جدید Dolibarr و یا به پایگاه داده از نصب در حال حاضر. اخطار، یک بار بازگرداندن به پایان رسید، شما باید وارد شوید / رمز عبور، که وجود داشته است هنگامی که پشتیبان گیری ساخته شده برای اتصال دوباره استفاده کنید. برای بازگرداندن پایگاه داده پشتیبان گیری به این نصب و راه اندازی در حال حاضر، شما می توانید این دستیار دنبال کنید.
+RestoreDesc2=Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
+RestoreDesc3=Restore the data, from a backup dump file, into the database of the new Dolibarr installation or into the database of this current installation (<b>%s</b>). Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore a backup database into this current installation, you can follow this assistant.
 RestoreMySQL=واردات خروجی زیر
 ForcedToByAModule= این قانون توسط یک ماژول فعال <b>به٪ s</b> اجباری
 PreviousDumpFiles=فایل روگرفت پایگاه داده پشتیبان گیری می کند
@@ -1337,6 +1336,8 @@ LDAPFieldCountry=کشور
 LDAPFieldCountryExample=به عنوان مثال: ج
 LDAPFieldDescription=توصیف
 LDAPFieldDescriptionExample=به عنوان مثال: توضیحات
+LDAPFieldNotePublic=Public Note
+LDAPFieldNotePublicExample=Example : publicnote
 LDAPFieldGroupMembers= اعضای گروه
 LDAPFieldGroupMembersExample= به عنوان مثال: uniqueMember
 LDAPFieldBirthdate=تاریخ تولد
@@ -1540,7 +1541,7 @@ CashDeskBankAccountForCB= پیش فرض حساب استفاده برای دری�
 CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale (if "no", stock decrease is done for each sell done from POS, whatever is option set into module Stock).
 CashDeskIdWareHouse=Force and restrict warehouse to use for stock decrease
 StockDecreaseForPointOfSaleDisabled=Stock decrease from Point Of Sale disabled
-StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatible with batch management
+StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatible with lot management
 CashDeskYouDidNotDisableStockDecease=You did not disable stock decrease when making a sell from Point Of Sale. So a warehouse is required.
 ##### Bookmark #####
 BookmarkSetup=راه اندازی ماژول چوب الف
@@ -1616,3 +1617,8 @@ ListOfNotificationsPerContact=List of notifications per contact*
 ListOfFixedNotifications=List of fixed notifications
 GoOntoContactCardToAddMore=Go on the tab "Notifications" of a thirdparty contact to add or remove notifications for contacts/addresses
 Threshold=Threshold
+BackupDumpWizard=Wizard to build database backup dump file
+SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
+SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is only manual steps a privileged user can do.
+InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
+ConfFileMuseContainCustom=Installing an external module from application save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to have option<br>- <strong>$dolibarr_main_url_root_alt</strong> enabled to value <strong>$dolibarr_main_url_root_alt="/custom"</strong><br>- <strong>$dolibarr_main_document_root_alt</strong> enabled to value <strong>"%s/custom"</strong>

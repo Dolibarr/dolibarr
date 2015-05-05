@@ -294,10 +294,11 @@ TotalOfTwoDiscountMustEqualsOriginal=İki yeni indirimin toplamı orijinal indir
 ConfirmRemoveDiscount=Bu indirimi kaldırmak istediğinizden emin misiniz?
 RelatedBill=İlgili fatura
 RelatedBills=İlgili faturalar
-RelatedCustomerInvoices=Related customer invoices
-RelatedSupplierInvoices=Related supplier invoices
+RelatedCustomerInvoices=İlgili müşteri faturaları
+RelatedSupplierInvoices=İlgili tedarikçi faturaları
 LatestRelatedBill=Son ilgili fatura
 WarningBillExist=Uyarı, bir yada çok fatura zaten var
+MergingPDFTool=Birleştirme PDF aracı
 
 # PaymentConditions
 PaymentConditionShortRECEP=Derhal

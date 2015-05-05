@@ -203,6 +203,7 @@ NewKeyWillBe=Jūsų naujas prisijungimo prie programos raktas bus
 ClickHereToGoTo=Spauskite čia norėdami pereiti į %s
 YouMustClickToChange=Pirmiausia turite paspausti ant šios nuorodos ir patvirtinti šį slaptažodžio pakeitimą
 ForgetIfNothing=Jei neprašėte šio pakeitimo, tiesiog pamirškite šį pranešimą. Jūsų mandatai yra saugūs.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Pridėti įrašą kalendoriuje %s

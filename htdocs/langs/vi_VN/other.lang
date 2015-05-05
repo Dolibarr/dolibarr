@@ -203,6 +203,7 @@ NewKeyWillBe=Khóa mới của bạn để đăng nhập vào phần mềm sẽ 
 ClickHereToGoTo=Click vào đây để đi đến% s
 YouMustClickToChange=Tuy nhiên, trước tiên bạn phải nhấp vào liên kết sau đây để xác nhận thay đổi mật khẩu này
 ForgetIfNothing=Nếu bạn không yêu cầu thay đổi này, chỉ cần quên email này. Thông tin của bạn được lưu giữ an toàn.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Thêm phần trong lịch% s

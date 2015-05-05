@@ -298,6 +298,7 @@ RelatedCustomerInvoices=Related customer invoices
 RelatedSupplierInvoices=Related supplier invoices
 LatestRelatedBill=Jaunākais sasitītais rēķins
 WarningBillExist=Uzmanību, viens vai vairāki rēķini jau eksistē
+MergingPDFTool=Merging PDF tool
 
 # PaymentConditions
 PaymentConditionShortRECEP=Tūlītēja

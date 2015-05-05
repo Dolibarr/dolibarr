@@ -35,49 +35,47 @@ TF_OTHER=Cits
 TF_TRANSPORTATION=Transportation
 TF_LUNCH=Pusdienas
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
+TF_TRAIN=Vilciens
+TF_BUS=Autobuss
+TF_CAR=Automašīna
 TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
-TF_TAXI=Taxi
+TF_ESSENCE=Degviela
+TF_HOTEL=Hostelis
+TF_TAXI=Taksis
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 ListTripsAndExpenses=List of expense reports
 AucuneNDF=No expense reports found for this criteria
 AucuneLigne=There is no expense report declared yet
 AddLine=Add a line
-AddLineMini=Add
+AddLineMini=Pievienot
 
 Date_DEBUT=Period date start
 Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+ModePaiement=Maksājuma veids
+Note=Piezīme
+Project=Projekts
 
 VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
+VALIDOR=Apstiprinājis
 AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
+AUTHORPAIEMENT=Samaksājis
 REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+CANCEL_USER=Atcelts
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Iemesls
+MOTIF_CANCEL=Iemesls
 
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
 DATE_VALIDE=Validation date
-DateApprove=Approving date
 DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_PAIEMENT=Maksājuma datums
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
+TO_PAID=Samaksāt
+BROUILLONNER=Atvērt pa jaunu
 SendToValid=Sent to approve
-ModifyInfoGen=Edit
+ModifyInfoGen=Labot
 ValidateAndSubmit=Validate and submit for approval
 
 NOT_VALIDATOR=You are not allowed to approve this expense report
@@ -100,27 +98,5 @@ ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to sta
 
 SaveTrip=Validate expense report
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
-
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
 
 NoTripsToExportCSV=No expense report to export for this period.

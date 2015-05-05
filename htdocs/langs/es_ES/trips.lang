@@ -1,126 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Informe de gastos
-Trips=Informes de gastos
-TripsAndExpenses=Informes de gastos
+ExpenseReport=Gasto
+ExpenseReports=Informes de gastos
+Trip=Gasto
+Trips=Gastos
+TripsAndExpenses=Gastos
 TripsAndExpensesStatistics=Estadísticas de gastos
-TripCard=Ficha informe de gastos
-AddTrip=Crear informe de gastos
-ListOfTrips=Listado de informe de gastos
-ListOfFees=Listado notas de honorarios
-NewTrip=Nuevo informe de gastos
+TripCard=Ficha de gasto
+AddTrip=Crear gasto
+ListOfTrips=Listado de gastos
+ListOfFees=Listado de honorarios
+NewTrip=Nuevo gasto
 CompanyVisited=Empresa/institución visitada
 Kilometers=Kilometros
 FeesKilometersOrAmout=Importe o kilómetros
-DeleteTrip=Eliminar informe de gastos
-ConfirmDeleteTrip=¿Está seguro de querer eliminar este informe de gastos?
-ListTripsAndExpenses=Listado de informe de gastos
-ListToApprove=Waiting for approval
-ExpensesArea=Área informe de gastos
-SearchATripAndExpense=Search an expense report
+DeleteTrip=Eliminar gasto
+ConfirmDeleteTrip=¿Está seguro de querer eliminar este gasto?
+ListTripsAndExpenses=Listado de gastos
+ListToApprove=En espera de aprobación
+ExpensesArea=Área de gastos
+SearchATripAndExpense=Buscar un gasto
 ClassifyRefunded=Clasificar 'Reembolsado'
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ExpenseReportWaitingForApproval=Se ha enviado un nuevo gasto para ser aprobado
+ExpenseReportWaitingForApprovalMessage=Un nuevo gasto ha sido enviado y espera su aprobación.\n-Usuario: %s\n-Periodo: %s\nHaga clic aquí para validarlo: %s
+TripId=Id de gasto
+AnyOtherInThisListCanValidate=Persona a informar para la validación
+TripSociete=Información de la empresa
+TripSalarie=Información del usuario
+TripNDF=Información del gasto
+DeleteLine=Eliminar una línea del gasto
+ConfirmDeleteLine=¿Está seguro de querer eliminar esta línea?
+PDFStandardExpenseReports=Plantilla estandard para generar un documento de gasto
+ExpenseReportLine=Línea de gasto
 TF_OTHER=Otro
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Transporte
 TF_LUNCH=Dieta
 TF_METRO=Metro
-TF_TRAIN=Train
-TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
+TF_TRAIN=Tren
+TF_BUS=Autobus
+TF_CAR=Coche
+TF_PEAGE=Peaje
+TF_ESSENCE=Combustible
+TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=Listado de informe de gastos
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Ha declarado otro gasto en un rango similar de fechas.
+ListTripsAndExpenses=Listado de gastos
+AucuneNDF=No se han encontrado gastos con este criterio
+AucuneLigne=No hay gastos declarados
+AddLine=Añadir una línea
+AddLineMini=Añadir
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Fecha de inicio del periodo
+Date_FIN=Fecha fin del periodo
+ModePaiement=Modo de pago
+Note=Nota
+Project=Proyecto
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Usuario a informar para la aprobación
+VALIDOR=Aprobado por
+AUTHOR=Registrado por
+AUTHORPAIEMENT=Pagado por
+REFUSEUR=Denegado por
+CANCEL_USER=Cancelado por
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Razón
+MOTIF_CANCEL=Razón
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Fecha denegación
+DATE_SAVE=Fecha de validación
+DATE_VALIDE=Fecha de validación
+DATE_CANCEL=Fecha cancelación
+DATE_PAIEMENT=Fecha de pago
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+TO_PAID=Pagar
+BROUILLONNER=Reabrir
+SendToValid=Enviar para aprobar
+ModifyInfoGen=Modificar
+ValidateAndSubmit=Validar y enviar para aprobar
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=No está autorizado para aprobar este gasto
+NOT_AUTHOR=No es el autor de este gasto. Operación cancelada.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Denegar un gasto
+ConfirmRefuseTrip=¿Está seguro de querer denegar este gasto?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Aprobar gasto
+ConfirmValideTrip=¿Está seguro de querer aprobar este gasto?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Pagar gasto
+ConfirmPaidTrip=¿Está seguro de querer cambiar el estado de este gasto a "Pagado"?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Cancelar gasto
+ConfirmCancelTrip=¿Está seguro de querer cancelar este gasto?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Devolver gasto al estado "Borrador"
+ConfirmBrouillonnerTrip=¿Está seguro de querer devolver este gasto al estado "Borrador"?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Validar gasto
+ConfirmSaveTrip=¿Está seguro de querer validar este gasto?
 
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
-
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Sin gastos a exportar para este periodo.

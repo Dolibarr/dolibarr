@@ -14,6 +14,7 @@ MyTasksDesc=Šis skats ir tikai uz projektiem vai uzdevumus, jums ir kontakts (k
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Šo viedokli iepazīstina visus projektus un uzdevumus, jums ir atļauts lasīt.
 TasksDesc=Šo viedokli iepazīstina visus projektus un uzdevumus (jūsu lietotāja atļaujas piešķirt jums atļauju skatīt visu).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projektu sadaļa
 NewProject=Jauns projekts
 AddProject=Izveidot projektu

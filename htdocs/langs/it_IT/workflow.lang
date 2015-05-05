@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Impostazioni flusso di lavoro
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
+WorkflowDesc=Questo modulo è progettatto per modificare il comportamento delle azioni automatizzate del programma. Il flusso di lavoro è aperto per impostazione predefinita (puoi compiere le azioni nell'ordine che preferisci). Puoi scegliere di attivare solo le azioni automatizzate che ti interessano.
 ThereIsNoWorkflowToModify=Non vi è alcun flusso di lavoro modificabile per il modulo.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Creare automaticamente un ordine cliente alla firma di una proposta commerciale
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla firma di una proposta commerciale

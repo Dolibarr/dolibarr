@@ -103,7 +103,6 @@ AllAccounts=Todas as Contas bancarias/de Caixa
 BackToAccount=Voltar e a Conta
 FutureTransaction=Transação futura. Impossivel conciliar.
 SelectChequeTransactionAndGenerate=Selecionar/filtrar cheques a se incluir no recibo de deposito e clickar no "Criar"
-InputReceiptNumber=Escolha o relatorio bancario relativo a conciliação. Use um valor numerico (como AAAAMM)
 EventualyAddCategory=Posivelmente especificar a categoria para se clasificar os registros
 ToConciliate=A se conciliar ?
 ThenCheckLinesAndConciliate=Verificar as linhas presentes no relatorio do banco e clickar

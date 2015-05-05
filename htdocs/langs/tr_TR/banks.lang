@@ -163,3 +163,5 @@ LabelRIB=BAN Etiketi
 NoBANRecord=BAN kaydı yok
 DeleteARib=BAN kaydını sil
 ConfirmDeleteRib=Bu BAN kaydını silmek istediğinize emin misiniz?
+StartDate=Başlangıç tarihi
+EndDate=Bitiş tarihi

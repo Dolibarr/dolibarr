@@ -50,4 +50,4 @@ ArcticNumRefModelError=Неуспешно да активирате
 PacificNumRefModelDesc1=Връщане Numero с формат %syymm-NNNN, където YY е годината, mm е месец и NNNN е последователност, без почивка и няма връщане назад 0
 PacificNumRefModelError=Интервенционната карта започва с $ syymm вече съществува и не е съвместим с този модел на последователност. Извадете го или го преименувайте да се активира този модул.
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders
