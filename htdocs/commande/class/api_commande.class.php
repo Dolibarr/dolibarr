@@ -28,7 +28,6 @@
  * 
  * @category Api
  * @package  Api
- * @author   jfefe   
  * 
  *
  */
