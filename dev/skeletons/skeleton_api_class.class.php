@@ -19,7 +19,6 @@
 
 
 /**
- * 
  * API class for skeleton object
  *
  * @smart-auto-routing false
@@ -28,10 +27,9 @@
  * 
  *
  */
-class SkeletonApi extends DolibarrApi {
-    
+class SkeletonApi extends DolibarrApi
+{
     /**
-     *
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
      */
     static $FIELDS = array(
@@ -61,10 +59,10 @@ class SkeletonApi extends DolibarrApi {
      *
      * Return an array with skeleton informations
      *
-     * @url	GET skeleton/{id}
      * @param 	int 	$id ID of skeleton
      * @return 	array|mixed data without useless information
 	 * 
+     * @url	GET skeleton/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -89,8 +87,6 @@ class SkeletonApi extends DolibarrApi {
      * List skeletons
      * 
      * Get a list of skeletons
-     *
-     * @url	GET /skeletons/
      * 
      * @param int		$mode		Use this param to filter list
      * @param string	$sortfield	Sort field
@@ -99,6 +95,8 @@ class SkeletonApi extends DolibarrApi {
      * @param int		$page		Page number
      *
      * @return array Array of skeleton objects
+     *
+     * @url	GET /skeletons/
      */
     function getList($mode, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
@@ -177,9 +175,10 @@ class SkeletonApi extends DolibarrApi {
     /**
      * Create skeleton object
      *
-     * @url	POST skeleton/
-     * @param array $request_data
+     * @param array $request_data   Request datas
      * @return int  ID of skeleton
+     * 
+     * @url	POST skeleton/
      */
     function post($request_data = NULL)
     {
@@ -201,10 +200,11 @@ class SkeletonApi extends DolibarrApi {
     /**
      * Update skeleton
      *
-     * @url	PUT skeleton/{id}
      * @param int   $id             Id of skeleton to update
      * @param array $request_data   Datas   
      * @return int 
+     * 
+     * @url	PUT skeleton/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -234,9 +234,10 @@ class SkeletonApi extends DolibarrApi {
     /**
      * Delete skeleton
      *
+     * @param   int     $id   Skeleton ID
+     * @return  array
+     * 
      * @url	DELETE skeleton/{id}
-     * @param int $id
-     * @return type
      */
     function delete($id)
     {
@@ -268,8 +269,10 @@ class SkeletonApi extends DolibarrApi {
     
     /**
      * Validate fields before create or update object
-     * @param array $data
+     * 
+     * @param array $data   Data to validate
      * @return array
+     * 
      * @throws RestException
      */
     function _validate($data)

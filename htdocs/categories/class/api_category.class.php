@@ -20,7 +20,6 @@
  require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
- * 
  * API class for category object
  *
  * @smart-auto-routing false
@@ -29,10 +28,9 @@
  * 
  *
  */
-class CategoryApi extends DolibarrApi {
-    
+class CategoryApi extends DolibarrApi
+{
     /**
-     *
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
      */
     static $FIELDS = array(
@@ -72,11 +70,10 @@ class CategoryApi extends DolibarrApi {
      *
      * Return an array with category informations
      *
-     * @url	GET category/{id}
-     * 
      * @param 	int 	$id ID of category
      * @return 	array|mixed data without useless information
 	 * 
+     * @url	GET category/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -102,15 +99,14 @@ class CategoryApi extends DolibarrApi {
      * 
      * Get a list of categories
      *
-     * @url	GET /category/list
-     * 
      * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     *
      * @return array Array of category objects
+     *
+     * @url	GET /category/list
      */
     function getList($type='product', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
@@ -170,14 +166,13 @@ class CategoryApi extends DolibarrApi {
     /**
      * Get member categories list
      * 
-     * @url GET /category/list/member
-     * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     * 
      * @return mixed
+     * 
+     * @url GET /category/list/member
      */
     function getListCategoryMember($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         return $this->getList('member', $sortfield, $sortorder, $limit, $page);  
@@ -186,14 +181,14 @@ class CategoryApi extends DolibarrApi {
     /**
      * Get customer categories list
      * 
-     * @url GET /category/list/customer
-     * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * 
      * @return mixed
+     * 
+     * @url GET /category/list/customer
      */
     function getListCategoryCustomer($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         return $this->getList('customer', $sortfield, $sortorder, $limit, $page);  
@@ -202,14 +197,14 @@ class CategoryApi extends DolibarrApi {
     /**
      * Get supplier categories list
      * 
-     * @url GET /category/list/supplier
-     * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * 
      * @return mixed
+     * 
+     * @url GET /category/list/supplier
      */
     function getListCategorySupplier($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         return $this->getList('supplier', $sortfield, $sortorder, $limit, $page);  
@@ -218,14 +213,14 @@ class CategoryApi extends DolibarrApi {
     /**
      * Get product categories list
      * 
-     * @url GET /category/list/product
-     * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * 
      * @return mixed
+     * 
+     * @url GET /category/list/product
      */
     function getListCategoryProduct($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         return $this->getList('product', $sortfield, $sortorder, $limit, $page);  
@@ -234,9 +229,13 @@ class CategoryApi extends DolibarrApi {
     /**
      * Get contact categories list
      * 
-     * @url GET /category/list/contact
-     * 
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
      * @return mixed
+     * 
+     * @url GET /category/list/contact
      */
     function getListCategoryContact($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         return $this->getList('contact', $sortfield, $sortorder, $limit, $page);  
@@ -244,10 +243,11 @@ class CategoryApi extends DolibarrApi {
     
     /**
      * Create category object
+     * 
+     * @param array $request_data   Request data
+     * @return int  ID of category
      *
      * @url	POST category/
-     * @param array $request_data
-     * @return int  ID of category
      */
     function post($request_data = NULL)
     {
@@ -268,11 +268,12 @@ class CategoryApi extends DolibarrApi {
 
     /**
      * Update category
-     *
-     * @url	PUT category/{id}
+     * 
      * @param int   $id             Id of category to update
      * @param array $request_data   Datas   
      * @return int 
+     *
+     * @url	PUT category/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -302,9 +303,10 @@ class CategoryApi extends DolibarrApi {
     /**
      * Delete category
      *
+     * @param int $id   Category ID
+     * @return array
+     * 
      * @url	DELETE category/{id}
-     * @param int $id
-     * @return type
      */
     function delete($id)
     {
@@ -334,8 +336,10 @@ class CategoryApi extends DolibarrApi {
     
     /**
      * Validate fields before create or update object
-     * @param array $data
+     * 
+     * @param array $data   Data to validate
      * @return array
+     * 
      * @throws RestException
      */
     function _validate($data)

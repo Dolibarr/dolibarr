@@ -20,19 +20,16 @@
  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
- * 
  * API class for product object
  *
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
- *
  */
-class ProductApi extends DolibarrApi {
-    
+class ProductApi extends DolibarrApi
+{
     /**
-     *
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
      */
     static $FIELDS = array(
@@ -63,10 +60,12 @@ class ProductApi extends DolibarrApi {
      *
      * Return an array with product informations
      *
-     * @url	GET product/{id}
-     * @param 	int 	$id ID of product
+     * @param 	int 	$id     ID of product
+     * @param   string  $ref    Product ref
+     * @param   string  $ref_ext    Product ref ext
      * @return 	array|mixed data without useless information
 	 * 
+     * @url	GET product/{id}
      * @throws 	RestException
      */
     function get($id='', $ref='', $ref_ext='')
@@ -93,8 +92,6 @@ class ProductApi extends DolibarrApi {
      * List products
      * 
      * Get a list of products
-     *
-     * @url	GET /product/list
      * 
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
@@ -105,6 +102,8 @@ class ProductApi extends DolibarrApi {
      * @param int		$page		Page number
      *
      * @return array Array of product objects
+     *
+     * @url	GET /product/list
      */
     function getList($mode=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
@@ -169,11 +168,11 @@ class ProductApi extends DolibarrApi {
     
     /**
      * Create product object
+     * 
+     * @param   array   $request_data   Request data
+     * @return  int     ID of product
      *
      * @url     POST product/
-     * 
-     * @param   array   $request_data
-     * @return  int     ID of product
      */
     function post($request_data = NULL)
     {
@@ -197,12 +196,12 @@ class ProductApi extends DolibarrApi {
 
     /**
      * Update product
-     *
-     * @url	PUT product/{id}
      * 
      * @param int   $id             Id of product to update
      * @param array $request_data   Datas   
      * @return int 
+     *
+     * @url	PUT product/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -231,10 +230,11 @@ class ProductApi extends DolibarrApi {
     
     /**
      * Delete product
+     * 
+     * @param   int     $id   Product ID
+     * @return  array
      *
      * @url	DELETE product/{id}
-     * @param int $id
-     * @return type
      */
     function delete($id)
     {
@@ -255,7 +255,8 @@ class ProductApi extends DolibarrApi {
     
     /**
      * Validate fields before create or update object
-     * @param array $data
+     * 
+     * @param array $data   Datas to validate
      * @return array
      * @throws RestException
      */

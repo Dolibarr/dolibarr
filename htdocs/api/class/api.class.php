@@ -22,8 +22,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
  * Class for API
+ * 
  */
-class DolibarrApi {
+class DolibarrApi
+{
     
     /**
      * @var DoliDb        $db Database object
@@ -38,7 +40,7 @@ class DolibarrApi {
     /**
      * Constructor
      * 
-     * @var	DoliDB	$db		Database handler
+     * @param	DoliDb	$db		Database handler
      */
     function __construct($db) {
         $this->db = $db;
@@ -49,6 +51,7 @@ class DolibarrApi {
      * Executed method when API is called without parameter
      *
      * Display a short message an return a http code 200
+     * 
      * @return array
      */
     function index()
@@ -64,13 +67,14 @@ class DolibarrApi {
 
     /**
      * Clean sensible object datas
-     * @var object $object	Object to clean
+     * 
+     * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      * 
      * @todo use an array for properties to clean
      *
      */
-    protected function _cleanObjectDatas($object){
+    function _cleanObjectDatas($object) {
 
         // Remove $db object property for object
 		unset($object->db);
@@ -130,10 +134,9 @@ class DolibarrApi {
  * API init
  *
  */
-class DolibarrApiInit extends DolibarrApi {
+class DolibarrApiInit extends DolibarrApi
+{
 
-	
-	
 	function __construct() {
 		global $db;
 		$this->db = $db;
@@ -143,11 +146,12 @@ class DolibarrApiInit extends DolibarrApi {
 	 * Login
 	 * 
 	 * Log user with username and password
-	 * @todo : to finish!
 	 * 
-	 * @param string $login			Username
-	 * @param string $password		User password
-	 * @param int $entity			User entity
+	 * @param   string  $login			Username
+	 * @param   string  $password		User password
+	 * @param   int     $entity			User entity
+     * @return  array   Response status and user token
+     * 
 	 * @throws RestException	
 	 */
 	public function login($login, $password, $entity = 0) {
@@ -194,6 +198,8 @@ class DolibarrApiInit extends DolibarrApi {
 	}
 
 	/**
+     * Get status (Dolibarr version)
+     * 
 	 * @access protected
 	 * @class  DolibarrApiAccess {@requires admin}
 	 */
@@ -205,6 +211,5 @@ class DolibarrApiInit extends DolibarrApi {
 				'dolibarr_version' => DOL_VERSION
 			)
 		);
-	}
-
+    }
 }

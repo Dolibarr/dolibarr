@@ -7,7 +7,7 @@ use Luracast\Restler\RestException;
 
 
 /**
- * Description of DolibarrApiAccess
+ * Dolibarr API access class
  *
  * @author jfefe
  */
@@ -97,6 +97,10 @@ class DolibarrApiAccess implements iAuthenticate
     }
 	
 	/**
+     * Verify access
+     * 
+     * @param   array   $m   Properties of method 
+     * 
      * @access private
      */
     public static function verifyAccess(array $m)

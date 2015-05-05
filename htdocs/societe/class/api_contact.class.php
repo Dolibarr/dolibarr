@@ -20,18 +20,15 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 /**
- * 
  * API class for contact object
  *
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
- *
  */
 class ContactApi extends DolibarrApi
 {
-
 	/**
 	 *
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -62,10 +59,10 @@ class ContactApi extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
-	 * @url	GET contact/{id}
 	 * @param 	int 	$id ID of contact
 	 * @return 	array|mixed data without useless information
 	 * 
+	 * @url	GET contact/{id}
 	 * @throws 	RestException
 	 */
 	function get($id) {
@@ -92,20 +89,19 @@ class ContactApi extends DolibarrApi
 	 * List contacts
 	 * 
 	 * Get a list of contacts
-	 *
-	 * @url	GET /contact/list
-	 * @url	GET /contact/list/{socid}
-	 * @url	GET	/thirdparty/{socid}/contacts
-	 * 
 	 * 
 	 * @param int		$socid		ID of thirdparty to filter list
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @throws RestException
-	 *
 	 * @return array Array of contact objects
+	 *
+	 * @url	GET /contact/list
+	 * @url	GET /contact/list/{socid}
+	 * @url	GET	/thirdparty/{socid}/contacts
+     * 
+	 * @throws RestException
 	 */
 	function getList($socid = 0, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
 		global $db, $conf;
@@ -192,9 +188,10 @@ class ContactApi extends DolibarrApi
 	/**
 	 * Create contact object
 	 *
+	 * @param   array   $request_data   Request datas
+	 * @return  int     ID of contact
+     * 
 	 * @url	POST contact/
-	 * @param array $request_data
-	 * @return int  ID of contact
 	 */
 	function post($request_data = NULL) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
@@ -214,10 +211,11 @@ class ContactApi extends DolibarrApi
 	/**
 	 * Update contact
 	 *
-	 * @url	PUT contact/{id}
 	 * @param int   $id             Id of contact to update
 	 * @param array $request_data   Datas   
 	 * @return int 
+     * 
+	 * @url	PUT contact/{id}
 	 */
 	function put($id, $request_data = NULL) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
@@ -250,9 +248,10 @@ class ContactApi extends DolibarrApi
 	/**
 	 * Delete contact
 	 *
+	 * @param   int     $id Contact ID
+	 * @return  array
+     * 
 	 * @url	DELETE contact/{id}
-	 * @param int $id
-	 * @return type
 	 */
 	function delete($id) {
 		if (!DolibarrApiAccess::$user->rights->contact->supprimer)
@@ -275,8 +274,9 @@ class ContactApi extends DolibarrApi
 
 	/**
 	 * Validate fields before create or update object
-	 * @param array $data
-	 * @return array
+     * 
+	 * @param   array $data Data to validate
+	 * @return  array
 	 * @throws RestException
 	 */
 	function _validate($data) {

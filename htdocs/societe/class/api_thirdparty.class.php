@@ -19,17 +19,15 @@
 
 
 /**
- * 
  * API class for thirdparty object
  *
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
- *
  */
-class ThirdpartyApi extends DolibarrApi {
-    
+class ThirdpartyApi extends DolibarrApi
+{
     /**
      *
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -65,10 +63,10 @@ class ThirdpartyApi extends DolibarrApi {
      *
      * Return an array with thirdparty informations
      *
-     * @url	GET thirdparty/{id}
      * @param 	int 	$id ID of thirdparty
      * @return 	array|mixed data without useless information
 	 * 
+     * @url	GET thirdparty/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -93,8 +91,6 @@ class ThirdpartyApi extends DolibarrApi {
      * List thirdparties
      * 
      * Get a list of thirdparties
-     *
-     * @url	GET /thirdparty/list
      * 
      * @param   int     $mode       Set to 1 to show only customers 
      *                              Set to 2 to show only prospects
@@ -103,9 +99,10 @@ class ThirdpartyApi extends DolibarrApi {
      * @param   string  $sortorder  Sort order
      * @param   int     $limit      Limit for list
      * @param   int     $page       Page number
-     * 
-     *
      * @return array Array of thirdparty objects
+     * 
+     * @url	GET /thirdparty/list
+     *
      */
     function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
@@ -183,9 +180,9 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Show customers
      * 
-     * @url GET /thirdparty/list/customers
-     * 
      * @return array    List of customers
+     * 
+     * @url GET /thirdparty/list/customers
      */
     function getListCustomers() {
         return $this->getList(1);
@@ -194,9 +191,9 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Show prospects
      * 
-     * @url GET /thirdparty/list/prospects
-     * 
      * @return array    List of prospects
+     * 
+     * @url GET /thirdparty/list/prospects
      */
     function getListProspects() {
         return $this->getList('',1);
@@ -205,9 +202,9 @@ class ThirdpartyApi extends DolibarrApi {
      /**
      * Show other
      * 
-     * @url GET /thirdparty/list/others
-     * 
      * @return array    List of thirpdparties who are not customer neither prospect
+     * 
+     * @url GET /thirdparty/list/others
      */
     function getListOthers() {
         return $this->getList('','',1);
@@ -216,9 +213,10 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Create thirdparty object
      *
-     * @url	POST thirdparty/
-     * @param array $request_data
+     * @param array $request_data   Request datas
      * @return int  ID of thirdparty
+     * 
+     * @url	POST thirdparty/
      */
     function post($request_data = NULL)
     {
@@ -237,10 +235,11 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Update thirdparty
      *
-     * @url	PUT thirdparty/{id}
      * @param int   $id             Id of thirdparty to update
      * @param array $request_data   Datas   
      * @return int 
+     * 
+     * @url	PUT thirdparty/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -270,9 +269,10 @@ class ThirdpartyApi extends DolibarrApi {
     /**
      * Delete thirdparty
      *
-     * @url	DELETE thirdparty/{id}
-     * @param int $id
+     * @param int $id   Thirparty ID
      * @return type
+     * 
+     * @url	DELETE thirdparty/{id}
      */
     function delete($id)
     {
@@ -293,8 +293,10 @@ class ThirdpartyApi extends DolibarrApi {
     
     /**
      * Validate fields before create or update object
-     * @param array $data
+     * 
+     * @param array $data   Datas to validate
      * @return array
+     * 
      * @throws RestException
      */
     function _validate($data)

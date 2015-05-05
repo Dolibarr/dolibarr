@@ -20,17 +20,15 @@
  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
- * 
  * API class for invoice object
  *
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
- *
  */
-class InvoiceApi extends DolibarrApi {
-    
+class InvoiceApi extends DolibarrApi
+{
     /**
      *
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -61,11 +59,11 @@ class InvoiceApi extends DolibarrApi {
      * Get properties of a invoice object
      *
      * Return an array with invoice informations
-     *
-     * @url	GET invoice/{id}
+     * 
      * @param 	int 	$id ID of invoice
      * @return 	array|mixed data without useless information
-	 * 
+     *
+     * @url	GET invoice/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -90,11 +88,6 @@ class InvoiceApi extends DolibarrApi {
      * List invoices
      * 
      * Get a list of invoices
-     *
-     * @url	GET invoice/list
-     * @url	GET invoice/list/{mode}
-     * @url GET thirdparty/{socid}/invoice/list
-     * @url GET thirdparty/{socid}/invoice/list/{mode} 
      * 
      * @param int       $socid      Filter list with thirdparty ID
      * @param string	$mode		Filter by invoice status : draft | unpaid | paid | cancelled
@@ -104,6 +97,11 @@ class InvoiceApi extends DolibarrApi {
      * @param int		$page		Page number
      *
      * @return array Array of invoice objects
+     *
+     * @url	GET invoice/list
+     * @url	GET invoice/list/{mode}
+     * @url GET thirdparty/{socid}/invoice/list
+     * @url GET thirdparty/{socid}/invoice/list/{mode} 
      */
     function getList($socid=0, $mode='', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
@@ -182,12 +180,11 @@ class InvoiceApi extends DolibarrApi {
     
     /**
      * Create invoice object
+     * 
+     * @param array $request_data   Request datas
+     * @return int  ID of invoice
      *
      * @url	POST invoice/
-     * 
-     * @param array $request_data
-     * 
-     * @return int  ID of invoice
      */
     function post($request_data = NULL)
     {
@@ -212,10 +209,11 @@ class InvoiceApi extends DolibarrApi {
     /**
      * Update invoice
      *
-     * @url	PUT invoice/{id}
      * @param int   $id             Id of invoice to update
      * @param array $request_data   Datas   
      * @return int 
+     * 
+     * @url	PUT invoice/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -245,9 +243,10 @@ class InvoiceApi extends DolibarrApi {
     /**
      * Delete invoice
      *
-     * @url	DELETE invoice/{id}
-     * @param int $id
+     * @param int   $id Invoice ID
      * @return type
+     * 
+     * @url	DELETE invoice/{id} 
      */
     function delete($id)
     {
@@ -279,8 +278,10 @@ class InvoiceApi extends DolibarrApi {
     
     /**
      * Validate fields before create or update object
-     * @param array $data
+     * 
+     * @param array $data   Datas to validate
      * @return array
+     * 
      * @throws RestException
      */
     function _validate($data)

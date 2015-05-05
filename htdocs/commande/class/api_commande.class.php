@@ -20,19 +20,22 @@
  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
- * 
  * API class for commande object
  *
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
+ * @category Api
+ * @package  Api
+ * @author   jfefe   
+ * 
  *
  */
-class CommandeApi extends DolibarrApi {
-    
+class CommandeApi extends DolibarrApi
+{
+
     /**
-     *
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
      */
     static $FIELDS = array(
@@ -61,14 +64,14 @@ class CommandeApi extends DolibarrApi {
      * Get properties of a commande object
      *
      * Return an array with commande informations
-     *
-     * @url	GET order/{id}
-     * @param       int         $id ID of order
-     * @param		string		$ref			Ref of object
+     * 
+     * @param       int         $id         ID of order
+     * @param		string		$ref		Ref of object
      * @param		string		$ref_ext		External reference of object
      * @param		string		$ref_int		Internal reference of other object
      * @return 	array|mixed data without useless information
-	 * 
+	 *
+     * @url	GET order/{id} 
      * @throws 	RestException
      */
     function get($id='',$ref='', $ref_ext='', $ref_int='')
@@ -94,8 +97,6 @@ class CommandeApi extends DolibarrApi {
      * List orders
      * 
      * Get a list of orders
-     *
-     * @url	GET /order/list
      * 
      * @param int		$mode		Use this param to filter list
      * @param string	$sortfield	Sort field
@@ -103,7 +104,8 @@ class CommandeApi extends DolibarrApi {
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      *
-     * @return array Array of order objects
+     * @url     GET     /order/list
+     * @return  array   Array of order objects
      */
     function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
@@ -181,9 +183,11 @@ class CommandeApi extends DolibarrApi {
     /**
      * Create order object
      *
-     * @url	POST order/
-     * @param array $request_data
-     * @return int  ID of commande
+     * @param   array   $request_data   Request datas
+     * 
+     * @url     POST    order/
+     * 
+     * @return  int     ID of commande
      */
     function post($request_data = NULL)
     {
@@ -206,9 +210,11 @@ class CommandeApi extends DolibarrApi {
     /**
      * Update order
      *
-     * @url	PUT order/{id}
      * @param int   $id             Id of commande to update
      * @param array $request_data   Datas   
+     * 
+     * @url	PUT order/{id}
+     * 
      * @return int 
      */
     function put($id, $request_data = NULL)
@@ -237,11 +243,13 @@ class CommandeApi extends DolibarrApi {
     }
     
     /**
-     * Delete commande
+     * Delete order
      *
-     * @url	DELETE order/{id}
-     * @param int $id
-     * @return type
+     * @param   int     $id         Order ID
+     * 
+     * @url     DELETE  order/{id}
+     * 
+     * @return  array
      */
     function delete($id)
     {
@@ -273,11 +281,14 @@ class CommandeApi extends DolibarrApi {
     /**
      * Validate an order
      * 
+     * @param   int $id             Order ID
+     * @param   int $idwarehouse    Warehouse ID
+     * 
      * @url GET     order/{id}/validate
      * @url POST    order/{id}/validate
      *  
-     * @param   int $id Order ID
-     * @param   int $warehouse  Warehouse ID
+     * @return  array
+     * 
      */
     function validOrder($id, $idwarehouse=0)
     {
@@ -307,9 +318,10 @@ class CommandeApi extends DolibarrApi {
     
     /**
      * Validate fields before create or update object
-     * @param array $data
-     * @return array
-     * @throws RestException
+     * 
+     * @param   array           $data   Array with data to verify
+     * @return  array           
+     * @throws  RestException
      */
     function _validate($data)
     {
