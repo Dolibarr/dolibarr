@@ -107,7 +107,7 @@ class ThirdpartyApi extends DolibarrApi {
      *
      * @return array Array of thirdparty objects
      */
-    function getList($mode, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
