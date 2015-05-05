@@ -29,7 +29,6 @@ Notify_PROPAL_SENTBYMAIL=Envío presupuesto por e-mail
 Notify_BILL_PAYED=Cobro factura a cliente
 Notify_BILL_CANCEL=Cancelación factura a cliente
 Notify_BILL_SENTBYMAIL=Envío factura a cliente por e-mail
-Notify_ORDER_SUPPLIER_VALIDATE=Pedido a proveedor registrado
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Envío pedido a proveedor por e-mail
 Notify_BILL_SUPPLIER_VALIDATE=Validación factura de proveedor
 Notify_BILL_SUPPLIER_PAYED=Pago factura de proveedor

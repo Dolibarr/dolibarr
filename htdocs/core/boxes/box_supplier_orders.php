@@ -58,13 +58,20 @@ class box_supplier_orders extends ModeleBoxes
 
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
         $supplierorderstatic=new CommandeFournisseur($db);
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+        $thirdpartytmp = new Fournisseur($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierOrders", $max));
 
         if ($user->rights->fournisseur->commande->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
+            $sql.= " s.code_client, s.code_fournisseur,";
+            $sql.= " s.logo,";
             $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
+            $sql.= " c.total_ht,";
+            $sql.= " c.tva as total_tva,";
+            $sql.= " c.total_ttc,";
             $sql.= " c.fk_statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -82,60 +89,61 @@ class box_supplier_orders extends ModeleBoxes
             {
                 $num = $db->num_rows($result);
 
-                $i = 0;
-                while ($i < $num) {
+                $line = 0;
+                while ($line < $num) {
                     $objp = $db->fetch_object($result);
                     $date=$db->jdate($objp->date_commande);
 					$datem=$db->jdate($objp->tms);
+                    $thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->fournisseur = 1;
+                    $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartytmp->logo = $objp->logo;
 
                     $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
                     $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
 
                     $tooltip = $langs->trans('SupplierOrder') . ': ' . $objp->ref;
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => $this->boximg,
                         'tooltip' => $tooltip,
                         'url' => $urlo,
                     );
 
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $objp->ref,
                         'tooltip' => $tooltip,
                         'url' => $urlo,
                     );
 
-                    $tooltip = $langs->trans('Supplier') . ': ' . $objp->name;
-                    $this->info_box_contents[$i][2] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => 'company',
-                        'tooltip' => $tooltip,
-                        'url' => $urls,
-                    );
-
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $objp->name,
-                        'tooltip' => $tooltip,
-                        'url' => $urls,
+                        'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][4] = array(
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
+                    );
+
+					$this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($date,'day'),
                     );
 
-                    $this->info_box_contents[$i][5] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num == 0)
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center"',
                         'text' => $langs->trans("NoSupplierOrder"),
                     );

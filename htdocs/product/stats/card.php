@@ -83,7 +83,7 @@ if (! empty($id) || ! empty($ref))
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 		// Status (to sell)
 		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';

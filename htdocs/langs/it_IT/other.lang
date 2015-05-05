@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Intervento convalidato
 Notify_FICHINTER_SENTBYMAIL=Intervento inviato per posta
 Notify_BILL_VALIDATE=Convalida fattura attiva
 Notify_BILL_UNVALIDATE=Ricevuta cliente non convalidata
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Ordine fornitore approvato
 Notify_ORDER_SUPPLIER_REFUSE=Ordine fornitore rifiutato
 Notify_ORDER_VALIDATE=Ordine cliente convalidato

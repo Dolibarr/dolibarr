@@ -127,7 +127,7 @@ if ($type==0 && $elemid && $action == 'addintocategory' && ($user->rights->produ
 	$newobject = new Product($db);
 	$result = $newobject->fetch($elemid);
 	$elementtype = 'product';
-	
+
 	// TODO Add into categ
 	$result=$object->add_type($newobject,$elementtype);
 	if ($result >= 0)
@@ -145,7 +145,7 @@ if ($type==0 && $elemid && $action == 'addintocategory' && ($user->rights->produ
 			setEventMessages($object->error,$object->errors,'errors');
 		}
 	}
-	
+
 }
 
 
@@ -232,7 +232,7 @@ print "</div>";
 $cats = $object->get_filles();
 if ($cats < 0)
 {
-	dol_print_error();
+	dol_print_error($db, $cats->error, $cats->errors);
 }
 else
 {
@@ -286,12 +286,12 @@ if ($object->type == 0)
 	$prods = $object->getObjectsInCateg("product");
 	if ($prods < 0)
 	{
-		dol_print_error();
+		dol_print_error($db, $prods->error, $prods->errors);
 	}
 	else
 	{
 		$showclassifyform=1; $typeid=0;
-		
+
 		// Form to add record into a category
 		if ($showclassifyform)
 		{
@@ -312,7 +312,7 @@ if ($object->type == 0)
 			print '</table>';
 			print '</form>';
 		}
-		
+
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
 		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices")."</td></tr>\n";
@@ -327,7 +327,7 @@ if ($object->type == 0)
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1,'category');
 				print "</td>\n";
-				print '<td valign="top">'.$prod->libelle."</td>\n";
+				print '<td valign="top">'.$prod->label."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;
@@ -359,7 +359,7 @@ if ($object->type == 1)
 	$socs = $object->getObjectsInCateg("supplier");
 	if ($socs < 0)
 	{
-		dol_print_error();
+		dol_print_error($db, $socs->error, $socs->errors);
 	}
 	else
 	{
@@ -410,7 +410,7 @@ if($object->type == 2)
 	$socs = $object->getObjectsInCateg("customer");
 	if ($socs < 0)
 	{
-		dol_print_error();
+		dol_print_error($db, $socs->error, $socs->errors);
 	}
 	else
 	{
@@ -466,7 +466,7 @@ if ($object->type == 3)
 	$prods = $object->getObjectsInCateg("member");
 	if ($prods < 0)
 	{
-		dol_print_error($db,$object->error);
+		dol_print_error($db, $prods->error, $prods->errors);
 	}
 	else
 	{
@@ -518,7 +518,7 @@ if($object->type == 4)
 	$contacts = $object->getObjectsInCateg("contact");
 	if ($contacts < 0)
 	{
-		dol_print_error();
+		dol_print_error($db, $contacts->error, $contacts->errors);
 	}
 	else
 	{

@@ -134,7 +134,7 @@ if (empty($user->societe_id))
     print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '<th class="liste_titre" align="right">&nbsp;</th>';
     print '</tr>';
-    print '<tr class="impair"><td colspan="3" class="impair tdboxstats nohover">';
+    print '<tr class="impair"><td colspan="3" class="tdboxstats nohover">';
 
     $var=true;
 

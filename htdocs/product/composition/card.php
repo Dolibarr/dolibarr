@@ -255,37 +255,59 @@ if ($id > 0 || ! empty($ref))
 
 
 		// Number of parent virtual products
-		print $form->textwithpicto($langs->trans("ParentProductsNumber").': '.count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
+		//print $form->textwithpicto($langs->trans("ParentProductsNumber").': '.count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
 
-		if (count($prodsfather) > 0)
-		{
-			print $langs->trans("ProductParentList").'<br>';
-			print '<table class="nobordernopadding">';
-			foreach($prodsfather as $value)
+		//if (count($prodsfather) > 0)
+		//{
+			print_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
+			print '<table class="centpercent noborder">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans('ParentProduct').'</td>';
+			print '<td>'.$langs->trans('Label').'</td>';
+			print '<td>'.$langs->trans('Qty').'</td>';
+			print '</td>';
+			if (count($prodsfather) > 0)
 			{
-				$idprod= $value["id"];
-				$productstatic->id=$idprod;// $value["id"];
-				$productstatic->type=$value["fk_product_type"];
-				$productstatic->ref=$value['label'];
+				$class='pair';
+
+				foreach($prodsfather as $value)
+				{
+					$idprod= $value["id"];
+					$productstatic->id=$idprod;// $value["id"];
+					$productstatic->type=$value["fk_product_type"];
+					$productstatic->ref=$value['ref'];
+					$productstatic->label=$value['label'];
+
+					$class=($class=='impair')?'pair':'impair';
+					print '<tr class="'.$class.'">';
+
+					print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
+					print '<td>'.$productstatic->label.'</td>';
+					print '<td>'.$value['qty'].'</td>';
+					print '</tr>';
+				}
+			}
+			else
+			{
 				print '<tr>';
-				print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
+				print '<td colspan="3">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 			print '</table>';
-		}
+		//}
 
 
 		print '<br>'."\n";
 
 
 		// Number of subproducts
-		print $form->textwithpicto($langs->trans("AssociatedProductsNumber").': '.(empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)?$nbofsubproducts:$nbofsubsubproducts), $langs->trans('IfZeroItIsNotAVirtualProduct'));
+		//print $form->textwithpicto($langs->trans("AssociatedProductsNumber").': '.(empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)?$nbofsubproducts:$nbofsubsubproducts), $langs->trans('IfZeroItIsNotAVirtualProduct'));
 
 		// List of subproducts
-		if (count($prods_arbo) > 0)
-		{
+		//if (count($prods_arbo) > 0)
+		//{
 			$atleastonenotdefined=0;
-			print $langs->trans("ProductAssociationList").'<br>';
+			print_fiche_titre($langs->trans("ProductAssociationList"),'','').'<br>';
 
 			print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="action" value="save_composed_product" />';
@@ -301,6 +323,8 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="center">'.$langs->trans('Qty').'</td>';
 			print '<td align="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
 			print '</tr>'."\n";
+
+			$class='pair';
 
 			foreach($prods_arbo as $value)
 			{
@@ -409,7 +433,7 @@ if ($id > 0 || ! empty($ref))
 			}*/
 
 			print '</form>';
-		}
+		//}
 
 		// Form with product to add
 		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -500,7 +524,7 @@ if ($id > 0 || ! empty($ref))
 						print "\n<tr ".$bc[$var].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
-						$productstatic->libelle=$objp->label;
+						$productstatic->label=$objp->label;
 						$productstatic->type=$objp->type;
 
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';

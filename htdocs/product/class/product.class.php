@@ -59,8 +59,21 @@ class Product extends CommonObject
 	var $id ;
 	//! Ref
 	var $ref;
-	var $libelle;            // TODO deprecated
+    /**
+     * Product label
+     * @var string
+     * @deprecated use $label
+     */
+	var $libelle;
+    /**
+     * Product label
+     * @var string
+     */
 	var $label;
+    /** 
+     * Product descripion
+     * @var string    
+     */
 	var $description;
 
 	/**
@@ -232,7 +245,7 @@ class Product extends CommonObject
 		if (dol_strlen(trim($this->ref)) == 0)
 		$err++;
 
-		if (dol_strlen(trim($this->libelle)) == 0)
+		if (dol_strlen(trim($this->label)) == 0)
 		$err++;
 
 		if ($err > 0)
@@ -260,7 +273,7 @@ class Product extends CommonObject
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->price_ttc=price2num($this->price_ttc);
 		$this->price=price2num($this->price);
 		$this->price_min_ttc=price2num($this->price_min_ttc);
@@ -312,7 +325,7 @@ class Product extends CommonObject
         $this->barcode=trim($this->barcode);
 
         // Check parameters
-		if (empty($this->libelle))
+		if (empty($this->label))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
 			return -1;
@@ -397,7 +410,7 @@ class Product extends CommonObject
 					$sql.= ", ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 					$sql.= ", ".price2num($price_min_ht);
 					$sql.= ", ".price2num($price_min_ttc);
-					$sql.= ", ".(! empty($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null");
+					$sql.= ", ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
 					$sql.= ", ".$user->id;
 					$sql.= ", ".$this->type;
 					$sql.= ", ".price2num($price_ht);
@@ -588,11 +601,11 @@ class Product extends CommonObject
 		$error=0;
 
 		// Check parameters
-		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
+		if (! $this->label) $this->label = 'MISSING LABEL';
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note = (isset($this->note) ? trim($this->note) : null);
 		$this->weight = price2num($this->weight);
@@ -667,7 +680,7 @@ class Product extends CommonObject
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-			$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
+			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
 			$sql.= ", ref = '" . $this->ref ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
@@ -958,7 +971,7 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // if there is already a description line for this language
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".$this->db->escape($this->libelle)."',";
+					$sql2.= " SET label='".$this->db->escape($this->label)."',";
 					$sql2.= " description='".$this->db->escape($this->description)."',";
 					$sql2.= " note='".$this->db->escape($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
@@ -966,7 +979,7 @@ class Product extends CommonObject
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->libelle);
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
@@ -1535,7 +1548,6 @@ class Product extends CommonObject
 				$this->id						= $obj->rowid;
 				$this->ref						= $obj->ref;
 				$this->ref_ext					= $obj->ref_ext;
-				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
 				$this->url						= $obj->url;
@@ -2815,16 +2827,16 @@ class Product extends CommonObject
 	/**
 	 *  Return all Father products fo current product
 	 *
-	 *  @return 	array prod
+	 *  @return 	array 		Array of product
 	 *  @see		getParent
 	 */
 	function getFather()
 	{
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND pa.fk_product_fils=".$this->id;
+		$sql.= " AND pa.fk_product_fils = ".$this->id;
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -2832,8 +2844,11 @@ class Product extends CommonObject
 			$prods = array ();
 			while ($record = $this->db->fetch_array($res))
 			{
-				$prods[$record['id']]['id'] =  $record['rowid'];
-				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
+				$prods[$record['id']]['id'] = $record['rowid'];
+				$prods[$record['id']]['ref'] = $record['ref'];
+				$prods[$record['id']]['label'] = $record['label'];
+				$prods[$record['id']]['qty'] = $record['qty'];
+				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
 			}
 			return $prods;
@@ -2854,7 +2869,7 @@ class Product extends CommonObject
 	 */
 	function getParent()
 	{
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
@@ -3409,7 +3424,7 @@ class Product extends CommonObject
 	function is_photo_available($sdir)
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
-		
+
 		global $conf;
 
 		$dir = $sdir;
@@ -3805,7 +3820,7 @@ class Product extends CommonObject
         // Initialize parameters
         $this->id=0;
         $this->ref = 'PRODUCT_SPEC';
-        $this->libelle = 'PRODUCT SPECIMEN';
+        $this->label = 'PRODUCT SPECIMEN';
         $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
         $this->specimen=1;
         $this->country_id=1;

@@ -119,7 +119,7 @@ class modContrat extends DolibarrModules
 		// Exports
 		//--------
 		$langs->load("contracts");
-		
+
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -154,7 +154,7 @@ class modContrat extends DolibarrModules
 		'cod.label'=>"Text",'cod.description'=>"Text",'cod.price_ht'=>"Numeric",'cod.tva_tx'=>"Numeric",
 		'cod.qty'=>"Numeric",'cod.total_ht'=>"Numeric",'cod.total_tva'=>"Numeric",'cod.total_ttc'=>"Numeric",
 		'cod.date_ouverture'=>"Date",'cod.date_ouverture_prevue'=>"Date",'cod.date_fin_validite'=>"Date",'cod.date_cloture'=>"Date",
-		'p.rowid'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
+		'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text');
 
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

@@ -44,6 +44,7 @@ class FormMail extends Form
     var $replytomail;
     var $toname;
     var $tomail;
+	var $trackid;
 
     var $withsubstit;			// Show substitution array
     var $withfrom;
@@ -244,7 +245,7 @@ class FormMail extends Form
         else
         {
         	$out='';
-        	
+
         	// Define list of attached files
         	$listofpaths=array();
         	$listofnames=array();
@@ -277,12 +278,13 @@ class FormMail extends Form
         		$out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+        		$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
         	}
         	foreach ($this->param as $key=>$value)
         	{
         		$out.= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
         	}
-        	
+
         	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
         	if ($result<0) {
         		setEventMessage($this->error,'errors');
@@ -291,7 +293,7 @@ class FormMail extends Form
         	foreach($this->lines_model as $line) {
         		$modelmail_array[$line->id]=$line->label;
         	}
-        	
+
         	if (count($modelmail_array)>0) {
 	        	$out.= '<table class="nobordernopadding" width="100%"><tr><td width="20%">'."\n";
 	        	$out.= $langs->trans('SelectMailModel').':'.$this->selectarray('modelmailselected', $modelmail_array,$model_id);
@@ -302,8 +304,8 @@ class FormMail extends Form
 	        	$out.= '<td><input class="flat" type="submit" value="'.$langs->trans('Valid').'" name="modelselected" id="modelselected"></td>';
 	        	$out.= '</tr></table>';
         	}
-        	
-        	
+
+
         	$out.= '<table class="border" width="100%">'."\n";
 
         	// Substitution array
@@ -644,7 +646,7 @@ class FormMail extends Form
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
-				
+
         		if (isset($_POST["message"]) &&  ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
 				else
 				{
@@ -774,7 +776,7 @@ class FormMail extends Form
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      Find if template exists
 	 *      Search into table c_email_templates
@@ -787,7 +789,7 @@ class FormMail extends Form
 	public function isEMailTemplate($type_template, $user, $outputlangs)
 	{
 		$ret=array();
-	
+
 		$sql = "SELECT label, topic, content, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
@@ -796,7 +798,7 @@ class FormMail extends Form
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		$sql.= $this->db->order("lang,label","ASC");
 		//print $sql;
-	
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -810,7 +812,7 @@ class FormMail extends Form
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      Find if template exists
 	 *      Search into table c_email_templates
@@ -823,7 +825,7 @@ class FormMail extends Form
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs)
 	{
 		$ret=array();
-	
+
 		$sql = "SELECT rowid, label, topic, content, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
@@ -832,12 +834,12 @@ class FormMail extends Form
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		$sql.= $this->db->order("lang,label","ASC");
 		//print $sql;
-	
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$this->lines_model=array();
-			while ($obj = $this->db->fetch_object($resql)) 
+			while ($obj = $this->db->fetch_object($resql))
 			{
 				$line = new ModelMail();
 				$line->id=$obj->rowid;

@@ -26,8 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
- *      \class      Prospect
- *		\brief      Classe permettant la gestion des prospects
+ *	Class to manage prospects
  */
 class Prospect extends Societe
 {
@@ -37,7 +36,7 @@ class Prospect extends Societe
     /**
      *	Constructor
      *
-     *	@param	DoliDB	$db		Databas handler
+     *	@param	DoliDB	$db		Database handler
      */
     function __construct($db)
     {

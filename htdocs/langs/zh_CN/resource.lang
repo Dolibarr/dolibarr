@@ -1,13 +1,13 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
+MenuResourceIndex=资源
+MenuResourceAdd=新资源
+MenuResourcePlanning=资源计划
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+NoResourceLinked=无资源链接
 
-ResourcePageIndex=Resources list
+ResourcePageIndex=资源列表
 ResourceSingular=Resource
 ResourceCard=Resource card
 AddResource=Create a resource

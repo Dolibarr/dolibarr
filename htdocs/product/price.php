@@ -368,7 +368,7 @@ print '</td>';
 print '</tr>';
 
 // Label
-print '<tr><td>' . $langs->trans("Label") . '</td><td>' . $object->libelle . '</td>';
+print '<tr><td>' . $langs->trans("Label") . '</td><td>' . $object->label . '</td>';
 
 $isphoto = $object->is_photo_available($conf->product->multidir_output [$object->entity]);
 

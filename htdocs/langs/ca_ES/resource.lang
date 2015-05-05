@@ -1,34 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Recursos
+MenuResourceAdd=Nou recurs
+MenuResourcePlanning=Planificació de recursos
+DeleteResource=Eliminar recurs
+ConfirmDeleteResourceElement=Estàs segur de voler eliminar el recurs d'aquest element?
+NoResourceInDatabase=Sense recursos a la base de dades.
+NoResourceLinked=Sense recursos enllaçats
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Llistat de recursos
+ResourceSingular=Recurs
+ResourceCard=Fitxa de recurs
+AddResource=Crear un recurs
+ResourceFormLabel_ref=Nom de recurs
+ResourceType=Tipus de recurs
+ResourceFormLabel_description=Descripció de recurs
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Recurs enllaçat a element
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Veure planificació de recursos
+GotoDate=Anar a la data
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Elements de recursos
+ResourceCreatedWithSuccess=Recurs creat correctament
+RessourceLineSuccessfullyDeleted=Línia de recurs eliminada correctament
+RessourceLineSuccessfullyUpdated=Línia de recurs actualitzada correctament
+ResourceLinkedWithSuccess=Recurs enllaçat correntament
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Fitxa de recurs
+ConfirmDeleteResource=Estàs segur de voler eliminar aquest element?
+RessourceSuccessfullyDeleted=Recurs eliminat correctament
+DictionaryResourceType=Tipus de recurs
 
-SelectResource=Select resource
+SelectResource=Seleccionar recurs

@@ -86,27 +86,69 @@ if ($cancel) $action='';	// Protection to avoid action for all cancel buttons
 // Correct stock
 if ($action == "correct_stock")
 {
-    if (is_numeric($_POST["nbpiece"]) && $product_id)
-    {
-        $product = new Product($db);
-        $result=$product->fetch($product_id);
+	$product = new Product($db);
+	if (! empty($product_id)) $result=$product->fetch($product_id);
 
-        $result=$product->correct_stock(
-            $user,
-            $id,
-            $_POST["nbpiece"],
-            $_POST["mouvement"],
-            $_POST["label"],
-            0
-        );		// We do not change value of stock for a correction
+	$error=0;
+
+	if (empty($product_id))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), 'errors');
+		$action='correction';
+	}
+	if (! is_numeric($_POST["nbpiece"]))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		$action='correction';
+	}
+
+	if (! $error)
+    {
+        if ($product->hasbatch())
+        {
+        	$batch=GETPOST('batch_number');
+        	$eatby=GETPOST('eatby');
+        	$sellby=GETPOST('sellby');
+	        $result=$product->correct_stock_batch(
+	            $user,
+	            $id,
+	            GETPOST("nbpiece",'int'),
+	            GETPOST("mouvement"),
+	            GETPOST("label",'san_alpha'),
+	            GETPOST('unitprice'),
+	        	$eatby,$sellby,$batch,
+	        	GETPOST('inventorycode')
+	        );		// We do not change value of stock for a correction
+        }
+        else
+		{
+	        $result=$product->correct_stock(
+	            $user,
+	            $id,
+	            GETPOST("nbpiece",'int'),
+	            GETPOST("mouvement"),
+	            GETPOST("label",'san_alpha'),
+	            GETPOST('unitprice'),
+	        	GETPOST('inventorycode')
+	        );		// We do not change value of stock for a correction
+        }
 
         if ($result > 0)
         {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
         }
+        else
+       {
+       		$error++;
+        	setEventMessages($product->error, $product->errors, 'errors');
+        	$action='correction';
+       }
     }
-    else $action='';
+
+    if (! $error) $action='';
 }
 
 
@@ -165,6 +207,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 //print $sql;
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -254,7 +297,7 @@ if ($resql)
 
         // Value
         print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
-        print empty($calcproducts['value'])?'0':$calcproducts['value'];
+        print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
         print "</td></tr>";
 
         // Last movement
@@ -285,13 +328,34 @@ if ($resql)
 
         print "</table>";
 
-        print '</div>';
+        dol_fiche_end();
     }
 
+
+	/*
+	 * Correct stock
+	 */
+	if ($action == "correction")
+	{
+		if ($id) $object=$entrepot;
+		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
+		print '<br>';
+	}
+
+	/*
+	 * Transfer of units
+	 */
+	if ($action == "transfert")
+	{
+		if ($id) $object=$entrepot;
+		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
+		print '<br>';
+	}
 
     /*
      * Correct stock
      */
+	/*
     if ($action == "correction")
     {
         print_titre($langs->trans("StockCorrection"));
@@ -300,7 +364,7 @@ if ($resql)
         print '<input type="hidden" name="action" value="correct_stock">';
         print '<table class="border" width="100%">';
 
-        // Warehouse
+        // Product
         print '<tr>';
         print '<td width="20%">'.$langs->trans("Product").'</td>';
         print '<td width="20%">';
@@ -333,10 +397,6 @@ if ($resql)
 		print '</form>';
     }
 
-    /*
-     * Transfer of units
-     */
-    /*
     if ($action == "transfert")
     {
         print_titre($langs->trans("Transfer"));
@@ -454,7 +514,7 @@ if ($resql)
     print '</td>';
     // Product label
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
+    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->label:$search_product).'">';
     print '</td>';
     // Batch
 	if (! empty($conf->productbatch->enabled))

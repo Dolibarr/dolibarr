@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Potrjena intervencija
 Notify_FICHINTER_SENTBYMAIL=Intervencija poslana po EMailu
 Notify_BILL_VALIDATE=Potrjen račun
 Notify_BILL_UNVALIDATE=Račun za kupca ni potrjen
-Notify_ORDER_SUPPLIER_VALIDATE=Naročilo pri dobavitelju je shranjeno
 Notify_ORDER_SUPPLIER_APPROVE=Odobreno naročilo pri dobavitelju
 Notify_ORDER_SUPPLIER_REFUSE=Zavrnjeno naročilo pri dobavitelju
 Notify_ORDER_VALIDATE=Potrjeno naročilo kupca

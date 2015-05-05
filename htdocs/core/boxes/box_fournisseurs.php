@@ -58,12 +58,16 @@ class box_fournisseurs extends ModeleBoxes
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+		$thirdpartytmp=new Fournisseur($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));
 
         if ($user->rights->societe->lire)
         {
-            $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status";
+            $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status,";
+            $sql.= " s.code_fournisseur,";
+            $sql.= " s.logo";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE s.fournisseur = 1";
@@ -78,42 +82,37 @@ class box_fournisseurs extends ModeleBoxes
             {
                 $num = $db->num_rows($result);
 
-                $i = 0;
-                while ($i < $num)
+                $line = 0;
+                while ($line < $num)
                 {
                     $objp = $db->fetch_object($result);
     				$datec=$db->jdate($objp->datec);
     				$datem=$db->jdate($objp->tms);
+					$thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->code_client = $objp->code_client;
+                    $thirdpartytmp->logo = $objp->logo;
 
-                    $tooltip = $langs->trans('Supplier') . ': ' . $objp->name;
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid,
-                    );
-
-                    $this->info_box_contents[$i][1] = array(
+                   	$this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $objp->name,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid,
+                        'text' => $thirdpartytmp->getNomUrl(1, '', 40),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datem, "day"),
                     );
 
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $thirdpartystatic->LibStatut($objp->status,3),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$i][0] = array(
+                if ($num==0) $this->info_box_contents[$line][0] = array(
                     'td' => 'align="center"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
