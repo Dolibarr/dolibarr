@@ -123,7 +123,7 @@ class box_propales extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
-                        'text' => price($objp->total_ht),
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(

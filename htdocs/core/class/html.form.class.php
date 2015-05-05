@@ -1493,13 +1493,13 @@ class Form
      *  @param		int			$price_level			Level of price to show
      *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
-     *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
+     *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @param      int			$socid					Thirdparty Id
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(),$socid=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0)
     {
         global $langs,$conf;
 
@@ -1512,9 +1512,10 @@ class Form
             if ($selected && empty($selected_input_value))
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-                $product = new Product($this->db);
-                $product->fetch($selected);
-                $selected_input_value=$product->ref;
+                $producttmpselect = new Product($this->db);
+                $producttmpselect->fetch($selected);
+                $selected_input_value=$producttmpselect->ref;
+                unset($producttmpselect);
             }
             // mode=1 means customers products
             $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;

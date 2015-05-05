@@ -41,6 +41,9 @@ if ($user->societe_id > 0)
 
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
+$search_login=GETPOST('search_login','alpha');
+$search_lastname=GETPOST('search_lastname','alpha');
+$search_firstname=GETPOST('search_firstname','alpha');
 $search_statut=GETPOST('search_statut','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
@@ -65,7 +68,9 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("ListOfUsers"));
 
-print_fiche_titre($langs->trans("ListOfUsers"), '<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>');
+$buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
+
+print_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 
 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login,";
 $sql.= " u.datec,";
@@ -90,6 +95,9 @@ if (! empty($search_user))
 {
     $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
 }
+if ($search_login != '') $sql.= natural_search("u.login", $search_login);
+if ($search_lastname != '') $sql.= natural_search("u.lastname", $search_lastname);
+if ($search_firstname != '') $sql.= natural_search("u.firstname", $search_firstname);
 if ($search_statut != '' && $search_statut >= 0)
 {
 	$sql.= " AND (u.statut=".$search_statut.")";
@@ -122,13 +130,16 @@ if ($result)
     print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u2.login",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"u.statut",$param,"",'align="center"',$sortfield,$sortorder);
-    print '<td width="1%">&nbsp;</td>';
+    print_liste_field_titre('');
     print "</tr>\n";
 
     // SearchBar
-    $colspan=7;
+    $colspan=4;
     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode)) $colspan++;
     print '<tr class="liste_titre">';
+    print '<td><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
+    print '<td><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
+    print '<td><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
     print '<td colspan="'.$colspan.'">&nbsp;</td>';
 
 	// Status

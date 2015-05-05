@@ -45,7 +45,7 @@ class modResource extends DolibarrModules
 		// Id for module (must be unique).
 		// Use a free id here
 		// (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 110111;
+		$this->numero = 63000;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'resource';
 
@@ -114,7 +114,7 @@ class modResource extends DolibarrModules
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
-		
+
 		$this->langfiles = array("resource@resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
@@ -172,25 +172,25 @@ class modResource extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-		$this->rights[$r][0] = 1101201;
-		$this->rights[$r][1] = 'See resources';
+		$this->rights[$r][0] = 63001;
+		$this->rights[$r][1] = 'Read resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 		$r++;
 
-		$this->rights[$r][0] = 1101202;
-		$this->rights[$r][1] = 'Modify resources';
+		$this->rights[$r][0] = 63002;
+		$this->rights[$r][1] = 'Create/Modify resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$r++;
 
-		$this->rights[$r][0] = 1101203;
+		$this->rights[$r][0] = 63003;
 		$this->rights[$r][1] = 'Delete resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$r++;
 
-		$this->rights[$r][0] = 1101204;
+		$this->rights[$r][0] = 63004;
 		$this->rights[$r][1] = 'Link resources';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'link';

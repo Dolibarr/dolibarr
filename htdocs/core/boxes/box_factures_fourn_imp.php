@@ -56,6 +56,8 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$facturestatic=new FactureFournisseur($db);
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+		$thirdpartytmp=new Fournisseur($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills",$max));
 
@@ -64,6 +66,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.date_lim_reglement as datelimite,";
 			$sql.= " f.amount, f.datef as df,";
+            $sql.= " f.total_ht as total_ht,";
+            $sql.= " f.tva as total_tva,";
+            $sql.= " f.total_ttc,";
 			$sql.= " f.paye, f.fk_statut, f.type";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
@@ -83,26 +88,30 @@ class box_factures_fourn_imp extends ModeleBoxes
 				$num = $db->num_rows($result);
 				$now=dol_now();
 
-				$i = 0;
+				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
 
-				while ($i < $num)
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
+					$thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->code_client = $objp->code_client;
+                    $thirdpartytmp->logo = $objp->logo;
 
 					$late='';
 					if ($datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left" width="16"',
                         'logo' => $this->boximg,
                         'tooltip' => $tooltip,
                         'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
                     );
 
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => ($objp->ref?$objp->ref:$objp->facid),
                         'text2'=> $late,
@@ -110,29 +119,18 @@ class box_factures_fourn_imp extends ModeleBoxes
                         'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
                     );
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $objp->ref_supplier,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                        'text' => $thirdpartytmp->getNomUrl(1, '', 40),
+                        'asis' => 1,
                     );
 
-                    $tooltip = $langs->trans('Supplier') . ': '. $objp->name;
-                    $this->info_box_contents[$i][3] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => 'company',
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid,
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
-                    $this->info_box_contents[$i][4] = array(
-                        'td' => 'align="left"',
-                        'text' => $objp->name,
-                        'tooltip' => $tooltip,
-                        'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid,
-                    );
-
-                    $this->info_box_contents[$i][5] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datelimite,'day'),
                     );
@@ -140,16 +138,16 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);
 					$alreadypaid=$fac->getSommePaiement();
-                    $this->info_box_contents[$i][6] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num==0)
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center"',
                         'text'=>$langs->trans("NoUnpaidSupplierBills"),
                     );

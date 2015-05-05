@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Validate interwencji
 Notify_FICHINTER_SENTBYMAIL=Interwencja wysyłane pocztą
 Notify_BILL_VALIDATE=Sprawdź rachunki
 Notify_BILL_UNVALIDATE=Faktura klienta nie- zwalidowane
-Notify_ORDER_SUPPLIER_VALIDATE=Kolejność Dostawca rejestrowane
 Notify_ORDER_SUPPLIER_APPROVE=Dostawca celu zatwierdzone
 Notify_ORDER_SUPPLIER_REFUSE=Dostawca odmówił celu
 Notify_ORDER_VALIDATE=Zamówienie Klienta potwierdzone

@@ -50,4 +50,4 @@ ArcticNumRefModelError=Activació impossible
 PacificNumRefModelDesc1=Retorna el número amb el format %syymm-nnnn on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense quedar a 0
 PacificNumRefModelError=Una factura que comença per # $$syymm existeix en base i és incompatible amb aquesta numeració. Elemínela o renombrela per activar aquest mòdul.
 PrintProductsOnFichinter=Mostrar els productes a la fitxa d'intervenció
-PrintProductsOnFichinterDetails=interventions generated from orders
+PrintProductsOnFichinterDetails=Intervencions generades des de comandes

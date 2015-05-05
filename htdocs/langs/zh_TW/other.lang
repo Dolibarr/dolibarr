@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=幹預驗證
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=客戶發票驗證
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=供應商為了批準
 Notify_ORDER_SUPPLIER_REFUSE=供應商的訂單被拒絕
 Notify_ORDER_VALIDATE=驗證客戶訂單
