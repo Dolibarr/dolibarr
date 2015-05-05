@@ -1686,7 +1686,7 @@ if (empty($reshook))
 	}
 }
 
-print "\n</div><br>\n";
+print "\n</div>\n";
 
 
 /*
