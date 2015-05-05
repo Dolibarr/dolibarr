@@ -72,8 +72,24 @@ class DolibarrApi {
      */
     protected function _cleanObjectDatas($object){
 
+        // Remove $db object property for object
 		unset($object->db);
-
+        
+        // If object has lines, remove $db property
+        if(isset($object->lines) && count($object->lines) > 0)  {
+            for($i=0; $i < count($object->lines); $i++) {
+                $this->_cleanObjectDatas($object->lines[$i]);
+            }
+        }
+        
+        // If object has linked objects, remove $db property
+        if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
+            foreach($object->linkedObjects as $type_object => $linked_object) {
+                foreach($linked_object as $object2clean) {
+                    $this->_cleanObjectDatas($object2clean);
+                }
+            }
+        }
 		return $object;
     }
 	
