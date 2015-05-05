@@ -45,12 +45,20 @@ class DolibarrApiAccess implements iAuthenticate
 	public static $user = '';
 	 
 	
+    /**
+     * @return string string to be used with WWW-Authenticate header
+     * @example Basic
+     * @example Digest
+     * @example OAuth
+     */
+    public function __getWWWAuthenticateString();
+    
 	/**
 	 * Check access
 	 * 
 	 * @return boolean
 	 */
-	public function __isAllowed()
+	public function _isAllowed()
     {
 		global $db;
 
@@ -104,11 +112,6 @@ class DolibarrApiAccess implements iAuthenticate
         Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
         return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
 	}
-	
-	public function __getWWWAuthenticateString()
-    {
-        return '';
-    }
 	
 	/**
      * Verify access
