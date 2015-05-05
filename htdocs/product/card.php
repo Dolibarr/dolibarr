@@ -1586,7 +1586,7 @@ else
 
 			// Categories
 			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->showCategories($object->id,'product');
+			print $form->showCategories($object->id,'product',1);
 			print "</td></tr>";
 
             print "</table>\n";
