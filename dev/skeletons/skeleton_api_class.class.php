@@ -100,7 +100,7 @@ class SkeletonApi extends DolibarrApi {
      *
      * @return array Array of skeleton objects
      */
-    function getList($mode, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($mode, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -192,7 +192,10 @@ class SkeletonApi extends DolibarrApi {
         foreach($request_data as $field => $value) {
             $this->skeleton->$field = $value;
         }
-        return $this->skeleton->create(DolibarrApiAccess::$user);
+        if( ! $this->skeleton->create(DolibarrApiAccess::$user)) {
+            throw new RestException(500);
+        }
+        return $this->skeleton->id;
     }
 
     /**
@@ -222,7 +225,7 @@ class SkeletonApi extends DolibarrApi {
             $this->skeleton->$field = $value;
         }
         
-        if($this->skeleton->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->skeleton->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
         
         return false;
@@ -249,7 +252,18 @@ class SkeletonApi extends DolibarrApi {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->skeleton->delete($id);
+        if( !$this->skeleton->delete($id))
+        {
+            throw new RestException(500);
+        }
+        
+         return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Skeleton deleted'
+            )
+        );
+        
     }
     
     /**
