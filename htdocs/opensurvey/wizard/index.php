@@ -48,8 +48,8 @@ print '<div class="center">';
 print '<p>'.$langs->trans("OrganizeYourMeetingEasily").'</p>';
 print '<div class="corps">';
 print '<br>';
-print '<div class="index_date"><div><img class="opacity" src="../img/date.png" onclick="document.formulaire.date.click()"></div><button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded"><img src="../img/calendar-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'"><strong>&nbsp;'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'</strong></button></div>';
-print '<div class="index_sondage"><div><img class="opacity" src="../img/sondage2.png" onclick="document.formulaire.autre.click()"></div><button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded"><img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'"><strong>&nbsp;'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</strong></button></div><div style="clear:both;"></div>';
+print '<div class="index_date"><div><img class="opacity imgopensurveywizard" src="../img/date.png" onclick="document.formulaire.date.click()"></div><button id="date" name="choix_sondage" value="date" type="submit" class="button orange bigrounded"><img src="../img/calendar-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'" style="padding-right: 4px">'.dol_escape_htmltag($langs->trans("CreateSurveyDate")).'</button></div>';
+print '<div class="index_sondage"><div><img class="opacity imgopensurveywizard" src="../img/sondage2.png" onclick="document.formulaire.autre.click()"></div><button id="autre" name="choix_sondage" value="autre" type="submit" class="button blue bigrounded"><img src="../img/chart-32.png" alt="'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'" style="padding-right: 4px">'.dol_escape_htmltag($langs->trans("CreateSurveyStandard")).'</button></div><div style="clear:both;"></div>';
 print '</div>';
 print '</div></form>';
 

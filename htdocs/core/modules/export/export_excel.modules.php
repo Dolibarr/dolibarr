@@ -190,7 +190,7 @@ class ExportExcel extends ModeleExports
 	            	return -1;
 	            }
 		    }
-		    
+
 		    if (!empty($conf->global->MAIN_USE_FILECACHE_EXPORT_EXCEL_DIR)) {
 			    $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_discISAM;
 			    $cacheSettings = array (
@@ -426,7 +426,7 @@ class ExportExcel extends ModeleExports
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
     	}
-		return 0;
+		return 1;
 	}
 
 

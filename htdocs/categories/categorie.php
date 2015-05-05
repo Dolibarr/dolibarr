@@ -357,7 +357,7 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->label.'</td>';
 		print '</tr>';
 
 		// Status (to sell)

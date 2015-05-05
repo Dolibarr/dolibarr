@@ -169,7 +169,7 @@ if (empty($reshook))
     {
         $error=0;
 
-        if (! GETPOST('libelle'))
+        if (! GETPOST('label'))
         {
             setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), 'errors');
             $action = "create";
@@ -187,7 +187,7 @@ if (empty($reshook))
 	        $units = GETPOST('units', 'int');
 
             $object->ref                   = $ref;
-            $object->libelle               = GETPOST('libelle');
+            $object->label                 = GETPOST('label');
             $object->price_base_type       = GETPOST('price_base_type');
 
             if ($object->price_base_type == 'TTC')
@@ -315,7 +315,7 @@ if (empty($reshook))
             	$object->oldcopy=dol_clone($object);
 
                 $object->ref                    = $ref;
-                $object->libelle                = GETPOST('libelle');
+                $object->label                  = GETPOST('label');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
             	$object->url					= GETPOST('url');
                 $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
@@ -822,7 +822,7 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('libelle')).'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
 
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
@@ -1085,7 +1085,7 @@ else
             print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
             // Status To sell
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
@@ -1341,7 +1341,7 @@ else
             print '</tr>';
 
             // Label
-            print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
+            print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td>';
 
             $nblignes=7;
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
@@ -1586,7 +1586,7 @@ else
 
 			// Categories
 			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->showCategories($object->id,'product');
+			print $form->showCategories($object->id,'product',1);
 			print "</td></tr>";
 
             print "</table>\n";
