@@ -793,7 +793,7 @@ function updateInvoice($authentication,$invoice)
 						$order->generateDocument($invoice->modelpdf, $outputlangs);		
 					}
 				}
-				if ($invlice['status'] == 2)
+				if ($invoice['status'] == 2)
 				{
 					$result = $object->set_paid($fuser,$invoice->close_code,$invoice->close_note);			
 				}
