@@ -115,7 +115,7 @@ if ($id > 0 || ! empty($ref)) {
 		print '</tr>';
 
 		// Libelle
-		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->libelle . '</td>';
+		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->label . '</td>';
 		print '</tr>';
 
 		// Status (to sell)
