@@ -627,7 +627,7 @@ function updateContact($authentication,$contact)
 	$error=0;
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 	// Check parameters
-	if (empty($contact['id']) && empty($contact['ref_ext'])	{
+	if (empty($contact['id']) && empty($contact['ref_ext']))	{
 		$error++; $errorcode='KO'; $errorlabel="Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
