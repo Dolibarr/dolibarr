@@ -2974,7 +2974,6 @@ a span.select2-chosen
 	cursor: default;
 }
 .select2-container-multi .select2-choices .select2-search-choice {
-  margin-top: 2px;
   margin-bottom: 2px;
 }
 
