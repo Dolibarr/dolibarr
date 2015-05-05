@@ -85,6 +85,10 @@ foreach ($modulesdir as $dir)
                     $part = 'categories';
 					$obj = 'category';
 				}
+                if ($module == 'facture') {
+                    $part = 'compta/facture';
+					$obj = 'facture';
+				}
                 if (empty($conf->$module->enabled)) $enabled=false;
                 
                 if ($enabled)
