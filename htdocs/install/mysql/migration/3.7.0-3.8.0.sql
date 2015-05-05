@@ -602,6 +602,9 @@ ALTER TABLE llx_user DROP INDEX idx_user_fk_societe;
 ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER;
 ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
 
-
-
+ALTER TABLE llx_actioncomm ADD COLUMN email_msgid varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
 
