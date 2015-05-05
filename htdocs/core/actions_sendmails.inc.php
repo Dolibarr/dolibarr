@@ -22,7 +22,7 @@
  */
 
 
-// TODO Include this include file into all class objects
+// TODO Include this include file into all element pages allowing email sending
 
 // $id must be defined
 // $actiontypecode must be defined
@@ -161,9 +161,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
+			$trackid = GETPOST('trackid','aZ');
+
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
 			if ($mailfile->error)
 			{
 				$mesgs[]='<div class="error">'.$mailfile->error.'</div>';
