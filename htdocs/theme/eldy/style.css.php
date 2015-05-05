@@ -447,6 +447,7 @@ textarea.centpercent {
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
 
+.clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
@@ -1359,8 +1360,6 @@ img.toolbarbutton {
 /* Onglets                                                                        */
 /* ============================================================================== */
 div.tabs {
-/*    margin: 0px 0px 2px 6px;
-    padding: 0px 6px 3px 0px; */
     text-align: <?php print $left; ?>;
     margin-left: 6px !important;
     margin-right: 6px !important;
@@ -3157,6 +3156,18 @@ border-top-right-radius: 6px;
 .lilevel3
 {
 	padding-left: 54px;
+}
+
+
+/* CSS style used for small screen */
+
+.imgopensurveywizard
+{
+	padding: 0 4px 0 4px;
+}
+@media only screen and (max-width: 767px)
+{
+	.imgopensurveywizard { width:95%; height: auto; }
 }
 
 <?php
