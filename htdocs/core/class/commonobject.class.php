@@ -91,10 +91,11 @@ abstract class CommonObject
      */
     public $canvas;
 
-    /**
-     *
-     * @var object      Thirdparty associated with object
-     */
+
+    public $name;
+    public $lastname;
+    public $firstname;
+    public $civility_id;
     public $thirdparty;
 
     // No constructor as it is an abstract class
