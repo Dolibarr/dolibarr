@@ -40,8 +40,16 @@ class CategoryApi extends DolibarrApi {
         'type'
     );
 
+    static $TYPES = array(
+        0 => 'product',
+        1 => 'supplier',
+        2 => 'customer',
+        3 => 'member',
+        4 => 'contact',
+    );
+    
     /**
-     * @var category $category {@type category}
+     * @var Categorie $category {@type Categorie}
      */
     public $category;
 
@@ -56,6 +64,7 @@ class CategoryApi extends DolibarrApi {
 		global $db, $conf;
 		$this->db = $db;
         $this->category = new Categorie($this->db);
+        
     }
 
     /**
@@ -71,7 +80,7 @@ class CategoryApi extends DolibarrApi {
      */
     function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->category->read) {
+		if(! DolibarrApiAccess::$user->rights->category->lire) {
 			throw new RestException(401);
 		}
 			
@@ -94,7 +103,7 @@ class CategoryApi extends DolibarrApi {
      *
      * @url	GET /category/list
      * 
-     * @param int		$mode		Use this param to filter list
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -102,7 +111,7 @@ class CategoryApi extends DolibarrApi {
      *
      * @return array Array of category objects
      */
-    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($type='product', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -113,13 +122,9 @@ class CategoryApi extends DolibarrApi {
         
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        
-		// Example of use $mode
-        //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
-        //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
-
         $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
-        
+        $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
+
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
@@ -153,12 +158,87 @@ class CategoryApi extends DolibarrApi {
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve category list');
+            throw new RestException(503, 'Error when retrieve category list : '.$category_static->error);
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
         }
 		return $obj_ret;
+    }
+    
+    /**
+     * Get member categories list
+     * 
+     * @url GET /category/list/member
+     * 
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     * 
+     * @return mixed
+     */
+    function getListCategoryMember($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        return $this->getList('member', $sortfield, $sortorder, $limit, $page);  
+    }
+    
+    /**
+     * Get customer categories list
+     * 
+     * @url GET /category/list/customer
+     * 
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     * 
+     * @return mixed
+     */
+    function getListCategoryCustomer($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        return $this->getList('customer', $sortfield, $sortorder, $limit, $page);  
+    }
+    
+    /**
+     * Get supplier categories list
+     * 
+     * @url GET /category/list/supplier
+     * 
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     * 
+     * @return mixed
+     */
+    function getListCategorySupplier($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        return $this->getList('supplier', $sortfield, $sortorder, $limit, $page);  
+    }
+    
+    /**
+     * Get product categories list
+     * 
+     * @url GET /category/list/product
+     * 
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     * 
+     * @return mixed
+     */
+    function getListCategoryProduct($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        return $this->getList('product', $sortfield, $sortorder, $limit, $page);  
+    }
+    
+    /**
+     * Get contact categories list
+     * 
+     * @url GET /category/list/contact
+     * 
+     * @return mixed
+     */
+    function getListCategoryContact($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        return $this->getList('contact', $sortfield, $sortorder, $limit, $page);  
     }
     
     /**
