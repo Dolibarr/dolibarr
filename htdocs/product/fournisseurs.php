@@ -280,7 +280,7 @@ if ($id || $ref)
 			print '</tr>';
 
 			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->label.'</td></tr>';
 
 			// Minimum Price
 			print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';

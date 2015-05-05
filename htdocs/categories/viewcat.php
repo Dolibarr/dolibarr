@@ -327,7 +327,7 @@ if ($object->type == 0)
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1,'category');
 				print "</td>\n";
-				print '<td valign="top">'.$prod->libelle."</td>\n";
+				print '<td valign="top">'.$prod->label."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;

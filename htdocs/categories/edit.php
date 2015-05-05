@@ -37,7 +37,7 @@ $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 
 $socid=GETPOST('socid','int');
-$nom=GETPOST('nom');
+$label=GETPOST('label');
 $description=GETPOST('description');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
@@ -66,7 +66,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	$categorie = new Categorie($db);
 	$result=$categorie->fetch($id);
 
-	$categorie->label          = $nom;
+	$categorie->label          = $label;
 	$categorie->description    = dol_htmlcleanlastbr($description);
 	$categorie->socid          = ($socid ? $socid : 'null');
 	$categorie->visible        = $visible;
@@ -138,13 +138,13 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td class="fieldrequired">';
 print $langs->trans("Ref").'</td>';
-print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$object->label.'" />';
+print '<td><input type="text" size="25" id="label" name ="label" value="'.$object->label.'" />';
 print '</tr>';
 
 // Description
 print '<tr>';
-print '<td width="25%">'.$langs->trans("Description").'</td>';
-print '<td>';
+print '<td class="fieldrequired" width="25%">'.$langs->trans("Description").'</td>';
+print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
 $doleditor->Create();

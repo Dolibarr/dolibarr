@@ -1402,7 +1402,7 @@ class Commande extends CommonOrder
             $line->localtax1_tx=$localtax1_tx;
             $line->localtax2_tx=$localtax2_tx;
             $line->ref=$prod->ref;
-            $line->libelle=$prod->libelle;
+            $line->libelle=$prod->label;
             $line->product_desc=$prod->description;
 	        $line->fk_unit=$prod->fk_unit;
 

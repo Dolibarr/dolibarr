@@ -102,7 +102,7 @@ if ($id)
 		print '<td colspan="2">';
 		print $object->getLibStatut(2);
 		print '</td></tr>';
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td>';
 		print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($object->price).'</td></tr>';
 		print "</table><br>\n";
 

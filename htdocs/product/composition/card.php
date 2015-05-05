@@ -524,7 +524,7 @@ if ($id > 0 || ! empty($ref))
 						print "\n<tr ".$bc[$var].">";
 						$productstatic->id=$objp->rowid;
 						$productstatic->ref=$objp->ref;
-						$productstatic->libelle=$objp->label;
+						$productstatic->label=$objp->label;
 						$productstatic->type=$objp->type;
 
 						print '<td>'.$productstatic->getNomUrl(1,'',24).'</td>';
