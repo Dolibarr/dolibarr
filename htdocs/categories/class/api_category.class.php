@@ -73,6 +73,7 @@ class CategoryApi extends DolibarrApi {
      * Return an array with category informations
      *
      * @url	GET category/{id}
+     * 
      * @param 	int 	$id ID of category
      * @return 	array|mixed data without useless information
 	 * 
@@ -80,7 +81,7 @@ class CategoryApi extends DolibarrApi {
      */
     function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->category->lire) {
+		if(! DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
 		}
 			
@@ -292,7 +293,7 @@ class CategoryApi extends DolibarrApi {
             $this->category->$field = $value;
         }
         
-        if($this->category->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->category->update(DolibarrApiAccess::$user))
             return $this->get ($id);
         
         return false;
@@ -319,7 +320,16 @@ class CategoryApi extends DolibarrApi {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->category->delete($id);
+        if (! $this->category->delete(DolibarrApiAccess::$user)) {
+            throw new RestException(401,'error when delete category');
+        }
+        
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Category deleted'
+            )
+        );
     }
     
     /**
