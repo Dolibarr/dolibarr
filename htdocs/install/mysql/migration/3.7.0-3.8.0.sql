@@ -607,4 +607,6 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);
+
 

@@ -40,15 +40,13 @@ create table llx_actioncomm
   fk_soc			integer,
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
-
   fk_user_action	integer,						-- user id of owner of action (note that assigned users to event are store into another table) 
-  transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_resources)
 
-  fk_user_done		integer,						-- user id of user that has made action (deprecated)
-  
-  priority			smallint,
-  fulldayevent		smallint NOT NULL default 0,
-  punctual			smallint NOT NULL default 1, -- deprecated. milestone is event with date start = date end
+  transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, so into table llx_actioncomm_resources.
+
+  priority			smallint,						-- priority (ical standard)
+  fulldayevent		smallint NOT NULL default 0, -- priority (ical standard)
+  punctual			smallint NOT NULL default 1, -- deprecated. milestone is event with date start (datep) = date end (datep2)
   percent			smallint NOT NULL default 0,
   location			varchar(128),
   durationp			real,							-- planed duration
@@ -61,6 +59,8 @@ create table llx_actioncomm
   email_sender		varchar(256),					-- when event was an email, we store here the sender
   email_to			varchar(256),					-- when event was an email, we store here the email_to
   errors_to			varchar(256),					-- when event was an email, we store here the erros_to
+  
+  recurid           varchar(128),                  -- used to store event id to link all recurring event records each other  
   
   fk_element		integer DEFAULT NULL,
   elementtype		varchar(32) DEFAULT NULL
