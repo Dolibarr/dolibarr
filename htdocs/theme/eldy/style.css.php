@@ -247,9 +247,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
     background: #FDFDFD;
-    color: #444;
+    color: #111;
     border: 1px solid #C0C0C0;
-    /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
 }
 
@@ -544,6 +543,10 @@ margin : 0px auto;
 #pictotitle {
 	margin-right: 8px;
 	margin-bottom: 4px;
+}
+.pictosubstatus {
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 

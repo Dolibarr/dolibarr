@@ -614,10 +614,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create))
     {
     	$colspan++;
-        print '<td>&nbsp;</td>';
+        print_liste_field_titre('');
     }
     // Edit
-    print '<td>&nbsp;</td>';
+    print_liste_field_titre('');
     print "</tr>";
 
 

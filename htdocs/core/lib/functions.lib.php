@@ -2046,22 +2046,24 @@ function img_picto_common($titlealt, $picto, $options = '', $pictoisfullpath = 0
 /**
  *	Show logo action
  *
- *	@param	string	$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  int		$numaction   	Action to show
- *	@return string      			Return an img tag
+ *	@param	string		$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string		$numaction   	Action id or code to show
+ *	@return string      				Return an img tag
  */
 function img_action($titlealt, $numaction)
 {
 	global $conf, $langs;
 
-	if ($titlealt == 'default')
+	if (empty($titlealt) || $titlealt == 'default')
 	{
-		if ($numaction == -1) $titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
-		if ($numaction == 0) $titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
-		if ($numaction == 1) $titlealt = $langs->transnoentitiesnoconv('ChangeToContact');
-		if ($numaction == 2) $titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
-		if ($numaction == 3) $titlealt = $langs->transnoentitiesnoconv('ChangeContactDone');
+		if ($numaction == '-1' || $numaction == 'ST_NO')			{ $numaction = -1; $titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact'); }
+		elseif ($numaction ==  '0' || $numaction == 'ST_NEVER') 	{ $numaction = 0; $titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted'); }
+		elseif ($numaction ==  '1' || $numaction == 'ST_TODO')  	{ $numaction = 1; $titlealt = $langs->transnoentitiesnoconv('ChangeToContact'); }
+		elseif ($numaction ==  '2' || $numaction == 'ST_PEND')  	{ $numaction = 2; $titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess'); }
+		elseif ($numaction ==  '3' || $numaction == 'ST_DONE')  	{ $numaction = 3; $titlealt = $langs->transnoentitiesnoconv('ChangeContactDone'); }
+		else { $titlealt = $langs->transnoentitiesnoconv('ChangeStatus '.$numaction); $numaction = 0; }
 	}
+	if (! is_numeric($numaction)) $numaction=0;
 
 	return img_picto($titlealt, 'stcomm'.$numaction.'.png');
 }

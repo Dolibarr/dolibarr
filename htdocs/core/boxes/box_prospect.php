@@ -26,7 +26,7 @@
 
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
+include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 
 /**
@@ -74,8 +74,7 @@ class box_prospect extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
-		$thirdpartystatic=new Prospect($db);
+		$thirdpartystatic=new Client($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));
 
@@ -130,7 +129,7 @@ class box_prospect extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => str_replace('img ','img height="14" ',$thirdpartystatic->LibProspStatut($objp->fk_stcomm,3)),
+                        'text' => str_replace('img ','img height="14" ',$thirdpartystatic->LibProspCommStatut($objp->fk_stcomm,3)),
                     );
 
                     $this->info_box_contents[$line][] = array(
