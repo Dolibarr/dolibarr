@@ -152,7 +152,7 @@ abstract class ModelNumRefExpedition
  *  @return int             			<=0 if KO, >0 if OK
  * @deprecated Use the new function generateDocument of Expedition class
  */
-function expedition_pdf_create(DoliDB $db, Expedition $object, $modele, $outputlangs)
+function expedition_pdf_create(DoliDB $db, Expedition $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	return $object->generateDocument($modele, $outputlangs);
+	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
