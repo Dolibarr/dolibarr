@@ -87,7 +87,7 @@ if (! empty($id)) {
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
 
 	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity = '" . $conf->entity . "'";
+		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 	}
 
 	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);

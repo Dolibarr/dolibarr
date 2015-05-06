@@ -136,7 +136,7 @@ if (strlen(trim($search_account))) {
 	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
 }
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity = '" . $conf->entity . "'";
+	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
 
 $sql .= " ORDER BY l.rowid";

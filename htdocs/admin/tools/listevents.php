@@ -123,7 +123,7 @@ $sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql.= " WHERE e.entity = ".$conf->entity;
+$sql.= " WHERE e.entity IN (".getEntity('actioncomm', 1).")";
 if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$db->escape($search_code)."%'"; }
 if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$db->escape($search_ip)."%'"; }
 if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$db->escape($search_user)."%'"; }
