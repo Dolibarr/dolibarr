@@ -159,32 +159,12 @@ class pdf_azur extends ModelePDFPropales
 		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 		{
 			$objphoto = new Product($this->db);
-			
+
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
-				/*if (empty($object->lines[$i]->fk_product)) continue;
-
-				$objphoto = new Product($this->db);
-				$objphoto->fetch($object->lines[$i]->fk_product);
-
-				$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
-
-				$realpath='';
-				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
-				{
-					$filename=$obj['photo'];
-					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
-					$realpath = $dir.$filename;
-					break;
-				}
-
-				if ($realpath) $realpatharray[$i]=$realpath;*/
-				
-				$objphoto->fetch($object->lines[$i]->fk_product);
-				
 				if (empty($object->lines[$i]->fk_product)) continue;
-				else $objphoto->fetch($object->lines[$i]->fk_product);
+
+				$objphoto->fetch($object->lines[$i]->fk_product);
 
 				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 				{
@@ -196,18 +176,19 @@ class pdf_azur extends ModelePDFPropales
 					$pdir[0] = dol_sanitizeFileName($objphoto->ref).'/';
 					$pdir[1] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";
 				}
+
 				$arephoto = false;
 				foreach ($pdir as $midir)
 				{
-					if(!$arephoto)
+					if (! $arephoto)
 					{
 						$dir = $conf->product->dir_output.'/'.$midir;
-					
+
 						foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
 						{
-							if($conf->global->CAT_HIGH_QUALITY_IMAGES == 0)
+							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 							{
-								if ( $obj['photo_vignette'])
+								if ($obj['photo_vignette'])
 								{
 									$filename= $obj['photo_vignette'];
 								}
@@ -220,17 +201,17 @@ class pdf_azur extends ModelePDFPropales
 							{
 								$filename=$obj['photo'];
 							}
-	
+
 							$realpath = $dir.$filename;
 							$arephoto = true;
 						}
 					}
 				}
-	
+
 				if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
 			}
 		}
-		
+
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
 		if ($conf->propal->dir_output)
