@@ -1617,7 +1617,7 @@ class CommandeFournisseur extends CommonOrder
         		$file = $dir . "/" . $ref . ".pdf";
         		if (file_exists($file))
         		{
-        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+        			if (! dol_delete_file($file))
         			{
         				$this->error='ErrorFailToDeleteFile';
         				$error++;
