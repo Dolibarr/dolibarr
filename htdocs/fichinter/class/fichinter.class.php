@@ -741,7 +741,7 @@ class Fichinter extends CommonObject
 					{
 						dol_delete_preview($this);
 
-						if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+						if (! dol_delete_file($file))
 						{
 							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 							return 0;

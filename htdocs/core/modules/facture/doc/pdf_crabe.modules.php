@@ -665,7 +665,9 @@ class pdf_crabe extends ModelePDFFactures
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				{
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				return 1;   // Pas d'erreur
 			}
@@ -1473,6 +1475,14 @@ class pdf_crabe extends ModelePDFFactures
 		if ($object->ref_client)
 		{
 			$posy+=4;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		}
+
+		if ($object->ref_client)
+		{
+			$posy+=5;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');

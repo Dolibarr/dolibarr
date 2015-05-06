@@ -1,0 +1,135 @@
+[submodule "htdocs/custom/productdiscount"]
+	path = htdocs/custom/productdiscount
+	url = git+ssh://hregis@doliforge.org/gitroot/productdiscount/productdiscount.git
+[submodule "htdocs/custom/multicompany"]
+	path = htdocs/custom/multicompany
+	url = gitolite@doliforge.org:multicompany/multicompany.git
+[submodule "htdocs/custom/paypalplus"]
+	path = htdocs/custom/paypalplus
+	url = git+ssh://hregis@doliforge.org/gitroot/paypalplus/paypalplus.git
+[submodule "htdocs/custom/milestone"]
+	path = htdocs/custom/milestone
+	url = gitolite@doliforge.org:milestone/milestone.git
+[submodule "htdocs/custom/docgen"]
+	path = htdocs/custom/docgen
+	url = git+ssh://hregis@doliforge.org/gitroot/docgen/docgen.git
+[submodule "htdocs/custom/extrafields"]
+	path = htdocs/custom/extrafields
+	url = gitolite@doliforge.org:extrafields/extrafields.git
+[submodule "htdocs/custom/business"]
+	path = htdocs/custom/business
+	url = gitolite@doliforge.org:business/business.git
+[submodule "htdocs/custom/agefodd"]
+	path = htdocs/custom/agefodd
+	url = gitolite@doliforge.org:agefodd/agefodd.git
+[submodule "htdocs/custom/genfac"]
+	path = htdocs/custom/genfac
+	url = git+ssh://hregis@doliforge.org/gitroot/massfacturation/massfacturation.git
+[submodule "htdocs/custom/lead"]
+	path = htdocs/custom/lead
+	url = git+ssh://hregis@doliforge.org/gitroot/lead/lead.git
+[submodule "htdocs/custom/team"]
+	path = htdocs/custom/team
+	url = gitolite@doliforge.org:team/team.git
+[submodule "htdocs/custom/highcharts"]
+	path = htdocs/custom/highcharts
+	url = git+ssh://hregis@doliforge.org/gitroot/highcharts/highcharts.git
+[submodule "htdocs/custom/joomla"]
+	path = htdocs/custom/joomla
+	url = gitolite@doliforge.org:joomla/joomla.git
+[submodule "htdocs/custom/donation"]
+	path = htdocs/custom/donation
+	url = git+ssh://hregis@doliforge.org/gitroot/capnetworks/donate.git
+[submodule "htdocs/custom/fidppi"]
+	path = htdocs/custom/fidppi
+	url = git+ssh://hregis@doliforge.org/gitroot/fidppi/fidppi.git
+[submodule "htdocs/custom/monitoring"]
+	path = htdocs/custom/monitoring
+	url = git+ssh://hregis@doliforge.org/gitroot/monitoring/monitoring.git
+[submodule "htdocs/custom/hosting"]
+	path = htdocs/custom/hosting
+	url = git+ssh://hregis@doliforge.org/gitroot/hosting/hosting.git
+[submodule "htdocs/custom/ventilation"]
+        path = htdocs/custom/ventilation
+        url = gitolite@doliforge.org:ventilation/ventilation.git
+[submodule "htdocs/custom/book"]
+        path = htdocs/custom/book
+        url = gitolite@doliforge.org:book/book.git
+[submodule "htdocs/custom/accounting"]
+	path = htdocs/custom/accounting
+	url = git+ssh://hregis@doliforge.org/gitroot/accounting/accounting.git
+[submodule "htdocs/custom/dcloud"]
+	path = htdocs/custom/dcloud
+	url = gitolite@doliforge.org:dcloud/dcloud.git
+[submodule "htdocs/custom/bigbluebutton"]
+	path = htdocs/custom/bigbluebutton
+	url = gitolite@doliforge.org:bigbluebutton/bigbluebutton.git
+[submodule "htdocs/custom/employees"]
+	path = htdocs/custom/employees
+	url = gitolite@doliforge.org:employees/employees.git
+[submodule "htdocs/custom/ondeo"]
+	path = htdocs/custom/ondeo
+	url = gitolite@doliforge.org:ondeo/ondeo.git
+[submodule "htdocs/custom/reports"]
+	path = htdocs/custom/reports
+	url = gitolite@doliforge.org:reports/reports.git
+[submodule "htdocs/custom/multicurrency"]
+	path = htdocs/custom/multicurrency
+	url = gitolite@doliforge.org:multicurrency/multicurrency.git
+[submodule "htdocs/custom/google"]
+	path = htdocs/custom/google
+	url = gitolite@doliforge.org:google/google.git
+[submodule "htdocs/custom/dolibox"]
+	path = htdocs/custom/dolibox
+	url = gitolite@doliforge.org:dolibox/dolibox.git
+[submodule "htdocs/custom/ultimatepdf"]
+	path = htdocs/custom/ultimatepdf
+	url = gitolite@doliforge.org:ultimatepdf/ultimatepdf.git
+[submodule "htdocs/custom/variantpro"]
+	path = htdocs/custom/variantpro
+	url = gitolite@doliforge.org:variantpro/variantpro.git
+[submodule "htdocs/custom/speedfinder"]
+	path = htdocs/custom/speedfinder
+	url = gitolite@doliforge.org:speedfinder/speedfinder.git
+[submodule "htdocs/custom/locker"]
+	path = htdocs/custom/locker
+	url = gitolite@doliforge.org:book/locker.git
+[submodule "htdocs/custom/composition"]
+	path = htdocs/custom/composition
+	url = gitolite@doliforge.org:composition/composition.git
+[submodule "htdocs/custom/formbuilder"]
+	path = htdocs/custom/formbuilder
+	url = gitolite@doliforge.org:formbuilder/formbuilder.git
+[submodule "htdocs/custom/catalog"]
+	path = htdocs/custom/catalog
+	url = gitolite@doliforge.org:catalog/Catalog.git
+[submodule "htdocs/custom/newsletter"]
+	path = htdocs/custom/newsletter
+	url = gitolite@doliforge.org:newsletter/newsletter.git
+[submodule "htdocs/custom/contratabonnement"]
+	path = htdocs/custom/contratabonnement
+	url = gitolite@doliforge.org:contratabonnement/contratabonnement.git
+[submodule "htdocs/custom/ndfp"]
+	path = htdocs/custom/ndfp
+	url = gitolite@doliforge.org:ndfp/ndfp.git
+[submodule "htdocs/custom/ecmplus"]
+	path = htdocs/custom/ecmplus
+	url = gitolite@doliforge.org:ecmplus/ecmplus.git
+[submodule "htdocs/custom/googlemaps"]
+	path = htdocs/custom/googlemaps
+	url = gitolite@doliforge.org:googlemaps/googlemaps.git
+[submodule "htdocs/custom/abonnes"]
+	path = htdocs/custom/abonnes
+	url = gitolite@doliforge.org:publication/abonnes.git
+[submodule "htdocs/custom/b2s"]
+	path = htdocs/custom/b2s
+	url = gitolite@doliforge.org:b2s/b2s.git
+[submodule "htdocs/custom/fidelite"]
+	path = htdocs/custom/fidelite
+	url = gitolite@doliforge.org:fidelite/fidelite.git
+[submodule "htdocs/custom/dol2speed"]
+	path = htdocs/custom/dol2speed
+	url = git@bitbucket.org:speedealing/dol2speed.git
+[submodule "htdocs/custom/pos"]
+	path = htdocs/custom/pos
+	url = gitolite@forge.speedealing.com:pos/pos.git

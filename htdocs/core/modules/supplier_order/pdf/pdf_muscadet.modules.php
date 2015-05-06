@@ -556,7 +556,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				{
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				return 1;   // Pas d'erreur
 			}

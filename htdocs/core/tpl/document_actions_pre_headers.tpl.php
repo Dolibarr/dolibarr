@@ -58,7 +58,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
         if ($urlfile)
         {
-            $ret = dol_delete_file($file, 0, 0, 0, $object);
+            $ret = dol_delete_file($file);
             if ($ret) {
                 setEventMessage($langs->trans("FileWasRemoved", $urlfile));
             } else {

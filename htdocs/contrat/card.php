@@ -825,7 +825,7 @@ else if ($action == 'remove_file' && $user->rights->contrat->creer) {
 		$langs->load("other");
 		$upload_dir = $conf->contrat->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file);
 		if ($ret)
 			setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
 		else
