@@ -95,7 +95,7 @@ class ExportExcel2007 extends ExportExcel
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
     	}
-		return 0;
+		return 1;
 	}
 
 }

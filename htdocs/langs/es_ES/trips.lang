@@ -1,22 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-Trip=Desplazamiento
-Trips=Desplazamientos
-TripsAndExpenses=Honorarios
-TripsAndExpensesStatistics=Estadísticas de honorarios
-TripCard=Ficha honorario
-AddTrip=Crear honorario
-ListOfTrips=Listado de honorarios
-ListOfFees=Listado notas de honorarios
-NewTrip=Nuevo honorario
+ExpenseReport=Gasto
+ExpenseReports=Informes de gastos
+Trip=Gasto
+Trips=Gastos
+TripsAndExpenses=Gastos
+TripsAndExpensesStatistics=Estadísticas de gastos
+TripCard=Ficha de gasto
+AddTrip=Crear gasto
+ListOfTrips=Listado de gastos
+ListOfFees=Listado de honorarios
+NewTrip=Nuevo gasto
 CompanyVisited=Empresa/institución visitada
 Kilometers=Kilometros
 FeesKilometersOrAmout=Importe o kilómetros
-DeleteTrip=Eliminar honorario
-ConfirmDeleteTrip=¿Está seguro de querer eliminar este honorario?
-TF_OTHER=Otro
-TF_LUNCH=Dieta
-TF_TRIP=Viaje
-ListTripsAndExpenses=Listado notas de honorarios
-ExpensesArea=Área de Notas de honorarios
-SearchATripAndExpense=Buscar un honorario
+DeleteTrip=Eliminar gasto
+ConfirmDeleteTrip=¿Está seguro de querer eliminar este gasto?
+ListTripsAndExpenses=Listado de gastos
+ListToApprove=En espera de aprobación
+ExpensesArea=Área de gastos
+SearchATripAndExpense=Buscar un gasto
 ClassifyRefunded=Clasificar 'Reembolsado'
+ExpenseReportWaitingForApproval=Se ha enviado un nuevo gasto para ser aprobado
+ExpenseReportWaitingForApprovalMessage=Un nuevo gasto ha sido enviado y espera su aprobación.\n-Usuario: %s\n-Periodo: %s\nHaga clic aquí para validarlo: %s
+TripId=Id de gasto
+AnyOtherInThisListCanValidate=Persona a informar para la validación
+TripSociete=Información de la empresa
+TripSalarie=Información del usuario
+TripNDF=Información del gasto
+DeleteLine=Eliminar una línea del gasto
+ConfirmDeleteLine=¿Está seguro de querer eliminar esta línea?
+PDFStandardExpenseReports=Plantilla estandard para generar un documento de gasto
+ExpenseReportLine=Línea de gasto
+TF_OTHER=Otro
+TF_TRANSPORTATION=Transporte
+TF_LUNCH=Dieta
+TF_METRO=Metro
+TF_TRAIN=Tren
+TF_BUS=Autobus
+TF_CAR=Coche
+TF_PEAGE=Peaje
+TF_ESSENCE=Combustible
+TF_HOTEL=Hotel
+TF_TAXI=Taxi
+
+ErrorDoubleDeclaration=Ha declarado otro gasto en un rango similar de fechas.
+ListTripsAndExpenses=Listado de gastos
+AucuneNDF=No se han encontrado gastos con este criterio
+AucuneLigne=No hay gastos declarados
+AddLine=Añadir una línea
+AddLineMini=Añadir
+
+Date_DEBUT=Fecha de inicio del periodo
+Date_FIN=Fecha fin del periodo
+ModePaiement=Modo de pago
+Note=Nota
+Project=Proyecto
+
+VALIDATOR=Usuario a informar para la aprobación
+VALIDOR=Aprobado por
+AUTHOR=Registrado por
+AUTHORPAIEMENT=Pagado por
+REFUSEUR=Denegado por
+CANCEL_USER=Cancelado por
+
+MOTIF_REFUS=Razón
+MOTIF_CANCEL=Razón
+
+DATE_REFUS=Fecha denegación
+DATE_SAVE=Fecha de validación
+DATE_VALIDE=Fecha de validación
+DATE_CANCEL=Fecha cancelación
+DATE_PAIEMENT=Fecha de pago
+
+TO_PAID=Pagar
+BROUILLONNER=Reabrir
+SendToValid=Enviar para aprobar
+ModifyInfoGen=Modificar
+ValidateAndSubmit=Validar y enviar para aprobar
+
+NOT_VALIDATOR=No está autorizado para aprobar este gasto
+NOT_AUTHOR=No es el autor de este gasto. Operación cancelada.
+
+RefuseTrip=Denegar un gasto
+ConfirmRefuseTrip=¿Está seguro de querer denegar este gasto?
+
+ValideTrip=Aprobar gasto
+ConfirmValideTrip=¿Está seguro de querer aprobar este gasto?
+
+PaidTrip=Pagar gasto
+ConfirmPaidTrip=¿Está seguro de querer cambiar el estado de este gasto a "Pagado"?
+
+CancelTrip=Cancelar gasto
+ConfirmCancelTrip=¿Está seguro de querer cancelar este gasto?
+
+BrouillonnerTrip=Devolver gasto al estado "Borrador"
+ConfirmBrouillonnerTrip=¿Está seguro de querer devolver este gasto al estado "Borrador"?
+
+SaveTrip=Validar gasto
+ConfirmSaveTrip=¿Está seguro de querer validar este gasto?
+
+NoTripsToExportCSV=Sin gastos a exportar para este periodo.

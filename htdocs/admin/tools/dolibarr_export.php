@@ -97,7 +97,7 @@ jQuery(document).ready(function() {
 		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
 		{
 			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
-		};
+		}
 	});
 
 	<?php
@@ -108,14 +108,9 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Backup"),'','setup');
+print_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
-print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
-print $langs->trans("BackupDescX").'<br><br>';
-print $langs->trans("BackupDesc3",DOL_DATA_ROOT).'<br>';
-print $langs->trans("BackupDescY").'<br><br>';
-
 
 ?>
 
@@ -124,9 +119,29 @@ print $langs->trans("BackupDescY").'<br><br>';
 	name="token" value="<?php echo $_SESSION['newtoken']; ?>" /> <input
 	type="hidden" name="export_type" value="server" />
 
-<fieldset id="fieldsetexport">
-<?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
-<table>
+<fieldset id="fieldsetexport"><legend style="font-size: 3em">1</legend>
+
+<?php
+print $langs->trans("BackupDesc3",$dolibarr_main_db_name).'<br>';
+//print $langs->trans("BackupDescY").'<br>';
+print '<br>';
+?>
+
+<div id="backupdatabaseleft" class="fichehalfleft" >
+
+<?php
+
+print_titre($title?$title:$langs->trans("BackupDumpWizard"));
+
+print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+print '<tr class="liste_titre">';
+print '<td class="liste_titre">';
+print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+print '</td>';
+print '</tr>';
+print '<tr '.$bc[false].'><td style="padding-left: 8px">';
+?>
+<table class="centpercent">
 	<tr>
 		<td valign="top">
 
@@ -182,7 +197,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 				$fullpathofmysqldump=$conf->global->SYSTEMTOOLS_MYSQLDUMP;
 			}
 			?><br>
-			<input type="text" name="mysqldump" size="80"
+			<input type="text" name="mysqldump" style="width: 80%"
 				value="<?php echo $fullpathofmysqldump; ?>" /></div>
 
 			<br>
@@ -317,7 +332,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 				$fullpathofpgdump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
 			}
 			?><br>
-			<input type="text" name="postgresqldump" size="80"
+			<input type="text" name="postgresqldump" style="width: 80%"
 				value="<?php echo $fullpathofpgdump; ?>" /></div>
 
 
@@ -357,12 +372,12 @@ print $langs->trans("BackupDescY").'<br><br>';
 	</tr>
 </table>
 
-</fieldset>
 
-<fieldset>
-<legend><?php echo $langs->trans("Destination"); ?></legend>
-<label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label>:
- <input type="text" name="filename_template" size="60"
+<!--<fieldset>
+<legend><?php echo $langs->trans("Destination"); ?></legend> -->
+<br>
+<label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label><br>
+<input type="text" name="filename_template" style="width: 90%"
 	id="filename_template"
 	value="<?php
 $prefix='dump';
@@ -417,7 +432,8 @@ foreach($compression as $key => $val)
 print '</div>';
 print "\n";
 
-?></fieldset>
+?><!--</fieldset>--> <!-- End destination -->
+
 
 <br>
 <div align="center"><input type="submit" class="button"
@@ -425,15 +441,38 @@ print "\n";
 <br>
 </div>
 
+<?php
+print '</td></tr></table>';
+?>
 
-</form>
+</div>
+<div id="backupdatabaseright" class="fichehalfright" style="height:400px; overflow: auto;">
+<div class="ficheaddleft">
 
 <?php
-
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
 $result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
 print '<br>';
+?>
 
+</div>
+</div>
+
+</fieldset>
+
+<br>
+
+<fieldset><legend style="font-size: 3em">2</legend>
+<?php
+print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
+print $langs->trans("BackupDescX").'<br><br>';
+?>
+</fieldset>
+
+
+
+</form>
+<?php
 
 llxFooter();
 

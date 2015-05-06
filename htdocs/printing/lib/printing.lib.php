@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,10 @@
 /**
  *  Define head array for tabs of printing tools setup pages
  *
- *  @return         Array of head
+ *  @param	string	$mode		Mode
+ *  @return         			Array of head
  */
-function printingadmin_prepare_head()
+function printingadmin_prepare_head($mode)
 {
     global $langs, $conf;
 
@@ -40,20 +41,28 @@ function printingadmin_prepare_head()
     $head[$h][2] = 'config';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup";
-    $head[$h][1] = $langs->trans("SetupDriver");
-    $head[$h][2] = 'setup';
-    $h++;
+    if ($mode == 'setup')
+    {
+	    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=setup";
+	    $head[$h][1] = $langs->trans("SetupDriver");
+	    $head[$h][2] = 'setup';
+	    $h++;
+    }
 
-    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test";
-    $head[$h][1] = $langs->trans("TestDriver");
-    $head[$h][2] = 'test';
-    $h++;
+    if ($mode == 'test')
+    {
+	    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=test";
+	    $head[$h][1] = $langs->trans("TargetedPrinter");
+	    $head[$h][2] = 'test';
+	    $h++;
+    }
 
-    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
-    $head[$h][1] = $langs->trans("UserConf");
-    $head[$h][2] = 'userconf';
-    $h++;
+		/** TODO This feature seem to be not ready yet.
+	    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
+	    $head[$h][1] = $langs->trans("UserConf");
+	    $head[$h][2] = 'userconf';
+	    $h++;
+	    */
 
     //$object=new stdClass();
 

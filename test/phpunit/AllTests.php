@@ -31,14 +31,24 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
-if ($langs->defaultlang != 'en_US') {
+
+
+if ($langs->defaultlang != 'en_US')
+{
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
     exit;
 }
-if (! empty($conf->google->enabled)) {
+if (! empty($conf->adherents->enabled))
+{
+	print "Error: Module member must be enabled to have significatn results.\n";
+	exit;
+}
+if (! empty($conf->google->enabled))
+{
     print "Warning: Google module should not be enabled.\n";
 }
-if (empty($user->id)) {
+if (empty($user->id))
+{
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -58,6 +68,7 @@ class AllTests
      */
     public static function suite()
     {
+
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';
@@ -152,12 +163,17 @@ class AllTests
         $suite->addTestSuite('BankAccountTest');
         require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
         $suite->addTestSuite('CompanyBankAccountTest');
+        require_once dirname(__FILE__).'/BonPrelevementTest.php';
+        $suite->addTestSuite('BonPrelevementTest');
+
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';
         $suite->addTestSuite('ChargeSocialesTest');
         require_once dirname(__FILE__).'/HolidayTest.php';
         $suite->addTestSuite('HolidayTest');
         require_once dirname(__FILE__).'/EntrepotTest.php';
         $suite->addTestSuite('EntrepotTest');
+        require_once dirname(__FILE__).'/MouvementStockTest.php';
+        $suite->addTestSuite('MouvementStockTest');
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');

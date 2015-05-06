@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Ροής εργασίας ρύθμιση μονάδας
-WorkflowDesc=Αυτή η ενότητα Σχεδιασμός για την τροποποίηση της συμπεριφοράς των αυτόματων ενεργειών σε εφαρμογή. Από προεπιλογή, η ροή εργασίας έχει ανοίξει (πράγμα που κάνετε στη σειρά που θέλετε). Μπορείτε να ενεργοποιήσει την αυτόματη ενέργειες που σας ενδιαφέρει.
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
 ThereIsNoWorkflowToModify=Δεν υπάρχει καμία ροή εργασίας μπορείτε να τροποποιήσετε τη μονάδα που έχετε ενεργοποιήσει.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Δημιουργήστε μια παραγγελία του πελάτη αυτόματα μετά από μια προσφορά που έχει υπογραφεί
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Δημιουργήστε ένα τιμολόγιο πελάτη αυτόματα μετά από μια προσφορά που έχει υπογραφεί

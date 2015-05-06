@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Faktura %s validerade
 InvoiceValidatedInDolibarrFromPos=Faktura %s validerats från POS
 InvoiceBackToDraftInDolibarr=Faktura %s gå tillbaka till förslaget status
 InvoiceDeleteDolibarr=Faktura %s raderas
-OrderValidatedInDolibarr= Beställ %s validerade
+OrderValidatedInDolibarr=Beställ %s validerade
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Beställ %s avbryts
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Ordningens %s godkänd
 OrderRefusedInDolibarr=Order %s vägrade
 OrderBackToDraftInDolibarr=Beställ %s gå tillbaka till förslaget status
@@ -58,8 +61,9 @@ OrderSentByEMail=Kundorderprojekt %s via e-post
 InvoiceSentByEMail=Kundfaktura %s via e-post
 SupplierOrderSentByEMail=Leverantör beställa %s via e-post
 SupplierInvoiceSentByEMail=Leverantörsfaktura %s via e-post
-ShippingSentByEMail=Frakt %s via e-post
-ShippingValidated= Frakt %s validerade
+ShippingSentByEMail=Leverans %s skickat per epost
+ShippingValidated= Leverans %s validerad
+InterventionSentByEMail=Ärende %s skickat per epost
 NewCompanyToDolibarr= Tredje part har skapats
 DateActionPlannedStart= Planerat startdatum
 DateActionPlannedEnd= Planerat slutdatum
@@ -68,7 +72,7 @@ DateActionDoneEnd= Real slutdatum
 DateActionStart= Startdatum
 DateActionEnd= Slutdatum
 AgendaUrlOptions1=Du kan också lägga till följande parametrar för att filtrera utgång:
-AgendaUrlOptions2=<b>login = %s</b> att begränsa produktionen till åtgärder inrättade av, påverkas eller göras av användaren <b>%s.</b>
+AgendaUrlOptions2=<b>login=%s</b> för att begränsa utdata till händelser skapade av eller tilldelade användare <b>%s</b>.
 AgendaUrlOptions3=<b>Logina =%s</b> ​​att begränsa produktionen till åtgärder som ägs av en användare<b>%s.</b>
 AgendaUrlOptions4=<b>logint = %s</b> att begränsa produktionen till handlande påverkade användarnas <b>%s.</b>
 AgendaUrlOptionsProject=<b>projekt = PROJECT_ID</b> att begränsa produktionen till åtgärder i samband med projektet <b>PROJECT_ID.</b>
@@ -90,3 +94,5 @@ WorkingTimeRange=Arbetstid intervall
 WorkingDaysRange=Arbetsdagar sträcker
 AddEvent=Skapa event
 MyAvailability=Min tillgänglighet
+ActionType=Event type
+DateActionBegin=Start event date

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -128,7 +129,7 @@ if (! empty($type))
 {
 	$sql.= " AND b.fk_type = '".$db->escape($type)."' ";
 }
-//Search period criteria
+// Search period criteria
 if (dol_strlen($search_dt_start)>0) {
 	$sql .= " AND b.dateo >= '" . $db->idate($search_dt_start) . "'";
 }
@@ -168,19 +169,20 @@ if ($resql)
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,'', 'title_bank.png');
 	}
 	else
 	{
-		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', 'title_bank.png');
 	}
 
 	print '<form method="post" action="search.php" name="search_form">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
-	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
-	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
-	$moreforfilter .= $langs->trans('EndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
+	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('StartDate') . ' ';
+	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= ' - ';
+	$moreforfilter .= $langs->trans('EndDate') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
 
 
 	if ($moreforfilter) {

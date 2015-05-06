@@ -19,6 +19,7 @@ ServiceStatusLateShort=Έληξε
 ServiceStatusClosed=Τερματισμένη
 ServicesLegend=Services legend
 Contracts=Συμβόλαια
+ContractsAndLine=Συμβόλαια και η γραμμή των συμβολαίων
 Contract=Συμβόλαιο
 NoContracts=Κανένα Συμβόλαιο
 MenuServices=Υπηρεσίες
@@ -91,7 +92,7 @@ ListOfServicesToExpire=Κατάλογος Υπηρεσιών προς λήξει
 NoteListOfYourExpiredServices=Αυτή η λίστα περιέχει μόνο τις υπηρεσίες των συμβάσεων για λογαριασμό ΠΕΛ./ΠΡΟΜ. που συνδέονται ως εκπρόσωπος πώληση.
 StandardContractsTemplate=Οι πρότυπες συμβάσεις
 ContactNameAndSignature=Για %s, το όνομα και η υπογραφή:
-OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
+OnlyLinesWithTypeServiceAreUsed=Μόνο εγγραφές τύπου "Υπηρεσία" θα αντιγραφούν.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

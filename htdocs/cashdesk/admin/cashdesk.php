@@ -85,7 +85,7 @@ $formproduct=new FormProduct($db);
 llxHeader('',$langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
 print '<br>';
 
 
@@ -130,7 +130,16 @@ if (! empty($conf->stock->enabled))
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
-	print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
+	if (empty($conf->productbatch->enabled)) {
+	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
+	}
+	else 
+	{
+	    if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
+	       $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
+	    }
+	    print $langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch'); 
+	}
 	print '</td></tr>';
 
 	$disabled=$conf->global->CASHDESK_NO_DECREASE_STOCK;
@@ -155,7 +164,7 @@ if (! empty($conf->service->enabled))
     $var=! $var;
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("CashdeskShowServices");
-    print '<td colspan="2">';;
+    print '<td colspan="2">';
     print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
     print "</td></tr>\n";
 }

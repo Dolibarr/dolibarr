@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Фактура %s валидирани
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Фактура %s се върнете в състояние на чернова
 InvoiceDeleteDolibarr=Invoice %s deleted
-OrderValidatedInDolibarr= Поръчка %s валидирани
+OrderValidatedInDolibarr=Поръчка %s валидирани
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Поръчка %s отменен
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Поръчка %s одобрен
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Поръчка %s се върне в състояние на чернова
@@ -58,8 +61,9 @@ OrderSentByEMail=, Изпратени по електронната поща %s 
 InvoiceSentByEMail=, Изпратени по електронната поща %s клиенти фактура
 SupplierOrderSentByEMail=%s доставчик реда, изпратени по електронната поща
 SupplierInvoiceSentByEMail=, Изпратени по електронната поща %s доставчик фактура
-ShippingSentByEMail=Доставка %s изпращат по електронна поща
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Създадено от трета страна
 DateActionPlannedStart= Планирана начална дата
 DateActionPlannedEnd= Планирана крайна дата
@@ -68,7 +72,7 @@ DateActionDoneEnd= Реална крайна дата
 DateActionStart= Начална дата
 DateActionEnd= Крайна дата
 AgendaUrlOptions1=Можете да добавите и следните параметри, за да филтрирате изход:
-AgendaUrlOptions2=<b>вход = %s</b> да ограничи изход към действия, създадени от засегнати или направено от потребителя <b>%s.</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s</b> да се ограничи производството на действията, засегнати на потребителските <b>%s.</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
 AddEvent=Create event
 MyAvailability=My availability
+ActionType=Event type
+DateActionBegin=Start event date

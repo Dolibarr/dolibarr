@@ -235,7 +235,9 @@ if ($socid)
 	$soc = new Societe($db);
 	$result = $soc->fetch($socid);
 
-	llxHeader("","",$langs->trans("Category"));
+	$title=$langs->trans("Category");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$soc->name." - ".$title;
+	llxHeader("",$title);
 
 	// Show tabs
 	$head = societe_prepare_head($soc);
@@ -278,7 +280,7 @@ if ($socid)
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
-    print dol_print_address($soc->address,'gmap','thirdparty',$soc->id);
+    dol_print_address($soc->address,'gmap','thirdparty',$soc->id);
     print '</td></tr>';
 
 	// Zip / Town
@@ -289,7 +291,8 @@ if ($socid)
 	if ($soc->country)
 	{
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-		$img=picto_from_langcode($soc->country_code);
+		//$img=picto_from_langcode($soc->country_code);
+		$img='';
 		print ($img?$img.' ':'');
 		print $soc->country;
 		print '</td></tr>';
@@ -338,9 +341,9 @@ else if ($id || $ref)
 		llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
-		$head=product_prepare_head($product, $user);
+		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
+		$picto=($product->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'category', $titre,0,$picto);
 
 
@@ -354,7 +357,7 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->label.'</td>';
 		print '</tr>';
 
 		// Status (to sell)
@@ -608,7 +611,7 @@ else if ($id || $ref)
  * 	@param		Object		$object				Object we want to see categories it can be classified into
  * 	@param		int			$typeid				Type of category (0, 1, 2, 3)
  *  @param		int			$socid				Id thirdparty
- *  @param		string		$showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
+ *  @param		int		$showclassifyform	1=Add form to 'Classify', 0=Do not show form to 'Classify'
  *  @return		int			0
  */
 function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)

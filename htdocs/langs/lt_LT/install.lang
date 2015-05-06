@@ -155,6 +155,8 @@ MigrationFinished=Perkėlimas baigtas
 LastStepDesc=<strong>Paskutinis žingsnis</strong>: Nustatykite čia prisijungimo vardą ir slaptažodį, kuriuos planuojate naudoti prisijungimui prie programos. Nepameskite jų, nes tai yra administratoriaus, kuris administruoja visus kitus vartotojus, sąskaitos rekvizitai.
 ActivateModule=Įjungti modulį %s
 ShowEditTechnicalParameters=Spauskite čia, kad galėtumete matyti/redaguoti išplėstinius parametrus (eksperto režime)
+WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+ErrorDatabaseVersionForbiddenForMigration=Jūsų duomenų bazės versija yra %s. Gali būti kritinė situacija su duomenų praradimu, jeigu pakeisite duomenų bazės struktūrą, kaip reikalaujama perkėlimo proceso metu. Šiuo tikslu perkėlimas nebus leidžiamas, kol nebus atliktas duomenų bazės programos atnaujinimas į aukštesnę versiją (žinomų klaidingų versijų sąrašas: %s)
 
 #########
 # upgrade
@@ -206,6 +208,7 @@ MigrationProjectTaskTime=Atnaujinti praleistą laiką sekundėmis
 MigrationActioncommElement=Atnaujinti veiksmų duomenis
 MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
+MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Parodyti negalimas opcijas
+HideNotAvailableOptions=Paslėpti negalimas opcijas

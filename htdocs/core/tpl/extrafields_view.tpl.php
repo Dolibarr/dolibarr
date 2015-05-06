@@ -48,7 +48,7 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td';
 			//var_dump($action);exit;
-			if ((! empty($action) && $action != 'view') && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 			print '>' . $label . '</td>';
 
 			//TODO Improve element and rights detection
@@ -65,7 +65,7 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 
 			print '</tr></table>';
-			print '<td colspan="5">';
+			print '<td colspan="'.$cols.'">';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attribute_type[$key], array('date','datetime'))) {

@@ -51,7 +51,7 @@ if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
 
-	
+
     dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
@@ -93,7 +93,7 @@ $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
-print_fiche_titre($langs->trans("PDF"),'','setup');
+print_fiche_titre($langs->trans("PDF"),'','title_setup');
 
 print $langs->trans("PDFDesc")."<br>\n";
 print "<br>\n";
@@ -222,7 +222,7 @@ if ($action == 'edit')	// Edit
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
-    
+
     // Hide Tva Intra on adress
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
@@ -385,14 +385,14 @@ else	// Show
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px" colspan="2">'.$langs->trans("Value").'</td></tr>';
 
-    
+
     // Hide any PDF informations
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
     print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
     print '</td></tr>';
 
-    
+
 	// Encrypt and protect PDF
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -417,16 +417,16 @@ else	// Show
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_pdfsecurity">'.$langs->trans("Disable").'</a>';
 	}
 	print "</td>";
-	
+
 	print "</td>";
 	print '</tr>';
-	
+
 	// Hide Tva Intra on adress
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS,1);
 	print '</td></tr>';
-	
+
 	//Desc
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
@@ -499,6 +499,13 @@ else	// Show
 		if ($i) print ' + ';
 		print 'FPDI';
 		print ' ('.@constant('FPDI_PATH').')';
+		$i++;
+	}
+	if (class_exists('TCPDI'))
+	{
+		if ($i) print ' + ';
+		print 'TCPDI';
+		print ' ('.@constant('TCPDI_PATH').')';
 		$i++;
 	}
 	print '<!-- $conf->global->MAIN_USE_FPDF = '.$conf->global->MAIN_USE_FPDF.' -->';

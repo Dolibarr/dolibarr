@@ -70,9 +70,10 @@ class Paiement extends CommonObject
 	 *    Load payment from database
 	 *
 	 *    @param	int		$id     Id of payment to get
+	 *    @param	int		$ref    Ref of payment to get (same as $id)
 	 *    @return   int     		<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id, $ref='')
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
@@ -81,7 +82,10 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
-		$sql.= ' AND p.rowid = '.$id;
+		if ($ref)
+			$sql.= ' AND p.rowid = '.$ref;
+		else
+			$sql.= ' AND p.rowid = '.$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -488,7 +492,7 @@ class Paiement extends CommonObject
                                     $fac->thirdparty->name,
                                     'company'
                                 );
-                                if ($result <= 0) dol_print_error($this->db);
+                                if ($result <= 0) dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
@@ -506,7 +510,7 @@ class Paiement extends CommonObject
                                     $fac->thirdparty->name,
                                     'company'
                                 );
-                                if ($result <= 0) dol_print_error($this->db);
+                                if ($result <= 0) dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
@@ -576,7 +580,7 @@ class Paiement extends CommonObject
     /**
      *	Updates the payment date
      *
-     *  @param	timestamp	$date   New date
+     *  @param	int	$date   New date
      *  @return int					<0 if KO, 0 if OK
      */
     function update_date($date)
@@ -737,9 +741,9 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
+	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *	@return	string					Chaine avec URL
 	 */
@@ -750,12 +754,12 @@ class Paiement extends CommonObject
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

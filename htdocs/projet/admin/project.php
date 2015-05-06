@@ -237,12 +237,7 @@ if ($action == 'deltask')
 // Set default model
 else if ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->PROJECT_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity);
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
@@ -297,7 +292,7 @@ llxHeader("",$langs->trans("ProjectsSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,title_setup);
 
 $head=project_admin_prepare_head();
 

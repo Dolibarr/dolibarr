@@ -2,11 +2,12 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012  Regis Houssin			    <regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Juanjo Menent		  	  <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
- * Copyright (C) 2013       Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +33,10 @@
 /**
  * Return array of tabs to used on pages for third parties cards.
  *
- * @param 	Object	$object		Object company shown
+ * @param 	Societe	$object		Object company shown
  * @return 	array				Array of tabs
  */
-function societe_prepare_head($object)
+function societe_prepare_head(Societe $object)
 {
     global $db, $langs, $conf, $user;
     $h = 0;
@@ -470,7 +471,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
         print_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"),$buttoncreate,'');
         print "\n".'<table class="noborder" width=100%>';
 
-        $sql  = "SELECT p.rowid,p.title,p.ref,p.public, p.dateo as do, p.datee as de";
+        $sql  = "SELECT p.rowid as id, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status";
         $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
         $sql .= " WHERE p.fk_soc = ".$object->id;
         $sql .= " ORDER BY p.dateo DESC";
@@ -482,23 +483,24 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Name").'</td><td align="center">'.$langs->trans("DateStart").'</td><td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td align="right">'.$langs->trans("Status").'</td>';
             print '</tr>';
 
             if ($num > 0)
             {
                 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-                $projectstatic = new Project($db);
+                $projecttmp = new Project($db);
 
                 $i=0;
                 $var=false;
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
-                    $projectstatic->fetch($obj->rowid);
+                    $projecttmp->fetch($obj->id);
 
                     // To verify role of users
-                    $userAccess = $projectstatic->restrictedProjectArea($user);
+                    $userAccess = $projecttmp->restrictedProjectArea($user);
 
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
@@ -506,13 +508,15 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                         print "<tr ".$bc[$var].">";
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
+                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"),($obj->public?'projectpub':'project'))." ".$obj->ref.'</a></td>';
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
                         print '<td align="center">'.dol_print_date($db->jdate($obj->do),"day").'</td>';
                         // Date end
                         print '<td align="center">'.dol_print_date($db->jdate($obj->de),"day").'</td>';
+                        // Status
+                        print '<td align="right">'.$projecttmp->getLibStatut(5).'</td>';
 
                         print '</tr>';
                     }
@@ -545,7 +549,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
  *		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
- * 		@param	Object		$object		Third party object
+ * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once contact is created
  *      @return	void
  */
@@ -768,7 +772,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
  *		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
- * 		@param	Object		$object		Third party object
+ * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once address is created
  *      @return	void
  */
@@ -863,7 +867,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  * 		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Object db
- * 		@param	Object		$object		Object third party or member
+ * 		@param	Adherent|Societe		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint	Return string but does not output it
  *      @return	mixed					Return html part or void if noprint is 1
@@ -905,22 +909,21 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid";
-        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
+        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-        if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id ";
+        if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         $sql.= " WHERE u.rowid = a.fk_user_author";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
-        if (get_class($object) == 'Adherent') {
+        if (get_class($object) == 'Adherent')
+        {
         	$sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-        	if (! empty($object->id))
-        		$sql.= " AND a.fk_element = ".$object->id;
+        	if (! empty($object->id)) $sql.= " AND a.fk_element = ".$object->id;
         }
-        if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
+        if (get_class($object) == 'Societe' && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (! empty($objcon->id)) $sql.= " AND a.fk_contact = ".$objcon->id;
-        // $sql.= " AND c.id=a.fk_action";
         $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -988,9 +991,11 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     }
 
                     $out.='<td width="80" class="nowrap">';
-                    $userstatic->id=$obj->fk_user_author;
-                    $userstatic->login=$obj->login;
-                    $out.=$userstatic->getLoginUrl(1);
+                    //$userstatic->id=$obj->fk_user_author;
+                    //$userstatic->login=$obj->login;
+                    //$out.=$userstatic->getLoginUrl(1);
+                    $userstatic->fetch($obj->fk_user_author);
+                    $out.=$userstatic->getNomUrl(1);
                     $out.='</td>';
 
                     // Statut
@@ -1026,7 +1031,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  * 		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Object db
- * 		@param	Object		$object		Object third party or member
+ * 		@param	Adherent|Societe		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint    Return string but does not output it
  *      @return	mixed					Return html part or void if noprint is 1
@@ -1055,19 +1060,18 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid as user_id";
-        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
+        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-        if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id ";
+        if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         $sql.= " WHERE u.rowid = a.fk_user_author";
         $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
+        if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (get_class($object) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         if (get_class($object) == 'Adherent' && $object->id) $sql.= " AND a.fk_element = ".$object->id;
-        if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-        // $sql.= " AND c.id=a.fk_action";
         $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -1235,22 +1239,36 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             {
             	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
             	{
-            		$propalstatic->ref=$langs->trans("ProposalShort");
-            		$propalstatic->id=$histo[$key]['fk_element'];
-            		$out.=$propalstatic->getNomUrl(1);
-            	}
+            		//$propalstatic->ref=$langs->trans("ProposalShort");
+            		//$propalstatic->id=$histo[$key]['fk_element'];
+                    if ($propalstatic->fetch($histo[$key]['fk_element'])>0) {
+                        $propalstatic->type=$histo[$key]['ftype'];
+                        $out.=$propalstatic->getNomUrl(1);
+                    } else {
+                        $out.= $langs->trans("ProposalDeleted");
+                    }
+             	}
             	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
             	{
-            		$orderstatic->ref=$langs->trans("Order");
-            		$orderstatic->id=$histo[$key]['fk_element'];
-            		$out.=$orderstatic->getNomUrl(1);
-            	}
+            		//$orderstatic->ref=$langs->trans("Order");
+            		//$orderstatic->id=$histo[$key]['fk_element'];
+                    if ($orderstatic->fetch($histo[$key]['fk_element'])>0) {
+                        $orderstatic->type=$histo[$key]['ftype'];
+                        $out.=$orderstatic->getNomUrl(1);
+                    } else {
+                        $out.= $langs->trans("OrderDeleted");
+                    }
+             	}
             	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
             	{
-            		$facturestatic->ref=$langs->trans("Invoice");
-            		$facturestatic->id=$histo[$key]['fk_element'];
-            		$facturestatic->type=$histo[$key]['ftype'];
-            		$out.=$facturestatic->getNomUrl(1,'compta');
+            		//$facturestatic->ref=$langs->trans("Invoice");
+            		//$facturestatic->id=$histo[$key]['fk_element'];
+                    if ($facturestatic->fetch($histo[$key]['fk_element'])>0) {
+                        $facturestatic->type=$histo[$key]['ftype'];
+                        $out.=$facturestatic->getNomUrl(1,'compta');
+                    } else {
+                        $out.= $langs->trans("InvoiceDeleted");
+                    }
             	}
             	else $out.='&nbsp;';
             }
@@ -1272,9 +1290,11 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
             // Auteur
             $out.='<td class="nowrap" width="80">';
-            $userstatic->id=$histo[$key]['userid'];
-            $userstatic->login=$histo[$key]['login'];
-            $out.=$userstatic->getLoginUrl(1);
+            //$userstatic->id=$histo[$key]['userid'];
+            //$userstatic->login=$histo[$key]['login'];
+            //$out.=$userstatic->getLoginUrl(1);
+            $userstatic->fetch($histo[$key]['userid']);
+            $out.=$userstatic->getNomUrl(1);
             $out.='</td>';
 
             // Statut

@@ -88,7 +88,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("LimitsSetup"),'','setup');
+print_fiche_titre($langs->trans("LimitsSetup"),'','title_setup');
 
 
 print $langs->trans("LimitsDesc")."<br>\n";

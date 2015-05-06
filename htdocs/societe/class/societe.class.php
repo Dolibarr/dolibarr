@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");    // To test if we can delete object
+    protected $childtables=array("askpricesupplier","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -241,7 +241,6 @@ class Societe extends CommonObject
 
     var $specimen;
 
-
     /**
      * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
      * @var int
@@ -352,6 +351,11 @@ class Societe extends CommonObject
 
     var $array_options;
 
+	// Incoterms
+	var $fk_incoterms;
+	var $location_incoterms;
+	var $libelle_incoterms;  //Used into tooltip
+
     /**
      * To contains a clone of this when we need to save old properties of object
      */
@@ -424,7 +428,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
@@ -432,6 +436,8 @@ class Societe extends CommonObject
             $sql.= ", ".(! empty($this->ref_int) ? "'".$this->ref_int."'":"null");
             $sql.= ", ".(! empty($this->ref_ext) ? "'".$this->ref_ext."'":"null");
             $sql.= ", 0";
+			$sql.= ", ".(int) $this->fk_incoterms;
+			$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
             $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
 
             dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -731,6 +737,10 @@ class Societe extends CommonObject
         $this->webservices_url = $this->webservices_url?clean_url($this->webservices_url,0):'';
         $this->webservices_key = trim($this->webservices_key);
 
+        //Incoterms
+        $this->fk_incoterms = (int) $this->fk_incoterms;
+		$this->location_incoterms = trim($this->location_incoterms);
+
         $this->db->begin();
 
         // Check name is required and codes are ok or unique.
@@ -814,6 +824,10 @@ class Societe extends CommonObject
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
 
+			//Incoterms
+			$sql.= ", fk_incoterms = ".$this->fk_incoterms;
+			$sql.= ", location_incoterms = ".(! empty($this->location_incoterms)?"'".$this->db->escape($this->location_incoterms)."'":"null");
+
             if ($customer)
             {
                 $sql .= ", code_client = ".(! empty($this->code_client)?"'".$this->db->escape($this->code_client)."'":"null");
@@ -881,7 +895,7 @@ class Societe extends CommonObject
             	$action='update';
 
                 // Actions on extra fields (by external module or standard code)
-                // FIXME le hook fait double emploi avec le trigger !!
+                // TODO le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -953,7 +967,7 @@ class Societe extends CommonObject
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
-     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof.
+     *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
     function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
     {
@@ -976,13 +990,14 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
-        $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
+        $sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', c.code as country_code, c.label as country';
         $sql .= ', d.code_departement as state_code, d.nom as state';
         $sql .= ', st.libelle as stcomm';
         $sql .= ', te.code as typent_code';
+		$sql .= ', i.libelle as libelle_incoterms';
         $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -990,6 +1005,7 @@ class Societe extends CommonObject
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
         if ($rowid) $sql .= ' WHERE s.rowid = '.$rowid;
         if ($ref)   $sql .= " WHERE s.nom = '".$this->db->escape($ref)."' AND s.entity IN (".getEntity($this->element, 1).")";
         if ($ref_ext) $sql .= " WHERE s.ref_ext = '".$this->db->escape($ref_ext)."' AND s.entity IN (".getEntity($this->element, 1).")";
@@ -1008,7 +1024,7 @@ class Societe extends CommonObject
             {
                 $this->error='Fetch several records found for ref='.$ref;
                 dol_syslog($this->error, LOG_ERR);
-                $result = -1;
+                $result = -2;
             }
             if ($num)
             {
@@ -1118,6 +1134,11 @@ class Societe extends CommonObject
 
                 $this->import_key = $obj->import_key;
 
+				//Incoterms
+				$this->fk_incoterms = $obj->fk_incoterms;
+				$this->location_incoterms = $obj->location_incoterms;
+				$this->libelle_incoterms = $obj->libelle_incoterms;
+
                 $result = 1;
 
                 // Retreive all extrafield for thirdparty
@@ -1128,17 +1149,15 @@ class Societe extends CommonObject
                	$this->fetch_optionals($this->id,$extralabels);
             }
             else
-            {
-                $this->error='Fetch no third party found for id='.$rowid;
-                dol_syslog($this->error, LOG_ERR);
-                $result = -2;
+			{
+                $result = 0;
             }
 
             $this->db->free($resql);
         }
         else
-        {
-            $this->error=$this->db->error();
+		{
+            $this->error=$this->db->lasterror();
             $result = -3;
         }
 
@@ -1158,11 +1177,20 @@ class Societe extends CommonObject
      * 	@param		boolean		$case		Case sensitive (true/false)
      * 	@param		boolean		$similar	Add test if string inside name into database, or name into database inside string. Do not use this: Not compatible with other database.
      * 	@param		string		$clause		Clause for filters
-     * 	@return		array		Array of thirdparties object
+     * 	@return		array|int				<0 if KO, array of thirdparties object if OK
      */
     function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
     {
     	$thirdparties = array();
+
+    	dol_syslog("searchByName name=".$name." type=".$type." exact=".$exact);
+
+    	// Check parameter
+    	if (empty($name))
+    	{
+    		$this->errors[]='ErrorBadValueForParameter';
+    		return -1;
+    	}
 
     	// Generation requete recherche
     	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
@@ -1242,7 +1270,7 @@ class Societe extends CommonObject
     	}
     	else
     	{
-    		$this->error=$this->db->error().' sql='.$sql;
+    		$this->error=$this->db->lasterror();
     		return -1;
     	}
     }
@@ -1250,12 +1278,14 @@ class Societe extends CommonObject
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
-     *    @param	int		$id     Id of third party to delete
+     *    @param	int		$id             Id of third party to delete
+     *    @param    User    $user           User who ask to delete thirparty
+     *    @param    int		$call_trigger   0=No, 1=yes
      *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
      */
-    function delete($id)
+    function delete($id, $user='', $call_trigger=1)
     {
-        global $user, $langs, $conf;
+        global $langs, $conf;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1270,10 +1300,14 @@ class Societe extends CommonObject
 		{
             $this->db->begin();
 
-            // Call trigger
-            $result=$this->call_trigger('COMPANY_DELETE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
+            // User is mandatory for trigger call
+            if ($user && $call_trigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('COMPANY_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (! $error)
 			{
@@ -1550,7 +1584,7 @@ class Societe extends CommonObject
      *
      *	@param	User	$user		Filtre sur un user auteur des remises
      * 	@param	string	$filter		Filtre autre
-     * 	@param	string	$maxvalue	Filter on max value for discount
+     * 	@param	integer	$maxvalue	Filter on max value for discount
      *	@return	int					<0 if KO, Credit note amount otherwise
      */
     function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
@@ -1699,14 +1733,17 @@ class Societe extends CommonObject
      *
      *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
      *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param	int		$maxlen			Max length of text
+     *		@param	int		$maxlen			Max length of name
+     *      @param	integer	$notooltip		1=Disable tooltip
      *		@return	string					String with URL
      */
-    function getNomUrl($withpicto=0,$option='',$maxlen=0)
+    function getNomUrl($withpicto=0,$option='',$maxlen=0,$notooltip=0)
     {
         global $conf,$langs;
 
         $name=$this->name?$this->name:$this->nom;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
 		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
 			if (($this->client) && (! empty ( $this->code_client ))) {
@@ -1718,43 +1755,69 @@ class Societe extends CommonObject
 			$name =$code.' '.$name;
 		}
 
-        $result='';
-        $lien=$lienfin='';
+        $result=''; $label='';
+        $link=''; $linkend='';
+
+        $label.= '<div width="100%">';
 
         if ($option == 'customer' || $option == 'compta')
         {
-           $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+           $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
+           $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+            $label.= '<u>' . $langs->trans("ShowProspect") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+            $label.= '<u>' . $langs->trans("ShowSupplier") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
         }
         else if ($option == 'category')
         {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
+            $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
+        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
         }
         else if ($option == 'category_supplier')
         {
-        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
+            $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
+        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
 
         // By default
-        if (empty($lien))
+        if (empty($link))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
+            $label.= '<u>' . $langs->trans("ShowCompany") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$this->id;
         }
 
-        // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'" title="'.dol_escape_htmltag($name, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        if (! empty($this->name))
+            $label.= '<br><b>' . $langs->trans('Name') . ':</b> '. $this->name;
+        if (! empty($this->code_client))
+            $label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
+        if (! empty($this->code_fournisseur))
+            $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
 
-        if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name, 'company', 'class="classfortooltip"').$lienfin);
+        if (! empty($this->logo))
+        {
+            $label.= '</br><div class="photointooltip">';
+            //if (! is_object($form)) $form = new Form($db);
+            $label.= Form::showphoto('societe', $this, 80);
+            $label.= '</div><div style="clear: both;"></div>';
+        }
+        $label.= '</div>';
+
+        // Add type of canvas
+        $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $link.=($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip"');
+        $link.='>';
+        $linkend='</a>';
+
+        if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($name,$maxlen):$name).$lienfin;
+        $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }
@@ -2039,6 +2102,7 @@ class Societe extends CommonObject
         $bac->fetch(0,$this->id);
         return $bac->getRibLabel(true);
     }
+
 
     /**
      * Return Array of RIB
@@ -2648,7 +2712,7 @@ class Societe extends CommonObject
     {
         global $conf;
 
-        // Define if third party is treated as company of not when nature is unknown
+        // Define if third party is treated as company (or not) when nature is unknown
         $isacompany=empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES)?0:1; // 0 by default
         if (! empty($this->tva_intra)) $isacompany=1;
         else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_PRIVATE'))) $isacompany=0;
@@ -2694,7 +2758,7 @@ class Societe extends CommonObject
     {
         if ($categorie_id > 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_soc) ";
             $sql.= " VALUES ('".$categorie_id."','".$this->id."');";
 
             if ($resql=$this->db->query($sql)) return 0;
@@ -3149,7 +3213,7 @@ class Societe extends CommonObject
 		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		*/
-		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";	// Not a draft
@@ -3160,8 +3224,18 @@ class Societe extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$obj=$this->db->fetch_object($resql);
-   			return ($obj->amount);
+			$outstandingBill = 0;
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$facturestatic=new Facture($this->db);
+			while($obj=$this->db->fetch_object($resql)) {
+				$facturestatic->id=$obj->rowid;
+				$paiement = $facturestatic->getSommePaiement();
+				$creditnotes = $facturestatic->getSumCreditNotesUsed();
+				$deposits = $facturestatic->getSumDepositsUsed();
+				
+				$outstandingBill+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
+   			}
+   			return $outstandingBill;
 		}
 		else
 			return 0;
@@ -3195,4 +3269,49 @@ class Societe extends CommonObject
 
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 * It must be used within a transaction to avoid trouble
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		/**
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
+		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 */
+		$sql = 'SELECT rowid
+FROM llx_societe_commerciaux
+WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
+  SELECT fk_user
+  FROM llx_societe_commerciaux
+  WHERE fk_soc = '.(int) $origin_id.'
+);';
+
+		$query = $db->query($sql);
+
+		while ($result = $db->fetch_object($query)) {
+			$db->query('DELETE FROM llx_societe_commerciaux WHERE rowid = '.$result->rowid);
+		}
+
+		/**
+		 * llx_societe_extrafields table must not be here because we don't care about the old thirdparty data
+		 * Do not include llx_societe because it will be replaced later
+		 */
+		$tables = array(
+			'societe_address',
+			'societe_commerciaux',
+			'societe_log',
+			'societe_prices',
+			'societe_remise',
+			'societe_remise_except',
+			'societe_rib'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

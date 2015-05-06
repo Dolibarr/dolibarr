@@ -119,6 +119,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CLONE':
 		    case 'ORDER_VALIDATE':
 		    case 'ORDER_DELETE':
+		    case 'ORDER_CANCEL':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
 		    case 'LINEORDER_INSERT':
@@ -134,6 +135,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_SUPPLIER_REFUSE':
 		    case 'ORDER_SUPPLIER_CANCEL':
 		    case 'ORDER_SUPPLIER_SENTBYMAIL':
+            case 'ORDER_SUPPLIER_DISPATCH':
 		    case 'LINEORDER_SUPPLIER_DISPATCH':
 		    case 'LINEORDER_SUPPLIER_CREATE':
 		    case 'LINEORDER_SUPPLIER_UPDATE':
@@ -151,6 +153,19 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'LINEPROPAL_UPDATE':
 		    case 'LINEPROPAL_DELETE':
 
+			// Askpricesupplier
+		    case 'ASKPRICESUPPLIER_CREATE':
+		    case 'ASKPRICESUPPLIER_CLONE':
+		    case 'ASKPRICESUPPLIER_MODIFY':
+		    case 'ASKPRICESUPPLIER_VALIDATE':
+		    case 'ASKPRICESUPPLIER_SENTBYMAIL':
+		    case 'ASKPRICESUPPLIER_CLOSE_SIGNED':
+		    case 'ASKPRICESUPPLIER_CLOSE_REFUSED':
+		    case 'ASKPRICESUPPLIER_DELETE':
+		    case 'LINEASKPRICESUPPLIER_INSERT':
+		    case 'LINEASKPRICESUPPLIER_UPDATE':
+		    case 'LINEASKPRICESUPPLIER_DELETE':
+		    
 			// Contracts
 		    case 'CONTRACT_CREATE':
 		    case 'CONTRACT_ACTIVATE':

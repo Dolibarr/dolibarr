@@ -100,9 +100,9 @@ if ($object->id)
 	/*
 	 *  En mode visu
 	*/
-	$head=product_prepare_head($object, $user);
+	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
-	$picto=($object->type==1?'service':'product');
+	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 	dol_fiche_head($head, 'photos', $titre, 0, $picto);
 
 	/*
@@ -126,7 +126,7 @@ if ($object->id)
 	print '</tr>';
 
 	// Libelle
-	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->label.'</td>';
 	print '</tr>';
 
 	// Status (to sell)
@@ -145,8 +145,8 @@ if ($object->id)
 
 
 	$permtoedit=0;
-	if ($user->rights->produit->creer && $object->type == 0) $permtoedit=1;
-	if ($user->rights->service->creer && $object->type == 1) $permtoedit=1;
+	if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) $permtoedit=1;
+	if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) $permtoedit=1;
 	if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
 
 	/* ************************************************************************** */

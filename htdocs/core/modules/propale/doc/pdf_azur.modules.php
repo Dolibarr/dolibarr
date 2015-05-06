@@ -4,6 +4,7 @@
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,9 +103,19 @@ class pdf_azur extends ModelePDFPropales
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=112;
-		$this->posxup=126;
-		$this->posxqty=145;
+		if($conf->global->PRODUCT_USE_UNITS)
+		{
+			$this->posxtva=99;
+			$this->posxup=114;
+			$this->posxqty=133;
+			$this->posxunit=150;
+		}
+		else
+		{
+			$this->posxtva=112;
+			$this->posxup=126;
+			$this->posxqty=145;
+		}
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
@@ -265,7 +276,7 @@ class pdf_azur extends ModelePDFPropales
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))
+				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
 					$this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -288,6 +299,29 @@ class pdf_azur extends ModelePDFPropales
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
+				
+				// Incoterm
+				$height_incoterms = 0;
+				if ($conf->incoterm->enabled)
+				{
+					$desc_incoterms = $object->getIncotermsForPDF();
+					if ($desc_incoterms)
+					{
+						$tab_top = 88;
+
+						$pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
+						$nexY = $pdf->GetY();
+						$height_incoterms=$nexY-$tab_top;
+	
+						// Rect prend une longueur en 3eme param
+						$pdf->SetDrawColor(192,192,192);
+						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
+	
+						$tab_top = $nexY+6;
+						$height_incoterms += 4;
+					}
+				}
 
 				// Affiche notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
@@ -304,7 +338,7 @@ class pdf_azur extends ModelePDFPropales
 				}
 				if ($notetoshow)
 				{
-					$tab_top = 88;
+					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
@@ -436,9 +470,26 @@ class pdf_azur extends ModelePDFPropales
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
+					// Enough for 6 chars
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+					else
+					{
+						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+
+					// Unit
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$pdf->SetXY($this->posxunit, $curY);
+						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+					}
 
 					// Discount on line
+					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
 						$pdf->SetXY($this->posxdiscount-2, $curY);
@@ -566,6 +617,57 @@ class pdf_azur extends ModelePDFPropales
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
+				//If propal merge product PDF is active
+				if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) 
+				{
+					require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
+					
+					$already_merged = array ();
+					foreach ( $object->lines as $line ) {
+						if (! empty($line->fk_product) && ! (in_array($line->fk_product, $already_merged))) {
+							// Find the desire PDF
+							$filetomerge = new Propalmergepdfproduct($this->db);
+					
+							if ($conf->global->MAIN_MULTILANGS) {
+								$filetomerge->fetch_by_product($line->fk_product, $outputlangs->defaultlang);
+							} else {
+								$filetomerge->fetch_by_product($line->fk_product);
+							}
+					
+							$already_merged[] = $line->fk_product;
+					
+							// If PDF is selected and file is not empty
+							if (count($filetomerge->lines) > 0) {
+								foreach ( $filetomerge->lines as $linefile ) {
+									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
+										if (! empty($conf->product->enabled))
+											$filetomerge_dir = $conf->product->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($line->product_ref);
+										elseif (! empty($conf->service->enabled))
+											$filetomerge_dir = $conf->service->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($line->product_ref);
+											
+										dol_syslog(get_class($this) . ':: upload_dir=' . $filetomerge_dir, LOG_DEBUG);
+											
+										$infile = $filetomerge_dir . '/' . $linefile->file_name;
+										if (is_file($infile)) {
+											$pagecount = $pdf->setSourceFile($infile);
+											for($i = 1; $i <= $pagecount; $i ++) {
+												$tplidx = $pdf->ImportPage($i);
+												$s = $pdf->getTemplatesize($tplidx);
+												$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+												$pdf->useTemplate($tplidx);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				//exit;
+				
+				
+				
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
@@ -1143,7 +1245,23 @@ class pdf_azur extends ModelePDFPropales
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			if($conf->global->PRODUCT_USE_UNITS)
+			{
+				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+			else
+			{
+				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+		}
+
+		if($conf->global->PRODUCT_USE_UNITS) {
+			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
+			if (empty($hidetop)) {
+				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
+				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+					'C');
+			}
 		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);

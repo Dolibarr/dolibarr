@@ -102,7 +102,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	{
 		$error++;
 		dol_syslog($securityevent->error, LOG_ERR);
-		$db->rolback();
+		$db->rollback();
 	}
 }
 

@@ -4,8 +4,8 @@ MenuResourceAdd=Resursă nouă
 MenuResourcePlanning=Planificare resursă
 DeleteResource=Şterge resursa
 ConfirmDeleteResourceElement=Confirmaţi ştergerea resursei pentru acest element
-NoResourceInDatabase=Nici o resursă în baza de date.
-NoResourceLinked=Nici o resursă legată
+NoResourceInDatabase=Nicio resursă în baza de date.
+NoResourceLinked=Nicio resursă legată
 
 ResourcePageIndex=Lista resurse
 ResourceSingular=Resursă

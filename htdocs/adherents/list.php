@@ -110,7 +110,7 @@ if ($sall)
             if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
             $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
-            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
+            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note_public LIKE '%".$db->escape($sall)."%' OR d.note_private LIKE '%".$db->escape($sall)."%')";
         }
 }
 if ($type > 0)
@@ -152,7 +152,7 @@ $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
-	if ($resql) $nbtotalofrecords = $db->num_rows($result);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
 }
 // Add order and limit
@@ -233,7 +233,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters fields
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
@@ -263,7 +263,7 @@ if ($resql)
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 
-	print "</tr>\n";	
+	print "</tr>\n";
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,14 +62,15 @@ class box_contacts extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc,";
-			$sql.= " s.nom as socname";
+			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc";
+			$sql.= ", s.nom as socname";
+            $sql.= ", s.code_client";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND sp.fk_soc = $user->societe_id";
+			if ($user->societe_id) $sql.= " AND sp.fk_soc = ".$user->societe_id;
 			$sql.= " ORDER BY sp.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
@@ -79,57 +81,43 @@ class box_contacts extends ModeleBoxes
 				$contactstatic=new Contact($db);
 				$societestatic=new Societe($db);
 
-				$i = 0;
-                while ($i < $num) {
+				$line = 0;
+                while ($line < $num) {
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-                    $contactstatic->lastname=$objp->lastname;
+                    $contactstatic->id=$objp->id;
+					$contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
 
-                    $societestatic->id=$objp->fk_soc;
-                    $societestatic->name=$objp->socname;
+                    $societestatic->id = $objp->fk_soc;
+                    $societestatic->code_client = $objp->code_client;
+                    $societestatic->name = $objp->socname;
 
-                    $this->info_box_contents[$i][0] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $langs->trans('Contact').': '.$contactstatic->getFullName($langs,0),
-                        'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid,
-                    );
-
-                    $this->info_box_contents[$i][1] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $contactstatic->getFullName($langs,0),
-                        'tooltip' => $langs->trans('Contact').': '.$contactstatic->getFullName($langs,0),
-                        'url' => DOL_URL_ROOT."/contact/card.php?id=".$objp->rowid,
+                        'text' => $contactstatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][2] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => ($objp->fk_soc > 0?'company':''),
-                        'tooltip' => $societestatic->name,
-                        'url' => ($objp->fk_soc > 0?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc:''),
-                    );
-
-                    $this->info_box_contents[$i][3] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => $societestatic->name,
-                        'tooltip' => $societestatic->name,
-                        'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc,
+                        'text' => $societestatic->getNomUrl(1),
+                        'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][4] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datem, "day"),
                     );
 
-                    $i++;
+                    $line++;
                 }
 
                 if ($num==0)
-                    $this->info_box_contents[$i][0] = array(
+                    $this->info_box_contents[$line][0] = array(
                         'td' => 'align="center"',
                         'text'=>$langs->trans("NoRecordedContacts"),
                     );

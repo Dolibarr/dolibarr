@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+
 
 $langs->load("compta");
 $langs->load("banks");
@@ -67,8 +71,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 
-	$sal->accountid=GETPOST("accountid");
-	$sal->fk_user=GETPOST("fk_user");
+	$sal->accountid=GETPOST("accountid","int");
+	$sal->fk_user=GETPOST("fk_user","int");
 	$sal->datev=$datev;
 	$sal->datep=$datep;
 	$sal->amount=price2num(GETPOST("amount"));
@@ -79,6 +83,11 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->type_payment=GETPOST("paymenttype");
 	$sal->num_payment=GETPOST("num_payment");
 	$sal->fk_user_creat=$user->id;
+
+	// Set user current salary as ref salaray for the payment
+	$fuser=new User($db);
+	$fuser->fetch(GETPOST("fk_user","int"));
+	$sal->salary=$fuser->salary;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
@@ -206,11 +215,11 @@ if ($action == 'create')
 		$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
 	}
 
-	print "<form name='add' action=\"card.php\" method=\"post\">\n";
+	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewSalaryPayment"));
+	print_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
 	print '<table class="border" width="100%">';
 
@@ -248,7 +257,7 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -292,11 +301,8 @@ if ($action == 'create')
 
 if ($id)
 {
-	$h = 0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/card.php?id='.$salpayment->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'card';
-	$h++;
+
+	$head=salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
 
@@ -368,7 +374,7 @@ if ($id)
 	print "<div class=\"tabsAction\">\n";
 	if ($salpayment->rappro == 0)
 	{
-		if (! empty($user->rights->tax->charges->supprimer))
+		if (! empty($user->rights->salaries->delete))
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$salpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}

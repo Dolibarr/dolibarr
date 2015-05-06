@@ -50,4 +50,4 @@ ArcticNumRefModelError=Neuspjelo aktiviranje
 PacificNumRefModelDesc1=Vratiti broj sa formatom %syymm-nnnn, gdje je yy godina, mm mjesec i nnnn niz bez prekida i bez vraćanja za 0.
 PacificNumRefModelError=Kartica intervencije koja počinje sa $syymm već postoji i nije kompatibilna sa ovim modelom nizda. Odstrani ili promijeni da bi se modul mogao aktivirati.
 PrintProductsOnFichinter=Isprintaj proizvode sa kartice intervencije
-PrintProductsOnFichinterDetails=za intervencije generisano sa narudžbi
+PrintProductsOnFichinterDetails=interventions generated from orders

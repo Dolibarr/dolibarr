@@ -273,7 +273,7 @@ class FormFile
         }
 
         $printer=0;
-        if (in_array($modulepart,array('facture','propal','proposal','order','commande','expedition')))	// This feature is implemented only for such elements
+        if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
         }
@@ -315,6 +315,15 @@ class FormFile
                 {
                     include_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
                     $modellist=ModelePDFPropales::liste_modeles($this->db);
+                }
+            }
+			else if ($modulepart == 'askpricesupplier')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/askpricesupplier/modules_askpricesupplier.php';
+                    $modellist=ModelePDFAskPriceSupplier::liste_modeles($this->db);
                 }
             }
             else if ($modulepart == 'commande')
@@ -440,16 +449,15 @@ class FormFile
             }
             else if ($modulepart != 'agenda')
             {
-
-                // For normalized standard modules
-                $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+            	// For normalized standard modules
+            	$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
                 {
-                    $res=include_once $file;
+                	$res=include_once $file;
                 }
                 // For normalized external modules
                 else
-              {
+				{
                 	$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 	$res=include_once $file;
                 }
@@ -459,7 +467,7 @@ class FormFile
                     $modellist=call_user_func($class.'::liste_modeles',$this->db);
                 }
                 else
-                {
+              {
                     dol_print_error($this->db,'Bad value for modulepart');
                     return -1;
                 }
@@ -542,7 +550,11 @@ class FormFile
 
             // Execute hooks
             $parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
-            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
+            if (is_object($hookmanager))
+            {
+            	$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
+            	$out.= $hookmanager->resPrint;
+            }
         }
 
         // Get list of files
@@ -671,10 +683,9 @@ class FormFile
     	if (! function_exists('dol_dir_list')) include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
-
     	$this->numoffiles=0;
 
-    	$file_list=dol_dir_list($filedir, 'files', 0, preg_quote($modulesubdir.'.pdf','/'), '\.meta$|\.png$');
+		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir).'.pdf','/'), '\.meta$|\.png$');
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -923,6 +934,11 @@ class FormFile
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($this->db);
         }
+        else if ($modulepart == 'askpricesupplier')
+        {
+            include_once DOL_DOCUMENT_ROOT.'/comm/askpricesupplier/class/askpricesupplier.class.php';
+            $object_instance=new AskPriceSupplier($this->db);
+        }
         else if ($modulepart == 'order')
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -984,6 +1000,7 @@ class FormFile
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/',$relativefile,$reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
                 if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+				if ($modulepart == 'askpricesupplier') { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }

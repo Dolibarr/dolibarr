@@ -174,7 +174,7 @@ $targetcontent=$sourcecontent;
 // Substitute class name
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
 $targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
-$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$tablenoprefix.'\'', $targetcontent);
 $targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
 
 // Substitute comments
@@ -252,7 +252,13 @@ foreach($property as $key => $prop)
 	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= \" ";
-		if ($prop['istime'])
+		if ($prop['field']=='datec')
+		{
+			$varprop.='"."\'".$this->db->idate(dol_now())."\'"."';
+			if ($i < count($property)) $varprop.=",";
+			$varprop.='";';
+		}
+		elseif ($prop['istime'])
 		{
 			$varprop.='".(! isset($this->'.$prop['field'].') || dol_strlen($this->'.$prop['field'].')==0?\'NULL\':"\'".$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
@@ -265,6 +271,12 @@ foreach($property as $key => $prop)
 			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
 			$varprop.='$this->db->escape($this->'.$prop['field'].')';
 			$varprop.='."\'")."';
+			if ($i < count($property)) $varprop.=",";
+			$varprop.='";';
+		}
+		elseif ($prop['field']=='fk_user_mod' || $prop['field']=='fk_user_author')
+		{
+			$varprop.='".$user->id."';
 			if ($i < count($property)) $varprop.=",";
 			$varprop.='";';
 		}
@@ -289,17 +301,26 @@ $i=0;
 foreach($property as $key => $prop)
 {
 	$i++;
-	if ($prop['field'] != 'rowid' && $prop['field'] != 'id')
+	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && $prop['field'] != 'datec' && $prop['field'] != 'fk_user_author')
 	{
 		$varprop.="\t\t\$sql.= \" ";
 		$varprop.=$prop['field'].'=';
-		if ($prop['istime'])
+		if ($prop['field']=='tms') {
+			$varprop.='".(dol_strlen($this->'.$prop['field'].')!=0 ? "\'".$this->db->idate(';
+			$varprop.='$this->'.$prop['field'];
+			$varprop.=')."\'" : "\'".$this->db->idate(dol_now())."\'").';
+			$varprop.='"';
+		}
+		elseif ($prop['istime'])
 		{
 			// (dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null')
 			$varprop.='".(dol_strlen($this->'.$prop['field'].')!=0 ? "\'".$this->db->idate(';
 			$varprop.='$this->'.$prop['field'];
 			$varprop.=')."\'" : \'null\').';
 			$varprop.='"';
+		}
+		elseif ($prop['field']=='fk_user_mod') {
+			$varprop.='".$user->id."';
 		}
 		else
 		{
@@ -325,6 +346,7 @@ $targetcontent=preg_replace('/\$sql\.= " t\.field2";/', '', $targetcontent);
 
 // Substitute select set parameters
 $varprop="\n";
+$varpropline="\n";
 $cleanparam='';
 $i=0;
 foreach($property as $key => $prop)
@@ -338,10 +360,21 @@ foreach($property as $key => $prop)
 		if ($prop['istime']) $varprop.=')';
 		$varprop.=";";
 		$varprop.="\n";
+		
+		$varpropline.="\t\t\t\t\$line->".$prop['field']." = ";
+		if ($prop['istime']) $varpropline.='$this->db->jdate(';
+		$varpropline.='$obj->'.$prop['field'];
+		if ($prop['istime']) $varpropline.=')';
+		$varpropline.=";";
+		$varpropline.="\n";
 	}
 }
 $targetcontent=preg_replace('/\$this->prop1 = \$obj->field1;/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\$this->prop2 = \$obj->field2;/', '', $targetcontent);
+
+//Substirute fetchAll
+$targetcontent=preg_replace('/\$line->prop1 = \$obj->field1;/', $varpropline, $targetcontent);
+$targetcontent=preg_replace('/\$line->prop2 = \$obj->field2;/', '', $targetcontent);
 
 
 // Substitute initasspecimen parameters

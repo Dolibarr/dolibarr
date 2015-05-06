@@ -166,7 +166,7 @@ class MailmanSpip
     /**
      *  Fonction qui donne les droits redacteurs dans spip
      *
-     *	@param	Object	$object		Object with data (->firstname, ->lastname, ->email and ->login)
+     *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
      *  @return	int					=0 if KO, >0 if OK
      */
     function add_to_spip($object)
@@ -208,7 +208,7 @@ class MailmanSpip
     /**
      *  Fonction qui enleve les droits redacteurs dans spip
      *
-     *	@param	Object	$object		Object with data (->login)
+     *	@param	Adherent	$object		Object with data (->login)
      *  @return	int					=0 if KO, >0 if OK
      */
     function del_to_spip($object)
@@ -247,7 +247,7 @@ class MailmanSpip
     /**
      *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
      *
-     *	@param	Object	$object		Object with data (->login)
+     *	@param	object	$object		Object with data (->login)
      *  @return int     			1=exists, 0=does not exists, -1=error
      */
     function is_in_spip($object)
@@ -297,7 +297,7 @@ class MailmanSpip
     /**
      *  Subscribe an email to all mailing-lists
      *
-     *	@param	Object	$object		Object with data (->email, ->pass, ->element, ->type)
+     *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
      *  @param	array	$listes    	To force mailing-list (string separated with ,)
      *  @return	int		  			<0 if KO, >=0 if OK
      */
@@ -369,7 +369,7 @@ class MailmanSpip
      *  Unsubscribe an email from all mailing-lists
      *  Used when a user is resiliated
      *
-     *	@param	Object	$object		Object with data (->email, ->pass, ->element, ->type)
+     *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
      *  @param	array	$listes     To force mailing-list (string separated with ,)
      *  @return int         		<0 if KO, >=0 if OK
      */

@@ -142,7 +142,7 @@ class DolEditor
      *
      *  @param	int		$noprint    1=Return HTML string instead of printing it to output
      *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
-     *  @return	void
+     *  @return	void|string
      */
     function Create($noprint=0,$morejs='')
     {
@@ -160,7 +160,7 @@ class DolEditor
         {
             $found=1;
             //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'"'.($this->readonly?' disabled="disabled"':'').' class="flat">';
-            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
+            $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 2px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
 
@@ -183,7 +183,8 @@ class DolEditor
             						customConfig : ckeditorConfig,
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						toolbar: \''.$this->toolbarname.'\',
+            						allowedContent :'.(empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)?'false':'true').',
+                            		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',

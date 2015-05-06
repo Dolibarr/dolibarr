@@ -206,7 +206,7 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
-	 * @param	Object 		$object        	contact
+	 * @param	Contact 		$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
@@ -408,6 +408,7 @@ abstract class CommonDocGenerator
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_label'=>$line->product_label,
+                        'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
@@ -442,7 +443,7 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   Object			$object             Main object to use as data source
+     * @param   Expedition			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
      * @param   array_key		$array_key	        Name of the key for return array
      * @return	array								Array of substitution

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
@@ -63,7 +63,7 @@ print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
 $useragent=$_SERVER['HTTP_USER_AGENT'];
 if (! empty($useragent))
 {
-    $tmp=getBrowserInfo();
+    $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
     $browserversion=$tmp['browserversion'];
     $browsername=$tmp['browsername'];
     if ($browsername == 'ie' && $browserversion < 7) print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
@@ -454,7 +454,7 @@ else
 			if ($allowupgrade)
 			{
 				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
-                $choice .= '<a class="button" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+                $choice .= '<a class="button runupgrade" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{
@@ -522,6 +522,12 @@ $("div#AShowChoices a").click(function() {
     }
 
 });
+
+/*
+$(".runupgrade").click(function() {
+	return confirm("'.dol_escape_js($langs->transnoentitiesnoconv("WarningUpgrade"), 0, 1).'");
+});
+*/
 
 </script>';
 

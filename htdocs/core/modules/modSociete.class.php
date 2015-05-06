@@ -294,8 +294,11 @@ class modSociete extends DolibarrModules
         				$typeFilter="Boolean";
         				break;
         			case 'sellist':
-        				$typeFilter="List:".$obj->param;
-        				break;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+						break;
         		}
         		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
         		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
@@ -353,8 +356,11 @@ class modSociete extends DolibarrModules
         				$typeFilter="Boolean";
         				break;
         			case 'sellist':
-        				$typeFilter="List:".$obj->param;
-        				break;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+						break;
         		}
         		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
         		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
@@ -382,7 +388,7 @@ class modSociete extends DolibarrModules
 		$this->import_icon[$r]='company';
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'societe','extra'=>MAIN_DB_PREFIX.'societe_extrafields');	// List of tables to insert into (insert done in same order)
-		$this->import_fields_array[$r]=array('s.nom'=>"Name*",'s.status'=>"Status",'s.client'=>"Customer*",'s.fournisseur'=>"Supplier*",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.code_compta'=>"CustomerAccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'s.fk_departement'=>"StateId",'s.fk_pays'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siren'=>"ProfId1",'s.siret'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_private'=>"NotePrivate",'s.note_public'=>"NotePublic",'s.fk_typent'=>"ThirdPartyType",'s.fk_effectif'=>"Staff","s.fk_forme_juridique"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus','s.default_lang'=>'DefaultLanguage','s.barcode'=>'BarCode','s.datec'=>"DateCreation");
+		$this->import_fields_array[$r]=array('s.nom'=>"Name*",'s.status'=>"Status",'s.client'=>"Customer*",'s.fournisseur'=>"Supplier*",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.code_compta'=>"CustomerAccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'s.fk_departement'=>"StateId",'s.fk_pays'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siren'=>"ProfId1",'s.siret'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.idprof5'=>"ProfId5",'s.idprof6'=>"ProfId6",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_private'=>"NotePrivate",'s.note_public'=>"NotePublic",'s.fk_typent'=>"ThirdPartyType",'s.fk_effectif'=>"Staff","s.fk_forme_juridique"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus','s.default_lang'=>'DefaultLanguage','s.barcode'=>'BarCode','s.datec'=>"DateCreation");
 		// Add extra fields
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
@@ -398,7 +404,7 @@ class modSociete extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r]=array('s.fk_user_creat'=>'user->id','extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'societe');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
-			's.fk_typent'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ctypent.class.php','class'=>'Ctypent','method'=>'fetch','dict'=>'DictionaryCompanyType'),
+			's.fk_typent'=>array('rule'=>'fetchidfromcodeorlabel','classfile'=>'/core/class/ctypent.class.php','class'=>'Ctypent','method'=>'fetch','dict'=>'DictionaryCompanyType'),
 			's.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ccountry.class.php','class'=>'Ccountry','method'=>'fetch','dict'=>'DictionaryCountry'),
 			's.fk_stcomm'=>array('rule'=>'zeroifnull'),
 		    's.code_client'=>array('rule'=>'getcustomercodeifauto'),
@@ -407,8 +413,8 @@ class modSociete extends DolibarrModules
 		    's.code_compta_fournisseur'=>array('rule'=>'getsupplieraccountancycodeifauto')
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-		$this->import_regex_array[$r]=array('s.status'=>'^[0|1]','s.client'=>'^[0|1|2|3]','s.fournisseur'=>'^[0|1]','s.fk_typent'=>'id@'.MAIN_DB_PREFIX.'c_typent','s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$this->import_examplevalues_array[$r]=array('s.nom'=>"MyBigCompany",'s.status'=>"0 (closed) or 1 (active)",'s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'s.code_client'=>"CU01-0001 or empty or 'auto'",'s.code_fournisseur'=>"SU01-0001 or empty or 'auto'",'s.address'=>"61 jump street",'s.zip'=>"123456",'s.town'=>"Big town",'s.fk_pays'=>'US, FR, DE...','s.phone'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note_private'=>"This is an example of private note for record",'s.note_public'=>"This is an example of public note for record",'s.fk_typent'=>"2",'s.fk_effectif'=>"3","s.fk_forme_juridique"=>"1",'s.fk_prospectlevel'=>'PL_MEDIUM','s.fk_stcomm'=>'0','s.default_lang'=>'en_US','s.barcode'=>'123456789');
+		$this->import_regex_array[$r]=array('s.status'=>'^[0|1]','s.client'=>'^[0|1|2|3]','s.fournisseur'=>'^[0|1]','s.fk_typent'=>'id@'.MAIN_DB_PREFIX.'c_typent','s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+		$this->import_examplevalues_array[$r]=array('s.nom'=>"MyBigCompany",'s.status'=>"0 (closed) or 1 (active)",'s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'s.code_client'=>"CU01-0001 or empty or 'auto'",'s.code_fournisseur'=>"SU01-0001 or empty or 'auto'",'s.address'=>"61 jump street",'s.zip'=>"123456",'s.town'=>"Big town",'s.fk_pays'=>'US, FR, DE...','s.phone'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.idprof5'=>"",'s.idprof6'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note_private'=>"This is an example of private note for record",'s.note_public'=>"This is an example of public note for record",'s.fk_typent'=>"2",'s.fk_effectif'=>"3","s.fk_forme_juridique"=>"1",'s.fk_prospectlevel'=>'PL_MEDIUM','s.fk_stcomm'=>'0','s.default_lang'=>'en_US','s.barcode'=>'123456789','s.datec'=>"2015-01-01 or 2015-01-01 12:30:00");
 
 		// Import list of contact and attributes
 		$r++;
@@ -437,7 +443,7 @@ class modSociete extends DolibarrModules
 			's.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ccountry.class.php','class'=>'Ccountry','method'=>'fetch','dict'=>'DictionaryCountry'),
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-		$this->import_regex_array[$r]=array('s.birthday'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+		$this->import_regex_array[$r]=array('s.birthday'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
 		$this->import_examplevalues_array[$r]=array('s.fk_soc'=>'MyBigCompany','s.civility'=>"MR",'s.lastname'=>"Smith",'s.firstname'=>'John','s.address'=>'61 jump street','s.zip'=>'75000','s.town'=>'Bigtown','s.fk_pays'=>'US, FR, DE...','s.datec'=>'1972-10-10','s.poste'=>"Director",'s.phone'=>"5551122",'s.phone_perso'=>"5551133",'s.phone_mobile'=>"5551144",'s.fax'=>"5551155",'s.email'=>"johnsmith@email.com",'s.note_private'=>"My private note",'s.note_public'=>"My public note");
 
 		// Import Bank Accounts

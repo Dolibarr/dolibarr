@@ -29,6 +29,7 @@ ReportTurnover=Omsetning
 PaymentsNotLinkedToInvoice=Betalinger ikke knyttet til noen faktura, så ikke knyttet til noen tredje part
 PaymentsNotLinkedToUser=Betalinger ikke knyttet til noen bruker
 Profit=Profit
+AccountingResult=Accounting result
 Balance=Balanse
 Debit=Debet
 Credit=Kreditt

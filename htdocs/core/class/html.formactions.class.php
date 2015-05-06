@@ -171,6 +171,7 @@ class FormActions
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'askpricesupplier')    $title=$langs->trans('ActionsOnAskPriceSupplier');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
@@ -210,7 +211,10 @@ class FormActions
         		{
 	        		$tmpa=dol_getdate($action->datep);
 	        		$tmpb=dol_getdate($action->datef);
-	        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) print '-'.dol_print_date($action->datef,'hour');
+	        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
+	        		{
+	        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef,'hour');
+	        		}
 	        		else print '-'.dol_print_date($action->datef,'dayhour');
         		}
         		print '</td>';

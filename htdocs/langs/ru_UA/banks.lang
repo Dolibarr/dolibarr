@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Банк / Наличные
 MenuSetupBank=Банк / Денежные установки
 FinancialAccount=Счет
 MainAccount=Главное внимание
@@ -29,7 +28,6 @@ DeleteAccount=Удалить аккаунт
 RemoveFromRubrique=Удалить связь с категорией
 RemoveFromRubriqueConfirm=Вы уверены, что хотите удалить связь между сделки и категории?
 ListBankTransactions=Список банковских операций
-IdTransaction=Transaction ID
 SearchTransaction=Поиск сделку
 ListTransactionsByCategory=Список сделки / категории
 TransactionsToConciliate=Сделки примирить

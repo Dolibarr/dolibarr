@@ -59,7 +59,7 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('resource');
 
 // Get parameters
-$id				= GETPOST('id','int');
+$id			= GETPOST('id','int');
 $action			= GETPOST('action','alpha');
 $mode			= GETPOST('mode','alpha');
 $lineid			= GETPOST('lineid','int');
@@ -70,6 +70,7 @@ $resource_type	= GETPOST('resource_type','alpha');
 $busy 			= GETPOST('busy','int');
 $mandatory 		= GETPOST('mandatory','int');
 $cancel			= GETPOST('cancel','alpha');
+$confirm                = GETPOST('confirm','alpha');
 
 if($action == 'add_element_resource' && ! $cancel)
 {
@@ -113,22 +114,22 @@ if ($action == 'update_linked_resource' && $user->rights->resource->write && !GE
 }
 
 // Delete a resource linked to an element
-if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
 {
-	$res = $object->fetch(GETPOST('id'));
-	if($res)
+	$res = $object->fetch($id);
+	if($res > 0)
 	{
-		$result = $object->delete_resource($lineid,$element);
+            $result = $object->delete_resource($lineid,$element);
 
-		if ($result >= 0)
-		{
-			setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
-			Header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
-		}
-		else {
-			setEventMessage($object->error,'errors');
-		}
+            if ($result >= 0)
+            {
+                    setEventMessage($langs->trans('RessourceLineSuccessfullyDeleted'));
+                    Header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+                    exit;
+            }
+            else {
+                    setEventMessage($object->error,'errors');
+            }
 	}
 	else
 	{
@@ -173,7 +174,7 @@ else
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
-		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
+		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
 	}
 
 

@@ -128,10 +128,8 @@ class HookManager
         $parameters['context']=join(':',$this->contextarray);
         dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
-        // Define type of hook ('output', 'returnvalue' or 'addreplace'). 'addreplace' should be type for all hooks. 'output' and 'returnvalue' are deprecated.
+        // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated).
         $hooktype='output';
-        if (preg_match('/^pdf_/',$method)) $hooktype='returnvalue';	// pdf_xxx except pdf_writelinedesc are returnvalue hooks. When there is 2 hooks of this type, only last one win.
-        if ($method =='insertExtraFields') $hooktype='returnvalue';
         if (in_array(
         	$method,
         	array(
@@ -149,6 +147,13 @@ class HookManager
         		'formatEvent'
         		)
         	)) $hooktype='addreplace';
+        // Deprecated hook types
+        if (preg_match('/^pdf_/',$method) && $method != 'pdf_writelinedesc') $hooktype='returnvalue';		// pdf_xxx except pdf_writelinedesc are 'returnvalue' hooks. When there is 2 hooks of this type, only last one win. TODO Move them into 'output' or 'addreplace' hooks.
+        if ($method == 'insertExtraFields')
+        {
+        	$hooktype='returnvalue';	// deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
+        	dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
+        }
 
         // Loop on each hook to qualify modules that have declared context
         $modulealreadyexecuted=array();
@@ -187,7 +192,7 @@ class HookManager
                     		dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error)?'':" ".$this->error).(empty($this->errors)?'':" ".join(",",$this->errors)), LOG_ERR);
                     	}
 
-                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (isset($actionclassinstance->results) && is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     }
                     // Generic hooks that return a string or array (printSearchForm, printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
@@ -201,8 +206,6 @@ class HookManager
 
                     	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
-                    	// TODO dead code to remove (do not enable this, but fix hook instead)
-                    	//if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
                     	// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string. we must use $actionclassinstance->resprints to return a string
                     	if (! is_array($result) && ! is_numeric($result))
                     	{
@@ -221,8 +224,8 @@ class HookManager
         }
 
         // TODO remove this. When there is something to print for an output hook, ->resPrint is filled.
-        if ($hooktype == 'output') return $this->resPrint;
-		if ($hooktype == 'returnvalue') return $result;
+        //if ($hooktype == 'output') return $this->resPrint;
+		//if ($hooktype == 'returnvalue') return $result;
         return ($error?-1:$resaction);
 	}
 

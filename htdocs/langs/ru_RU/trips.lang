@@ -1,22 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-Trip=Поездка
-Trips=Поездки
-TripsAndExpenses=Поездки и расходы
-TripsAndExpensesStatistics=Статистика поездок и расходов
-TripCard=Карточка поездки
-AddTrip=Добавить поездку
-ListOfTrips=Список поездок
+ExpenseReport=Отчёт о затратах
+ExpenseReports=Отчёты о затратах
+Trip=Отчёт о затратах
+Trips=Отчёты о затратах
+TripsAndExpenses=Отчёты о затратах
+TripsAndExpensesStatistics=Статистика отчётов о затратах
+TripCard=Карточка отчётов о затратах
+AddTrip=Создать отчёт о затратах
+ListOfTrips=Список отчёта о затратах
 ListOfFees=Список сборов
-NewTrip=Новая Поездка
+NewTrip=Новый отчёт о затртатах
 CompanyVisited=Посещенная организация
 Kilometers=Километры
 FeesKilometersOrAmout=Сумма или километры
-DeleteTrip=Удалить поездку
-ConfirmDeleteTrip=Вы уверены, что хотите удалить эту поездку?
-TF_OTHER=Другое
-TF_LUNCH=Обед
-TF_TRIP=Поездка
-ListTripsAndExpenses=Список поездок и расходов
-ExpensesArea=Область поездок и расходов
-SearchATripAndExpense=Поиск поездок и расходов
+DeleteTrip=Удалить отчёт о затратах
+ConfirmDeleteTrip=Вы точно хотите удалить этот отчёт о затратах?
+ListTripsAndExpenses=Список отчётов о затратах
+ListToApprove=Ждёт утверждения
+ExpensesArea=Поле отчётов о затратах
+SearchATripAndExpense=Поиск отчёта о затратах
 ClassifyRefunded=Classify 'Refunded'
+ExpenseReportWaitingForApproval=Новый отчёт о затратах направлен на утверждение
+ExpenseReportWaitingForApprovalMessage=Новый отчёт отчёт о затратах отправлен и ждёт утверждения. \nОт пользователя %s\nЗа период %s\nНажмите для проверки: %s
+TripId=ID отчёта о затратах
+AnyOtherInThisListCanValidate=Кого уведомлять для подтверждения.
+TripSociete=Информация о компании
+TripSalarie=Информация о пользователе
+TripNDF=Информация о отчёте о затратах
+DeleteLine=Удалить строку из отчёта о затратах
+ConfirmDeleteLine=Вы точно хотите удалить эту строку?
+PDFStandardExpenseReports=Шаблон отчёта о затратах для создания документа в формате PDF
+ExpenseReportLine=Строка отчёта о затратах
+TF_OTHER=Другое
+TF_TRANSPORTATION=Транспортировка
+TF_LUNCH=Обед
+TF_METRO=Метро
+TF_TRAIN=Поезд
+TF_BUS=Автобус
+TF_CAR=Машина
+TF_PEAGE=Троллейбус
+TF_ESSENCE=Топливо
+TF_HOTEL=Хостел
+TF_TAXI=Такси
+
+ErrorDoubleDeclaration=Вы должны задекларировать другой отчёт о затратах в этом временном диапазоне. 
+ListTripsAndExpenses=Список отчётов о затратах
+AucuneNDF=Нет отчётов о затратах по этому критерию
+AucuneLigne=Нет задекларированных отчётов о затратах
+AddLine=Добавить строку
+AddLineMini=Добавить
+
+Date_DEBUT=Дата начала периода
+Date_FIN=Дата конца периода
+ModePaiement=Режим оплаты
+Note=Примечание
+Project=Проект
+
+VALIDATOR=Уведомить пользователя о опробации
+VALIDOR=Утверждено
+AUTHOR=Записано
+AUTHORPAIEMENT=Оплачено
+REFUSEUR=Отклонено
+CANCEL_USER=Отменено
+
+MOTIF_REFUS=Причина
+MOTIF_CANCEL=Причина
+
+DATE_REFUS=Дата отклонения
+DATE_SAVE=Дата проверки
+DATE_VALIDE=Дата проверки
+DATE_CANCEL=Дата отмены
+DATE_PAIEMENT=Дата платежа
+
+TO_PAID=Оплатить
+BROUILLONNER=Открыть заново
+SendToValid=Отправить запрос на утверждение
+ModifyInfoGen=Редактировать
+ValidateAndSubmit=Проверить и отправить запрос на утверждение
+
+NOT_VALIDATOR=Вы не можете утвердить этот отчёт о затратах
+NOT_AUTHOR=Вы не автор этого отчёта о затратах. Операция отменена.
+
+RefuseTrip=Отклонить отчёт о затратах
+ConfirmRefuseTrip=Вы точно хотите отклонить этот отчёт о затратах?
+
+ValideTrip=Одобрить отчёт о затратах
+ConfirmValideTrip=Вы точно хотите одобрить отчёт о затратах?
+
+PaidTrip=Оплатить отчёт о затратах
+ConfirmPaidTrip=Вы точно хотите изменит статус этого отчёта о затратах на "Оплачен"?
+
+CancelTrip=Отменить отчёт о затратах
+ConfirmCancelTrip=Вы точно хотите отменить отчёт о затратах?
+
+BrouillonnerTrip=Вернуть отчёту о затратах статус "Черновик"
+ConfirmBrouillonnerTrip=Вы точно хотите изменить статус этого отчёта о затратах на "Черновик"?
+
+SaveTrip=Проверить отчёт о завтратах
+ConfirmSaveTrip=Вы точно хотите проверить данный отчёт о затратах?
+
+NoTripsToExportCSV=Нет отчёта о затратах за этот период.

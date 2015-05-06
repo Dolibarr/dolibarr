@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Proveedores
-Supplier=Proveedor
 AddSupplier=Crear un proveedor
 SupplierRemoved=Proveedor eliminado
 SuppliersInvoice=Factura proveedor
@@ -42,3 +41,6 @@ NoneOrBatchFileNeverRan=Ninguno o lote <b>%s</b> no se ha ejecutado recientement
 SentToSuppliers=Enviado a proveedores
 ListOfSupplierOrders=Listado de pedidos a proveedor
 MenuOrdersSupplierToBill=Pedidos a proveedor a facturar
+NbDaysToDelivery=Tiempo de entrega en días
+DescNbDaysToDelivery=El plazo mayor se visualiza el el listado de pedidos de productos
+UseDoubleApproval=Usar aprobación doble (la segunda aprobación puede ser realizada por un usuario con el permiso dedicado)

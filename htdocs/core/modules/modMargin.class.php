@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2015   Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +81,7 @@ class modMargin extends DolibarrModules
 		// New pages on tabs
 		$this->tabs = array(
 				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous:/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous && ($societe->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 
@@ -129,6 +130,14 @@ class modMargin extends DolibarrModules
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
+
+		$r++;
+		$this->rights[$r][0] = 59003; // id de la permission
+		$this->rights[$r][1] = 'Read every user margin'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'read';
+		$this->rights[$r][5] = 'all';
 	}
 
 	/**

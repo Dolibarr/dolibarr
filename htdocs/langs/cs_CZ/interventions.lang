@@ -50,4 +50,4 @@ ArcticNumRefModelError=Nepodařilo se aktivovat
 PacificNumRefModelDesc1=Zpět numero ve formátu %syymm-nnnn, kde yy je rok, MM je měsíc a nnnn je sekvence bez přerušení a bez vrátí na 0.
 PacificNumRefModelError=Zásah karta začíná s $ syymm již existuje a není kompatibilní s tímto modelem sekvence. Vyjměte ji nebo přejmenujte jej na aktivaci tohoto modulu.
 PrintProductsOnFichinter=Vytisknout produktů na intervenční karty
-PrintProductsOnFichinterDetails=forinterventions získané z objednávek
+PrintProductsOnFichinterDetails=interventions generated from orders

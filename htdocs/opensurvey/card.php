@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,12 +157,14 @@ if ($action == 'edit') {
  * View
  */
 
-if ($object->fk_user_creat) {
+$form=new Form($db);
+
+if ($object->fk_user_creat)
+{
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user_creat);
 }
 
-$form=new Form($db);
 
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
@@ -186,8 +188,8 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = opensurvey_prepare_head($object);
 
-print dol_get_fiche_head($head,'general',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
 
+dol_fiche_head($head,'general',$langs->trans("Survey"),0,dol_buildpath('/opensurvey/img/object_opensurvey.png',1),1);
 
 print '<table class="border" width="100%">';
 
@@ -212,7 +214,7 @@ $adresseadmin=$object->mail_admin;
 print $langs->trans("Title") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
+	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
 }
 else print dol_htmlentities($object->titre);
 print '</td></tr>';
@@ -307,17 +309,30 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-$url=$urlwithouturlroot.dol_buildpath('/opensurvey/public/studs.php',1).'?sondage='.$object->id_sondage;
-$urllink='<a href="'.$url.'" target="_blank">'.$url.'</a>';
+$url=$urlwithouturlroot.dol_buildpath('/public/opensurvey/studs.php',1).'?sondage='.$object->id_sondage;
+$urllink='<input type="text" style="width: 60%" '.($action == 'edit' ? 'disabled="disabled"' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 print $urllink;
+if ($action != 'edit')
+{
+	print '<script type="text/javascript">
+               jQuery(document).ready(function () {
+				    jQuery("#opensurveyurl").focus(function() { jQuery(this).select(); } );
+				});
+		    </script>';
+	print ' <a href="'.$url.'" target="_blank">'.$langs->trans("Link").'</a>';
 
+}
 print '</table>';
 
-if ($action == 'edit') print '<br><div class="center"><input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+dol_fiche_end();
+
+if ($action == 'edit')
+{
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+}
 
 print '</form>'."\n";
 
-dol_fiche_end();
 
 
 /*
@@ -364,7 +379,7 @@ if ($comments) {
 }
 else
 {
-	print $langs->trans("NoCommentYet").'<br>';;
+	print $langs->trans("NoCommentYet").'<br>';
 }
 
 print '<br>';

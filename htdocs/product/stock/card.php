@@ -308,7 +308,7 @@ else
 
 			// Value
 			print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
-			print empty($calcproducts['value'])?'0':$calcproducts['value'];
+			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
 
 			// Last movement
@@ -387,8 +387,8 @@ else
 			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
-			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
+			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
+			if ($user->rights->stock->creer)            print_liste_field_titre('');
 			print "</tr>";
 
 			$totalunit=0;
@@ -435,7 +435,8 @@ else
 					print "<tr ".$bc[$var].">";
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-					$productstatic->ref=$objp->ref;
+                    $productstatic->ref = $objp->ref;
+                    $productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
@@ -466,14 +467,14 @@ else
 
                     if ($user->rights->stock->mouvement->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
-						print img_picto($langs->trans("StockMovement"),'uparrow.png').' '.$langs->trans("StockMovement");
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print img_picto($langs->trans("StockMovement"),'uparrow.png','class="hideonsmartphone"').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
+						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}

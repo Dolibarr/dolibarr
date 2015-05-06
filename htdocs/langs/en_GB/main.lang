@@ -1,4 +1,7 @@
-# Dolibarr language file - en_GB - main
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
@@ -7,16 +10,18 @@ FormatDateShortJava=dd/MM/yyyy
 FormatDateShortJavaInput=dd/MM/yyyy
 FormatDateShortJQuery=dd/mm/yy
 FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+AmountVAT=Amount VAT
 TotalVAT=Total VAT
 IncludedVAT=Included VAT
-HT=Net of tax
 TTC=Inc. VAT
 VAT=VAT
 VATRate=VAT Rate
-AmountVAT=Amount VAT

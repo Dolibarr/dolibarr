@@ -13,7 +13,9 @@ ConfigAccountingExpert=Cấu hình của các chuyên gia kế toán mô-đun
 Journaux=Tạp chí
 JournalFinancial=Tạp chí tài chính
 Exports=Xuất khẩu
+Export=Xuất dữ liệu
 Modelcsv=Mô hình xuất khẩu
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Chọn một mô hình xuất khẩu
 Modelcsv_normal=Cổ điển xuất khẩu
 Modelcsv_CEGID=Xuất khẩu theo hướng CEGID chuyên gia
@@ -66,7 +68,7 @@ Lineofinvoice=Dòng của hóa đơn
 VentilatedinAccount=Ventilation thành công trong các tài khoản kế toán
 NotVentilatedinAccount=Không ventilation trong tài khoản kế toán
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

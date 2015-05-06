@@ -710,13 +710,13 @@ class Datamatrix {
 		$pos = 0; // current position
 		$cw = array(); // array of codewords to be returned
 		$cw_num = 0; // number of data codewords
-		$data_lenght = strlen($data); // number of chars
-		while ($pos < $data_lenght) {
+		$data_length = strlen($data); // number of chars
+		while ($pos < $data_length) {
 			// set last used encoding
 			$this->last_enc = $enc;
 			switch ($enc) {
 				case ENC_ASCII: { // STEP B. While in ASCII encodation
-					if (($data_lenght > 1) AND ($pos < ($data_lenght - 1)) AND ($this->isCharMode(ord($data[$pos]), ENC_ASCII_NUM) AND $this->isCharMode(ord($data[$pos + 1]), ENC_ASCII_NUM))) {
+					if (($data_length > 1) AND ($pos < ($data_length - 1)) AND ($this->isCharMode(ord($data[$pos]), ENC_ASCII_NUM) AND $this->isCharMode(ord($data[$pos + 1]), ENC_ASCII_NUM))) {
 						// 1. If the next data sequence is at least 2 consecutive digits, encode the next two digits as a double digit in ASCII mode.
 						$cw[] = (intval(substr($data, $pos, 2)) + 130);
 						++$cw_num;
@@ -820,7 +820,7 @@ class Datamatrix {
 								break;
 							}
 						}
-					} while (($p > 0) AND ($epos < $data_lenght));
+					} while (($p > 0) AND ($epos < $data_length));
 					// process last data (if any)
 					if ($p > 0) {
 						// get remaining number of data symbols
@@ -870,10 +870,10 @@ class Datamatrix {
 					break;
 				}
 				case ENC_EDF: { // F. While in EDIFACT (EDF) encodation
-					// initialize temporary array with 0 lenght
+					// initialize temporary array with 0 length
 					$temp_cw = array();
 					$epos = $pos;
-					$field_lenght = 0;
+					$field_length = 0;
 					$newenc = $enc;
 					do {
 						// 2. process the next character in EDIFACT encodation.
@@ -881,21 +881,21 @@ class Datamatrix {
 						if ($this->isCharMode($chr, ENC_EDF)) {
 							++$epos;
 							$temp_cw[] = $chr;
-							++$field_lenght;
+							++$field_length;
 						}
-						if (($field_lenght == 4) OR ($epos == $data_lenght) OR !$this->isCharMode($chr, ENC_EDF)) {
-							if (($epos == $data_lenght) AND ($field_lenght < 3)) {
+						if (($field_length == 4) OR ($epos == $data_length) OR !$this->isCharMode($chr, ENC_EDF)) {
+							if (($epos == $data_length) AND ($field_length < 3)) {
 								$enc = ENC_ASCII;
 								$cw[] = $this->getSwitchEncodingCodeword($enc);
 								++$cw_num;
 								break;
 							}
-							if ($field_lenght < 4) {
+							if ($field_length < 4) {
 								// set unlatch character
 								$temp_cw[] = 0x1f;
-								++$field_lenght;
+								++$field_length;
 								// fill empty characters
-								for ($i = $field_lenght; $i < 4; ++$i) {
+								for ($i = $field_length; $i < 4; ++$i) {
 									$temp_cw[] = 0;
 								}
 								$enc = ENC_ASCII;
@@ -919,19 +919,19 @@ class Datamatrix {
 							}
 							$temp_cw = array();
 							$pos = $epos;
-							$field_lenght = 0;
+							$field_length = 0;
 							if ($enc == ENC_ASCII) {
 								break; // exit from EDIFACT mode
 							}
 						}
-					} while ($epos < $data_lenght);
+					} while ($epos < $data_length);
 					break;
 				}
 				case ENC_BASE256: { // G. While in Base 256 (B256) encodation
-					// initialize temporary array with 0 lenght
+					// initialize temporary array with 0 length
 					$temp_cw = array();
-					$field_lenght = 0;
-					while (($pos < $data_lenght) AND ($field_lenght <= 1555)) {
+					$field_length = 0;
+					while (($pos < $data_length) AND ($field_length <= 1555)) {
 						$newenc = $this->lookAheadTest($data, $pos, $enc);
 						if ($newenc != $enc) {
 							// 1. If the look-ahead test (starting at step J) indicates another mode, switch to that mode.
@@ -942,16 +942,16 @@ class Datamatrix {
 							$chr = ord($data[$pos]);
 							++$pos;
 							$temp_cw[] = $chr;
-							++$field_lenght;
+							++$field_length;
 						}
 					}
-					// set field lenght
-					if ($field_lenght <= 249) {
-						$cw[] = $this->get255StateCodeword($field_lenght, ($cw_num + 1));
+					// set field length
+					if ($field_length <= 249) {
+						$cw[] = $this->get255StateCodeword($field_length, ($cw_num + 1));
 						++$cw_num;
 					} else {
-						$cw[] = $this->get255StateCodeword((floor($field_lenght / 250) + 249), ($cw_num + 1));
-						$cw[] = $this->get255StateCodeword(($field_lenght % 250), ($cw_num + 2));
+						$cw[] = $this->get255StateCodeword((floor($field_length / 250) + 249), ($cw_num + 1));
+						$cw[] = $this->get255StateCodeword(($field_length % 250), ($cw_num + 2));
 						$cw_num += 2;
 					}
 					if (!empty($temp_cw)) {

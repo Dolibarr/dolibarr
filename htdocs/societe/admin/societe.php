@@ -165,10 +165,7 @@ if ($action == 'setdoc')
 
 	$db->begin();
 
-	if (dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		$conf->global->COMPANY_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "COMPANY_ADDON_PDF",$value,'chaine',0,'',$conf->entity);
 
 	// On active le modele
 	$type='company';
@@ -291,10 +288,10 @@ $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers|ES:Conf
 llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CompanySetup"),$linkback,'title_setup');
 
 
-$head = societe_admin_prepare_head(null);
+$head = societe_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
 
@@ -395,6 +392,7 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot,0);
@@ -488,6 +486,7 @@ print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
+$var=true;
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot.'doc/',0);

@@ -56,6 +56,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_proje
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
 
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+
+
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
@@ -109,7 +112,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
         if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
         if (! $conf->ficheinter->enabled) { print __METHOD__." intervention module not enabled\n"; die(); }
-        if (! $conf->deplacement->enabled) { print __METHOD__." trip module not enabled\n"; die(); }
+        if (! $conf->expensereport->enabled) { print __METHOD__." expensereport module not enabled\n"; die(); }
 
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 

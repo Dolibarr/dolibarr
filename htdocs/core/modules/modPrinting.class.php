@@ -44,13 +44,14 @@ class modPrinting extends DolibarrModules
     function  __construct($db)
     {
         $this->db = $db ;
-        $this->numero = 112000;
+        $this->numero = 64000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
         $this->family = "other";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable Printing System.";
+		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
+        $this->description = "Enable Direct Printing System.";
         $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -93,7 +94,7 @@ class modPrinting extends DolibarrModules
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
         $r++;
-        $this->rights[$r][0] = 112001;
+        $this->rights[$r][0] = 64001;
         $this->rights[$r][1] = 'Printing';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;

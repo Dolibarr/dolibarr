@@ -227,11 +227,11 @@ llxHeader('',$langs->trans("CronAdd"));
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
 	$head=cron_prepare_head($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
+	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 }
 elseif ($action=='create')
 {
-	print_fiche_titre($langs->trans("CronTask"),'','setup');
+	print_fiche_titre($langs->trans("CronTask"),'','title_setup');
 }
 
 if ($conf->use_javascript_ajax)

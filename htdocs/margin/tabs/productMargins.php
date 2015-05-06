@@ -77,9 +77,9 @@ if ($id > 0 || ! empty($ref))
 	 */
 	if ($result > 0)
 	{
-		$head=product_prepare_head($object, $user);
+		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type==1?'service':'product');
+		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'margin', $titre, 0, $picto);
 
 		print '<table class="border" width="100%">';
@@ -92,7 +92,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td>';
 		print '</tr>';
 
 		// Status (to sell)

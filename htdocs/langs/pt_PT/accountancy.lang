@@ -13,7 +13,9 @@ ConfigAccountingExpert=A configuração do módulo especialista em contabilidade
 Journaux=Diarios
 JournalFinancial=Diarios financeiros
 Exports=Exportados
+Export=Export
 Modelcsv=Modelo de exportação
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Selecione um modelo de exportação
 Modelcsv_normal=Exportação classica
 Modelcsv_CEGID=Exportação em direção Especialista CEGID 
@@ -66,7 +68,7 @@ Lineofinvoice=Linha de fatura
 VentilatedinAccount=Limpo com succeso na conta de contabilidade
 NotVentilatedinAccount=Por limpar na conta de contabilidade
 
-ACCOUNTING_SEPARATORCSV=Separador CSV
+ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a ser mostrado por página (máxima recomendada: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comece a classificação das páginas repartição "Tem que repartir" pelos elementos mais recentes

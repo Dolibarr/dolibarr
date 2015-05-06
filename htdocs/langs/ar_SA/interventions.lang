@@ -50,4 +50,4 @@ ArcticNumRefModelError=فشل لتفعيل
 PacificNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm فيها السنة هي السنة ، هو شهر ملم وnnnn هو كسر التسلسل وليس هناك عودة لل0
 PacificNumRefModelError=تدخل البطاقة ابتداء من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders

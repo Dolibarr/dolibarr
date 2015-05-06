@@ -22,6 +22,7 @@ create table llx_facture_fourn_det
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture_fourn  integer NOT NULL,
+  fk_parent_line    integer NULL,
   fk_product        integer NULL,
   ref               varchar(50),   -- supplier product ref
   label             varchar(255),  -- product label
@@ -45,5 +46,8 @@ create table llx_facture_fourn_det
   date_end          datetime   DEFAULT NULL,       -- date fin si service
   info_bits						integer    DEFAULT 0,				-- TVA NPR ou non
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
-  import_key        varchar(14)
+  special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
+  rang						 integer      DEFAULT 0,
+  import_key        varchar(14),
+  fk_unit         integer    DEFAULT NULL
 )ENGINE=innodb;

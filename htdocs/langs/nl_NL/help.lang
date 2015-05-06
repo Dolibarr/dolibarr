@@ -24,5 +24,5 @@ BackToHelpCenter=Klik anders hier om <a href="%s"> terug te gaan naar de hoofdpa
 LinkToGoldMember=U kunt een van de, vooraf door Dolibarr geselecteerde, coaches voor uw taal bellen (%s) door te klikken op zijn Widget (status en de maximale prijs worden automatisch bijgewerkt):
 PossibleLanguages=Ondersteunde talen
 MakeADonation=Help het Dolibarr project door een donatie te doen
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Help het Dolibarr project, wordt lid van de stichting
+SeeOfficalSupport=Voor officiële Dolibarr ondersteuning in uw taal: <br><b><a href="%s" target="_blank">%s</a></b>

@@ -3,8 +3,9 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Jean Heimburger		<jean@tiaris.info>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
+$langs->load('companies');
 $langs->load('suppliers');
 $langs->load('products');
 $langs->load('bills');
 $langs->load('orders');
-$langs->load('companies');
 $langs->load('commercial');
 
 $action	= GETPOST('action');
@@ -49,9 +51,14 @@ if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('suppliercard','globalcard'));
+
 
 /*
  * Action
@@ -111,8 +118,8 @@ if ($id > 0 && empty($object->id))
 
 if ($object->id > 0)
 {
-	$title=$langs->trans("SupplierCard");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+	$title=$langs->trans("ThirdParty")." - ".$langs->trans('SupplierCard');
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('SupplierCard');
 	$help_url='';
 	llxHeader('',$title, $help_url);
 
@@ -128,7 +135,6 @@ if ($object->id > 0)
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	$object->next_prev_filter="te.fournisseur = 1";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
@@ -167,7 +173,8 @@ if ($object->id > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($object->country_code);
+	//$img=picto_from_langcode($object->country_code);
+	$img='';
 	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
 	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
@@ -194,13 +201,13 @@ if ($object->id > 0)
 	// Local Taxes
 	if ($mysoc->useLocalTax(1))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax1IsUsed").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
 		print yn($object->localtax1_assuj);
 		print '</td></tr>';
 	}
 	if ($mysoc->useLocalTax(2))
 	{
-		print '<tr><td class="nowrap">'.$langs->trans("LocalTax2IsUsed").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
 		print yn($object->localtax2_assuj);
 		print '</td></tr>';
 	}
@@ -250,7 +257,16 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
-    // Module Adherent
+	// Other attributes
+	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields);
+	}
+
+	// Module Adherent
     if (! empty($conf->adherent->enabled))
     {
         $langs->load("members");
@@ -289,6 +305,8 @@ if ($object->id > 0)
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
+	print '<br>';
+
 
 	/*
 	 * List of products
@@ -298,23 +316,60 @@ if ($object->id > 0)
 		$langs->load("products");
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
-		print '</a></td></tr></table>';
+		print '</a></td></tr>';
+
+		//Query from product/liste.php
+		$sql = 'SELECT p.rowid, p.ref, p.label, pfp.tms,';
+		$sql.= ' p.fk_product_type';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
+		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+		$sql.= ' AND pfp.fk_soc = '.$object->id;
+		$sql .= $db->order('pfp.tms', 'desc');
+		$sql.= $db->plimit($MAXLIST);
+
+		$query = $db->query($sql);
+
+		$return = array();
+
+		if ($db->num_rows($query)) {
+
+			$productstatic = new Product($db);
+
+			while ($objp = $db->fetch_object($query)) {
+
+				$var=!$var;
+
+				$productstatic->id = $objp->rowid;
+				$productstatic->ref = $objp->ref;
+				$productstatic->label = $objp->label;
+				$productstatic->type = $objp->fk_product_type;
+
+				print "<tr ".$bc[$var].">";
+				print '<td class="nowrap">';
+				print $productstatic->getNomUrl(1);
+				print '</td>';
+				print '<td align="center">';
+				print dol_trunc(dol_htmlentities($objp->label), 30);
+				print '</td>';
+				print '<td align="right" class="nowrap">'.dol_print_date($objp->tms).'</td>';
+				print '</tr>';
+			}
+		}
+
+		print '</table>';
 	}
 
 
-	print '<br>';
-
 	/*
-	 * Last orders
+	 * Last supplier orders
 	 */
 	$orderstatic = new CommandeFournisseur($db);
 
 	if ($user->rights->fournisseur->commande->lire)
 	{
-
-
 		// TODO move to DAO class
 		// Check if there are supplier orders billable
 		$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
@@ -336,7 +391,7 @@ if ($object->id > 0)
 		}
 
 		// TODO move to DAO class
-		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
+		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
 		$sql.= " AND p.entity =".$conf->entity;
@@ -354,7 +409,7 @@ if ($object->id > 0)
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
-    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
     			print '<td align="right"><a href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
@@ -368,8 +423,11 @@ if ($object->id > 0)
 
 				print "<tr ".$bc[$var].">";
                 print '<td class="nowrap">';
-                $orderstatic->id=$obj->rowid;
-                $orderstatic->ref=$obj->ref;
+                $orderstatic->id = $obj->rowid;
+                $orderstatic->ref = $obj->ref;
+                $orderstatic->total_ht = $obj->total_ht;
+                $orderstatic->total_tva = $obj->total_tva;
+                $orderstatic->total_ttc = $obj->total_ttc;
                 print $orderstatic->getNomUrl(1);
                 print '</td>';
 				print '<td align="center" width="80">';
@@ -397,7 +455,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last invoices
+	 * Last supplier invoices
 	 */
 	$MAXLIST=5;
 
@@ -407,13 +465,13 @@ if ($object->id > 0)
 	if ($user->rights->fournisseur->facture->lire)
 	{
 		// TODO move to DAO class
-		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
+		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
 		$sql.= ' WHERE f.fk_soc = '.$object->id;
 		$sql.= " AND f.entity =".$conf->entity;
-		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef,f.total_ttc,f.paye';
+		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef,f.total_ht,f.total_tva,f.total_ttc,f.paye';
 		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);
 		if ($resql)
@@ -440,6 +498,10 @@ if ($object->id > 0)
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid).($obj->ref_supplier?' - '.$obj->ref_supplier:'');
+                $facturestatic->ref_supplier = $obj->ref_supplier;
+                $facturestatic->total_ht = $obj->total_ht;
+                $facturestatic->total_tva = $obj->total_tva;
+                $facturestatic->total_ttc = $obj->total_ttc;
 				//$facturestatic->ref_supplier=$obj->ref_supplier;
 				print $facturestatic->getNomUrl(1);
 				//print img_object($langs->trans('ShowBill'),'bill').' '.($obj->ref?$obj->ref:$obj->rowid).' - '.$obj->ref_supplier.'</a>';
@@ -489,6 +551,12 @@ if ($object->id > 0)
 	{
 		$langs->load("bills");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+	}
+
+	if ($conf->askpricesupplier->enabled && $user->rights->askpricesupplier->creer)
+	{
+		$langs->load("askpricesupplier");
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/askpricesupplier/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAskPriceSupplier").'</a>';
 	}
 
 	if ($user->rights->fournisseur->facture->creer)

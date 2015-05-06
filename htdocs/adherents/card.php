@@ -249,7 +249,7 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
-		$morphy=$morphy=$_POST["morphy"];;
+		$morphy=$morphy=$_POST["morphy"];
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
@@ -302,6 +302,7 @@ if (empty($reshook))
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
 			// Check if we need to also synchronize user information
 			$nosyncuser=0;
@@ -471,6 +472,7 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
 		// Check parameters
 		if (empty($morphy) || $morphy == "-1") {
@@ -1159,7 +1161,7 @@ else
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
 		if ($object->user_id)
 		{
-			print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
 		}
 		else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
@@ -1516,13 +1518,13 @@ else
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editlogin')
 		{
-			print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
 		}
 		else
 		{
 			if ($object->user_id)
 			{
-				print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
+				$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'none');
 			}
 			else print $langs->trans("NoDolibarrAccess");
 		}

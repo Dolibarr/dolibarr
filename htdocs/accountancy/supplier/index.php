@@ -21,7 +21,7 @@
 /**
  * \file		htdocs/accountancy/supplier/index.php
  * \ingroup		Accounting Expert
- * \brief		Page accueil ventilation
+ * \brief		Home supplier ventilation
  */
 
 require '../../main.inc.php';
@@ -93,9 +93,9 @@ if ($action == 'validatehistory') {
 llxHeader('', $langs->trans("SuppliersVentilation"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
-$textnextyear = ' <a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
+$textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
-print_fiche_titre($langs->trans("SuppliersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
+print_fiche_titre($langs->trans("SuppliersVentilation") . "&nbsp;" . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear);
 
 print '<b>' . $langs->trans("DescVentilSupplier") . '</b>';
 print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=validatehistory">' . $langs->trans("ValidateHistory") . '</a></div>';
@@ -105,7 +105,7 @@ $y = $year_current;
 $var = true;
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
+print '<tr class="liste_titre"><td width="200" align="left">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("JanuaryMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("FebruaryMin") . '</td>';

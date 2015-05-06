@@ -88,10 +88,10 @@ if (!empty($MemoryLimit))
 $form=new Form($db);
 $formfile = new FormFile($db);
 
-$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-llxHeader('','',$help_url);
+//$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+//llxHeader('','',$help_url);
 
-print_fiche_titre($langs->trans("Backup"),'','setup');
+//print_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 
 // Start with empty buffer
@@ -165,13 +165,18 @@ if ($what == 'mysql')
         $paramclear.=' -p"'.str_replace(array('"','`'),array('\"','\`'),$dolibarr_main_db_pass).'"';
     }
 
+    $_SESSION["commandbackuplastdone"]=$command." ".$paramcrypted;
+    $_SESSION["commandbackuptorun"]="";
+    /*
     print '<b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
     print '<textarea rows="'.ROWS_2.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
     print '<br>';
+
     //print $paramclear;
 
     // Now run command and show result
     print '<b>'.$langs->trans("BackupResult").':</b> ';
+	*/
 
     $errormsg='';
 
@@ -264,6 +269,9 @@ if ($what == 'mysqlnobin')
     {
         backup_tables($outputfile);
     }
+
+    $_SESSION["commandbackuplastdone"]="";
+    $_SESSION["commandbackuptorun"]="";
 }
 
 // POSTGRESQL
@@ -320,7 +328,9 @@ if ($what == 'postgresql')
     $paramcrypted.=" -w ".$dolibarr_main_db_name;
     $paramclear.=" -w ".$dolibarr_main_db_name;
 
-    print $langs->trans("RunCommandSummaryToLaunch").':<br>'."\n";
+    $_SESSION["commandbackuplastdone"]="";
+    $_SESSION["commandbackuptorun"]=$command." ".$paramcrypted;
+    /*print $langs->trans("RunCommandSummaryToLaunch").':<br>'."\n";
     print '<textarea rows="'.ROWS_3.'" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
 
     print '<br>';
@@ -330,7 +340,7 @@ if ($what == 'postgresql')
     print $langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user);
 
     print '<br>';
-    print '<br>';
+    print '<br>';*/
 
     $what='';
 }
@@ -339,33 +349,45 @@ if ($what == 'postgresql')
 
 
 // Si on a demande une generation
-if ($what)
-{
+//if ($what)
+//{
     if ($errormsg)
     {
+    	setEventMessage($langs->trans("Error")." : ".$errormsg, 'errors');
+    	/*
         print '<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
-        //		print '<a href="'.DOL_URL_ROOT.$relativepatherr.'">'.$langs->trans("DownloadErrorFile").'</a><br>';
         print '<br>';
-        print '<br>';
+        print '<br>';*/
     }
     else
-    {
-        print '<div class="ok">';
-        print $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
-        print $langs->trans("YouCanDownloadBackupFile");
-        print '</div>';
-        print '<br>';
+	{
+		if ($what)
+		{
+	        setEventMessage($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"));
+	        /*print '<div class="ok">';
+	        print $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
+	        print $langs->trans("YouCanDownloadBackupFile");
+	        print '</div>';
+	        print '<br>';*/
+		}
+		else
+		{
+			setEventMessage($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user));
+		}
     }
-}
+//}
 
+/*
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
 $result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,($langs->trans("NoBackupFileAvailable").'<br>'.$langs->trans("ToBuildBackupFileClickHere",DOL_URL_ROOT.'/admin/tools/dolibarr_export.php')),0,$langs->trans("PreviousDumpFiles"));
 
 print '<br>';
+*/
+
+// Redirect t backup page
+header("Location: dolibarr_export.php");
 
 $time_end = time();
-
-llxFooter();
 
 $db->close();
 
@@ -469,7 +491,6 @@ function backup_tables($outputfile, $tables='*')
 
 	        $sql='SELECT * FROM '.$table;
 	        $result = $db->query($sql);
-	        $num_fields = $db->num_rows($result);
 	        while($row = $db->fetch_row($result))
 	        {
 	            // For each row of data we print a line of INSERT
@@ -480,10 +501,10 @@ function backup_tables($outputfile, $tables='*')
 	                if ($row[$j] == null and !is_string($row[$j])) {
 	                    // IMPORTANT: if the field is NULL we set it NULL
 	                    $row[$j] = 'NULL';
-	                } elseif(is_string($row[$j]) and $row[$j] == '') {
+	                } elseif(is_string($row[$j]) && $row[$j] == '') {
 	                    // if it's an empty string, we set it as an empty string
 	                    $row[$j] = "''";
-	                } elseif(is_numeric($row[$j]) and !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+	                } elseif(is_numeric($row[$j]) && !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 	                    // if it's a number, we return it as-is
 //	                    $row[$j] = $row[$j];
 	                } else { // else for all other cases we escape the value and put quotes around

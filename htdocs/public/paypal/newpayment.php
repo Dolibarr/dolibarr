@@ -695,7 +695,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
-		$text.='<br>'.$product->ref.($product->libelle?' - '.$product->libelle:'');
+		$text.='<br>'.$product->ref.($product->label?' - '.$product->label:'');
 	}
 	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
 	//if ($contractline->date_fin_validite) {

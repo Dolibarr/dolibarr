@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Arve %s on kinnitatud
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Arve %s on tagasi mustandi staatuses
 InvoiceDeleteDolibarr=Arve %s on kustutatud
-OrderValidatedInDolibarr= Tellimus %s on kinnitatud
+OrderValidatedInDolibarr=Tellimus %s on kinnitatud
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Tellimus %s on tühistatud
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Tellimus %s on heaks kiidetud
 OrderRefusedInDolibarr=Tellimus %s on tagasi lükatud
 OrderBackToDraftInDolibarr=Tellimus %s on muudetud mustandiks
@@ -58,8 +61,9 @@ OrderSentByEMail=Tellimus %s on saadetud e-postiga
 InvoiceSentByEMail=Arve %s on saadetud e-postiga
 SupplierOrderSentByEMail=Ostutellimus %s on saadetud e-postiga
 SupplierInvoiceSentByEMail=Ostuarve %s on saadetud e-postiga
-ShippingSentByEMail=Saadetis %s on saadetud e-postiga
-ShippingValidated= Kohaletoomine %s on kinnitatud
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Kolmas isik loodud
 DateActionPlannedStart= Plaanitav alguskuupäev
 DateActionPlannedEnd= Plaanitav lõppkuupäev
@@ -68,7 +72,7 @@ DateActionDoneEnd= Tegelik lõppkuupäev
 DateActionStart= Alguskuupäev
 DateActionEnd= Lõppkuupäev
 AgendaUrlOptions1=Otsingutulemuste piiramiseks võib kasutada ka järgmisi parameetreid:
-AgendaUrlOptions2=<b>login=%s</b> tagastab vastusena kasutaja poolt algatatud, talle määratud ja lõpetatud sündmused<b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> tagastab vastusena ainult kasutajale määratud tegevused <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
 AddEvent=Create event
 MyAvailability=My availability
+ActionType=Event type
+DateActionBegin=Start event date

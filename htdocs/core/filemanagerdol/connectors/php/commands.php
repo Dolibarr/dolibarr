@@ -22,7 +22,14 @@
  * This is the File Manager Connector for PHP.
  */
 
-function GetFolders( $resourceType, $currentFolder )
+/**
+ * GetFolders
+ * 
+ * @param	string	$resourceType		Resource type
+ * @param 	string 	$currentFolder		Current folder
+ * @return 	void
+ */
+function GetFolders($resourceType, $currentFolder)
 {
 	// Map the virtual path to the local server path.
 	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFolders');
@@ -178,6 +185,15 @@ function CreateFolder( $resourceType, $currentFolder )
 
 // DOL_CHANGE
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
+/**
+ * FileUpload
+ * 
+ * @param	string	$resourceType	Resource type
+ * @param 	string 	$currentFolder	Current folder
+ * @param	string	$sCommand		Command
+ * @param	string	$CKEcallback	Callback
+ * @return	null
+ */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	if (!isset($_FILES)) {
@@ -188,7 +204,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 	if ( isset( $_FILES['NewFile'] ) && !is_null($_FILES['NewFile']['tmp_name'])
        // This is for the QuickUpload tab box
-        or (isset($_FILES['upload']) and !is_null($_FILES['upload']['tmp_name'])))
+        or (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name'])))
 	{
 		global $Config ;
 

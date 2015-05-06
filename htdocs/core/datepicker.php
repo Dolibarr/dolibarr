@@ -26,17 +26,18 @@
  *       \brief      File to manage popup date selector
  */
 
-if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// disabled
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
+if (! defined('NOLOGIN')) define('NOLOGIN',1);					// disabled
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));	// If language was forced on URL by the main.inc.php
 $langs->load("main");
@@ -121,7 +122,7 @@ print '</body></html>'."\n";
  * 	Convert date to timestamp
  *
  * 	@param	string		$mysqldate		Date YYYMMDD
- *  @return	timestamp					Timestamp
+ *  @return	integer					Timestamp
  */
 function xyzToUnixTimestamp($mysqldate)
 {
@@ -186,37 +187,45 @@ function displayBox($selectedDate,$month,$year)
 	</tr>
 	<tr class="dpDayNames">
 	<?php
-	$first_day_of_week = isset($conf->global->MAIN_START_WEEK) ? (int) $conf->global->MAIN_START_WEEK : 0;
+	$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
 	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
 	for( $i=0; $i < 7; $i++ )
 	{
-		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $first_day_of_week) % 7]), '</td>', "\n";
+		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";
 	}
 	?>
 	</tr>
 	<?php
-	//print "x ".$thedate." y";
+	//print "x ".$thedate." y";			// $thedate = first day of month
 	$firstdate=dol_getdate($thedate);
-	$mydate=$firstdate;
+	//var_dump($firstdateofweek);
+	$mydate=dol_get_first_day_week(1, $month, $year, true);	// mydate = cursor date
 
 	// Loop on each day of month
 	$stoploop=0; $day=1; $cols=0;
 	while (! $stoploop)
 	{
 		//print_r($mydate);
-		if($firstdate==$mydate)	// At first run
+		if ($mydate < $firstdate)	// At first run
 		{
 			echo "<TR class=\"dpWeek\">";
+			//echo $conf->global->MAIN_START_WEEK.' '.$firstdate["wday"].' '.$startday;
 			$cols=0;
-			for($i=0;$i< ($mydate["wday"]+7-$first_day_of_week)%7;$i++)
+			for ($i = 0; $i < 7; $i++)
 			{
+				$w = ($i + $startday) % 7;
+				if ($w == $firstdate["wday"])
+				{
+					$mydate = $firstdate;
+					break;
+				}
 				echo "<TD>&nbsp;</TD>";
 				$cols++;
 			}
 		}
 		else
 		{
-			if ($mydate["wday"]==$first_day_of_week)
+			if ($mydate["wday"] == $startday)
 			{
 				echo "<TR class=\"dpWeek\">";
 				$cols=0;
@@ -240,7 +249,7 @@ function displayBox($selectedDate,$month,$year)
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 
-		if ($mydate != $firstdate && $mydate["wday"]==(($first_day_of_week + 6)%7)) echo "</TR>\n";
+		if (($mydate["wday"] + 1) % 7 == $startday) echo "</TR>\n";
 
 		//$thedate=strtotime("tomorrow",$thedate);
 		$day++;
@@ -280,4 +289,3 @@ function displayBox($selectedDate,$month,$year)
 </table>
 		<?php
 }//end function
-

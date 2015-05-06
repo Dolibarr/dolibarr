@@ -7,6 +7,7 @@
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
+    echo "Detect duplicate translation keys inside a file (there is no cross file check)."
 	echo "Usage: detectduplicatelangkey.sh (list|fix)"
 fi
 

@@ -51,6 +51,7 @@ $langs->load('orders');
 $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
+if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
 
 $origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
@@ -76,10 +77,7 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 $object = new Expedition($db);
 
 // Load object
-if ($id > 0 || ! empty($ref))
-{
-	$ret=$object->fetch($id, $ref);
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
@@ -98,10 +96,16 @@ if (($action == 'create') || ($action == 'add'))
 		{
 			$langs->load("errors");
 			setEventMessage($langs->trans("WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn"),'errors');
-			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$id);
+			header("Location: ".DOL_URL_ROOT.'/expedition/shipment.php?id='.$origin_id);
 			exit;
 		}
 	}
+}
+
+// Set incoterm
+if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+{
+	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 }
 
 $parameters=array();
@@ -136,6 +140,7 @@ if (empty($reshook))
 
 	    $object->socid					= $objectsrc->socid;
 	    $object->ref_customer			= $objectsrc->ref_client;
+	    $object->model_pdf				= GETPOST('model');
 	    $object->date_delivery			= $date_delivery;	// Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
@@ -143,46 +148,62 @@ if (empty($reshook))
 	    $object->ref_int				= GETPOST('ref_int','alpha');
 	    $object->note_private			= GETPOST('note_private');
 	    $object->note_public			= GETPOST('note_public');
+		$object->fk_incoterms 			= GETPOST('incoterm_id', 'int');
+		$object->location_incoterms 	= GETPOST('location_incoterms', 'alpha');
+
+	    $batch_line = array();
 
 	    $num=count($objectsrc->lines);
 	    $totalqty=0;
 	    for ($i = 0; $i < $num; $i++)
 	    {
-	        $qty = "qtyl".$i;
-			$j=0;
+			$idl="idl".$i;
+
 			$sub_qty=array();
 			$subtotalqty=0;
-			$idl="idl".$i;
+
+			$j=0;
 			$batch="batchl".$i."_0";
-			if (isset($_POST[$batch])) {
+	    	$qty = "qtyl".$i;
+
+			if (isset($_POST[$batch]))
+			{
 				//shipment line with batch-enable product
 				$qty .= '_'.$j;
-				while (isset($_POST[$batch])) {
+				while (isset($_POST[$batch]))
+				{
+					// save line of detail into sub_qty
 					$sub_qty[$j]['q']=GETPOST($qty,'int');
 					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
+
 					$subtotalqty+=$sub_qty[$j]['q'];
+
 					$j++;
 					$batch="batchl".$i."_".$j;
 					$qty = "qtyl".$i.'_'.$j;
-
 				}
-				$batch_line[$i]['detail']=$sub_qty;
+
+				$batch_line[$i]['detail']=$sub_qty;		// array of details
 				$batch_line[$i]['qty']=$subtotalqty;
 				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
+
 				$totalqty+=$subtotalqty;
-			} else {
-				//Standard product
+			}
+			else
+			{
+				//shipment line for product with no batch management
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
 	    }
 
-	    if ($totalqty > 0)
+	    if ($totalqty > 0)		// There is at least one thing to ship
 	    {
 	        //var_dump($_POST);exit;
 	        for ($i = 0; $i < $num; $i++)
 	        {
 	            $qty = "qtyl".$i;
-				if (! isset($batch_line[$i])) {
+				if (! isset($batch_line[$i]))
+				{	// not batch mode
 					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 					{
 						$ent = "entl".$i;
@@ -197,8 +218,11 @@ if (empty($reshook))
 							$error++;
 						}
 					}
-				} else {
-					if ($batch_line[$i]['qty']>0) {
+				}
+				else
+				{	// batch mode
+					if ($batch_line[$i]['qty']>0)
+					{
 						$ret=$object->addline_batch($batch_line[$i]);
 						if ($ret < 0)
 						{
@@ -211,7 +235,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $ret=$object->create($user);
+	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
 	            if ($ret <= 0)
 	            {
 	                $mesg='<div class="error">'.$object->error.'</div>';
@@ -256,7 +280,10 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
+	else if ($action == 'confirm_valid' && $confirm == 'yes' &&
+        ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
+	)
 	{
 	    $object->fetch_thirdparty();
 
@@ -304,7 +331,7 @@ if (empty($reshook))
 	    }
 	}
 
-	else if ($action == 'reopen' && $user->rights->expedition->valider)
+	else if ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
 	{
 	    $result = $object->setStatut(0);
 	    if ($result < 0)
@@ -454,7 +481,6 @@ if ($action == 'create')
         $classname = ucfirst($origin);
 
         $object = new $classname($db);
-
         if ($object->fetch($origin_id))	// This include the fetch_lines
         {
             //var_dump($object);
@@ -568,6 +594,24 @@ if ($action == 'create')
             print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number','alpha').'">';
             print "</td></tr>\n";
 
+            // Incoterms
+			if (!empty($conf->incoterm->enabled))
+			{
+				print '<tr>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+		        print '<td colspan="3" class="maxwidthonsmartphone">';
+		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
+				print '</td></tr>';
+			}
+
+            // Document model
+            print "<tr><td>".$langs->trans("Model")."</td>";
+            print '<td colspan="3">';
+			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
+			$liste = ModelePdfExpedition::liste_modeles($db);
+			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
+            print "</td></tr>\n";
+            
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
@@ -728,7 +772,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() and is_object($product->stock_warehouse[$warehouse_id])))
+                if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
@@ -834,7 +878,7 @@ if ($action == 'create')
             print '<br>';
         }
         else
-        {
+		{
             dol_print_error($db);
         }
     }
@@ -899,7 +943,7 @@ else if ($id || $ref)
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
+				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid, $object);
 			}
 
 			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
@@ -1156,6 +1200,29 @@ else if ($id || $ref)
 		print $form->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,$object,$user->rights->expedition->creer,'string',$object->tracking_number);
 		print '</td></tr>';
 
+		// Incoterms
+		if (!empty($conf->incoterm->enabled))
+		{
+			print '<tr><td>';
+	        print '<table width="100%" class="nobordernopadding"><tr><td>';
+	        print $langs->trans('IncotermLabel');
+	        print '<td><td align="right">';
+	        if ($user->rights->expedition->creer) print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        else print '&nbsp;';
+	        print '</td></tr></table>';
+	        print '</td>';
+	        print '<td colspan="3">';
+			if ($action != 'editincoterm')
+			{
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			}
+			else
+			{
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+			}
+	        print '</td></tr>';
+		}
+
 		// Other attributes
 		$parameters=array('colspan' => ' colspan="3"');
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1354,7 +1421,8 @@ else if ($id || $ref)
 
 		if ($object->statut == 0 && $num_prod > 0)
 		{
-			if ($user->rights->expedition->valider)
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+  		     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 			}
@@ -1365,7 +1433,7 @@ else if ($id || $ref)
 		}
 
 		// TODO add alternative status
-		/* if ($object->statut == 1 && $user->rights->expedition->valider)
+		/* if ($object->statut == 1 && $user->rights->expedition->creer)
 		{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 		}*/
@@ -1454,6 +1522,10 @@ else if ($id || $ref)
 	/*
 	 * Action presend
 	*/
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1552,6 +1624,7 @@ else if ($id || $ref)
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='shipping_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['shippingid']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 

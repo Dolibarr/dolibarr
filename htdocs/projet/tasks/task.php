@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
-$planned_workload=GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60;
+$planned_workload=((GETPOST('planned_workloadhour')!='' && GETPOST('planned_workloadmin')!='')?GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60:'');
 
 // Security check
 $socid=0;
@@ -91,12 +91,15 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		if ($ret < 0) $error++;
 
-		$result=$object->update($user);
-
-		if ($result < 0)
+		if (! $error)
 		{
-		    setEventMessages($object->error,$object->errors,'errors');
+			$result=$object->update($user);
+			if ($result < 0)
+			{
+			    setEventMessages($object->error,$object->errors,'errors');
+			}
 		}
 	}
 	else
@@ -107,17 +110,14 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
 {
-	if ($object->fetch($id,$ref) >= 0 )
+	if ($object->fetch($id,$ref) >= 0)
 	{
-		$result=$projectstatic->fetch($object->fk_projet);
-		if (! empty($projectstatic->socid))
-		{
-			$projectstatic->societe->fetch($projectstatic->socid);
-		}
+		$result=$projectstatic->fetch($object->fk_project);
+		$projectstatic->fetch_thirdparty();
 
 		if ($object->delete($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id);
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
 			exit;
 		}
 		else
@@ -438,20 +438,26 @@ if ($id > 0 || ! empty($ref))
 
 			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
-			print convertSecondToTime($object->planned_workload,'allhourmin');
+			if ($object->planned_workload != '')
+			{
+				print convertSecondToTime($object->planned_workload,'allhourmin');
+			}
 			print '</td></tr>';
 
 			// Progress declared
 			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-			print $object->progress.' %';
+			if ($object->progress != '')
+			{
+				print $object->progress.' %';
+			}
 			print '</td></tr>';
 
 			// Progress calculated
 			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
-			if ($object->planned_workload)
+			if ($object->planned_workload != '')
 			{
 				$tmparray=$object->getSummaryOfTimeSpent();
-				if ($tmparray['total_duration'] > 0) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
+				if ($tmparray['total_duration'] > 0 && ! empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
 			}
 			else print '';

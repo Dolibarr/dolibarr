@@ -128,7 +128,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
             $error++;
         }
-        if ($object->type == '-1') 	// Otherwise it is TF_LUNCH,...
+        if ($object->type == '-1')
         {
 	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
             $error++;
@@ -252,7 +252,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-    print $form->select_type_fees(GETPOST('type','int'),'type',1);
+    $form->select_type_fees(GETPOST('type','int'),'type',1);
     print '</td></tr>';
 
     print "<tr>";
@@ -347,7 +347,7 @@ else if ($id)
             // Type
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-            print $form->select_type_fees(GETPOST('type','int')?GETPOST('type','int'):$object->type,'type',0);
+            $form->select_type_fees(GETPOST('type','int')?GETPOST('type','int'):$object->type,'type',0);
             print '</td></tr>';
 
             // Who
@@ -432,11 +432,13 @@ else if ($id)
             print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
             print '</td></tr>';
 
-            // Type
+	        $form->load_cache_types_fees();
+            
+	        // Type
             print '<tr><td>';
             print $form->editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
             print '</td><td>';
-            print $form->editfieldval("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
+            print $form->editfieldval("Type",'type',$form->cache_types_fees[$object->type],$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
             print '</td></tr>';
 
             // Who
@@ -486,11 +488,11 @@ else if ($id)
                 print '</td><td colspan="3">';
                 if ($action == 'classify')
                 {
-                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
+                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid', 0, 0, 1);
                 }
                 else
                 {
-                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+                    $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none', 0, 0);
                 }
                 print '</td>';
                 print '</tr>';

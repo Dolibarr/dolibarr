@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 LastWithdrawalReceipt=%s neuste Abbuchungsbelege
-InvoiceRefused=Ablehnung in Rechnung stellen
 WithdrawalRefused=Abbuchungen abgelehnt
+InvoiceRefused=Ablehnung in Rechnung stellen
 StatusWaiting=Wartestellung
 StatusMotif2=Abbuchung angefochten
 StatusMotif4=Ablehnung durch Kontoinhaber

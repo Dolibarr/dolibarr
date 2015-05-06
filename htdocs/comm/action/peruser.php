@@ -205,6 +205,8 @@ if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' |
 $param.="&maxprint=".$maxprint;
 
 $prev = dol_get_first_day_week($day, $month, $year);
+//print "day=".$day." month=".$month." year=".$year;
+//var_dump($prev); exit;
 $prev_year  = $prev['prev_year'];
 $prev_month = $prev['prev_month'];
 $prev_day   = $prev['prev_day'];
@@ -223,6 +225,7 @@ $next_day   = $next['day'];
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
 $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+//print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow,'dayhour');
 //print dol_print_date($lastdaytoshow,'dayhour');
 
@@ -302,16 +305,16 @@ if ($conf->use_javascript_ajax)
 		{
 			foreach ($showextcals as $val)
 			{
-				$htmlname = dol_string_nospecial($val['name']);
+				$htmlname = md5($val['name']);
 				$s.='<script type="text/javascript">' . "\n";
 				$s.='jQuery(document).ready(function () {' . "\n";
-				$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
+				$s.='		jQuery("#check_ext' . $htmlname . '").click(function() {';
 				$s.=' 		/* alert("'.$htmlname.'"); */';
-				$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
+				$s.=' 		jQuery(".family_ext' . $htmlname . '").toggle();';
 				$s.='		});' . "\n";
 				$s.='});' . "\n";
 				$s.='</script>' . "\n";
-				$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 			}
 		}
 	}
@@ -534,12 +537,16 @@ echo '<input type="hidden" name="newdate" id="newdate">' ;
 echo '</form>';
 
 
-// Table :
+// Line header with list of days
+
+//print "begin_d=".$begin_d." end_d=".$end_d;
+
+
 echo '<table width="100%" class="nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
-$i=0;
+$i=0;	// 0 = sunday,
 while ($i < 7)
 {
 	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
@@ -607,7 +614,7 @@ else
 	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
-	if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
+	//if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
 	//print $sql;
 	$resql=$db->query($sql);
 	if ($resql)
@@ -679,7 +686,7 @@ foreach ($usernames as $username)
 
 	// Lopp on each day of week
 	$i = 0;
-	for ($iter_day = 0; $iter_day < 7; $iter_day++)
+	for ($iter_day = 0; $iter_day < 8; $iter_day++)
 	{
 		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 		{
@@ -797,7 +804,7 @@ $db->close();
  * @param   int		$minheight      Minimum height for each event. 60px by default.
  * @param	boolean	$showheader		Show header
  * @param	array	$colorsbytype	Array with colors by type
- * @param	string	$var			true or false for alternat style on tr/td
+ * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */
 function show_day_events2($username, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $showheader=false, $colorsbytype=array(), $var=false)
@@ -862,7 +869,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					}
 
 					$color=$event->icalcolor;
-					$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
+					$cssclass=(! empty($event->icalname)?'family_ext'.md5($event->icalname):'family_other unsortable');
 				}
 				else if ($event->type_code == 'BIRTHDAY')
 				{

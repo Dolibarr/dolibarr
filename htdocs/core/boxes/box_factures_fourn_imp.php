@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,9 @@
  */
 
 /**
- *	    \file       htdocs/core/boxes/box_factures_fourn_imp.php
+ *      \file       htdocs/core/boxes/box_factures_fourn_imp.php
  *      \ingroup    fournisseur
- *		\brief      Fichier de gestion d'une box des factures fournisseurs impayees
+ *      \brief      Fichier de gestion d'une box des factures fournisseurs impayees
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
@@ -29,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_factures_fourn_imp extends ModeleBoxes
 {
-	var $boxcode="oldestunpaidsupplierbills";
-	var $boximg="object_bill";
-	var $boxlabel="BoxOldestUnpaidSupplierBills";
+	var $boxcode = "oldestunpaidsupplierbills";
+	var $boximg = "object_bill";
+	var $boxlabel = "BoxOldestUnpaidSupplierBills";
 	var $depends = array("facture","fournisseur");
 
 	var $db;
@@ -55,6 +56,8 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$facturestatic=new FactureFournisseur($db);
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+		$thirdpartytmp=new Fournisseur($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills",$max));
 
@@ -63,6 +66,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
 			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.date_lim_reglement as datelimite,";
 			$sql.= " f.amount, f.datef as df,";
+            $sql.= " f.total_ht as total_ht,";
+            $sql.= " f.tva as total_tva,";
+            $sql.= " f.total_ttc,";
 			$sql.= " f.paye, f.fk_statut, f.type";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
@@ -82,66 +88,86 @@ class box_factures_fourn_imp extends ModeleBoxes
 				$num = $db->num_rows($result);
 				$now=dol_now();
 
-				$i = 0;
+				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
 
-				while ($i < $num)
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
+					$thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->code_client = $objp->code_client;
+                    $thirdpartytmp->logo = $objp->logo;
 
 					$late='';
 					if ($datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
+                    $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => $this->boximg,
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => ($objp->ref?$objp->ref:$objp->facid),
-					'text2'=> $late,
-                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => ($objp->ref?$objp->ref:$objp->facid),
+                        'text2'=> $late,
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
-                    'text' => $objp->ref_supplier,
-                    'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $thirdpartytmp->getNomUrl(1, '', 40),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'url' => DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid);
-
-					$this->info_box_contents[$i][5] = array('td' => 'align="right"',
-                    'text' => dol_print_date($datelimite,'day'));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datelimite,'day'),
+                    );
 
 					$fac = new FactureFournisseur($db);
 					$fac->fetch($objp->facid);
 					$alreadypaid=$fac->getSommePaiement();
-					$this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$alreadypaid,$objp->type),
+                    );
 
-					$i++;
-				}
+                    $line++;
+                }
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidSupplierBills"));
+                if ($num==0)
+                    $this->info_box_contents[$line][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoUnpaidSupplierBills"),
+                    );
 
-				$db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
+                $db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
+        }
 
-	}
+    }
 
 	/**
 	 *	Method to show box

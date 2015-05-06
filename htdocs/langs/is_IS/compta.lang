@@ -29,6 +29,7 @@ ReportTurnover=Velta
 PaymentsNotLinkedToInvoice=Greiðslur ekki tengd við hvaða nótum svo ekki tengdur neinum þriðja aðila
 PaymentsNotLinkedToUser=Greiðslur tengist ekki allir notandi
 Profit=Hagnaður
+AccountingResult=Accounting result
 Balance=Jafnvægi
 Debit=Debit
 Credit=Greiðslukort

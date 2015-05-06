@@ -26,8 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
- *      \class      Prospect
- *		\brief      Classe permettant la gestion des prospects
+ *	Class to manage prospects
  */
 class Prospect extends Societe
 {
@@ -37,12 +36,10 @@ class Prospect extends Societe
     /**
      *	Constructor
      *
-     *	@param	DoliDB	$db		Databas handler
+     *	@param	DoliDB	$db		Database handler
      */
     function __construct($db)
     {
-        global $config;
-
         $this->db = $db;
 
         return 0;
@@ -56,7 +53,7 @@ class Prospect extends Societe
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array("customers" => 0,"prospects" => 0);
         $clause = "WHERE";

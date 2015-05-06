@@ -261,7 +261,7 @@ $form=new Form($db);
 //if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("PropalSetup"),$linkback,'title_setup');
 
 $head = propal_admin_prepare_head();
 
@@ -643,6 +643,27 @@ print "</tr>\n";
 print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
-$db->close();
+
+/*
+ * Notifications
+ */
+
+print_titre($langs->trans("Notifications"));
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
+print '</td><td align="right">';
+print "</td></tr>\n";
+
+print '</table>';
+
 
 llxFooter();
+
+$db->close();

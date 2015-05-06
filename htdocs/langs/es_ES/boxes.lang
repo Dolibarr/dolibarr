@@ -94,3 +94,4 @@ BoxProductDistributionFor=Distribución de %s para %s
 ForCustomersInvoices=Facturas a clientes
 ForCustomersOrders=Pedidos de clientes
 ForProposals=Presupuestos
+LastXMonthRolling=El último %s mes natural

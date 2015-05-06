@@ -87,12 +87,11 @@ class Productbatch extends CommonObject
 		$sql.= "import_key";
 		$sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->fk_product_stock)?'NULL':$this->fk_product_stock).",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':$this->db->idate($this->sellby)).",";
-		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':$this->db->idate($this->eatby)).",";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
+		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->qty)?'NULL':$this->qty).",";
 		$sql.= " ".(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'")."";
-
 
 		$sql.= ")";
 
@@ -122,11 +121,6 @@ class Productbatch extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -330,7 +324,9 @@ class Productbatch extends CommonObject
 
 		$object=new Productbatch($this->db);
 
-		$this->db->begin();
+		$object->context['createfromclone']='createfromclone';
+
+ 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
@@ -355,6 +351,8 @@ class Productbatch extends CommonObject
 
 
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -464,7 +462,7 @@ class Productbatch extends CommonObject
     /**
      * Return all batch detail records for given product and warehouse
      *
-     *  @param	obj			$db    database object
+     *  @param	DoliDB			$db    database object
      *  @param	int			$fk_product_stock    id product_stock for objet
      *  @param	int			$with_qty    doesn't return line with 0 quantity
 	 *  @return int          	<0 if KO, >0 if OK

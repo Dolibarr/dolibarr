@@ -81,32 +81,31 @@ if ($action == 'set')
 {
 	$db->begin();
 
-	$activeModules = array();
+	$newActiveModules = array();
 	$selectedModules = (isset($_POST['SYSLOG_HANDLERS']) ? $_POST['SYSLOG_HANDLERS'] : array());
-
-	foreach ($selectedModules as $syslogHandler)
+	//var_dump($selectedModules);
+	foreach ($syslogModules as $syslogHandler)
 	{
 		if (in_array($syslogHandler, $syslogModules))
 		{
 			$module = new $syslogHandler;
 
-			if ($module->isActive())
+			if (in_array($syslogHandler, $selectedModules)) $newActiveModules[] = $syslogHandler;
+			foreach ($module->configure() as $option)
 			{
-				$activeModules[] = $syslogHandler;
-
-				foreach ($module->configure() as $option)
+				if (isset($_POST[$option['constant']]))
 				{
-					if ($_POST[$option['constant']])
-					{
-						dolibarr_del_const($db, $option['constant'], 0);
-						dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
-					}
+					$_POST[$option['constant']] = trim($_POST[$option['constant']]);
+					dolibarr_del_const($db, $option['constant'], 0);
+					dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
 				}
 			}
 		}
 	}
 
+	$activeModules = $newActiveModules;
 	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
+
 
     if (! $error)
 	{
@@ -148,7 +147,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SyslogSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("SyslogSetup"),$linkback,'title_setup');
 print '<br>';
 
 $def = array();
@@ -164,6 +163,9 @@ if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
 	$option = 'disabled="disabled"';
 }
+
+
+//print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
 
 // Output mode
 print_titre($langs->trans("SyslogOutput"));
@@ -190,7 +192,7 @@ foreach ($syslogModules as $moduleName)
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td width="140">';
-	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').(!$moduleactive ? 'disabled="disabled"' : '').'> ';
+	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').($moduleactive <= 0 ? 'disabled="disabled"' : '').'> ';
 	print $module->getName();
 	print '</td>';
 
@@ -205,6 +207,7 @@ foreach ($syslogModules as $moduleName)
 			else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+			if (! empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
 		}
 	}
 	print '</td>';

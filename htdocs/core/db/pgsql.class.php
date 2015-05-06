@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,6 +208,8 @@ class DoliDBPgsql extends DoliDB
     			$line=preg_replace('/tinytext/i','text',$line);
     			$line=preg_replace('/mediumtext/i','text',$line);
 
+    			$line=preg_replace('/text\([0-9]+\)/i','text',$line);
+
     			// change not null datetime field to null valid ones
     			// (to support remapping of "zero time" to null
     			$line=preg_replace('/datetime not null/i','datetime',$line);
@@ -254,7 +257,7 @@ class DoliDBPgsql extends DoliDB
                     $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ NULL/i','',$newreg3);
                     $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
-                    $newreg3=preg_replace('/ DEFAULT \'[0-9a-zA-Z_@]*\'/i','',$newreg3);
+                    $newreg3=preg_replace('/ DEFAULT \'?[0-9a-zA-Z_@]*\'?/i','',$newreg3);
                     $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
                     // TODO Add alter to set default value or null/not null if there is this in $reg[3]
                 }
@@ -365,7 +368,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$login		Login
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
-	 *	@param		string		$port		Port of database server
+	 *	@param		integer		$port		Port of database server
 	 *	@return		resource				Database access handler
 	 *	@see		close
 	 */
@@ -434,10 +437,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
-		// FIXME: Dummy method
-		// TODO: Implement
-
-		return '';
+		return 'pgsql php driver';
 	}
 
     /**
@@ -543,7 +543,7 @@ class DoliDBPgsql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_array($resultset)
@@ -556,7 +556,7 @@ class DoliDBPgsql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_row($resultset)
@@ -768,7 +768,7 @@ class DoliDBPgsql extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return return          		XXX(field) or XXX('value') or field or 'value'
+     *  @return string          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -1007,7 +1007,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resultset			Resultset x (x->attname)
+	 *	@return	resource			Resultset x (x->attname)
 	 */
 	function DDLDescTable($table,$field="")
 	{

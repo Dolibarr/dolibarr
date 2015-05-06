@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 $langs->load("exports");
+$langs->load("compta");
 $langs->load("errors");
 
 // Security check
@@ -1753,7 +1754,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
  *
  * @param 	array	$fieldssource	Array of field source
  * @param	array	$listofkey		Array of keys
- * @return	void
+ * @return	integer
  */
 function getnewkey(&$fieldssource,&$listofkey)
 {

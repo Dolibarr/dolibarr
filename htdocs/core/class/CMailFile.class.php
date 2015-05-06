@@ -4,7 +4,7 @@
  * Copyright (C)           Eric Seigne
  * Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,20 +31,21 @@
 
 /**
  *	Class to send emails (with attachments or not)
- *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
+ *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid);
  *         $mailfile->sendfile();
  */
 class CMailFile
 {
-	var $subject;      // Topic:       Subject of email
-	var $addr_from;    // From:        Label of sender (name but can contains an email inside <>)
-	                   // Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	                   //              Use it with an email from a sending host from is a SPF protected domain and sending host is not this domain.
-	                   // Return-Path: Email where to send bounds.
-	var $errors_to;    // Errors-To:   Email where to send errors.
+	var $subject;      	// Topic:       Subject of email
+	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@mydomain.com>' or 'John Doe <myemail@mydomain.com>' or '<myemail+trackingid@mydomain.com>')
+	                   	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
+	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, use for Sender an email of the protected domain.
+	                   	// Return-Path: Email where to send bounds.
+	var $errors_to;		// Errors-To:	Email where to send errors.
 	var $addr_to;
 	var $addr_cc;
 	var $addr_bcc;
+	var $trackid;
 
 	var $mixed_boundary;
 	var $related_boundary;
@@ -64,6 +65,9 @@ class CMailFile
 	var $styleCSS;
 	//! Defined background directly in body tag
 	var $bodyCSS;
+
+	var $headers;
+	var $message;
 
 	// Image
 	var $html;
@@ -85,8 +89,8 @@ class CMailFile
 	 *	CMailFile
 	 *
 	 *	@param 	string	$subject             Topic/Subject of mail
-	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Nom firstname <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	@param 	string	$from                Sender email      (RFC 2822: "Nom firstname <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
+	 *	@param 	string	$from                Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
 	 *	@param 	string	$msg                 Message
 	 *	@param 	array	$filename_list       List of files to attach (full path of filename on file system)
 	 *	@param 	array	$mimetype_list       List of MIME type of attached files
@@ -95,12 +99,11 @@ class CMailFile
 	 *	@param 	string	$addr_bcc            Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
 	 *	@param 	int		$deliveryreceipt     Ask a delivery receipt
 	 *	@param 	int		$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
-	 *	@param 	string	$errors_to      	 Email errors
+	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
+	 *	@param	string	$trackid             Tracking string
 	 */
-	function __construct($subject,$to,$from,$msg,
-	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='')
+	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='')
 	{
 		global $conf;
 
@@ -126,7 +129,7 @@ class CMailFile
 		// If ending method not defined
 		if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 
-		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: MAIN_MAIL_SENDMODE=".$conf->global->MAIN_MAIL_SENDMODE." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid", LOG_DEBUG);
 		dol_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml", LOG_DEBUG);
 
 		// Detect if message is HTML (use fast method)
@@ -192,6 +195,7 @@ class CMailFile
 			$this->addr_cc = $addr_cc;
 			$this->addr_bcc = $addr_bcc;
 			$this->deliveryreceipt = $deliveryreceipt;
+			$this->trackid = $trackid;
 			$smtp_headers = $this->write_smtpheaders();
 
 			// Define mime_headers
@@ -251,6 +255,7 @@ class CMailFile
 			$smtps->setSubject($this->encodetorfc2822($subject));
 			$smtps->setTO($this->getValidAddress($to,0,1));
 			$smtps->setFrom($this->getValidAddress($from,0,1));
+			$smtps->setTrackId($trackid);
 
 			if (! empty($this->html))
 			{
@@ -303,6 +308,7 @@ class CMailFile
 			$this->phpmailer->Subject($this->encodetorfc2822($subject));
 			$this->phpmailer->setTO($this->getValidAddress($to,0,1));
 			$this->phpmailer->SetFrom($this->getValidAddress($from,0,1));
+			// TODO Add trackid into smtp header
 
 			if (! empty($this->html))
 			{
@@ -516,8 +522,12 @@ class CMailFile
 		return $res;
 	}
 
-
-	// Encode subject according to RFC 2822 - http://en.wikipedia.org/wiki/MIME#Encoded-Word
+	/**
+	 * Encode subject according to RFC 2822 - http://en.wikipedia.org/wiki/MIME#Encoded-Word
+	 *
+	 * @param string $stringtoencode String to encode
+	 * @return string                string encoded
+	 */
 	function encodetorfc2822($stringtoencode)
 	{
 		global $conf;
@@ -641,7 +651,7 @@ class CMailFile
 	/**
 	 * Create SMTP headers (mode = 'mail')
 	 *
-	 * @return	smtp headers
+	 * @return	string headers
 	 */
 	function write_smtpheaders()
 	{
@@ -672,7 +682,17 @@ class CMailFile
 		//$out.= "X-Priority: 3".$this->eol2;
 
 		$out.= 'Date: ' . date("r") . $this->eol2;
-		$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol2;
+
+		$trackid = $this->trackid;
+		if ($trackid)
+		{
+			$out.= 'Message-ID: <' . time() . '.phpmail-'.$trackid.'@' . $host . ">" . $this->eol2;
+			$out.= 'references: <' . time() . '.phpmail-'.$trackid.'@' . $host . ">" . $this->eol2;
+		}
+		else
+		{
+			$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol2;
+		}
 
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol2;
 		$out.= "Mime-Version: 1.0".$this->eol2;
@@ -692,7 +712,7 @@ class CMailFile
 	 *
 	 * @param	array	$filename_list			Array of filenames
 	 * @param 	array	$mimefilename_list		Array of mime types
-	 * @return	array							mime headers
+	 * @return	string							mime headers
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
@@ -1023,9 +1043,9 @@ class CMailFile
 	}
 
 	/**
-	 * Return an address for SMTP protocol
+	 * Return a formatted address string for SMTP protocol
 	 *
-	 * @param	string		$address		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param	string		$address		Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
 	 * @param	int			$format			0=auto, 1=emails with <>, 2=emails without <>, 3=auto + label between "
 	 * @param	int			$encode			1=Encode name to RFC2822
 	 * @return	string						If format 0: '<john@doe.com>' or 'John Doe <john@doe.com>' or '=?UTF-8?B?Sm9obiBEb2U=?= <john@doe.com>'

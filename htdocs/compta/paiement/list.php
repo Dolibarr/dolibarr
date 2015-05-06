@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,10 +122,10 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if ($search_ref)         		$sql .=" AND p.rowid=".$search_ref;
+    if ($search_ref > 0)       		$sql .=" AND p.rowid=".$search_ref;
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
-    if ($search_paymenttype != "")  $sql .=" AND c.code='".$search_paymenttype."'";
-    if ($search_amount)      		$sql .=" AND p.amount='".price2num($search_amount)."'";
+    if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
+    if ($search_amount)      		$sql .=" AND p.amount='".$db->escape(price2num($search_amount))."'";
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -144,7 +145,7 @@ if ($resql)
     $paramlist.=($search_company?"&search_company=".$search_company:"");
     $paramlist.=($search_amount?"&search_amount=".$search_amount:"");
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$paramlist,$sortfield,$sortorder,'',$num,'','title_accountancy.png');
 
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     print '<table class="noborder" width="100%">';
@@ -237,7 +238,7 @@ if ($resql)
             if ($objp->statut == 0) print '</a>';
             print '</td>';
         }
-		
+
 		print '<td>&nbsp;</td>';
         print '</tr>';
 

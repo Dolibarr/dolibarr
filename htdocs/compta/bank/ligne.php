@@ -4,6 +4,8 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
 
 /**
  *	\file       htdocs/compta/bank/ligne.php
- *	\ingroup    compta
+ *	\ingroup    bank
  *	\brief      Page to edit a bank transaction record
  */
 
@@ -33,6 +35,9 @@ $langs->load("categories");
 $langs->load("compta");
 $langs->load("bills");
 if (! empty($conf->adherent->enabled)) $langs->load("members");
+if (! empty($conf->don->enabled)) $langs->load("donations");
+if (! empty($conf->loan->enabled)) $langs->load("loan");
+if (! empty($conf->salaries->enabled)) $langs->load("salaries");
 
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
@@ -345,10 +350,28 @@ if ($result)
                     print $langs->trans("SalaryPayment");
                     print '</a>';
                 }
+                else if ($links[$key]['type']=='payment_loan') {
+                    print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowLoanPayment'),'payment').' ';
+                    print $langs->trans("PaymentLoan");
+                    print '</a>';
+                }
+                else if ($links[$key]['type']=='loan') {
+                    print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowLoan'),'bill').' ';
+                    print $langs->trans("Loan");
+                    print '</a>';
+                }
                 else if ($links[$key]['type']=='member') {
                     print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('ShowMember'),'user').' ';
                     print $links[$key]['label'];
+                    print '</a>';
+                }
+				else if ($links[$key]['type']=='payment_donation') {
+                    print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowDonation'),'payment').' ';
+                    print $langs->trans("DonationPayment");
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='banktransfert') {
@@ -384,7 +407,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print $form->select_types_paiements($objp->fk_type,"value",'',2);
+            $form->select_types_paiements($objp->fk_type,"value",'',2);
             print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
             if ($objp->receiptid)
             {
@@ -530,7 +553,7 @@ if ($result)
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
             print '<br>'."\n";
-            print_fiche_titre($langs->trans("Reconciliation"),'','');
+            print_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setreconcile">';

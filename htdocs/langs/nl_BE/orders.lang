@@ -62,7 +62,6 @@ ConfirmValidateOrder=Bent u zeker dat u deze bestelling onder naam <b>%ss</b> wi
 ConfirmCancelOrder=Bent u zeker dat u deze bestelling wil annuleren?
 ConfirmMakeOrder=Bent u zeker dat u deze bestelling gemaakt op <b>%ss</b> wil bevestigen?
 ClassifyBilled=Classify "Billed"
-ComptaCard=Accountancy card
 DraftOrders=Klad bestellingen
 RelatedOrders=Gerelateerde bestellingen
 OnProcessOrders=Bestellingen in uitvoering

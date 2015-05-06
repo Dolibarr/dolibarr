@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
- * Copyright (C) 2005-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,6 +199,30 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
 		print $form->editfieldval("Label",'label',$object->label,$object,0);
 		print '</td></tr>';
+
+        // Status
+        $alreadypaid=$object->getSommePaiement();
+        print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
+
+        // Amount
+        print '<tr><td>'.$langs->trans('AmountHT').'</td><td colspan="3">'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3">'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+
+        // Amount Local Taxes
+        //TODO: Place into a function to control showing by country or study better option
+        if ($societe->localtax1_assuj=="1") //Localtax1
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+            print '<td colspan="3">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '</tr>';
+        }
+        if ($societe->localtax2_assuj=="1") //Localtax2
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+            print '<td colspan="3">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '</tr>';
+        }
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="3">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 		print "</table>";
 

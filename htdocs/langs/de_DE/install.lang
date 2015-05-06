@@ -155,6 +155,8 @@ MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
 ActivateModule=Aktivieren von Modul %s
 ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bearbeiten (Expertenmodus)
+WarningUpgrade=Warnung: \nHaben Sie zuerst eine Sicherungskopie der Datenbank gemacht ? \nAufgrund der Probleme im Datenbanksystem (zB MySQL Version 5.5.40 ) , viele Daten oder Tabellen können während der Migration verloren gehen , so ist es sehr empfehlenswert , vor dem Starten des Migrationsprozesses, eine vollständige Sicherung  Ihrer Datenbank zu haben.\n\nKlicken Sie auf OK , um die Migration zu starten
+ErrorDatabaseVersionForbiddenForMigration=Die Version Ihres Datenbankmanager ist %s.\nDies ist einen kritischer Bug welcher zu Datenverlust führen kann, wenn Sie die Struktur der Datenbank wie vom Migrationsprozess erforderlich  ändern. Aus diesem Grund, ist die Migration nicht erlaubt bevor der Datenbankmanager auf eine später Version aktualisiert wurde (Liste betroffer Versionen %s )
 
 #########
 # upgrade
@@ -194,18 +196,19 @@ MigrationReopenedContractsNumber=%s Verträge geändert
 MigrationReopeningContractsNothingToUpdate=Keine geschlossenen Verträge zur Wiedereröffnung
 MigrationBankTransfertsUpdate=Verknüpfung zwischen Banktransaktion und einer Überweisung aktualisieren
 MigrationBankTransfertsNothingToUpdate=Alle Banktransaktionen sind auf neuestem Stand.
-MigrationShipmentOrderMatching=Aktualisiere Sendungsscheine
+MigrationShipmentOrderMatching=Aktualisierung Versand
 MigrationDeliveryOrderMatching=Aktualisiere Lieferscheine
 MigrationDeliveryDetail=Aktualisiere Lieferungen
 MigrationStockDetail=Produklagerwerte aktualisieren
 MigrationMenusDetail=Tabellen der dynamischen Menüs aktualisieren
-MigrationDeliveryAddress=Lieferadresse in Sendungen aktualisieren
+MigrationDeliveryAddress=Update Lieferadresse in Versand
 MigrationProjectTaskActors=Datenmigration für llx_projet_task_actors Tabelle
 MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet nach llx_element_contact
 MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 MigrationActioncommElement=Aktualisiere die Maßnahmen
 MigrationPaymentMode=Migration der Daten für die Zahlungsart
 MigrationCategorieAssociation=Kategorien verschieben
+MigrationEvents=Migration of events to add event owner into assignement table
 
 ShowNotAvailableOptions=Nicht verfügbare Optionen anzeigen
 HideNotAvailableOptions=Nicht verfügbare Optionen ausblenden

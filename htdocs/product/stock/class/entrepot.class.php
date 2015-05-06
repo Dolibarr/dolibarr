@@ -415,7 +415,7 @@ class Entrepot extends CommonObject
 	{
 		$ret=array();
 
-		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ps.pmp) as value";
+		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE ps.fk_entrepot = ".$this->id;
@@ -510,15 +510,19 @@ class Entrepot extends CommonObject
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
+		$langs->load("stocks");
 
 		$result='';
-        $label = $langs->trans("ShowStock").': '.$this->libelle;
+        $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->libelle;
+        if (! empty($this->lieu))
+            $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
-        $lien='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link='<a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
-        if ($withpicto) $result.=($lien.img_object($label, 'stock', 'class="classfortooltip"').$lienfin.' ');
-		$result.=$lien.$this->libelle.$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'stock', 'class="classfortooltip"').$linkend.' ');
+		$result.=$link.$this->libelle.$linkend;
 		return $result;
 	}
 

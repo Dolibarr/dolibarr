@@ -13,7 +13,9 @@ ConfigAccountingExpert=配置"会计专家模块"
 Journaux=日记帐
 JournalFinancial=财经杂志
 Exports=出口
+Export=Export
 Modelcsv=出口型号
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=选择一个“导出模型”
 Modelcsv_normal=典型的导出
 Modelcsv_CEGID=出口对Cegid的专家
@@ -66,7 +68,7 @@ Lineofinvoice=发票行
 VentilatedinAccount=在会计账户成功通风
 NotVentilatedinAccount=不通风的会计账户
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

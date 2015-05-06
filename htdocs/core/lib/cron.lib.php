@@ -50,10 +50,10 @@ function cronadmin_prepare_head()
 /**
  * Return array of tabs to used on a cron job
  *
- * @param 	Object	$object		Object cron
+ * @param 	Cronjob	$object		Object cron
  * @return 	array				Array of tabs
  */
-function cron_prepare_head($object)
+function cron_prepare_head(Cronjob $object)
 {
 	global $langs, $conf, $user;
 	$h = 0;
@@ -115,6 +115,8 @@ function dol_print_cron_urls()
 	if ($linuxlike)
 	{
 		print $langs->trans("CronExplainHowToRunUnix");
+		print '<br>';
+		print '<textarea rows="'.ROWS_1.'" style="width:80%">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$user->login.' &gt; '.DOL_DOCUMENT_ROOT.'/cron_run_jobs.php.log</textarea><br>';
 	}
 	else
 	{

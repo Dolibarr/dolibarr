@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -547,17 +548,19 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("Show").': '.$this->ref;
+        $label = '<u>' . $langs->trans("ShowIntervention") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='intervention';
 
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -887,10 +890,10 @@ class Fichinter extends CommonObject
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
-	 *  @param		array	$array_option			Array option
+	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option='')
+	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_options='')
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -906,8 +909,8 @@ class Fichinter extends CommonObject
 			$line->datei        = $date_intervention;
 			$line->duration     = $duration;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$line->array_options=$array_options;
 			}
 
 			$result=$line->insert($user);
@@ -949,7 +952,7 @@ class Fichinter extends CommonObject
 		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
 		$this->duree = 0;
-		$nbp = 20;
+		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
@@ -1009,6 +1012,23 @@ class Fichinter extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'fichinter'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 /**
@@ -1020,7 +1040,6 @@ class FichinterLigne extends CommonObjectLine
 	var $error;
 
 	// From llx_fichinterdet
-	var $rowid;
 	var $fk_fichinter;
 	var $desc;          	// Description ligne
 	var $datei;           // Date intervention

@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -191,6 +193,7 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
  */
 
 $form = new Form($db);
+$prelevement = new BonPrelevement($db);
 
 llxHeader();
 
@@ -293,10 +296,26 @@ if ($socid && $action != 'edit' && $action != "create")
 	}
 
 	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban.'</td></tr>';
+	print '<td colspan="4">'.$account->iban . '&nbsp;';
+    if (! empty($account->iban)) {
+        if (! checkIbanForAccount($account)) {
+            print img_picto($langs->trans("IbanNotValid"),'warning');
+        } else {
+            print img_picto($langs->trans("IbanValid"),'info');
+        }
+    }
+    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4">'.$account->bic.'</td></tr>';
+	print '<td colspan="4">'.$account->bic.'&nbsp;';
+    if (! empty($account->bic)) {
+        if (! checkSwiftForAccount($account)) {
+            print img_picto($langs->trans("SwiftNotValid"),'warning');
+        } else {
+            print img_picto($langs->trans("SwiftValid"),'info');
+        }
+    }
+    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print $account->domiciliation;
@@ -320,11 +339,11 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print "<br>";
 
-    
+
     /*
      * List of bank accounts
      */
-    
+
     print_titre($langs->trans("AllRIB"));
 
     $rib_list = $soc->get_all_rib();
@@ -339,6 +358,10 @@ if ($socid && $action != 'edit' && $action != "create")
         print_liste_field_titre($langs->trans("RIB"));
         print_liste_field_titre($langs->trans("IBAN"));
         print_liste_field_titre($langs->trans("BIC"));
+        if (! empty($conf->prelevement->enabled))
+        {
+			print '<td>RUM</td>';
+        }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print '<td width="40"></td>';
         print '</tr>';
@@ -356,6 +379,12 @@ if ($socid && $action != 'edit' && $action != "create")
             print '<td>'.$rib->iban.'</td>';
             // BIC
             print '<td>'.$rib->bic.'</td>';
+
+            if (! empty($conf->prelevement->enabled))
+            {
+				print '<td>'.$prelevement->buildRumNumber($soc->code_client, $rib->datec, $rib->id).'</td>';
+            }
+
             // Default
             print '<td align="center" width="70">';
             if (!$rib->default_rib) {
@@ -387,8 +416,11 @@ if ($socid && $action != 'edit' && $action != "create")
             $var = !$var;
         }
 
-        if (count($rib_list) == 0) {
-            print '<tr '.$bc[0].'><td colspan="7" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+        if (count($rib_list) == 0) 
+        {
+        	$colspan=7;
+        	if (! empty($conf->prelevement->enabled)) $colspan++;
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';

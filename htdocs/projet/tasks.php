@@ -47,12 +47,11 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id,$ref);
-	$id=$object->id;
-	$ref=$object->ref;
-
 	// fetch optionals attributes and labels
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
@@ -133,8 +132,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			}
 			else
 			{
-			    setEventMessage($task->error,'errors');
-			    setEventMessage($task->errors,'errors');
+			    setEventMessages($task->error,$task->errors,'errors');
 			}
 		}
 
@@ -150,6 +148,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
+			$id = $projectid;
 		}
 	}
 	else
@@ -168,17 +167,20 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
-*/
+ */
 
 $form=new Form($db);
 $formother=new FormOther($db);
 $taskstatic = new Task($db);
 $userstatic=new User($db);
 
+$title=$langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Tasks"),$help_url);
+llxHeader("",$title,$help_url);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -263,7 +265,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print_fiche_titre($langs->trans("NewTask"));
+	print_fiche_titre($langs->trans("NewTask"), '', 'title_project');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -349,7 +351,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</form>';
 
 }
-else
+else if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
@@ -411,7 +413,7 @@ else
 	}
 
 	print '<table id="tablelines" class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre nodrag nodrop">';
 	// print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="100">'.$langs->trans("RefTask").'</td>';
 	print '<td>'.$langs->trans("LabelTask").'</td>';

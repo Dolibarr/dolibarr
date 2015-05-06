@@ -157,7 +157,7 @@ class FormOther
      *
      *    @param	string	$selected   Preselected ecotaxes
      *    @param    string	$htmlname	Name of combo list
-     *    @return	void
+     *    @return	integer
      */
     function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
     {
@@ -268,7 +268,7 @@ class FormOther
     /**
      *    Return a HTML select list to select a percent
      *
-     *    @param	string	$selected      	pourcentage pre-selectionne
+     *    @param	integer	$selected      	pourcentage pre-selectionne
      *    @param    string	$htmlname      	nom de la liste deroulante
      *    @param	int		$disabled		Disabled or not
      *    @param    int		$increment     	increment value
@@ -303,7 +303,7 @@ class FormOther
      * Return select list for categories (to use in form search selectors)
      *
      * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     * @param  string	$selected     	Preselected value
+     * @param  integer	$selected     	Preselected value
      * @param  string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @return string		        	Html combo list code
@@ -324,12 +324,13 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            $moreforfilter.= ajax_combobox('select_categ_'.$htmlname);
-            $nodatarole=' data-role="none"';
+            $comboenhancement = ajax_combobox('select_categ_'.$htmlname);
+            $moreforfilter.=$comboenhancement;
+            $nodatarole=($comboenhancement?' data-role="none"':'');
         }
 
         // Print a select with each of them
-        $moreforfilter.='<select class="flat" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        $moreforfilter.='<select class="flat minwidth100" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -373,8 +374,13 @@ class FormOther
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-            $out.= ajax_combobox($htmlname);
-            $nodatarole=' data-role="none"';
+
+            $comboenhancement = ajax_combobox($htmlname);
+            if ($comboenhancement)
+            {
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+            }
         }
         // Select each sales and print them in a select input
         $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
@@ -385,7 +391,7 @@ class FormOther
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_societe = ".$user->societe_id;
+        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_soc = ".$user->societe_id;
         // Add existing sales representatives of thirdparty of external user
         if (empty($user->rights->user->user->lire) && $user->societe_id)
         {
@@ -601,7 +607,7 @@ class FormOther
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
-     * 		@return	void
+     * 		@return	string
      */
     function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
@@ -731,7 +737,7 @@ class FormOther
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	void
+     *    	@return	string
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
@@ -767,20 +773,22 @@ class FormOther
     }
 
     /**
-     *    	Return HTML combo list of month
+     *      Return HTML combo list of month
      *
-     *    	@param	string		$selected          Preselected value
-     *    	@param  string		$htmlname          Nom de la zone select
-     *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	void
+     *      @param  string      $selected          Preselected value
+     *      @param  string      $htmlname          Name of HTML select object
+     *      @param  int         $useempty          Show empty in list
+     *      @param  int         $longlabel         Show long label
+     *      @return string
      */
-    function select_month($selected='',$htmlname='monthid',$useempty=0)
+    function select_month($selected='',$htmlname='monthid',$useempty=0,$longlabel=0)
     {
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        $montharray = monthArray($langs);	// Get array
+        if ($longlabel) $montharray = monthArray($langs, 0);	// Get array
+        else $montharray = monthArray($langs, 1);
 
         $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
@@ -814,7 +822,7 @@ class FormOther
      *  @param	int			$offset			Offset
      *  @param	int			$invert			Invert
      *  @param	string		$option			Option
-     *  @return	void
+     *  @return	string
      */
     function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {
@@ -832,7 +840,7 @@ class FormOther
      *  @param	int		$offset			Offset
      *  @param	int		$invert			Invert
      *  @param	string	$option			Option
-     *  @return	void
+     *  @return	string
      */
     function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {

@@ -24,15 +24,12 @@ create table llx_actioncomm
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
   ref_ext			varchar(128),
-  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
+  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
   datep				datetime,						-- date start
   datep2			datetime,						-- date end
-  datea				datetime,						-- deprecated
-  datea2			datetime,						-- deprecated
 
-  fk_action			integer,						-- type of action (optional link with llx_c_actioncomm or null)
-  code				varchar(32) NULL,				-- code of action for automatic action
-  label				varchar(128) NOT NULL,			-- label/title of event
+  fk_action			integer,						-- type of action (optional link with id in llx_c_actioncomm or null)
+  code				varchar(32) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
   
   datec				datetime,						-- date creation
   tms				timestamp,						-- date modification
@@ -44,7 +41,7 @@ create table llx_actioncomm
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
 
-  fk_user_action	integer,						-- user id of owner of action (currently also user id of actor that must do action. In future, actors assigned to action will be an array into table llx_actioncomm_resources)
+  fk_user_action	integer,						-- user id of owner of action (note that assigned users to event are store into another table) 
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_resources)
 
   fk_user_done		integer,						-- user id of user that has made action (deprecated)
@@ -55,8 +52,15 @@ create table llx_actioncomm
   percent			smallint NOT NULL default 0,
   location			varchar(128),
   durationp			real,							-- planed duration
-  durationa			real,							-- deprecated
-  note				text,
+
+  label				varchar(256) NOT NULL,			-- label/title of event or topic of email
+  note				text,							-- note of event or content of email
+  
+  email_msgid		varchar(256),					-- when event was an email, we store here the msgid
+  email_from		varchar(256),					-- when event was an email, we store here the from
+  email_sender		varchar(256),					-- when event was an email, we store here the sender
+  email_to			varchar(256),					-- when event was an email, we store here the email_to
+  errors_to			varchar(256),					-- when event was an email, we store here the erros_to
   
   fk_element		integer DEFAULT NULL,
   elementtype		varchar(32) DEFAULT NULL

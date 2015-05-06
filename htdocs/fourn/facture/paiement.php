@@ -5,7 +5,11 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+<<<<<<< HEAD
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+=======
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+>>>>>>> refs/remotes/origin/3.6
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +32,9 @@
  */
 
 require '../../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 $langs->load('companies');
 $langs->load('bills');
@@ -420,7 +424,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	        // Bouton Enregistrer
 	        if ($action != 'add_paiement')
 	        {
-				print '<<br><div class="center"><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+				print '<br><div class="center"><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
 				print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></div>';
 	        }
 
@@ -473,7 +477,7 @@ if (empty($action))
 
     $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
     $sql.= ' s.rowid as socid, s.nom as name,';
-    $sql.= ' c.libelle as paiement_type,';
+    $sql.= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql.= ' ba.rowid as bid, ba.label,';
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
     $sql.= ' SUM(f.amount)';
@@ -512,7 +516,7 @@ if (empty($action))
     {
         $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
     }
-    $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.libelle, ba.rowid, ba.label";
+    $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit+1, $offset);
@@ -584,7 +588,9 @@ if (empty($action))
             else print '&nbsp;';
             print '</td>';
 
-            print '<td>'.dol_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
+            $payment_type = $langs->trans("PaymentType".$objp->paiement_type)!=("PaymentType".$objp->paiement_type)?$langs->trans("PaymentType".$objp->paiement_type):$objp->paiement_libelle;
+
+            print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement,32)."</td>\n";
 
             print '<td>';
             if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';

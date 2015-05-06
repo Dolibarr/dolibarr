@@ -172,7 +172,7 @@ jQuery(document).ready(function() {
 <?php
 }
 
-print_fiche_titre($langs->trans("OtherSetup"),'','setup');
+print_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
@@ -229,8 +229,8 @@ $sql.= ", note";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if (empty($user->entity) && $debug) {} // to force for superadmin
-elseif ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
+if ((empty($user->entity) || $user->admin) && $debug) {} // to force for superadmin
+else $sql.= " AND visible = 1";			// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
 $sql.= " ORDER BY entity, name ASC";
 
 dol_syslog("Const::listConstant", LOG_DEBUG);
@@ -280,7 +280,6 @@ if ($result)
 		if ($conf->use_javascript_ajax)
 		{
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
-			print ' &nbsp; ';
 		}
 		else
 		{

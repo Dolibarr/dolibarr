@@ -13,7 +13,9 @@ ConfigAccountingExpert=Konfiguration af ekspert Regnskabsmodulet
 Journaux=Journaler
 JournalFinancial=Finans journal
 Exports=Eksporter
+Export=Export
 Modelcsv=Eksportmodul
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Vælg en eksportmodel
 Modelcsv_normal=Klassisk eksport
 Modelcsv_CEGID=Eksporter med CEGID ekspert
@@ -66,7 +68,7 @@ Lineofinvoice=Fakturalinjer
 VentilatedinAccount=Fornyet med succes i den regnskabsmæssige konto
 NotVentilatedinAccount=Ikke fornyede i den regnskabsmæssige konto
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

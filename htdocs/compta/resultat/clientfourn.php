@@ -558,7 +558,6 @@ if ($conf->salaries->enabled)
 	$sql.= " WHERE p.entity = ".$conf->entity;
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-
 	$sql.= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
 	$sql.= " ORDER BY u.firstname";
 
@@ -652,7 +651,7 @@ if ($conf->donation->enabled)
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/compta/dons/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
+				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 				if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price($obj->amount).'</td>';
 				print '<td align="right">'.price($obj->amount).'</td>';

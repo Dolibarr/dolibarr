@@ -455,7 +455,7 @@ class FormCompany
 		{
 			$out.= '<div id="particulier2" class="visible">';
 			$out.= '<select class="flat" name="forme_juridique_code" id="legal_form">';
-			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
+			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';	// When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
 
 			$num = $this->db->num_rows($resql);
 			if ($num)
@@ -465,13 +465,21 @@ class FormCompany
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$labelcountry=(($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code) ? $langs->trans("Country".$obj->country_code) : $obj->country);
-					$labeljs=(($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code) ? $langs->trans("JuridicalStatus".$obj->code) : ($obj->label!='-'?$obj->label:''));	// $obj->label is already in output charset (converted by database driver)
-					$arraydata[$obj->code]=array('code'=>$obj->code, 'label'=>$labeljs, 'label_sort'=>$labelcountry.'_'.$labeljs, 'country_code'=>$obj->country_code, 'country'=>$labelcountry);
+
+					if ($obj->code)		// We exclude empty line, we will add it later
+					{
+						$labelcountry=(($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code) ? $langs->trans("Country".$obj->country_code) : $obj->country);
+						$labeljs=(($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code) ? $langs->trans("JuridicalStatus".$obj->code) : ($obj->label!='-'?$obj->label:''));	// $obj->label is already in output charset (converted by database driver)
+						$arraydata[$obj->code]=array('code'=>$obj->code, 'label'=>$labeljs, 'label_sort'=>$labelcountry.'_'.$labeljs, 'country_code'=>$obj->country_code, 'country'=>$labelcountry);
+					}
 					$i++;
 				}
 
 				$arraydata=dol_sort_array($arraydata, 'label_sort', 'ASC');
+				if (empty($country_codeid))	// Introduce empty value (if $country_codeid not empty, empty value was already added)
+				{
+					$arraydata[0]=array('code'=>0, 'label'=>'', 'label_sort'=>'_', 'country_code'=>'', 'country'=>'');
+				}
 
 				foreach($arraydata as $key => $val)
 				{
@@ -699,7 +707,7 @@ class FormCompany
 	 *    @param    string		$fields					Fields
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable autocomplete features
-	 *    @return	void
+	 *    @return	string
 	 */
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0)
 	{

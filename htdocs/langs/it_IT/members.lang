@@ -203,4 +203,4 @@ MembersByNature=Membri per natura
 VATToUseForSubscriptions=Aliquota IVA in uso per le sottoscrizioni
 NoVatOnSubscription=Nessuna IVA per gli abbonamenti
 MEMBER_PAYONLINE_SENDEMAIL=Email di avviso quando Dolibarr riceve la conferma della validazione di un pagamento per adesione
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for subscription line into invoice: %s
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Prodotto utilizzato per la riga dell'abbonamento in fattura: %s

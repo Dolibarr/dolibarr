@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Adolfo segura        <adolfo.segura@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +240,7 @@ else
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
 
-    	print_barre_liste($texte, $page, "list.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+    	print_barre_liste($texte, $page, "list.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
 
     	if (! empty($catid))
     	{
@@ -420,6 +421,7 @@ else
     			print '<td class="nowrap">';
     			$product_static->id = $objp->rowid;
     			$product_static->ref = $objp->ref;
+                $product_static->label = $objp->label;
     			$product_static->type = $objp->fk_product_type;
     			print $product_static->getNomUrl(1,'',24);
     			print "</td>\n";
@@ -456,8 +458,11 @@ else
     			if (empty($conf->global->PRODUIT_MULTIPRICES))
     			{
     			    print '<td align="right">';
-        			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-        			else print price($objp->price).' '.$langs->trans("HT");
+    			    if ($objp->tosell)
+    			    {
+        				if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+        				else print price($objp->price).' '.$langs->trans("HT");
+    			    }
         			print '</td>';
     			}
 
@@ -465,15 +470,18 @@ else
     			if ($user->rights->fournisseur->lire)
     			{
         			print  '<td align="right">';
-        			if ($objp->minsellprice != '')
+    			    if ($objp->tobuy && $objp->minsellprice != '')
         			{
     					//print price($objp->minsellprice).' '.$langs->trans("HT");
     					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
     					{
     						if ($product_fourn->product_fourn_price_id > 0)
     						{
-    							$htmltext=$product_fourn->display_price_product_fournisseur();
-    							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    							{
+    								$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
+    								print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    							}
     							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
     						}
     					}

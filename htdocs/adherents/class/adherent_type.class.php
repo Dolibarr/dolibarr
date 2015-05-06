@@ -36,6 +36,13 @@ class AdherentType extends CommonObject
     public $element = 'adherent_type';
 
     var $id;
+
+    /**
+     * @var int
+     * @deprecated Use rowid
+     */
+    public $ref;
+
     var $libelle;
     var $statut;
     var $cotisation;  // Soumis a la cotisation
@@ -66,7 +73,7 @@ class AdherentType extends CommonObject
     {
         global $conf;
 
-        $this->statut=trim($this->statut);
+        $this->statut=(int) $this->statut;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
         $sql.= "libelle";
@@ -259,9 +266,9 @@ class AdherentType extends CommonObject
 
 
     /**
-     *    	Renvoie nom clicable (avec eventuellement le picto)
+     *    	Return clicable name (with picto eventually)
      *
-     *		@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *		@param		int		$maxlen			length max libelle
      *		@return		string					String with URL
      */
@@ -272,14 +279,14 @@ class AdherentType extends CommonObject
         $result='';
         $label=$langs->trans("ShowTypeCard",$this->libelle);
 
-        $lien = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
         $picto='group';
 
-        if ($withpicto) $result.=($lien.img_object($label, $picto, 'class="classfortooltip"').$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$lienfin;
+        $result.=$link.($maxlen?dol_trunc($this->libelle,$maxlen):$this->libelle).$linkend;
         return $result;
     }
 

@@ -2,8 +2,10 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +117,7 @@ $companystatic = new Societe($db);
  */
 if ($action == 'create')
 {
-	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
+	print_fiche_titre($langs->trans("CreateRepeatableInvoice"),'','title_accountancy.png');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
@@ -201,6 +203,7 @@ if ($action == 'create')
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
+		$sql.= ' l.fk_unit,';
 		$sql.= ' p.ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
@@ -221,6 +224,9 @@ if ($action == 'create')
 				print '<td>'.$langs->trans("Description").'</td>';
 				print '<td align="center">'.$langs->trans("VAT").'</td>';
 				print '<td align="center">'.$langs->trans("Qty").'</td>';
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
+				}
 				print '<td>'.$langs->trans("ReductionShort").'</td>';
 				print '<td align="right">'.$langs->trans("TotalHT").'</td>';
 				print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
@@ -245,6 +251,7 @@ if ($action == 'create')
 
 				// Show product and description
 				$type=(isset($objp->product_type)?$objp->product_type:$objp->fk_product_type);
+				$product_static->fk_unit=$objp->fk_unit;
 
 				if ($objp->fk_product > 0)
 				{
@@ -297,6 +304,10 @@ if ($action == 'create')
 
 				// Qty
 				print '<td align="center">'.$objp->qty.'</td>';
+
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					print '<td align="left">'.$product_static->getLabelOfUnit().'</td>';
+				}
 
 				// Percent
 				if ($objp->remise_percent > 0)
@@ -444,7 +455,11 @@ else
 			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td align="right">'.$langs->trans("Price").'</td>';
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
-			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
+			print '<td align="center">'.$langs->trans("Qty").'</td>';
+			if ($conf->global->PRODUCT_USE_UNITS) {
+				print '<td align="left">'.$langs->trans("Unit").'</td>';
+			}
+			print '</tr>';
 
 			$num = count($object->lines);
 			$i = 0;
@@ -511,7 +526,11 @@ else
 				}
 				print '<td align="right">'.price($object->lines[$i]->price).'</td>';
 				print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
-				print '<td align="center">'.$object->lines[$i]->qty.'</td></tr>'."\n";
+				print '<td align="center">'.$object->lines[$i]->qty.'</td>';
+				if ($conf->global->PRODUCT_USE_UNITS) {
+					print "<td align=\"left\">".$object->lines[$i]->getLabelOfUnit()."</td>";
+				}
+				print "</tr>\n";
 				$i++;
 			}
 			print '</table>';
@@ -523,12 +542,12 @@ else
 			 */
 			print '<div class="tabsAction">';
 
-			if ($object->statut == 0 && $user->rights->facture->creer)
+			if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->creer)
 			{
 			    	echo '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 			}
 
-			if ($object->statut == 0 && $user->rights->facture->supprimer)
+			if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
 			{
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 			}
@@ -558,7 +577,7 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num);
+			print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],"&socid=$socid",$sortfield,$sortorder,'',$num,'','title_accountancy.png');
 
 			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
 

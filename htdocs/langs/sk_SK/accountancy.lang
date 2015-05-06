@@ -1,19 +1,21 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Accounting=Účtovníctvo
+Globalparameters=Globálne parametre
+Chartofaccounts=Tabuľka účtov
+Fiscalyear=Fiškálne roky
+Menuaccount=Účty účtovníctva
+Menuthirdpartyaccount=Účty tretích strán
+MenuTools=Nástroje
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
 JournalFinancial=Financial journals
 Exports=Exports
+Export=Export
 Modelcsv=Model of export
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Select a model of export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export towards CEGID Expert
@@ -22,19 +24,19 @@ Back=Return
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
+Validate=Overiť
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
-Ventilation=Breakdown
+Ventilation=Rozpis
 ToDispatch=To dispatch
 Dispatched=Dispatched
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+CustomersVentilation=Rozpis zákazníkov
+SuppliersVentilation=Rozpis dodávateľov
 TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-ByMonth=By Month
+Reports=Zostavy
+ByCustomerInvoice=Podľa faktúr zákazníkov
+ByMonth=Podľa mesiacov
 NewAccount=New accounting account
 Update=Update
 List=List
@@ -66,7 +68,7 @@ Lineofinvoice=Line of invoice
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Separator CSV
+ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

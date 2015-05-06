@@ -71,7 +71,7 @@ else if ($action == 'disable_layoutmenu')
 
 llxHeader('',$langs->trans("Setup"));
 
-print_fiche_titre($langs->trans("Menus"),'','setup');
+print_fiche_titre($langs->trans("Menus"),'','title_setup');
 
 
 $h = 0;
@@ -120,7 +120,7 @@ print "</td>";
 print '</tr>';
 
 // Use a flip-hide menu
-if (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0)
+if (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 1)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";

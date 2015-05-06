@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Birgjar
-Supplier=Birgir
-AddSupplier=Bæta við birgja
+AddSupplier=Create a supplier
 SupplierRemoved=Birgir fjarri
 SuppliersInvoice=Birgjar Reikningar
 NewSupplier=New birgir
@@ -30,7 +29,7 @@ ExportDataset_fournisseur_2=Birgir reikninga og greiðslur
 ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Samþykkja þessari röð
 ConfirmApproveThisOrder=Ertu viss um að þú viljir samþykkja þessari röð?
-DenyingThisOrder=Afneita þessari röð
+DenyingThisOrder=Deny this order
 ConfirmDenyingThisOrder=Ertu viss um að þú viljir afneita þessari röð?
 ConfirmCancelThisOrder=Ertu viss um að þú viljir hætta í þessari röð?
 AddCustomerOrder=Búa til viðskiptavina til
@@ -42,3 +41,6 @@ NoneOrBatchFileNeverRan=Enginn eða <b>hópur %s </b> er ekki hljóp nýlega
 SentToSuppliers=Sent to suppliers
 ListOfSupplierOrders=List of supplier orders
 MenuOrdersSupplierToBill=Supplier orders to invoice
+NbDaysToDelivery=Delivery delay in days
+DescNbDaysToDelivery=The biggest delay is display among order product list
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

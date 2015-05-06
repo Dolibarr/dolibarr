@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ $actiontest=GETPOST('test','alpha');
 $actionsave=GETPOST('save','alpha');
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
-$MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
+$MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 
 // List of aviable colors
 $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5');
@@ -123,7 +124,7 @@ $arrayofcss=array();
 llxHeader('',$langs->trans("AgendaSetup"),'','',0,0,$arrayofjs,$arrayofcss);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 print '<br>';
 
 $head=agenda_prepare_head();

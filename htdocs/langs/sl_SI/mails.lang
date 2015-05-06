@@ -139,3 +139,5 @@ ListOfNotificationsDone=Seznam vseh poslanih e-poštnih obvestil
 MailSendSetupIs=Konfiguracij pošiljanja e-pošte je bila nastavljena na '%s'. Ta način ne more biti uporabljen za masovno pošiljanje.
 MailSendSetupIs2=Najprej morate kot administrator preko menija %sDomov - Nastavitve - E-pošta%s spremeniti parameter <strong>'%s'</strong> za uporabo načina '%s'. V tem načinu lahko odprete nastavitve SMTP strežnika, ki vam jih omogoča vaš spletni oprerater in uporabite masovno pošiljanje.
 MailSendSetupIs3=Če imate vprašanja o nastavitvi SMTP strežnika, lahko vprašate %s.
+YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor)
+NbOfTargetedContacts=Current number of targeted contact emails

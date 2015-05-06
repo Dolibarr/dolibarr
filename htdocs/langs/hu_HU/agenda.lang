@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=%s számla érvényesítve
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Számla %s menj vissza a tervezett jogállását
 InvoiceDeleteDolibarr=Invoice %s deleted
-OrderValidatedInDolibarr= %s megrendelés érvényesítve
+OrderValidatedInDolibarr=%s megrendelés érvényesítve
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Rendelés %s törölt
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Rendelés %s jóváhagyott
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Rendelés %s menj vissza vázlat
@@ -58,8 +61,9 @@ OrderSentByEMail=Ügyfél érdekében %s postáztuk
 InvoiceSentByEMail=Az ügyfél számlát postáztuk %s
 SupplierOrderSentByEMail=Szállító érdekében %s postáztuk
 SupplierInvoiceSentByEMail=Szállító számlát postáztuk %s
-ShippingSentByEMail=Szállítás %s postáztuk
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Harmadik fél létrehozva
 DateActionPlannedStart= Tervezett indulási dátum
 DateActionPlannedEnd= Tervezett befejezési dátum
@@ -68,7 +72,7 @@ DateActionDoneEnd= Tényleges befejezési dátum
 DateActionStart= Indulási dátum
 DateActionEnd= Befejezési dátum
 AgendaUrlOptions1=Az alábbi paramétereket hozzá lehet adni a kimenet szűréséhez:
-AgendaUrlOptions2=<b>login=%s</b> kimenet szükítése a <b>%s</b> felhasználó által létrehozott cselekvésekre, érintő cselekvésekre,által végzett cselekvésekre.
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> kimenet szükítése a <b>%s</b> felhasználó érintő cselekvésekre.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
 AddEvent=Create event
 MyAvailability=My availability
+ActionType=Event type
+DateActionBegin=Start event date

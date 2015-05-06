@@ -76,6 +76,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
     {
         global $conf,$user,$langs,$db;
 
+        if (empty($conf->facture->enabled)) { print __METHOD__." module customer invoice must be enabled.\n"; die(); }
         if (! empty($conf->ecotaxdeee->enabled)) { print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(); }
 
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.

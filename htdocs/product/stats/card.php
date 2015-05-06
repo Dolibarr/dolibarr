@@ -67,9 +67,9 @@ if (! empty($id) || ! empty($ref))
 
 	if ($result)
 	{
-		$head=product_prepare_head($object, $user);
+		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type==1?'service':'product');
+		$picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 
 		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
@@ -83,7 +83,7 @@ if (! empty($id) || ! empty($ref))
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 		// Status (to sell)
 		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';

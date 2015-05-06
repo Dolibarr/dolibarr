@@ -35,6 +35,6 @@ MessageKO=Nachrichtenseite für abgebrochene Zahlung
 NewPayboxPaymentReceived=Neue Paybox-Zahlung erhalten
 NewPayboxPaymentFailed=Neue Paybox-Zahlungen probiert, aber fehlgeschlagen
 PAYBOX_PAYONLINE_SENDEMAIL=Status-Email nach einer Zahlung (erfolgreich oder nicht)
-PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_SITE=Wert für PayBox Seite
 PAYBOX_PBX_RANG=Value for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

@@ -53,7 +53,6 @@ class AccountingAccount extends CommonObject
 	 * @param 	DoliDB	$db		Database handle
 	 */
 	function __construct($db)
-
 	{
 		$this->db = $db;
 	}
@@ -124,7 +123,7 @@ class AccountingAccount extends CommonObject
 	 */
 	function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 		$now = dol_now();
 
@@ -192,7 +191,7 @@ class AccountingAccount extends CommonObject
 		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accountingaccount");
 
-			if (! $notrigger) {
+//			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -202,7 +201,7 @@ class AccountingAccount extends CommonObject
 				// $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// // End call triggers
-			}
+//			}
 		}
 
 		// Commit or rollback
@@ -227,8 +226,6 @@ class AccountingAccount extends CommonObject
 	 */
 	function update($user)
 	{
-		global $langs;
-
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accountingaccount ";
@@ -296,7 +293,6 @@ class AccountingAccount extends CommonObject
 	 */
 	function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$result = $this->checkUsage();
@@ -305,8 +301,8 @@ class AccountingAccount extends CommonObject
 
 			$this->db->begin();
 
-			if (! $error) {
-				if (! $notrigger) {
+//			if (! $error) {
+//				if (! $notrigger) {
 					// Uncomment this and change MYOBJECT to your own tag if you
 					// want this action calls a trigger.
 
@@ -316,8 +312,8 @@ class AccountingAccount extends CommonObject
 					// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
 					// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// // End call triggers
-				}
-			}
+//				}
+//			}
 
 			if (! $error) {
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accountingaccount";
@@ -394,8 +390,6 @@ class AccountingAccount extends CommonObject
 	 */
 	function account_desactivate($id)
 	{
-		global $langs;
-
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
@@ -429,8 +423,6 @@ class AccountingAccount extends CommonObject
 	 */
 	function account_activate($id)
 	{
-		global $langs;
-
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accountingaccount ";

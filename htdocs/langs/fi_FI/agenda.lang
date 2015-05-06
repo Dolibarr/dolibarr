@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Laskun validoitava
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Laskun %s palata luonnos tila
 InvoiceDeleteDolibarr=Invoice %s deleted
-OrderValidatedInDolibarr= Tilaa validoitava
+OrderValidatedInDolibarr=Tilaa validoitava
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Tilaus %s peruutettu
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Tilaa %s hyväksytty
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Tilaa %s palata luonnos tila
@@ -58,8 +61,9 @@ OrderSentByEMail=Asiakas tilaa %s lähetetään sähköpostilla
 InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
 SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
 SupplierInvoiceSentByEMail=Toimittaja lasku %s lähetetään sähköpostilla
-ShippingSentByEMail=Toimitus %s lähetetään sähköpostilla
-ShippingValidated= Shipping %s validated
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Shipment %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Kolmannen osapuolen luonut
 DateActionPlannedStart= SUUNNITELTU ALKAMISPÄIVÄ
 DateActionPlannedEnd= Suunniteltu lopetuspäivämäärää
@@ -68,7 +72,7 @@ DateActionDoneEnd= Real lopetuspäivämäärää
 DateActionStart= Aloituspäivämäärä
 DateActionEnd= Lopetuspäivä
 AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
-AgendaUrlOptions2=<b>login=<b>login= %s</b> rajoittaa tuotannon toimiin luotu, vaikuttaa tavalla tai tehdä <b>käyttäjä %s.</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=<b>logint= %s</b> rajoittaa tuotannon toimet vaikuttavat <b>käyttäjän %s.</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
 AddEvent=Create event
 MyAvailability=My availability
+ActionType=Event type
+DateActionBegin=Start event date

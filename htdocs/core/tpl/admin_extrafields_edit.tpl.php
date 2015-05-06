@@ -68,7 +68,7 @@ if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_ar
 		}
 	}
 }
-elseif (($type== 'sellist') || ($type == 'chkbxlst'))
+elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 {
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -99,7 +99,7 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 <td>
 <table class="nobordernopadding">
 <tr><td>
-	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo $param_chain; ?></textarea>
+	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
 </td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
 </table>
 </td>
@@ -121,4 +121,4 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 
 </form>
 
-<!-- END PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- END PHP TEMPLATE admin_extrafields_edit.tpl.php -->

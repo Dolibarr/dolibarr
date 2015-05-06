@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Κωδικός Λογιστικής για τις πληρωμές των μισθών
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Κωδικός Λογιστικής για οικονομική επιβάρυνση
+Salary=Mισθός
+Salaries=Μισθοί
 Employee=Υπάλληλος
 NewSalaryPayment=Νέα μισθοδοσία
 SalaryPayment=Μισθός
 SalariesPayments=Πληρωμές μισθών
 ShowSalaryPayment=Εμφάνιση μισθοδοσίας
+THM=Η μέση ωριαία τιμή
+TJM=Η μέση ημερήσια τιμή
+CurrentSalary=Τρέχον μισθός

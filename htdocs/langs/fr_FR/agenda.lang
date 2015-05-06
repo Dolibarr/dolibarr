@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Facture %s validée
 InvoiceValidatedInDolibarrFromPos=Facture %s validée depuis le Point de Vente
 InvoiceBackToDraftInDolibarr=Facture %s repassée en brouillon
 InvoiceDeleteDolibarr=Facture %s supprimée
-OrderValidatedInDolibarr= Commande %s validée
+OrderValidatedInDolibarr=Commande %s validée
+OrderDeliveredInDolibarr=Commande %s classée Délivrée
+OrderCanceledInDolibarr=Commande %s annulée
+OrderBilledInDolibarr=Commande %s classée Facturée
 OrderApprovedInDolibarr=Commande %s approuvée
 OrderRefusedInDolibarr=Commande %s refusée
 OrderBackToDraftInDolibarr=Commande %s repassée en brouillon
@@ -58,8 +61,9 @@ OrderSentByEMail=Commande client %s envoyée par email
 InvoiceSentByEMail=Facture client %s envoyée par eMail
 SupplierOrderSentByEMail=Commande fournisseur %s envoyée par email
 SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par email
-ShippingSentByEMail=Bon d'expédition %s envoyé par email
+ShippingSentByEMail=Bon expédition %s envoyé par EMail
 ShippingValidated= Expédition %s validée
+InterventionSentByEMail=Intervention %s envoyée par EMail
 NewCompanyToDolibarr= Tiers créé
 DateActionPlannedStart= Date de début de réalisation prévue
 DateActionPlannedEnd= Date de fin de réalisation prévue
@@ -68,7 +72,7 @@ DateActionDoneEnd= Date de fin de réalisation réelle
 DateActionStart= Date de début
 DateActionEnd= Date de fin
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
-AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions créées, affectées ou réalisées par l'utilisateur <b>%s</b>.
+AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions créées par ou assignées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
 AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectées à l'utilisateur <b>%s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écévements associés au projet <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Plage d'heures travaillées
 WorkingDaysRange=Plage de jours travaillés
 AddEvent=Créer un événement
 MyAvailability=Ma disponibilité
+ActionType=Type événement
+DateActionBegin=Date début événément

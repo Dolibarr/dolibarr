@@ -96,7 +96,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		CommonObject	$object				Id of object to generate
+	 *  @param		Object			$object				Object to generate
 	 *  @param		Translate		$outputlangs		Lang output object
 	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int				$hidedetails		Do not show line details
@@ -106,7 +106,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $conf, $hookmanager, $langs, $user;
+		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -121,16 +121,24 @@ class pdf_soleil extends ModelePDFFicheinter
 		{
 			$object->fetch_thirdparty();
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->ficheinter->dir_output;
-			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
-			$file = $dir . "/" . $objectref . ".pdf";
+		    // Definition of $dir and $file
+			if ($object->specimen)
+			{
+				$dir = $conf->ficheinter->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->ficheinter->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
+			}
 
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
@@ -149,6 +157,9 @@ class pdf_soleil extends ModelePDFFicheinter
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+				$nblignes = count($object->lines);
+
+				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$heightforinfotot = 50;	// Height reserved to output the info and total part
@@ -196,12 +207,13 @@ class pdf_soleil extends ModelePDFFicheinter
 				$tab_height_newpage = 150;
 
 				// Affiche notes
-				if (! empty($object->note_public))
+				$notetoshow=empty($object->note_public)?'':$object->note_public;
+				if ($notetoshow)
 				{
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -252,14 +264,16 @@ class pdf_soleil extends ModelePDFFicheinter
 					$valide = empty($objectligne->id) ? 0 : $objectligne->fetch($objectligne->id);
 					if ($valide > 0 || $object->specimen)
 					{
-						$curX = $this->posxdesc-1;
 						$curY = $nexY;
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 						$pdf->SetTextColor(0,0,0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext/*+$heightforinfotot*/);	// The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 						$pageposbefore=$pdf->getPage();
+
+						// Description of product line
+						$curX = $this->posxdesc-1;
 
 						// Description of product line
 						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
@@ -288,6 +302,8 @@ class pdf_soleil extends ModelePDFFicheinter
 								if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 								{
 									$pdf->AddPage('','',true);
+									if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter+1);
 								}
 							}
@@ -316,33 +332,34 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->setPage($pagenb);
 							if ($pagenb == 1)
 							{
-								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext, 0, $outputlangs, 0, 1);
+								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 							}
 							else
 							{
-								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforfreetext, 0, $outputlangs, 1);
+								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
 							$this->_pagefoot($pdf,$object,$outputlangs,1);
 							$pagenb++;
 							$pdf->setPage($pagenb);
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
 							$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 						{
 							if ($pagenb == 1)
 							{
-								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext, 0, $outputlangs, 0, 1);
+								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 							}
 							else
 							{
-								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforfreetext, 0, $outputlangs, 1, 1);
+								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
 							$this->_pagefoot($pdf,$object,$outputlangs,1);
 							// New page
 							$pdf->AddPage();
 							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 							$pagenb++;
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
 				}
@@ -350,13 +367,13 @@ class pdf_soleil extends ModelePDFFicheinter
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfreetext - $heightforfooter - 50, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfreetext - $heightforfooter - 50, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -364,6 +381,13 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->Close();
 				$pdf->Output($file,'F');
+
+				// Add pdfgeneration hook
+				$hookmanager->initHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
@@ -633,7 +657,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	void
+	 *      @return	integer
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{

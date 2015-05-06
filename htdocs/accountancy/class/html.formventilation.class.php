@@ -50,10 +50,6 @@ class FormVentilation extends Form
 	 */
 	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey='')
 	{
-		global $langs;
-
-		$date_array = array ();
-
 		$sql  = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
 
@@ -100,7 +96,7 @@ class FormVentilation extends Form
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array())
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$out = '';
 
@@ -128,7 +124,7 @@ class FormVentilation extends Form
 					$label = $obj->account_number . ' - ' . $obj->label;
 
 					// Remember guy's we store in database llx_facturedet the rowid of accountingaccount and not the account_number
-					// Bacause same account_number can be share between different accounting_system and do have the same meaning
+					// Because same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $obj->rowid) {
 						// $out .= '<option value="' . $obj->account_number . '" selected="selected">' . $label . '</option>';
 						$out .= '<option value="' . $obj->rowid . '" selected="selected">' . $label . '</option>';
@@ -161,7 +157,7 @@ class FormVentilation extends Form
 	 */
 	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array())
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$out = '';
 
@@ -217,7 +213,7 @@ class FormVentilation extends Form
 	 */
 	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array())
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$out = '';
 

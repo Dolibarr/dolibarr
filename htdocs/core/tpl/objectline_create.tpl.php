@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','askpricesupplier','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -42,8 +42,8 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
-if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal', 'askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+//print $object->element;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -52,12 +52,24 @@ if (in_array($object->element,array('propal','facture','invoice','commande','ord
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td align="right"><span id="title_fourn_ref"><?php echo $langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
+	<?php } ?>
 	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
 	<td align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left">';
+		print '<span id="title_units">';
+		print $langs->trans('Unit');
+		print '</span></td>';
+	}
+	?>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
 	if ($this->situation_cycle_ref) {
@@ -90,7 +102,7 @@ else {
 	$coldisplay=0; }
 ?>
 
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td class="nobottom"<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 
 	<?php
 
@@ -158,12 +170,12 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			$form->select_produits('', 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
+			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id);
 		}
 		else
 		{
 			$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tag will be edited with which ajax json response key
+					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tags that will be edited with which ajax json response key
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);
@@ -191,43 +203,50 @@ else {
 	$nbrows=ROWS_2;
 	$enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
 	if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,'98%');
+	$toolbarname='dolibarr_details';
+	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
+	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
 	$doleditor->Create();
 	?>
 	</td>
 
-	<td align="right"><?php
-	if (GETPOST('prod_entry_mode') != 'predef')
-	{
-		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
-		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
-	}
+	<?php if ($object->element == 'askpricesupplier') { ?>
+		<td class="nobottom" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+	<?php } ?>
+
+	<td class="nobottom" align="right"><?php
+	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
-	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
+	<td class="nobottom" align="right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
-	<?php } ?>
 	</td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td align="right">
-	<?php if (GETPOST('prod_entry_mode') != 'predef') { ?>
+	<td class="nobottom" align="right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
-	<?php } ?>
 	</td>
 	<?php } ?>
-	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
+	<td class="nobottom" align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
-	<td align="right" class="nowrap"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td class="nobottom" align="left">';
+		print $form->selectUnits($line->fk_unit, "units");
+		print '</td>';
+	}
+	?>
+	<td class="nobottom nowrap" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" class="nowrap"><input type="text" size="1" value="0" name="progress">%</td>';
+		print '<td class="nobottom nowrap" align="right"><input type="text" size="1" value="0" name="progress">%</td>';
 	}
 	if (! empty($usemargins))
 	{
 		?>
-		<td align="right" class="margininfos">
+		<td class="nobottom" align="right" class="margininfos">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
@@ -242,12 +261,12 @@ else {
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nobottom nowrap margininfos"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nobottom nowrap margininfos"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -258,20 +277,33 @@ else {
 		}
 	}
 	?>
-	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+	<td class="nobottom" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 	<?php
 	// Lines for extrafield
-	if (!empty($extrafieldsline)) {
+	if (!empty($extrafieldsline))
+	{
 		if ($this->table_element_line=='commandedet') {
 			$newline = new OrderLine($this->db);
 		}
 		elseif ($this->table_element_line=='propaldet') {
 			$newline = new PropaleLigne($this->db);
 		}
+		elseif ($this->table_element_line=='askpricesupplierdet') {
+			$newline = new AskPriceSupplierLine($this->db);
+		}
 		elseif ($this->table_element_line=='facturedet') {
 			$newline = new FactureLigne($this->db);
+		}
+		elseif ($this->table_element_line=='contratdet') {
+			$newline = new ContratLigne($this->db);
+		}
+		elseif ($this->table_element_line=='commande_fournisseurdet') {
+			$newline = new CommandeFournisseurLigne($this->db);
+		}
+		elseif ($this->table_element_line=='facture_fourn_det') {
+			$newline = new SupplierInvoiceLine($this->db);
 		}
 		if (is_object($newline)) {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
@@ -281,13 +313,16 @@ else {
 </tr>
 
 <?php
-if (! empty($conf->service->enabled) && $dateSelector && GETPOST('type') != '0')
+if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
 	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
+	if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+	if ($conf->global->PRODUCT_USE_UNITS) {
+		$colspan++;
+	}
 
 	if (! empty($usemargins))
 	{
@@ -535,6 +570,11 @@ jQuery(document).ready(function() {
   		if (jQuery('#idprod').val() > 0) jQuery('#dp_desc').focus();
 		if (jQuery('#idprodfournprice').val() > 0) jQuery('#dp_desc').focus();
 	});
+
+	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
+		setforpredef();
+	<?php } ?>
+
 });
 
 /* Function to set fields from choice */
@@ -557,22 +597,25 @@ function setforfree() {
 	jQuery("#np_markRate").show();	// May no exists
 	jQuery(".np_marginRate").show();	// May no exists
 	jQuery(".np_markRate").show();	// May no exists
+	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").attr('checked',false);
 	jQuery("#prod_entry_mode_predef").attr('checked',true);
 	jQuery("#price_ht").hide();
+	jQuery("#title_up_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
 	jQuery("#title_vat").hide();
-	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ttc").hide();
 	jQuery("#np_marginRate").hide();	// May no exists
 	jQuery("#np_markRate").hide();	// May no exists
 	jQuery(".np_marginRate").hide();	// May no exists
 	jQuery(".np_markRate").hide();	// May no exists
+	jQuery(".np_markRate").hide();	// May no exists
+	jQuery("#units, #title_units").hide();
 }
 
 </script>

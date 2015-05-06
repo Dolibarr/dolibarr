@@ -48,7 +48,10 @@ InvoiceValidatedInDolibarr=Rēķins %s apstiprināts
 InvoiceValidatedInDolibarrFromPos=Invoice %s validated from POS
 InvoiceBackToDraftInDolibarr=Rēķins %s doties atpakaļ uz melnrakstu
 InvoiceDeleteDolibarr=Rēķins %s dzēsts
-OrderValidatedInDolibarr= Pasūtījums %s pārbaudīts
+OrderValidatedInDolibarr=Pasūtījums %s pārbaudīts
+OrderDeliveredInDolibarr=Order %s classified delivered
+OrderCanceledInDolibarr=Pasūtījums %s atcelts
+OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Pasūtījums %s apstiprināts
 OrderRefusedInDolibarr=Pasūtījums %s atteikts
 OrderBackToDraftInDolibarr=Pasūtījums %s doties atpakaļ uz melnrakstu
@@ -58,8 +61,9 @@ OrderSentByEMail=Klienta pasūtījums %s nosūtīts pa e-pastu
 InvoiceSentByEMail=Klienta rēķins %s nosūtīts pa e-pastu
 SupplierOrderSentByEMail=Piegādātāja pasūtījums %s nosūtīts pa e-pastu
 SupplierInvoiceSentByEMail=Piegādātāja rēķins %s nosūtīts pa e-pastu
-ShippingSentByEMail=Piegāde %s nosūtīta pa pastu
-ShippingValidated= Piegāde %s apstiprināta
+ShippingSentByEMail=Shipment %s sent by EMail
+ShippingValidated= Sūtījums %s apstiprināts
+InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Trešā puses izveidota
 DateActionPlannedStart= Plānotais sākuma datums
 DateActionPlannedEnd= Plānotais beigu datums
@@ -68,7 +72,7 @@ DateActionDoneEnd= Reālais beigu datums
 DateActionStart= Sākuma datums
 DateActionEnd= Beigu datums
 AgendaUrlOptions1=Jūs varat pievienot arī šādus parametrus, lai filtrētu produkciju:
-AgendaUrlOptions2=<b>login=%s</b> ierobežot izejas uz darbībām, ko rada, piešķirto vai izdarīt lietotāju <b>%s.</b>
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s</b> ierobežot izejas darbībām piešķirto lietotāja <b>%s.</b>
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
@@ -90,3 +94,5 @@ WorkingTimeRange=Working time range
 WorkingDaysRange=Working days range
 AddEvent=Izveidot notikumu
 MyAvailability=My availability
+ActionType=Event type
+DateActionBegin=Start event date

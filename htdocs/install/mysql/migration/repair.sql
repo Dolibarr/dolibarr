@@ -73,6 +73,18 @@ delete from llx_livraisondet where fk_livraison not in (select fk_target from ll
 delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 
 
+-- Fix delete element_element orphelins (right side)
+delete from llx_element_element where targettype='shipping' and fk_target not in (select rowid from llx_expedition);
+delete from llx_element_element where targettype='propal' and fk_target not in (select rowid from llx_propal);
+delete from llx_element_element where targettype='facture' and fk_target not in (select rowid from llx_facture);
+delete from llx_element_element where targettype='commande' and fk_target not in (select rowid from llx_commande);
+-- Fix delete element_element orphelins (left side)
+delete from llx_element_element where sourcetype='shipping' and fk_source not in (select rowid from llx_expedition);
+delete from llx_element_element where sourcetype='propal' and fk_source not in (select rowid from llx_propal);
+delete from llx_element_element where sourcetype='facture' and fk_source not in (select rowid from llx_facture);
+delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);
+
+
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
@@ -212,5 +224,6 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 --update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 --update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 
+delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
 
 

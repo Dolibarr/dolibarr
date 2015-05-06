@@ -1,22 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-Trip=Deslocação
-Trips=Deslocações
-TripsAndExpenses=Deslocações e Despesas
-TripsAndExpensesStatistics=Viagens e estatísticas despesas
-TripCard=Ficha de Deslocação
-AddTrip=Adicionar Deslocação
-ListOfTrips=Lista de Deslocações
+ExpenseReport=Relatório de despesas
+ExpenseReports=Relatórios de despesas
+Trip=Relatório de Despesas
+Trips=Relatórios de Despesas
+TripsAndExpenses=Relatório de Despesas
+TripsAndExpensesStatistics=Estatísticas dos Relatórios de Despesas
+TripCard=Expense report card
+AddTrip=Create expense report
+ListOfTrips=Lista de relatório de despesas
 ListOfFees=Lista de Taxas
-NewTrip=Nova Deslocação
+NewTrip=Novo relatório de despesas
 CompanyVisited=Empresa/Instituição Visitada
 Kilometers=Quilómetros
 FeesKilometersOrAmout=Quantidade de Quilómetros
-DeleteTrip=Eliminar Deslocação
-ConfirmDeleteTrip=Deseja mesmo eliminar esta deslocação?
+DeleteTrip=Apagar relatório de despesas
+ConfirmDeleteTrip=Tem a certeza que deseja apagar este relatório de despesas?
+ListTripsAndExpenses=Lista de relatórios de despesas
+ListToApprove=A aguardar aprovação
+ExpensesArea=Expense reports area
+SearchATripAndExpense=Search an expense report
+ClassifyRefunded=Classificar 'Reembolsado'
+ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
+TripId=Id expense report
+AnyOtherInThisListCanValidate=Person to inform for validation.
+TripSociete=Informação da Empresa
+TripSalarie=Informations user
+TripNDF=Informations expense report
+DeleteLine=Delete a ligne of the expense report
+ConfirmDeleteLine=Are you sure you want to delete this line ?
+PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+ExpenseReportLine=Expense report line
 TF_OTHER=Outro
+TF_TRANSPORTATION=Meio de Transporte
 TF_LUNCH=Alimentação
-TF_TRIP=Viagem
-ListTripsAndExpenses=Lista de viagens e despesas
-ExpensesArea=Viagens e área de despesas
-SearchATripAndExpense=Procure uma viagem e despesas
-ClassifyRefunded=Classify 'Refunded'
+TF_METRO=Metro
+TF_TRAIN=Comboio
+TF_BUS=Autocarro
+TF_CAR=Carro
+TF_PEAGE=Portagem
+TF_ESSENCE=Combustível
+TF_HOTEL=Hostel
+TF_TAXI=Táxi
+
+ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
+ListTripsAndExpenses=Lista de relatórios de despesas
+AucuneNDF=No expense reports found for this criteria
+AucuneLigne=There is no expense report declared yet
+AddLine=Adicione uma linha
+AddLineMini=Adicionar
+
+Date_DEBUT=Period date start
+Date_FIN=Period date end
+ModePaiement=Payment mode
+Note=Nota
+Project=Projeto
+
+VALIDATOR=User to inform for approbation
+VALIDOR=Aprovado por
+AUTHOR=Registado por
+AUTHORPAIEMENT=Pago por
+REFUSEUR=Negado por
+CANCEL_USER=Cancelado por
+
+MOTIF_REFUS=Motivo
+MOTIF_CANCEL=Motivo
+
+DATE_REFUS=Deny date
+DATE_SAVE=Data da validação
+DATE_VALIDE=Data da validação
+DATE_CANCEL=Data do cancelamento
+DATE_PAIEMENT=Data de pagamento
+
+TO_PAID=Pagar
+BROUILLONNER=Reabrir
+SendToValid=Enviar para aprovação
+ModifyInfoGen=Editar
+ValidateAndSubmit=Validar e submeter para aprovação 
+
+NOT_VALIDATOR=You are not allowed to approve this expense report
+NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+
+RefuseTrip=Deny an expense report
+ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+
+ValideTrip=Aprovar relatório de despesas
+ConfirmValideTrip=Are you sure you want to approve this expense report ?
+
+PaidTrip=Pagar um relatório de despesas
+ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+
+CancelTrip=Cancelar um relatório de despesas
+ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+
+BrouillonnerTrip=Move back expense report to status "Draft"n
+ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+
+SaveTrip=Validar relatório de despesas
+ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+
+NoTripsToExportCSV=nenhum relatório de despesas para exportar para este período.

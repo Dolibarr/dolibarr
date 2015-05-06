@@ -148,22 +148,59 @@ if ($action == 'order' && isset($_POST['valid']))
         foreach ($suppliers as $supplier)
         {
             $order = new CommandeFournisseur($db);
-            $order->socid = $suppliersid[$i];
-            //trick to know which orders have been generated this way
-            $order->source = 42;
-            foreach ($supplier['lines'] as $line) {
-                $order->lines[] = $line;
+            // Check if an order for the supplier exists
+            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " WHERE fk_soc = ".$suppliersid[$i];
+            $sql.= " AND source = 42 AND fk_statut = 0";
+            $sql.= " ORDER BY date_creation DESC";
+            $resql = $db->query($sql);
+            if($resql && $db->num_rows($resql) > 0) {
+                $obj = $db->fetch_object($resql);
+                $order->fetch($obj->rowid);
+                foreach ($supplier['lines'] as $line) {
+                    $result = $order->addline(
+                        $line->desc,
+                        $line->subprice,
+                        $line->qty,
+                        $line->tva_tx,
+                        $line->localtax1_tx,
+                        $line->localtax2_tx,
+                        $line->fk_product,
+                        0,
+                        $line->ref_fourn,
+                        $line->remise_percent,
+                        'HT',
+                        0,
+                        $line->info_bits
+                    );
+                }
+                if ($result < 0) {
+                    $fail++;
+                    $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+                    $msg .= $order->error;
+                    setEventMessage($msg, 'errors');
+                } else {
+                    $id = $result;
+                }
+            } else {
+                $order->socid = $suppliersid[$i];
+                $order->fetch_thirdparty();
+                //trick to know which orders have been generated this way
+                $order->source = 42;
+                foreach ($supplier['lines'] as $line) {
+                    $order->lines[] = $line;
+                }
+                $order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
+                $order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+                $id = $order->create($user);
+                if ($id < 0) {
+                    $fail++;
+                    $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
+                    $msg .= $order->error;
+                    setEventMessage($msg, 'errors');
+                }
+                $i++;
             }
-            $order->cond_reglement_id = 0;
-            $order->mode_reglement_id = 0;
-            $id = $order->create($user);
-            if ($id < 0) {
-                $fail++;
-                $msg = $langs->trans('OrderFail') . "&nbsp;:&nbsp;";
-                $msg .= $order->error;
-                setEventMessage($msg, 'errors');
-            }
-            $i++;
         }
 
         if (! $fail && $id)
@@ -336,6 +373,17 @@ $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
+	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
+	'<input type="hidden" name="sortfield" value="' . $sortfield . '">'.
+	'<input type="hidden" name="sortorder" value="' . $sortorder . '">'.
+	'<input type="hidden" name="type" value="' . $type . '">'.
+	'<input type="hidden" name="linecount" value="' . $num . '">'.
+	'<input type="hidden" name="action" value="order">'.
+	'<input type="hidden" name="mode" value="' . $mode . '">';
+
 dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
 
 print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
@@ -386,16 +434,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	);
 }
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
-	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
-	'<input type="hidden" name="sortfield" value="' . $sortfield . '">'.
-	'<input type="hidden" name="sortorder" value="' . $sortorder . '">'.
-	'<input type="hidden" name="type" value="' . $type . '">'.
-	'<input type="hidden" name="linecount" value="' . $num . '">'.
-	'<input type="hidden" name="action" value="order">'.
-	'<input type="hidden" name="mode" value="' . $mode . '">'.
-
-	'<table class="liste" width="100%">';
+print '<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
 $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
@@ -467,7 +506,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
-		$form = new Form($db);
 		$var =! $var;
 
 		if ($usevirtualstock)
@@ -480,7 +518,13 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$stock = $prod->stock_reel;
 		}
 
-		$ordered = $prod->stats_commande_fournisseur['qty']-$prod->stats_reception['qty'];
+		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+		$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+		$result=$prod->load_stats_reception(0,'4');
+
+		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
+		//print $prod->stats_reception['qty'];
+		$ordered = $prod->stats_commande_fournisseur['qty'] - $prod->stats_reception['qty'];
 
 		$warning='';
 		if ($objp->alertstock && ($stock < $objp->alertstock))
@@ -492,9 +536,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//virtual stock to compute the stock to buy value
 		$stocktobuy = max(max($objp->desiredstock, $objp->alertstock) - $stock - $ordered, 0);
 		$disabled = '';
-		if($ordered > 0) {
-			$compare = $usevirtualstock ? $stock : $stock + $ordered;
-			if($compare >= $objp->desiredstock) {
+		if ($ordered > 0)
+		{
+			$stockforcompare = $usevirtualstock ? $stock : $stock + $ordered;
+			if ($stockforcompare >= $objp->desiredstock)
+			{
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled="disabled"';
 			}
@@ -502,7 +548,8 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				$picto = img_picto('', './img/no', '', 1);
 			}
 		} else {
-			$picto = img_picto('', './img/no', '', 1);
+			//$picto = img_help('',$langs->trans("NoPendingReceptionOnSupplierOrder"));
+			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), './img/no', '', 1);
 		}
 
 		print '<tr '.$bc[$var].'>';
@@ -555,12 +602,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 print '</table>';
 
 
-$value=$langs->trans("CreateOrders");
-print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
-
-
-print '</form>';
-
 if ($num > $conf->liste_limit)
 {
 	if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha'))
@@ -569,42 +610,29 @@ if ($num > $conf->liste_limit)
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
 		$filters .= '&mode=' . $mode;
-		print_barre_liste(
-			'',
-			$page,
-			'replenish.php',
-			$filters,
-			$sortfield,
-			$sortorder,
-			'',
-			$num,
-			0,
-			''
-		);
-	} else {
+		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
+	}
+	else
+	{
 		$filters = '&sref=' . $sref . '&snom=' . $snom;
 		$filters .= '&fourn_id=' . $fourn_id;
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
 		$filters .= '&mode=' . $mode;
-		print_barre_liste(
-			'',
-			$page,
-			'replenish.php',
-			$filters,
-			$sortfield,
-			$sortorder,
-			'',
-			$num,
-			0,
-			''
-		);
+		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
 	}
 }
 
 $db->free($resql);
 
 dol_fiche_end();
+
+
+$value=$langs->trans("CreateOrders");
+print '<div class="center"><input class="button" type="submit" name="valid" value="'.$value.'"></div>';
+
+
+print '</form>';
 
 
 // TODO Replace this with jquery

@@ -33,6 +33,7 @@ class PaymentTerm // extends CommonObject
 	var $errors=array();				//!< To return several error codes (or messages)
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
+	var $context =array();
 
     var $id;
 
@@ -409,6 +410,8 @@ class PaymentTerm // extends CommonObject
 
 		$object=new PaymentTerm($this->db);
 
+		$object->context['createfromclone'] = 'createfromclone';
+
 		$this->db->begin();
 
 		// Load source object
@@ -435,6 +438,8 @@ class PaymentTerm // extends CommonObject
 
 
 		}
+
+		unset($this->context['createfromclone']);
 
 		// End
 		if (! $error)

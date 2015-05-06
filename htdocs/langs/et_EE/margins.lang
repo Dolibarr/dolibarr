@@ -16,6 +16,7 @@ MarginDetails=Marginaalide info
 ProductMargins=Toodete marginaalid
 CustomerMargins=Klientide marginaalid
 SalesRepresentativeMargins=Müügiesindajate tasud
+UserMargins=User margins
 ProductService=Toode või teenus
 AllProducts=Kõik tooted ja teenused
 ChooseProduct/Service=Vali toode või teenus

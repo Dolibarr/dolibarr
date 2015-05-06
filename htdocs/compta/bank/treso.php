@@ -1,5 +1,5 @@
 <?php
-/* Copytight (C) 2005-2009 Regis Houssin               <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
@@ -329,8 +329,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Solde actuel
 	$var=!$var;
 	print '<tr class="liste_total">';
-	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").'</td>';
-	print '<td align="right" nowrap>'.price($solde).'</td>';
+	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$acct->currency_code.')</td>';
+	print '<td align="right" nowrap>'.price($solde, 0, $langs, 0, 0, -1, $acct->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";

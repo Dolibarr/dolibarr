@@ -9,6 +9,7 @@
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +145,9 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-$sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
+if (! $sall) $sql = 'SELECT';
+else $sql = 'SELECT DISTINCT';
+$sql.= ' s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
@@ -180,9 +183,9 @@ if ($search_author)
 {
 	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
 }
-if ($search_montant_ht)
+if ($search_montant_ht != '')
 {
-	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+	$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
 }
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
@@ -248,7 +251,7 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_commercial.png');
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -314,12 +317,12 @@ if ($result)
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 	// Amount
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
+	print '<td class="liste_titre" align="right">';
+	print '<input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
 	// Author
 	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
+	print '<input class="flat" size="6" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$formpropal->selectProposalStatus($viewstatut,1);

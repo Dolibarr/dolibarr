@@ -253,7 +253,6 @@ CivilityMR=Sig.
 CivilityMLE=Signora
 CivilityMTRE=Signor
 CivilityDR=Dottore
-
 ##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=Dollari Australiani
@@ -290,10 +289,10 @@ CurrencyXOF=Franchi CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Franchi CFP
 CurrencySingXPF=Franco CFP
-
 CurrencyCentSingEUR=centesimo
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=Millesimo
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Posta
@@ -306,7 +305,6 @@ DemandReasonTypeSRC_WOM=Passaparola
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Dipendente
 DemandReasonTypeSRC_SPONSORING=Sponsorship
-
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
 PaperFormatEU2A0=Formato 2A0

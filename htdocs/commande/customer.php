@@ -158,12 +158,12 @@ if ($resql)
 		print '<td>';
 
         $result='';
-        $lien=$lienfin='';
-        $lien = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php',1).'?socid='.$obj->rowid.'">';
-        $lienfin='</a>';
+        $link=$linkend='';
+        $link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php',1).'?socid='.$obj->rowid.'">';
+        $linkend='</a>';
         $name=$obj->name;
-        $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);
-        $result.=$lien.(dol_trunc($name,$maxlen)).$lienfin;
+        $result.=($link.img_object($langs->trans("ShowCompany").': '.$name,'company').$linkend);
+        $result.=$link.(dol_trunc($name,$maxlen)).$linkend;
 
 		print $result;
 		print '</td>';

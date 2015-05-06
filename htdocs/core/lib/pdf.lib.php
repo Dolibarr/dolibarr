@@ -125,8 +125,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
 	else require_once FPDF_PATH.'fpdf.php';
 
-	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
-	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
+	// We need to instantiate tcpdi or fpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
+    if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
+	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
@@ -146,7 +147,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		*/
-		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 		// For TCPDF, we specify permission we want to block
 		$pdfrights = array('modify','copy');
@@ -157,7 +159,8 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	}
 	else
 	{
-		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 	}
 
@@ -522,7 +525,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	// Get format of bank account according to its country
 	$usedetailedbban=$account->useDetailedBBAN();
 
-	$onlynumber=0; $usedetailedbban=1; // For tests
+	//$onlynumber=0; $usedetailedbban=1; // For tests
 	if ($usedetailedbban)
 	{
 		$savcurx=$curx;
@@ -535,6 +538,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
+		/*
 		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8);
 
 		if ($usedetailedbban == 1)
@@ -598,6 +602,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 		$curx=$savcurx;
 		$cury+=9;
+		*/
 	}
 	else
 	{
@@ -610,12 +615,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
-
+		
 		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
-
+	
 	if (empty($onlynumber) && ! empty($account->domiciliation))
 	{
 		$pdf->SetXY($curx, $cury);
@@ -626,8 +631,18 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
 	}
+	
+	if (! empty($account->proprio))
+	{
+		$pdf->SetXY($curx, $cury);
+		$val=$outputlangs->transnoentities("BankAccountOwner").': ' . $outputlangs->convToOutputCharset($account->proprio);
+		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
+		$tmpy=$pdf->getStringHeight(100, $val);
+		$cury+=$tmpy;
+	}
+	
 	else if (! $usedetailedbban) $cury+=1;
-
+	
 	// Use correct name of bank id according to country
 	$ibankey="IBANNumber";
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
@@ -926,7 +941,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
  *  @param  int				$hideref       		Hide reference
  *  @param  int				$hidedesc           Hide description
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
- * 	@return	void
+ * 	@return	string|null
  */
 function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
@@ -1144,7 +1159,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1170,7 +1185,7 @@ function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1195,7 +1210,7 @@ function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	null|string
  */
 function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1419,6 +1434,43 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 }
 
 /**
+ *	Return line unit
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ *  @return	void
+ */
+function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
+{
+	global $langs;
+	if ($object->lines[$i]->special_code != 3) {
+		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
+			$special_code = $object->lines[$i]->special_code;
+			if (!empty($object->lines[$i]->fk_parent_line)) {
+				$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+			}
+			$parameters = array(
+				'i' => $i,
+				'outputlangs' => $outputlangs,
+				'hidedetails' => $hidedetails,
+				'special_code' => $special_code
+			);
+			$action = '';
+			return $hookmanager->executeHooks('pdf_getlineunit', $parameters, $object,
+				$action);    // Note that $action and $object may have been modified by some hooks
+		} else {
+			if (empty($hidedetails) || $hidedetails > 1) {
+				return $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			}
+		}
+	}
+}
+
+
+/**
  *	Return line remise percent
  *
  *	@param	Object		$object				Object
@@ -1554,7 +1606,7 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	Object		$object				Object
  *	@param	string		$type				Type
  *  @param  Translate	$outputlangs		Object langs for output
- * 	@return	void
+ * 	@return	integer
  */
 function pdf_getTotalQty($object,$type,$outputlangs)
 {

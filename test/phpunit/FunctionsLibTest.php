@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,6 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no 
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
-
 
 /**
  * Class for PHPUnit tests
@@ -120,36 +120,79 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 
     /**
-    * testDolHtmlCleanLastBr
+    * testGetBrowserInfo
     *
     * @return void
     */
-    public function testGetBrowserVersion()
+    public function testGetBrowserInfo()
     {
-        $_SERVER['HTTP_USER_AGENT']='Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; KITV4 Wanadoo; KITV5 Wanadoo)';    // MSIE 5.0
-        $tmp=getBrowserInfo();
+		// MSIE 5.0
+        $user_agent ='Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; KITV4 Wanadoo; KITV5 Wanadoo)';
+        $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('ie',$tmp['browsername']);
         $this->assertEquals('5.0',$tmp['browserversion']);
-        $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.5a) Gecko/20030728 Mozilla Firefox/0.9.1';    // Firefox 0.9.1
-        $tmp=getBrowserInfo();
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+		// Firefox 0.9.1
+        $user_agent ='Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.5a) Gecko/20030728 Mozilla Firefox/0.9.1';
+        $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('firefox',$tmp['browsername']);
         $this->assertEquals('0.9.1',$tmp['browserversion']);
-        $_SERVER['HTTP_USER_AGENT']='Mozilla/3.0 (Windows 98; U) Opera 6.03  [en]';
-        $tmp=getBrowserInfo();
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+        $user_agent ='Mozilla/3.0 (Windows 98; U) Opera 6.03  [en]';
+        $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('opera',$tmp['browsername']);
         $this->assertEquals('6.03',$tmp['browserversion']);
-        $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21';
-        $tmp=getBrowserInfo();
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+        $user_agent ='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21';
+        $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('19.0.1042.0',$tmp['browserversion']);
-        $_SERVER['HTTP_USER_AGENT']='chrome (Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11)';
-        $tmp=getBrowserInfo();
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+        $user_agent ='chrome (Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11)';
+        $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('17.0.963.56',$tmp['browserversion']);
-        $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
-        $tmp=getBrowserInfo();
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+        $user_agent ='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
+        $tmp=getBrowserInfo($user_agent);
         $this->assertEquals('safari',$tmp['browsername']);
         $this->assertEquals('533.21.1',$tmp['browserversion']);
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+	    //Internet Explorer 11
+	    $user_agent = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
+	    $tmp=getBrowserInfo($user_agent);
+	    $this->assertEquals('ie',$tmp['browsername']);
+	    $this->assertEquals('11.0',$tmp['browserversion']);
+	    $this->assertEmpty($tmp['phone']);
+	    $this->assertFalse($tmp['tablet']);
+	    $this->assertEquals('classic', $tmp['layout']);
+
+	    //iPad
+	    $user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
+	    $tmp=getBrowserInfo($user_agent);
+	    $this->assertEquals('safari',$tmp['browsername']);
+	    $this->assertEquals('8536.25',$tmp['browserversion']);
+	    $this->assertEquals('ios',$tmp['browseros']);
+	    $this->assertEquals('tablet',$tmp['layout']);
+	    $this->assertEquals('iphone',$tmp['phone']);
     }
 
 
@@ -191,6 +234,12 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='<h2>abc</h2>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
+        $input='<img id="abc" src="https://xxx.com/aaa/image.png" />';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after,'Failure on test of img tag');
+        $input='<a class="azerty" href="https://xxx.com/aaa/image.png" />';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after,'Failure on test of a tag');
 
         // False
         $input='xxx < br>';
@@ -202,6 +251,10 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='xxx <brstyle="ee">';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
+        $input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+
     }
 
 
@@ -646,6 +699,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->savlangs=$langs;
         $this->savdb=$db;
 
+        // Sellers
         $companyfrnovat=new Societe($db);
         $companyfrnovat->country_code='FR';
         $companyfrnovat->tva_assuj=0;
@@ -653,53 +707,88 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $companyfr=new Societe($db);
         $companyfr->country_code='FR';
         $companyfr->tva_assuj=1;
+		$companyfr->tva_intra='FR9999';
 
+        // Buyers
         $companymc=new Societe($db);
         $companymc->country_code='MC';
         $companymc->tva_assuj=1;
+		$companyfr->tva_intra='MC9999';
 
         $companyit=new Societe($db);
         $companyit->country_code='IT';
         $companyit->tva_assuj=1;
         $companyit->tva_intra='IT99999';
 
-        $notcompanyit=new Societe($db);
-        $notcompanyit->country_code='IT';
-        $notcompanyit->tva_assuj=1;
-        $notcompanyit->tva_intra='';
-        $notcompanyit->typent_code='TE_PRIVATE';
+        $companyde=new Societe($db);
+        $companyde->country_code='DE';
+        $companyde->tva_assuj=1;
+        $companyde->tva_intra='DE99999';
+
+        $notcompanyde=new Societe($db);
+        $notcompanyde->country_code='DE';
+        $notcompanyde->tva_assuj=0;
+        $notcompanyde->tva_intra='';
+        $notcompanyde->typent_code='TE_PRIVATE';
 
         $companyus=new Societe($db);
         $companyus->country_code='US';
         $companyus->tva_assuj=1;
         $companyus->tva_intra='';
 
-        // Test RULE 0 (FR-IT)
+
+        // Test RULE 0 (FR-DE)
         // Not tested
 
         // Test RULE 1
         $vat=get_default_tva($companyfrnovat,$companymc,0);
-        $this->assertEquals(0,$vat);
+        $this->assertEquals(0,$vat,'RULE 1');
 
         // Test RULE 2 (FR-FR)
         $vat=get_default_tva($companyfr,$companyfr,0);
-        $this->assertEquals(20,$vat);
+        $this->assertEquals(20,$vat,'RULE 2');
 
         // Test RULE 2 (FR-MC)
         $vat=get_default_tva($companyfr,$companymc,0);
-        $this->assertEquals(20,$vat);
+        $this->assertEquals(20,$vat,'RULE 2');
 
-        // Test RULE 3 (FR-IT)
+        // Test RULE 3 (FR-DE company)
         $vat=get_default_tva($companyfr,$companyit,0);
-        $this->assertEquals(0,$vat);
+        $this->assertEquals(0,$vat,'RULE 3');
 
-        // Test RULE 4 (FR-IT)
-        $vat=get_default_tva($companyfr,$notcompanyit,0);
-        $this->assertEquals(20,$vat);
+        // Test RULE 4 (FR-DE not a company)
+        $vat=get_default_tva($companyfr,$notcompanyde,0);
+        $this->assertEquals(20,$vat,'RULE 4');
 
         // Test RULE 5 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);
-        $this->assertEquals(0,$vat);
+        $this->assertEquals(0,$vat,'RULE 5');
+
+
+        // We do same tests but with option SERVICE_ARE_ECOMMERCE_200238EC on.
+        $conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
+
+
+        // Test RULE 1 (FR-US)
+        $vat=get_default_tva($companyfr,$companyus,0);
+        $this->assertEquals(0,$vat,'RULE 1 ECOMMERCE_200238EC');
+
+        // Test RULE 2 (FR-FR)
+        $vat=get_default_tva($companyfr,$companyfr,0);
+        $this->assertEquals(20,$vat,'RULE 2 ECOMMERCE_200238EC');
+
+        // Test RULE 3 (FR-DE company)
+        $vat=get_default_tva($companyfr,$companyde,0);
+        $this->assertEquals(0,$vat,'RULE 3 ECOMMERCE_200238EC');
+
+        // Test RULE 4 (FR-DE not a company)
+        $vat=get_default_tva($companyfr,$notcompanyde,0);
+        $this->assertEquals(19,$vat,'RULE 4 ECOMMERCE_200238EC');
+
+        // Test RULE 5 (FR-US)
+        $vat=get_default_tva($companyfr,$companyus,0);
+        $this->assertEquals(0,$vat,'RULE 5 ECOMMERCE_200238EC');
+
     }
 
     /**
@@ -765,7 +854,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	$vat1=get_default_localtax($companyes,$companyes,1,0);
     	$vat2=get_default_localtax($companyes,$companyes,2,0);
     	$this->assertEquals(5.2,$vat1);
-    	$this->assertEquals(-21,$vat2);
+    	$this->assertEquals(-19,$vat2);
 
     	// Test RULE ES-IT
     	$vat1=get_default_localtax($companyes,$companyit,1,0);
@@ -836,7 +925,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1000, price2num('1 000.0'));
 		$this->assertEquals(1000, price2num('1 000','MT'));
 		$this->assertEquals(1000, price2num('1 000','MU'));
-		
+
 		$this->assertEquals(1000.123456, price2num('1 000.123456'));
 
 		// Round down
@@ -850,8 +939,36 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 		// Text can't be converted
 		$this->assertEquals('12.4$',price2num('12.4$'));
 		$this->assertEquals('12r.4$',price2num('12r.4$'));
-		
-		return true;		
+
+		return true;
+	}
+
+	/**
+	 * testDolGetDate
+	 *
+	 * @return boolean
+	 */
+	public function testDolGetDate()
+	{
+		global $conf;
+
+		$conf->global->MAIN_START_WEEK = 0;
+
+		$tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+		$this->assertEquals(4, $tmp['wday']);
+
+		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+		$this->assertEquals(5, $tmp['wday']);
+
+		$conf->global->MAIN_START_WEEK = 1;
+
+		$tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
+		$this->assertEquals(4, $tmp['wday']);
+
+		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
+		$this->assertEquals(5, $tmp['wday']);
+
+		return true;
 	}
 
 }
