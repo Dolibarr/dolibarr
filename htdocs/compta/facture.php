@@ -1754,7 +1754,7 @@ if (empty($reshook))
 			$langs->load("other");
 			$upload_dir = $conf->facture->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			$ret = dol_delete_file($file);
 			if ($ret)
 				setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 			else

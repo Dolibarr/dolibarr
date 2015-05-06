@@ -263,7 +263,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 		$langs->load("other");
 
 		$file=$dir.get_exdir($object->number,2,1) . GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
+		$ret=dol_delete_file($file);
 		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
 	}
@@ -322,7 +322,7 @@ else
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
-		
+
 	}
 
 	/*
@@ -331,7 +331,7 @@ else
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
-		
+
 	}
 }
 
