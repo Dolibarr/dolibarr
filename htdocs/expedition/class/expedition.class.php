@@ -1645,7 +1645,7 @@ class Expedition extends CommonObject
 	 * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
 	 *  @return int             			<=0 if KO, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs)
+	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $conf,$user,$langs;
 
@@ -1668,7 +1668,7 @@ class Expedition extends CommonObject
 
 		$this->fetch_origin();
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, 0, 0, 0);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	/**
