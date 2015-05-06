@@ -2777,7 +2777,7 @@ class Commande extends CommonOrder
         		{
         			dol_delete_preview($this);
 
-        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+        			if (! dol_delete_file($file))
         			{
         				$this->db->rollback();
         				return 0;

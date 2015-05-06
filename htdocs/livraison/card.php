@@ -82,7 +82,7 @@ if ($action == 'add')
 	$object->note             = $_POST["note"];
 	$object->commande_id      = $_POST["commande_id"];
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
-	
+
 	if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 	{
 		$expedition->entrepot_id     = $_POST["entrepot_id"];
@@ -218,7 +218,7 @@ elseif ($action == 'remove_file')
 
 	$upload_dir =	$conf->expedition->dir_output . "/receipt";
 	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
+	$ret=dol_delete_file($file);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 }
@@ -589,7 +589,7 @@ else
 
 			// Incoterms
 			if (!empty($conf->incoterm->enabled))
-			{			
+			{
 				print '<tr><td>';
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
@@ -603,7 +603,7 @@ else
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 				}
-				else 
+				else
 				{
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}
