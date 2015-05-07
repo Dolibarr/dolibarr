@@ -721,13 +721,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$disableglob    Disable usage of glob like *
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
- *  @deprecated	object	$object			Current object in use
+ *  @param	object	$object			Current object in use
  *  @return boolean         		True if file is deleted (or if glob is used and there's nothing to delete), False if error
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
 	global $db, $conf, $user, $langs;
-	global $object, $hookmanager;
+	global $hookmanager;
 
 	$langs->load("other");
 	$langs->load("errors");
