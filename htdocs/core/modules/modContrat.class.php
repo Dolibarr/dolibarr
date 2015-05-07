@@ -41,7 +41,7 @@ class modContrat extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$this->db = $db;
 		$this->numero = 54;
@@ -118,12 +118,10 @@ class modContrat extends DolibarrModules
 
 		// Exports
 		//--------
-		$langs->load("contracts");
-
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]=$langs->trans('ContractsAndLine');	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r]='ContractsAndLine';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='contract';
 		$this->export_permission[$r]=array(array("contrat","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',

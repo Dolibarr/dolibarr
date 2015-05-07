@@ -545,7 +545,8 @@ if (empty($reshook))
 	}
 
 	// Add a new line
-	else if ($action == 'addline' && $user->rights->commande->creer) {
+	else if ($action == 'addline' && $user->rights->commande->creer)
+	{
 		$langs->load('errors');
 		$error = 0;
 
@@ -805,7 +806,7 @@ if (empty($reshook))
 	/*
 	 *  Update a line
 	 */
-	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save') == $langs->trans('Save'))
+	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('save'))
 	{
 		// Clean parameters
 		$date_start='';
@@ -821,10 +822,10 @@ if (empty($reshook))
 		if (preg_match('/\*/', $vat_rate))
 			$info_bits |= 0x01;
 
-			// Define vat_rate
+		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);
-		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
-		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
@@ -840,6 +841,10 @@ if (empty($reshook))
 				unset($_POST["options_" . $key]);
 			}
 		}
+
+		// Define special_code for special lines
+		$special_code=GETPOST('special_code');
+		if (! GETPOST('qty')) $special_code=3;
 
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
@@ -871,7 +876,7 @@ if (empty($reshook))
 		}
 
 		if (! $error) {
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, 0, $array_options, GETPOST('units'));
+			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'));
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {

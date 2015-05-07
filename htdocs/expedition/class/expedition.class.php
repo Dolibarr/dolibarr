@@ -1639,7 +1639,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk accordign to template module.
+	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force the model to using ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang to use for translations
