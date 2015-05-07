@@ -92,7 +92,7 @@ class FormContract
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
-							print '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							print '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						}
 						else
 						{

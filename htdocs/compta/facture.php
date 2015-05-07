@@ -2018,13 +2018,13 @@ if ($action == 'create')
 			{
 				print '<tr><td>' . $langs->trans('CreateFromRepeatableInvoice') . '</td><td>';
 				print '<select class="flat" name="fac_rec">';
-				print '<option value="0" selected="selected"></option>';
+				print '<option value="0" selected></option>';
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
 					print '<option value="' . $objp->rowid . '"';
 					if (GETPOST('fac_rec') == $objp->rowid)
-						print ' selected="selected"';
+						print ' selected';
 					print '>' . $objp->titre . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
 				}
@@ -2047,7 +2047,7 @@ if ($action == 'create')
 	{
 		$options .= '<option value="' . $facparam ['id'] . '"';
 		if ($facparam ['id'] == $_POST['fac_replacement'])
-			$options .= ' selected="selected"';
+			$options .= ' selected';
 		$options .= '>' . $facparam ['ref'];
 		$options .= ' (' . $facturestatic->LibStatut(0, $facparam ['status']) . ')';
 		$options .= '</option>';
@@ -2072,7 +2072,7 @@ if ($action == 'create')
 
 		$optionsav .= '<option value="' . $key . '"';
 		if ($key == $_POST['fac_avoir'])
-			$optionsav .= ' selected="selected"';
+			$optionsav .= ' selected';
 		$optionsav .= '>';
 		$optionsav .= $newinvoice_static->ref;
 		$optionsav .= ' (' . $newinvoice_static->getLibStatut(1, $valarray ['paymentornot']) . ')';
@@ -2132,7 +2132,7 @@ if ($action == 'create')
 		$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
 		print '<tr height="18"><td valign="middle">';
 		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '') . ' ';
-		if ($opt == '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled';
+		if ($opt == '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled';
 		print '>';
 		print '</td><td valign="middle">';
 		$text = $langs->trans("InvoiceSituationAsk") . ' ';

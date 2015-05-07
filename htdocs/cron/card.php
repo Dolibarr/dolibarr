@@ -357,7 +357,7 @@ if (($action=="create") || ($action=="edit"))
 	{
 		if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i)
 		{
-			print "<option value='".$i."' selected='selected'>".$i."</option>";
+			print "<option value='".$i."' selected>".$i."</option>";
 		}
 		else
 		{

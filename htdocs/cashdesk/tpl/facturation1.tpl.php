@@ -73,7 +73,7 @@ $langs->load("cashdesk");
 						for ($i = 0; $i < $nbtoshow; $i++)
 						{
 							if ( $id == $tab_designations[$i]['rowid'] )
-								$selected = 'selected="selected"';
+								$selected = 'selected';
 							else
 								$selected = '';
 
@@ -132,7 +132,7 @@ $langs->load("cashdesk");
                         for($i=0;$i < $tab_tva_size;$i++) {
 
                             if ( $tva_tx == $tab_tva[$i]['taux'] )
-                                $selected = 'selected="selected"';
+                                $selected = 'selected';
                             else
                             $selected = '';
 

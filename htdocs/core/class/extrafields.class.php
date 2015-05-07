@@ -737,7 +737,7 @@ class ExtraFields
 			{
 				list($val, $parent) = explode('|', $val);
 				$out.='<option value="'.$key.'"';
-				$out.= ($value==$key?' selected="selected"':'');
+				$out.= ($value==$key?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 				$out.='>'.$val.'</option>';
 			}
@@ -849,7 +849,7 @@ class ExtraFields
 									$labeltoshow=dol_trunc($obj->$field_toshow,18).' ';
 								}
 							}
-							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						}
 						else
 						{
@@ -866,7 +866,7 @@ class ExtraFields
 							if (empty($labeltoshow)) $labeltoshow='(not defined)';
 							if ($value==$obj->rowid)
 							{
-								$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+								$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 							}
 
 							if (!empty($InfoFieldList[3]))
@@ -875,7 +875,7 @@ class ExtraFields
 							}
 
 							$out.='<option value="'.$obj->rowid.'"';
-							$out.= ($value==$obj->rowid?' selected="selected"':'');
+							$out.= ($value==$obj->rowid?' selected':'');
 							$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 							$out.='>'.$labeltoshow.'</option>';
 						}

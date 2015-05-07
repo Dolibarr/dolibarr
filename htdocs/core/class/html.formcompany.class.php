@@ -164,7 +164,7 @@ class FormCompany
 				$obj = $this->db->fetch_object($resql);
 
 				print '<option value="'.$obj->code.'"';
-				if ($selected == $obj->code) print ' selected="selected"';
+				if ($selected == $obj->code) print ' selected';
 				print '>';
 				$level=$langs->trans($obj->code);
 				if ($level == $obj->code) $level=$langs->trans($obj->label);
@@ -263,7 +263,7 @@ class FormCompany
 						if ((! empty($selected) && $selected == $obj->rowid)
 						 || (empty($selected) && ! empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">';
+							$out.= '<option value="'.$obj->rowid.'" selected>';
 						}
 						else
 						{
@@ -336,7 +336,7 @@ class FormCompany
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							print '<option value="'.$obj->code.'" selected="selected">'.$obj->label.'</option>';
+							print '<option value="'.$obj->code.'" selected>'.$obj->label.'</option>';
 						}
 						else
 						{
@@ -386,7 +386,7 @@ class FormCompany
 					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->code)
 					{
-						$out.= '<option value="'.$obj->code.'" selected="selected">';
+						$out.= '<option value="'.$obj->code.'" selected>';
 					}
 					else
 					{
@@ -495,7 +495,7 @@ class FormCompany
 
 					if ($selected > 0 && $selected == $val['code'])
 					{
-						$out.= '<option value="'.$val['code'].'" selected="selected">';
+						$out.= '<option value="'.$val['code'].'" selected>';
 					}
 					else
 					{
@@ -648,7 +648,7 @@ class FormCompany
 						{
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled';
-							print ' selected="selected">'.dol_trunc($obj->name,24).'</option>';
+							print ' selected>'.dol_trunc($obj->name,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
@@ -799,7 +799,7 @@ class FormCompany
     			{
     				if ($selected == $valors[$i])
     				{
-    					print '<option value="'.$valors[$i].'" selected="selected">';
+    					print '<option value="'.$valors[$i].'" selected>';
     				}
     				else
     				{

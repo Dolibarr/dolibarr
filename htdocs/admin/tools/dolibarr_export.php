@@ -215,7 +215,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
 			<select name="sql_compat" id="select_sql_compat" class="flat">
-				<option value="NONE" selected="selected">NONE</option>
+				<option value="NONE" selected>NONE</option>
 				<option value="ANSI">ANSI</option>
 				<option value="DB2">DB2</option>
 				<option value="MAXDB">MAXDB</option>
@@ -340,7 +340,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			<fieldset><legend><?php echo $langs->trans("ExportOptions"); ?></legend>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 			<select name="sql_compat" id="select_sql_compat" class="flat">
-				<option value="POSTGRESQL" selected="selected">POSTGRESQL</option>
+				<option value="POSTGRESQL" selected>POSTGRESQL</option>
 				<option value="ANSI">ANSI</option>
 			</select><br>
 			<!-- <input type="checkbox" name="drop_database" value="yes"

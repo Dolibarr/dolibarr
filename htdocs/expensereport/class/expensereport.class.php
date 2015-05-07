@@ -1710,7 +1710,7 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
 	{
 		if ($selected != '' && $selected == $key)
 		{
-			print '<option value="'.$key.'" selected="true">';
+			print '<option value="'.$key.'" selected>';
 		}
 		else
 		{
@@ -1739,7 +1739,7 @@ function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
 	if ($showempty)
 	{
 		print '<option value="-1"';
-		if ($selected == -1) print ' selected="true"';
+		if ($selected == -1) print ' selected';
 		print '>&nbsp;</option>';
 	}
 
@@ -1755,7 +1755,7 @@ function select_type_fees_id($selected='',$htmlname='type',$showempty=0)
 		{
 			$obj = $db->fetch_object($resql);
 			print '<option value="'.$obj->id.'"';
-			if ($obj->code == $selected || $obj->id == $selected) print ' selected="selected"';
+			if ($obj->code == $selected || $obj->id == $selected) print ' selected';
 			print '>';
 			if ($obj->code != $langs->trans($obj->code)) print $langs->trans($obj->code);
 			else print $langs->trans($obj->type);

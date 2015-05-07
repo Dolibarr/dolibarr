@@ -93,7 +93,7 @@ class FormIntervention
 						$labeltoshow=dol_trunc($obj->ref,18);
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
-							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						}
 						else
 						{

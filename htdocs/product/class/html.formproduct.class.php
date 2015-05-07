@@ -126,7 +126,7 @@ class FormProduct
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
 			$out.='<option value="'.$id.'"';
-			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected="selected"';
+			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
 			$out.=$arraytypes['label'];
 			if ($fk_product) $out.=' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
@@ -184,7 +184,7 @@ class FormProduct
 			$return.= '<option value="'.$key.'"';
 			if ($key == $default)
 			{
-				$return.= ' selected="selected"';
+				$return.= ' selected';
 			}
 			//$return.= '>'.$value.'</option>';
 			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';

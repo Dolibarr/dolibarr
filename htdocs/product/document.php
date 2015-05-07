@@ -284,7 +284,7 @@ if ($object->id)
     						print  '<option value="' . $key . '">' . $value . '</option>';
     					}
     				} else if ($delauft_lang == $key) {
-    					print  '<option value="' . $key . '" selected="selected">' . $value . '</option>';
+    					print  '<option value="' . $key . '" selected>' . $value . '</option>';
     				} else {
     					print  '<option value="' . $key . '">' . $value . '</option>';
     				}

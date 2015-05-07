@@ -202,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 		$var=True;
 		$num = $db->num_rows($result);
 		$i = 0;
-		$options = '<option value="0" selected="true">&nbsp;</option>';
+		$options = '<option value="0" selected>&nbsp;</option>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);

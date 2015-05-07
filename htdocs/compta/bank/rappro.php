@@ -115,12 +115,12 @@ if ($resql)
 {
     $var=True;
     $num = $db->num_rows($resql);
-    if ($num > 0) $options .= '<option value="0"'.(GETPOST('cat')?'':' selected="true"').'>&nbsp;</option>';
+    if ($num > 0) $options .= '<option value="0"'.(GETPOST('cat')?'':' selected').'>&nbsp;</option>';
     $i = 0;
     while ($i < $num)
     {
         $obj = $db->fetch_object($resql);
-        $options .= '<option value="'.$obj->rowid.'"'.(GETPOST('cat')==$obj->rowid?' selected="true"':'').'>'.$obj->label.'</option>'."\n";
+        $options .= '<option value="'.$obj->rowid.'"'.(GETPOST('cat')==$obj->rowid?' selected':'').'>'.$obj->label.'</option>'."\n";
         $i++;
     }
     $db->free($resql);

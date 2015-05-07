@@ -426,7 +426,7 @@ class Export
 							}
 							if (!empty($ValueField) && $ValueField == $obj->rowid)
 							{
-								$szFilterField.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+								$szFilterField.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 							}
 							else
 							{

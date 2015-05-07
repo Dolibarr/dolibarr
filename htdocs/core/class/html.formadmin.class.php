@@ -68,13 +68,13 @@ class FormAdmin
 		if ($showempty)
 		{
 			$out.= '<option value=""';
-			if ($selected == '') $out.= ' selected="selected"';
+			if ($selected == '') $out.= ' selected';
 			$out.= '>&nbsp;</option>';
 		}
 		if ($showauto)
 		{
 			$out.= '<option value="auto"';
-			if ($selected == 'auto') $out.= ' selected="selected"';
+			if ($selected == 'auto') $out.= ' selected';
 			$out.= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
@@ -96,7 +96,7 @@ class FormAdmin
 			}
 			else if ($selected == $key)
 			{
-				$out.= '<option value="'.$key.'" selected="selected">'.$value.'</option>';
+				$out.= '<option value="'.$key.'" selected>'.$value.'</option>';
 			}
 			else
 			{
@@ -157,7 +157,7 @@ class FormAdmin
 
     	                        if ($file == $selected)
     	                        {
-    	        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="selected">'.$filelib.'</option>';
+    	        					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected>'.$filelib.'</option>';
     	                        }
     	                        else
     	                        {
@@ -257,7 +257,7 @@ class FormAdmin
 			print '<option value="'.$key.'"';
             if ($key == $selected)
 			{
-				print '	selected="selected"';
+				print '	selected';
 			}
 			print '>';
 			if ($key == 'all') print $langs->trans("AllMenus");
@@ -312,7 +312,7 @@ class FormAdmin
 		foreach ($arraytz as $lib => $gmt)
 		{
 			print '<option value="'.$lib.'"';
-			if ($selected == $lib || $selected == $gmt) print ' selected="selected"';
+			if ($selected == $lib || $selected == $gmt) print ' selected';
 			print '>'.$gmt.'</option>'."\n";
 		}
 		print '</select>';
@@ -366,14 +366,14 @@ class FormAdmin
 		if ($showempty)
 		{
 			$out.= '<option value=""';
-			if ($selected == '') $out.= ' selected="selected"';
+			if ($selected == '') $out.= ' selected';
 			$out.= '>&nbsp;</option>';
 		}
 		foreach ($paperformat as $key => $value)
 		{
             if ($selected == $key)
 			{
-				$out.= '<option value="'.$key.'" selected="selected">'.$value.'</option>';
+				$out.= '<option value="'.$key.'" selected>'.$value.'</option>';
 			}
 			else
 			{

@@ -307,13 +307,13 @@ function limitChars(textarea, limit, infodiv)
            <option value="0">0</option>
            <option value="1">1</option>
            <option value="2">2</option>
-           <option value="3" selected="selected">3</option>
+           <option value="3" selected>3</option>
            </select></td></tr>
 
            <tr><td>'.$langs->trans("Type").' :</td><td>
            <select name="class" id="valid" class="flat">
            <option value="0">Flash</option>
-           <option value="1" selected="selected">Standard</option>
+           <option value="1" selected>Standard</option>
            <option value="2">SIM</option>
            <option value="3">ToolKit</option>
            </select></td></tr>';
