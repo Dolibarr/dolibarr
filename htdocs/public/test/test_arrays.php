@@ -2,15 +2,11 @@
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-
 require '../../main.inc.php';
 
-if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1')
-{
-	print "Page available only from remote address 127.0.0.1";
-	exit;
+if ($dolibarr_main_prod) {
+	accessforbidden();
 }
-
 
 $usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
