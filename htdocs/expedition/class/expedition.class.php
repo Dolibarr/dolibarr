@@ -1598,14 +1598,14 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk accordign to template module.
+	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force the model to using ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang to use for translations
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @return     int         				0 if KO, 1 if OK
+	 * 	@return 	int 						1 if OK -1 if KO
 	 */
 	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
 	{

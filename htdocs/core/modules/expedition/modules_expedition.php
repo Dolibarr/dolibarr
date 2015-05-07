@@ -143,14 +143,17 @@ abstract class ModelNumRefExpedition
 }
 
 /**
- * 	Cree un bon d'expedition sur disque
+ * 	Create a document onto disk according to template module.
  *
- * 	@param	DoliDB		$db  			Objet base de donnee
- * 	@param	Object		$object			Object expedition
- * 	@param	string		$modele			Force le modele a utiliser ('' to not force)
- * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
- *  @return int             			<=0 if KO, >0 if OK
- * @deprecated Use the new function generateDocument of Expedition class
+ * 	@param		DoliDB		$db  			Objet base de donnee
+ * 	@param		Object		$object			Object expedition
+ * 	@param		string		$modele			Force le modele a utiliser ('' to not force)
+ * 	@param		Translate	$outputlangs	Objet lang a utiliser pour traduction
+ *  @param      int			$hidedetails    Hide details of lines
+ *  @param      int			$hidedesc       Hide description
+ *  @param      int			$hideref        Hide ref
+ * 	@return 	int 						1 if OK -1 if KO
+ * 	@deprecated Use the new function generateDocument of Expedition class
  */
 function expedition_pdf_create(DoliDB $db, Expedition $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
