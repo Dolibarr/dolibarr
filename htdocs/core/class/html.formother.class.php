@@ -278,7 +278,7 @@ class FormOther
      */
     function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
     {
-        $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled="disabled"':'').'>';
+        $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
 
         for ($i = $start ; $i <= $end ; $i += $increment)
         {
@@ -519,7 +519,7 @@ class FormOther
                 {
                     if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
-                        if ($i > 0) print '<option value="0" disabled="disabled">----------</option>';
+                        if ($i > 0) print '<option value="0" disabled>----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
                         if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
                         print '>';	// Project -> Task
@@ -555,7 +555,7 @@ class FormOther
 
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
                     if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected="selected"';
-                    if ($disabled) print ' disabled="disabled"';
+                    if ($disabled) print ' disabled';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
                     if (empty($lines[$i]->public))

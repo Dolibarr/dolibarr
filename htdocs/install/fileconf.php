@@ -147,7 +147,7 @@ if (! empty($force_install_message))
 	?>
 		<td class="label" valign="top"><?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_document_root.'" name="main_dir">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_document_root.'"'.(empty($force_install_noedit)?'':' disabled').' name="main_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?></td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
@@ -181,7 +181,7 @@ if (! empty($force_install_message))
 		?>
 		<td class="label" valign="top"><?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_data_root.'" name="main_data_dir">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_data_dir'.(empty($force_install_noedit)?'':'_bis').'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_data_root.'"'.(empty($force_install_noedit)?'':' disabled').' name="main_data_dir'.(empty($force_install_noedit)?'':'_bis').'">';
 		?></td>
 		<td class="comment"><?php
 		print $langs->trans("WithNoSlashAtTheEnd")."<br>";
@@ -228,7 +228,7 @@ if (! empty($force_install_message))
 		</td>
 		<td valign="top" class="label"><?php
 		if ($force_install_noedit) print '<input type="hidden" value="'.$dolibarr_main_url_root.'" name="main_url">';
-		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(empty($force_install_noedit)?'':' disabled="disabled"').' name="main_url'.(empty($force_install_noedit)?'':'_bis').'">';
+		print '<input type="text" size="60" value="'.$dolibarr_main_url_root.'"'.(empty($force_install_noedit)?'':' disabled').' name="main_url'.(empty($force_install_noedit)?'':'_bis').'">';
 		?></td>
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
 		<ul>
@@ -323,8 +323,8 @@ if (! empty($force_install_message))
 		        	if ($type=='sqlite') { $testfunction=''; $testclass='PDO'; }
 		            if ($type=='sqlite3') { $testfunction=''; $testclass='SQLite3'; }
 		            $option.='<option value="'.$type.'"'.($defaultype == $type?' selected="selected"':'');
-		            if ($testfunction && ! function_exists($testfunction)) $option.=' disabled="disabled"';
-		            if ($testclass && ! class_exists($testclass)) $option.=' disabled="disabled"';
+		            if ($testfunction && ! function_exists($testfunction)) $option.=' disabled';
+		            if ($testclass && ! class_exists($testclass)) $option.=' disabled';
 		            $option.='>';
 		            $option.=$type.'&nbsp; &nbsp;';
 		            if ($note) $option.=' '.$note;
@@ -340,7 +340,7 @@ if (! empty($force_install_message))
 		}
 
 		if ($force_install_noedit && $force_install_type) print '<input id="db_type" type="hidden" value="'.$force_install_type.'" name="db_type">';
-		print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled="disabled"':'').'>';
+		print '<select id="db_type" name="db_type'.(empty($force_install_noedit) || empty($force_install_type)?'':'_bis').'"'.($force_install_noedit && $force_install_type?' disabled':'').'>';
 		print $option;
 		print '</select>';
 
@@ -354,7 +354,7 @@ if (! empty($force_install_message))
 		</b></td>
 		<td valign="top" class="label"><input type="text"
 			name="db_host<?php print ($force_install_noedit==2 && $force_install_dbserver)?'_bis':''; ?>"
-			<?php if ($force_install_noedit==2 && $force_install_dbserver) print ' disabled="disabled"'; ?>
+			<?php if ($force_install_noedit==2 && $force_install_dbserver) print ' disabled'; ?>
 			value="<?php print (! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:(empty($force_install_dbserver)?'localhost':$force_install_dbserver); ?>">
 			<?php if ($force_install_noedit==2 && $force_install_dbserver) print '<input type="hidden" name="db_host" value="'.((! empty($dolibarr_main_db_host))?$dolibarr_main_db_host:$force_install_dbserver).'">'; ?>
 		</td>
@@ -367,7 +367,7 @@ if (! empty($force_install_message))
 		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
 		<td valign="top" class="label"><input type="text"
 			name="db_port<?php print ($force_install_noedit==2 && $force_install_port)?'_bis':''; ?>"
-			<?php if ($force_install_noedit==2 && $force_install_port) print ' disabled="disabled"'; ?>
+			<?php if ($force_install_noedit==2 && $force_install_port) print ' disabled'; ?>
 			value="<?php print (! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port; ?>">
 			<?php if ($force_install_noedit==2 && $force_install_port) print '<input type="hidden" name="db_port" value="'.((! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port).'">'; ?>
 		</td>

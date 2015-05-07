@@ -198,7 +198,7 @@ class mailing_framboise extends MailingTargets
 			$num = $this->db->num_rows($resql);
 
 			$s.='<option value="0">&nbsp;</option>';
-			if (! $num) $s.='<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+			if (! $num) $s.='<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
 
 			$i = 0;
 			while ($i < $num)

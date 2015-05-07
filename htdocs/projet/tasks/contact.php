@@ -378,7 +378,7 @@ if ($id > 0 || ! empty($ref))
 				$formcompany->selectTypeContact($object, '', 'type','external','rowid');
 				print '</td>';
 				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
-				if (! $nbofcontacts) print ' disabled="disabled"';
+				if (! $nbofcontacts) print ' disabled';
 				print '></td>';
 				print '</tr>';
 

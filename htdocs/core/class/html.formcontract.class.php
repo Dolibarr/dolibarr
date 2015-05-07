@@ -115,7 +115,7 @@ class FormContract
 							else
 							{
 								$resultat='<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat.=' disabled="disabled"';
+								if ($disabled) $resultat.=' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
 								$resultat.='>'.$labeltoshow;

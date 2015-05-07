@@ -160,7 +160,7 @@ class FormProjets
 							else
 							{
 								$resultat='<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat.=' disabled="disabled"';
+								if ($disabled) $resultat.=' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
 								$resultat.='>';
@@ -258,7 +258,7 @@ class FormProjets
 			/*else
 			{
 				$sellist = '<select class="flat" name="elementselect">';
-				$sellist.= '<option value="0" disabled="disabled">'.$langs->trans("None").'</option>';
+				$sellist.= '<option value="0" disabled>'.$langs->trans("None").'</option>';
 				$sellist.= '</select>';
 			}*/
 			$this->db->free($resql);

@@ -1536,7 +1536,7 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td>';
 	print $langs->trans("Option");
 	print '</td><td>';
-	print '<input type="checkbox" name="excludefirstline" value="1" disabled="disabled"';
+	print '<input type="checkbox" name="excludefirstline" value="1" disabled';
 	print ($excludefirstline?' checked':'');
 	print '>';
 	print ' '.$langs->trans("DoNotImportFirstLine");

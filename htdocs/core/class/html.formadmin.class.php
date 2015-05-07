@@ -64,7 +64,7 @@ class FormAdmin
 
 		$out='';
 
-		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+		$out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
 		if ($showempty)
 		{
 			$out.= '<option value=""';
@@ -184,7 +184,7 @@ class FormAdmin
 			if ($newprefix != $oldprefix)	// Add separators
 			{
 				// Affiche titre
-				print '<option value="-1" disabled="disabled">';
+				print '<option value="-1" disabled>';
 				if ($newprefix=='0') print '-- '.$langs->trans("VersionRecommanded").' --';
                 if ($newprefix=='1') print '-- '.$langs->trans("VersionExperimental").' --';
 				if ($newprefix=='2') print '-- '.$langs->trans("VersionDevelopment").' --';

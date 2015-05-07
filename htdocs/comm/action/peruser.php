@@ -300,7 +300,7 @@ if ($conf->use_javascript_ajax)
 	$s.='</script>' . "\n";
 	if (! empty($conf->use_javascript_ajax))
 	{
-		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 		if (is_array($showextcals) && count($showextcals) > 0)
 		{
 			foreach ($showextcals as $val)

@@ -1382,12 +1382,12 @@ if ($action == 'create')
     // Replacement
     print '<tr height="18"><td valign="middle">';
     print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked':'');
-    if (! $options) print ' disabled="disabled"';
+    if (! $options) print ' disabled';
     print '>';
     print '</td><td valign="middle">';
     $text=$langs->trans("InvoiceReplacementAsk").' ';
     $text.='<select class="flat" name="fac_replacement"';
-    if (! $options) $text.=' disabled="disabled"';
+    if (! $options) $text.=' disabled';
     $text.='>';
     if ($options)
     {
@@ -1406,13 +1406,13 @@ if ($action == 'create')
     // Credit note
     print '<tr height="18"><td valign="middle">';
     print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked':'');
-    if (! $optionsav) print ' disabled="disabled"';
+    if (! $optionsav) print ' disabled';
     print '>';
     print '</td><td valign="middle">';
     $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
     //	$text.='<input type="text" value="">';
     $text.='<select class="flat" name="fac_avoir"';
-    if (! $optionsav) $text.=' disabled="disabled"';
+    if (! $optionsav) $text.=' disabled';
     $text.='>';
     if ($optionsav)
     {

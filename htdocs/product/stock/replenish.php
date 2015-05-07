@@ -542,7 +542,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			if ($stockforcompare >= $objp->desiredstock)
 			{
 				$picto = img_picto('', './img/yes', '', 1);
-				$disabled = 'disabled="disabled"';
+				$disabled = 'disabled';
 			}
 			else {
 				$picto = img_picto('', './img/no', '', 1);

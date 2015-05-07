@@ -2132,7 +2132,7 @@ if ($action == 'create')
 		$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
 		print '<tr height="18"><td valign="middle">';
 		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '') . ' ';
-		if ($opt == '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled="disabled"';
+		if ($opt == '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled';
 		print '>';
 		print '</td><td valign="middle">';
 		$text = $langs->trans("InvoiceSituationAsk") . ' ';
@@ -2148,7 +2148,7 @@ if ($action == 'create')
 		print '<tr height="18"><td valign="middle">';
 		print '<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
 		if (! $options)
-			print ' disabled="disabled"';
+			print ' disabled';
 		print '>';
 		print '</td><td valign="middle">';
 		print '<script type="text/javascript" language="javascript">
@@ -2161,7 +2161,7 @@ if ($action == 'create')
 		$text = $langs->trans("InvoiceReplacementAsk") . ' ';
 		$text .= '<select class="flat" name="fac_replacement" id="fac_replacement"';
 		if (! $options)
-			$text .= ' disabled="disabled"';
+			$text .= ' disabled';
 		$text .= '>';
 		if ($options) {
 			$text .= '<option value="-1">&nbsp;</option>';
@@ -2177,7 +2177,7 @@ if ($action == 'create')
 	else
 	{
 		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" id="radio_replacement" value="0" disabled="disabled">';
+		print '<input type="radio" name="type" id="radio_replacement" value="0" disabled>';
 		print '</td><td valign="middle">';
 		$text = $langs->trans("InvoiceReplacement") . ' ';
 		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
@@ -2194,7 +2194,7 @@ if ($action == 'create')
 			print '<tr height="18"><td valign="top">';
 			print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
 			if (! $optionsav)
-				print ' disabled="disabled"';
+				print ' disabled';
 			print '>';
 			print '</td><td valign="top">';
 			// Show credit note options only if we checked credit note
@@ -2216,7 +2216,7 @@ if ($action == 'create')
 			// $text.='<input type="text" value="">';
 			$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
 			if (! $optionsav)
-				$text .= ' disabled="disabled"';
+				$text .= ' disabled';
 			$text .= '>';
 			if ($optionsav) {
 				$text .= '<option value="-1"></option>';
@@ -2238,7 +2238,7 @@ if ($action == 'create')
 		else
 		{
 			print '<tr height="18"><td valign="middle">';
-			print '<input type="radio" name="type" id="radio_creditnote" value="0" disabled="disabled">';
+			print '<input type="radio" name="type" id="radio_creditnote" value="0" disabled>';
 			print '</td><td valign="middle">';
 			$text = $langs->trans("InvoiceAvoir") . ' ';
 			$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';

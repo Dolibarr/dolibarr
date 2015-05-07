@@ -255,7 +255,7 @@ class FormCompany
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $country_codeid && $obj->country_code)
 							{
-								$out.= '<option value="-1" disabled="disabled">----- '.$obj->country." -----</option>\n";
+								$out.= '<option value="-1" disabled>----- '.$obj->country." -----</option>\n";
 								$country=$obj->country;
 							}
 						}
@@ -330,7 +330,7 @@ class FormCompany
 							// Show break
 							$key=$langs->trans("Country".strtoupper($obj->country_code));
 							$valuetoshow=($key != "Country".strtoupper($obj->country_code))?$obj->country_code." - ".$key:$obj->country;
-							print '<option value="-1" disabled="disabled">----- '.$valuetoshow." -----</option>\n";
+							print '<option value="-1" disabled>----- '.$valuetoshow." -----</option>\n";
 							$country=$obj->country;
 						}
 
@@ -647,14 +647,14 @@ class FormCompany
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
 							print '<option value="'.$obj->rowid.'"';
-							if ($disabled) print ' disabled="disabled"';
+							if ($disabled) print ' disabled';
 							print ' selected="selected">'.dol_trunc($obj->name,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
-							if ($disabled) print ' disabled="disabled"';
+							if ($disabled) print ' disabled';
 							print '>'.dol_trunc($obj->name,24).'</option>';
 						}
 						$i ++;

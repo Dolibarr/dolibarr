@@ -358,7 +358,7 @@ if (! empty($conf->use_javascript_ajax))
   	$s.='});' . "\n";
 	$s.='</script>' . "\n";
 
-	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 	if (is_array($showextcals) && count($showextcals) > 0)
 	{
 		$s.='<script type="text/javascript">' . "\n";

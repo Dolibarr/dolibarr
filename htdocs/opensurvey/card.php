@@ -310,7 +310,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $url=$urlwithouturlroot.dol_buildpath('/public/opensurvey/studs.php',1).'?sondage='.$object->id_sondage;
-$urllink='<input type="text" style="width: 60%" '.($action == 'edit' ? 'disabled="disabled"' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
+$urllink='<input type="text" style="width: 60%" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 print $urllink;
 if ($action != 'edit')
 {

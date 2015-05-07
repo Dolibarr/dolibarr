@@ -116,7 +116,7 @@ class FormIntervention
 							else
 							{
 								$resultat='<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat.=' disabled="disabled"';
+								if ($disabled) $resultat.=' disabled';
 								$resultat.='>'.$labeltoshow;
 								$resultat.='</option>';
 							}

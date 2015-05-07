@@ -265,7 +265,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 				for="checkbox_hexforbinary"> <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
 
 			<input type="checkbox" name="charset_utf8" value="yes"
-				id="checkbox_charset_utf8" checked disabled="disabled" /> <label
+				id="checkbox_charset_utf8" checked disabled /> <label
 				for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
 			</fieldset>
@@ -308,7 +308,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
                                         id="checkbox_dump_ignore" /> <label for="checkbox_dump_ignore"> <?php echo $langs->trans("IgnoreDuplicateRecords"); ?></label><br>
 
                                 <input type="checkbox" name="nobin_charset_utf8" value="yes"
-                                        id="checkbox_charset_utf8" checked disabled="disabled" /> <label
+                                        id="checkbox_charset_utf8" checked disabled /> <label
                                         for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
                             </fieldset>
@@ -422,7 +422,7 @@ foreach($compression as $key => $val)
 	}
 	else	// Disabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="disabled">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
 	}
