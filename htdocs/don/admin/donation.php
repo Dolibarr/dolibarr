@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
@@ -199,7 +199,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("DonationsSetup"),$linkback,title_setup);
+print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
 
 $head = donation_admin_prepare_head();
 
@@ -225,8 +225,8 @@ $var=! $var;
 print '<tr '.$bc[$var].'>';
 
 print '<td width="50%">';
-$label = $langs->trans(AccountAccounting);
-print '<label for="'.$langs->trans(AccountAccounting).'">' . $label . '</label></td>';
+$label = $langs->trans("AccountAccounting");
+print '<label for="'.$langs->trans("AccountAccounting").'">' . $label . '</label></td>';
 print '<td>';
 print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . $conf->global->DONATION_ACCOUNTINGACCOUNT . '">';
 print '</td><td align="right">';

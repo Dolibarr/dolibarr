@@ -741,7 +741,7 @@ if ($resql)
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
-			    if ( $action == 'editline' && GETPOST('lineid',int)==$pdluo->id )
+			    if ( $action == 'editline' && GETPOST('lineid','int')==$pdluo->id )
 			    { //Current line edit
 			        print "\n".'<tr><td colspan="9">';
 			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
