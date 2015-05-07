@@ -381,7 +381,7 @@ if (empty($reshook))
 	        $outputlangs = new Translate("",$conf);
 	        $outputlangs->setDefaultLang($newlang);
 	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs);
+		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result <= 0)
 	    {
 	        dol_print_error($db,$result);
