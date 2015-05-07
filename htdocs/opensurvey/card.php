@@ -253,7 +253,7 @@ if (!$object->fk_user_creat) {
 print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="checkbox" name="mailsonde" size="40"'.($object->mailsonde?' checked="true"':'').'">';
+	print '<input type="checkbox" name="mailsonde" size="40"'.($object->mailsonde?' checked':'').'">';
 }
 else {
 	print yn($object->mailsonde);
@@ -271,7 +271,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('CanComment').'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="checkbox" name="cancomment" size="40"'.($object->allow_comments?' checked="true"':'').'">';
+	print '<input type="checkbox" name="cancomment" size="40"'.($object->allow_comments?' checked':'').'">';
 }
 else print yn($object->allow_comments);
 print '</td></tr>';
@@ -280,7 +280,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<input type="checkbox" name="canseeothersvote" size="40"'.($object->allow_spy?' checked="true"':'').'">';
+	print '<input type="checkbox" name="canseeothersvote" size="40"'.($object->allow_spy?' checked':'').'">';
 }
 else print yn($object->allow_spy);
 print '</td></tr>';

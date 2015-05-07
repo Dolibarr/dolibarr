@@ -420,7 +420,7 @@ if ($resql)
         {
 
             print '<td align="center" class="nowrap">';
-            print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked="checked"':'').'>';
+            print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked':'').'>';
 //             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
 //             print ' &nbsp; ';
 //             print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";

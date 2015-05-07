@@ -3112,8 +3112,8 @@ class Form
                         $more.='<tr>';
                         $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
                         $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
-                        if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
-                        if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
+                        if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked';
+                        if (is_bool($input['value']) && $input['value']) $more.=' checked';
                         if (isset($input['disabled'])) $more.=' disabled="disabled"';
                         $more.=' /></td>';
                         $more.='<td valign="top" align="left">&nbsp;</td>';

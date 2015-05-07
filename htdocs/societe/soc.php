@@ -895,13 +895,13 @@ else
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
 	        print '<label for="radiocompany">';
-            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked="checked"').'>';
+            print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked').'>';
 	        print '&nbsp;';
             print $langs->trans("Company/Fundation");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
 	        print '<label for="radioprivate">';
-            $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'').'>';
+            $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked':'').'>';
 	        $text.='&nbsp;';
 	        $text.= $langs->trans("Individual");
 	        $htmltext=$langs->trans("ToCreateContactWithSameName");

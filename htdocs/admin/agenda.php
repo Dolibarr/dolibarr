@@ -178,7 +178,7 @@ if (! empty($triggers))
 			print '<td align="right" width="40">';
 			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 			$value=$conf->global->$key;
-			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked="checked"':'').'>';
+			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
 			print '</td></tr>'."\n";
 		}
 	}

@@ -587,7 +587,7 @@ if ($result)
             if ($user->rights->banque->consolidate)
             {
                 print '<td colspan="3">';
-                print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"])?($_POST["reconciled"]?' checked="checked"':''):($objp->rappro?' checked="checked"':'')).'">';
+                print '<input type="checkbox" name="reconciled" class="flat" '.(isset($_POST["reconciled"])?($_POST["reconciled"]?' checked':''):($objp->rappro?' checked':'')).'">';
                 print '</td>';
             }
             else

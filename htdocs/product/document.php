@@ -315,11 +315,11 @@ if ($object->id)
     				if ($conf->global->MAIN_MULTILANGS) {
     					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) {
     						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
-    						$checked = ' checked="checked" ';
+    						$checked = ' checked ';
     					}
     				} else {
     					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) {
-    						$checked = ' checked="checked" ';
+    						$checked = ' checked ';
     					}
     				}
     				 

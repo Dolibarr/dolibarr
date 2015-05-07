@@ -318,7 +318,7 @@ print ' ';
 print $langs->trans("SubCats") . '? ';
 print '<input type="checkbox" name="subcat" value="yes"';
 if ($subcat) {
-    print ' checked="checked"';
+    print ' checked';
 }
 print'></td>';
 print '<td colspan="4" align="right">';

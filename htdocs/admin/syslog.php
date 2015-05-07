@@ -192,7 +192,7 @@ foreach ($syslogModules as $moduleName)
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td width="140">';
-	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').($moduleactive <= 0 ? 'disabled="disabled"' : '').'> ';
+	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked' : '').($moduleactive <= 0 ? 'disabled="disabled"' : '').'> ';
 	print $module->getName();
 	print '</td>';
 

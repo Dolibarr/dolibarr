@@ -245,7 +245,7 @@ if (! empty($force_install_message))
 		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
 		<td class="label" valign="top"><input type="checkbox"
 			name="main_force_https"
-			<?php if (! empty($force_install_mainforcehttps)) print ' checked="on"'; ?>></td>
+			<?php if (! empty($force_install_mainforcehttps)) print ' checked'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToForceHttps"); ?>
 		</td>
 
@@ -392,7 +392,7 @@ if (! empty($force_install_message))
 
 		<td class="label" valign="top"><input type="checkbox"
 			id="db_create_database" name="db_create_database"
-			<?php if ($force_install_createdatabase) print ' checked="on"'; ?>></td>
+			<?php if ($force_install_createdatabase) print ' checked'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateDatabase"); ?>
 		</td>
 	</tr>
@@ -426,7 +426,7 @@ if (! empty($force_install_message))
 
 		<td class="label" valign="top"><input type="checkbox"
 			id="db_create_user" name="db_create_user"
-			<?php if (! empty($force_install_createuser)) print ' checked="on"'; ?>></td>
+			<?php if (! empty($force_install_createuser)) print ' checked'; ?>></td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
 		</td>
 	</tr>

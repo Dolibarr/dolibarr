@@ -697,7 +697,7 @@ class ExtraFields
 		{
 			$checked='';
 			if (!empty($value)) {
-				$checked=' checked="checked" value="1" ';
+				$checked=' checked value="1" ';
 			} else {
 				$checked=' value="1" ';
 			}
@@ -902,7 +902,7 @@ class ExtraFields
 				$out.=' value="'.$keyopt.'"';
 
 				if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
-					$out.= 'checked="checked"';
+					$out.= 'checked';
 				}else {
 					$out.='';
 				}
@@ -917,7 +917,7 @@ class ExtraFields
 			{
 				$out.='<input class="flat" type="radio" name="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'');
 				$out.=' value="'.$keyopt.'"';
-				$out.= ($value==$keyopt?'checked="checked"':'');
+				$out.= ($value==$keyopt?'checked':'');
 				$out.='/>'.$val.'<br>';
 			}
 		}
@@ -1007,7 +1007,7 @@ class ExtraFields
 							$out .= '<input class="flat" type="checkbox" name="options_' . $key . $keyprefix . '[]" ' . ($moreparam ? $moreparam : '');
 							$out .= ' value="' . $obj->rowid . '"';
 
-							$out .= 'checked="checked"';
+							$out .= 'checked';
 
 							$out .= '/>' . $labeltoshow . '<br>';
 						} else {
@@ -1026,7 +1026,7 @@ class ExtraFields
 								$out .= '<input class="flat" type="checkbox" name="options_' . $key . $keyprefix . '[]" ' . ($moreparam ? $moreparam : '');
 								$out .= ' value="' . $obj->rowid . '"';
 
-								$out .= 'checked="checked"';
+								$out .= 'checked';
 								$out .= '';
 
 								$out .= '/>' . $labeltoshow . '<br>';
@@ -1039,7 +1039,7 @@ class ExtraFields
 							$out .= '<input class="flat" type="checkbox" name="options_' . $key . $keyprefix . '[]" ' . ($moreparam ? $moreparam : '');
 							$out .= ' value="' . $obj->rowid . '"';
 
-							$out .= ((is_array($value_arr) && in_array($obj->rowid, $value_arr)) ? ' checked="checked" ' : '');
+							$out .= ((is_array($value_arr) && in_array($obj->rowid, $value_arr)) ? ' checked ' : '');
 							;
 							$out .= '';
 
@@ -1122,7 +1122,7 @@ class ExtraFields
 		{
 			$checked='';
 			if (!empty($value)) {
-				$checked=' checked="checked" ';
+				$checked=' checked ';
 			}
 			$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly="readonly" disabled="disabled">';
 		}

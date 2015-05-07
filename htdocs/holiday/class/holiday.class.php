@@ -970,7 +970,7 @@ class Holiday extends CommonObject
 
             // Si la valeur est 1 on retourne checked
             if($obj->value) {
-                return 'checked="checked"';
+                return 'checked';
             }
         }
     }

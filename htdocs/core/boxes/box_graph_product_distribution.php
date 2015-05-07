@@ -324,17 +324,17 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
 			if (! empty($conf->facture->enabled) || ! empty($user->rights->facture->lire))
 			{
-				$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked="true"':'').'> '.$langs->trans("ForCustomersInvoices");
+				$stringtoshow.='<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb?' checked':'').'> '.$langs->trans("ForCustomersInvoices");
 				$stringtoshow.=' &nbsp; ';
 			}
 			if (! empty($conf->propal->enabled) || ! empty($user->rights->propal->lire))
 			{
-				$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked="true"':'').'> '.$langs->trans("ForProposals");
+				$stringtoshow.='<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb?' checked':'').'> '.$langs->trans("ForProposals");
 				$stringtoshow.='&nbsp;';
 			}
 			if (! empty($conf->commande->enabled) || ! empty($user->rights->commande->lire))
 			{
-				$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked="true"':'').'> '.$langs->trans("ForCustomersOrders");
+				$stringtoshow.='<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb?' checked':'').'> '.$langs->trans("ForCustomersOrders");
 			}
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';

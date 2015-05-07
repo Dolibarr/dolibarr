@@ -679,7 +679,7 @@ if ($resql)
 	print '</td>';
 	// Late
 	print '<td class="liste_titre" align="center">';
-	print '<input type="checkbox" name="option" value="late"'.($option == 'late'?' checked="checked"':'').'> '.$langs->trans("Late");
+	print '<input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 	print '</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre" align="left">';

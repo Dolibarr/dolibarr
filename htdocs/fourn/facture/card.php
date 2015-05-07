@@ -1353,7 +1353,7 @@ if ($action == 'create')
 
     // Standard invoice
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="checked"':'').'>';
+    print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked':'').'>';
     print '</td><td valign="middle">';
     $desc=$form->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
     print $desc;
@@ -1362,7 +1362,7 @@ if ($action == 'create')
     /*
      // Deposit
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked="checked"':'').'>';
+    print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked':'').'>';
     print '</td><td valign="middle">';
     $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
     print $desc;
@@ -1372,7 +1372,7 @@ if ($action == 'create')
     if (! empty($conf->global->FACTURE_USE_PROFORMAT))
     {
     print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="checked"':'').'>';
+    print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked':'').'>';
     print '</td><td valign="middle">';
     $desc=$form->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
     print $desc;
@@ -1381,7 +1381,7 @@ if ($action == 'create')
 
     // Replacement
     print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked="checked"':'');
+    print '<input type="radio" name="type" value="1"'.($_POST['type']==1?' checked':'');
     if (! $options) print ' disabled="disabled"';
     print '>';
     print '</td><td valign="middle">';
@@ -1405,7 +1405,7 @@ if ($action == 'create')
 
     // Credit note
     print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked=true':'');
+    print '<input type="radio" name="type" value="2"'.($_POST['type']==2?' checked':'');
     if (! $optionsav) print ' disabled="disabled"';
     print '>';
     print '</td><td valign="middle">';

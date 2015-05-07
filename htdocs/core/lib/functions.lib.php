@@ -3684,8 +3684,8 @@ function yn($yesno, $case=1, $color=0)
 	{
 		$result=$langs->trans('yes');
 		if ($case == 1 || $case == 3) $result=$langs->trans("Yes");
-		if ($case == 2) $result='<input type="checkbox" value="1" checked="checked" disabled="disabled">';
-		if ($case == 3) $result='<input type="checkbox" value="1" checked="checked" disabled="disabled"> '.$result;
+		if ($case == 2) $result='<input type="checkbox" value="1" checked disabled="disabled">';
+		if ($case == 3) $result='<input type="checkbox" value="1" checked disabled="disabled"> '.$result;
 
 		$classname='ok';
 	}

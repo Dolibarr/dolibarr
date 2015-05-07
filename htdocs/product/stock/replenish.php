@@ -332,7 +332,7 @@ if ($usevirtualstock)
 	{
 		$sql.= ' AND (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 		$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
-		$alertchecked = 'checked="checked"';
+		$alertchecked = 'checked';
 	}
 } else {
 	$sql.= ' HAVING ((p.desiredstock > 0 AND (p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
@@ -341,7 +341,7 @@ if ($usevirtualstock)
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
 		$sql.= ' AND (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
-		$alertchecked = 'checked="checked"';
+		$alertchecked = 'checked';
 	}
 }
 

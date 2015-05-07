@@ -2084,7 +2084,7 @@ if ($action == 'create')
 
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked="checked"' : '') . '>';
+	print '<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked' : '') . '>';
 	print '</td><td valign="middle">';
 	$desc = $form->textwithpicto($langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1);
 	print $desc;
@@ -2094,7 +2094,7 @@ if ($action == 'create')
 	{
 		// Deposit
 		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked="checked"' : '') . '>';
+		print '<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '>';
 		print '</td><td valign="middle" class="nowrap">';
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
@@ -2122,7 +2122,7 @@ if ($action == 'create')
 		{
 		// First situation invoice
 		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked="checked"' : '') . '>';
+		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '>';
 		print '</td><td valign="middle">';
 		$desc = $form->textwithpicto($langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1);
 		print $desc;
@@ -2131,7 +2131,7 @@ if ($action == 'create')
 		// Next situation invoice
 		$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
 		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked="checked"' : '') . ' ';
+		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '') . ' ';
 		if ($opt == '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled="disabled"';
 		print '>';
 		print '</td><td valign="middle">';
@@ -2146,7 +2146,7 @@ if ($action == 'create')
 
 		// Replacement
 		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked="checked"' : '');
+		print '<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
 		if (! $options)
 			print ' disabled="disabled"';
 		print '>';
@@ -2192,7 +2192,7 @@ if ($action == 'create')
 		{
 			// Credit note
 			print '<tr height="18"><td valign="top">';
-			print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked=true' : '');
+			print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
 			if (! $optionsav)
 				print ' disabled="disabled"';
 			print '>';
@@ -2229,8 +2229,8 @@ if ($action == 'create')
 			print $desc;
 
 			print '<div id="credit_note_options">';
-	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 			print '</div>';
 
 			print '</td></tr>' . "\n";
