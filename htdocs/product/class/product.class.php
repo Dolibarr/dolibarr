@@ -1423,7 +1423,6 @@ class Product extends CommonObject
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -3170,7 +3169,7 @@ class Product extends CommonObject
 	function is_photo_available($sdir)
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
-		
+
 		global $conf;
 
 		$dir = $sdir;
