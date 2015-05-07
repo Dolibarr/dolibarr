@@ -255,7 +255,7 @@ if (empty($reshook)) {
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
         }
         if ($result < 0)
         {
@@ -355,7 +355,7 @@ if (empty($reshook)) {
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($newlang);
         }
-        $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+        $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
         if ($result <= 0)
         {
             dol_print_error($db,$result);
