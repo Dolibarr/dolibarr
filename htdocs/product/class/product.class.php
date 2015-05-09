@@ -442,7 +442,7 @@ class Product extends CommonObject
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
 		$this->description = trim($this->description);
-		$this->note = (isset($this->note)? trim($this->note):"null");
+		$this->note = (isset($this->note)? trim($this->note):null);
 		$this->weight = price2num($this->weight);
 		$this->weight_units = trim($this->weight_units);
 		$this->length = price2num($this->length);
@@ -493,7 +493,7 @@ class Product extends CommonObject
 		$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 		$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 		$sql.= " WHERE rowid = " . $id;
-
+var_dump($sql);die;
 		dol_syslog(get_class($this)."update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
