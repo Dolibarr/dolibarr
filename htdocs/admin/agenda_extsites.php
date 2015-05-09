@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,7 +158,7 @@ if ($conf->use_javascript_ajax)
 }
 else
 {
-	if($conf->global->AGENDA_DISABLE_EXT == 0)
+	if (empty($conf->global->AGENDA_DISABLE_EXT))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"),'on').'</a>';
 	}
