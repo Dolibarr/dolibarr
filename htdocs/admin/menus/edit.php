@@ -323,8 +323,8 @@ if ($action == 'create')
     {
         print '<select name="type" class="flat" id="topleft">';
         print '<option value="">&nbsp;</option>';
-        print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>'.$langs->trans('Top').'</option>';
-        print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>'.$langs->trans('Left').'</option>';
+        print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected':'').'>'.$langs->trans('Top').'</option>';
+        print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected':'').'>'.$langs->trans('Left').'</option>';
         print '</select>';
     }
     //	print '<input type="text" size="50" name="type" value="'.$type.'">';
@@ -356,8 +356,8 @@ if ($action == 'create')
 
     // Target
     print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-    print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
-    print '<option value="_blank"'.($menu->target=="_blank"?' selected="true"':'').'>'.$langs->trans('_blank').'</option>';
+    print '<option value=""'.($menu->target==""?' selected':'').'>'.$langs->trans('').'</option>';
+    print '<option value="_blank"'.($menu->target=="_blank"?' selected':'').'>'.$langs->trans('_blank').'</option>';
     print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled
@@ -406,9 +406,9 @@ elseif ($action == 'edit')
 
     // User
     print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
-    print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("AllMenus").'</option>';
-    print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
-    print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';
+    print '<option value="2"'.($menu->user==2?' selected':'').'>'.$langs->trans("AllMenus").'</option>';
+    print '<option value="0"'.($menu->user==0?' selected':'').'>'.$langs->trans('Internal').'</option>';
+    print '<option value="1"'.($menu->user==1?' selected':'').'>'.$langs->trans('External').'</option>';
     print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
 
     // Type
@@ -438,8 +438,8 @@ elseif ($action == 'edit')
 
     // Target
     print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-    print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
-    print '<option value="_blank"'.($menu->target=="_blank"?' selected="true"':'').'>'.$langs->trans('_blank').'</option>';
+    print '<option value=""'.($menu->target==""?' selected':'').'>'.$langs->trans('').'</option>';
+    print '<option value="_blank"'.($menu->target=="_blank"?' selected':'').'>'.$langs->trans('_blank').'</option>';
     print '</select></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled

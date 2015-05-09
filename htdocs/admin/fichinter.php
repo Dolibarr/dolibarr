@@ -554,7 +554,7 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
 print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
 if ($conf->global->FICHINTER_PRINT_PRODUCTS)
-	print 'checked="checked" ';
+	print 'checked ';
 print '/>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

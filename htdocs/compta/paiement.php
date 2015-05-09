@@ -571,7 +571,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
                     else
                     {
-                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled="disabled">';
+                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
                         print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }
                     print "</td>";
@@ -632,7 +632,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         	if ($facture->type == 2) $buttontitle=$langs->trans('ToMakePaymentBack');
 
         	print '<br><div class="center">';
-        	print '<input type="checkbox" checked="checked" name="closepaidinvoices"> '.$checkboxlabel;
+        	print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
             /*if (! empty($conf->prelevement->enabled))
             {
                 $langs->load("withdrawals");

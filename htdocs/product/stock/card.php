@@ -218,7 +218,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	print '<select name="statut" class="flat">';
 	print '<option value="0">'.$langs->trans("WarehouseClosed").'</option>';
-	print '<option value="1" selected="selected">'.$langs->trans("WarehouseOpened").'</option>';
+	print '<option value="1" selected>'.$langs->trans("WarehouseOpened").'</option>';
 	print '</select>';
 	print '</td></tr>';
 
@@ -552,8 +552,8 @@ else
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
-			print '<option value="0" '.($object->statut == 0?'selected="selected"':'').'>'.$langs->trans("WarehouseClosed").'</option>';
-			print '<option value="1" '.($object->statut == 0?'':'selected="selected"').'>'.$langs->trans("WarehouseOpened").'</option>';
+			print '<option value="0" '.($object->statut == 0?'selected':'').'>'.$langs->trans("WarehouseClosed").'</option>';
+			print '<option value="1" '.($object->statut == 0?'':'selected').'>'.$langs->trans("WarehouseOpened").'</option>';
 			print '</select>';
 			print '</td></tr>';
 

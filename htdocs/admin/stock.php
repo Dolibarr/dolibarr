@@ -122,7 +122,7 @@ $disabled='';
 if (! empty($conf->productbatch->enabled))
 {
 	$langs->load("productbatch");
-	$disabled=' disabled="disabled"';
+	$disabled=' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 

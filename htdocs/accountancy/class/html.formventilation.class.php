@@ -66,7 +66,7 @@ class FormVentilation extends Form
 
 				$selected = '';
 				if ($selectedkey == $obj->import_key) {
-					$selected = ' selected="selected" ';
+					$selected = ' selected ';
 				}
 
 				$out .= '<OPTION value="' . $obj->import_key . '"' . $selected . '>' . $obj->import_key . '</OPTION>';
@@ -126,8 +126,8 @@ class FormVentilation extends Form
 					// Remember guy's we store in database llx_facturedet the rowid of accountingaccount and not the account_number
 					// Because same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $obj->rowid) {
-						// $out .= '<option value="' . $obj->account_number . '" selected="selected">' . $label . '</option>';
-						$out .= '<option value="' . $obj->rowid . '" selected="selected">' . $label . '</option>';
+						// $out .= '<option value="' . $obj->account_number . '" selected>' . $label . '</option>';
+						$out .= '<option value="' . $obj->rowid . '" selected>' . $label . '</option>';
 					} else {
 						// $out .= '<option value="' . $obj->account_number . '">' . $label . '</option>';
 						$out .= '<option value="' . $obj->rowid . '">' . $label . '</option>';
@@ -184,7 +184,7 @@ class FormVentilation extends Form
 					$label = $obj->pcg_type;
 
 					if (($selectid != '') && $selectid == $obj->pcg_type) {
-						$out .= '<option value="' . $obj->pcg_type . '" selected="selected">' . $label . '</option>';
+						$out .= '<option value="' . $obj->pcg_type . '" selected>' . $label . '</option>';
 					} else {
 						$out .= '<option value="' . $obj->pcg_type . '">' . $label . '</option>';
 					}
@@ -240,7 +240,7 @@ class FormVentilation extends Form
 					$label = $obj->pcg_subtype;
 
 					if (($selectid != '') && $selectid == $obj->pcg_subtype) {
-						$out .= '<option value="' . $obj->pcg_subtype . '" selected="selected">' . $label . '</option>';
+						$out .= '<option value="' . $obj->pcg_subtype . '" selected>' . $label . '</option>';
 					} else {
 						$out .= '<option value="' . $obj->pcg_subtype . '">' . $label . '</option>';
 					}

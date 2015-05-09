@@ -699,7 +699,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         	print $form->selectarray('users', $liste, '', 1);
         }
        	print '</td><td align="center">';
-       	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled="disabled"').'>';
+       	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
        	print '</td></tr></table>';
        	print '</form>';
 
@@ -1351,7 +1351,7 @@ else
             {
 				print '<tr><td valign="top">'.$langs->trans("ColorUser").'</td>';
 				print '<td colspan="2">';
-				if ($object->color) print '<input type="text" disabled="disabled" style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
+				if ($object->color) print '<input type="text" disabled style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
 				print '</td>';
 				print "</tr>\n";
 			}

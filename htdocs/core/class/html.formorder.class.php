@@ -61,7 +61,7 @@ class FormOrder
 
         foreach($statustohow as $key => $value)
         {
-			print '<option value="'.$value.'"'.(($selected == $key || $selected == $value)?' selected="selected"':'').'>';
+			print '<option value="'.$value.'"'.(($selected == $key || $selected == $value)?' selected':'').'>';
 			print CommandeFournisseur::LibStatut($key,$short);
 	        print '</option>';
         }
@@ -80,16 +80,16 @@ class FormOrder
 	{
 		global $conf,$langs;
 		print '<select class="flat" name="'.$htmlname.'">';
-		if ($addempty) print '<option value="-1" selected="selected">&nbsp;</option>';
+		if ($addempty) print '<option value="-1" selected>&nbsp;</option>';
 
 		// TODO Use a table called llx_c_input_reason
-		print '<option value="0"'.($selected=='0'?' selected="selected"':'').'>'.$langs->trans('OrderSource0').'</option>';
-		print '<option value="1"'.($selected=='1'?' selected="selected"':'').'>'.$langs->trans('OrderSource1').'</option>';
-		print '<option value="2"'.($selected=='2'?' selected="selected"':'').'>'.$langs->trans('OrderSource2').'</option>';
-		print '<option value="3"'.($selected=='3'?' selected="selected"':'').'>'.$langs->trans('OrderSource3').'</option>';
-		print '<option value="4"'.($selected=='4'?' selected="selected"':'').'>'.$langs->trans('OrderSource4').'</option>';
-		print '<option value="5"'.($selected=='5'?' selected="selected"':'').'>'.$langs->trans('OrderSource5').'</option>';
-		print '<option value="6"'.($selected=='6'?' selected="selected"':'').'>'.$langs->trans('OrderSource6').'</option>';
+		print '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans('OrderSource0').'</option>';
+		print '<option value="1"'.($selected=='1'?' selected':'').'>'.$langs->trans('OrderSource1').'</option>';
+		print '<option value="2"'.($selected=='2'?' selected':'').'>'.$langs->trans('OrderSource2').'</option>';
+		print '<option value="3"'.($selected=='3'?' selected':'').'>'.$langs->trans('OrderSource3').'</option>';
+		print '<option value="4"'.($selected=='4'?' selected':'').'>'.$langs->trans('OrderSource4').'</option>';
+		print '<option value="5"'.($selected=='5'?' selected':'').'>'.$langs->trans('OrderSource5').'</option>';
+		print '<option value="6"'.($selected=='6'?' selected':'').'>'.$langs->trans('OrderSource6').'</option>';
 
 		print '</select>';
 	}

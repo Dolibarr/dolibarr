@@ -367,7 +367,7 @@ if ($action == 'create')
 			print '<tr><td colspan="3" align="left">';
 			print '<select name="usenewprice" class="flat">';
 			print '<option value="0">'.$langs->trans("AlwaysUseFixedPrice").'</option>';
-			print '<option value="1" disabled="disabled">'.$langs->trans("AlwaysUseNewPrice").'</option>';
+			print '<option value="1" disabled>'.$langs->trans("AlwaysUseNewPrice").'</option>';
 			print '</select>';
 			print '</td></tr>';
 		}

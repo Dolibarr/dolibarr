@@ -424,7 +424,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	        // Bouton Enregistrer
 	        if ($action != 'add_paiement')
 	        {
-				print '<br><div class="center"><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
 				print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"></div>';
 	        }
 

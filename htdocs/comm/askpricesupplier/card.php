@@ -1216,7 +1216,7 @@ if ($action == 'create')
 		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
 			print '<tr><td colspan="3">&nbsp;</td></tr>';
 
-		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="checked"></td>';
+		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked></td>';
 		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyAsk") . '</td></tr>';
 	}
 

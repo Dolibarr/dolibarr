@@ -1798,7 +1798,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post">';
 	$ret.='<div class="menu_titre menu_titre_search">';
-	$ret.='<label for="'.$htmlinputname.'">';
+	$ret.='<label for="'.$idname.$htmlinputname.'">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title;
 	$ret.='</a>';

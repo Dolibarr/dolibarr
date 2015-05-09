@@ -366,17 +366,17 @@ jQuery(document).ready(function() {
 </script>';
 
 // Checkbox to select from free text
-print '<input id="fillmanually" type="radio" '.((! GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode")=='fillmanually')?'checked="checked" ':'').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
+print '<input id="fillmanually" type="radio" '.((! GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode")=='fillmanually')?'checked ':'').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
 print '<br>';
 
-print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
 print '<br>';
 print '<div class="showforproductselector">';
 $form->select_produits(GETPOST('productid'), 'productid', '');
 print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 
-print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked="checked" ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
+print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
 print '<br>';
 print '<div class="showforthirdpartyselector">';
 print $form->select_company(GETPOST('socid'), 'socid', '', 1);
@@ -423,7 +423,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled="checked" ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input class="button" type="submit" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode"))?'':'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

@@ -103,7 +103,7 @@ if (count($export->array_export_code))
 	}
 	/*
 	 print '<form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
-	print ($user->rights->export->creer?'':' disabled="disabled"');
+	print ($user->rights->export->creer?'':' disabled');
 	print '><div class="center"></div></form>';
 	*/
 }

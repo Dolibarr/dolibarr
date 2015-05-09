@@ -221,7 +221,7 @@ if ($resql) {
 		$row = $db->fetch_row($resql);
 		
 		print '<option value="' . $row[0] . '"';
-		print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected="selected"' : '';
+		print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected' : '';
 		print '>' . $row[1] . ' - ' . $row[3] . '</option>';
 		
 		$i ++;

@@ -135,7 +135,7 @@ if ($action == 'edit')
     print '<td colspan="2">'.$langs->trans("Alert").': ';
     if (! empty($object->birthday_alert))
     {
-        print '<input type="checkbox" name="birthday_alert" checked="checked"></td>';
+        print '<input type="checkbox" name="birthday_alert" checked></td>';
     }
     else
     {

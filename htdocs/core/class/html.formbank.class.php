@@ -65,7 +65,7 @@ class FormBank
             {
                 if ($selected == $type_available[$i])
                 {
-                    print '<option value="'.$type_available[$i].'" selected="selected">'.$langs->trans("BankType".$type_available[$i]).'</option>';
+                    print '<option value="'.$type_available[$i].'" selected>'.$langs->trans("BankType".$type_available[$i]).'</option>';
                 }
                 else
                 {

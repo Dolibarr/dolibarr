@@ -568,7 +568,7 @@ if ($id > 0 || ! empty($ref))
 
 				//print '<div class="center">';
 				print '<input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
-				if (count($listwarehouses) <= 0) print ' disabled="disabled"';
+				if (count($listwarehouses) <= 0) print ' disabled';
 				print '>';
 				//print '</div>';
 			}

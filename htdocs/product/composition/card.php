@@ -367,7 +367,7 @@ if ($id > 0 || ! empty($ref))
 					if ($user->rights->produit->creer || $user->rights->service->creer)
 					{
 						print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
-						print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked="checked"':''  ).' /></td>';
+						print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
 
 					}
 					else{
@@ -536,7 +536,7 @@ if ($id > 0 || ! empty($ref))
 
 						if($object->is_sousproduit($id, $objp->rowid))
 						{
-							//$addchecked = ' checked="checked"';
+							//$addchecked = ' checked';
 							$qty=$object->is_sousproduit_qty;
 							$incdec=$object->is_sousproduit_incdec;
 						}
@@ -554,12 +554,12 @@ if ($id > 0 || ! empty($ref))
 
 						// Inc Dec
 						print '<td align="center">';
-						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec?'checked="checked"':'').'>';
+						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec?'checked':'').'>';
 						else
 						{
 							// TODO Hide field and show it when setting a qty
-							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked="checked">';
-							//print '<input type="checkbox" disabled="true" name="prod_incdec_'.$i.'" value="1" checked="checked">';
+							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
+							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
 						}
 						print '</td>';
 
