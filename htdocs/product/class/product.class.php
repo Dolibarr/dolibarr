@@ -493,7 +493,7 @@ class Product extends CommonObject
 		$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 		$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 		$sql.= " WHERE rowid = " . $id;
-var_dump($sql);die;
+
 		dol_syslog(get_class($this)."update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
