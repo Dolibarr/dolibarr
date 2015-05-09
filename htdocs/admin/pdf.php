@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2103 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2105 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -408,11 +408,11 @@ else	// Show
 	}
 	print '</td>';
 	print '<td align="center" width="140">';
-	if ($conf->global->PDF_SECURITY_ENCRYPTION == 0)
+	if (empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_pdfsecurity">'.$langs->trans("Activate").'</a>';
 	}
-	if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
+	else
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_pdfsecurity">'.$langs->trans("Disable").'</a>';
 	}
