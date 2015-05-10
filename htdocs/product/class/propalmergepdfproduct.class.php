@@ -225,9 +225,9 @@ class Propalmergepdfproduct extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param	int		$id    Id object
-     *  @param	string	$lang  lang string id
-     *  @return int          	<0 if KO, >0 if OK
+     *  @param	int		$product_id    	Id object
+     *  @param	string	$lang  			Lang string code
+     *  @return int          			<0 if KO, >0 if OK
      */
     function fetch_by_product($product_id, $lang='')
     {
@@ -637,7 +637,11 @@ class Propalmergepdfproduct extends CommonObject
 
 }
 
-class PropalmergepdfproductLine{
+/**
+ * Class to manage propal merge of product line
+ */
+class PropalmergepdfproductLine
+{
 	var $id;
 	
 	var $fk_product;

@@ -156,7 +156,7 @@ LastStepDesc=<strong>Paskutinis žingsnis</strong>: Nustatykite čia prisijungim
 ActivateModule=Įjungti modulį %s
 ShowEditTechnicalParameters=Spauskite čia, kad galėtumete matyti/redaguoti išplėstinius parametrus (eksperto režime)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+ErrorDatabaseVersionForbiddenForMigration=Jūsų duomenų bazės versija yra %s. Gali būti kritinė situacija su duomenų praradimu, jeigu pakeisite duomenų bazės struktūrą, kaip reikalaujama perkėlimo proceso metu. Šiuo tikslu perkėlimas nebus leidžiamas, kol nebus atliktas duomenų bazės programos atnaujinimas į aukštesnę versiją (žinomų klaidingų versijų sąrašas: %s)
 
 #########
 # upgrade
@@ -208,7 +208,7 @@ MigrationProjectTaskTime=Atnaujinti praleistą laiką sekundėmis
 MigrationActioncommElement=Atnaujinti veiksmų duomenis
 MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Parodyti negalimas opcijas
+HideNotAvailableOptions=Paslėpti negalimas opcijas

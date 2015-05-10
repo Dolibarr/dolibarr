@@ -14,6 +14,7 @@ MyTasksDesc=Tämä näkemys on vain hankkeisiin tai tehtäviä olet yhteyshenkil
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Tämä näkemys esitetään kaikki hankkeet ja tehtävät sinulla voi lukea.
 TasksDesc=Tämä näkemys esitetään kaikki hankkeet ja tehtävät (käyttäjäoikeuksien antaa sinulle luvan katsella kaikkea).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projektit alueella
 NewProject=Uusi projekti
 AddProject=Create project

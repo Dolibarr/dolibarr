@@ -236,7 +236,7 @@ if ($resql)
 		$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ';
 	}
-	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked="checked"':'').'>';
+	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
  	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';

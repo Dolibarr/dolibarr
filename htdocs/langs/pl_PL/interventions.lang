@@ -50,4 +50,4 @@ ArcticNumRefModelError=Nie można włączyć
 PacificNumRefModelDesc1=Wróć NUMERO z formatu %syymm rr-nnnn gdzie jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
 PacificNumRefModelError=Interwencja karty zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
 PrintProductsOnFichinter=Drukarnie na karcie interwencyjną
-PrintProductsOnFichinterDetails=forinterventions wygenerowane z zamówień
+PrintProductsOnFichinterDetails=Interwencje generowane z zamówień

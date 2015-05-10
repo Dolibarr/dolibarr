@@ -25,4 +25,4 @@ Sender=Expéditeur
 Recipient=Destinataire
 ErrorStockIsNotEnough=Le stock est insuffisant
 Shippable=Expédiable
-NonShippable=Non Expédiable
+NonShippable=Non expédiable

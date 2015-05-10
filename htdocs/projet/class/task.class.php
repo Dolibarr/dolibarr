@@ -561,9 +561,12 @@ class Task extends CommonObject
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
      * @param	string	$filteronprojstatus	Filter on project status
+     * @param	string	$morewherefilter	Add more filter into where SQL request
+     * @param	string	$filteronprojuser	Filter on user that is a contact of project
+     * @param	string	$filterontaskuse	Filter on user assigned to task
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1)
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuse=0)
     {
         global $conf;
 
@@ -573,27 +576,34 @@ class Task extends CommonObject
 
         // List of tasks (does not care about permissions. Filtering will be done later)
         $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut,";
-        $sql.= " t.rowid as taskid, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress,";
-        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.ref as ref_task,t.rang";
+        $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress,";
+        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang";
         if ($mode == 0)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-            $sql.= " WHERE t.fk_projet = p.rowid";
-            $sql.= " AND p.entity = ".$conf->entity;
-            if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-            if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
+            $sql.= " WHERE p.entity = ".$conf->entity;
+            $sql.= " AND t.fk_projet = p.rowid";
         }
         if ($mode == 1)
         {
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             $sql.= " WHERE p.entity = ".$conf->entity;
-            if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
-            if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         }
+        if ($filteronprojuser)
+        {
+			// TODO
+        }
+        if ($filterontaskuser)
+        {
+			// TODO
+        }
+        if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
+        if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
+        if ($morewherefilter) $sql.=" AND (".$morewherefilter.")";
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
         //print $sql;exit;
@@ -629,7 +639,7 @@ class Task extends CommonObject
                 {
 					$tasks[$i] = new Task($this->db);
                     $tasks[$i]->id				= $obj->taskid;
-					$tasks[$i]->ref				= $obj->ref_task;
+					$tasks[$i]->ref				= $obj->taskref;
                     $tasks[$i]->fk_project		= $obj->projectid;
                     $tasks[$i]->projectref		= $obj->ref;
                     $tasks[$i]->projectlabel	= $obj->plabel;

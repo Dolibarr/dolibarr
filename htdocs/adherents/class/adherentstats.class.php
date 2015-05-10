@@ -65,7 +65,7 @@ class AdherentStats extends Stats
 		$this->field='cotisation';
 
 		$this->where.= " m.statut != 0";
-		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity = ".$conf->entity;
+		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent', 1).")";
 		//if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->memberid)
 		{

@@ -27,3 +27,5 @@ ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_date_fin_validite (date_fin_
 
 ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_contrat FOREIGN KEY (fk_contrat) REFERENCES llx_contrat (rowid);
 ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+
+ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);

@@ -61,6 +61,15 @@ if (in_array($object->element,array('propal', 'askpricesupplier','facture','invo
 	<td align="right"><span id="title_up_ttc"><?php echo $langs->trans('PriceUTTC'); ?></span></td>
 	<?php } ?>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td align="left">';
+		print '<span id="title_units">';
+		print $langs->trans('Unit');
+		print '</span></td>';
+	}
+	?>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
 	if ($this->situation_cycle_ref) {
@@ -93,7 +102,7 @@ else {
 	$coldisplay=0; }
 ?>
 
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td class="nobottom"<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 
 	<?php
 
@@ -111,8 +120,8 @@ else {
 	{
 		echo '<label for="prod_entry_mode_free">';
 		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
-		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked="true"':'') );
-		echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : '');
+		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
+		echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
 		echo '> ';
 		// Show type selector
 		echo $langs->trans("FreeLineOfType");
@@ -140,7 +149,7 @@ else {
 		if ($forceall >= 0) echo '<br>';
 		echo '<span>';
 		echo '<label for="prod_entry_mode_predef">';
-		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked="true"':'').'> ';
+		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
 		if (empty($senderissupplier))
 		{
 			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
@@ -200,36 +209,44 @@ else {
 	$doleditor->Create();
 	?>
 	</td>
-	
+
 	<?php if ($object->element == 'askpricesupplier') { ?>
-		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+		<td class="nobottom" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
 	<?php } ?>
-	
-	<td align="right"><?php
+
+	<td class="nobottom" align="right"><?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">0';
 	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
-	<td align="right">
+	<td class="nobottom" align="right">
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 	</td>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
-	<td align="right">
+	<td class="nobottom" align="right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?$_POST["price_ttc"]:''); ?>">
 	</td>
 	<?php } ?>
-	<td align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
+	<td class="nobottom" align="right"><input type="text" size="2" name="qty" id="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
-	<td align="right" class="nowrap"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<?php
+	if($conf->global->PRODUCT_USE_UNITS)
+	{
+		print '<td class="nobottom" align="left">';
+		print $form->selectUnits($line->fk_unit, "units");
+		print '</td>';
+	}
+	?>
+	<td class="nobottom nowrap" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" class="nowrap"><input type="text" size="1" value="0" name="progress">%</td>';
+		print '<td class="nobottom nowrap" align="right"><input type="text" size="1" value="0" name="progress">%</td>';
 	}
 	if (! empty($usemargins))
 	{
 		?>
-		<td align="right" class="margininfos">
+		<td class="nobottom" align="right" class="margininfos">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
@@ -244,12 +261,12 @@ else {
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nobottom nowrap margininfos"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td align="right" class="nowrap margininfos"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nobottom nowrap margininfos"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -260,7 +277,7 @@ else {
 		}
 	}
 	?>
-	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+	<td class="nobottom" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 	<?php
@@ -303,6 +320,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	if($this->situation_cycle_ref) $colspan++;
 	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 	if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+	if ($conf->global->PRODUCT_USE_UNITS) {
+		$colspan++;
+	}
 
 	if (! empty($usemargins))
 	{
@@ -577,6 +597,7 @@ function setforfree() {
 	jQuery("#np_markRate").show();	// May no exists
 	jQuery(".np_marginRate").show();	// May no exists
 	jQuery(".np_markRate").show();	// May no exists
+	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
 	jQuery("#select_type").val(-1);
@@ -593,6 +614,8 @@ function setforpredef() {
 	jQuery("#np_markRate").hide();	// May no exists
 	jQuery(".np_marginRate").hide();	// May no exists
 	jQuery(".np_markRate").hide();	// May no exists
+	jQuery(".np_markRate").hide();	// May no exists
+	jQuery("#units, #title_units").hide();
 }
 
 </script>

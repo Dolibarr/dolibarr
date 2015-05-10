@@ -127,7 +127,7 @@ if ($search_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql.= ' WHERE c.fk_soc = s.rowid';
-$sql.= ' AND c.entity = '.$conf->entity;
+$sql.= ' AND c.entity IN ('.getEntity('commande', 1).')';
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) {

@@ -101,8 +101,6 @@ class box_clients extends ModeleBoxes
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-                if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url= DOL_URL_ROOT."/comm/card.php?socid=";
-                else $url= DOL_URL_ROOT."/societe/soc.php?socid=";
 
 				$line = 0;
 				while ($line < $num)

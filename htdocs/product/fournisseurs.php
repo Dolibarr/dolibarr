@@ -280,7 +280,7 @@ if ($id || $ref)
 			print '</tr>';
 
 			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->label.'</td></tr>';
 
 			// Minimum Price
 			print '<tr><td>'.$langs->trans("BuyingPriceMin").'</td>';
@@ -523,20 +523,20 @@ if ($id || $ref)
 				$param="&id=".$product->id;
 				print '<tr class="liste_titre">';
 				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
+				print_liste_field_titre($langs->trans("SupplierRef"));
 				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
-				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
-				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
+				print_liste_field_titre($langs->trans("VATRate"));
+				print_liste_field_titre($langs->trans("PriceQtyMinHT"));
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
-				print '<td class="liste_titre" align="right">'.$langs->trans("DiscountQtyMin").'</td>';
+				print_liste_field_titre($langs->trans("DiscountQtyMin"));
 				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
-					if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
+					if (! empty($conf->margin->enabled)) print_liste_field_titre($langs->trans("UnitCharges"));
 				}
-				print '<td class="liste_titre"></td>';
+				print_liste_field_titre('');
 				print "</tr>\n";
 
 				$product_fourn = new ProductFournisseur($db);

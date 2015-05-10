@@ -40,6 +40,8 @@ if (! isset($argv[1]) || ! $argv[1]) {
 	exit(-1);
 }
 $id=$argv[1];
+if (! isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
+else $login = '';
 
 require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
@@ -58,7 +60,9 @@ $error=0;
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-
+$user = new User($db);
+// for signature, we use user send as parameter
+if (! empty($login)) $user->fetch('',$login);
 
 // We get list of emailing to process
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
@@ -144,6 +148,8 @@ if ($resql)
 						$other4=$other[3];
 						$other5=$other[4];
 						// Array of possible substitutions (See also fie mailing-send.php that should manage same substitutions)
+						$signature = (!empty($user->signature))?$user->signature:''; 
+						
 						$substitutionarray=array(
 							'__ID__' => $obj->source_id,
 							'__EMAIL__' => $obj->email,
@@ -155,7 +161,7 @@ if ($resql)
 							'__OTHER3__' => $other3,
 							'__OTHER4__' => $other4,
 							'__OTHER5__' => $other5,
-							'__SIGNATURE__' => '',	// Signature is empty when ran from command line (user is a bot)
+							'__SIGNATURE__' => $signature,	// Signature is empty when ran from command line or taken from user in parameter)
 							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
 						);

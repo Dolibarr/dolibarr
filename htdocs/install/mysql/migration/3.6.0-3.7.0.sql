@@ -207,8 +207,9 @@ UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELE
 -- fk_user_author
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_user_author (fk_user_author);
 UPDATE llx_product_price set fk_user_author = null where fk_user_author = 0;
+UPDATE llx_product_price set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREIGN KEY (fk_user_author) REFERENCES  llx_user (rowid);
--- fk_user_author
+-- fk_product
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
 DELETE from llx_product_price where fk_product NOT IN (SELECT rowid from llx_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
@@ -1179,3 +1180,5 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (212, 21,  '18','0',7.5,2,0,0,'IVA standard rate',1);
 
 ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;
+
+INSERT INTO llx_const (name, value, type, note, visible, entity) values ('PRODUCT_USE_OLD_PATH_FOR_PHOTO','1','chaine','Use old path for products images',1,1);

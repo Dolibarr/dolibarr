@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -1622,7 +1622,7 @@ class AskPriceSupplier extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$product->ref_fourn.'", ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
 
 		$resql = $this->db->query($sql);
-		if (!resql) {
+		if (!$resql) {
 			$this->error=$this->db->error();
             $this->db->rollback();
             return -1;
@@ -1658,7 +1658,7 @@ class AskPriceSupplier extends CommonObject
 		$sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user) VALUES ('.implode(',', $values).')';
 
 		$resql = $this->db->query($sql);
-		if (!resql) {
+		if (!$resql) {
 			$this->error=$this->db->error();
             $this->db->rollback();
             return -1;

@@ -43,4 +43,4 @@ ListOfSupplierOrders=Lista comenzi furnizori
 MenuOrdersSupplierToBill=Comenzi Furnizor de facturat
 NbDaysToDelivery= Intârziere Livrare in zile
 DescNbDaysToDelivery=Cea mai mare intarziere este afisata in lista produsului comandat
-UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)
+UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

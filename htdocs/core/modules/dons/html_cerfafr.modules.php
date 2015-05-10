@@ -181,7 +181,7 @@ class html_cerfafr extends ModeleDon
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART200 >= 1) 
 					{
-						$art200='<input type="checkbox" checked="checked">200 du CGI';
+						$art200='<input type="checkbox" checked>200 du CGI';
 					}
 					else
 					{
@@ -194,7 +194,7 @@ class html_cerfafr extends ModeleDon
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART238 >= 1) 
 					{
-						$art238='<input type="checkbox" checked="checked">238 bis du CGI';
+						$art238='<input type="checkbox" checked>238 bis du CGI';
 					}
 					else
 					{
@@ -207,7 +207,7 @@ class html_cerfafr extends ModeleDon
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART885 >= 1) 
 					{
-						$art885='<input type="checkbox" checked="checked">885-0 V bis du CGI';
+						$art885='<input type="checkbox" checked>885-0 V bis du CGI';
 					}
 					else
 					{

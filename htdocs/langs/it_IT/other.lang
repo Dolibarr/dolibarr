@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Intervento convalidato
 Notify_FICHINTER_SENTBYMAIL=Intervento inviato per posta
 Notify_BILL_VALIDATE=Convalida fattura attiva
 Notify_BILL_UNVALIDATE=Ricevuta cliente non convalidata
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Ordine fornitore approvato
 Notify_ORDER_SUPPLIER_REFUSE=Ordine fornitore rifiutato
 Notify_ORDER_VALIDATE=Ordine cliente convalidato
@@ -203,6 +202,7 @@ NewKeyWillBe=Le tue nuove credenziali per loggare al software sono
 ClickHereToGoTo=Clicca qui per andare a %s
 YouMustClickToChange=Devi cliccare sul seguente link per validare il cambio della password
 ForgetIfNothing=Se non hai richiesto questo cambio, lascia perdere questa mail. Le tue credenziali sono mantenute al sicuro.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Aggiungi evento al calendario %s

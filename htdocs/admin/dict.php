@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
- * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
  * Copyright (C) 2011-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
@@ -70,7 +70,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,23,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,0,25);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,10,23,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,0,25,0,26);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -99,6 +99,8 @@ $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
 $tabname[23]= MAIN_DB_PREFIX."c_revenuestamp";
 $tabname[24]= MAIN_DB_PREFIX."c_type_resource";
 $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
+$tabname[26]= MAIN_DB_PREFIX."c_units";
+$tabname[27]= MAIN_DB_PREFIX."c_stcomm";
 
 // Dictionary labels
 $tablib=array();
@@ -127,6 +129,8 @@ $tablib[22]= "DictionarySource";
 $tablib[23]= "DictionaryRevenueStamp";
 $tablib[24]= "DictionaryResourceType";
 $tablib[25]= "DictionaryEMailTemplates";
+$tablib[26]= "DictionaryUnits";
+$tablib[27]= "DictionaryProspectStatus";
 
 // Requests to extract data
 $tabsql=array();
@@ -152,9 +156,11 @@ $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
 $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
-$tabsql[23]= "SELECT t.rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
+$tabsql[23]= "SELECT t.rowid as rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
 $tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content, active FROM ".MAIN_DB_PREFIX."c_email_templates";
+$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
+$tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -183,6 +189,8 @@ $tabsqlsort[22]="code ASC, label ASC";
 $tabsqlsort[23]="country ASC, taux ASC";
 $tabsqlsort[24]="code ASC,label ASC";
 $tabsqlsort[25]="label ASC";
+$tabsqlsort[26]="code ASC";
+$tabsqlsort[27]="code ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -211,6 +219,8 @@ $tabfield[22]= "code,label";
 $tabfield[23]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[24]= "code,label";
 $tabfield[25]= "label,type_template,private,position,topic,content";
+$tabfield[26]= "code,label,short_label";
+$tabfield[27]= "code,libelle";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -239,6 +249,8 @@ $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[23]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[24]= "code,label";
 $tabfieldvalue[25]= "label,type_template,private,position,topic,content";
+$tabfieldvalue[26]= "code,label,short_label";
+$tabfieldvalue[27]= "code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -267,6 +279,8 @@ $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[23]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24]= "code,label";
 $tabfieldinsert[25]= "label,type_template,private,position,topic,content";
+$tabfieldinsert[26]= "code,label,short_label";
+$tabfieldinsert[27]= "code,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -297,6 +311,8 @@ $tabrowid[22]= "rowid";
 $tabrowid[23]= "";
 $tabrowid[24]= "";
 $tabrowid[25]= "";
+$tabrowid[26]= "";
+$tabrowid[27]= "id";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -325,6 +341,8 @@ $tabcond[22]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabl
 $tabcond[23]= true;
 $tabcond[24]= ! empty($conf->resource->enabled);
 $tabcond[25]= true; // && ! empty($conf->global->MAIN_EMAIL_EDIT_TEMPLATE_FROM_DIC);
+$tabcond[26]= ! empty($conf->product->enabled);
+$tabcond[27]= ! empty($conf->societe->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -353,6 +371,8 @@ $tabhelp[22] = array();
 $tabhelp[23] = array();
 $tabhelp[24] = array();
 $tabhelp[25] = array();
+$tabhelp[26] = array();
+$tabhelp[27] = array();
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -381,6 +401,8 @@ $tabfieldcheck[22] = array();
 $tabfieldcheck[23] = array();
 $tabfieldcheck[24] = array();
 $tabfieldcheck[25] = array();
+$tabfieldcheck[26] = array();
+$tabfieldcheck[27] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
@@ -858,6 +880,7 @@ if ($id)
             if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
             if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
             if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
+	        if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -995,6 +1018,7 @@ if ($id)
                 if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
                 if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
                 if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
+	            if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
 
                 // Affiche nom du champ
                 if ($showfield)
@@ -1006,7 +1030,8 @@ if ($id)
             if ($id == 4) print getTitleFieldOfList($langs->trans("Favorite"),0,$_SERVER["PHP_SELF"],"favorite",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
 
 			print getTitleFieldOfList($langs->trans("Status"),0,$_SERVER["PHP_SELF"],"active",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
-            print '<td colspan="3"  class="liste_titre">&nbsp;</td>';
+            print getTitleFieldOfList('');
+            print getTitleFieldOfList('');
             print '</tr>';
 
             // Lines with values
@@ -1159,7 +1184,14 @@ if ($id)
                             else if ($fieldlist[$field]=='unicode') {
                             	$valuetoshow = $langs->getCurrencySymbol($obj->code,1);
                             }
-
+                            else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
+	                            $langs->load("products");
+	                            $valuetoshow=$langs->trans($obj->$fieldlist[$field]);
+                            }
+                            else if ($fieldlist[$field]=='short_label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
+	                            $langs->load("products");
+	                            $valuetoshow = $langs->trans($obj->$fieldlist[$field]);
+                            }
                             else if (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format'))
                             {
                             	$key = $langs->trans('SizeUnit'.strtolower($obj->unit));
@@ -1217,7 +1249,7 @@ if ($id)
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $isdisable=0; $isdisable = 0; }
 
-                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;';
+                    $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;id='.$id.'&amp;';
 
 					// Favorite
 					// Only activated on country dictionary

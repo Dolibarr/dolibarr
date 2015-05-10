@@ -643,8 +643,8 @@ class Categorie extends CommonObject
 	{
 		$field=''; $classname=''; $category_table=''; $object_table='';
 		if ($type=='product')  { $field='product'; $classname='Product'; }
-		if ($type=='customer') { $field='societe'; $classname='Societe'; }
-		if ($type=='supplier') { $field='societe'; $classname='Fournisseur'; $category_table='fournisseur'; }
+		if ($type=='customer') { $field='soc'; $classname='Societe'; $category_table='societe'; $object_table='societe'; }
+		if ($type=='supplier') { $field='soc'; $classname='Fournisseur'; $category_table='fournisseur'; $object_table='societe'; }
 		if ($type=='member')   { $field='member'; $classname='Adherent'; $category_table=''; $object_table='adherent'; }
 		if ($type=='contact')  { $field='socpeople'; $classname='Contact'; $category_table='contact'; $object_table='socpeople'; }
 
@@ -1064,11 +1064,11 @@ class Categorie extends CommonObject
 	 */
 	function print_all_ways($sep = " &gt;&gt; ", $url='')
 	{
-		$ways = array ();
+		$ways = array();
 
 		foreach ($this->get_all_ways() as $way)
 		{
-			$w = array ();
+			$w = array();
 			foreach ($way as $cat)
 			{
 				if ($url == '')

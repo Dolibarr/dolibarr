@@ -351,7 +351,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</form>';
 
 }
-else
+else if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu

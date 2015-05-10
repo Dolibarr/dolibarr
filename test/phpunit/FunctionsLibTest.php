@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -853,7 +854,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	$vat1=get_default_localtax($companyes,$companyes,1,0);
     	$vat2=get_default_localtax($companyes,$companyes,2,0);
     	$this->assertEquals(5.2,$vat1);
-    	$this->assertEquals(-21,$vat2);
+    	$this->assertEquals(-19,$vat2);
 
     	// Test RULE ES-IT
     	$vat1=get_default_localtax($companyes,$companyit,1,0);

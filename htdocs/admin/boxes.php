@@ -375,7 +375,7 @@ foreach($boxtoadd as $box)
 
 print '</table>'."\n";
 print '<div class="right">';
-print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled="disabled"').' value="'.$langs->trans("Activate").'">';
+print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
 print '</form>';
 print "\n".'<!-- End Boxes Available -->'."\n";

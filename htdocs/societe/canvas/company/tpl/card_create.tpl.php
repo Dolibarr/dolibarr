@@ -28,7 +28,7 @@
 <?php echo $this->control->tpl['ajax_selecttype']; ?>
 <br>
 <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
-<input type="radio" id="radiocompany" class="flat" name="private" value="0" checked="checked">
+<input type="radio" id="radiocompany" class="flat" name="private" value="0" checked>
 <?php echo $langs->trans("Company/Fundation"); ?> &nbsp; &nbsp;
 <input type="radio" id="radioprivate" class="flat" name="private" value="1"> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>

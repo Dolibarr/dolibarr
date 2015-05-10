@@ -32,7 +32,7 @@ create table llx_stock_mouvement
   type_mouvement  smallint,
   fk_user_author  integer,
   label           varchar(255),		-- comment on movement
-  inventorycode   varchar(128),
+  inventorycode   varchar(128),		-- code used to group different movement line into one operation (may be an inventory, a mass picking)
   fk_origin       integer,
   origintype      varchar(32)
 )ENGINE=innodb;

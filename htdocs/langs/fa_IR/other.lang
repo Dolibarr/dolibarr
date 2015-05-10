@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=مداخله اعتبار
 Notify_FICHINTER_SENTBYMAIL=مداخله با پست
 Notify_BILL_VALIDATE=صورت حساب به مشتری اعتبار
 Notify_BILL_UNVALIDATE=صورت حساب به مشتری unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=منظور تامین کننده تایید
 Notify_ORDER_SUPPLIER_REFUSE=منظور تامین کننده خودداری کرد
 Notify_ORDER_VALIDATE=سفارش مشتری معتبر
@@ -203,6 +202,7 @@ NewKeyWillBe=کلید جدید را برای ورود به نرم افزار خ�
 ClickHereToGoTo=برای رفتن به٪ s اینجا را کلیک کنید
 YouMustClickToChange=با این حال شما باید اول بر روی لینک زیر کلیک کنید تا اعتبار این تغییر رمز عبور
 ForgetIfNothing=اگر شما این تغییر را درخواست نکرده، فقط این ایمیل را فراموش کرده ام. اعتبار نامه های شما امن نگهداری می شود.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=اضافه کردن ورودی در تقویم از٪ s

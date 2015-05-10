@@ -140,6 +140,7 @@ if (empty($reshook))
 
 	    $object->socid					= $objectsrc->socid;
 	    $object->ref_customer			= $objectsrc->ref_client;
+	    $object->model_pdf				= GETPOST('model');
 	    $object->date_delivery			= $date_delivery;	// Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
 	    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
@@ -405,7 +406,7 @@ if (empty($reshook))
 	        $outputlangs = new Translate("",$conf);
 	        $outputlangs->setDefaultLang($newlang);
 	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs);
+		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result <= 0)
 	    {
 	        dol_print_error($db,$result);
@@ -603,6 +604,14 @@ if ($action == 'create')
 				print '</td></tr>';
 			}
 
+            // Document model
+            print "<tr><td>".$langs->trans("Model")."</td>";
+            print '<td colspan="3">';
+			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
+			$liste = ModelePdfExpedition::liste_modeles($db);
+			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
+            print "</td></tr>\n";
+            
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook

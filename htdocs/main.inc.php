@@ -1,15 +1,16 @@
 <?php
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2014 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2008      Matteli
- * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2008       Matteli
+ * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -575,18 +576,14 @@ if (! defined('NOLOGIN'))
         }
         else
        {
-            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming)
-            {
-                // TODO We should use a hook here, not a trigger.
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++;
-                }
-                // End call triggers
-            }
+	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+	       $hookmanager->initHooks(array('main'));
+
+	       $action = '';
+	       $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+	       if ($reshook < 0) {
+		       setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	       }
         }
     }
 
@@ -1189,10 +1186,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
             }
-            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
+            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2", ...
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
@@ -1665,21 +1662,28 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        }
 	    }
 
-	    // Link to bugtrack
-	    if (! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
-	    {
-	    	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		// Link to bugtrack
+		if (! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	        $bugbaseurl='https://doliforge.org/tracker/?';
-	        $bugbaseurl.='func=add&group_id=144&atid=246';
-	        $bugbaseurl.="&details=";
-	        $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
-	        $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
-	        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
-	        $bugbaseurl.=urlencode($langs->trans("PHP").": ".version_php()."\n");
-	        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-	        print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
-	    }
+			$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new';
+			$bugbaseurl.= '?title=';
+			$bugbaseurl.= urlencode("Bug: ");
+			$bugbaseurl.= '&body=';
+			$bugbaseurl.= urlencode("# Environment\n");
+			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
+			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
+			$bugbaseurl.= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
+			$bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
+			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
+			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
+			$bugbaseurl.= urlencode("\n");
+			$bugbaseurl.= urlencode("# Report\n");
+			print '<p id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
+			print '<a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '</p>';
+		}
 
         print "</div>\n";
         print "<!-- End Help Block-->\n";
@@ -1794,7 +1798,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post">';
 	$ret.='<div class="menu_titre menu_titre_search">';
-	$ret.='<label for="'.$htmlinputname.'">';
+	$ret.='<label for="'.$idname.$htmlinputname.'">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title;
 	$ret.='</a>';

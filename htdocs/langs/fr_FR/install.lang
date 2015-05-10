@@ -89,7 +89,7 @@ SystemIsUpgraded=Dolibarr a été mis à jour avec succès.
 YouNeedToPersonalizeSetup=Vous devez maintenant configurer Dolibarr selon vos besoins (Choix de l'apparence, des fonctionnalités, etc.). Pour cela, cliquez sur le lien ci-dessous :
 AdminLoginCreatedSuccessfuly=Création du compte administrateur Dolibarr '<b>%s</b>' réussie.
 GoToDolibarr=Accéder à Dolibarr
-GoToSetupArea=Accéder à Dolibarr (espace configuration)
+GoToSetupArea=Accéder à Dolibarr (espace de configuration)
 MigrationNotFinished=La version de votre base n'est pas encore complètement à niveau, aussi il vous faudra relancer à nouveau une migration.
 GoToUpgradePage=Accéder à la page de migration à nouveau
 Examples=Exemples
@@ -156,7 +156,7 @@ LastStepDesc=<strong>Dernière étape</strong>: Définissez ici l'identifiant et
 ActivateModule=Activation du module %s
 ShowEditTechnicalParameters=Cliquer ici pour afficher/éditer les paramètres techniques (mode expert)
 WarningUpgrade=Attention :\nAvez-vous fait une sauvegarde de la base de données en premier ?\nA cause de problèmes dans le système de base de données (Par exemple mysql version 5.5.40), beaucoup de données ou de tables peuvent être perdu pendant le processus de migration, il est donc très recommandé d'avoir une sauvegarde complète de votre base de données avant de commencer le processus de migration.\n\nCliquez OK pour commencer le processus de migration
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+ErrorDatabaseVersionForbiddenForMigration=La version de votre gestionnaire de base de données est %s. Celle-ci présente un défaut critique entraînant des pertes de données si vous changez la structure de votre base de données tel que requis par le processus de migration. C'est pourquoi la migration vous sera interdite tant que vous n'aurez pas mis à jour votre gestionnaire de base de données vers une version supérieure corrigée (Liste des versions affectées par le défaut : %s).
 
 #########
 # upgrade

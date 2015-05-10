@@ -14,6 +14,7 @@ MyTasksDesc=Þessi skoðun er takmörkuð við verkefni eða verkefni sem þú e
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=Þetta sýnir öll verkefni og verkefni sem þú ert að fá að lesa.
 TasksDesc=Þetta sýnir öll verkefni og verkefni (notandi heimildir veita þér leyfi til að skoða allt).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Verkefni area
 NewProject=Ný verkefni
 AddProject=Create project

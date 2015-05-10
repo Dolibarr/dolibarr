@@ -14,6 +14,7 @@ MyTasksDesc=این دیدگاه به پروژه ها و یا کارهای شما
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=این دیدگاه ارائه تمام پروژه ها و کارهای شما مجاز به خواندن.
 TasksDesc=این دیدگاه ارائه تمام پروژه ها و وظایف (مجوز دسترسی خود را به شما عطا اجازه دسترسی به همه چیز).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=منطقه پروژه ها
 NewProject=پروژه های جدید
 AddProject=Create project

@@ -263,12 +263,12 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $result=$localobject->update($user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        $result=$localobject->update_note($localobject->note);
+        $result=$localobject->update_note($localobject->note,'_private');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-        //$result=$localobject->update_note_public($localobject->note_public);
-        //print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        //$this->assertLessThan($result, 0);
+        $result=$localobject->update_note_public($localobject->note,'_public');
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
 
         $newobject=new Adherent($this->savdb);
         $result=$newobject->fetch($localobject->id);
@@ -278,8 +278,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($localobject->civility_id, $newobject->civility_id);
         $this->assertEquals($localobject->login, $newobject->login);
         $this->assertEquals($localobject->societe, $newobject->societe);
-        $this->assertEquals($localobject->note, $newobject->note);
-        //$this->assertEquals($localobject->note_public, $newobject->note_public);
+        $this->assertEquals($localobject->note_public, $newobject->note_public);
         $this->assertEquals($localobject->lastname, $newobject->lastname);
         $this->assertEquals($localobject->firstname, $newobject->firstname);
         $this->assertEquals($localobject->address, $newobject->address);
@@ -417,7 +416,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $this->assertNull($localobject->fk_soc);
 
         //Now we remove the third party
-        $result = $thirdparty->delete($thirdparty->id);
+        $result = $thirdparty->delete($thirdparty->id,$user);
         $this->assertEquals($result, 1);
 
         return $localobject;

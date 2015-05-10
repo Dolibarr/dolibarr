@@ -50,4 +50,4 @@ ArcticNumRefModelError=Epäonnistui aktivoida
 PacificNumRefModelDesc1=Paluu numero on muodossa %syymm-nnnn jossa VV on vuosi, mm kuukausi ja nnnn on sarja ilman taukoa eikä palata 0
 PacificNumRefModelError=Interventiokynnyksen kortin alkaen $ syymm jo olemassa, ja ei ole yhteensopiva tämän mallin järjestyksessä. Poistaa sen tai nimetä sen aktivoida tämän moduulin.
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders

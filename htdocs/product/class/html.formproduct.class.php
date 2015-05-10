@@ -72,7 +72,7 @@ class FormProduct
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
 			$sql.= " AND ps.fk_product = '".$fk_product."'";
 		}
-		$sql.= " WHERE e.entity = ".$conf->entity;
+		$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
 		$sql.= " AND e.statut = 1";
 		$sql.= " ORDER BY e.label";
 
@@ -121,12 +121,12 @@ class FormProduct
 		$this->loadWarehouses($fk_product);
 		$nbofwarehouses=count($this->cache_warehouses);
 		
-		$out='<select class="flat"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
+		$out='<select class="flat"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
 			$out.='<option value="'.$id.'"';
-			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected="selected"';
+			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
 			$out.=$arraytypes['label'];
 			if ($fk_product) $out.=' ('.$langs->trans("Stock").': '.($arraytypes['stock']>0?$arraytypes['stock']:'?').')';
@@ -184,7 +184,7 @@ class FormProduct
 			$return.= '<option value="'.$key.'"';
 			if ($key == $default)
 			{
-				$return.= ' selected="selected"';
+				$return.= ' selected';
 			}
 			//$return.= '>'.$value.'</option>';
 			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';

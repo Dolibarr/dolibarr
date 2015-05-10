@@ -43,4 +43,4 @@ ListOfSupplierOrders=Λίστα παραγγελιών των προμηθευτ
 MenuOrdersSupplierToBill=Παραγγελίες προμηθευτών για τιμολόγηση
 NbDaysToDelivery=Καθυστέρηση παράδοσης σε ημέρες
 DescNbDaysToDelivery=Η μεγαλύτερη καθυστέρηση εμφανίζετε μεταξύ παραγγελίας και τη λίστα των προϊόντων
-UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)
+UseDoubleApproval=Χρησιμοποιήστε διπλή έγκριση (η δεύτερη έγκριση μπορεί να γίνει από οποιονδήποτε χρήστη με ειδική άδεια)

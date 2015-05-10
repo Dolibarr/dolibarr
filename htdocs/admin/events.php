@@ -104,7 +104,7 @@ foreach ($eventstolog as $key => $arr)
 		print '<td>';
 		$key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="checked"':'').'>';
+		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
 		print '</td></tr>'."\n";
 	}
 }

@@ -109,7 +109,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Libelle
-		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->libelle . '</td>';
+		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->label . '</td>';
 		print '</tr>';
 
 		// Status (to sell)
@@ -139,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 			$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn_det as d";
 			if (! $user->rights->societe->client->voir && ! $socid)	$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE f.fk_soc = s.rowid";
-			$sql .= " AND f.entity = " . $conf->entity;
+			$sql .= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
 			$sql .= " AND d.fk_facture_fourn = f.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))

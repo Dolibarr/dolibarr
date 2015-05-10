@@ -116,9 +116,19 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=112;
-		$this->posxup=126;
-		$this->posxqty=145;
+		if($conf->global->PRODUCT_USE_UNITS)
+		{
+			$this->posxtva=99;
+			$this->posxup=114;
+			$this->posxqty=133;
+			$this->posxunit=150;
+		}
+		else
+		{
+			$this->posxtva=112;
+			$this->posxup=126;
+			$this->posxqty=145;
+		}
 		$this->posxdiscount=162;
 		$this->posxprogress=174; // Only displayed for situation invoices
 		$this->postotalht=174;
@@ -283,7 +293,7 @@ class pdf_crabe extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))
+				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
 					$this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -487,7 +497,23 @@ class pdf_crabe extends ModelePDFFactures
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
+					// Enough for 6 chars
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+					else
+					{
+						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+
+					// Unit
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$pdf->SetXY($this->posxunit, $curY);
+						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+					}
 
 					// Discount on line
 					if ($object->lines[$i]->remise_percent)
@@ -1327,7 +1353,23 @@ class pdf_crabe extends ModelePDFFactures
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			if($conf->global->PRODUCT_USE_UNITS)
+			{
+				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+			else
+			{
+				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+		}
+
+		if($conf->global->PRODUCT_USE_UNITS) {
+			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
+			if (empty($hidetop)) {
+				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
+				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+					'C');
+			}
 		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);

@@ -14,6 +14,7 @@ MyTasksDesc=Cette vue est restreinte aux projets et tâches pour lesquels vous �
 OnlyOpenedProject=Seules les projets ouverts sont visibles (les projets avec le statut brouillon et fermé ne sont pas affichés)
 TasksPublicDesc=Cette vue présente tous les projets et tâches pour lesquels vous êtes habilité à avoir une visibilité.
 TasksDesc=Cette vue présente tous les projets et tâches (vos habilitations vous offrant une vue exhaustive).
+AllTaskVisibleButEditIfYouAreAssigned=Toutes les tâches de ce projet sont visibles, mais vous pouvez entrer le temps seulement pour une tâche à laquelle vous êtes affecté.
 ProjectsArea=Espace projet
 NewProject=Nouveau projet
 AddProject=Créer projet

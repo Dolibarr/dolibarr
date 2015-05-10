@@ -99,7 +99,7 @@ if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$db->escape($catid);
 if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
-$sql.= " AND d.entity = ".$conf->entity;
+$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
 if ($sall)
 {
         // For natural search

@@ -412,7 +412,7 @@ if ($action == 'create' && !$error)
 
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="true"':'').'>';
+	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked':'').'>';
 	print '</td><td valign="middle">';
 	$desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
@@ -526,7 +526,7 @@ if (($action != 'create' && $action != 'add') || !$error)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.entity = '.$conf->entity;
+	$sql.= ' WHERE c.entity IN ('.getEntity('commande', 1).')';
 	$sql.= ' AND c.fk_soc = s.rowid';
 
 	// Show orders with status validated, shipping started and delivered (well any order we can bill)
@@ -683,7 +683,7 @@ if (($action != 'create' && $action != 'add') || !$error)
 		/*
 		 * Boutons actions
 		*/
-		print '<br><div class="center"><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
+		print '<br><div class="center"><input type="checkbox" checked name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
 		print '<div align="right">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<input type="hidden" name="action" value="create">';

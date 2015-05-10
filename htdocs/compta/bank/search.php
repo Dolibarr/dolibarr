@@ -110,7 +110,7 @@ $sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 if (GETPOST("req_nb"))
 {
     $sql.= " AND b.num_chq LIKE '%".$db->escape(GETPOST("req_nb"))."%'";

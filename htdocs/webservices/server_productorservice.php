@@ -73,7 +73,7 @@ $server->wsdl->addComplexType(
     	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
     	'login' => array('name'=>'login','type'=>'xsd:string'),
         'password' => array('name'=>'password','type'=>'xsd:string'),
-        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string')
     )
 );
 // Define WSDL Return object
@@ -85,7 +85,7 @@ $server->wsdl->addComplexType(
     '',
     array(
         'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+        'result_label' => array('name'=>'result_label','type'=>'xsd:string')
     )
 );
 
@@ -122,6 +122,8 @@ $productorservice_fields = array(
     'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
     'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
     'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
+    'warehouse_ref' => array('name'=>'warehouse_ref','type'=>'xsd:string'),		// Used only for create or update to set which warehouse to use for stock correction if stock_real differs from database
+
     'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
     'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
 
@@ -503,7 +505,7 @@ function createProductOrService($authentication,$product)
         $newobject->ref=$product['ref'];
         $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];
@@ -561,6 +563,46 @@ function createProductOrService($authentication,$product)
         {
             $error++;
         }
+
+        if (! $error)
+        {
+        	// Update stock if stock count is provided and differs from database after creation or update
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+				$savstockreal=$newobject->stock_reel;
+				$newobject->load_stock();		// This overwrite ->stock_reel
+				$getstockreal = $newobject->stock_reel;
+
+				if ($savstockreal != $getstockreal)
+				{
+					$warehouse = new Entrepot($this->db);
+					$warehouse->fetch(0, $product['warehouse_ref']);
+					if ($warehouse->id > 0)
+					{
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if ($result <= 0)
+						{
+							$error++;
+							$newobject->error='You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
+						}
+					}
+					else
+					{
+						$error++;
+						$newobject->error='You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
+					}
+				}
+			}
+		}
 
         if (! $error)
         {
@@ -633,7 +675,7 @@ function updateProductOrService($authentication,$product)
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];
@@ -691,6 +733,46 @@ function updateProductOrService($authentication,$product)
         {
             $error++;
         }
+        else
+		{
+        	// Update stock if stock count is provided and differs from database after creation or update
+			if (isset($product['stock_real']) && $product['stock_real'] != '' && ! empty($conf->global->stock->enabled))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+				$savstockreal=$newobject->stock_reel;
+				$newobject->load_stock();		// This overwrite ->stock_reel
+				$getstockreal = $newobject->stock_reel;
+
+				if ($savstockreal != $getstockreal)
+				{
+					$warehouse = new Entrepot($this->db);
+					$warehouse->fetch(0, $product['warehouse_ref']);
+					if ($warehouse->id > 0)
+					{
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 0, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if (($savstockreal - $getstockreal) > 0)
+						{
+							$result=$newobject->correct_stock($fuser, $warehouse->id, ($savstockreal - $getstockreal), 1, 'Correction from external call (Web Service)', 0, 'WS'.dol_print_date($now,'dayhourlog'));
+						}
+						if ($result <= 0)
+						{
+							$error++;
+							$newobject->error='You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
+						}
+					}
+					else
+					{
+						$error++;
+						$newobject->error='You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
+					}
+				}
+			}
+        }
+
         if (! $error)
         {
             if ($newobject->price_base_type == 'HT')
@@ -717,7 +799,7 @@ function updateProductOrService($authentication,$product)
             $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
         }
         else
-        {
+		{
             $db->rollback();
             $error++;
             $errorcode='KO';

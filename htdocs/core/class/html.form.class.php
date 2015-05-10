@@ -74,7 +74,7 @@ class Form
      * Output key field for an editable field
      *
      * @param   string	$text			Text of label or key to translate
-     * @param   string	$htmlname		Name of select field
+     * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
      * @param   string	$preselected	Name of Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
@@ -167,11 +167,11 @@ class Form
                 }
                 else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
                 {
-                    $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
+                    $ret.=$this->select_date($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
                 }
-                else if ($typeofdata == 'datehourpicker')
+                else if ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
                 {
-                	$ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname,1,1);
+                    $ret.=$this->select_date($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
                 }
                 else if (preg_match('/^select;/',$typeofdata))
                 {
@@ -191,24 +191,24 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
-                {
+                //if ($typeofdata != 'day' && $typeofdata != 'dayhour' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
+                //{
                 	$ret.='<td align="left">';
                 	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
                 	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
-                }
+                //}
                 $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
             else
 			{
 				if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
-                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,0,-1,$conf->currency) : '');
+                elseif ($typeofdata == 'amount')   $ret.=($value != '' ? price($value,'',$langs,0,-1,-1,$conf->currency) : '');
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-                elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
+                elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
                 else if (preg_match('/^select;/',$typeofdata))
                 {
                     $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
@@ -534,12 +534,12 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option value="" disabled="disabled">----------------------</option>';
+						$out.= '<option value="" disabled>----------------------</option>';
 					}
                     if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
                         $foundselected=true;
-                        $out.= '<option value="'.$row['rowid'].'" selected="selected">';
+                        $out.= '<option value="'.$row['rowid'].'" selected>';
                     }
                     else
 					{
@@ -623,7 +623,7 @@ class Form
                 {
                     if ($selected && ($selected == $row['rowid'] || $selected == $row['code']))
                     {
-                        $out.= '<option value="'.$row['rowid'].'" selected="selected">';
+                        $out.= '<option value="'.$row['rowid'].'" selected>';
                     }
                     else
 					{
@@ -676,16 +676,16 @@ class Form
             if ($showempty)
             {
                 print '<option value="-1"';
-                if ($selected == -1) print ' selected="selected"';
+                if ($selected == -1) print ' selected';
                 print '>&nbsp;</option>';
             }
 
             print '<option value="0"';
-            if (0 == $selected) print ' selected="selected"';
+            if (0 == $selected) print ' selected';
             print '>'.$langs->trans("Product");
 
             print '<option value="1"';
-            if (1 == $selected) print ' selected="selected"';
+            if (1 == $selected) print ' selected';
             print '>'.$langs->trans("Service");
 
             print '</select>';
@@ -773,14 +773,14 @@ class Form
         if ($showempty)
         {
             print '<option value="-1"';
-            if ($selected == -1) print ' selected="selected"';
+            if ($selected == -1) print ' selected';
             print '>&nbsp;</option>';
         }
 
         foreach($this->cache_types_fees as $key => $value)
         {
             print '<option value="'.$key.'"';
-            if ($key == $selected) print ' selected="selected"';
+            if ($key == $selected) print ' selected';
             print '>';
             print $value;
             print '</option>';
@@ -972,7 +972,7 @@ class Form
                     }
                     if ($selected > 0 && $selected == $obj->rowid)
                     {
-                        $out.= '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
+                        $out.= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
                     }
                     else
 					{
@@ -1042,13 +1042,13 @@ class Form
                     if ($desc=='(DEPOSIT)')     $desc=$langs->trans("Deposit");
 
                     $selectstring='';
-                    if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="selected"';
+                    if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected';
 
                     $disabled='';
                     if ($maxvalue > 0 && $obj->amount_ttc > $maxvalue)
                     {
                         $qualifiedlines--;
-                        $disabled=' disabled="disabled"';
+                        $disabled=' disabled';
                     }
 
                     print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
@@ -1138,8 +1138,8 @@ class Form
             }
 
             if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
-            if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'></option>';
-            if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'>'.$langs->trans("Internal").'</option>';
+            if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'></option>';
+            if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans("Internal").'</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -1163,8 +1163,8 @@ class Form
                         if ($selected && $selected == $obj->rowid)
                         {
                             $out.= '<option value="'.$obj->rowid.'"';
-                            if ($disabled) $out.= ' disabled="disabled"';
-                            $out.= ' selected="selected">';
+                            if ($disabled) $out.= ' disabled';
+                            $out.= ' selected>';
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
                             if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
@@ -1173,7 +1173,7 @@ class Form
                         else
                         {
                             $out.= '<option value="'.$obj->rowid.'"';
-                            if ($disabled) $out.= ' disabled="disabled"';
+                            if ($disabled) $out.= ' disabled';
                             $out.= '>';
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
@@ -1196,7 +1196,7 @@ class Form
             }
             else
 			{
-            	$out.= '<option value="-1"'.($showempty==2?'':' selected="selected"').' disabled="disabled">'.$langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined").'</option>';
+            	$out.= '<option value="-1"'.($showempty==2?'':' selected').' disabled>'.$langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined").'</option>';
             }
             if ($htmlname != 'none' || $options_only)
             {
@@ -1237,7 +1237,7 @@ class Form
      *
      *  @param	string	$selected       User id or user object of user preselected. If -1, we use id of current user.
      *  @param  string	$htmlname       Field name in form
-     *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
      *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
@@ -1246,15 +1246,16 @@ class Form
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      *  @param	string	$morefilter		Add more filters into sql request
+     *  @param	string	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0)
     {
         global $conf,$user,$langs;
 
         // If no preselected user defined, we take current user
-        if ((is_numeric($selected) && ($selected < -1 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
+        if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
         $excludeUsers=null;
         $includeUsers=null;
@@ -1331,8 +1332,9 @@ class Form
 		            $nodatarole=($comboenhancement?' data-role="none"':'');
 		        }
 
-                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
-                if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                $out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
+                if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected':'').'>&nbsp;</option>'."\n";
+				if ($show_every) $out.= '<option value="-2"'.(($selected==-2)?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
                 $userstatic=new User($this->db);
 
@@ -1350,13 +1352,13 @@ class Form
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
                         $out.= '<option value="'.$obj->rowid.'"';
-                        if ($disableline) $out.= ' disabled="disabled"';
-                        $out.= ' selected="selected">';
+                        if ($disableline) $out.= ' disabled';
+                        $out.= ' selected>';
                     }
                     else
                     {
                         $out.= '<option value="'.$obj->rowid.'"';
-                        if ($disableline) $out.= ' disabled="disabled"';
+                        if ($disableline) $out.= ' disabled';
                         $out.= '>';
                     }
 
@@ -1402,7 +1404,7 @@ class Form
             }
             else
             {
-                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" disabled="disabled">';
+                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" disabled>';
                 $out.= '<option value="">'.$langs->trans("None").'</option>';
             }
             $out.= '</select>';
@@ -1491,13 +1493,13 @@ class Form
      *  @param		int			$price_level			Level of price to show
      *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
-     *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
+     *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @param      int			$socid					Thirdparty Id
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(),$socid=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0)
     {
         global $langs,$conf;
 
@@ -1510,9 +1512,10 @@ class Form
             if ($selected && empty($selected_input_value))
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-                $product = new Product($this->db);
-                $product->fetch($selected);
-                $selected_input_value=$product->ref;
+                $producttmpselect = new Product($this->db);
+                $producttmpselect->fetch($selected);
+                $selected_input_value=$producttmpselect->ref;
+                unset($producttmpselect);
             }
             // mode=1 means customers products
             $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
@@ -1647,7 +1650,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'" autofocus>';
-            $out.='<option value="0" selected="selected">&nbsp;</option>';
+            $out.='<option value="0" selected>&nbsp;</option>';
 
             $i = 0;
             while ($num && $i < $num)
@@ -1770,7 +1773,7 @@ class Form
         $outtype=$objp->fk_product_type;
 
         $opt = '<option value="'.$objp->rowid.'"';
-        $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
+        $opt.= ($objp->rowid == $selected)?' selected':'';
 		$opt.= (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)?' pbq="'.$objp->price_by_qty_rowid.'"':'';
         if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
         {
@@ -2030,7 +2033,7 @@ class Form
 
             //$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
             $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-            if (! $selected) $out.='<option value="0" selected="selected">&nbsp;</option>';
+            if (! $selected) $out.='<option value="0" selected>&nbsp;</option>';
             else $out.='<option value="0">&nbsp;</option>';
 
             $i = 0;
@@ -2045,8 +2048,8 @@ class Form
 				$outdiscount=0;
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
-                if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
-                if (empty($objp->idprodfournprice)) $opt.=' disabled="disabled"';
+                if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
+                if (empty($objp->idprodfournprice)) $opt.=' disabled';
                 $opt.= '>';
 
                 $objRef = $objp->ref;
@@ -2204,7 +2207,7 @@ class Form
                     $opt = '<option value="'.$objp->idprodfournprice.'"';
                     //if there is only one supplier, preselect it
                     if($num == 1) {
-                        $opt .= ' selected="selected"';
+                        $opt .= ' selected';
                     }
                     $opt.= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
@@ -2290,7 +2293,7 @@ class Form
 
                     if ($selected && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="selected">'.$obj->label.'</option>';
+                        print '<option value="'.$obj->rowid.'" selected>'.$obj->label.'</option>';
                     }
                     else
                     {
@@ -2408,7 +2411,7 @@ class Form
         {
             if ($selected == $id)
             {
-                print '<option value="'.$id.'" selected="selected">';
+                print '<option value="'.$id.'" selected>';
             }
             else
             {
@@ -2482,14 +2485,14 @@ class Form
         $this->loadCacheInputReason();
 
         print '<select class="flat" name="'.$htmlname.'">';
-        if ($addempty) print '<option value="0"'.(empty($selected)?' selected="selected"':'').'>&nbsp;</option>';
+        if ($addempty) print '<option value="0"'.(empty($selected)?' selected':'').'>&nbsp;</option>';
         foreach($this->cache_demand_reason as $id => $arraydemandreason)
         {
             if ($arraydemandreason['code']==$exclude) continue;
 
             if ($selected && ($selected == $arraydemandreason['id'] || $selected == $arraydemandreason['code']))
             {
-                print '<option value="'.$arraydemandreason['id'].'" selected="selected">';
+                print '<option value="'.$arraydemandreason['id'].'" selected>';
             }
             else
             {
@@ -2565,7 +2568,7 @@ class Form
         {
             if ($selected == $id)
             {
-                print '<option value="'.$id.'" selected="selected">';
+                print '<option value="'.$id.'" selected>';
             }
             else
             {
@@ -2619,8 +2622,8 @@ class Form
             if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
             if ($format == 3) print '<option value="'.$id.'"';
             // Si selected est text, on compare avec code, sinon avec id
-            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected="selected"';
-            elseif ($selected == $id) print ' selected="selected"';
+            if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
+            elseif ($selected == $id) print ' selected';
             print '>';
             if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'],$maxlength):$arraytypes['label']);
             if ($format == 1) $value=$arraytypes['code'];
@@ -2669,7 +2672,7 @@ class Form
         {
             if ($selected == $id)
             {
-                $return.= '<option value="'.$id.'" selected="selected">'.$value;
+                $return.= '<option value="'.$id.'" selected>'.$value;
             }
             else
             {
@@ -2718,7 +2721,7 @@ class Form
                 while ($i < $num) {
                     $obj = $this->db->fetch_object($result);
                     if ($selected == $obj->rowid) {
-                        print '<option value="'.$obj->rowid.'" selected="selected">';
+                        print '<option value="'.$obj->rowid.'" selected>';
                     } else {
                         print '<option value="'.$obj->rowid.'">';
                     }
@@ -2785,7 +2788,7 @@ class Form
 
 		$langs->load('bills');
 
-		$opt = '<option value ="" selected="selected"></option>';
+		$opt = '<option value ="" selected></option>';
 		$sql = 'SELECT rowid, facnumber, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
 		$sql .= ' order by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
@@ -2804,7 +2807,7 @@ class Form
 							//Not prov?
 							if (substr($res[1], 1, 4) != 'PROV') {
 								if ($selected == $res[0]) {
-									$opt .= '<option value="' . $res[0] . '" selected="selected">' . $res[1] . '</option>';
+									$opt .= '<option value="' . $res[0] . '" selected>' . $res[1] . '</option>';
 								} else {
 									$opt .= '<option value="' . $res[0] . '">' . $res[1] . '</option>';
 								}
@@ -2816,11 +2819,49 @@ class Form
 		} else {
 				dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
-		if ($opt == '<option value ="" selected="selected"></option>') {
-			$opt = '<option value ="0" selected="selected">' . $langs->trans('NoSituations') . '</option>';
+		if ($opt == '<option value ="" selected></option>') {
+			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
 		}
 		return $opt;
 	}
+
+    /**
+     *      Creates HTML units selector (code => label)
+     *
+     *      @param	string	$selected       Preselected code ('km', 'm', 'l', 'p', ...)
+     *      @param  string	$htmlname       Select name
+     *      @param	int		$showempty		Add a nempty line
+     * 		@return	string                  HTML select
+     */
+    function selectUnits($selected = '', $htmlname = 'units', $showempty=0)
+    {
+        global $langs;
+
+        $langs->load('products');
+
+        $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+
+        $sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
+        $resql = $this->db->query($sql);
+        if($resql && $this->db->num_rows($resql) > 0)
+        {
+	        if ($showempty) $return .= '<option value="none"></option>';
+
+            while($res = $this->db->fetch_object($resql))
+            {
+                if ($selected == $res[0])
+                {
+                    $return.='<option value="'.$res->code.'" selected>'.$langs->trans($res->label).'</option>';
+                }
+                else
+                {
+                    $return.='<option value="'.$res->code.'">'.$langs->trans($res->label).'</option>';
+                }
+            }
+            $return.='</select>';
+        }
+        return $return;
+    }
 
     /**
      *  Return a HTML select list of bank accounts
@@ -2865,7 +2906,7 @@ class Form
                     $obj = $this->db->fetch_object($result);
                     if ($selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="selected">';
+                        print '<option value="'.$obj->rowid.'" selected>';
                     }
                     else
                     {
@@ -2946,7 +2987,7 @@ class Form
 		$outarray=array();
         if (is_array($cate_arbo))
         {
-            if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+            if (! count($cate_arbo)) $output.= '<option value="-1" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
             else
             {
                 $output.= '<option value="-1">&nbsp;</option>';
@@ -2954,14 +2995,14 @@ class Form
                 {
                     if ($cate_arbo[$key]['id'] == $selected || ($selected == 'auto' && count($cate_arbo) == 1))
                     {
-                        $add = 'selected="selected" ';
+                        $add = 'selected ';
                     }
                     else
                     {
                         $add = '';
                     }
                     $output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'],$maxlength,'middle').'</option>';
-					
+
 					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
                 }
             }
@@ -3071,9 +3112,9 @@ class Form
                         $more.='<tr>';
                         $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
                         $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
-                        if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
-                        if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
-                        if (isset($input['disabled'])) $more.=' disabled="disabled"';
+                        if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked';
+                        if (is_bool($input['value']) && $input['value']) $more.=' checked';
+                        if (isset($input['disabled'])) $more.=' disabled';
                         $more.=' /></td>';
                         $more.='<td valign="top" align="left">&nbsp;</td>';
                         $more.='</tr>'."\n";
@@ -3087,7 +3128,7 @@ class Form
                             if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
                             $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
-                            if ($input['disabled']) $more.=' disabled="disabled"';
+                            if ($input['disabled']) $more.=' disabled';
                             $more.=' /></td>';
                             $more.='<td valign="top" align="left">';
                             $more.=$selval;
@@ -3427,40 +3468,41 @@ class Form
     /**
      *    Show a form + html select a date
      *
-     *    @param	string		$page        Page
-     *    @param	string		$selected    Date preselected
-     *    @param    string		$htmlname    Html name of date input fields or 'none'
-     *    @param    int			$displayhour Display hour selector
-     *    @param    int			$displaymin	 Display minutes selector
+     *    @param	string		$page        	Page
+     *    @param	string		$selected    	Date preselected
+     *    @param    string		$htmlname    	Html name of date input fields or 'none'
+     *    @param    int			$displayhour 	Display hour selector
+     *    @param    int			$displaymin		Display minutes selector
+     *    @param	int			$nooutput		1=No print output, return string
      *    @return	void
      *    @see		select_date
      */
-    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0)
+    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
     {
         global $langs;
 
+        $ret='';
+
         if ($htmlname != "none")
         {
-            print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
-            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            print $this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            $ret.='<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+            $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
+            $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            $ret.='<tr><td>';
+            $ret.=$this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname);
+            $ret.='</td>';
+            $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            $ret.='</tr></table></form>';
         }
         else
         {
-            if ($selected)
-            {
-                $this->load_cache_types_paiements();
-                print $this->cache_types_paiements[$selected]['label'];
-            } else {
-                print "&nbsp;";
-            }
+        	if ($displayhour) $ret.=dol_print_date($selected,'dayhour');
+        	else $ret.=dol_print_date($selected,'day');
         }
+
+        if (empty($nooutput)) print $ret;
+        return $ret;
     }
 
 
@@ -3732,7 +3774,7 @@ class Form
         {
         	if ($selected && $selected == $code_iso)
         	{
-        		$out.= '<option value="'.$code_iso.'" selected="selected">';
+        		$out.= '<option value="'.$code_iso.'" selected>';
         	}
         	else
         	{
@@ -3913,7 +3955,7 @@ class Form
         		$disabled=true;
         	}
 
-        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$title.'>';
+        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$title.'>';
 
         	foreach ($this->cache_vatrates as $rate)
         	{
@@ -3925,7 +3967,7 @@ class Form
         		$return.= '"';
         		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
         		{
-        			$return.= ' selected="selected"';
+        			$return.= ' selected';
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		$return.= $rate['nprtva'] ? ' *': '';
@@ -4044,7 +4086,7 @@ class Form
                 {
                     // Zone de saisie manuelle de la date
                     $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
-                    $retstring.=($disabled?' disabled="disabled"':'');
+                    $retstring.=($disabled?' disabled':'');
                     $retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "';  // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
                     $retstring.='>';
 
@@ -4070,30 +4112,30 @@ class Form
             else
 			{
                 // Day
-                $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'day">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat" name="'.$prefix.'day">';
 
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<option value="0" selected="selected">&nbsp;</option>';
+                    $retstring.='<option value="0" selected>&nbsp;</option>';
                 }
 
                 for ($day = 1 ; $day <= 31; $day++)
                 {
-                    $retstring.='<option value="'.$day.'"'.($day == $sday ? ' selected="selected"':'').'>'.$day.'</option>';
+                    $retstring.='<option value="'.$day.'"'.($day == $sday ? ' selected':'').'>'.$day.'</option>';
                 }
 
                 $retstring.="</select>";
 
-                $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'month">';
+                $retstring.='<select'.($disabled?' disabled':'').' class="flat" name="'.$prefix.'month">';
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<option value="0" selected="selected">&nbsp;</option>';
+                    $retstring.='<option value="0" selected>&nbsp;</option>';
                 }
 
                 // Month
                 for ($month = 1 ; $month <= 12 ; $month++)
                 {
-                    $retstring.='<option value="'.$month.'"'.($month == $smonth?' selected="selected"':'').'>';
+                    $retstring.='<option value="'.$month.'"'.($month == $smonth?' selected':'').'>';
                     $retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
                     $retstring.="</option>";
                 }
@@ -4102,15 +4144,15 @@ class Form
                 // Year
                 if ($emptydate || $set_time == -1)
                 {
-                    $retstring.='<input'.($disabled?' disabled="disabled"':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+                    $retstring.='<input'.($disabled?' disabled':'').' placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
                 }
                 else
                 {
-                    $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'year">';
+                    $retstring.='<select'.($disabled?' disabled':'').' class="flat" name="'.$prefix.'year">';
 
                     for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                     {
-                        $retstring.='<option value="'.$year.'"'.($year == $syear ? ' selected="true"':'').'>'.$year.'</option>';
+                        $retstring.='<option value="'.$year.'"'.($year == $syear ? ' selected':'').'>'.$year.'</option>';
                     }
                     $retstring.="</select>\n";
                 }
@@ -4122,12 +4164,12 @@ class Form
         if ($h)
         {
             // Show hour
-            $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
+            $retstring.='<select'.($disabled?' disabled':'').' class="flat '.($fullday?$fullday.'hour':'').'" name="'.$prefix.'hour">';
             if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
                 if (strlen($hour) < 2) $hour = "0" . $hour;
-                $retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected="true"':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
+                $retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
             }
             $retstring.='</select>';
             if (empty($conf->dol_optimize_smallscreen)) $retstring.=":";
@@ -4136,12 +4178,12 @@ class Form
         if ($m)
         {
             // Show minutes
-            $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
+            $retstring.='<select'.($disabled?' disabled':'').' class="flat '.($fullday?$fullday.'min':'').'" name="'.$prefix.'min">';
             if ($emptyhours) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {
                 if (strlen($min) < 2) $min = "0" . $min;
-                $retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected="true"':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
+                $retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
             }
             $retstring.='</select>';
         }
@@ -4222,13 +4264,13 @@ class Form
 
         if ($typehour=='select')
         {
-	        $retstring.='<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
+	        $retstring.='<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled':'').'>';
 	        for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
 	        {
 	            $retstring.='<option value="'.$hour.'"';
 	            if ($hourSelected == $hour)
 	            {
-	                $retstring.=" selected=\"true\"";
+	                $retstring.=" selected";
 	            }
 	            $retstring.=">".$hour."</option>";
 	        }
@@ -4236,7 +4278,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input type="text" size="2" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
+        	$retstring.='<input type="text" size="2" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat" value="'.($hourSelected?((int) $hourSelected):'').'">';
         }
         else return 'BadValueForParameterTypeHour';
 
@@ -4247,18 +4289,18 @@ class Form
 
         if ($typehour=='select')
         {
-	        $retstring.='<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
+	        $retstring.='<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled':'').'>';
 	        for ($min = 0; $min <= 55; $min=$min+5)
 	        {
 	            $retstring.='<option value="'.$min.'"';
-	            if ($minSelected == $min) $retstring.=' selected="selected"';
+	            if ($minSelected == $min) $retstring.=' selected';
 	            $retstring.='>'.$min.'</option>';
 	        }
 	        $retstring.="</select>";
         }
         elseif ($typehour=='text')
         {
-        	$retstring.='<input type="text" size="2" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
+        	$retstring.='<input type="text" size="2" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat" value="'.($minSelected?((int) $minSelected):'').'">';
         }
         $retstring.=' '.$langs->trans('MinuteShort');
         $retstring.="&nbsp;";
@@ -4313,13 +4355,13 @@ class Form
         		   </script>';
         }
 
-        $out.='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
+        $out.='<select id="'.$htmlname.'" '.($disabled?'disabled ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
         {
         	$textforempty=' ';
         	if (! empty($conf->use_javascript_ajax)) $textforempty='&nbsp;';	// If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
-            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'>'.$textforempty.'</option>'."\n";
+            $out.='<option value="-1"'.($id==-1?' selected':'').'>'.$textforempty.'</option>'."\n";
         }
 
         if (is_array($array))
@@ -4337,7 +4379,7 @@ class Form
             foreach($array as $key => $value)
             {
                 $out.='<option value="'.$key.'"';
-                if ($id != '' && $id == $key) $out.=' selected="selected"';		// To preselect a value
+                if ($id != '' && $id == $key) $out.=' selected';		// To preselect a value
                 $out.='>';
 
                 if ($key_in_label)
@@ -4366,13 +4408,15 @@ class Form
      *	@param	array	$selected		Array with key+value preselected
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
-     *	@param  string	$option         Valeur de l'option en fonction du type choisi
+     *	@param  string	$morecss        Add more css style
      *	@param  int		$translate		Translate and encode value
-     *  @param	int		$width			Force width of select box. May be used only when using jquery couch.
+     *  @param	int		$width			Force width of select box. May be used only when using jquery couch. Example: 250, 95%
+     *  @param	string	$moreattrib		Add more options on select component. Example: 'disabled'
+     *  @param	string	$elemtype		Type of element we show ('category', ...)
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0, $width=0)
+    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
     {
     	global $conf, $langs;
 
@@ -4382,8 +4426,36 @@ class Form
     		$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
    			print '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
     			<script type="text/javascript">
+	    			function formatResult(record) {'."\n";
+						if ($elemtype == 'category')
+						{
+							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+						}
+						else
+						{
+							print 'return record.text;';
+						}
+			print '	};
+    				function formatSelection(record) {'."\n";
+						if ($elemtype == 'category')
+						{
+							print '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
+								  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+						}
+						else
+						{
+							print 'return record.text;';
+						}
+			print '	};
 	    			$(document).ready(function () {
     					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+							// Specify format function for dropdown item
+							formatResult: formatResult,
+    					 	templateResult: formatResult,		/* For 4.0 */
+							// Specify format function for selected item
+							formatSelection: formatSelection,
+    					 	templateResult: formatSelection		/* For 4.0 */
     					});
     				});
     			</script>';
@@ -4392,7 +4464,7 @@ class Form
     	// Try also magic suggest
 
     	// Add data-role="none" to disable jmobile decoration
-    	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.($width?' style="width: '.$width.'px"':'').'>'."\n";
+    	$out = '<select data-role="none" id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple="multiple" name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/',$width)?$width:$width.'px').'"':'').'>'."\n";
     	if (is_array($array) && ! empty($array))
     	{
     		if ($value_as_key) $array=array_combine($array, $array);
@@ -4404,7 +4476,7 @@ class Form
     				$out.= '<option value="'.$key.'"';
     				if (is_array($selected) && ! empty($selected) && in_array($key, $selected))
     				{
-    					$out.= ' selected="selected"';
+    					$out.= ' selected';
     				}
     				$out.= '>';
 
@@ -4419,6 +4491,49 @@ class Form
 
     	return $out;
     }
+
+
+	/**
+	 * 	Render list of categories linked to object with id $id and type $type
+	 *
+	 * 	@param		int		$id				Id of object
+ 	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+ 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Use text with link
+	 * 	@return		mixed					Array of category objects or < 0 if KO
+	 */
+	function showCategories($id, $type, $rendermode=0)
+	{
+		global $db;
+
+		$cat = new Categorie($db);
+		$categories = $cat->containing($id, $type);
+
+		if ($rendermode == 1)
+		{
+			$toprint = array();
+			foreach($categories as $c)
+			{
+				$ways = $c->print_all_ways();
+				foreach($ways as $way)
+				{
+					$toprint[] = img_object('','category').' '.$way;
+				}
+			}
+			return implode('<br>', $toprint);
+		}
+
+		if ($rendermode == 0)
+		{
+			$cate_arbo = $this->select_all_categories(0, '', 'parent', 64, 0, 1);
+			foreach($categories as $c) {
+				$arrayselected[] = $c->id;
+			}
+
+			return $this->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%', 'disabled', 'category');
+		}
+
+		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
+	}
 
 
     /**
@@ -4442,18 +4557,18 @@ class Form
             $no="0";
         }
 
-        $disabled = ($disabled ? ' disabled="disabled"' : '');
+        $disabled = ($disabled ? ' disabled' : '');
 
         $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
-        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected="selected"':'').'></option>'."\n";
+        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'></option>'."\n";
         if (("$value" == 'yes') || ($value == 1))
         {
-            $resultyesno .= '<option value="'.$yes.'" selected="selected">'.$langs->trans("Yes").'</option>'."\n";
+            $resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
         }
         else
        {
-       		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected="selected"');
+       		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected');
             $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
             $resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
         }
@@ -4495,7 +4610,7 @@ class Form
                 $obj = $this->db->fetch_object($result);
                 if ($selected == $obj->rowid)
                 {
-                    print '<option value="'.$obj->rowid.'" selected="selected">';
+                    print '<option value="'.$obj->rowid.'" selected>';
                 }
                 else
                 {
@@ -4736,13 +4851,13 @@ class Form
                 $nodatarole=($comboenhancement?' data-role="none"':'');
             }
 
-            $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$nodatarole.'>';
+            $out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
 
         	$num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
             {
-                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected':'').'>&nbsp;</option>'."\n";
 
                 while ($i < $num)
                 {
@@ -4751,10 +4866,10 @@ class Form
                     if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
 
                     $out.= '<option value="'.$obj->rowid.'"';
-                    if ($disableline) $out.= ' disabled="disabled"';
+                    if ($disableline) $out.= ' disabled';
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
-                        $out.= ' selected="selected"';
+                        $out.= ' selected';
                     }
                     $out.= '>';
 
@@ -4770,8 +4885,8 @@ class Form
             }
             else
             {
-                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'></option>'."\n";
-                $out.= '<option value="" disabled="disabled">'.$langs->trans("NoUserGroupDefined").'</option>';
+                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected':'').'></option>'."\n";
+                $out.= '<option value="" disabled>'.$langs->trans("NoUserGroupDefined").'</option>';
             }
             $out.= '</select>';
         }

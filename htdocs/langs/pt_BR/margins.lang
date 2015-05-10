@@ -13,8 +13,6 @@ CustomerMargins=Margems de clientes
 SalesRepresentativeMargins=Tolerância aos representante de vendas
 UserMargins=Margens do Usuário
 ProductService=Produto ou serviço
-StartDate=Data inicio
-EndDate=Data fim
 Launch=Inicio
 ForceBuyingPriceIfNull=Forcar preço de compra se nulo
 ForceBuyingPriceIfNullDetails=Se "ATIVADO" a margem sera zero na linha (preço de compra = preço de venda), se nao ("DESATIVADO"), margem sera igual ao preço de venda (preço de compra = 0)

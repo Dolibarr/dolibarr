@@ -615,9 +615,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print_fiche_titre($langs->trans("NewUser"));
 
-    print $langs->trans("CreateInternalUserDesc");
+    print $langs->trans("CreateInternalUserDesc")."<br>\n";
     print "<br>";
-    print "<br>";
+
 
     if (! empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr'))
     {
@@ -699,7 +699,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         	print $form->selectarray('users', $liste, '', 1);
         }
        	print '</td><td align="center">';
-       	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled="disabled"').'>';
+       	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
        	print '</td></tr></table>';
        	print '</form>';
 
@@ -707,13 +707,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
        	print '<br>';
     }
 
-    print dol_set_focus('#lastname');
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
     if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+
+    dol_fiche_head('', '', '', 0, '');
+
+    print dol_set_focus('#lastname');
 
     print '<table class="border" width="100%">';
 
@@ -1025,7 +1028,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
  	print "</table>\n";
 
-    print '<br><div align="center"><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></div>';
+ 	dol_fiche_end();
+
+    print '<div align="center"><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></div>';
 
     print "</form>";
 }
@@ -1090,9 +1095,7 @@ else
 
         // Show tabs
         $head = user_prepare_head($object);
-
         $title = $langs->trans("User");
-        dol_fiche_head($head, 'user', $title, 0, 'user');
 
         /*
          * Confirmation reinitialisation mot de passe
@@ -1139,6 +1142,8 @@ else
          */
         if ($action != 'edit')
         {
+			dol_fiche_head($head, 'user', $title, 0, 'user');
+
             $rowspan=19;
 
             print '<table class="border" width="100%">';
@@ -1346,7 +1351,7 @@ else
             {
 				print '<tr><td valign="top">'.$langs->trans("ColorUser").'</td>';
 				print '<td colspan="2">';
-				if ($object->color) print '<input type="text" disabled="disabled" style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
+				if ($object->color) print '<input type="text" disabled style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -1451,7 +1456,7 @@ else
 
 			print "</table>\n";
 
-            print "</div>\n";
+            dol_fiche_end();
 
 
             /*
@@ -1669,7 +1674,14 @@ else
          */
         if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
         {
-            $rowspan=16;
+        	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="update">';
+            print '<input type="hidden" name="entity" value="'.$object->entity.'">';
+
+            dol_fiche_head($head, 'user', $title, 0, 'user');
+
+        	$rowspan=16;
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
@@ -1677,13 +1689,9 @@ else
 			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
 			if (! empty($conf->agenda->enabled)) $rowspan++;
 
-        	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
 
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
             print $object->id;
             print '</td>';
@@ -2141,15 +2149,15 @@ else
 
             print '</table>';
 
-            print '<br><div align="center">';
+            dol_fiche_end();
+
+            print '<div align="center">';
             print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
-            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '&nbsp; &nbsp; &nbsp;';
             print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
             print '</div>';
 
             print '</form>';
-
-            print '</div>';
         }
 
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid)) $ldap->close;

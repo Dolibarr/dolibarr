@@ -69,11 +69,9 @@ MOTIF_CANCEL=Neden
 DATE_REFUS=Ret tarihi
 DATE_SAVE=Onay tarihi
 DATE_VALIDE=Onay tarihi
-DateApprove=Onaylama tarihi
 DATE_CANCEL=İptal etme tarihi
 DATE_PAIEMENT=Ödeme tarihi
 
-Deny=Ret
 TO_PAID=Öde
 BROUILLONNER=Yeniden aç
 SendToValid=Onay için gönder
@@ -100,27 +98,5 @@ ConfirmBrouillonnerTrip=Bu gider raporunu "Taslak" durumuna döndürmek istediğ
 
 SaveTrip=Gider raporunu doğrula
 ConfirmSaveTrip=Bu gider raporunu doğrulamak istediğinizden emin misiniz?
-
-Synchro_Compta=NDF <-> Hesap
-
-TripSynch=Senkronizasyon: Gider Raporu <-> Cari Hesap
-TripToSynch=Hesaba işlenecek gider raporu
-AucuneTripToSynch="Ödendi" durumunda hiç gider raporu yok
-ViewAccountSynch=Hesabı incele
-
-ConfirmNdfToAccount=Bu gider raporunu geçerli hesaba işlemek istediğinizden emin misiniz?
-ndfToAccount=Gider raporu - Entegrasyon
-
-ConfirmAccountToNdf=Bu gider raporunu geçerli hesaptan silmek istediğinizden emin misini?
-AccountToNdf=Gider Raporu - Para çekme
-
-LINE_NOT_ADDED=Hiç satır eklenmedi:
-NO_PROJECT=Hiçbir proje seçilmemiştir.
-NO_DATE=Hiçbir tarih seçilmemiştir.
-NO_PRICE=Hiçbir fiyat belirtilmiştir.
-
-TripForValid=Doğrulanacak
-TripForPaid=Ödenecek
-TripPaid=Ödendi
 
 NoTripsToExportCSV=Bu dönem için dışaaktarılacak gider raporu yok.

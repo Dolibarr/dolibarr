@@ -19,7 +19,7 @@ OptionsDeactivatedForThisExportModel=Für dieses Exportierungsmodell, sind die E
 Selectmodelcsv=Wählen Sie ein Exportmodell
 Modelcsv_normal=Klassischer Export
 Modelcsv_CEGID=Export zu CEGID Expert
-BackToChartofaccounts=Return chart of accounts
+BackToChartofaccounts=Zurück zum  Kontenplan
 Back=Rückkehr 
 
 Definechartofaccounts=Kontenplan definieren
@@ -52,7 +52,7 @@ AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
 AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
 Line=Zeile
 
-CAHTF=Total purchase supplier HT
+CAHTF=Summe Lieferantenbestellungen netto
 InvoiceLines=Rechnungszeile bereinigen
 InvoiceLinesDone=Bereinigte Rechnungszeilen
 IntoAccount=Im Buchhaltungs-Konto
@@ -75,7 +75,7 @@ ACCOUNTING_LIST_SORT_VENTILATION_TODO=Beginnen Sie die Sortierung der Abbau Seit
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Beginnen Sie die Sortierung der Abbau Seiten "Abbau" durch die aktuellen Elemente
 
 AccountLength=Länge der in Dolibarr gezeigten Rechnungskonten
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
+AccountLengthDesc=Funktion ermöglicht, eine Länge von Rechnungslegungs Konto indem Räume, die durch den Nullwert vorzutäuschen. Diese Funktion berührt nur die Anzeige, ist es nicht die in Dolibarr registriert Rechnungswesen Konten ändern. Für den Export ist diese Funktion erforderlich, bei bestimmten Software-kompatibel zu sein.
 ACCOUNTING_LENGTH_GACCOUNT=Länge der Finanzbuchführung
 ACCOUNTING_LENGTH_AACCOUNT=Länge der Partner
 
@@ -91,8 +91,8 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Konto der Warte
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Produkte (wenn nicht im Produktblatt definiert)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Produkte (wenn nicht im Produktblatt definiert)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Dienstleistungen (wenn nicht im Produktblatt definiert)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Dienstleistungen (wenn nicht im Produktblatt definiert)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Leistungen (wenn nicht im Produktblatt definiert)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Leistungen (wenn nicht im Produktblatt definiert)
 
 Doctype=Dokumententyp
 Docdate=Datum
@@ -103,7 +103,7 @@ Labelcompte=Label-Account
 Debit=Soll
 Credit=Haben
 Amount=Betrag
-Sens=Sens
+Sens=Zweck
 Codejournal=Journal
 
 DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs

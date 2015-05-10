@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Ferran Marcet		 <fmarcet@2byte.es>
  *
@@ -63,6 +64,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -112,6 +114,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($cancel) $action = '';
+
 	include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 	// Action clone object
@@ -231,7 +235,7 @@ if (empty($reshook))
 	}
 	else if ($action == 'setdate_livraison' && $user->rights->propal->creer)
 	{
-		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
@@ -255,7 +259,7 @@ if (empty($reshook))
 		$object->fetch_thirdparty();
 
 		$datep = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+		$date_delivery = dol_mktime(12, 0, 0, GETPOST('date_livraisonmonth'), GETPOST('date_livraisonday'), GETPOST('date_livraisonyear'));
 		$duration = GETPOST('duree_validite');
 
 		if (empty($datep)) {
@@ -451,7 +455,7 @@ if (empty($reshook))
 
 										$tva_tx=get_default_tva($mysoc, $object->thirdparty);
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options);
+										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
 
 										if ($result > 0) {
 											$lineid = $result;
@@ -726,6 +730,7 @@ if (empty($reshook))
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
 			// Ecrase $txtva par celui du produit
+			// Replaces $fk_unit with the product unit
 			if (! empty($idprod)) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
@@ -834,6 +839,7 @@ if (empty($reshook))
 					}
 
 				$type = $prod->type;
+				$fk_unit = $prod->fk_unit;
 			} else {
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -842,6 +848,8 @@ if (empty($reshook))
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 				$desc = $product_desc;
 				$type = GETPOST('type');
+
+				$fk_unit = GETPOST('units', 'alpha');
 			}
 
 			// Margin
@@ -864,7 +872,7 @@ if (empty($reshook))
 				setEventMessage($mesg, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit);
 
 				if ($result > 0) {
 					$db->commit();
@@ -898,6 +906,7 @@ if (empty($reshook))
 					unset($_POST['np_markRate']);
 					unset($_POST['dp_desc']);
 					unset($_POST['idprod']);
+					unset($_POST['units']);
 
 			    	unset($_POST['date_starthour']);
 			    	unset($_POST['date_startmin']);
@@ -921,7 +930,8 @@ if (empty($reshook))
 	}
 
 	// Mise a jour d'une ligne dans la propale
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('save') == $langs->trans("Save")) {
+	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('save'))
+	{
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx')))
@@ -933,8 +943,8 @@ if (empty($reshook))
 		// Define vat_rate
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
-		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
-		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		$pu_ht = GETPOST('price_ht');
 
 		// Add buying price
@@ -992,7 +1002,7 @@ if (empty($reshook))
 		if (! $error) {
 			$db->begin();
 
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options);
+			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"]);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1029,7 +1039,8 @@ if (empty($reshook))
 		}
 	}
 
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
+	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel'))
+	{
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
@@ -1374,7 +1385,7 @@ if ($action == 'create')
 		$absolute_discount = $soc->getAvailableDiscounts();
 		print '. ';
 		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 1, -1, -1, $conf->currency));
 		else
 			print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
@@ -1431,9 +1442,9 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		$form->select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addprop");
+		$form->select_date($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
 	} else {
-		$form->select_date(-1, 'liv_', '', '', '', "addprop", 1, 1);
+		$form->select_date(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
 	}
 	print '</td></tr>';
 
@@ -1516,18 +1527,18 @@ if ($action == 'create')
 			$newclassname = 'Intervention';
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
 		{
-			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 		}
 
 		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2
 		{
-			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 		}
-		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 	}
 
 	print "</table>\n";
@@ -1554,7 +1565,7 @@ if ($action == 'create')
 		$sql .= " FROM " . MAIN_DB_PREFIX . "propal p";
 		$sql .= ", " . MAIN_DB_PREFIX . "societe s";
 		$sql .= " WHERE s.rowid = p.fk_soc";
-		$sql .= " AND p.entity = " . $conf->entity;
+		$sql .= " AND p.entity IN (".getEntity('propal', 1).")";
 		$sql .= " AND p.fk_statut <> 0";
 		$sql .= " ORDER BY Id";
 
@@ -1577,7 +1588,7 @@ if ($action == 'create')
 		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
 			print '<tr><td colspan="3">&nbsp;</td></tr>';
 
-		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="checked"></td>';
+		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked></td>';
 		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyPropal") . '</td></tr>';
 	}
 
@@ -1854,23 +1865,9 @@ if ($action == 'create')
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('DeliveryDate');
-	print '</td>';
-	if ($action != 'editdate_livraison' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_livraison&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1) . '</a></td>';
-	print '</tr></table>';
+	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer);
 	print '</td><td colspan="3">';
-	if ($action == 'editdate_livraison') {
-		print '<form name="editdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="setdate_livraison">';
-		$form->select_date($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
-		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		print dol_print_date($object->date_livraison, 'daytext');
-	}
+	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer, 'day');
 	print '</td>';
 	print '</tr>';
 
@@ -1990,7 +1987,7 @@ if ($action == 'create')
 		print $langs->trans('OutstandingBill');
 		print '</td><td align=right colspan=3>';
 		print price($soc->get_OutstandingBill()) . ' / ';
-		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
+		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';
 		print '</tr>';
 	}
@@ -2044,7 +2041,7 @@ if ($action == 'create')
 
 	// Amount HT
 	print '<tr><td height="10" width="25%">' . $langs->trans('AmountHT') . '</td>';
-	print '<td align="right" class="nowrap" colspan="2"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+	print '<td class="nowrap" colspan="2">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
@@ -2056,26 +2053,26 @@ if ($action == 'create')
 
 	// Amount VAT
 	print '<tr><td height="10">' . $langs->trans('AmountVAT') . '</td>';
-	print '<td align="right" class="nowrap" colspan="2">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td class="nowrap" colspan="2">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 	// Localtax1
 	{
 		print '<tr><td height="10">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td align="right" class="nowrap" colspan="2">' . price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+		print '<td class="nowrap" colspan="2">' . price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 		print '<td></td></tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 	// Localtax2
 	{
 		print '<tr><td height="10">' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-		print '<td align="right" class="nowrap" colspan="2">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+		print '<td class="nowrap" colspan="2">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 		print '</tr>';
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">' . $langs->trans('AmountTTC') . '</td>';
-	print '<td align="right" class="nowrap" colspan="2">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td class="nowrap" colspan="2">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 
 	// Statut

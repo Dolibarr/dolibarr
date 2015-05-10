@@ -930,7 +930,7 @@ class Account extends CommonObject
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.rappro=0";
         $sql.= " AND b.fk_account = ba.rowid";
-        $sql.= " AND ba.entity = ".$conf->entity;
+        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
         $sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
         if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
 
@@ -1191,7 +1191,7 @@ class AccountLine extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
-        $sql.= " AND ba.entity = ".$conf->entity;
+        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
         if ($num) $sql.= " AND b.num_chq='".$this->db->escape($num)."'";
         else if ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
         else $sql.= " AND b.rowid=".$rowid;

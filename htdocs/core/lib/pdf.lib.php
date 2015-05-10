@@ -1462,6 +1462,43 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 }
 
 /**
+ *	Return line unit
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	HookManager	$hookmanager		Hook manager instance
+ *  @return	void
+ */
+function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
+{
+	global $langs;
+	if ($object->lines[$i]->special_code != 3) {
+		if (is_object($hookmanager) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || !empty($object->lines[$i]->fk_parent_line))) {
+			$special_code = $object->lines[$i]->special_code;
+			if (!empty($object->lines[$i]->fk_parent_line)) {
+				$special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+			}
+			$parameters = array(
+				'i' => $i,
+				'outputlangs' => $outputlangs,
+				'hidedetails' => $hidedetails,
+				'special_code' => $special_code
+			);
+			$action = '';
+			return $hookmanager->executeHooks('pdf_getlineunit', $parameters, $object,
+				$action);    // Note that $action and $object may have been modified by some hooks
+		} else {
+			if (empty($hidedetails) || $hidedetails > 1) {
+				return $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			}
+		}
+	}
+}
+
+
+/**
  *	Return line remise percent
  *
  *	@param	Object		$object				Object

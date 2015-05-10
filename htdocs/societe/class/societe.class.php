@@ -1288,12 +1288,14 @@ class Societe extends CommonObject
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
-     *    @param	int		$id     Id of third party to delete
+     *    @param	int		$id             Id of third party to delete
+     *    @param    User    $user           User who ask to delete thirparty
+     *    @param    int		$call_trigger   0=No, 1=yes
      *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
      */
-    function delete($id)
+    function delete($id, $user='', $call_trigger=1)
     {
-        global $user, $langs, $conf;
+        global $langs, $conf;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1308,10 +1310,14 @@ class Societe extends CommonObject
 		{
             $this->db->begin();
 
-            // Call trigger
-            $result=$this->call_trigger('COMPANY_DELETE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
+            // User is mandatory for trigger call
+            if ($user && $call_trigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('COMPANY_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (! $error)
 			{
@@ -3091,48 +3097,62 @@ class Societe extends CommonObject
 	 *  Return status of prospect
 	 *
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param	string	$label		Label to use for status for added status
 	 *  @return string        		Libelle
 	 */
-	function getLibProspCommStatut($mode=0)
+	function getLibProspCommStatut($mode=0, $label='')
 	{
-		return $this->LibProspCommStatut($this->stcomm_id,$mode);
+		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label);
 	}
 
 	/**
 	 *  Return label of a given status
 	 *
-	 *  @param	int		$statut        	Id statut
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string        			Libelle du statut
+	 *  @param	int|string	$statut        	Id or code for prospection status
+	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @param	string		$label			Label to use for status for added status
+	 *  @return string       	 			Libelle du statut
 	 */
-	function LibProspCommStatut($statut,$mode=0)
+	function LibProspCommStatut($statut, $mode=0, $label='')
 	{
 		global $langs;
 		$langs->load('customers');
 
 		if ($mode == 2)
 		{
-			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
-			if ($statut ==  0) return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
-			if ($statut ==  1) return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
-			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
-			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
+			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
+			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
+			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
+			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+			else
+			{
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+			}
 		}
 		if ($mode == 3)
 		{
-			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1);
-			if ($statut ==  0) return img_action($langs->trans("StatusProspect0"), 0);
-			if ($statut ==  1) return img_action($langs->trans("StatusProspect1"), 1);
-			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2);
-			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3);
+			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"),-1);
+			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0);
+			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1);
+			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2);
+			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3);
+			else
+			{
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0);
+			}
 		}
 		if ($mode == 4)
 		{
-			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
-			if ($statut ==  0) return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
-			if ($statut ==  1) return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
-			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
-			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
+			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
+			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
+			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
+			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+			else
+			{
+				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+			}
 		}
 
 		return "Error, mode/status not found";
@@ -3161,7 +3181,7 @@ class Societe extends CommonObject
 			if (! $resql)
 			{
 				$this->db->rollback();
-				$this->error=$this->db->error();
+				$this->error=$this->db->lasterror();
 				return -1;
 			}
 
@@ -3220,7 +3240,7 @@ class Societe extends CommonObject
 		$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		*/
-		$sql  = "SELECT sum(total) as amount FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		$sql .= " AND paye = 0";
 		$sql .= " AND fk_statut <> 0";	// Not a draft
@@ -3231,8 +3251,18 @@ class Societe extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$obj=$this->db->fetch_object($resql);
-   			return ($obj->amount);
+			$outstandingBill = 0;
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$facturestatic=new Facture($this->db);
+			while($obj=$this->db->fetch_object($resql)) {
+				$facturestatic->id=$obj->rowid;
+				$paiement = $facturestatic->getSommePaiement();
+				$creditnotes = $facturestatic->getSumCreditNotesUsed();
+				$deposits = $facturestatic->getSumDepositsUsed();
+
+				$outstandingBill+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
+   			}
+   			return $outstandingBill;
 		}
 		else
 			return 0;

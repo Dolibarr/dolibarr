@@ -107,7 +107,7 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->label.'</td>';
 		print '</tr>';
 
 		// Status (to sell)
@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 			$sql.= ", ".MAIN_DB_PREFIX."commandedet as d";
 			if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE c.fk_soc = s.rowid";
-			$sql.= " AND c.entity = ".$conf->entity;
+			$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 			$sql.= " AND d.fk_commande = c.rowid";
 			$sql.= " AND d.fk_product =".$product->id;
 	            if (! empty($search_month))

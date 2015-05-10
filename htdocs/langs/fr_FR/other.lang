@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Validation fiche intervention
 Notify_FICHINTER_SENTBYMAIL=Envoi fiche d'intervention par email
 Notify_BILL_VALIDATE=Validation facture client
 Notify_BILL_UNVALIDATE=Dévalidation facture client
-Notify_ORDER_SUPPLIER_VALIDATE=Commande fournisseur enregistrée
 Notify_ORDER_SUPPLIER_APPROVE=Approbation commande fournisseur
 Notify_ORDER_SUPPLIER_REFUSE=Refus commande fournisseur
 Notify_ORDER_VALIDATE=Validation commande client
@@ -203,6 +202,7 @@ NewKeyWillBe=Vos nouveaux identifiants pour vous connecter à l'application sero
 ClickHereToGoTo=Cliquez ici pour aller sur %s
 YouMustClickToChange=Vous devez toutefois auparavant cliquer sur le lien suivant, afin de valider ce changement de mot de passe
 ForgetIfNothing=Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message. Vos identifiants restent sécurisés.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s

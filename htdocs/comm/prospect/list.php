@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("propal");
@@ -42,7 +42,8 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 $action				= GETPOST('action','alpha');
 $socname            = GETPOST("socname",'alpha');
-$stcomm             = GETPOST("stcomm",'int');
+$stcomm             = GETPOST("stcomm",'alpha');	// code
+$search_stcomm      = GETPOST("search_stcomm",'int');
 $search_nom         = GETPOST("search_nom");
 $search_zipcode     = GETPOST("search_zipcode");
 $search_town        = GETPOST("search_town");
@@ -160,6 +161,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 {
     $socname="";
 	$stcomm="";
+	$search_stcomm="";
 	$search_nom="";
 	$search_zipcode="";
 	$search_town="";
@@ -171,6 +173,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 if ($search_status=='') $search_status=1; // always display active customer first
 
+
+
 /*
  * Actions
  */
@@ -179,12 +183,17 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
-	if ($action == 'cstc')
+if (empty($reshook))
+{
+	if ($action == 'setstcomm')
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
-		$sql .= " WHERE rowid = ".$_GET["socid"];
-		$result=$db->query($sql);
+		$object = new Client($db);
+		$result=$object->fetch($socid);
+		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
+		$result=$object->set_commnucation_level($user);
+		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+
+		$action=''; $socid=0;
 	}
 }
 
@@ -196,8 +205,9 @@ if (empty($reshook)) {
 $formother=new FormOther($db);
 $form=new Form($db);
 
-$sql = "SELECT s.rowid, s.nom as name, s.commercial_name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
-$sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.commercial_name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
+$sql.= " s.prefix_comm, s.fk_prospectlevel, s.fk_stcomm as stcomm_id,";
+$sql.= " st.libelle as stcomm_label,";
 $sql.= " d.nom as departement";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -210,7 +220,7 @@ $sql.= " AND s.client IN (2, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = " .$socid;
-if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
+if ($search_stcomm != '') $sql.= " AND s.fk_stcomm=".$search_stcomm;
 if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
@@ -267,7 +277,7 @@ if ($resql)
 	if ($num == 1 && $socname)
 	{
 		$obj = $db->fetch_object($resql);
-		header("Location: card.php?socid=".$obj->rowid);
+		header("Location: card.php?socid=".$obj->socid);
 		exit;
 	}
 	else
@@ -276,23 +286,23 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_zipcode='.urlencode($search_zipcode).'&amp;search_town='.urlencode($search_town);
+	$param='&search_stcomm='.$search_stcomm.'&search_nom='.urlencode($search_nom).'&search_zipcode='.urlencode($search_zipcode).'&search_town='.urlencode($search_town);
  	// Store the status filter in the URL
- 	if (isSet($search_cstc))
+ 	if (isSet($search_setstcomm))
  	{
- 		foreach ($search_cstc as $key => $value)
+ 		foreach ($search_setstcomm as $key => $value)
  		{
  			if ($value == 'true')
- 				$param.='&amp;search_cstc['.((int) $key).']=true';
+ 				$param.='&search_setstcomm['.((int) $key).']=true';
  			else
- 				$param.='&amp;search_cstc['.((int) $key).']=false';
+ 				$param.='&search_setstcomm['.((int) $key).']=false';
  		}
  	}
- 	if ($search_level_from != '') $param.='&amp;search_level_from='.$search_level_from;
- 	if ($search_level_to != '') $param.='&amp;search_level_to='.$search_level_to;
- 	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
- 	if ($search_sale > 0) $param.='&amp;search_sale='.$search_sale;
- 	if ($search_status != '') $param.='&amp;search_status='.$search_status;
+ 	if ($search_level_from != '') $param.='&search_level_from='.$search_level_from;
+ 	if ($search_level_to != '') $param.='&search_level_to='.$search_level_to;
+ 	if ($search_categ != '') $param.='&search_categ='.$search_categ;
+ 	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
+ 	if ($search_status != '') $param.='&search_status='.$search_status;
  	// $param and $urladd should have the same value
  	$urladd = $param;
 
@@ -333,9 +343,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
-	print '<td class="liste_titre">&nbsp;</td>';
+	print_liste_field_titre('');
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
-    print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre('');
 
     $parameters=array();
     $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -365,7 +375,7 @@ if ($resql)
  	$options_from = '<option value="">&nbsp;</option>';
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
- 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected="selected"':'').'>';
+ 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected':'').'>';
  		$options_from .= $langs->trans($tab_level_label);
  		$options_from .= '</option>';
  	}
@@ -377,7 +387,7 @@ if ($resql)
  	$options_to = '<option value="">&nbsp;</option>';
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
- 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected="selected"':'').'>';
+ 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected':'').'>';
  		$options_to .= $langs->trans($tab_level_label);
  		$options_to .= '</option>';
  	}
@@ -415,8 +425,9 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-	$prospectstatic=new Prospect($db);
+	$prospectstatic=new Client($db);
 	$prospectstatic->client=2;
+	$prospectstatic->loadCacheOfProspStatus();
 
 	while ($i < min($num,$conf->liste_limit))
 	{
@@ -426,7 +437,7 @@ if ($resql)
 
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
-		$prospectstatic->id=$obj->rowid;
+		$prospectstatic->id=$obj->socid;
 		$prospectstatic->name=$obj->name;
         $prospectstatic->status=$obj->status;
         $prospectstatic->code_client=$obj->code_client;
@@ -435,8 +446,8 @@ if ($resql)
         $prospectstatic->commercial_name=$obj->commercial_name;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
-        print "<td>".$obj->zip."&nbsp;</td>";
-		print "<td>".$obj->town."&nbsp;</td>";
+        print "<td>".$obj->zip."</td>";
+		print "<td>".$obj->town."</td>";
 		print '<td align="center">'.$obj->departement.'</td>';
 		// Creation date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
@@ -446,19 +457,15 @@ if ($resql)
 		print "</td>";
 		// Statut
 		print '<td align="center" class="nowrap">';
-		print $prospectstatic->LibProspStatut($obj->fk_stcomm,2);
+		print $prospectstatic->LibProspCommStatut($obj->stcomm_id,2,$prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
 		print "</td>";
 
-		//$sts = array(-1,0,1,2,3);
 		print '<td align="right" class="nowrap">';
-		foreach ($sts as $key => $value)
+		foreach($prospectstatic->cacheprospectstatus as $key => $val)
 		{
-			if ($value <> $obj->fk_stcomm)
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:'').'">';
-				print img_action(0,$value);
-				print '</a>&nbsp;';
-			}
+			$titlealt='default';
+			if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$obj->socid.'&stcomm='.$val['code'].'&action=setstcomm'.$param.($page?'&page='.urlencode($page):'').'">'.img_action($titlealt,$val['code']).'</a>';
 		}
 		print '</td>';
 

@@ -43,4 +43,4 @@ ListOfSupplierOrders=Lista zleceń dostawca
 MenuOrdersSupplierToBill=Zamówienia dostawca do faktury
 NbDaysToDelivery=Opóźnienie dostawy w dni
 DescNbDaysToDelivery=Największe opóźnienie wyświetlania listy produktów wśród zamówienia
-UseDoubleApproval=Use double approval (the second approval will be any user of a defined user group)
+UseDoubleApproval=Użyj podwójnego zatwierdzenia (drugie zezwolenie może być wykonane przez dowolnego użytkownika z dedykowanymi uprawnieniami)

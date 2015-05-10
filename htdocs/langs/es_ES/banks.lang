@@ -163,3 +163,5 @@ LabelRIB=Nombre de la cuenta bancaria
 NoBANRecord=Ninguna cuenta bancaria definida
 DeleteARib=Eliminar cuenta bancaria
 ConfirmDeleteRib=¿Está seguro de que desea eliminar esta cuenta bancaria?
+StartDate=Fecha de inicio
+EndDate=Fecha de fin

@@ -101,26 +101,5 @@ ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to sta
 SaveTrip=Valideaza raport de cheltuieli
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
 
-Synchro_Compta=NDF <-> Cont
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Vezi Contul
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Niciun proiect selectat
-NO_DATE=Nicio data selectata
-NO_PRICE=Nici unul pret indicat.
-
-TripForValid=De validat
-TripForPaid=De platit
-TripPaid=Platit
 
 NoTripsToExportCSV=No expense report to export for this period.

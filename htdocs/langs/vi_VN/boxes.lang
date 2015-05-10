@@ -94,3 +94,4 @@ BoxProductDistributionFor=Phân phối %s cho %s
 ForCustomersInvoices=Khách hàng hoá đơn
 ForCustomersOrders=Khách hàng đặt hàng
 ForProposals=Đề xuất
+LastXMonthRolling=The last %s month rolling

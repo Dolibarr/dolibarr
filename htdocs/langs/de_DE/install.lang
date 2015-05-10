@@ -155,8 +155,8 @@ MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
 ActivateModule=Aktivieren von Modul %s
 ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bearbeiten (Expertenmodus)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=Warnung: \nHaben Sie zuerst eine Sicherungskopie der Datenbank gemacht ? \nAufgrund der Probleme im Datenbanksystem (zB MySQL Version 5.5.40 ) , viele Daten oder Tabellen können während der Migration verloren gehen , so ist es sehr empfehlenswert , vor dem Starten des Migrationsprozesses, eine vollständige Sicherung  Ihrer Datenbank zu haben.\n\nKlicken Sie auf OK , um die Migration zu starten
+ErrorDatabaseVersionForbiddenForMigration=Die Version Ihres Datenbankmanager ist %s.\nDies ist einen kritischer Bug welcher zu Datenverlust führen kann, wenn Sie die Struktur der Datenbank wie vom Migrationsprozess erforderlich  ändern. Aus diesem Grund, ist die Migration nicht erlaubt bevor der Datenbankmanager auf eine später Version aktualisiert wurde (Liste betroffer Versionen %s )
 
 #########
 # upgrade
@@ -196,12 +196,12 @@ MigrationReopenedContractsNumber=%s Verträge geändert
 MigrationReopeningContractsNothingToUpdate=Keine geschlossenen Verträge zur Wiedereröffnung
 MigrationBankTransfertsUpdate=Verknüpfung zwischen Banktransaktion und einer Überweisung aktualisieren
 MigrationBankTransfertsNothingToUpdate=Alle Banktransaktionen sind auf neuestem Stand.
-MigrationShipmentOrderMatching=Aktualisiere Sendungsscheine
+MigrationShipmentOrderMatching=Aktualisierung Versand
 MigrationDeliveryOrderMatching=Aktualisiere Lieferscheine
 MigrationDeliveryDetail=Aktualisiere Lieferungen
 MigrationStockDetail=Produklagerwerte aktualisieren
 MigrationMenusDetail=Tabellen der dynamischen Menüs aktualisieren
-MigrationDeliveryAddress=Lieferadresse in Sendungen aktualisieren
+MigrationDeliveryAddress=Update Lieferadresse in Versand
 MigrationProjectTaskActors=Datenmigration für llx_projet_task_actors Tabelle
 MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet nach llx_element_contact
 MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)

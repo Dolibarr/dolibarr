@@ -139,7 +139,7 @@ function getEntity($element=false, $shared=0)
  */
 function getBrowserInfo($user_agent)
 {
-	include_once DOL_DOCUMENT_ROOT.'/core/class/mobiledetect.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/includes/mobiledetect/mobiledetect.class.php';
 
 	$name='unknown';
 	$version='';
@@ -1648,8 +1648,8 @@ function isValidEmail($address, $acceptsupervisorkey=0)
 
 /**
  *  Return true if phone number syntax is ok
+ *  TODO Decide what to do with this
  *
- * TODO: Decide what to do with this
  *  @param	string		$phone		phone (Ex: "0601010101")
  *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
@@ -2046,22 +2046,24 @@ function img_picto_common($titlealt, $picto, $options = '', $pictoisfullpath = 0
 /**
  *	Show logo action
  *
- *	@param	string	$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  int		$numaction   	Action to show
- *	@return string      			Return an img tag
+ *	@param	string		$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  string		$numaction   	Action id or code to show
+ *	@return string      				Return an img tag
  */
 function img_action($titlealt, $numaction)
 {
 	global $conf, $langs;
 
-	if ($titlealt == 'default')
+	if (empty($titlealt) || $titlealt == 'default')
 	{
-		if ($numaction == -1) $titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
-		if ($numaction == 0) $titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
-		if ($numaction == 1) $titlealt = $langs->transnoentitiesnoconv('ChangeToContact');
-		if ($numaction == 2) $titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
-		if ($numaction == 3) $titlealt = $langs->transnoentitiesnoconv('ChangeContactDone');
+		if ($numaction == '-1' || $numaction == 'ST_NO')			{ $numaction = -1; $titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact'); }
+		elseif ($numaction ==  '0' || $numaction == 'ST_NEVER') 	{ $numaction = 0; $titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted'); }
+		elseif ($numaction ==  '1' || $numaction == 'ST_TODO')  	{ $numaction = 1; $titlealt = $langs->transnoentitiesnoconv('ChangeToContact'); }
+		elseif ($numaction ==  '2' || $numaction == 'ST_PEND')  	{ $numaction = 2; $titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess'); }
+		elseif ($numaction ==  '3' || $numaction == 'ST_DONE')  	{ $numaction = 3; $titlealt = $langs->transnoentitiesnoconv('ChangeContactDone'); }
+		else { $titlealt = $langs->transnoentitiesnoconv('ChangeStatus '.$numaction); $numaction = 0; }
 	}
+	if (! is_numeric($numaction)) $numaction=0;
 
 	return img_picto($titlealt, 'stcomm'.$numaction.'.png');
 }
@@ -2474,10 +2476,11 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
  *
  *	@param	 	DoliDB	$db      	Database handler
  *	@param  	mixed	$error		String or array of errors strings to show
+ *  @param		array	$errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors
  */
-function dol_print_error($db='',$error='')
+function dol_print_error($db='',$error='',$errors=null)
 {
 	global $conf,$langs,$argv;
 	global $dolibarr_main_prod;
@@ -2550,12 +2553,15 @@ function dol_print_error($db='',$error='')
 		$syslog.=", db_error=".$db->lasterror();
 	}
 
-	if ($error)
+	if ($error || $errors)
 	{
 		$langs->load("errors");
 
-		if (is_array($error)) $errors=$error;
-		else $errors=array($error);
+		// Merge all into $errors array
+		if (is_array($error) && is_array($errors)) $errors=array_merge($error,$errors);
+		elseif (is_array($error)) $errors=$error;
+		elseif (is_array($errors)) $errors=array_merge(array($error),$errors);
+		else $errors=array_merge(array($error));
 
 		foreach($errors as $msg)
 		{
@@ -2564,7 +2570,7 @@ function dol_print_error($db='',$error='')
 			{
 				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
 			}
-			else                            // Mode CLI
+			else                        // Mode CLI
 			{
 				$out.='> '.$langs->transnoentities("Message").":\n".$msg."\n" ;
 			}
@@ -3678,8 +3684,8 @@ function yn($yesno, $case=1, $color=0)
 	{
 		$result=$langs->trans('yes');
 		if ($case == 1 || $case == 3) $result=$langs->trans("Yes");
-		if ($case == 2) $result='<input type="checkbox" value="1" checked="checked" disabled="disabled">';
-		if ($case == 3) $result='<input type="checkbox" value="1" checked="checked" disabled="disabled"> '.$result;
+		if ($case == 2) $result='<input type="checkbox" value="1" checked disabled>';
+		if ($case == 3) $result='<input type="checkbox" value="1" checked disabled> '.$result;
 
 		$classname='ok';
 	}
@@ -3687,8 +3693,8 @@ function yn($yesno, $case=1, $color=0)
 	{
 		$result=$langs->trans("no");
 		if ($case == 1 || $case == 3) $result=$langs->trans("No");
-		if ($case == 2) $result='<input type="checkbox" value="0" disabled="disabled">';
-		if ($case == 3) $result='<input type="checkbox" value="0" disabled="disabled"> '.$result;
+		if ($case == 2) $result='<input type="checkbox" value="0" disabled>';
+		if ($case == 3) $result='<input type="checkbox" value="0" disabled> '.$result;
 
 		if ($color == 2) $classname='ok';
 		else $classname='error';
@@ -3727,10 +3733,10 @@ function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
  *
  *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
  *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
- *  @param	int		$newmask	Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0444'
+ *  @param	int		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
  *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
  */
-function dol_mkdir($dir, $dataroot='', $newmask=0)
+function dol_mkdir($dir, $dataroot='', $newmask=null)
 {
 	global $conf;
 
@@ -3768,7 +3774,9 @@ function dol_mkdir($dir, $dataroot='', $newmask=0)
 
 				umask(0);
 				$dirmaskdec=octdec($newmask);
-				if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+				if (empty($newmask)) {
+					$dirmaskdec = empty( $conf->global->MAIN_UMASK ) ? octdec( '0755' ) : octdec( $conf->global->MAIN_UMASK );
+				}
 				$dirmaskdec |= octdec('0111');  // Set x bit required for directories
 				if (! @mkdir($ccdir_osencoded, $dirmaskdec))
 				{
@@ -4957,9 +4965,10 @@ function dol_getmypid()
  *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
  *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
  * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
+ * @param	integer			$nofinaland	1=Do now output the final 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $numeric=0)
+function natural_search($fields, $value, $numeric=0, $nofinaland=0)
 {
     global $db,$langs;
 
@@ -5014,7 +5023,7 @@ function natural_search($fields, $value, $numeric=0)
         if ($newres) $res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') .$newres . ($i2 > 1 ? ')' : '');
         $j++;
     }
-    $res = " AND (" . $res . ")";
+    $res = ($nofinaland?"":" AND ")."(" . $res . ")";
     //print 'xx'.$res.'yy';
     return $res;
 }

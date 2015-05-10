@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +165,7 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	$result = $object->update($user);
 	if ($result > 0)
 	{
-		header("Location: ".$_SEVER["PHP_SELF"]."?id=".$_POST['id']);
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
 		exit;
 	}
 	else
@@ -217,7 +218,7 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 		$subject = $langs->trans("ExpenseReportWaitingForApproval");
 
 		// CONTENT
-		$link = $urlwithroot.'/expenserecord/card.php?id='.$object->id;
+		$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 		$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
 
 		// Rebuild pdf
@@ -244,7 +245,7 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 			{
 				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
 				setEventMessage($mesg);
-				header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			}
 			else
@@ -349,7 +350,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 			// SEND
 			$result=$mailfile->sendfile();
 			if ($result):
-			Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 			endif;
 
@@ -454,7 +455,7 @@ if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $u
 					$result=$mailfile->sendfile();
 					if ($result):
 						setEventMessage($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo));
-						Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+						Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 						exit;
 					else:
 						setEventMessage($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo),'errors');
@@ -540,7 +541,7 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 				if ($result)
 				{
 					setEventMessage($langs->trans("MailSuccessfulySent",$emailFrom,$emailTo));
-					Header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+					Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 					exit;
 				}
 				else
@@ -624,7 +625,7 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-						header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 						exit;
 					}
 					else
@@ -793,7 +794,7 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 
 		if ($result > 0)
 		{
-			header("Location: ".$_SEVER["PHP_SELF"]."?id=".$id);
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
 		else
@@ -1324,27 +1325,27 @@ else
 				dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
 				if ($action == 'save'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'save_from_refuse'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'delete'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'validate'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'paid'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
@@ -1356,20 +1357,20 @@ else
 				}
 
 				if ($action == 'brouillonner'):
-				$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id."&amp;rowid=".$_GET['rowid'],$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&amp;rowid=".$_GET['rowid'],$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 					if ($ret == 'html') print '<br>';
 				}
 
@@ -1738,7 +1739,7 @@ else
 						$defaultvat=-1;
 						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 						print '<select class="flat" name="vatrate">';
-						print '<option name="none" value="" selected="selected">';
+						print '<option name="none" value="" selected>';
 						print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$defaultvat), $mysoc, '', 0, 0, '', true);
 						print '</select>';
 						print '</td>';
@@ -1805,18 +1806,18 @@ if ($action != 'create' && $action != 'edit')
 		if ($object->fk_user_author == $user->id)
 		{
 			// Modifier
-			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('ModifyInfoGen').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
 			// Validate
 			if (count($object->lines) > 0 || count($object->lignes) > 0)
 			{
-				print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=save&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 			}
 
 			if ($user->rights->expensereport->supprimer)
 			{
 				// Supprimer
-				print '<a class="butActionDelete" href="'.$_SEVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
 	}
@@ -1831,12 +1832,12 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Modifier
-			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('ModifyInfoGen').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
 			// Brouillonner (le statut refusée est identique à brouillon)
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
-			print '<a class="butAction" href="'.$_SEVER["PHP_SELF"].'?action=save_from_refuse&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 
 			if ($user->rights->expensereport->supprimer)
 			{

@@ -5,6 +5,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2013-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
@@ -58,8 +59,21 @@ class Product extends CommonObject
 	var $id ;
 	//! Ref
 	var $ref;
-	var $libelle;            // TODO deprecated
+    /**
+     * Product label
+     * @var string
+     * @deprecated use $label
+     */
+	var $libelle;
+    /**
+     * Product label
+     * @var string
+     */
 	var $label;
+    /** 
+     * Product descripion
+     * @var string    
+     */
 	var $description;
 
 	/**
@@ -176,6 +190,12 @@ class Product extends CommonObject
     var $fk_price_expression;
 
 	/**
+	 * Unit code ('km', 'm', 'l', 'p', ...)
+	 * @var string
+	 */
+	public $fk_unit;
+
+	/**
 	 * Regular product
 	 */
 	const TYPE_PRODUCT = 0;
@@ -225,7 +245,7 @@ class Product extends CommonObject
 		if (dol_strlen(trim($this->ref)) == 0)
 		$err++;
 
-		if (dol_strlen(trim($this->libelle)) == 0)
+		if (dol_strlen(trim($this->label)) == 0)
 		$err++;
 
 		if ($err > 0)
@@ -253,7 +273,7 @@ class Product extends CommonObject
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->price_ttc=price2num($this->price_ttc);
 		$this->price=price2num($this->price);
 		$this->price_min_ttc=price2num($this->price_min_ttc);
@@ -305,7 +325,7 @@ class Product extends CommonObject
         $this->barcode=trim($this->barcode);
 
         // Check parameters
-		if (empty($this->libelle))
+		if (empty($this->label))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
 			return -1;
@@ -382,6 +402,7 @@ class Product extends CommonObject
 					$sql.= ", canvas";
 					$sql.= ", finished";
 					$sql.= ", tobatch";
+					$sql.= ", fk_unit";
 					$sql.= ") VALUES (";
 					$sql.= "'".$this->db->idate($now)."'";
 					$sql.= ", ".$conf->entity;
@@ -389,7 +410,7 @@ class Product extends CommonObject
 					$sql.= ", ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 					$sql.= ", ".price2num($price_min_ht);
 					$sql.= ", ".price2num($price_min_ttc);
-					$sql.= ", ".(! empty($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null");
+					$sql.= ", ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
 					$sql.= ", ".$user->id;
 					$sql.= ", ".$this->type;
 					$sql.= ", ".price2num($price_ht);
@@ -402,6 +423,7 @@ class Product extends CommonObject
 					$sql.= ", '".$this->canvas."'";
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
+					$sql.= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
@@ -579,11 +601,11 @@ class Product extends CommonObject
 		$error=0;
 
 		// Check parameters
-		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
+		if (! $this->label) $this->label = 'MISSING LABEL';
 
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
-		$this->libelle = trim($this->libelle);
+		$this->label = trim($this->label);
 		$this->description = trim($this->description);
 		$this->note = (isset($this->note) ? trim($this->note) : null);
 		$this->weight = price2num($this->weight);
@@ -658,7 +680,7 @@ class Product extends CommonObject
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-			$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
+			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
 			$sql.= ", ref = '" . $this->ref ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
@@ -691,6 +713,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
+	        $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -948,7 +971,7 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // if there is already a description line for this language
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".$this->db->escape($this->libelle)."',";
+					$sql2.= " SET label='".$this->db->escape($this->label)."',";
 					$sql2.= " description='".$this->db->escape($this->description)."',";
 					$sql2.= " note='".$this->db->escape($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
@@ -956,7 +979,7 @@ class Product extends CommonObject
 				else
 				{
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->libelle);
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
@@ -1503,8 +1526,8 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
-		$sql.= " ,ref_ext, fk_price_expression";
+		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit";
+		$sql.= " , fk_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1514,7 +1537,6 @@ class Product extends CommonObject
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -1525,7 +1547,6 @@ class Product extends CommonObject
 				$this->id						= $obj->rowid;
 				$this->ref						= $obj->ref;
 				$this->ref_ext					= $obj->ref_ext;
-				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
 				$this->url						= $obj->url;
@@ -1582,6 +1603,7 @@ class Product extends CommonObject
 
 				$this->ref_ext					= $obj->ref_ext;
 				$this->fk_price_expression		= $obj->fk_price_expression;
+				$this->fk_unit					= $obj->fk_unit;
 
 				$this->db->free($resql);
 
@@ -1770,7 +1792,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.rowid = pd.fk_propal";
 		$sql.= " AND p.fk_soc = s.rowid";
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
 		$sql.= " AND pd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND pr.fk_statut != 0";
@@ -1813,7 +1835,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
@@ -1855,7 +1877,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_commande";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('commande_fourniseur', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0) $sql.= " AND c.fk_soc = ".$socid;
@@ -1900,7 +1922,7 @@ class Product extends CommonObject
 		$sql.= " WHERE e.rowid = ed.fk_expedition";
 		$sql.= " AND c.rowid = cd.fk_commande";
 		$sql.= " AND e.fk_soc = s.rowid";
-		$sql.= " AND e.entity = ".$conf->entity;
+		$sql.= " AND e.entity IN (".getEntity('expedition', 1).")";
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND e.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -1943,7 +1965,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE cf.rowid = fd.fk_commande";
 		$sql.= " AND cf.fk_soc = s.rowid";
-		$sql.= " AND cf.entity = ".$conf->entity;
+		$sql.= " AND cf.entity IN (".getEntity('commande_fournisseur', 1).")";
 		$sql.= " AND fd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND cf.fk_soc = ".$socid;
@@ -1985,7 +2007,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = cd.fk_contrat";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('contrat', 1).")";
 		$sql.= " AND cd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND c.statut != 0";
@@ -2027,7 +2049,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = fd.fk_facture";
 		$sql.= " AND f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture', 1).")";
 		$sql.= " AND fd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND f.fk_statut != 0";
@@ -2069,7 +2091,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = fd.fk_facture_fourn";
 		$sql.= " AND f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
 		$sql.= " AND fd.fk_product = ".$this->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		//$sql.= " AND f.fk_statut != 0";
@@ -2167,7 +2189,7 @@ class Product extends CommonObject
 		$sql.= " WHERE f.rowid = d.fk_facture";
 		$sql.= " AND d.fk_product =".$this->id;
 		$sql.= " AND f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND f.fk_soc = $socid";
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
@@ -2196,7 +2218,7 @@ class Product extends CommonObject
 		$sql.= " WHERE f.rowid = d.fk_facture_fourn";
 		$sql.= " AND d.fk_product =".$this->id;
 		$sql.= " AND f.fk_soc = s.rowid";
-		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND f.fk_soc = $socid";
 		$sql.= " GROUP BY date_format(f.datef,'%Y%m')";
@@ -2225,7 +2247,7 @@ class Product extends CommonObject
 		$sql.= " WHERE p.rowid = d.fk_propal";
 		$sql.= " AND d.fk_product =".$this->id;
 		$sql.= " AND p.fk_soc = s.rowid";
-		$sql.= " AND p.entity = ".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
 		$sql.= " GROUP BY date_format(p.datep,'%Y%m')";
@@ -2252,7 +2274,7 @@ class Product extends CommonObject
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		$sql.= " AND d.fk_product =".$this->id;
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
@@ -2279,7 +2301,7 @@ class Product extends CommonObject
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		$sql.= " AND d.fk_product =".$this->id;
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND c.fk_soc = ".$socid;
 		$sql.= " GROUP BY date_format(c.date_commande,'%Y%m')";
@@ -2804,16 +2826,16 @@ class Product extends CommonObject
 	/**
 	 *  Return all Father products fo current product
 	 *
-	 *  @return 	array prod
+	 *  @return 	array 		Array of product
 	 *  @see		getParent
 	 */
 	function getFather()
 	{
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND pa.fk_product_fils=".$this->id;
+		$sql.= " AND pa.fk_product_fils = ".$this->id;
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -2821,8 +2843,11 @@ class Product extends CommonObject
 			$prods = array ();
 			while ($record = $this->db->fetch_array($res))
 			{
-				$prods[$record['id']]['id'] =  $record['rowid'];
-				$prods[$record['id']]['label'] =  $this->db->escape($record['label']);
+				$prods[$record['id']]['id'] = $record['rowid'];
+				$prods[$record['id']]['ref'] = $record['ref'];
+				$prods[$record['id']]['label'] = $record['label'];
+				$prods[$record['id']]['qty'] = $record['qty'];
+				$prods[$record['id']]['incdec'] = $record['incdec'];
 				$prods[$record['id']]['fk_product_type'] =  $record['fk_product_type'];
 			}
 			return $prods;
@@ -2843,7 +2868,7 @@ class Product extends CommonObject
 	 */
 	function getParent()
 	{
-		$sql = "SELECT p.label as label,p.rowid,pa.fk_product_pere as id,p.fk_product_type";
+		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p";
 		$sql.= " WHERE p.rowid = pa.fk_product_pere";
@@ -3120,7 +3145,7 @@ class Product extends CommonObject
 	 *  @param  	double	$nbpiece        nb of units
 	 *  @param  	int		$movement       0 = add, 1 = remove
 	 * 	@param		string	$label			Label of stock movement
-	 * 	@param		double	$price			Price to use for stock eval
+	 * 	@param		double	$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *  @param		string	$inventorycode	Inventory code
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
@@ -3399,8 +3424,11 @@ class Product extends CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
+		global $conf;
+
 		$dir = $sdir;
-		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos";
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $dir .= '/'. get_exdir($this->id,2) . $this->id ."/photos/";
+		else $dir .= '/'.dol_sanitizeFileName($this->ref).'/';
 
 		$nbphoto=0;
 
@@ -3791,7 +3819,7 @@ class Product extends CommonObject
         // Initialize parameters
         $this->id=0;
         $this->ref = 'PRODUCT_SPEC';
-        $this->libelle = 'PRODUCT SPECIMEN';
+        $this->label = 'PRODUCT SPECIMEN';
         $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
         $this->specimen=1;
         $this->country_id=1;
@@ -3802,6 +3830,48 @@ class Product extends CommonObject
 
         $this->barcode=-1;	// Create barcode automatically
     }
+
+	/**
+	 *	Returns the text label from units dictionnary
+	 *
+	 * 	@param	string $type Label type (long or short)
+	 *	@return	string|int <0 if ko, label if ok
+	 */
+	function getLabelOfUnit($type='long')
+	{
+		global $langs;
+
+		if (!$this->fk_unit) {
+			return '';
+		}
+
+		$langs->load('products');
+
+		$this->db->begin();
+
+		$label_type = 'label';
+
+		if ($type == 'short')
+		{
+			$label_type = 'short_label';
+		}
+
+		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$resql = $this->db->query($sql);
+		if($resql && $this->db->num_rows($resql) > 0)
+		{
+			$res = $this->db->fetch_array($resql);
+			$label = $res[$label_type];
+			$this->db->free($resql);
+			return $label;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
     /**
      * Return if object has a sell-by date or eat-by date

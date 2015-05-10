@@ -1,4 +1,13 @@
 # Dolibarr language file - Source file is en_US - trips
+Trip=Expense report
+Trips=Expense reports
+TripsAndExpenses=Expenses reports
+TripsAndExpensesStatistics=Expense reports statistics
+ListOfTrips=List of expense report
+NewTrip=New expense report
 Kilometers=Kilometros
 FeesKilometersOrAmout=Quantidade de Kilometros
+DeleteTrip=Delete expense report
+ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
+ListTripsAndExpenses=List of expense reports
 ClassifyRefunded=Classificar 'Rembolsado'

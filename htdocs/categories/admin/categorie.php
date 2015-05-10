@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013 		Florian Henry  <florian.henry@open-concept.pro>
+/* Copyright (C) 2008-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013 		Florian Henry  		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015 		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,11 +108,11 @@ if ($conf->use_javascript_ajax)
 }
 else
 {
-	if($conf->global->CATEGORIE_RECURSIV_ADD == 0)
+	if (empty($conf->global->CATEGORIE_RECURSIV_ADD))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 	}
-	else if($conf->global->CATEGORIE_RECURSIV_ADD == 1)
+	else
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Enabled"),'on').'</a>';
 	}

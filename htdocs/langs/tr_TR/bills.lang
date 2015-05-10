@@ -25,8 +25,8 @@ InvoiceReplacement=Fatura değiştirme
 InvoiceReplacementAsk=Fatura değiştirme yapılacak fatura
 InvoiceReplacementDesc=<b>Fatura değiştirme</b> henüz tahsilat yapılmamış bir faturanın iptal edilmesi ve tamamen değiştirilmesi için kullanılır.<br><br>Not: Yalnızca ödeme yapılmamış faturalar değiştirilebilir. Değiştirdiğiniz fatura eğer henüz kapataılmamışsa, kullanılmamak üzere otomatik olarak kapatılacaktır.
 InvoiceAvoir=İade faturası
-InvoiceAvoirAsk=İade faturası fatura düzeltmek için kullanılır
-InvoiceAvoirDesc=<b>İade Faturası</b> bir eksi fatura olup fatura tutarının gerçekte ödenen tutardan farklı olması durumunda kullanılır (çünkü müşteri yanlışlıkla fazla ödeme yapmıştır, ya da tamamını ödemeyecektir, örneğin bazı malları iade ettiğinden).
+InvoiceAvoirAsk=Fatura düzeltmek için iade faturası
+InvoiceAvoirDesc=<b>İade Faturası</b> bir eksi fatura olup fatura tutarının gerçekte ödenen tutardan farklı olması durumunda kullanılır (çünkü müşteri yanlışlıkla fazla ödeme yapmıştır, ya da tamamını ödemeyecektir, örneğin bazı malları iade etmiştir).
 invoiceAvoirWithLines=İlk faturadan alınan kalemlerle İade Faturası oluştur
 invoiceAvoirWithPaymentRestAmount=İlk faturanın ödenmemiş bakiyeli İade Faturası
 invoiceAvoirLineWithPaymentRestAmount=Ödenmemiş kalan tutar için İade Faturası
@@ -294,10 +294,11 @@ TotalOfTwoDiscountMustEqualsOriginal=İki yeni indirimin toplamı orijinal indir
 ConfirmRemoveDiscount=Bu indirimi kaldırmak istediğinizden emin misiniz?
 RelatedBill=İlgili fatura
 RelatedBills=İlgili faturalar
-RelatedCustomerInvoices=Related customer invoices
-RelatedSupplierInvoices=Related supplier invoices
+RelatedCustomerInvoices=İlgili müşteri faturaları
+RelatedSupplierInvoices=İlgili tedarikçi faturaları
 LatestRelatedBill=Son ilgili fatura
 WarningBillExist=Uyarı, bir yada çok fatura zaten var
+MergingPDFTool=Birleştirme PDF aracı
 
 # PaymentConditions
 PaymentConditionShortRECEP=Derhal

@@ -57,13 +57,14 @@ function product_prepare_head($object)
 	}
 
 	// Show category tab
+	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=0';
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;
-	}
+	}*/
 
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))

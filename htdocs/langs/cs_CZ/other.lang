@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Intervence ověřena
 Notify_FICHINTER_SENTBYMAIL=Intervence poštou
 Notify_BILL_VALIDATE=Zákazník faktura ověřena
 Notify_BILL_UNVALIDATE=Zákazník faktura unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Dodavatel aby schválila
 Notify_ORDER_SUPPLIER_REFUSE=Dodavatel aby odmítl
 Notify_ORDER_VALIDATE=Zákazníka ověřena
@@ -203,6 +202,7 @@ NewKeyWillBe=Váš nový klíč pro přihlášení do softwaru bude
 ClickHereToGoTo=Klikněte zde pro přechod na %s
 YouMustClickToChange=Musíte však nejprve kliknout na následující odkaz pro potvrzení této změny hesla
 ForgetIfNothing=Pokud jste o tuto změnu, stačí zapomenout na tento e-mail. Vaše přihlašovací údaje jsou v bezpečí.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Přidat záznam do kalendáře %s

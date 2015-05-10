@@ -2,6 +2,7 @@
 -- Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -51,7 +52,8 @@ create table llx_propaldet
   fk_product_fournisseur_price		integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
   special_code						integer      DEFAULT 0,          -- code pour les lignes speciales
-  rang								integer      DEFAULT 0           -- ordre affichage sur la propal
+  rang								integer      DEFAULT 0,           -- ordre affichage sur la propal
+  fk_unit           integer      DEFAULT NULL           -- lien vers table des unités
   
 )ENGINE=innodb;
 

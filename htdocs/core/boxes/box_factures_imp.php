@@ -95,10 +95,10 @@ class box_factures_imp extends ModeleBoxes
 				$num = $db->num_rows($result);
 				$now=dol_now();
 
-				$i = 0;
+				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
-				while ($i < $num)
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
@@ -117,33 +117,38 @@ class box_factures_imp extends ModeleBoxes
 					$late='';
 					if ($datelimite < ($now - $conf->facture->client->warning_delay)) $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $societestatic->getNomUrl(1, '', 44),
                         'asis' => 1,
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
+                    );
+
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right"',
                         'text' => dol_print_date($datelimite,'day'),
                     );
 
-                    $this->info_box_contents[$i][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
                         'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
                     );
 
-					$i++;
+					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
 
 				$db->free($result);
 			}

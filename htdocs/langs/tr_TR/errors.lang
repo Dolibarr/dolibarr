@@ -159,14 +159,17 @@ ErrorPriceExpression22=Eksi sonuç '%s'
 ErrorPriceExpressionInternal=İç hata '%s'
 ErrorPriceExpressionUnknown=Bilinmeyen hata '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Kaynak ve hedef depolar farklı olmalı
-ErrorTryToMakeMoveOnProductRequiringBatchData=Hata, parti/seri bilgisi gerektiren ürün için parti/seri bilgisi olmadan stok hareketi yapılmaya çalışılıyor.
-ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Bütün kabul girişleri bu eylemin yapılmasına izin verilmeden önce doğrulanmalıdır.
-ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
-ErrorGlobalVariableUpdater1=Invalid JSON format '%s'
-ErrorGlobalVariableUpdater2=Missing parameter '%s'
-ErrorGlobalVariableUpdater3=The requested data was not found in result
-ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
-ErrorGlobalVariableUpdater5=No global variable selected
+ErrorTryToMakeMoveOnProductRequiringBatchData=Hata, parti/seri numarası gerektiren bir ürün için parti/seri numarası olmadan bir stok hareketi yapılmaya çalışılıyor.
+ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Bütün kayıtlı kabuller, bu eylemin yapılmasına izin verilmeden önce doğrulanmalıdır (onaylanmış ya da reddedilmiş)
+ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Bütün kayıtlı kabuller, bu eylemin yapılmasına izin verilmeden önce doğrulanmalıdır (onaylanmış)
+ErrorGlobalVariableUpdater0=HTTP isteğinde '%s' hatası
+ErrorGlobalVariableUpdater1=Geçersiz JSON biçimi '%s'
+ErrorGlobalVariableUpdater2=Parametre '%s' eksik
+ErrorGlobalVariableUpdater3=İstenen veri sonuçta bulunamadı
+ErrorGlobalVariableUpdater4=SOAP istemcisinde '%s' hatası
+ErrorGlobalVariableUpdater5=Seçilmiş genel değişken yok
+ErrorFieldMustBeANumeric=<b>%s</b> alanı sayısal bir değer olmalıdır
+ErrorFieldMustBeAnInteger=<b>%s</b> alanı tamsayı olmalıdır
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

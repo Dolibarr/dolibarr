@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum / wiki podpora
-EMailSupport=E-maily podporu
-RemoteControlSupport=Online reálnom čase / vzdialená podpora
+CommunitySupport=Forum / wiki pre podporu
+EMailSupport=E-mailová podpora
+RemoteControlSupport=Online / vzdialená podpora v reálnom čase
 OtherSupport=Ďalšia podpora
 ToSeeListOfAvailableRessources=Ak chcete kontaktovať / zobrazenie dostupných zdrojov:
 ClickHere=Kliknite tu
@@ -25,4 +25,4 @@ LinkToGoldMember=Môžete zavolať jednu z predvolených trénera o Dolibarr pre
 PossibleLanguages=Podporované jazyky
 MakeADonation=Nápoveda Dolibarr projekt, aby sa darcovstvo
 SubscribeToFoundation=Nápoveda Dolibarr projekt, prihláste sa do základu
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Oficiálna podpora Dolibarr vo Vašom jayzku: 

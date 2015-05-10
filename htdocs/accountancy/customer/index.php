@@ -159,7 +159,7 @@ $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity = '" . $conf->entity . "'";
+	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
 
 $sql .= " GROUP BY fd.fk_code_ventilation";
@@ -234,7 +234,7 @@ $sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'
 $sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity = '" . $conf->entity . "'";
+	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
 
 dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
@@ -307,7 +307,7 @@ if (! empty($conf->margin->enabled)) {
 	$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 
 	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity = '" . $conf->entity . "'";
+		$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 	}
 	
 	dol_syslog('htdocs/accountancy/customer/index.php:: $sql=' . $sql);
