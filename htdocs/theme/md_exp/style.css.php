@@ -64,7 +64,7 @@ $theme='eldy';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files and other constants
-$fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+$fontlist='Open Sans,sans-serif';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $img_head='';
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -108,7 +108,7 @@ $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+r
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
 $colorbackbody='#f0f0f0';
 $colortext='40,40,40';
-$fontsize='12';
+$fontsize='13';
 $fontsizesmaller='11';
 
 // Eldy colors
@@ -256,7 +256,7 @@ input, input.flat, textarea, textarea.flat, form.flat select select, select.flat
 }
 
 input, textarea, select {
-	border-radius:4px;
+	border-radius:2px;
 	border:solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.2);
@@ -330,9 +330,9 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 	border: 1px solid #bbbbbb;
 	border-bottom-color: #a2a2a2;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -922,7 +922,7 @@ form#login {
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
-	border-radius: 8px;
+	border-radius: 4px;
 	border:solid 1px rgba(80,80,80,.4);
 
 	border-top:solid 1px f8f8f8;
@@ -1177,9 +1177,9 @@ td.photo {
     background-repeat: repeat-x !important;
 	border: 1px solid #CCC !important;
 
-    -moz-border-radius: 5px 5px 5px 5px !important;
-	-webkit-border-radius: 5px 5px 5px 5px !important;
-	border-radius: 5px 5px 5px 5px !important;
+    -moz-border-radius: 2px 2px 2px 2px !important;
+	-webkit-border-radius: 2px 2px 2px 2px !important;
+	border-radius: 2px 2px 2px 2px !important;
     -moz-box-shadow: 2px 2px 4px #DDD;
     -webkit-box-shadow: 2px 2px 4px #DDD;
     box-shadow: 2px 2px 4px #DDD;
@@ -1414,9 +1414,9 @@ div.tabBar {
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
     padding-bottom: 8px;
     margin: 0px 0px 14px 0px;
-    -moz-border-radius:6px;
-    -webkit-border-radius: 6px;
-	border-radius: 6px;
+    -moz-border-radius:3px;
+    -webkit-border-radius: 3px;
+	border-radius: 3px;
     border-right: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
     border-left: 1px solid #BBB;
@@ -1461,9 +1461,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
-    /*-moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
+    /*-moz-border-radius:3px 3px 0px 0px;
+	-webkit-border-radius:3px 3px 0px 0px;
+	border-radius:3px 3px 0px 0px;
 
 	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
@@ -1483,9 +1483,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid #D0D0D0;
 	border-top: 1px solid #D8D8D8;
 
-	-moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
+	-moz-border-radius:3px 3px 0px 0px;
+	-webkit-border-radius:3px 3px 0px 0px;
+	border-radius:3px 3px 0px 0px;
 
 	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
@@ -1526,9 +1526,9 @@ span.tabspan {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
+    -moz-border-radius:3px 3px 0px 0px;
+	-webkit-border-radius:3px 3px 0px 0px;
+	border-radius:3px 3px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -1552,9 +1552,9 @@ div.divButAction { margin-bottom: 1.4em; }
 	background: white;
 	border: 1px solid #8CACBB;
 	color: #434956;
-    -moz-border-radius:0px 5px 0px 5px;
-	-webkit-border-radius:0px 5px 0px 5px;
-	border-radius:0px 5px 0px 5px;
+    -moz-border-radius:0px 2px 0px 2px;
+	-webkit-border-radius:0px 2px 0px 2px;
+	border-radius:0px 2px 0px 2px;
     -moz-box-shadow: 2px 2px 3px #DDD;
     -webkit-box-shadow: 2px 2px 3px #DDD;
     box-shadow: 2px 2px 3px #DDD;
@@ -1584,9 +1584,9 @@ div.divButAction { margin-bottom: 1.4em; }
 	background: white !important;
 	border: 1px solid #AAAAAA !important;
 	color: #AAAAAA !important;
-    -moz-border-radius:0px 5px 0px 5px;
-	-webkit-border-radius:0px 5px 0px 5px;
-	border-radius:0px 5px 0px 5px;
+    -moz-border-radius:0px 2px 0px 2px;
+	-webkit-border-radius:0px 2px 0px 2px;
+	border-radius:0px 2px 0px 2px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
@@ -1628,9 +1628,9 @@ span.butAction, span.butActionDelete {
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 	border: 1px solid #bbbbbb;
 	border-bottom-color: #a2a2a2;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -1781,9 +1781,9 @@ table.noborder, table.formdoc, div.noborder {
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
 
-	-moz-border-radius: 0.2em;
-	-webkit-border-radius: 0.2em;
-	border-radius: 0.2em;
+	-moz-border-radius: 0.1em;
+	-webkit-border-radius: 0.1em;
+	border-radius: 0.1em;
 }
 
 table.noborder tr, div.noborder form {
@@ -2044,7 +2044,7 @@ div.tabBar .noborder {
     margin-bottom: 8px !important;*/
     border: 1px solid #AAA;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 .boxtable {
@@ -2134,9 +2134,9 @@ div.warning {
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0d0b0;
-  -moz-border-radius:6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
+  -moz-border-radius:3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   background: #EFDF9A;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -2146,9 +2146,9 @@ div.error {
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DC9CAB;
-  -moz-border-radius:6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
+  -moz-border-radius:3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   background: #EFCFCF;
 }
 
@@ -2158,9 +2158,9 @@ div.info {
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DFBF9A;
-  -moz-border-radius:6px;
-  -webkit-border-radius: 6px;
-  border-radius:6px;
+  -moz-border-radius:3px;
+  -webkit-border-radius: 3px;
+  border-radius:3px;
   background: #EFCFAA;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -2324,9 +2324,9 @@ padding: 2px;
 z-index: 3000;
 background-color: #EFCFAA;
 opacity: 1;
--moz-border-radius:6px;
--webkit-border-radius: 6px;
-border-radius: 6px;
+-moz-border-radius:3px;
+-webkit-border-radius: 3px;
+border-radius: 3px;
 }
 #tiptip_content {
     background-color: rgb(252,248,246);
@@ -2346,9 +2346,9 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 }
 
 .bodyline {
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	border-radius: 8px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
@@ -2461,7 +2461,7 @@ table.cal_month    { border-spacing: 0px; }
 .cal_peruser       { padding: 0px; }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
-table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px;
+table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 3px; border-radius: 3px;
 						-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
 						moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
 						box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
@@ -2726,9 +2726,9 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #C0C0C0 !important;
-    -moz-border-radius:0px 5px 0px 5px !important;
-	-webkit-border-radius:0px 5px 0px 5px !important;
-	border-radius:0px 5px 0px 5px !important;
+    -moz-border-radius:0px 2px 0px 2px !important;
+	-webkit-border-radius:0px 2px 0px 2px !important;
+	border-radius:0px 2px 0px 2px !important;
     -moz-box-shadow: 3px 3px 4px #DDD !important;
     -webkit-box-shadow: 3px 3px 4px #DDD !important;
     box-shadow: 3px 3px 4px #DDD !important;
