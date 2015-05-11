@@ -705,6 +705,9 @@ class FormFile
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
     			}
+	                if ($modulepart == 'facture_fournisseur') {
+	                    $relativepath = get_exdir($modulesubdir, 2). $modulesubdir. "/" . $file["name"];                    
+	                }
 
     			// Show file name with link to download
     			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
