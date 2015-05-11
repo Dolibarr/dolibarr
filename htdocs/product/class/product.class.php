@@ -1482,7 +1482,7 @@ class Product extends CommonObject
 				$this->date_modification		= $obj->tms;
 				$this->import_key				= $obj->import_key;
 				$this->entity					= $obj->entity;
-				
+
 				$this->ref_ext					= $obj->ref_ext;
 
 				$this->db->free($resql);
