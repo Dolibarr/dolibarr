@@ -307,8 +307,8 @@ if ($resql)
 		$facturestatic->ref_supplier=$obj->ref_supplier;
 		print $facturestatic->getNomUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
-		$filedir=$conf->fournisseur->dir_output.'/facture' . '/' . dol_sanitizeFileName($obj->facid).'/0/'.dol_sanitizeFileName($obj->ref);
-		print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+		$filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2).dol_sanitizeFileName($object->ref?$obj->ref:$obj->facid);
+		print $formfile->getDocumentsLink('facture_fournisseur', $filename, $filedir);
 		print "</td>\n";
 
 		// Ref supplier
