@@ -98,3 +98,4 @@ DocModelJauneDescription=Jaune proposal model
 DefaultModelPropalCreate=Default model creation
 DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
 DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+ProposalCustomerSignature=Written acceptance, company stamp, date and signature
