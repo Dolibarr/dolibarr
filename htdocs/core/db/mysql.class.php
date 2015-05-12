@@ -177,14 +177,14 @@ class DoliDBMysql extends DoliDB
 	}
 
 	/**
-	 *	Connexion to server
+	 *	Connection to server
 	 *
 	 *	@param	    string	$host		database server host
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer	$port		Port of database server
-	 *	@return		resource			Database access handler
+	 *	@return		resource|false		Database access handler
 	 *	@see		close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
@@ -219,7 +219,7 @@ class DoliDBMysql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
-		return mysqli_get_client_info();
+		return mysql_get_client_info();
 	}
 
 
@@ -247,7 +247,7 @@ class DoliDBMysql extends DoliDB
 	 * @param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
      * @param   string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @return	resource    			Resultset of answer
+	 * @return	resource|true|false   Resultset of answer
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
@@ -287,8 +287,8 @@ class DoliDBMysql extends DoliDB
 	/**
 	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 *	@param	Resultset	$resultset  Curseur de la requete voulue
-	 *	@return	Object					Object result line or false if KO or end of cursor
+	 *	@param	resource	$resultset  Curseur de la requete voulue
+	 *	@return	resource|false		Object result line or false if KO or end of cursor
 	 */
 	function fetch_object($resultset)
 	{
@@ -300,7 +300,7 @@ class DoliDBMysql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_array($resultset)
@@ -327,7 +327,7 @@ class DoliDBMysql extends DoliDB
 	/**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	Resultset	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
      *	@see    affected_rows
 	 */
@@ -341,7 +341,7 @@ class DoliDBMysql extends DoliDB
 	/**
 	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 *	@param	resultset	$resultset   Curseur de la requete voulue
+	 *	@param	resource	$resultset   Curseur de la requete voulue
 	 *	@return int		    Nombre de lignes
 	 *	@see    num_rows
 	 */
@@ -358,10 +358,10 @@ class DoliDBMysql extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  resultset	$resultset   Curseur de la requete voulue
+	 *	@param  resource	$resultset   Curseur de la requete voulue
 	 *	@return	void
 	 */
-	function free($resultset=0)
+	function free($resultset=null)
 	{
         // If resultset not provided, we take the last used by connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
@@ -558,7 +558,7 @@ class DoliDBMysql extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	resource				resource defined if OK, null if KO
+	 * 	@return	false|resource|true	resource defined if OK, null if KO
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
@@ -712,7 +712,7 @@ class DoliDBMysql extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resource			Resource
+	 *	@return	false|resource|true	Resource
 	 */
 	function DDLDescTable($table,$field="")
 	{
