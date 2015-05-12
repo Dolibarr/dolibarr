@@ -25,15 +25,15 @@
     		var size = jQuery("#size");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
-    		if (type == 'date') { size.attr('disabled','disabled'); }
-    		else if (type == 'datetime') { size.attr('disabled','disabled'); }
+			if (type == 'date') { size.prop('disabled', true); }
+			else if (type == 'datetime') { size.prop('disabled', true); }
     		else if (type == 'double') { size.removeAttr('disabled'); }
     		else if (type == 'int') { size.removeAttr('disabled'); }
-    		else if (type == 'text') { size.removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
+			else if (type == 'text') { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); }
     		else if (type == 'varchar') { size.removeAttr('disabled'); }
-    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else size.val('').attr('disabled','disabled');
+			else if (type == 'boolean') { size.val('').prop('disabled', true); unique.prop('disabled', true);}
+			else if (type == 'price') { size.val('').prop('disabled', true); unique.prop('disabled', true);}
+			else size.val('').prop('disabled', true);
     	}
     	init_typeoffields(jQuery("#type").val());
     });

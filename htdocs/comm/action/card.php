@@ -570,11 +570,11 @@ if ($action == 'create')
 	            			$(".fulldayendmin").removeAttr("disabled");
 	            			$("#p2").removeAttr("disabled");
 	            		} else {
-	            			$(".fulldaystarthour").attr("disabled","disabled").val("00");
-	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
-	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
-	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
-	            			$("#p2").removeAttr("disabled");
+							$(".fulldaystarthour").prop("disabled", true).val("00");
+							$(".fulldaystartmin").prop("disabled", true).val("00");
+							$(".fulldayendhour").prop("disabled", true).val("23");
+							$(".fulldayendmin").prop("disabled", true).val("59");
+							$("#p2").removeAttr("disabled");
 	            		}
 	            	}
                     setdatefields();
@@ -841,10 +841,10 @@ if ($id > 0)
 	            				$(".fulldayendhour").removeAttr("disabled");
 	            				$(".fulldayendmin").removeAttr("disabled");
 	            			} else {
-	            				$(".fulldaystarthour").attr("disabled","disabled").val("00");
-	            				$(".fulldaystartmin").attr("disabled","disabled").val("00");
-	            				$(".fulldayendhour").attr("disabled","disabled").val("23");
-	            				$(".fulldayendmin").attr("disabled","disabled").val("59");
+								$(".fulldaystarthour").prop("disabled", true).val("00");
+								$(".fulldaystartmin").prop("disabled", true).val("00");
+								$(".fulldayendhour").prop("disabled", true).val("23");
+								$(".fulldayendmin").prop("disabled", true).val("59");
 	            			}
 	            		}
 	            		setdatefields();

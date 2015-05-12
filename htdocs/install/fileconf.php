@@ -496,7 +496,7 @@ jQuery(document).ready(function() {
 		else
 		{
 			jQuery(".hideroot").hide();
-			jQuery(".needroot").attr('disabled','disabled');
+			jQuery(".needroot").prop('disabled', true);
 		}
 	}
 

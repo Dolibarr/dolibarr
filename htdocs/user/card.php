@@ -821,22 +821,22 @@ if (($action == 'create') || ($action == 'adduserldap'))
 								$("select[name=admin]").change(function() {
 									 if ( $(this).val() == 0 ) {
 									 	$("input[name=superadmin]")
-									 		.attr("disabled", true)
+											.prop("disabled", true)
 											.prop("checked", false);
 									 	$("select[name=entity]")
-											.attr("disabled", false);
+											.prop("disabled", false);
 									 } else {
 									 	$("input[name=superadmin]")
-									 		.attr("disabled", false);
+											.prop("disabled", false);
 									 }
 								});
 								$("input[name=superadmin]").change(function() {
 									if ( $(this).prop("checked", true) ) {
 										$("select[name=entity]")
-											.attr("disabled", true);
+											.prop("disabled", true);
 									} else {
 										$("select[name=entity]")
-											.attr("disabled", false);
+											.prop("disabled", false);
 									}
 								});
 							});
@@ -1822,32 +1822,32 @@ else
 										var admin = $("select[name=admin]").val();
 										if (admin == 0) {
 											$("input[name=superadmin]")
-													.attr("disabled", true)
+													.prop("disabled", true)
 													.prop("checked", false);
 										}
 										if ($("input[name=superadmin]").prop("checked", true)) {
 											$("select[name=entity]")
-													.attr("disabled", true);
+													.prop("disabled", true);
 										}
 										$("select[name=admin]").change(function() {
 											 if ( $(this).val() == 0 ) {
 											 	$("input[name=superadmin]")
-											 		.attr("disabled", true)
+													.prop("disabled", true)
 													.prop("checked", false);
 											 	$("select[name=entity]")
-													.attr("disabled", false);
+													.prop("disabled", false);
 											 } else {
 											 	$("input[name=superadmin]")
-											 		.attr("disabled", false);
+													.prop("disabled", false);
 											 }
 										});
 										$("input[name=superadmin]").change(function() {
 											if ( $(this).prop("checked", true)) {
 												$("select[name=entity]")
-													.attr("disabled", true);
+													.prop("disabled", true);
 											} else {
 												$("select[name=entity]")
-													.attr("disabled", false);
+													.prop("disabled", false);
 											}
 										});
 									});
