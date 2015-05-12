@@ -80,8 +80,8 @@ class DoliDBPgsql extends DoliDB
 
 		if (! function_exists("pg_connect"))
 		{
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error="Pgsql PHP functions are not available in this version of PHP";
 			dol_syslog(get_class($this)."::DoliDBPgsql : Pgsql PHP functions are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
@@ -89,8 +89,8 @@ class DoliDBPgsql extends DoliDB
 
 		if (! $host)
 		{
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
@@ -102,14 +102,14 @@ class DoliDBPgsql extends DoliDB
 
 		if ($this->db)
 		{
-			$this->connected = 1;
-			$this->ok = 1;
+			$this->connected = true;
+			$this->ok = true;
 		}
 		else
 		{
 			// host, login ou password incorrect
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error='Host, login or password incorrect';
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error,LOG_ERR);
 		}
@@ -119,15 +119,15 @@ class DoliDBPgsql extends DoliDB
 		{
 			if ($this->select_db($name))
 			{
-				$this->database_selected = 1;
+				$this->database_selected = true;
 				$this->database_name = $name;
-				$this->ok = 1;
+				$this->ok = true;
 			}
 			else
 			{
-				$this->database_selected = 0;
+				$this->database_selected = false;
 				$this->database_name = '';
-				$this->ok = 0;
+				$this->ok = false;
 				$this->error=$this->error();
 				dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
@@ -135,7 +135,7 @@ class DoliDBPgsql extends DoliDB
 		else
 		{
 			// Pas de selection de base demandee, ok ou ko
-			$this->database_selected = 0;
+			$this->database_selected = false;
 		}
 
 		return $this->ok;
@@ -451,7 +451,7 @@ class DoliDBPgsql extends DoliDB
         if ($this->db)
         {
           if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
-          $this->connected=0;
+          $this->connected=false;
           return pg_close($this->db);
         }
         return false;

@@ -74,8 +74,8 @@ class DoliDBSqlite3 extends DoliDB
 
         /*if (! function_exists("sqlite_query"))
         {
-            $this->connected = 0;
-            $this->ok = 0;
+            $this->connected = false;
+            $this->ok = false;
             $this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
             dol_syslog(get_class($this)."::DoliDBSqlite3 : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
             return $this->ok;
@@ -83,8 +83,8 @@ class DoliDBSqlite3 extends DoliDB
 
         /*if (! $host)
         {
-            $this->connected = 0;
-            $this->ok = 0;
+            $this->connected = false;
+            $this->ok = false;
             $this->error=$langs->trans("ErrorWrongHostParameter");
             dol_syslog(get_class($this)."::DoliDBSqlite3 : Erreur Connect, wrong host parameters",LOG_ERR);
             return $this->ok;
@@ -96,9 +96,9 @@ class DoliDBSqlite3 extends DoliDB
 
         if ($this->db)
         {
-            $this->connected = 1;
-            $this->ok = 1;
-            $this->database_selected = 1;
+            $this->connected = true;
+            $this->ok = true;
+            $this->database_selected = true;
             $this->database_name = $name;
 
             $this->addCustomFunction('IF');
@@ -114,9 +114,9 @@ class DoliDBSqlite3 extends DoliDB
         else
         {
             // host, login ou password incorrect
-            $this->connected = 0;
-            $this->ok = 0;
-            $this->database_selected = 0;
+            $this->connected = false;
+            $this->ok = false;
+            $this->database_selected = false;
             $this->database_name = '';
             //$this->error=sqlite_connect_error();
             dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error,LOG_ERR);
@@ -380,7 +380,7 @@ class DoliDBSqlite3 extends DoliDB
         if ($this->db)
         {
             if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
-            $this->connected=0;
+            $this->connected=false;
             $this->db->close();
             $this->db=null;    // Clean this->db
             return true;

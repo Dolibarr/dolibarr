@@ -637,7 +637,7 @@ if (! $error && $db->connected && $action == "set")
 
             $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-            if ($db->connected == 1)
+            if ($db->connected)
             {
                 dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
                 print "<tr><td>";
@@ -648,7 +648,7 @@ if (! $error && $db->connected && $action == "set")
                 print "</td></tr>";
 
                 // si acces serveur ok et acces base ok, tout est ok, on ne va pas plus loin, on a meme pas utilise le compte root.
-                if ($db->database_selected == 1)
+                if ($db->database_selected)
                 {
                     dolibarr_install_syslog("etape1: connexion to database : ".$conf->db->name.", by user : ".$conf->db->user." is ok", LOG_DEBUG);
                     print "<tr><td>";

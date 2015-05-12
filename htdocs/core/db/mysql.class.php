@@ -69,8 +69,8 @@ class DoliDBMysql extends DoliDB
 
 		if (! function_exists("mysql_connect"))
 		{
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP. Try to use another driver.";
 			dol_syslog(get_class($this)."::DoliDBMysql : Mysql PHP functions for using Mysql driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
 			return $this->ok;
@@ -78,8 +78,8 @@ class DoliDBMysql extends DoliDB
 
 		if (! $host)
 		{
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBMysql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
@@ -89,14 +89,14 @@ class DoliDBMysql extends DoliDB
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
 		if ($this->db)
 		{
-			$this->connected = 1;
-			$this->ok = 1;
+			$this->connected = true;
+			$this->ok = true;
 		}
 		else
 		{
 			// host, login ou password incorrect
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error=mysql_error();
 			dol_syslog(get_class($this)."::DoliDBMysql : Erreur Connect mysql_error=".$this->error,LOG_ERR);
 		}
@@ -106,9 +106,9 @@ class DoliDBMysql extends DoliDB
 		{
 			if ($this->select_db($name))
 			{
-				$this->database_selected = 1;
+				$this->database_selected = true;
 				$this->database_name = $name;
-				$this->ok = 1;
+				$this->ok = true;
 
 				// If client connected with different charset than Dolibarr HTML output
 				$clientmustbe='';
@@ -122,9 +122,9 @@ class DoliDBMysql extends DoliDB
 			}
 			else
 			{
-				$this->database_selected = 0;
+				$this->database_selected = false;
 				$this->database_name = '';
-				$this->ok = 0;
+				$this->ok = false;
 				$this->error=$this->error();
 				dol_syslog(get_class($this)."::DoliDBMysql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
@@ -132,7 +132,7 @@ class DoliDBMysql extends DoliDB
 		else
 		{
 			// Pas de selection de base demandee, ok ou ko
-			$this->database_selected = 0;
+			$this->database_selected = false;
 
 			if ($this->connected)
 			{
@@ -234,7 +234,7 @@ class DoliDBMysql extends DoliDB
         if ($this->db)
         {
           if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
-          $this->connected=0;
+          $this->connected=false;
           return mysql_close($this->db);
         }
         return false;

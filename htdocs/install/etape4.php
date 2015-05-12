@@ -71,7 +71,7 @@ print '<table cellspacing="0" cellpadding="2" width="100%">';
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-if ($db->ok == 1)
+if ($db->ok)
 {
     print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
     print '<input name="login" type="text" value="'.(! empty($_GET["login"])?$_GET["login"]:(isset($force_install_dolibarrlogin)?$force_install_dolibarrlogin:'')).'"></td></tr>';

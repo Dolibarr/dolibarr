@@ -88,7 +88,7 @@ if ($action == "set")
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-    if ($db->connected == 1)
+    if ($db->connected)
     {
         print "<tr><td>";
         print $langs->trans("ServerConnection")." : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
@@ -101,7 +101,7 @@ if ($action == "set")
 
     if ($ok)
     {
-        if($db->database_selected == 1)
+        if($db->database_selected)
         {
             dolibarr_install_syslog("etape2: Connexion successful to database : ".$conf->db->name);
         }

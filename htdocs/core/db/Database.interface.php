@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,13 +112,6 @@ interface Database
 	function error();
 
 	/**
-	 * Return label of manager
-	 *
-	 * @return	string      Label
-	 */
-	function getLabel();
-
-	/**
 	 *  List tables into a database
 	 *
 	 *  @param	string		$database	Name of database
@@ -141,7 +134,7 @@ interface Database
 	 * @param   string $sortorder Sort order
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	function order($sortfield = 0, $sortorder = 0);
+	function order($sortfield = null, $sortorder = null);
 
 	/**
 	 * Decrypt sensitive data in database
@@ -382,15 +375,15 @@ interface Database
 	);
 
 	/**
-     * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
-     * 19700101020000 -> 3600 with TZ+1 and gmt=0
-     * 19700101020000 -> 7200 whaterver is TZ if gmt=1
-     *
+	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
+	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
+	 * 19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @param	int				$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 * @param	bool			$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 * @return	int|string					Date TMS or ''
-     */
-    function jdate($string, $gm=false);
+	 */
+	function jdate($string, $gm=false);
 
 	/**
 	 * Encrypt sensitive data in database
