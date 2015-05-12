@@ -414,11 +414,11 @@ if ($action == 'new')
         {
             jQuery("#checkall_'.$bid.'").click(function()
             {
-                jQuery(".checkforremise_'.$bid.'").attr(\'checked\', true);
+                jQuery(".checkforremise_'.$bid.'").prop(\'checked\', true);
             });
             jQuery("#checknone_'.$bid.'").click(function()
             {
-                jQuery(".checkforremise_'.$bid.'").attr(\'checked\', false);
+                jQuery(".checkforremise_'.$bid.'").prop(\'checked\', false);
             });
         });
         </script>

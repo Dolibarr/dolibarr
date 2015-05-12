@@ -822,7 +822,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 									 if ( $(this).val() == 0 ) {
 									 	$("input[name=superadmin]")
 									 		.attr("disabled", true)
-									 		.attr("checked", false);
+											.prop("checked", false);
 									 	$("select[name=entity]")
 											.attr("disabled", false);
 									 } else {
@@ -831,7 +831,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 									 }
 								});
 								$("input[name=superadmin]").change(function() {
-									if ( $(this).attr("checked") == "checked" ) {
+									if ( $(this).prop("checked", true) ) {
 										$("select[name=entity]")
 											.attr("disabled", true);
 									} else {
@@ -1823,9 +1823,9 @@ else
 										if (admin == 0) {
 											$("input[name=superadmin]")
 													.attr("disabled", true)
-													.attr("checked", false);
+													.prop("checked", false);
 										}
-										if ($("input[name=superadmin]").attr("checked") == "checked") {
+										if ($("input[name=superadmin]").prop("checked", true)) {
 											$("select[name=entity]")
 													.attr("disabled", true);
 										}
@@ -1833,7 +1833,7 @@ else
 											 if ( $(this).val() == 0 ) {
 											 	$("input[name=superadmin]")
 											 		.attr("disabled", true)
-											 		.attr("checked", false);
+													.prop("checked", false);
 											 	$("select[name=entity]")
 													.attr("disabled", false);
 											 } else {
@@ -1842,7 +1842,7 @@ else
 											 }
 										});
 										$("input[name=superadmin]").change(function() {
-											if ( $(this).attr("checked") == "checked" ) {
+											if ( $(this).prop("checked", true)) {
 												$("select[name=entity]")
 													.attr("disabled", true);
 											} else {

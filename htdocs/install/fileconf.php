@@ -487,8 +487,8 @@ jQuery(document).ready(function() {
 
 	function init_needroot()
 	{
-		/*alert(jQuery("#db_create_database").attr("checked")); */
-		if (jQuery("#db_create_database").attr("checked") || jQuery("#db_create_user").attr("checked"))
+		/*alert(jQuery("#db_create_database").prop("checked")); */
+		if (jQuery("#db_create_database").prop("checked") || jQuery("#db_create_user").prop("checked"))
 		{
 			jQuery(".hideroot").show();
 			jQuery(".needroot").removeAttr('disabled');

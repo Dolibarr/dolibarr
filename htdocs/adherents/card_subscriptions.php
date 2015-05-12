@@ -873,7 +873,7 @@ if ($rowid)
                             }
                         });
                         ';
-            if (GETPOST('paymentsave')) print '$("#'.GETPOST('paymentsave').'").attr("checked",true);';
+            if (GETPOST('paymentsave')) print '$("#'.GETPOST('paymentsave').'").prop("checked",true);';
     	    print '});';
             print '</script>'."\n";
         }
