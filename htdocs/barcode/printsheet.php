@@ -313,28 +313,28 @@ jQuery(document).ready(function() {
 	{
 		if (jQuery("#fillmanually:checked").val() == "fillmanually")
 		{
-			jQuery("#submitproduct").attr(\'disabled\',\'disabled\');
-			jQuery("#submitthirdparty").attr(\'disabled\',\'disabled\');
-			jQuery("#search_productid").attr(\'disabled\',\'disabled\');
-			jQuery("#socid").attr(\'disabled\',\'disabled\');
+			jQuery("#submitproduct").prop("disabled", true);
+			jQuery("#submitthirdparty").prop("disabled", true);
+			jQuery("#search_productid").prop("disabled", true);
+			jQuery("#socid").prop("disabled", true);
 			jQuery(".showforproductselector").hide();
 			jQuery(".showforthirdpartyselector").hide();
 		}
 		if (jQuery("#fillfromproduct:checked").val() == "fillfromproduct")
 		{
-			jQuery("#submitproduct").removeAttr(\'disabled\');
-			jQuery("#submitthirdparty").attr(\'disabled\',\'disabled\');
-			jQuery("#search_productid").removeAttr(\'disabled\');
-			jQuery("#socid").attr(\'disabled\',\'disabled\');
+			jQuery("#submitproduct").removeAttr("disabled");
+			jQuery("#submitthirdparty").prop("disabled", true);
+			jQuery("#search_productid").removeAttr("disabled");
+			jQuery("#socid").prop("disabled", true);
 			jQuery(".showforproductselector").show();
 			jQuery(".showforthirdpartyselector").hide();
 		}
 		if (jQuery("#fillfromthirdparty:checked").val() == "fillfromthirdparty")
 		{
-			jQuery("#submitproduct").attr(\'disabled\',\'disabled\');
-			jQuery("#submitthirdparty").removeAttr(\'disabled\');
-			jQuery("#search_productid").attr(\'disabled\',\'disabled\');
-			jQuery("#socid").removeAttr(\'disabled\');
+			jQuery("#submitproduct").prop("disabled", true);
+			jQuery("#submitthirdparty").removeAttr("disabled");
+			jQuery("#search_productid").prop("disabled", true);
+			jQuery("#socid").removeAttr("disabled");
 			jQuery(".showforproductselector").hide();
 			jQuery(".showforthirdpartyselector").show();
 		}
@@ -348,11 +348,11 @@ jQuery(document).ready(function() {
 	{
 		if (jQuery("#select_fk_barcode_type").val() > 0 && jQuery("#forbarcode").val())
 		{
-			jQuery("#submitformbarcodegen").removeAttr(\'disabled\');
+			jQuery("#submitformbarcodegen").removeAttr("disabled");
 		}
 		else
 		{
-			jQuery("#submitformbarcodegen").attr(\'disabled\',\'disabled\');
+			jQuery("#submitformbarcodegen").prop("disabled", true);
 		}
 	}
 	init_gendoc_button();

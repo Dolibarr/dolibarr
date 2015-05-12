@@ -132,7 +132,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						// Disable an element
     						if (options.option_disabled) {
     							if (ui.item.disabled) {
-    								$("#" + options.option_disabled).attr("disabled", "disabled");
+									$("#" + options.option_disabled).prop("disabled", true);
     								if (options.error) {
     									$.jnotify(options.error, "error", true);		// Output with jnotify the error message
     								}
@@ -145,7 +145,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						if (options.disabled) {
     							$.each(options.disabled, function(key, value) {
-    								$("#" + value).attr("disabled", "disabled");
+									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
@@ -524,7 +524,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=a
                     // Disable another element
                     if (input.disabled && input.disabled.length > 0) {
                         $.each(input.disabled, function(key,value) {
-                            $("#" + value).attr("disabled", true);
+                            $("#" + value).prop("disabled", true);
                             if ($("#" + value).hasClass("butAction") == true) {
                                 $("#" + value).removeClass("butAction");
                                 $("#" + value).addClass("butActionRefused");

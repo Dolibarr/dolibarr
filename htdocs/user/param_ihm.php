@@ -155,11 +155,11 @@ if ($action == 'edit')
 	print '<script type="text/javascript" language="javascript">
 	jQuery(document).ready(function() {
 		$("#main_lang_default").change(function() {
-			$("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
+			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
 		});
 		$("#main_size_liste_limit").keyup(function() {
-			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
-			else $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
+			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
+			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
 		});
 	});
 	</script>';

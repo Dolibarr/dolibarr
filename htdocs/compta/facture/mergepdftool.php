@@ -393,16 +393,16 @@ llxHeader('',$title);
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#checkall").click(function() {
-		$(".checkformerge").attr('checked', true);
+		$(".checkformerge").prop('checked', true);
 	});
 	$("#checknone").click(function() {
-		$(".checkformerge").attr('checked', false);
+		$(".checkformerge").prop('checked', false);
 	});
 	$("#checkallsend").click(function() {
-		$(".checkforsend").attr('checked', true);
+		$(".checkforsend").prop('checked', true);
 	});
 	$("#checknonesend").click(function() {
-		$(".checkforsend").attr('checked', false);
+		$(".checkforsend").prop('checked', false);
 	});
 });
 </script>
