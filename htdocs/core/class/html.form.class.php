@@ -4356,7 +4356,7 @@ class Form
         		   </script>';
         }
 
-        $out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled="disabled" ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';
+        $out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
         {
