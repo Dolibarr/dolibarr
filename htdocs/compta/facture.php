@@ -3137,28 +3137,28 @@ if ($action == 'create')
 
 		// Paye partiellement 'escompte'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat') {
-			print '<tr><td colspan="' . $nbcols . '" align="right" nowrap="1">';
+			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
 		// Paye partiellement ou Abandon 'badcustomer'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'badcustomer') {
-			print '<tr><td colspan="' . $nbcols . '" align="right" nowrap="1">';
+			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			// $resteapayeraffiche=0;
 		}
 		// Paye partiellement ou Abandon 'product_returned'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'product_returned') {
-			print '<tr><td colspan="' . $nbcols . '" align="right" nowrap="1">';
+			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
 		// Paye partiellement ou Abandon 'abandon'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'abandon') {
-			print '<tr><td colspan="' . $nbcols . '" align="right" nowrap="1">';
+			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
 			$text = $langs->trans("HelpAbandonOther");
 			if ($object->close_note)
 				$text .= '<br><br><b>' . $langs->trans("Reason") . '</b>:' . $object->close_note;
@@ -3319,7 +3319,7 @@ if ($action == 'create')
 			print $object->situation_counter;
 
 			print '</td>';
-			print '<td align="right" colspan="2" nowrap>';
+			print '<td align="right" colspan="2" class="nowrap">';
 
 			$prevsits_total_amount = 0;
 			foreach ($prevsits as $situation) {
@@ -3340,7 +3340,7 @@ if ($action == 'create')
 				print $prevsits[$i]->situation_counter;
 				print '</a></td>';
 
-				print '<td align="right" colspan="2" nowrap>';
+				print '<td align="right" colspan="2" class="nowrap">';
 				print '- ' . price($prevsits[$i]->total_ht);
 				print '</td>';
 				print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
@@ -3350,20 +3350,20 @@ if ($action == 'create')
 
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-	print '<td colspan="3" nowrap>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="3" nowrap>' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	print '<td colspan="3" class="nowrap">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="3" class="nowrap">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td colspan="3" nowrap>' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<td colspan="3" class="nowrap">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	}
 	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-		print '<td colspan="3" nowrap>' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<td colspan="3" class=nowrap">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	}
 
 	// Revenue stamp

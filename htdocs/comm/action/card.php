@@ -986,7 +986,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td nowrap width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="nowrap" width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 
@@ -1174,7 +1174,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td nowrap width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="nowrap" width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print ($object->priority?$object->priority:'');
 		print '</td></tr>';
 
