@@ -2200,7 +2200,7 @@ if ($action == 'create')
 			// Show credit note options only if we checked credit note
 			print '<script type="text/javascript" language="javascript">
 			jQuery(document).ready(function() {
-				if (! jQuery("#radio_creditnote").prop("checked"))
+				if (! jQuery("#radio_creditnote").is(":checked"))
 				{
 					jQuery("#credit_note_options").hide();
 				}

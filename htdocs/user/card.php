@@ -831,7 +831,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 									 }
 								});
 								$("input[name=superadmin]").change(function() {
-									if ( $(this).prop("checked", true) ) {
+									if ( $(this).is(":checked") ) {
 										$("select[name=entity]")
 											.prop("disabled", true);
 									} else {
@@ -1825,7 +1825,7 @@ else
 													.prop("disabled", true)
 													.prop("checked", false);
 										}
-										if ($("input[name=superadmin]").prop("checked", true)) {
+										if ($("input[name=superadmin]").is(":checked")) {
 											$("select[name=entity]")
 													.prop("disabled", true);
 										}
@@ -1842,7 +1842,7 @@ else
 											 }
 										});
 										$("input[name=superadmin]").change(function() {
-											if ( $(this).prop("checked", true)) {
+											if ( $(this).is(":checked")) {
 												$("select[name=entity]")
 													.prop("disabled", true);
 											} else {
