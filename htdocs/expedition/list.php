@@ -117,14 +117,14 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"ship2bill.php","e.ref","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),"ship2bill.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"ship2bill.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),$_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
 	if($conf->livraison_bon->enabled) {
-		print_liste_field_titre($langs->trans("DeliveryOrder"),"ship2bill.php","e.date_expedition","",$param, '',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateReceived"),"ship2bill.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DeliveryOrder"),$_SERVER["PHP_SELF"],"e.date_expedition","",$param, '',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateReceived"),$_SERVER["PHP_SELF"],"e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Status"),"ship2bill.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
