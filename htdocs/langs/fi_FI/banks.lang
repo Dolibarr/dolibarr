@@ -163,3 +163,5 @@ LabelRIB=BAN tunnus
 NoBANRecord=Ei BAN tietuetta
 DeleteARib=Poista BAN tiedue
 ConfirmDeleteRib=Are you sure you want to delete this BAN record ?
+StartDate=Start date
+EndDate=End date

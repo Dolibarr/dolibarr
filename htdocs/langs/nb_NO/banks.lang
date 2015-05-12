@@ -163,3 +163,5 @@ LabelRIB=BAN Etikett
 NoBANRecord=Ingen BAN kort
 DeleteARib=BAN-kort slettet
 ConfirmDeleteRib=Er du sikker på at du vil slette dette BAN-kortet?
+StartDate=Start date
+EndDate=End date

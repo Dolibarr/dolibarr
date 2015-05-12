@@ -211,12 +211,15 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-        if (! is_array($this->userassigned))	// For backward compatibility
+        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility
         {
         	$tmpid=$this->userassigned;
         	$this->userassigned=array();
         	$this->userassigned[$tmpid]=array('id'=>$tmpid);
         }
+
+        if (is_object($this->contact) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
+
 
         $userownerid=$this->userownerid;
         $userdoneid=$this->userdoneid;
@@ -282,13 +285,13 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->idate($now)."',";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
-        $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";	// deprecated
+        $sql.= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '')?"'".$this->durationp."'":"null").",";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
         $sql.= (isset($this->type_code)?" '".$this->type_code."'":"null").",";
-        $sql.= (isset($this->socid) && $this->socid > 0?" '".$this->socid."'":"null").",";
-        $sql.= (isset($this->fk_project) && $this->fk_project > 0?" '".$this->fk_project."'":"null").",";
+        $sql.= ((isset($this->socid) && $this->socid > 0)?" '".$this->socid."'":"null").",";
+        $sql.= ((isset($this->fk_project) && $this->fk_project > 0)?" '".$this->fk_project."'":"null").",";
         $sql.= " '".$this->db->escape($this->note)."',";
-        $sql.= (isset($this->contactid) && $this->contactid > 0?"'".$this->contactid."'":"null").",";
+        $sql.= ((isset($this->contactid) && $this->contactid > 0)?"'".$this->contactid."'":"null").",";
         $sql.= (isset($user->id) && $user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= ($userownerid>0?"'".$userownerid."'":"null").",";
         $sql.= ($userdoneid>0?"'".$userdoneid."'":"null").",";
@@ -743,7 +746,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        $sql.= " WHERE a.entity = ".$conf->entity;
+        $sql.= " WHERE a.entity IN (".getEntity('actioncomm', 1).")";
         if (! empty($socid)) $sql.= " AND a.fk_soc = ".$socid;
         if (! empty($elementtype))
         {
@@ -794,7 +797,7 @@ class ActionComm extends CommonObject
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
         $sql.= " WHERE a.percent >= 0 AND a.percent < 100";
-        $sql.= " AND a.entity = ".$conf->entity;
+        $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
         if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
         if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
@@ -1091,7 +1094,7 @@ class ActionComm extends CommonObject
 			// We must filter on assignement table
 			if ($filters['logint'] || $filters['login']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			$sql.= " WHERE a.fk_action=c.id";
-            $sql.= " AND a.entity = ".$conf->entity;
+            $sql.= " AND a.entity IN (".getEntity('actioncomm', 1).")";
             foreach ($filters as $key => $value)
             {
                 if ($key == 'notolderthan' && $value != '') $sql.=" AND a.datep >= '".$this->db->idate($now-($value*24*60*60))."'";

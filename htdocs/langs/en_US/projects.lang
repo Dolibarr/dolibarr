@@ -144,3 +144,5 @@ InputPerDay=Input per day
 InputPerWeek=Input per week 
 InputPerAction=Input per action
 TimeAlreadyRecorded=Time spent already recorded for this task/day and user %s
+ProjectsWithThisUserAsContact=Projects with this user as contact
+TasksWithThisUserAsContact=Tasks assigned to this user

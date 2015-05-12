@@ -5,8 +5,8 @@ English Dolibarr ChangeLog
 WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
 You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
-Upgrading to any other version or database system is abolutely required BEFORE trying to
-make a migration.
+Upgrading to any other version or any other database system is abolutely required BEFORE trying
+to make a migration.
 
 
 ***** ChangeLog for 3.8 compared to 3.7.* *****
@@ -40,7 +40,13 @@ Dolibarr better:
   trigger ORDER_SUPPLIER_CREATE instead.
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
+- All fields "fk_societe" were renamed into "fk_soc".
 
+***** ChangeLog for 3.7.1 compared to 3.7.* *****
+- Fix: Bug in the new photo system
+- Fix: Error management
+- Fix: [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
+- Fix: [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
@@ -212,6 +218,7 @@ Dolibarr better:
 - A lot of pages called liste.php were renamed into list.php
 - If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
   warehouse module and your Point Of Sale module if you use one.
+- Replaced USER_UPDATE_SESSION trigger with an updateSession hook
 
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service
@@ -416,6 +423,12 @@ Fix: [ bug #1757 ] Sorting breaks product/service statistics
 Fix: [ bug #1797 ] Tulip supplier invoice module takes creation date instead of invoice date
 Fix: [ bug #1792 ] Users are not allowed to see margins module index page when no product view permission is enabled
 Fix: [ bug #1846 ] Browser IE11 not detected
+Fix: [ bug #1906 ] Deplacement does not allow translated decimal format
+Fix: [ bug #1905 ] Custom deplacement types do not get translated in deplacement card
+Fix: [ bug #2583 ] Unable to create a bank transfer with localized numbers
+Fix: [ bug #2577 ] Incorrect invoice status in "Linked objects" page of a project
+Fix: [ bug #2576 ] Unable to edit a dictionary entry that has # in its ref
+Fix: [ bug #2758 ] Product::update sets product note to "null" when $prod->note is null
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

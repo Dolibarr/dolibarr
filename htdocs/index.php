@@ -134,7 +134,7 @@ if (empty($user->societe_id))
     print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '<th class="liste_titre" align="right">&nbsp;</th>';
     print '</tr>';
-    print '<tr class="impair"><td colspan="3" class="impair tdboxstats nohover">';
+    print '<tr class="impair"><td colspan="3" class="tdboxstats nohover">';
 
     $var=true;
 
@@ -161,7 +161,7 @@ if (empty($user->societe_id))
 		! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire);
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
-	    DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php",
+	    DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
 	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
 	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
 	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
@@ -174,7 +174,7 @@ if (empty($user->societe_id))
 	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
 	    // Name class containing the method load_state_board for each line
 	    $classes=array('Client',
-	                   'Prospect',
+	                   'Client',
 	                   'Fournisseur',
 	                   'Adherent',
 	                   'Product',

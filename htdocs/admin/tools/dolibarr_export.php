@@ -209,13 +209,13 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			</div>
 
 			<div class="formelementrow"><input type="checkbox" name="disable_fk"
-				value="yes" id="checkbox_disable_fk" checked="checked" /> <label
+				value="yes" id="checkbox_disable_fk" checked /> <label
 				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
 			</div>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
 			<select name="sql_compat" id="select_sql_compat" class="flat">
-				<option value="NONE" selected="selected">NONE</option>
+				<option value="NONE" selected>NONE</option>
 				<option value="ANSI">ANSI</option>
 				<option value="DB2">DB2</option>
 				<option value="MAXDB">MAXDB</option>
@@ -232,22 +232,22 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_structure"
-				value="structure" id="checkbox_sql_structure" checked="checked" /> <label
+				value="structure" id="checkbox_sql_structure" checked /> <label
 				for="checkbox_sql_structure"> <?php echo $langs->trans('ExportStructure') ?></label> </legend> <input
-				type="checkbox" name="drop"<?php echo ((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked="checked"':''; ?> id="checkbox_dump_drop" /> <label
+				type="checkbox" name="drop"<?php echo ((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked':''; ?> id="checkbox_dump_drop" /> <label
 				for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
 			</fieldset>
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_data" value="data"
-				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
+				id="checkbox_sql_data" checked /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" checked="checked" /> <label
+				id="checkbox_dump_showcolumns" checked /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			<input type="checkbox" name="extended_ins" value="yes"
-				id="checkbox_dump_extended_ins" checked="checked" /> <label
+				id="checkbox_dump_extended_ins" checked /> <label
 				for="checkbox_dump_extended_ins"> <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
 
 			<input type="checkbox" name="disable-add-locks" value="no"
@@ -261,11 +261,11 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 				id="checkbox_dump_ignore" /> <label for="checkbox_dump_ignore"> <?php echo $langs->trans("IgnoreDuplicateRecords"); ?></label><br>
 
 			<input type="checkbox" name="hexforbinary" value="yes"
-				id="checkbox_hexforbinary" checked="checked" /> <label
+				id="checkbox_hexforbinary" checked /> <label
 				for="checkbox_hexforbinary"> <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
 
 			<input type="checkbox" name="charset_utf8" value="yes"
-				id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+				id="checkbox_charset_utf8" checked disabled /> <label
 				for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
 			</fieldset>
@@ -282,14 +282,14 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
                                 </div>
 
                                 <div class="formelementrow"><input type="checkbox" name="nobin_disable_fk"
-                                        value="yes" id="checkbox_disable_fk" checked="checked" /> <label
+                                        value="yes" id="checkbox_disable_fk" checked /> <label
                                         for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
                                 </div>
                             </fieldset>
 
                             <br>
                             <fieldset><legend><?php echo $langs->trans('ExportStructure') ?></legend> <input
-                                    type="checkbox" name="nobin_drop"<?php echo ((! isset($_GET["nobin_drop"]) && ! isset($_POST["nobin_drop"])) || GETPOST('nobin_drop'))?' checked="checked"':''; ?> id="checkbox_dump_drop" /> <label
+                                    type="checkbox" name="nobin_drop"<?php echo ((! isset($_GET["nobin_drop"]) && ! isset($_POST["nobin_drop"])) || GETPOST('nobin_drop'))?' checked':''; ?> id="checkbox_dump_drop" /> <label
                                     for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
                             </fieldset>
 
@@ -308,7 +308,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
                                         id="checkbox_dump_ignore" /> <label for="checkbox_dump_ignore"> <?php echo $langs->trans("IgnoreDuplicateRecords"); ?></label><br>
 
                                 <input type="checkbox" name="nobin_charset_utf8" value="yes"
-                                        id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+                                        id="checkbox_charset_utf8" checked disabled /> <label
                                         for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
                             </fieldset>
@@ -340,7 +340,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			<fieldset><legend><?php echo $langs->trans("ExportOptions"); ?></legend>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 			<select name="sql_compat" id="select_sql_compat" class="flat">
-				<option value="POSTGRESQL" selected="selected">POSTGRESQL</option>
+				<option value="POSTGRESQL" selected>POSTGRESQL</option>
 				<option value="ANSI">ANSI</option>
 			</select><br>
 			<!-- <input type="checkbox" name="drop_database" value="yes"
@@ -350,15 +350,15 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_structure"
-				value="structure" id="checkbox_sql_structure" checked="checked" /> <label
+				value="structure" id="checkbox_sql_structure" checked /> <label
 				for="checkbox_sql_structure"> <?php echo $langs->trans('ExportStructure') ?></label> </legend></fieldset>
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_data" value="data"
-				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
+				id="checkbox_sql_data" checked /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" checked="checked" /> <label
+				id="checkbox_dump_showcolumns" checked /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			</fieldset>
@@ -417,12 +417,12 @@ foreach($compression as $key => $val)
 {
 	if (! $val['function'] || function_exists($val['function']))	// Enabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="checked">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
 	else	// Disabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="disabled">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
 	}

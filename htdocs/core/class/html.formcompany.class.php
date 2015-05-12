@@ -164,7 +164,7 @@ class FormCompany
 				$obj = $this->db->fetch_object($resql);
 
 				print '<option value="'.$obj->code.'"';
-				if ($selected == $obj->code) print ' selected="selected"';
+				if ($selected == $obj->code) print ' selected';
 				print '>';
 				$level=$langs->trans($obj->code);
 				if ($level == $obj->code) $level=$langs->trans($obj->label);
@@ -255,7 +255,7 @@ class FormCompany
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $country_codeid && $obj->country_code)
 							{
-								$out.= '<option value="-1" disabled="disabled">----- '.$obj->country." -----</option>\n";
+								$out.= '<option value="-1" disabled>----- '.$obj->country." -----</option>\n";
 								$country=$obj->country;
 							}
 						}
@@ -263,7 +263,7 @@ class FormCompany
 						if ((! empty($selected) && $selected == $obj->rowid)
 						 || (empty($selected) && ! empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">';
+							$out.= '<option value="'.$obj->rowid.'" selected>';
 						}
 						else
 						{
@@ -330,13 +330,13 @@ class FormCompany
 							// Show break
 							$key=$langs->trans("Country".strtoupper($obj->country_code));
 							$valuetoshow=($key != "Country".strtoupper($obj->country_code))?$obj->country_code." - ".$key:$obj->country;
-							print '<option value="-1" disabled="disabled">----- '.$valuetoshow." -----</option>\n";
+							print '<option value="-1" disabled>----- '.$valuetoshow." -----</option>\n";
 							$country=$obj->country;
 						}
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							print '<option value="'.$obj->code.'" selected="selected">'.$obj->label.'</option>';
+							print '<option value="'.$obj->code.'" selected>'.$obj->label.'</option>';
 						}
 						else
 						{
@@ -386,7 +386,7 @@ class FormCompany
 					$obj = $this->db->fetch_object($resql);
 					if ($selected == $obj->code)
 					{
-						$out.= '<option value="'.$obj->code.'" selected="selected">';
+						$out.= '<option value="'.$obj->code.'" selected>';
 					}
 					else
 					{
@@ -495,7 +495,7 @@ class FormCompany
 
 					if ($selected > 0 && $selected == $val['code'])
 					{
-						$out.= '<option value="'.$val['code'].'" selected="selected">';
+						$out.= '<option value="'.$val['code'].'" selected>';
 					}
 					else
 					{
@@ -647,14 +647,14 @@ class FormCompany
 						if ($selected > 0 && $selected == $obj->rowid)
 						{
 							print '<option value="'.$obj->rowid.'"';
-							if ($disabled) print ' disabled="disabled"';
-							print ' selected="selected">'.dol_trunc($obj->name,24).'</option>';
+							if ($disabled) print ' disabled';
+							print ' selected>'.dol_trunc($obj->name,24).'</option>';
 							$firstCompany = $obj->rowid;
 						}
 						else
 						{
 							print '<option value="'.$obj->rowid.'"';
-							if ($disabled) print ' disabled="disabled"';
+							if ($disabled) print ' disabled';
 							print '>'.dol_trunc($obj->name,24).'</option>';
 						}
 						$i ++;
@@ -799,7 +799,7 @@ class FormCompany
     			{
     				if ($selected == $valors[$i])
     				{
-    					print '<option value="'.$valors[$i].'" selected="selected">';
+    					print '<option value="'.$valors[$i].'" selected>';
     				}
     				else
     				{

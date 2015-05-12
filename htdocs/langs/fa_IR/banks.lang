@@ -163,3 +163,5 @@ LabelRIB=BAN برچسب
 NoBANRecord=هیچ سابقه BAN
 DeleteARib=حذف رکورد BAN
 ConfirmDeleteRib=آیا مطمئن هستید که می خواهید این رکورد BAN را حذف کنید؟
+StartDate=Start date
+EndDate=End date

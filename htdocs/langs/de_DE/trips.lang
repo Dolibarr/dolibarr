@@ -1,126 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
+ExpenseReport=Spesenabrechnung
+ExpenseReports=Spesenabrechnungen Hinweis
+Trip=Spesenabrechnung
+Trips=Spesenabrechnungen
+TripsAndExpenses=Reise- und Spesenabrechnungen
+TripsAndExpensesStatistics=Reise- und Spesen Statistik
+TripCard=Reisekosten Karte
+AddTrip=Reisekostenabrechnung erstellen
+ListOfTrips=Liste Reisekostenabrechnungen
 ListOfFees=Liste der Spesen
-NewTrip=New expense report
+NewTrip=neue Reisekostenabrechnung
 CompanyVisited=Besuchter Partner
 Kilometers=Kilometerstand
 FeesKilometersOrAmout=Kilometergeld oder Spesenbetrag
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
+DeleteTrip=Spesenabrechnung löschen
+ConfirmDeleteTrip=Möchten Sie diese Spesenabrechnung wirklich löschen?
+ListTripsAndExpenses=Liste Reise- und Spesenabrechnungen
+ListToApprove=Warten auf Bestätigung
+ExpensesArea=Spesenabrechnungen
+SearchATripAndExpense=Suche nach einer Spesenabrechnung
 ClassifyRefunded=Als 'rückerstattet' markieren
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+ExpenseReportWaitingForApproval=Eine neue Reisekostenabrechnung ist zur Genehmigung vorgelegt worden
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+AnyOtherInThisListCanValidate=Person für die Validierung zu informieren .
+TripSociete=Partner
+TripSalarie=Mitarbeiter
+TripNDF=Hinweise Spesenabrechnung 
+DeleteLine=Enferne eine Zeile von der Spesenabrechnung
+ConfirmDeleteLine=Möchten Sie diese Zeile wirklich löschen?
+PDFStandardExpenseReports=Standard-Vorlage, um ein PDF-Dokument für die Spesenabrechnung zu erzeugen
+ExpenseReportLine=Spesenabrechnung Zeile
 TF_OTHER=Andere
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Spedition
 TF_LUNCH=Essen
-TF_METRO=Metro
-TF_TRAIN=Train
+TF_METRO=S- und U-Bahn
+TF_TRAIN=Bahn
 TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
+TF_CAR=Auto
+TF_PEAGE=Mautgebühr
+TF_ESSENCE=Kraftstoff
+TF_HOTEL=Herberge
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnliche Datumsbereich erstellt.
+ListTripsAndExpenses=Liste Reise- und Spesenabrechnungen
+AucuneNDF=Keine Spesenabrechnungen für diese Kriterien gefunden
+AucuneLigne=Es wurde noch keine Spesenabrechnung erstellt.
+AddLine=Neue Zeile hinzufügen
+AddLineMini=Hinzufügen
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Beginndatum
+Date_FIN=Enddatum
+ModePaiement=Zahlungsart
+Note=Hinweis
+Project=Projekt
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Benutzer über die Genehmigung informieren
+VALIDOR=genehmigt durch
+AUTHOR=gespeichert von
+AUTHORPAIEMENT=einbezahlt von
+REFUSEUR=abgelehnt durch
+CANCEL_USER=verworfen von
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Grund
+MOTIF_CANCEL=Grund
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Datum Ablehnung
+DATE_SAVE=Freigabedatum
+DATE_VALIDE=Freigabedatum
+DATE_CANCEL=Stornodatum
+DATE_PAIEMENT=Zahlungsdatum
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+TO_PAID=bezahlen
+BROUILLONNER=entwerfen
+SendToValid=senden zu genehmigen
+ModifyInfoGen=Bearbeiten
+ValidateAndSubmit=Validieren und zur Genehmigung einreichen
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesennabrechnung zu genehmigen
+NOT_AUTHOR=Sie sind nicht der Autor dieser Spesenabrechnung. Vorgang abgebrochen.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Verweigern eine Spesenabrechnung
+ConfirmRefuseTrip=Möchten Sie diese Spesenabrechnung wirklich ablehnen?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Genehmigen Spesenabrechnung
+ConfirmValideTrip=Sind Sie sicher, dass diese Spesenabrechnung genehmigen möchten?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Spesenabrechnung bezahlen
+ConfirmPaidTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Bezahlt" ändern?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Abrechen einer Spesenabrechnung
+ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich abbrechen?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Gehen Sie zurück Spesenabrechnung zu Status "Entwurf"
+ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Entwurf" ändern?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Bestätige Spesenabrechnung
+ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung überprüfen wollen?
 
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
-
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.

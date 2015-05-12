@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Интервенция валидирани
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Клиентът фактура се заверява
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Доставчик утвърдения
 Notify_ORDER_SUPPLIER_REFUSE=Доставчик за отказа
 Notify_ORDER_VALIDATE=Клиента заявка се заверява
@@ -203,6 +202,7 @@ NewKeyWillBe=Вашият нов ключ за влизане в софтуер�
 ClickHereToGoTo=Click here to go to %s
 YouMustClickToChange=Необходимо е да щтракнете върху следния линк за да потвърдите промяната на паролата
 ForgetIfNothing=Ако не сте заявили промяната, просто забравете за този имейл. Вашите идентификационни данни се съхраняват на сигурно място.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Добави запис в календара %s

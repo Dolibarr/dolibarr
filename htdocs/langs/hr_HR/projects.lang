@@ -14,6 +14,7 @@ MyTasksDesc=This view is limited to projects or tasks you are a contact for (wha
 OnlyOpenedProject=Only opened projects are visible (projects with draft or closed status are not visible).
 TasksPublicDesc=This view presents all projects and tasks you are allowed to read.
 TasksDesc=This view presents all projects and tasks (your user permissions grant you permission to view everything).
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task you are assigned on.
 ProjectsArea=Projects area
 NewProject=Novi projekt
 AddProject=Create project

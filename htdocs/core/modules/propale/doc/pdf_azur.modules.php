@@ -2,8 +2,9 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,9 +103,19 @@ class pdf_azur extends ModelePDFPropales
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=112;
-		$this->posxup=126;
-		$this->posxqty=145;
+		if($conf->global->PRODUCT_USE_UNITS)
+		{
+			$this->posxtva=99;
+			$this->posxup=114;
+			$this->posxqty=133;
+			$this->posxunit=150;
+		}
+		else
+		{
+			$this->posxtva=112;
+			$this->posxup=126;
+			$this->posxqty=145;
+		}
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
@@ -158,28 +169,60 @@ class pdf_azur extends ModelePDFPropales
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 		{
+			$objphoto = new Product($this->db);
+
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
 
-				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
-				$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
-
-				$realpath='';
-				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 				{
-					$filename=$obj['photo'];
-					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
-					$realpath = $dir.$filename;
-					break;
+					$pdir[0] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";
+					$pdir[1] = dol_sanitizeFileName($objphoto->ref).'/';
+				}
+				else
+				{
+					$pdir[0] = dol_sanitizeFileName($objphoto->ref).'/';
+					$pdir[1] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";
 				}
 
-				if ($realpath) $realpatharray[$i]=$realpath;
+				$arephoto = false;
+				foreach ($pdir as $midir)
+				{
+					if (! $arephoto)
+					{
+						$dir = $conf->product->dir_output.'/'.$midir;
+
+						foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+						{
+							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							{
+								if ($obj['photo_vignette'])
+								{
+									$filename= $obj['photo_vignette'];
+								}
+								else
+								{
+									$filename=$obj['photo'];
+								}
+							}
+							else
+							{
+								$filename=$obj['photo'];
+							}
+
+							$realpath = $dir.$filename;
+							$arephoto = true;
+						}
+					}
+				}
+
+				if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
 			}
 		}
+
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
 		if ($conf->propal->dir_output)
@@ -265,7 +308,7 @@ class pdf_azur extends ModelePDFPropales
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))
+				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
 					$this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -459,9 +502,26 @@ class pdf_azur extends ModelePDFPropales
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
+					// Enough for 6 chars
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+					else
+					{
+						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
+					}
+
+					// Unit
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$pdf->SetXY($this->posxunit, $curY);
+						$pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+					}
 
 					// Discount on line
+					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
 						$pdf->SetXY($this->posxdiscount-2, $curY);
@@ -584,6 +644,9 @@ class pdf_azur extends ModelePDFPropales
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 				*/
+				
+				// Customer signature area
+				$posy=$this->_signature_area($pdf, $object, $posy, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -1217,7 +1280,23 @@ class pdf_azur extends ModelePDFPropales
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			if($conf->global->PRODUCT_USE_UNITS)
+			{
+				$pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+			else
+			{
+				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+			}
+		}
+
+		if($conf->global->PRODUCT_USE_UNITS) {
+			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
+			if (empty($hidetop)) {
+				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
+				$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+					'C');
+			}
 		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
@@ -1455,5 +1534,35 @@ class pdf_azur extends ModelePDFPropales
 		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
+	/**
+	 *	Show area for the customer to sign
+	 *
+	 *	@param	PDF			$pdf            Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@return int							Position pour suite
+	 */
+	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	{
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$tab_top = $posy + 4;
+		$tab_hl = 4;
+		$pdf->SetFont('','', $default_font_size - 1);
+
+		$posx = 120;
+		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
+		$useborder=0;
+		$index = 0;
+		// Total HT
+		$pdf->SetFillColor(255,255,255);
+		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
+		
+		$pdf->SetXY($posx, $tab_top + $tab_hl);
+		$pdf->MultiCell($largcol, $tab_hl*6, '', 1, 'R');
+		
+		return ($tab_hl*7);
+	}
 }
 

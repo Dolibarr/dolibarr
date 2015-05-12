@@ -37,8 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -338,7 +338,9 @@ if ($action == 'add' && $user->rights->contrat->creer)
 				                0,
 				                $lines[$i]->info_bits,
 			                    $lines[$i]->fk_fournprice,
-			                    $lines[$i]->pa_ht
+			                    $lines[$i]->pa_ht,
+		                        array(),
+			                    $lines[$i]->fk_unit
 		                    );
 
 		                    if ($result < 0)
@@ -494,6 +496,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
            	$desc=$prod->description;
            	$desc=dol_concatdesc($desc,$product_desc);
+	        $fk_unit = $prod->fk_unit;
         }
         else
 		{
@@ -502,6 +505,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
             $desc=$product_desc;
+			$fk_unit= GETPOST('units', 'alpha');
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
@@ -541,7 +545,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $info_bits,
       			$fk_fournprice,
       			$pa_ht,
-            	$array_options
+            	$array_options,
+	            $fk_unit
             );
         }
 
@@ -622,6 +627,8 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
 	  	else
 	  	  $pa_ht = null;
 
+	    $fk_unit = GETPOST('unit', 'alpha');
+
         $objectline->description=GETPOST('product_desc');
         $objectline->price_ht=GETPOST('elprice');
         $objectline->subprice=GETPOST('elprice');
@@ -637,6 +644,12 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->fk_user_cloture=$user->id;
         $objectline->fk_fournprice=$fk_fournprice;
         $objectline->pa_ht=$pa_ht;
+
+	    if ($fk_unit > 0) {
+		    $objectline->fk_unit = GETPOST('unit');
+	    } else {
+		    $objectline->fk_unit = null;
+	    }
 
         // Extrafields
         $extrafieldsline = new ExtraFields($db);
@@ -960,7 +973,7 @@ if ($action == 'create')
     print '<input type="hidden" name="remise_percent" value="0">';
 
     dol_fiche_head();
-    
+
     print '<table class="border" width="100%">';
 
     // Ref
@@ -1070,7 +1083,7 @@ if ($action == 'create')
         	print '<br>'.$langs->trans("Note").': '.$langs->trans("OnlyLinesWithTypeServiceAreUsed");
         }
 	}
-    
+
     print "</form>\n";
 }
 else
@@ -1266,15 +1279,13 @@ else
          * Lines of contracts
          */
 
-	    if ($conf->product->enabled || $conf->service->enabled) {
-			$productstatic=new Product($db);
-	    }
+		$productstatic=new Product($db);
 
         $usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
 
         $var=false;
-        
+
 		// Title line for service
         $cursorline=1;
         while ($cursorline <= $nbofservices)
@@ -1294,6 +1305,7 @@ else
             $sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
             $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
+	        $sql.= " cd.fk_unit,";
             $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -1309,6 +1321,7 @@ else
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
+	            if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
 				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
                 print '<td width="30">&nbsp;</td>';
@@ -1328,19 +1341,28 @@ else
                         $productstatic->id=$objp->fk_product;
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
-                        print $productstatic->getNomUrl(1,'',20);
+                        $text = $productstatic->getNomUrl(1,'',20);
                         if ($objp->label)
                         {
-                        	print ' - ';
+                        	$text .= ' - ';
                         	$productstatic->ref=$objp->label;
-                        	print $productstatic->getNomUrl(0,'',16);
+                        	$text .= $productstatic->getNomUrl(0,'',16);
                         }
-                        if (! empty($conf->global->PRODUIT_DESC_IN_FORM) && !empty($objp->description))
-                            print '<br>'.dol_nl2br($objp->description);
+                        $description = $objp->description;
+
+	                    // Add description in form
+						if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+						{
+							$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							$description = '';	// Already added into main visible desc
+						}
+
+                        echo $form->textwithtooltip($text,$description,3,'','',$cursorline,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+
                         print '</td>';
                     }
                     else
-                    {
+					{
                         print '<td>'.dol_htmlentitiesbr($objp->description)."</td>\n";
                     }
                     // TVA
@@ -1349,6 +1371,8 @@ else
                     print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
                     // Quantite
                     print '<td align="center">'.$objp->qty.'</td>';
+	                // Unit
+	                if($conf->global->PRODUCT_USE_UNITS) print '<td align="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
@@ -1396,8 +1420,16 @@ else
                     // Dates de en service prevues et effectives
                     if ($objp->subprice >= 0)
                     {
+	                    $colspan = 6;
+
+	                    if ($conf->margin->enabled && $conf->global->PRODUCT_USE_UNITS) {
+		                    $colspan = 8;
+	                    } elseif ($conf->margin->enabled || $conf->global->PRODUCT_USE_UNITS) {
+		                    $colspan = 7;
+	                    }
+
                         print '<tr '.$bc[$var].'>';
-                        print '<td colspan="'.($conf->margin->enabled?7:6).'">';
+                        print '<td colspan="'.$colspan.'">';
 
                         // Date planned
                         print $langs->trans("DateStartPlanned").': ';
@@ -1465,6 +1497,12 @@ else
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+                    if ($conf->global->PRODUCT_USE_UNITS)
+                    {
+                    	print '<td align="left">';
+                    	print $form->selectUnits($objp->fk_unit, "unit");
+                    	print '</td>';
+                    }
                     print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 					if (! empty($usemargins))
 					{
@@ -1478,6 +1516,7 @@ else
 
                     $colspan=5;
                     if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
+	              if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
                     // Ligne dates prevues
                     print "<tr ".$bc[$var].">";

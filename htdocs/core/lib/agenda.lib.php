@@ -64,16 +64,16 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<div class="fichecenter">';
 
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
-	else print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+	else print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap borderright">';
 
 	print '<table class="nobordernopadding">';
 
 	if ($canedit)
 	{
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px;">';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("Group").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
@@ -83,16 +83,16 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		$formactions=new FormActions($db);
 
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px;">';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Type");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0));
 		print '</td></tr>';
 
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px;">';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
 		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
@@ -100,7 +100,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px;">';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		print $form->select_thirdparty($socid, 'socid');
@@ -124,7 +124,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Filter on hours
 		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px;">'.$langs->trans("WorkingTimeRange").'</td>';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("WorkingTimeRange").'</td>';
 		print "<td class='nowrap maxwidthonsmartphone'>";
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';

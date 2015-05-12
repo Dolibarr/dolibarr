@@ -4,6 +4,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2011-2013	Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +293,7 @@ llxHeader("",$langs->trans("ProjectsSetup"));
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,title_setup);
+print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
 
 $head=project_admin_prepare_head();
 

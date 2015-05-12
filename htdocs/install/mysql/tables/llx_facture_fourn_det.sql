@@ -48,5 +48,6 @@ create table llx_facture_fourn_det
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
   special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
   rang						 integer      DEFAULT 0,
-  import_key        varchar(14)
+  import_key        varchar(14),
+  fk_unit         integer    DEFAULT NULL
 )ENGINE=innodb;

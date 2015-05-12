@@ -94,3 +94,4 @@ BoxProductDistributionFor=Distribution of %s for %s
 ForCustomersInvoices=Customers invoices
 ForCustomersOrders=Customers orders
 ForProposals=Proposals
+LastXMonthRolling=The last %s month rolling

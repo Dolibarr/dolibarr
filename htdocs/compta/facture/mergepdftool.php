@@ -679,7 +679,7 @@ if ($resql)
 	print '</td>';
 	// Late
 	print '<td class="liste_titre" align="center">';
-	print '<input type="checkbox" name="option" value="late"'.($option == 'late'?' checked="checked"':'').'> '.$langs->trans("Late");
+	print '<input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 	print '</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre" align="left">';
@@ -791,13 +791,15 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 			print '<td align="right">';
 			$cn=$facturestatic->getSumCreditNotesUsed();
+			$dep=$facturestatic->getSumDepositsUsed();
 			if (! empty($objp->am)) print price($objp->am);
 			if (! empty($objp->am) && ! empty($cn)) print '+';
 			if (! empty($cn)) print price($cn);
+			if (! empty($dep)) print price(-$dep);
 			print '</td>';
 
 			// Remain to receive
-			print '<td align="right">'.((! empty($objp->am) || ! empty($cn))?price($objp->total_ttc-$objp->am-$cn):'&nbsp;').'</td>';
+			print '<td align="right">'.((! empty($objp->am) || ! empty($cn) || ! empty($dep))?price($objp->total_ttc-$objp->am-$cn-$dep):'&nbsp;').'</td>';
 
 			// Status of invoice
 			print '<td align="right" class="nowrap">';
@@ -827,7 +829,7 @@ if ($resql)
 			$total_ht+=$objp->total_ht;
 			$total_tva+=($objp->total_tva + $tx1 + $tx2 + $revenuestamp);
 			$total_ttc+=$objp->total_ttc;
-			$total_paid+=$objp->am + $cn;
+			$total_paid+=$objp->am + $cn + $dep;
 
 			$i++;
 		}

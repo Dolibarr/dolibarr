@@ -598,7 +598,7 @@ else
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
         print $form->select_date($object->date_start?$object->date_start:-1,'projectstart');
         print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
-        if ($comefromclone){print ' checked="checked" ';}
+        if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
         print '</td></tr>';
 

@@ -191,7 +191,7 @@ if ($object->id)
     print '</tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 	// Status (to sell)
 	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
@@ -284,7 +284,7 @@ if ($object->id)
     						print  '<option value="' . $key . '">' . $value . '</option>';
     					}
     				} else if ($delauft_lang == $key) {
-    					print  '<option value="' . $key . '" selected="selected">' . $value . '</option>';
+    					print  '<option value="' . $key . '" selected>' . $value . '</option>';
     				} else {
     					print  '<option value="' . $key . '">' . $value . '</option>';
     				}
@@ -315,11 +315,11 @@ if ($object->id)
     				if ($conf->global->MAIN_MULTILANGS) {
     					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) {
     						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
-    						$checked = ' checked="checked" ';
+    						$checked = ' checked ';
     					}
     				} else {
     					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) {
-    						$checked = ' checked="checked" ';
+    						$checked = ' checked ';
     					}
     				}
     				 

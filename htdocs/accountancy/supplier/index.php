@@ -144,7 +144,7 @@ $sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'
 $sql .= "  AND ff.fk_statut > 0 ";
 
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND ff.entity = '" . $conf->entity . "'";
+	$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
 
 $sql .= " GROUP BY ffd.fk_code_ventilation";
@@ -221,7 +221,7 @@ $sql .= "  AND ff.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'
 $sql .= "  AND ff.fk_statut > 0 ";
 
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND ff.entity = '" . $conf->entity . "'";
+	$sql .= " AND ff.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
 
 dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);

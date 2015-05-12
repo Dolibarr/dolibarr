@@ -232,7 +232,7 @@ if ($modecompta != 'CREANCES-DETTES') {
     $sql.= " WHERE pf.rowid IS NULL";
     $sql.= " AND p.fk_bank = b.rowid";
     $sql.= " AND b.fk_account = ba.rowid";
-    $sql.= " AND ba.entity = ".$conf->entity;
+    $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	if ($date_start && $date_end) {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}

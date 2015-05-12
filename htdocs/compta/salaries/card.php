@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
+
 
 $langs->load("compta");
 $langs->load("banks");
@@ -298,11 +301,8 @@ if ($action == 'create')
 
 if ($id)
 {
-	$h = 0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/card.php?id='.$salpayment->id;
-	$head[$h][1] = $langs->trans('Card');
-	$head[$h][2] = 'card';
-	$h++;
+
+	$head=salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
 

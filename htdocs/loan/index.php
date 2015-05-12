@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014       Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ $langs->load("banks");
 $langs->load("bills");
 
 // Security check
-$socid = GETPOST('socid', int);
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 

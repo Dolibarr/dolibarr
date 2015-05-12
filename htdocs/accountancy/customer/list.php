@@ -132,7 +132,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity = '" . $conf->entity . "'";
+	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
 
 $sql .= " ORDER BY l.rowid";

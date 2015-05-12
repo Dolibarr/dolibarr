@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->load("products");
 $langs->load("stocks");
 $langs->load("orders");
+$langs->load("productbatch");
 
 // Security check
 if ($user->societe_id) {

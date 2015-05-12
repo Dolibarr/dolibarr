@@ -38,6 +38,11 @@ if ($langs->defaultlang != 'en_US')
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
     exit;
 }
+if (! empty($conf->adherents->enabled))
+{
+	print "Error: Module member must be enabled to have significatn results.\n";
+	exit;
+}
 if (! empty($conf->google->enabled))
 {
     print "Warning: Google module should not be enabled.\n";
@@ -63,7 +68,7 @@ class AllTests
      */
     public static function suite()
     {
-    	
+
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';

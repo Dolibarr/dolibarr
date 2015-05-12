@@ -8,7 +8,7 @@ This files describe steps made by Dolibarr packaging team to make a
 beta version of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in ChangeLog. To generate a changelog, you can do "git log x.y.z..HEAD --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIXED\|NEW'"
+- Update version/info in ChangeLog. To generate a changelog, you can do "git log `git merge-base x.y origin/develop`..x.y --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -i -e '^FIX\|NEW'"
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
 - Update version number with x.y.z-w in build/debian/changelog
 - Update version number with x.y.z-w in build/rpm/*.spec
@@ -30,7 +30,7 @@ This files describe steps made by Dolibarr packaging team to make a
 complete release of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in ChangeLog. To generate a changelog, you can do "git log x.y.z..HEAD --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^Fix\|New\|Sec'"
+- Update version/info in ChangeLog. To generate a changelog, you can do "git log `git merge-base x.y origin/develop`..x.y --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -i -e '^FIX\|NEW'"
 - Update version number with x.y.z in htdocs/filefunc.inc.php
 - Update version number with x.y.z in build/debian/changelog
 - Update version number with x.y.z in build/rpm/*.spec

@@ -88,7 +88,7 @@ if ($_GET["id"]) {
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
 	if (! empty($conf->multicompany->enabled)) {
-		$sql .= " AND f.entity = '" . $conf->entity . "'";
+		$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 	}
 	
 	$result = $db->query($sql);

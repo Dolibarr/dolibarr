@@ -46,6 +46,7 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("salaries");
 $langs->load("loan");
 $langs->load("donations");
 
@@ -201,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 		$var=True;
 		$num = $db->num_rows($result);
 		$i = 0;
-		$options = '<option value="0" selected="true">&nbsp;</option>';
+		$options = '<option value="0" selected>&nbsp;</option>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
@@ -263,7 +264,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	$sql.= " WHERE b.fk_account = ".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
 
 	dol_syslog("account.php count transactions -", LOG_DEBUG);
@@ -511,7 +512,7 @@ if ($id > 0 || ! empty($ref))
 	}
 	$sql.= " WHERE b.fk_account=".$object->id;
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= $sql_rech;
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);

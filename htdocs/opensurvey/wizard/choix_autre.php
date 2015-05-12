@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 // Security check
 if (!$user->rights->opensurvey->write) accessforbidden();
 
+
+
 /*
  * Action
  */
@@ -48,7 +50,8 @@ if (isset($_SESSION["nbrecases"])) {
 	$_SESSION["nbrecases"]=5;
 }
 
-if (isset($_POST["ajoutcases"])) {
+if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x"))
+{
 	$_SESSION["nbrecases"]=$_SESSION["nbrecases"]+5;
 }
 
@@ -83,7 +86,7 @@ if (isset($_POST["confirmecreation"]))
 	if ($testremplissage != "ok" || (!$toutchoix)) {
 		setEventMessage($langs->trans("ErrorOpenSurveyOneChoice"), 'errors');
 	} else {
-	
+
 		//format du sondage AUTRE
 		$_SESSION["formatsondage"]="A";
 

@@ -2,15 +2,11 @@
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-
 require '../../main.inc.php';
 
-if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1')
-{
-	print "Page available only from remote address 127.0.0.1";
-	exit;
+if ($dolibarr_main_prod) {
+	accessforbidden();
 }
-
 
 $usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
@@ -65,8 +61,9 @@ else
 
 <h1>
 This page is a sample of page using tables. It is designed to make test with<br>
-- css (edit page to change to test another css)<br>
+- css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
 - jmobile (add parameter dol_use_jmobile=1&dol_optimize_smallscreen=1 to enable view with jmobile)<br>
+- no javascript / usage for bind people (add parameter nojs=1 to force disable javascript)<br>
 - dataTables<br>
 - tablednd<br>
 </h1>
@@ -115,9 +112,13 @@ This page is a sample of page using tables. It is designed to make test with<br>
 
 
 
-<br><hr><br>Example 1 : Standard table => Use this if you need the drag and drop for lines<br>
+<br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines<br>
 
 <?php
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+$productspecimen=new Product($db);
+$productspecimen->initAsSpecimen();
+
 $sortfield='aaa';
 $sortorder='ASC';
 $tasksarray=array(1,2,3);	// To force having several lines
@@ -130,14 +131,14 @@ if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/aj
 <?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
 <?php print getTitleFieldOfList($langs->trans('title3'),0,$_SERVER["PHP_SELF"],'ccc','','','align="center"',$sortfield,$sortorder); ?>
 </tr>
-<tr class="pair"><td class="pair">a1</td><td class="pair" align="right">b1</td><td class="tdlineupdown pair" align="left">c1</td></tr>
-<tr class="impair"><td class="impair">a2</td><td class="impair" align="right">b2</td><td class="tdlineupdown impair" align="left">c2</td></tr>
+<tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
+<tr class="impair"><td>a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
 </table>
 <br>
 
 
 
-<br><hr><br>Example 2 : Table using tags: table/thead/tbody/tr/td + dataTable => Use this for long result tables<br>
+<br><hr><br>Example 2 : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for long result tables<br>
 
 
 
@@ -221,9 +222,11 @@ $('xxxth').replaceWith(
 <table id="idtableexample2" class="centpercent">
 	<thead>
     <tr class="liste_titre">
-        <th>snake</th>
-        <th><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a cell</label></th>
-		<?php print getTitleFieldOfList($langs->trans('zzz'),1,$_SERVER["PHP_SELF"],'','','','align="center" class="tagtd"',$sortfield,$sortorder); ?>
+        <th>Column A</th>
+        <th><label><input type="checkbox" name="hidedetails" value="2"> A checkbox inside a title of Column B</label></th>
+		<?php
+		print getTitleFieldOfList($langs->trans('Column C'),1,$_SERVER["PHP_SELF"],'','','','align="center" class="tagtd"',$sortfield,$sortorder);
+		?>
     </tr>
     </thead>
     <tbody>
@@ -292,7 +295,7 @@ $('xxxth').replaceWith(
 <br>
 
 
-<br><hr><br>Example 3 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd => Use this, but AVOID IT if possible, for tables that need to have a different form for each line (drag and drop of lines does not work for this case, also height of title can't be forced to a minimum)<br><br>
+<br><hr><br>Example 3 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd => Use this for tables that need to have a different form for each line, but AVOID IT if possible (drag and drop of lines does not work for this case, also height of title can't be forced to a minimum)<br><br>
 
 
 <?php
@@ -302,22 +305,28 @@ $('xxxth').replaceWith(
 ?>
 <div class="tagtable centpercent" id="tablelines">
     <div class="tagtr liste_titre">
-        <div class="tagtd">line3<input type="hidden" name="cartitem" value="3"></div>
-        <div class="tagtd">dfsdf</div>
-        <div class="tagtd">ffdsfsd</div>
-        <div class="tagtd tdlineupdown">aaaa</div>
+        <div class="tagtd">Title A<input type="hidden" name="cartitem" value="3"></div>
+        <div class="tagtd">title B</div>
+        <div class="tagtd">title C</div>
+        <div class="tagtd">title D</div>
     </div>
-    <div class="impair tagtr">
+    <div class="pair tagtr">
         <div class="tagtd">line4<input type="hidden" name="cartitem" value="3"></div>
         <div class="tagtd">dfsdf</div>
         <div class="tagtd"><input name="count" value="4"></div>
         <div class="tagtd tdlineupdown">bbbb</div>
     </div>
-    <div class="pair tagtr">
+    <div class="impair tagtr">
         <div class="tagtd">line5<input type="hidden" name="cartitemb" value="3"></div>
         <div class="tagtd">dfsdf</div>
         <div class="tagtd"><input name="countb" value="4"></div>
         <div class="tagtd tdlineupdown">bbbb</div>
+    </div>
+    <div class="pair tagtr">
+        <div class="tagtd">line6<input type="hidden" name="cartitem" value="3"></div>
+        <div class="tagtd">jghjgh</div>
+        <div class="tagtd">5</div>
+        <div class="tagtd tdlineupdown">lll</div>
     </div>
 <!-- Using form into div make Firefox crazy (page loading does not end) -->
 <!--	<form class="liste_titre" method="POST" action="1.php">

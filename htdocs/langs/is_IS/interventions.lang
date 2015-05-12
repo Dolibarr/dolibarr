@@ -50,4 +50,4 @@ ArcticNumRefModelError=Ekki tókst að virkja
 PacificNumRefModelDesc1=Fara aftur numero með snið %s yymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
 PacificNumRefModelError=Íhlutun kort sem byrjar á $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders

@@ -1,12 +1,13 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
 ProductStatusOnBatch=Oui (Lot/Série requis)
-ProductStatusNotOnBatch=Non (Lot/série non utilisé)
+ProductStatusNotOnBatch=No (Lot/Série non utilisé)
 ProductStatusOnBatchShort=Oui
 ProductStatusNotOnBatchShort=Non
 Batch=Lot/Série
-atleast1batchfield=Date de péremption ou numéro de lot/série
-batch_number=Lot/Numéro de série
+atleast1batchfield=Date limite consommation, péremption ou numéro de lot/série
+batch_number=Numéro de Lot/Série
+BatchNumberShort=Lot/Série
 l_eatby=Date limite de consommation
 l_sellby=Date de péremption
 DetailBatchNumber=Détails Lot/Série

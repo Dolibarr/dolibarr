@@ -1,126 +1,102 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Expense report
-ExpenseReports=Expense reports
-Trip=Expense report
-Trips=Expense reports
-TripsAndExpenses=Expenses reports
-TripsAndExpensesStatistics=Expense reports statistics
-TripCard=Expense report card
-AddTrip=Create expense report
-ListOfTrips=List of expense report
+ExpenseReport=Nota spese
+ExpenseReports=Note spese
+Trip=Nota spese
+Trips=Note spese
+TripsAndExpenses=Note spese
+TripsAndExpensesStatistics=Statistiche note spese
+TripCard=Scheda nota spese
+AddTrip=Crea nota spese
+ListOfTrips=Lista delle note spese
 ListOfFees=Elenco delle tariffe
-NewTrip=New expense report
+NewTrip=Nuova nota spese
 CompanyVisited=Società/Fondazione visitata
 Kilometers=Kilometri
 FeesKilometersOrAmout=Tariffa kilometrica o importo
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
-ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
+DeleteTrip=Elimina nota spese
+ConfirmDeleteTrip=Vuoi davvero eliminare questa nota spese?
+ListTripsAndExpenses=Lista delle note spese
+ListToApprove=In attesa di approvazione
+ExpensesArea=Area note spese
+SearchATripAndExpense=Ricerca una nota spese
 ClassifyRefunded=Classifica come "Rimborsata"
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
-ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
-TripId=Id expense report
-AnyOtherInThisListCanValidate=Person to inform for validation.
-TripSociete=Information company
-TripSalarie=Informations user
-TripNDF=Informations expense report
-DeleteLine=Delete a ligne of the expense report
-ConfirmDeleteLine=Are you sure you want to delete this line ?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
-ExpenseReportLine=Expense report line
+ExpenseReportWaitingForApproval=È stata inserita una nuova nota spese da approvare
+ExpenseReportWaitingForApprovalMessage=È stata inserita una nuova nota spese da approvare.\n- Utente: %s\n- Periodo: %s\nClicca qui per approvarla: %s
+TripId=ID nota spese
+AnyOtherInThisListCanValidate=Persona da informare per la convalida
+TripSociete=Informazioni azienda
+TripSalarie=Informazioni utente
+TripNDF=Informazioni nota spese
+DeleteLine=Cancella una riga della nota spese
+ConfirmDeleteLine=Vuoi davvero eliminare questa riga?
+PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
+ExpenseReportLine=Riga di nota spese
 TF_OTHER=Altro
-TF_TRANSPORTATION=Transportation
+TF_TRANSPORTATION=Trasporto
 TF_LUNCH=Pranzo
 TF_METRO=Metro
-TF_TRAIN=Train
+TF_TRAIN=Treno
 TF_BUS=Bus
-TF_CAR=Car
-TF_PEAGE=Toll
-TF_ESSENCE=Fuel
-TF_HOTEL=Hostel
+TF_CAR=Auto
+TF_PEAGE=Pedaggio
+TF_ESSENCE=Carburante
+TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
-ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-ListTripsAndExpenses=List of expense reports
-AucuneNDF=No expense reports found for this criteria
-AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
+ErrorDoubleDeclaration=Hai già inviata una nota spese per il periodo selezionato
+ListTripsAndExpenses=Lista delle note spese
+AucuneNDF=Nessuna nota spese trovata
+AucuneLigne=Non ci sono ancora note spese
+AddLine=Aggiungi una riga
+AddLineMini=Aggiungi
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
-ModePaiement=Payment mode
-Note=Note
-Project=Project
+Date_DEBUT=Data di inizio
+Date_FIN=Data di fine
+ModePaiement=Modalità di pagamento
+Note=Nota
+Project=Progetto
 
-VALIDATOR=User to inform for approbation
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paied by
-REFUSEUR=Denied by
-CANCEL_USER=Canceled by
+VALIDATOR=Utente responsabile dell'approvazione
+VALIDOR=Approvata da
+AUTHOR=Registrata da
+AUTHORPAIEMENT=Liquidata da
+REFUSEUR=Rifiutata da
+CANCEL_USER=Eliminata da
 
-MOTIF_REFUS=Reason
-MOTIF_CANCEL=Reason
+MOTIF_REFUS=Motivo
+MOTIF_CANCEL=Motivo
 
-DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DateApprove=Approving date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_REFUS=Rifiutata in data
+DATE_SAVE=Convalidata in data
+DATE_VALIDE=Convalidata in data
+DATE_CANCEL=Eliminata in data
+DATE_PAIEMENT=Liquidata in data
 
-Deny=Deny
-TO_PAID=Pay
-BROUILLONNER=Reopen
-SendToValid=Sent to approve
-ModifyInfoGen=Edit
-ValidateAndSubmit=Validate and submit for approval
+TO_PAID=Liquida
+BROUILLONNER=Riapri
+SendToValid=Invia per l'approvazione
+ModifyInfoGen=Modifica
+ValidateAndSubmit=Convalida e proponi per l'approvazione
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_VALIDATOR=Non sei autorizzato ad approvare questa nota spese
+NOT_AUTHOR=Non sei l'autore di questa nota spese. Operazione annullata.
 
-RefuseTrip=Deny an expense report
-ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
+RefuseTrip=Rifiuta una nota spese
+ConfirmRefuseTrip=Vuoi davvero rifiutare questa nota spese?
 
-ValideTrip=Approve expense report
-ConfirmValideTrip=Are you sure you want to approve this expense report ?
+ValideTrip=Approva la nota spese
+ConfirmValideTrip=Vuoi davvero approvare questa nota spese?
 
-PaidTrip=Pay an expense report
-ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
+PaidTrip=Liquida una nota spese
+ConfirmPaidTrip=Vuoi davvero modificare lo stato di questa nota spese in "liquidata"?
 
-CancelTrip=Cancel an expense report
-ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
+CancelTrip=Elimina una nota spese
+ConfirmCancelTrip=Vuoi davvero eliminare questa nota spese?
 
-BrouillonnerTrip=Move back expense report to status "Draft"n
-ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to status "Draft" ?
+BrouillonnerTrip=Riporta la nota spese allo stato "bozza"
+ConfirmBrouillonnerTrip=Vuoi davvero riportare questa nota spese allo stato "bozza"?
 
-SaveTrip=Validate expense report
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+SaveTrip=Convalida la nota spese
+ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
 
-Synchro_Compta=NDF <-> Compte
-
-TripSynch=Synchronisation : Notes de frais <-> Compte courant
-TripToSynch=Notes de frais à intégrer dans la compta
-AucuneTripToSynch=Aucune note de frais n'est en statut "Payée".
-ViewAccountSynch=Voir le compte
-
-ConfirmNdfToAccount=Êtes-vous sûr de vouloir intégrer cette note de frais dans le compte courant?
-ndfToAccount=Note de frais - Intégration
-
-ConfirmAccountToNdf=Êtes-vous sûr de vouloir retirer cette note de frais du compte courant?
-AccountToNdf=Note de frais - Retrait
-
-LINE_NOT_ADDED=Ligne non ajoutée :
-NO_PROJECT=Aucun projet sélectionné.
-NO_DATE=Aucune date sélectionnée.
-NO_PRICE=Aucun prix indiqué.
-
-TripForValid=à Valider
-TripForPaid=à Payer
-TripPaid=Payée
-
-NoTripsToExportCSV=No expense report to export for this period.
+NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo

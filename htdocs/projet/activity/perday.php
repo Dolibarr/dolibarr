@@ -277,7 +277,7 @@ print "</table>";
 dol_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

@@ -371,7 +371,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
     print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" id="logo" size="50">';
-    print '</td><td valign="middle" align="right">';
+    print '</td><td class="nocellnopadd" valign="middle" align="right">';
     if (! empty($mysoc->logo_mini))
     {
         print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
@@ -543,7 +543,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%"><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-    print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',1) . '</td></tr>';
+    print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',0,1) . '</td></tr>';
 
     print "</table>";
 
@@ -756,7 +756,7 @@ else
 
     print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print $mysoc->logo;
-    print '</td><td valign="center" align="right">';
+    print '</td><td class="nocellnopadd" valign="center" align="right">';
 
     // On propose la generation de la vignette si elle n'existe pas
     if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))

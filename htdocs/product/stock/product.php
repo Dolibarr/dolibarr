@@ -124,7 +124,7 @@ if ($action == "correct_stock" && ! $cancel)
 
 	if (! $error)
 	{
-		$priceunit=price2num(GETPOST("price"));
+		$priceunit=price2num(GETPOST("unitprice"));
 		if (is_numeric(GETPOST("nbpiece")) && $id)
 		{
 			if (empty($product)) {
@@ -403,7 +403,7 @@ if ($id > 0 || $ref)
 		print '</tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->label.'</td>';
 		print '</tr>';
 
         // Status (to sell)
@@ -598,83 +598,8 @@ if ($id > 0 || $ref)
 	 */
 	if ($action == "correction")
 	{
-		print '<script type="text/javascript" language="javascript">
-		jQuery(document).ready(function() {
-			function init_price()
-			{
-				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr(\'disabled\');
-				else jQuery("#unitprice").attr(\'disabled\',\'disabled\');
-			}
-			init_price();
-			jQuery("#mouvement").change(function() {
-				init_price();
-			});
-		});
-		</script>';
-
-		print_titre($langs->trans("StockCorrection"));
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="correct_stock">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		print '<table class="border" width="100%">';
-
-		// Warehouse
-		print '<tr>';
-		print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
-		print '<td width="20%">';
-		print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
-		print '</td>';
-		print '<td width="20%">';
-		print '<select name="mouvement" id="mouvement" class="flat">';
-		print '<option value="0">'.$langs->trans("Add").'</option>';
-		print '<option value="1">'.$langs->trans("Delete").'</option>';
-		print '</select></td>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" id="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
-		print '</tr>';
-
-		// Purchase price
-		print '<tr>';
-		print '<td width="20%" colspan="2">'.$langs->trans("UnitPurchaseValue").'</td>';
-		print '<td colspan="4"><input class="flat" name="price" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-		print '</tr>';
-
-		// Eat-by date
-		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
-		{
-			print '<tr>';
-			print '<td colspan="2">'.$langs->trans("batch_number").'</td><td colspan="4">';
-			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
-			print '</td>';
-			print '</tr><tr>';
-			print '<td colspan="2">'.$langs->trans("l_eatby").'</td><td>';
-			$form->select_date('','eatby','','',1,"");
-			print '</td>';
-			print '<td></td>';
-			print '<td>'.$langs->trans("l_sellby").'</td><td>';
-			$form->select_date('','sellby','','',1,"");
-			print '</td>';
-			print '</tr>';
-		}
-
-		// Label of mouvement of id of inventory
-		$valformovementlabel=(GETPOST("label")?GETPOST("label"):$langs->trans("MovementCorrectStock", $product->ref));
-		print '<tr>';
-		print '<td width="20%" colspan="2">'.$langs->trans("MovementLabel").'</td>';
-		print '<td colspan="2">';
-		print '<input type="text" name="label" size="40" value="'.$valformovementlabel.'">';
-		print '</td>';
-		print '<td width="20%">'.$langs->trans("InventoryCode").'</td><td width="20%"><input class="flat" name="inventorycode" id="inventorycode" size="14" value="'.GETPOST("inventorycode").'"></td>';
-		print '</tr>';
-
-		print '</table>';
-
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
-		print '</div>';
-		print '</form>';
+		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
+		print '<br>';
 	}
 
 	/*
@@ -682,89 +607,8 @@ if ($id > 0 || $ref)
 	 */
 	if ($action == "transfert")
 	{
-	    $pdluoid=GETPOST('pdluoid','int');
-
-	    $pdluo = new Productbatch($db);
-
-	    if ($pdluoid > 0)
-	    {
-	        $result=$pdluo->fetch($pdluoid);
-
-	        if ($result > 0)
-	        {
-	            $pdluoid=$pdluo->id;
-	        }
-	        else
-	        {
-	            dol_print_error($db);
-	        }
-	    }
-
-		print_titre($langs->trans("StockTransfer"));
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="transfert_stock">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		if ($pdluoid)
-		{
-		    print '<input type="hidden" name="pdluoid" value="'.$pdluoid.'">';
-		}
-		print '<table class="border" width="100%">';
-
-		print '<tr>';
-		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="15%">';
-		if ($pdluoid > 0)
-		{
-		    print $formproduct->selectWarehouses($pdluo->warehouseid,'id_entrepot_source','',1,1);
-		}
-		else
-		{
-            print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot_source')?GETPOST('id_entrepot_source','int'):'ifone')),'id_entrepot_source','',1);
-		}
-		print '</td>';
-		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="15%">';
-		print $formproduct->selectWarehouses(GETPOST('id_entrepot_destination'),'id_entrepot_destination','',1);
-		print '</td>';
-		print '<td width="15%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="15%"><input type="text" class="flat" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
-		print '</tr>';
-
-		// Eat-by date
-		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
-		{
-			print '<tr>';
-			print '<td>'.$langs->trans("batch_number").'</td><td colspan="5">';
-			print '<input type="text" name="batch_number" size="40"'.($pdluoid > 0 ? ' disabled="true"':'').' value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';			// If form was opened for a specific pdluoid, field is disabled
-			print '</td>';
-			print '</tr><tr>';
-			print '<td>'.$langs->trans("l_eatby").'</td><td>';
-			print $form->select_date(($d_eatby?$d_eatby:$pdluo->eatby),'eatby','','',1,"", 1, 0, 1, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
-			print '</td>';
-			print '<td>'.$langs->trans("l_sellby").'</td><td>';
-			print $form->select_date(($d_sellby?$d_sellby:$pdluo->sellby),'sellby','','',1,"", 1, 0, 1, ($pdluoid > 0 ? 1 : 0));		// If form was opened for a specific pdluoid, field is disabled
-			print '</td>';
-			print '<td colspan="2"></td>';
-			print '</tr>';
-		}
-
-		// Label
-		$valformovementlabel=(GETPOST("label")?GETPOST("label"):$langs->trans("MovementTransferStock", $product->ref));
-		print '<tr>';
-		print '<td width="15%">'.$langs->trans("MovementLabel").'</td>';
-		print '<td colspan="3">';
-		print '<input type="text" name="label" size="60" value="'.dol_escape_htmltag($valformovementlabel).'">';
-		print '</td>';
-		print '<td width="20%">'.$langs->trans("InventoryCode").'</td><td width="20%"><input class="flat" name="inventorycode" id="inventorycode" size="14" value="'.GETPOST("inventorycode").'"></td>';
-		print '</tr>';
-
-		print '</table>';
-
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
-		print '</div>';
-
-		print '</form>';
+		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
+		print '<br>';
 	}
 
 	/*
@@ -897,7 +741,7 @@ if ($resql)
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
-			    if ( $action == 'editline' && GETPOST('lineid',int)==$pdluo->id )
+			    if ( $action == 'editline' && GETPOST('lineid','int')==$pdluo->id )
 			    { //Current line edit
 			        print "\n".'<tr><td colspan="9">';
 			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';

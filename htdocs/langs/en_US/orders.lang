@@ -75,6 +75,7 @@ AddToMyOrders=Add to my orders
 AddToOtherOrders=Add to other orders
 AddToDraftOrders=Add to draft order
 ShowOrder=Show order
+OrdersOpened=Orders to process
 NoOpenedOrders=No open orders
 NoOtherOpenedOrders=No other open orders
 NoDraftOrders=No draft orders

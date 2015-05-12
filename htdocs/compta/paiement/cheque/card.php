@@ -376,7 +376,7 @@ if ($action == 'new')
 	$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_type = 'CHQ'";
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
 	if ($filterdate)          $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
@@ -462,7 +462,7 @@ if ($action == 'new')
 			print '<td>'.$value["banque"]."</td>\n";
 			print '<td align="right">'.price($value["amount"]).'</td>';
 			print '<td align="center">';
-			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked="checked" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 			print '</td>' ;
 			print '</tr>';
 
@@ -599,7 +599,7 @@ else
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql.= " WHERE ba.rowid = b.fk_account";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$object->id;
 	$sql.= " ORDER BY $sortfield $sortorder";

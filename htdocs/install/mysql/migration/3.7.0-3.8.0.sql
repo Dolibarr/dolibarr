@@ -18,6 +18,14 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+-- IVORY COST (id country=21)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (212, 21,  '18','0',7.5,2,0,0,'IVA standard rate',1);
+-- Taiwan VAT Rates
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
+
+
 -- Loan
 create table llx_loan
 (
@@ -77,7 +85,7 @@ ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
 
 
-ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime;
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
@@ -104,12 +112,12 @@ ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NUL
 
 
 --create table for user conf of printing driver
-CREATE TABLE llx_printing 
+CREATE TABLE llx_printing
 (
  rowid integer AUTO_INCREMENT PRIMARY KEY,
  tms timestamp,
  datec datetime,
- printer_name text NOT NULL, 
+ printer_name text NOT NULL,
  printer_location text NOT NULL,
  printer_id varchar(255) NOT NULL,
  copy integer NOT NULL DEFAULT '1',
@@ -119,9 +127,6 @@ CREATE TABLE llx_printing
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
-
--- Taiwan VAT Rates
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
 
 -- Add situation invoices
 ALTER TABLE llx_facture ADD COLUMN situation_cycle_ref smallint;
@@ -194,7 +199,7 @@ CREATE TABLE llx_expensereport (
   total_ht 			double(24,8) DEFAULT 0,
   total_tva 		double(24,8) DEFAULT 0,
   localtax1			double(24,8) DEFAULT 0,				-- amount total localtax1
-  localtax2			double(24,8) DEFAULT 0,				-- amount total localtax2	
+  localtax2			double(24,8) DEFAULT 0,				-- amount total localtax2
   total_ttc 		double(24,8) DEFAULT 0,
   date_debut 		date NOT NULL,
   date_fin 			date NOT NULL,
@@ -287,11 +292,11 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
 
-ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;    
+ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;
 ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
 
 
-  
+
 -- Module AskPriceSupplier --
 CREATE TABLE llx_askpricesupplier (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -533,8 +538,83 @@ CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
 ) ENGINE=InnoDB;
 
 
+-- Units
+create table llx_c_units(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
+	code varchar(3),
+	label varchar(50),
+	short_label varchar(5),
+	active tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
+
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('P','piece','p', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('SET','set','se', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('S','second','s', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('H','hour','h', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('D','day','d', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('KG','kilogram','kg', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('G','gram','g', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M','meter','m', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('LM','linear meter','lm', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M2','square meter','m2', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('M3','cubic meter','m3', 1);
+INSERT INTO llx_c_units ( code, label, short_label, active) VALUES ('L','liter','l', 1);
+
+alter table llx_product add fk_unit integer default NULL;
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_facturedet_rec add fk_unit integer default NULL;
+ALTER TABLE llx_facturedet_rec ADD CONSTRAINT fk_facturedet_rec_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_facturedet add fk_unit integer default NULL;
+ALTER TABLE llx_facturedet ADD CONSTRAINT fk_facturedet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_propaldet add fk_unit integer default NULL;
+ALTER TABLE llx_propaldet ADD CONSTRAINT fk_propaldet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_commandedet add fk_unit integer default NULL;
+ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_contratdet add fk_unit integer default NULL;
+ALTER TABLE llx_contratdet ADD CONSTRAINT fk_contratdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_commande_fournisseurdet add fk_unit integer default NULL;
+ALTER TABLE llx_commande_fournisseurdet ADD CONSTRAINT fk_commande_fournisseurdet_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+alter table llx_facture_fourn_det add fk_unit integer default NULL;
+ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_unit FOREIGN KEY (fk_unit) REFERENCES llx_c_units (rowid);
+
+
+
+
 -- Feature request: A page to merge two thirdparties into one #2613
+ALTER TABLE llx_categorie_societe DROP FOREIGN KEY fk_categorie_societe_fk_soc;
 ALTER TABLE llx_categorie_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_fk_soc   FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+ALTER TABLE llx_categorie_fournisseur DROP FOREIGN KEY fk_categorie_fournisseur_fk_soc;
 ALTER TABLE llx_categorie_fournisseur CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
-ALTER TABLE llx_societe CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
-ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER NOT NULL;
+ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_fk_soc   FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+ALTER TABLE llx_user DROP INDEX uk_user_fk_societe;
+ALTER TABLE llx_user DROP INDEX idx_user_fk_societe;
+ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER;
+ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
+
+-- API module
+ALTER TABLE llx_user ADD api_key VARCHAR(128) DEFAULT NULL AFTER pass_temp;
+ALTER TABLE llx_user ADD INDEX idx_user_api_key (api_key);
+
+
+
+ALTER TABLE llx_actioncomm ADD COLUMN email_msgid varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);
+
+ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
+
+

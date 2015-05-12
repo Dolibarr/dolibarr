@@ -28,8 +28,8 @@ Validate=Convalida
 Addanaccount=Aggiungi un account di contabilità
 AccountAccounting=Account di contabilità
 Ventilation=Breakdown
-ToDispatch=To dispatch
-Dispatched=Dispatched
+ToDispatch=Da spedire
+Dispatched=Spedito
 
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
@@ -68,7 +68,7 @@ Lineofinvoice=Riga fattura
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Separatore delle colonne nel file di esportazione
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
@@ -103,7 +103,7 @@ Labelcompte=Etichetta account
 Debit=Debito
 Credit=Credito
 Amount=Importo
-Sens=Sens
+Sens=Verso
 Codejournal=Giornale
 
 DelBookKeeping=Delete the records of the general ledger
@@ -143,7 +143,7 @@ Active=Statement
 NewFiscalYear=Nuovo anno fiscale
 
 DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
+TotalVente=Totale netto fatturato
 TotalMarge=Margine totale sulle vendite
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
 DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account

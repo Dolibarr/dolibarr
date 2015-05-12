@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=Firmenname %s bereits vorhanden. Bitte wählen Sie einen anderen.
-ErrorPrefixAlreadyExists=Präfix %s bereits vorhanden. Wählen Sie einen anderen.
+ErrorPrefixAlreadyExists=Präfix %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorSetACountryFirst=Wähle zuerst das Land
 SelectThirdParty=Wähle einen Partner
 DeleteThirdParty=Lösche einen Partner
@@ -16,11 +16,11 @@ MenuNewPrivateIndividual=Neue Privatperson
 MenuSocGroup=Gruppen
 NewCompany=Neues Unternehmen (Leads, Kunden, Lieferanten)
 NewThirdParty=Neuer Partner (Leads, Kunden, Lieferanten)
-NewSocGroup=Neue Firmengruppe
+NewSocGroup=Neue Unternehmensgruppe
 NewPrivateIndividual=Neue Privatperson (Lead, Kunde, Lieferant)
 CreateDolibarrThirdPartySupplier=Neuen Partner erstellen (Lieferant)
 ProspectionArea=Übersicht Geschäftsanbahnung
-SocGroup=Gruppe von Unternehmen
+SocGroup=Unternehmensgruppe
 IdThirdParty=Partner ID
 IdCompany=Unternehmens ID
 IdContact=Kontakt ID
@@ -83,7 +83,7 @@ DefaultLang=Standardsprache
 VATIsUsed=MwSt.-pflichtig
 VATIsNotUsed=Nicht MwSt-pflichtig
 CopyAddressFromSoc=Übernehme die Adresse vom Partner
-NoEmailDefined=Es ist keine Mail-Adresse definiert
+NoEmailDefined=Es wurde keine Mailadresse definiert
 ##### Local Taxes #####
 LocalTax1IsUsedES= RE wird verwendet
 LocalTax1IsNotUsedES= RE wird nicht verwendet

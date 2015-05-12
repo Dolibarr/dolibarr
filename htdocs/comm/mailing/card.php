@@ -780,7 +780,7 @@ else
                     if ($conf->file->mailing_limit_sendbyweb == 0)
                     {
                     	$text.=$langs->trans("MailingNeedCommand");
-                    	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
+                    	$text.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
                     	$text.='<br><br>';
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';

@@ -383,8 +383,8 @@ foreach ($demoprofiles as $profilearray)
                     $modulo=($j % $nbcolsmod);
         		    if ($modulo == 0) print '<tr>';
                     print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
-                    if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled="disabled"';
-                    if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked="checked"';
+                    if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled';
+                    if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked';
                     print '> '.$val->getName().' &nbsp;';
                     print '<!-- id='.$val->numero.' -->';
                     print '</td>';

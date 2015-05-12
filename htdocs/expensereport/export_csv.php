@@ -85,7 +85,7 @@ print '<select name="mois">';
 for($i=1;$i<13;$i++) {
    $mois = str_pad($i, 2, "0", STR_PAD_LEFT);
    if($month == $mois) {
-     print '<option value="'.$mois.'" selected="selected">'.$mois.'</option>';
+     print '<option value="'.$mois.'" selected>'.$mois.'</option>';
    } else {
       print '<option value="'.$mois.'">'.$mois.'</option>';
    }
@@ -97,7 +97,7 @@ print '<select name="annee">';
 
 for($i=2009;$i<$year+1;$i++) {
    if($year == $i) {
-     print '<option value="'.$i.'" selected="selected">'.$i.'</option>';
+     print '<option value="'.$i.'" selected>'.$i.'</option>';
    } else {
       print '<option value="'.$i.'">'.$i.'</option>';
    }

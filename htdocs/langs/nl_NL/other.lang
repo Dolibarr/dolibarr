@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Interventie gevalideerd
 Notify_FICHINTER_SENTBYMAIL=Interventie via mail verzonden
 Notify_BILL_VALIDATE=Klant factuur gevalideerd
 Notify_BILL_UNVALIDATE=Klantenfactuur niet gevalideerd
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Leverancier te zijn goedgekeurd
 Notify_ORDER_SUPPLIER_REFUSE=Leverancier bestellen geweigerd
 Notify_ORDER_VALIDATE=Bestelling van de klant gevalideerd
@@ -203,6 +202,7 @@ NewKeyWillBe=Uw nieuwe sleutel in te loggen zal zijn
 ClickHereToGoTo=Klik hier om naar %s
 YouMustClickToChange=Je moet echter wel eerst klikken op de volgende link om de wachtwoord wijziging te valideren
 ForgetIfNothing=Als u deze wijziging niet heeft aangevraagd, negeer deze e-mail. Uw referenties blijven veilig bewaard.
+IfAmountHigherThan=If amount higher than <strong>%s</strong>
 
 ##### Calendar common #####
 AddCalendarEntry=Nieuwe vermelding in de agenda %s

@@ -3,6 +3,7 @@
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
 -- Copyright (C) 2006-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -53,6 +54,7 @@ create table llx_commandedet
   
   special_code					integer      DEFAULT 0,      -- code pour les lignes speciales
   rang							integer      DEFAULT 0,
+  fk_unit            integer      DEFAULT NULL,           -- lien vers table des unités
   import_key					varchar(14)
 )ENGINE=innodb;
 

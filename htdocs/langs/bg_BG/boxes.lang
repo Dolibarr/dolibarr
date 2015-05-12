@@ -94,3 +94,4 @@ BoxProductDistributionFor=Разпределение на %s за %s
 ForCustomersInvoices=Клиента фактури
 ForCustomersOrders=Клиентски поръчки
 ForProposals=Предложения
+LastXMonthRolling=The last %s month rolling

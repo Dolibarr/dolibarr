@@ -749,7 +749,7 @@ class Holiday extends CommonObject
         // Boucle des statuts
         for($i=1; $i < $nb; $i++) {
             if($i==$selected) {
-                $statut.= '<option value="'.$i.'" selected="selected">'.$langs->trans($name[$i-1]).'</option>'."\n";
+                $statut.= '<option value="'.$i.'" selected>'.$langs->trans($name[$i-1]).'</option>'."\n";
             }
             else {
                 $statut.= '<option value="'.$i.'">'.$langs->trans($name[$i-1]).'</option>'."\n";
@@ -797,7 +797,7 @@ class Holiday extends CommonObject
             while ($obj = $this->db->fetch_object($result))
             {
                 if($groupe==$obj->rowid) {
-                    $selectGroup.= '<option value="'.$obj->rowid.'" selected="selected">'.$obj->name.'</option>'."\n";
+                    $selectGroup.= '<option value="'.$obj->rowid.'" selected>'.$obj->name.'</option>'."\n";
                 } else {
                     $selectGroup.= '<option value="'.$obj->rowid.'">'.$obj->name.'</option>'."\n";
                 }
@@ -970,7 +970,7 @@ class Holiday extends CommonObject
 
             // Si la valeur est 1 on retourne checked
             if($obj->value) {
-                return 'checked="checked"';
+                return 'checked';
             }
         }
     }

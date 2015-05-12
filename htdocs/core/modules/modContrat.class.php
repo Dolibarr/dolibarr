@@ -41,7 +41,7 @@ class modContrat extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$this->db = $db;
 		$this->numero = 54;
@@ -85,45 +85,57 @@ class modContrat extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'contrat';
+		$r=0;
+		
+		$r++;
+		$this->rights[$r][0] = 161;
+		$this->rights[$r][1] = 'Lire les contrats';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'lire';
 
-		$this->rights[1][0] = 161;
-		$this->rights[1][1] = 'Lire les contrats';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'lire';
+		$r++;
+		$this->rights[$r][0] = 162;
+		$this->rights[$r][1] = 'Creer / modifier les contrats';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
 
-		$this->rights[2][0] = 162;
-		$this->rights[2][1] = 'Creer / modifier les contrats';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'creer';
+		$r++;
+		$this->rights[$r][0] = 163;
+		$this->rights[$r][1] = 'Activer un service d\'un contrat';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'activer';
 
-		$this->rights[3][0] = 163;
-		$this->rights[3][1] = 'Activer un service d\'un contrat';
-		$this->rights[3][2] = 'w';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'activer';
+		$r++;
+		$this->rights[$r][0] = 164;
+		$this->rights[$r][1] = 'Desactiver un service d\'un contrat';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'desactiver';
 
-		$this->rights[4][0] = 164;
-		$this->rights[4][1] = 'Desactiver un service d\'un contrat';
-		$this->rights[4][2] = 'w';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'desactiver';
+		$r++;
+		$this->rights[$r][0] = 165;
+		$this->rights[$r][1] = 'Supprimer un contrat';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supprimer';
 
-		$this->rights[5][0] = 165;
-		$this->rights[5][1] = 'Supprimer un contrat';
-		$this->rights[5][2] = 'd';
-		$this->rights[5][3] = 0;
-		$this->rights[5][4] = 'supprimer';
+		$r++;
+		$this->rights[$r][0] = 167;
+		$this->rights[$r][1] = 'Export contracts';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
 
+		
 		// Exports
 		//--------
-		$langs->load("contracts");
-		
 		$r=1;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]=$langs->trans('ContractsAndLine');	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r]='ContractsAndLine';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='contract';
 		$this->export_permission[$r]=array(array("contrat","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',
@@ -154,7 +166,7 @@ class modContrat extends DolibarrModules
 		'cod.label'=>"Text",'cod.description'=>"Text",'cod.price_ht'=>"Numeric",'cod.tva_tx'=>"Numeric",
 		'cod.qty'=>"Numeric",'cod.total_ht'=>"Numeric",'cod.total_tva'=>"Numeric",'cod.total_ttc'=>"Numeric",
 		'cod.date_ouverture'=>"Date",'cod.date_ouverture_prevue'=>"Date",'cod.date_fin_validite'=>"Date",'cod.date_cloture'=>"Date",
-		'p.rowid'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
+		'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text');
 
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';

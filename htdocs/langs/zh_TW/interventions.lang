@@ -50,4 +50,4 @@ ArcticNumRefModelError=無法啟動
 PacificNumRefModelDesc1=用以下固定的方式回傳編號:<br> %syymm-nnnn <br>   yy 是年、mm是月、nnnn是一個不為0的序號。
 PacificNumRefModelError=錯誤編號一個以 $syymm 為起始的 intervention card 已經存在，且不相容於此序號模型。請刪除或重新命名以便啟用這個模塊。
 PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinterDetails=interventions generated from orders

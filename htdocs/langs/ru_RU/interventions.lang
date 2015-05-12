@@ -49,5 +49,5 @@ ArcticNumRefModelDesc1=Общие номера модели
 ArcticNumRefModelError=Ошибка при активации
 PacificNumRefModelDesc1=Вернуться Numero с форматом %syymm-YY, где NNNN это год, мм в месяц, и это NNNN последовательности без перерыва и не вернуться до 0
 PacificNumRefModelError=Вмешательство карточки начиная с $ syymm уже и не совместимы с этой моделью последовательности. Удалить или переименовать его, чтобы активировать этот модуль.
-PrintProductsOnFichinter=Print products on intervention card
-PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinter=Выводить товары на карточки посредничества
+PrintProductsOnFichinterDetails=interventions generated from orders

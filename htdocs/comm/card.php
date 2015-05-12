@@ -97,15 +97,13 @@ if (empty($reshook))
 		$action="";
 	}
 
+	// set accountancy code
 	if ($action == 'setcustomeraccountancycode')
 	{
 		$result=$object->fetch($id);
 		$object->code_compta=$_POST["customeraccountancycode"];
 		$result=$object->update($object->id,$user,1,1,0);
-		if ($result < 0)
-		{
-			setEventMessage($object->errors, 'errors');
-		}
+		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
 	// conditions de reglement
@@ -113,7 +111,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-		if ($result < 0) dol_print_error($db,$object->error);
+		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
 	// mode de reglement
@@ -121,7 +119,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
-		if ($result < 0) dol_print_error($db,$object->error);
+		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
 	// assujetissement a la TVA
@@ -130,7 +128,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->tva_assuj=$_POST['assujtva_value'];
 		$result=$object->update($object->id);
-		if ($result < 0) dol_print_error($db,$object->error);
+		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
 	// set prospect level
@@ -139,16 +137,16 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
 		$result=$object->set_prospect_level($user);
-		if ($result < 0) setEventMessage($object->error,'errors');
+		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
 	// update prospect level
-	if ($action == 'cstc')
+	if ($action == 'setstcomm')
 	{
 		$object->fetch($id);
-		$object->stcomm_id=GETPOST('stcomm','int');
+		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
 		$result=$object->set_commnucation_level($user);
-		if ($result < 0) setEventMessage($object->error,'errors');
+		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
 	}
 
 	// update outstandng limit
@@ -157,7 +155,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('outstanding_limit');
 		$result=$object->set_OutstandingBill($user);
-		if ($result < 0) setEventMessage($object->error,'errors');
+		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 }
 
@@ -407,7 +405,8 @@ if ($id > 0)
 		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		// display amount and link to unpaid bill
 		$outstandingBills = $object->get_OutstandingBill();
-		if ($outstandingBills != 0) {
+		if ($outstandingBills != 0)
+		{
 			print ' ('.$langs->trans("CurrentOutstandingBill");
 			print ' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'&search_status=1">';
 			print price($outstandingBills, '', $langs, 0, -1, -1, $conf->currency);
@@ -457,14 +456,16 @@ if ($id > 0)
 		print '</tr>';
 
 		// Status
-		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="2">'.$object->getLibProspCommStatut(4).'</td>';
-		print '<td>';
-		if ($object->stcomm_id != -1) print '<a href="card.php?socid='.$object->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
-		if ($object->stcomm_id !=  0) print '<a href="card.php?socid='.$object->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
-		if ($object->stcomm_id !=  1) print '<a href="card.php?socid='.$object->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
-		if ($object->stcomm_id !=  2) print '<a href="card.php?socid='.$object->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
-		if ($object->stcomm_id !=  3) print '<a href="card.php?socid='.$object->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
-		print '</td></tr>';
+		$object->loadCacheOfProspStatus();
+		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="3">'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+		print ' &nbsp; &nbsp; <div class="floatright">';
+		foreach($object->cacheprospectstatus as $key => $val)
+		{
+			$titlealt='default';
+			if (! empty($val['code']) && ! in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt=$val['label'];
+			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
+		}
+		print '</div></td></tr>';
 	}
 
 	// Other attributes
@@ -684,7 +685,7 @@ if ($id > 0)
         $sql.= ', s.rowid as socid';
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
         $sql.= " WHERE e.fk_soc = s.rowid AND s.rowid = ".$object->id;
-        $sql.= " AND e.entity = ".$conf->entity;
+        $sql.= " AND e.entity IN (".getEntity('expedition', 1).")";
         $sql.= ' GROUP BY e.rowid';
         $sql.= ', e.ref';
         $sql.= ', e.date_creation';

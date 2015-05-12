@@ -71,7 +71,7 @@ class FormMailing  extends Form
 
 		foreach($mailing->statut_dest as $id=>$status) {
 			if ($selectedid==$id)  {
-				$selected=" selected=selected ";
+				$selected=" selected ";
 			}else {
 				$selected="";
 			}

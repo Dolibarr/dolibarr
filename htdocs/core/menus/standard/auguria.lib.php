@@ -413,8 +413,10 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				{
 					print '<div class="menu_contenu">'.$tabstring;
 					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
 					if ($menu_array[$i]['url']) print '</a>';
+					else print '</span>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
 					print '</div>'."\n";

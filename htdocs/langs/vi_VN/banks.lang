@@ -163,3 +163,5 @@ LabelRIB=BAN Label
 NoBANRecord=Không có hồ sơ BAN
 DeleteARib=Xóa BAN kỷ lục
 ConfirmDeleteRib=Bạn Bạn có chắc chắn muốn xóa bản ghi BAN này?
+StartDate=Start date
+EndDate=End date

@@ -226,7 +226,7 @@ http://packages.qa.debian.org/t/tcpdf.html
 
 ##### Create/Maintain dolibarr package
 
-To update dolibarr debian package
+To update dolibarr debian package when upstream version has changed
 
 * You can git clone debian git repo
 > git clone git.debian.org:/git/collab-maint/dolibarr.git [dolibarr-debian]
@@ -261,7 +261,8 @@ x.y.z+dfsgw
 
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
-* Add an entry into debian/changelog
+* Fix debian/* files used to build package.
+Add an entry into debian/changelog
 > dch -v x.y.z+dfsgw-v "My comment" will add entry.
 For example: dch -v x.y.z+dfsgw-1 "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
 Then modify changelog to replace "version" or "unstable" with "UNRELEASED".
@@ -269,7 +270,16 @@ Then check/modify also the user/date signature:
 - Date must have format reported by "date -R"
 - Name and email must match value into debian/control file (Entry added here is used by next step).
 
-* We try to build package
+
+To update dolibarr debian package when only files into debian has changed
+
+* Change files and commit.
+* Add a tag debian/x.y.z+dfsgw-2 (increase the last 1 into 2)
+
+
+Once files has been prepared, it's time to test:
+
+* Try to build package
 > rm -fr ../build-area; git-buildpackage -us -uc
 
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
@@ -286,6 +296,7 @@ Note: If there was errors managed manually, you may need to make a git commit bu
 > Edit debian/changelog to replace "UNRELEASED" into "unstable", then push
 > git-buildpackage --git-tag-only --git-retag
 > git push --tags
+
 
 * Compilation is then done by a debian developer and sent
 > sbuild ...

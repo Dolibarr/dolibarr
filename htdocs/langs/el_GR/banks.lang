@@ -163,3 +163,5 @@ LabelRIB=Ετικέτα BAN
 NoBANRecord=Καμία εγγραφή BAN
 DeleteARib=Διαγραφή BAN εγγραφή
 ConfirmDeleteRib=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την εγγραφή BAN;
+StartDate=Ημερομηνία έναρξης
+EndDate=Ημερομηνία λήξης

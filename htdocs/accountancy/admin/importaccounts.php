@@ -164,7 +164,7 @@ if ($result) {
 		
 		// Colonne choix ligne a ventiler
 		
-		$checked = ('label' == 'O') ? ' checked=checked' : '';
+		$checked = ('label' == 'O') ? ' checked' : '';
 		
 		print '<td align="center">';
 		print '<input type="checkbox" name="mesCasesCochees[]" ' . $checked . ' value="' . $objp->accounting . '"/>';
