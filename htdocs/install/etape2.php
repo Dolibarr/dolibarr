@@ -139,7 +139,7 @@ if ($action == "set")
 
 
     // To say sql requests are escaped for mysql so we need to unescape them
-    $db->unescapeslashquot=1;
+    $db->unescapeslashquot=true;
 
 
     /**************************************************************************************
