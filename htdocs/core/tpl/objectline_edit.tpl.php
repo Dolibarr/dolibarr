@@ -99,7 +99,7 @@ $coldisplay=-1; // We remove first td
 		$doleditor=new DolEditor('product_desc',$line->description,'',164,$toolbarname,'',false,true,$enable,$nbrows,'98%');
 		$doleditor->Create();
 	} else {
-		print '<textarea id="desc" class="flat" name="desc" readonly="readonly" style="width: 200px; height:80px;">' . $line->description . '</textarea>';
+		print '<textarea id="desc" class="flat" name="desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
 	}
 	?>
 	</td>
@@ -113,19 +113,19 @@ $coldisplay=-1; // We remove first td
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
 		print '<td align="right">' . $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type) . '</td>';
 	} else {
-		print '<td align="right"><input size="1" type="text" class="flat" name="tva_tx" value="' . price($line->tva_tx) . '" readonly="readonly" />%</td>';
+		print '<td align="right"><input size="1" type="text" class="flat" name="tva_tx" value="' . price($line->tva_tx) . '" readonly />%</td>';
 	}
 
 	$coldisplay++;
 	print '<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
-	if ($this->situation_counter > 1) print ' readonly="readonly"';
+	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
 		print '<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc)?price($line->pu_ttc,0,'',0):'').'"';
-		if ($this->situation_counter > 1) print ' readonly="readonly"';
+		if ($this->situation_counter > 1) print ' readonly';
 		print '></td>';
 	}
 	?>
@@ -136,7 +136,7 @@ $coldisplay=-1; // We remove first td
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
 		print '<input size="3" type="text" class="flat" name="qty" id="qty" value="' . $line->qty . '"';
-		if ($this->situation_counter > 1) print ' readonly="readonly"';
+		if ($this->situation_counter > 1) print ' readonly';
 		print '>';
 	} else { ?>
 		&nbsp;
@@ -155,7 +155,7 @@ $coldisplay=-1; // We remove first td
 	<td align="right" nowrap><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
-		if ($this->situation_counter > 1) print ' readonly="readonly"';
+		if ($this->situation_counter > 1) print ' readonly';
 		print '>%';
 	} else { ?>
 		&nbsp;
