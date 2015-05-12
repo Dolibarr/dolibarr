@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +22,13 @@
 
 /**
  *	\file       htdocs/core/db/sqlite.class.php
- *	\brief      Class file to manage Dolibarr database access for a Sqlite database
+ *	\brief      Class file to manage Dolibarr database access for a SQLite database
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
- *	Class to manage Dolibarr database access for a Sqlite database
+ *	Class to manage Dolibarr database access for a SQLite database
  */
 class DoliDBSqlite3 extends DoliDB
 {
@@ -58,7 +59,7 @@ class DoliDBSqlite3 extends DoliDB
      */
     function __construct($type, $host, $user, $pass, $name='', $port=0)
     {
-        global $conf,$langs;
+        global $conf;
 
         // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
         if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
@@ -304,6 +305,7 @@ class DoliDBSqlite3 extends DoliDB
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
+	    // FIXME: sqlite_select_db() does not exist
         return sqlite_select_db($this->db,$database);
     }
 
@@ -316,7 +318,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer	$port		Port of database server
-	 *	@return		resource			Database access handler
+	 *	@return		SQLite3				Database access handler
 	 *	@see		close
      */
     function connect($host, $login, $passwd, $name, $port=0)
@@ -372,7 +374,7 @@ class DoliDBSqlite3 extends DoliDB
     /**
      *  Close database connexion
      *
-     *  @return     boolean     True if disconnect successfull, false otherwise
+     *  @return     bool     True if disconnect successfull, false otherwise
      *  @see        connect
      */
     function close()
@@ -382,7 +384,7 @@ class DoliDBSqlite3 extends DoliDB
             if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
             $this->connected=false;
             $this->db->close();
-            $this->db=null;    // Clean this->db
+            unset($this->db);    // Clean this->db
             return true;
         }
         return false;
@@ -395,13 +397,13 @@ class DoliDBSqlite3 extends DoliDB
      * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
      * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *	@return	resource    			Resultset of answer
+     *	@return	SQLite3Result			Resultset of answer
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
         $errmsg='';
 
-        $ret='';
+        $ret=null;
         $query = trim($query);
         $this->error = 0;
 
@@ -492,8 +494,8 @@ class DoliDBSqlite3 extends DoliDB
     /**
      *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
      *
-     *	@param	Resultset	$resultset  Curseur de la requete voulue
-     *	@return	Object					Object result line or false if KO or end of cursor
+     *	@param	SQLite3Result	$resultset  Curseur de la requete voulue
+     *	@return	false|object				Object result line or false if KO or end of cursor
      */
     function fetch_object($resultset)
     {
@@ -511,8 +513,8 @@ class DoliDBSqlite3 extends DoliDB
     /**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
-     *	@return	array					Array
+     *	@param	SQLite3Result	$resultset  Resultset of request
+     *	@return	false|array					Array or false if KO or end of cursor
      */
     function fetch_array($resultset)
     {
@@ -520,17 +522,14 @@ class DoliDBSqlite3 extends DoliDB
         if (! is_object($resultset)) { $resultset=$this->_results; }
         //return $resultset->fetch(PDO::FETCH_ASSOC);
         $ret = $resultset->fetchArray(SQLITE3_ASSOC);
-        if ($ret) {
-            return (array) $ret;
-        }
-		return false;
+	    return $ret;
     }
 
     /**
      *	Return datas as an array
      *
-     *	@param	resource	$resultset  Resultset of request
-     *	@return	array					Array
+     *	@param	SQLite3Result	$resultset  Resultset of request
+     *	@return	false|array					Array or false if KO or end of cursor
      */
     function fetch_row($resultset)
     {
@@ -543,19 +542,21 @@ class DoliDBSqlite3 extends DoliDB
         else
         {
             // si le curseur est un booleen on retourne la valeur 0
-            return 0;
+            return false;
         }
     }
 
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	Resultset	$resultset  Resulset of requests
+     *	@param	SQLite3Result	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
      *	@see    affected_rows
      */
     function num_rows($resultset)
     {
+	    // FIXME: SQLite3Result does not have a queryString member
+
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
         if (preg_match("/^SELECT/i", $resultset->queryString)) {
@@ -567,12 +568,14 @@ class DoliDBSqlite3 extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	Resultset	$resultset  Resulset of requests
+     *	@param	SQLite3Result	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
      *	@see    affected_rows
      */
     function affected_rows($resultset)
     {
+	    // FIXME: SQLite3Result does not have a queryString member
+
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
         if (preg_match("/^SELECT/i", $resultset->queryString)) {
@@ -587,10 +590,10 @@ class DoliDBSqlite3 extends DoliDB
     /**
 	 *	Free last resultset used.
      *
-	 *	@param  integer	$resultset   Curseur de la requete voulue
+	 *	@param  SQLite3Result	$resultset   Curseur de la requete voulue
 	 *	@return	void
      */
-    function free($resultset=0)
+    function free($resultset=null)
     {
         // If resultset not provided, we take the last used by connexion
         if (! is_object($resultset)) { $resultset=$this->_results; }
@@ -791,7 +794,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	resource				resource defined if OK, null if KO
+	 * 	@return	SQLite3Result   		resource defined if OK, null if KO
      */
     function DDLCreateDb($database,$charset='',$collation='',$owner='')
     {
@@ -933,8 +936,7 @@ class DoliDBSqlite3 extends DoliDB
 
         dol_syslog($sql,LOG_DEBUG);
         if(! $this -> query($sql))
-        return -1;
-        else
+            return -1;
         return 1;
     }
 
@@ -943,7 +945,7 @@ class DoliDBSqlite3 extends DoliDB
      *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resource			Resource
+	 *	@return	SQLite3Result		Resource
      */
     function DDLDescTable($table,$field="")
     {
@@ -994,10 +996,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             return -1;
         }
-        else
-        {
-            return 1;
-        }
+        return 1;
     }
 
     /**
@@ -1018,8 +1017,7 @@ class DoliDBSqlite3 extends DoliDB
 
         dol_syslog(get_class($this)."::DDLUpdateField ".$sql,LOG_DEBUG);
         if (! $this->query($sql))
-        return -1;
-        else
+            return -1;
         return 1;
     }
 
@@ -1039,7 +1037,7 @@ class DoliDBSqlite3 extends DoliDB
             $this->error=$this->lasterror();
             return -1;
         }
-        else return 1;
+        return 1;
     }
 
 
@@ -1086,7 +1084,6 @@ class DoliDBSqlite3 extends DoliDB
         {
             return -1;
         }
-
         return 1;
     }
 
@@ -1145,6 +1142,7 @@ class DoliDBSqlite3 extends DoliDB
      */
     function getPathOfDump()
     {
+	    // FIXME: not for SQLite
         $fullpathofdump='/pathtomysqldump/mysqldump';
 
         $resql=$this->query('SHOW VARIABLES LIKE \'basedir\'');
@@ -1164,6 +1162,7 @@ class DoliDBSqlite3 extends DoliDB
      */
     function getPathOfRestore()
     {
+	    // FIXME: not for SQLite
         $fullpathofimport='/pathtomysql/mysql';
 
         $resql=$this->query('SHOW VARIABLES LIKE \'basedir\'');
