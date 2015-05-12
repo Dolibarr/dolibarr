@@ -50,45 +50,54 @@ class Societe extends CommonObject
      */
     protected $ismultientitymanaged = 1;
 
-    var $id;
-    var $name;
-    var $entity;
+    public $id;
+    public $name;
+    public $entity;
 
     /**
+     * Thirdparty name
+     * @var string
      * @deprecated Use $name instead
      */
-    var $nom;
+    public $nom;
 
-    var $firstname;
-    var $lastname;
-    var $particulier;
-    var $civility_id;
-    var $address;
-    var $zip;
-    var $town;
+    public $firstname;
+    public $lastname;
+    public $particulier;
+    public $civility_id;
+    public $address;
+    public $zip;
+    public $town;
 
     /**
-     * 0=activity ceased, 1= in activity
+     * Thirdparty status : 0=activity ceased, 1= in activity
      * @var int
      */
     var $status;
 
     /**
      * Id of department
+     * @var int
      */
     var $state_id;
     var $state_code;
     var $state;
+    
     /**
+     * State code 
+     * @var string
      * @deprecated Use state_code instead
      */
     var $departement_code;
+    
     /**
+     * @var string
      * @deprecated Use state instead
      */
     var $departement;
 
     /**
+     * @var string
      * @deprecated Use country instead
      */
     var $pays;
@@ -223,18 +232,22 @@ class Societe extends CommonObject
 
 	/**
 	 * Date of last update
+     * @var string
 	 */
 	var $date_modification;
 	/**
 	 * User that made last update
+     * @var string
 	 */
 	var $user_modification;
 	/**
 	 * Date of creation
+     * @var string
 	 */
 	var $date_creation;
 	/**
 	 * User that created the thirdparty
+     * @var User
 	 */
 	var $user_creation;
 
@@ -282,6 +295,7 @@ class Societe extends CommonObject
     var $code_compta_fournisseur;
 
     /**
+     * @var string
      * @deprecated Note is split in public and private notes
      */
     var $note;
@@ -310,6 +324,7 @@ class Societe extends CommonObject
 
     /**
      * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+     * @var int
      */
     var $commercial_id;
     var $parent;
@@ -358,6 +373,7 @@ class Societe extends CommonObject
 
     /**
      * To contains a clone of this when we need to save old properties of object
+     *  @var Societe
      */
     var $oldcopy;
 
