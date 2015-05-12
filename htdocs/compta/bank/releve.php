@@ -489,15 +489,15 @@ else
 			if ($objp->amount < 0)
 			{
 				$totald = $totald + abs($objp->amount);
-				print '<td align="right" nowrap=\"nowrap\">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+				print '<td align="right" class="nowrap">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 			}
 			else
 			{
 				$totalc = $totalc + abs($objp->amount);
-				print "<td>&nbsp;</td><td align=\"right\" nowrap=\"nowrap\">".price($objp->amount)."</td>\n";
+				print '<td>&nbsp;</td><td align="right" class="nowrap">'.price($objp->amount)."</td>\n";
 			}
 
-			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
+			print '<td align="right" class="nowrap">'.price($total)."</td>\n";
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{

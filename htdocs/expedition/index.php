@@ -93,7 +93,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr ".$bc[$var]."><td nowrap=\"nowrap\">";
+			print "<tr ".$bc[$var].'><td class="nowrap">';
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
 			print $shipment->getNomUrl(1);

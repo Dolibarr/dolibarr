@@ -152,7 +152,7 @@ $coldisplay=-1; // We remove first td
 	}
 	?>
 
-	<td align="right" nowrap><?php $coldisplay++; ?>
+	<td align="right" class="nowrap"><?php $coldisplay++; ?>
 	<?php if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
 		if ($this->situation_counter > 1) print ' readonly';
@@ -164,7 +164,7 @@ $coldisplay=-1; // We remove first td
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" nowrap><input type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		print '<td align="right" class="nowrap"><input type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
 	}
 	if (! empty($usemargins))
 	{
