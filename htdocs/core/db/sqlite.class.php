@@ -54,7 +54,7 @@ class DoliDBSqlite extends DoliDB
      */
     function __construct($type, $host, $user, $pass, $name='', $port=0)
     {
-        global $conf,$langs;
+        global $conf;
 
         // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
         if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
@@ -303,7 +303,7 @@ class DoliDBSqlite extends DoliDB
      */
     function connect($host, $login, $passwd, $name, $port=0)
     {
-        global $conf,$main_data_dir;
+        global $main_data_dir;
 
         dol_syslog(get_class($this)."::connect name=".$name,LOG_DEBUG);
 
@@ -379,9 +379,7 @@ class DoliDBSqlite extends DoliDB
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
-        $errmsg='';
-
-        $ret='';
+        $ret=null;
         $query = trim($query);
         $this->error = 0;
 

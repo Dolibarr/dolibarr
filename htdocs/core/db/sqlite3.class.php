@@ -323,7 +323,7 @@ class DoliDBSqlite3 extends DoliDB
      */
     function connect($host, $login, $passwd, $name, $port=0)
     {
-        global $conf,$main_data_dir;
+        global $main_data_dir;
 
         dol_syslog(get_class($this)."::connect name=".$name,LOG_DEBUG);
 
@@ -401,8 +401,6 @@ class DoliDBSqlite3 extends DoliDB
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
-        $errmsg='';
-
         $ret=null;
         $query = trim($query);
         $this->error = 0;

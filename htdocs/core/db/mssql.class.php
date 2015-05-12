@@ -57,7 +57,7 @@ class DoliDBMssql extends DoliDB
      */
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{
-		global $conf,$langs;
+		global $langs;
 
 		$this->database_user=$user;
         $this->database_host=$host;
