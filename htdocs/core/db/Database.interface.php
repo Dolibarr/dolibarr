@@ -216,7 +216,7 @@ interface Database
 	 * @param   string $login login
 	 * @param   string $passwd password
 	 * @param   string $name name of database (not used for mysql, used for pgsql)
-	 * @param   string $port Port of database server
+	 * @param   int    $port Port of database server
 	 * @return  resource            Database access handler
 	 * @see     close
 	 */
@@ -293,10 +293,10 @@ interface Database
 	 * @param        string $type 			Type de la table
 	 * @param        array 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 * @param        array 	$fulltext_keys 	Tableau des Nom de champs qui seront indexes en fulltext
-	 * @param        string $keys 			Tableau des champs cles noms => valeur
+	 * @param        array $keys 			Tableau des champs cles noms => valeur
 	 * @return       int                    <0 if KO, >=0 if OK
 	 */
-	function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = "", $fulltext_keys = "", $keys = "");
+	function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 
 	/**
 	 * Return list of available charset that can be used to store data in database
@@ -424,7 +424,7 @@ interface Database
 	 * @param  	resource 		$resultset 		Fre cursor
 	 * @return  void
 	 */
-	function free($resultset = 0);
+	function free($resultset = null);
 
 	/**
 	 * Close database connexion
