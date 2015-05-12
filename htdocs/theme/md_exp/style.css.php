@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  */
 
 /**
- *		\file       htdocs/theme/eldy/style.css.php
- *		\brief      File for CSS style sheet Eldy
+ *		\file       htdocs/theme/md_exp/style.css.php
+ *		\brief      File for CSS style sheet Md (Material Design)
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
@@ -1602,7 +1603,7 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
 
-/* Preapre for bootstrap look
+/* Prepare for bootstrap look
 .butAction, .butActionDelete, .butActionRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
@@ -1946,12 +1947,14 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 
+	/*
     background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-    font-weight: bold;
+    */
+	font-weight: bold;
 
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>;
