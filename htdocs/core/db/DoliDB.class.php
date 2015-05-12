@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2013-2014 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,41 +29,43 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-    //! Database handler
-    public $db;
-    //! Database type
-    public $type;
-    //! Charset used to force charset when creating database
-    public $forcecharset='utf8';
-    //! Collate used to force collate when creating database
-    public $forcecollate='utf8_general_ci';
-    //! Resultset of last query
-    private $_results;
-    //! 1 if connected, else 0
-    public $connected;
-    //! 1 if database selected, else 0
-    public $database_selected;
-    //! Selected database name
-    public $database_name;
-    //! Database username
-    public $database_user;
-    //! Database host
-    public $database_host;
-    //! Database port
-    public $database_port;
-    //! >=1 if a transaction is opened, 0 otherwise
-    public $transaction_opened;
-    //! Last successful query
-    public $lastquery;
-    //! Last failed query
-    public $lastqueryerror;
-    //! Last error message
-    public $lasterror;
-    //! Last error number
-    public $lasterrno;
+	/** @var resource Database handler */
+	public $db;
+	/** @var string Database type */
+	public $type;
+	/** @var string Charset used to force charset when creating database */
+	public $forcecharset='utf8';
+	/** @var string Collate used to force collate when creating database */
+	public $forcecollate='utf8_general_ci';
+	/** @var resource Resultset of last query */
+	private $_results;
+	/** @var bool true if connected, else false */
+	public $connected;
+	/** @var bool true if database selected, else false */
+	public $database_selected;
+	/** @var string Selected database name */
+	public $database_name;
+	/** @var string Database username */
+	public $database_user;
+	/** @var string Database host */
+	public $database_host;
+	/** @var int Database port */
+	public $database_port;
+	/** @var int >=1 if a transaction is opened, 0 otherwise */
+	public $transaction_opened;
+	/** @var string Last successful query */
+	public $lastquery;
+	/** @ar string Last failed query */
+	public $lastqueryerror;
+	/** @var string Last error message */
+	public $lasterror;
+	/** @var int Last error number */
+	public $lasterrno;
 
-    public $ok;
-    public $error;
+	/** @var bool Status */
+	public $ok;
+	/** @var string */
+	public $error;
 
 	/**
 	 *	Format a SQL IF
@@ -206,16 +208,6 @@ abstract class DoliDB implements Database
 	}
 
 	/**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-	 */
-	function getLabel()
-	{
-		return $this->label;
-	}
-
-	/**
 	 *	Return last request executed with query()
 	 *
 	 *	@return	string					Last query
@@ -232,9 +224,9 @@ abstract class DoliDB implements Database
 	 * @param	string	$sortorder  Sort order
 	 * @return	string      		String to provide syntax of a sort sql string
 	 */
-	function order($sortfield=0,$sortorder=0)
+	function order($sortfield=null,$sortorder=null)
 	{
-		if ($sortfield)
+		if (isset($sortfield))
 		{
 			$return='';
 			$fields=explode(',',$sortfield);
@@ -244,7 +236,9 @@ abstract class DoliDB implements Database
 				else $return.=',';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-                if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
+				if (isset($sortorder)) {
+					$return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
+				}
 			}
 			return $return;
 		}
@@ -270,7 +264,7 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	int					$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
 	function jdate($string, $gm=false)
