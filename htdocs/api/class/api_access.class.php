@@ -44,6 +44,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 	 
+    // @codingStandardsIgnoreStart
 	
 	/**
 	 * Check access
@@ -52,6 +53,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public function __isAllowed()
     {
+    // @codingStandardsIgnoreEnd
 		global $db;
 
 		$stored_key = '';
@@ -105,10 +107,12 @@ class DolibarrApiAccess implements iAuthenticate
         return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
 	}
 	
+    // @codingStandardsIgnoreStart
 	public function __getWWWAuthenticateString()
     {
         return '';
     }
+    // @codingStandardsIgnoreEnd
 	
 	/**
      * Verify access
