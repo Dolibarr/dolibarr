@@ -868,11 +868,13 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    string	$keys 			Tableau des champs cles noms => valeur
+	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
      */
-    function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
+    function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
     {
+	    // FIXME: $fulltext_keys parameter is unused
+
         // cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql = "create table ".$table."(";
@@ -902,7 +904,7 @@ class DoliDBSqlite3 extends DoliDB
         if($primary_key != "")
         $pk = "primary key(".$primary_key.")";
 
-        if($unique_keys != "")
+        if(is_array($unique_keys))
         {
             $i = 0;
             foreach($unique_keys as $key => $value)
@@ -911,7 +913,7 @@ class DoliDBSqlite3 extends DoliDB
                 $i++;
             }
         }
-        if($keys != "")
+        if(is_array($keys))
         {
             $i = 0;
             foreach($keys as $key => $value)
@@ -923,9 +925,9 @@ class DoliDBSqlite3 extends DoliDB
         $sql .= implode(',',$sqlfields);
         if($primary_key != "")
         $sql .= ",".$pk;
-        if($unique_keys != "")
+        if(is_array($unique_keys))
         $sql .= ",".implode(',',$sqluq);
-        if($keys != "")
+        if(is_array($keys))
         $sql .= ",".implode(',',$sqlk);
         $sql .=") type=".$type;
 
