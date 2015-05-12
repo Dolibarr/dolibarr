@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,43 +20,66 @@
  */
 
 /**
- *   	\file       htdocs/admin/perms.php
- *      \ingroup    core
- *		\brief      Page d'administration/configuration des permissions par defaut
+ * \file        htdocs/admin/perms.php
+ * \ingroup     core
+ * \brief       Default permissions administration/setup page
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+global $bc, $conf, $db, $langs, $user;
+
 $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
 
-$action=GETPOST('action');
-
 if (!$user->admin) accessforbidden();
+
+$action = GETPOST('action', 'alpha');
 
 
 /*
  * Actions
  */
 
-if ($action == 'add')
-{
-    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-    $sql.= " WHERE id = ".$_GET["pid"];
-    $sql.= " AND entity = ".$conf->entity;
-    $db->query($sql);
+if ($action == 'update') {
+	$permissions_cache = GETPOST('permissions_cache', 'array');
+	$permissions = GETPOST('permissions', 'array');
+	$anchor = GETPOST('submit');
+
+	// Since permissions is a checkbox list, only checked boxes are reported.
+	// We use the cache to make sure we don't miss one.
+	foreach ($permissions_cache as $cached_perm_id => $cached_perm_status) {
+		// Detect which permissions have changed.
+		if (empty($permissions[$cached_perm_id]) != empty($cached_perm_status)) {
+			// Reverse the permissions cache to infer the new status.
+			$bydefault = ('checked' == $cached_perm_status) ? 0 : 1;
+
+			// TODO: optimize in a single query?
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "rights_def SET bydefault=" . $bydefault;
+			$sql .= " WHERE id = " . $cached_perm_id;
+			$sql .= " AND entity = " . $conf->entity;
+			$db->query($sql);
+		}
+	}
+
+	// Redirect to the latest modified subsection
+	header('Location: ' .$_SERVER["PHP_SELF"] . '#' . $anchor);
 }
 
-if ($action == 'remove')
-{
-    $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-    $sql.= " WHERE id = ".$_GET["pid"];
-    $sql.= " AND entity = ".$conf->entity;
-    $db->query($sql);
-}
+// Get permissions
+$sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
+$sql .= " FROM " . MAIN_DB_PREFIX . "rights_def as r";
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'";    // Ignore "tous" (all) permission
+$sql .= " AND entity IN (" . (!empty($conf->multicompany->transverse_mode) ? "1," : "") . $conf->entity . ")";
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$sql .= " AND r.perms NOT LIKE '%_advance'";
+}  // Hide advanced perms if option is not enabled
+$sql .= " ORDER BY r.module, r.id";
+
+$result = $db->query($sql);
 
 
 /*
@@ -64,7 +88,7 @@ if ($action == 'remove')
 
 llxHeader('',$langs->trans("DefaultRights"));
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("DefaultRightsDesc");
 print " ".$langs->trans("OnlyActiveElementsAreShown")."<br><br>\n";
@@ -90,6 +114,9 @@ foreach ($modulesdir as $dir)
 				if ($modName)
 				{
 					include_once $dir.$file;
+					/**
+					 * @var $objMod DolibarrModules
+					 */
 					$objMod = new $modName($db);
 
 					// Load all lang files of module
@@ -123,18 +150,12 @@ dol_fiche_head($head, 'default', $langs->trans("Security"));
 // Show warning about external users
 print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
 
-// Affiche lignes des permissions
-$sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
-$sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND entity IN (".(! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
-$sql.= " ORDER BY r.module, r.id";
-
-$result = $db->query($sql);
 if ($result)
 {
     $num	= $db->num_rows($result);
@@ -146,7 +167,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
 
-        // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
+		// If module is not present anymore (in includes/module), ignore the line
         if (! $modules[$obj->module])
         {
             $i++;
@@ -173,15 +194,16 @@ if ($result)
         // Break found, it's a new module to catch
         if ($oldmod <> $obj->module)
         {
+			if (0 != $i) printSubmit($oldmod);
+
         	$oldmod	= $obj->module;
             $objMod	= $modules[$obj->module];
             $picto	= ($objMod->picto?$objMod->picto:'generic');
 
             print '<tr class="liste_titre">';
-            print '<td>'.$langs->trans("Module").'</td>';
+            print '<td><a name="' . $oldmod . '">'.$langs->trans("Module").'</a></td>';
+			print '<td align="center">'.$langs->trans("Default").'</td>';
             print '<td>'.$langs->trans("Permission").'</td>';
-            print '<td align="center">'.$langs->trans("Default").'</td>';
-            print '<td align="center">&nbsp;</td>';
             print "</tr>\n";
         }
 
@@ -191,33 +213,47 @@ if ($result)
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 
-        $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-        print '<td>'.$perm_libelle. '</td>';
-
         print '<td align="center">';
-        if ($obj->bydefault == 1)
-        {
-            print img_picto($langs->trans("Active"),'tick');
-            print '</td><td>';
-            print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove#'.$objMod->getName().'">'.img_edit_remove().'</a>';
-        }
-        else
-        {
-            print '&nbsp;';
-            print '</td><td>';
-            print '<a href="perms.php?pid='.$obj->id.'&amp;action=add#'.$objMod->getName().'">'.img_edit_add().'</a>';
-        }
 
-        print '</td></tr>';
+		print '<input type="hidden" id="permcache_' . $obj->id . '" name="permissions_cache[' .$obj->id . ']" value=' . (1 == $obj->bydefault?'checked':'') . '>';
+		print '<input type="checkbox" id="perm_' . $obj->id . '" name="permissions[' . $obj->id . ']"' . (1 == $obj->bydefault?' checked':'') . '>';
+
+		print '</td>';
+
+		$perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
+		print '<td>'.$perm_libelle. '</td>';
+
+		print '</tr>';
         $i++;
     }
+	printSubmit($oldmod);
 }
 
 print '</table>';
 
 print '</div>';
 
-
 $db->close();
 
 llxFooter();
+
+
+// View functions
+
+/**
+ * Reusable submit button
+ *
+ * @param string $value Button value
+ */
+function printSubmit($value = 'submit')
+{
+	global $langs;
+
+	print '<tr>';
+	print '<td colspan="3" align="right">';
+	print '<button name="submit" type="submit" value="' . $value . '" class="button">';
+	print $langs->trans('Modify');
+	print '</button>';
+	print '</td>';
+	print '</tr>';
+}
