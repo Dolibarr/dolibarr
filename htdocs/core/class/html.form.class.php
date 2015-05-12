@@ -4347,7 +4347,8 @@ class Form
         	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
         				$(document).ready(function () {
-        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+        					$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        				    dir: \'ltr\',
         					width: \'off\',
         					minimumInputLength: 0
         				});
@@ -4355,7 +4356,7 @@ class Form
         		   </script>';
         }
 
-        $out.='<select id="'.$htmlname.'" '.($disabled?'disabled ':'').'class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" '.($moreparam?$moreparam:'').'>';
+        $out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled="disabled" ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';
 
         if ($show_empty)
         {
@@ -4400,6 +4401,79 @@ class Form
         return $out;
     }
 
+
+    /**
+     *	Return a HTML select string, built from an array of key+value.
+     *  Note: Do not use returned string into a langs->trans function, content may be entity encoded twice.
+     *
+     *	@param	string	$url			Url
+     *	@param	string	$htmlname       Name of html select area
+     *	@param	array	$array          Array with key+value
+     *	@param	string	$id             Preselected key
+     *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
+     *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
+     *	@param	int		$value_as_key   1 to use value as key
+     *	@param  string	$moreparam      Add more parameters onto the select tag
+     *	@param  int		$translate		Translate and encode value
+     * 	@param	int		$maxlen			Length maximum for labels
+     * 	@param	int		$disabled		Html select box is disabled
+     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
+     *  @param	string	$morecss		Add more class to css styles
+     *  @param	int		$addjscombo		Add js combo
+     * 	@return	string					HTML select string.
+     */
+    static function selectArrayAjax($url, $htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
+    {
+    	$out = '';
+    	
+        // Add code for jquery to use multiselect
+        if ($addjscombo && empty($conf->dol_use_jmobile))
+        {
+        	$tmpplugin='select2';
+        	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    		   <script type="text/javascript">
+				$(document).ready(function () {
+			    	$(".'.$htmlname.'").select2({
+					  ajax: {
+					    dir: "ltr",
+					    url: "'.$url.'",
+					    dataType: \'json\',
+					    delay: 250,
+					    data: function (params) {
+					      return {
+					        q: params.term, // search term
+					        page: params.page
+					      };
+					    },
+					    processResults: function (data, page) {
+					      // parse the results into the format expected by Select2.
+					      // since we are using custom formatting functions we do not need to
+					      // alter the remote JSON data
+					      return {
+					        results: data.items
+					      };
+					    },
+					    cache: true
+					  },
+					  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+					  minimumInputLength: 0,
+					  //templateResult: formatRepo, // omitted for brevity, see the source of this page
+					  //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+					});
+				});
+			</script>';
+        }
+		else
+		{
+        	// TODO get values from ajax page to use a standard already completed array
+        		
+		}
+		
+   		$out.=self::selectarray('.'.$htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, '', $translate, $maxlen, $disabled, $sort, '', 0);
+   		
+		return $out;
+    }
+    
     /**
      *	Show a multiselect form from an array.
      *
@@ -4450,6 +4524,7 @@ class Form
 			print '	};
 	    			$(document).ready(function () {
     					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+    						dir: \'ltr\',
 							// Specify format function for dropdown item
 							formatResult: formatResult,
     					 	templateResult: formatResult,		/* For 4.0 */
@@ -4493,6 +4568,7 @@ class Form
     }
 
 
+    
 	/**
 	 * 	Render list of categories linked to object with id $id and type $type
 	 *
