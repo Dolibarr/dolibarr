@@ -1427,10 +1427,10 @@ class DoliDBSqlite3 extends DoliDB
     /**
      * calc_daynr
      *
-     * @param 	string 	$year		Year
-     * @param 	string 	$month		Month
-     * @param	string	$day 		Day
-     * @return string La date formatee.
+     * @param 	int 	$year		Year
+     * @param 	int 	$month		Month
+     * @param	int     $day 		Day
+     * @return int Formatted date
      */
     private static function calc_daynr($year, $month, $day) {
         $y = $year;
@@ -1448,8 +1448,9 @@ class DoliDBSqlite3 extends DoliDB
     /**
      * calc_weekday
      *
-     * @param string	$daynr							???
-     * @param string	$sunday_first_day_of_week		???
+     * @param int	$daynr							???
+     * @param bool	$sunday_first_day_of_week		???
+     * @return int
      */
     private static function calc_weekday($daynr, $sunday_first_day_of_week) {
       $ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
