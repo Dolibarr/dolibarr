@@ -399,27 +399,27 @@ if ($object->id > 0)
 	
 	// Montants
 	print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
+	print '<td align="right" colspan="2" class="nowrap">'.price($object->total_ht).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" class="nowrap">'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td align="right" colspan="2" class="nowrap">'.price($object->total_localtax1).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td align="right" colspan="2" class="nowrap">'.price($object->total_localtax2).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 
 
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" class="nowrap">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 	// We can also use bcadd to avoid pb with floating points
@@ -428,7 +428,7 @@ if ($object->id > 0)
     //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
     $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
 
-    print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td align="right" colspan="2" nowrap>'.price($resteapayer).'</td>';
+    print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td align="right" colspan="2" class="nowrap">'.price($resteapayer).'</td>';
     print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 	// Statut

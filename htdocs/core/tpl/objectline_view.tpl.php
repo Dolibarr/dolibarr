@@ -148,7 +148,7 @@ if (empty($usemargins)) $usemargins=0;
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td align="left" nowrap="nowrap">';
+		print '<td align="left" class="nowrap">';
 		$label = $line->getLabelOfUnit('short');
 		if ($label !== '') {
 			print $langs->trans($label);
@@ -169,7 +169,7 @@ if (empty($usemargins)) $usemargins=0;
 
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" nowrap="nowrap">' . $line->situation_percent . '%</td>';
+		print '<td align="right" class="nowrap">' . $line->situation_percent . '%</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
