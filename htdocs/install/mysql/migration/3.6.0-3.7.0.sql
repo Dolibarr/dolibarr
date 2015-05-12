@@ -1182,3 +1182,4 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;
 
 INSERT INTO llx_const (name, value, type, note, visible, entity) values ('PRODUCT_USE_OLD_PATH_FOR_PHOTO','1','chaine','Use old path for products images',1,1);
+

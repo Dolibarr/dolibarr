@@ -106,3 +106,27 @@ function contact_prepare_head(Contact $object)
 	return $head;
 }
 
+/**
+ * Return array of tabs to used on page
+ *
+ * @param	Object	$object		Object for tabs
+ * @return	array				Array of tabs
+ */
+function contact_prepare_head2($object)
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT.'/contact/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'company';
+    $h++;
+
+    $head[$h][0] = 'commerciaux.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("SalesRepresentative");
+    $head[$h][2] = 'salesrepresentative';
+    $h++;
+
+    return $head;
+}

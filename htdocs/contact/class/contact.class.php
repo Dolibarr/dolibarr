@@ -1101,4 +1101,89 @@ class Contact extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	
+	
+	/**
+     *  Return array of sales representatives
+     *
+     *  @param	User	$user		Object user
+     *  @return array       		Array of sales representatives of contact
+     */
+    function getSalesRepresentatives(User $user)
+    {
+        global $conf;
+
+        $reparray=array();
+
+        $sql = "SELECT u.rowid, u.lastname, u.firstname";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople_sales_representatives as ssr, ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE u.rowid = ssr.fk_user AND ssr.fk_socpeople =".$this->id;
+        $sql.= " AND entity in (0, ".$conf->entity.") ORDER BY u.lastname ASC";
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+				$reparray[$i] = $obj;
+                $i++;
+            }
+            return $reparray;
+        }
+        else {
+            dol_print_error($this->db);
+            return 0;
+        }
+    }
+
+	/**
+     *	Add link to sales representative
+     *
+     *	@param	User	$user		Object user
+     *	@param	int		$commid		Id of user
+     *	@return	void
+     */
+    function add_commercial(User $user, $commid)
+    {
+        if ($this->id > 0 && $commid > 0)
+        {
+            $sql = "DELETE FROM  ".MAIN_DB_PREFIX."socpeople_sales_representatives";
+            $sql.= " WHERE fk_socpeople = ".$this->id." AND fk_user = ".(int) $commid;
+
+            $this->db->query($sql);
+
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople_sales_representatives";
+            $sql.= " ( fk_socpeople, fk_user )";
+            $sql.= " VALUES (".$this->id.",".$commid.")";
+
+            if (! $this->db->query($sql) )
+            {
+                dol_syslog(get_class($this)."::add_commercial Erreur");
+            }
+        }
+    }
+
+    /**
+     *	Add link to sales representative
+     *
+     *	@param	User	$user		Object user
+     *	@param	int		$commid		Id of user
+     *	@return	void
+     */
+    function del_commercial(User $user, $commid)
+    {
+        if ($this->id > 0 && $commid > 0)
+        {
+            $sql  = "DELETE FROM  ".MAIN_DB_PREFIX."socpeople_sales_representatives ";
+            $sql .= " WHERE fk_socpeople = ".$this->id." AND fk_user = ".(int) $commid;
+
+            if (! $this->db->query($sql) )
+            {
+                dol_syslog(get_class($this)."::del_commercial Erreur");
+            }
+        }
+    }
 }
