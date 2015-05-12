@@ -28,23 +28,24 @@ use Luracast\Restler\RestException;
 class DolibarrApiAccess implements iAuthenticate
 {
 	const REALM = 'Restricted Dolibarr API';
-	
+
 	/**
-	 * @var array $requires	role required by API method		user / external / admin	
+	 * @var array $requires	role required by API method		user / external / admin
 	 */
 	public static $requires = array('user','external','admin');
-	
+
 	/**
 	 * @var string $role		user role
 	 */
     public static $role = 'user';
-	
+
 	/**
-	 * @var User		$user	Loggued user 
+	 * @var User		$user	Loggued user
 	 */
 	public static $user = '';
-	 
-	
+
+    // @codingStandardsIgnoreStart
+
     /**
      * @return string string to be used with WWW-Authenticate header
      * @example Basic
@@ -52,26 +53,27 @@ class DolibarrApiAccess implements iAuthenticate
      * @example OAuth
      */
     public function __getWWWAuthenticateString();
-    
+
 	/**
 	 * Check access
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function _isAllowed()
     {
+    // @codingStandardsIgnoreEnd
 		global $db;
 
 		$stored_key = '';
-		
+
 		$userClass = Defaults::$userIdentifierClass;
-				
+
 		if (isset($_GET['api_key'])) {
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql.= " u.tms as date_modification, u.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
-	
+
 			if ($db->query($sql))
 			{
 				if ($db->num_rows($result))
@@ -89,17 +91,17 @@ class DolibarrApiAccess implements iAuthenticate
 				$userClass::setCacheIdentifier($_GET['api_key']);
 				return false;
 			}
-			
+
 			$fuser = new User($db);
 			if(! $fuser->fetch('',$login)) {
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error);
 			}
 			$fuser->getrights();
 			static::$user = $fuser;
-			
+
 			if($fuser->societe_id)
 				static::$role = 'external';
-			
+
 			if($fuser->admin)
 				static::$role = 'admin';
         }
@@ -112,12 +114,19 @@ class DolibarrApiAccess implements iAuthenticate
         Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
         return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
 	}
-	
+
+    // @codingStandardsIgnoreStart
+	public function __getWWWAuthenticateString()
+    {
+        return '';
+    }
+    // @codingStandardsIgnoreEnd
+
 	/**
      * Verify access
-     * 
-     * @param   array   $m   Properties of method 
-     * 
+     *
+     * @param   array   $m   Properties of method
+     *
      * @access private
      */
     public static function verifyAccess(array $m)
@@ -125,11 +134,11 @@ class DolibarrApiAccess implements iAuthenticate
         $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
                 ? $m['class']['DolibarrApiAccess']['properties']['requires']
                 : false;
-		
-		
+
+
         return $requires
             ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
-		
+
     }
 }
