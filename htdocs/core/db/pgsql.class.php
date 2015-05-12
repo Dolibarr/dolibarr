@@ -45,7 +45,7 @@ class DoliDBPgsql extends DoliDB
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	const VERSIONMIN='8.4.0';	// Version min database
-	//! Resultset of last query
+	/** @var resource Resultset of last query */
 	private $_results;
 
 	public $unescapeslashquot;

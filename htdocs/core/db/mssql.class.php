@@ -41,7 +41,7 @@ class DoliDBMssql extends DoliDB
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	const VERSIONMIN='2000';
-	//! Resultset of last query
+	/** @var resource Resultset of last query */
 	private $_results;
 
     /**
