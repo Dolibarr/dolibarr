@@ -504,6 +504,7 @@ class DoliDBSqlite3 extends DoliDB
         if ($ret) {
             return (object) $ret;
         }
+		return false;
     }
 
 
@@ -522,6 +523,7 @@ class DoliDBSqlite3 extends DoliDB
         if ($ret) {
             return (array) $ret;
         }
+		return false;
     }
 
     /**

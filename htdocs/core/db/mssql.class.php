@@ -282,8 +282,9 @@ class DoliDBMssql extends DoliDB
 		elseif ($this->transaction_opened > 1)
 		{
 			return true;
-		} else
-		    trigger_error("Commit requested but no transaction remain");
+		}
+		trigger_error("Commit requested but no transaction remain");
+		return false;
 	}
 
 	/**
@@ -306,8 +307,9 @@ class DoliDBMssql extends DoliDB
 		elseif ($this->transaction_opened > 1)
 		{
 			return true;
-		} else
-		    trigger_error("Rollback requested but no transaction remain");
+		}
+		trigger_error("Rollback requested but no transaction remain");
+		return false;
 	}
 
 	/**
