@@ -21,7 +21,7 @@
  */
 
 /**
- *    Class to manage Dolibarr database access for a Mysql database
+ *    Class to manage Dolibarr database access for an SQL database
  */
 interface Database
 {
