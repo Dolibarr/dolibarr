@@ -102,21 +102,21 @@ function dol_hash($chain,$type=0)
  *	@param	User	$user      	  	User to check
  *	@param  string	$features	    Features to check (it must be module name. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- *	@param  string	$dbtablename    'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+ *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	Canvas	$objcanvas		Object canvas
  * 	@return	int						Always 1, die process if not allowed
  */
-function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
+function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
     global $db, $conf;
 
     //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-    //print ", perm: ".$features."->".$feature2."=".$user->rights->$features->$feature2->lire."<br>";
+    //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
     // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
     if (is_object($objcanvas))
@@ -135,7 +135,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     if (! empty($feature2)) $feature2 = explode("|", $feature2);
 
     // More parameters
-    $params = explode('&', $dbtablename);
+    $params = explode('&', $tableandshare);
     $dbtablename=(! empty($params[0]) ? $params[0] : '');
     $sharedelement=(! empty($params[1]) ? $params[1] : $dbtablename);
 
@@ -331,7 +331,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     // is linked to a company allowed to $user.
     if (! empty($objectid) && $objectid > 0)
     {
-		$ok = checkUserAccessToObject($user, $featuresarray,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
+    	$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
 		return $ok ? 1 : accessforbidden();
     }
 
@@ -344,19 +344,19 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
  * @param User		$user			User to check
  * @param array		$featuresarray	Features/modules to check
  * @param int		$objectid		Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- * @param string	$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+ * @param string	$tableandshare	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
  * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param string	$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  * @param string	$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
  * 
  * @return	bool		True if user has access, False otherwise
  */
-function checkUserAccessToObject($user, $featuresarray, $objectid=0, $dbtablename='', $feature2='', $dbt_keyfield='', $dbt_select='') 
+function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='', $dbt_select='') 
 {
 	global $db, $conf;
 	
 	// More parameters
-	$params = explode('&', $dbtablename);
+	$params = explode('&', $tableandshare);
 	$dbtablename=(! empty($params[0]) ? $params[0] : '');
 	$sharedelement=(! empty($params[1]) ? $params[1] : $dbtablename);
 	

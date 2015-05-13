@@ -42,7 +42,7 @@ if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 }
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user read and no permission to read other users, we stop
 if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
