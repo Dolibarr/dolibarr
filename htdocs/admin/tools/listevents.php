@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015           Bahfir Abbes		<bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,22 @@ $search_ip   = GETPOST("search_ip");
 $search_user = GETPOST("search_user");
 $search_desc = GETPOST("search_desc");
 $search_ua   = GETPOST("search_ua");
+
+$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$params = "&amp;search_code=$search_code&amp;search_ip=$search_ip&amp;search_user=$search_user&amp;search_desc=$search_desc&amp;search_ua=$search_ua";
+$params.= "&amp;date_startmonth=".$_REQUEST["date_startmonth"];
+$params.= "&amp;date_startday=".$_REQUEST["date_startday"];
+$params.= "&amp;date_startyear=".$_REQUEST["date_startyear"];
+$params.= "&amp;date_endmonth=".$_REQUEST["date_endmonth"];
+$params.= "&amp;date_endday=".$_REQUEST["date_endday"];
+$params.= "&amp;date_endyear=".$_REQUEST["date_endyear"];
+
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
+    $date_start=mktime(0,0,0,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
+    $date_end=mktime(23,59,59,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
+}
 
 
 /*
@@ -124,6 +141,7 @@ $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql.= " WHERE e.entity IN (".getEntity('actioncomm', 1).")";
+$sql.= " AND e.dateevent >= '".$db->idate($date_start)."' AND e.dateevent <= '".$db->idate($date_end)."'";
 if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$db->escape($search_code)."%'"; }
 if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$db->escape($search_ip)."%'"; }
 if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$db->escape($search_user)."%'"; }
@@ -145,7 +163,8 @@ if ($result)
 	if ($search_desc) $param.='&search_desc='.$search_desc;
 	if ($search_ua) $param.='&search_ua='.$search_ua;
 
-	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, 'setup');
+        $langs->load('withdrawals');
+	print_barre_liste($langs->trans("ListOfSecurityEvents").' : '.$num.' '.strtolower($langs->trans("Lines")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, 'setup');
 
 	if ($action == 'purge')
 	{
@@ -168,7 +187,7 @@ if ($result)
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" width="15%">'.$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).$form->select_date($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
 
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
