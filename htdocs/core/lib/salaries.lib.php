@@ -33,7 +33,7 @@ function salaries_prepare_head($object) {
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'salaries';
+	$head[$h][2] = 'card';
 	$h++;
 
     // Show more tabs from modules
@@ -42,11 +42,13 @@ function salaries_prepare_head($object) {
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries');
 
+    /*
 	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-
+	*/
+    
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries', 'remove');
 
 	return $head;
