@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=Intervence ověřena
 Notify_FICHINTER_SENTBYMAIL=Intervence poštou
 Notify_BILL_VALIDATE=Zákazník faktura ověřena
 Notify_BILL_UNVALIDATE=Zákazník faktura unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Dodavatel aby schválila
 Notify_ORDER_SUPPLIER_REFUSE=Dodavatel aby odmítl
 Notify_ORDER_VALIDATE=Zákazníka ověřena

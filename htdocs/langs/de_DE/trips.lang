@@ -20,7 +20,7 @@ ListToApprove=Warten auf Bestätigung
 ExpensesArea=Spesenabrechnungen
 SearchATripAndExpense=Suche nach einer Spesenabrechnung
 ClassifyRefunded=Als 'rückerstattet' markieren
-ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
+ExpenseReportWaitingForApproval=Eine neue Reisekostenabrechnung ist zur Genehmigung vorgelegt worden
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person für die Validierung zu informieren .
@@ -29,7 +29,7 @@ TripSalarie=Mitarbeiter
 TripNDF=Hinweise Spesenabrechnung 
 DeleteLine=Enferne eine Zeile von der Spesenabrechnung
 ConfirmDeleteLine=Möchten Sie diese Zeile wirklich löschen?
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+PDFStandardExpenseReports=Standard-Vorlage, um ein PDF-Dokument für die Spesenabrechnung zu erzeugen
 ExpenseReportLine=Spesenabrechnung Zeile
 TF_OTHER=Andere
 TF_TRANSPORTATION=Spedition
@@ -56,7 +56,7 @@ ModePaiement=Zahlungsart
 Note=Hinweis
 Project=Projekt
 
-VALIDATOR=User to inform for approbation
+VALIDATOR=Benutzer über die Genehmigung informieren
 VALIDOR=genehmigt durch
 AUTHOR=gespeichert von
 AUTHORPAIEMENT=einbezahlt von
@@ -97,6 +97,6 @@ BrouillonnerTrip=Gehen Sie zurück Spesenabrechnung zu Status "Entwurf"
 ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Entwurf" ändern?
 
 SaveTrip=Bestätige Spesenabrechnung
-ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung überprüfen wollen?
 
 NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.

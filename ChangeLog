@@ -6,8 +6,26 @@ WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql versio
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
 You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
 Upgrading to any other version or database system is abolutely required BEFORE trying to
-make a migration.
+make a Dolibarr upgrade.
 
+
+***** ChangeLog for 3.7.1 compared to 3.7.* *****
+- Fix: Bug in the new photo system
+- Fix: Error management
+- Fix: [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
+- Fix: [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
+
+- Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose 
+  your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
+  restore old path.
+
+WARNING: 
+
+Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
+Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
+You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
+Upgrading to any other version or database system is abolutely required BEFORE trying to
+make a Dolibarr upgrade.
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
@@ -163,9 +181,19 @@ For developers:
 - Qual: Replace all constants ACCOUNTINGEX_* by ACCOUNTING_* to simplify migration of the module
 - Fix: [ bug #1724 ] Can't add a submenu to projects
 
+WARNING:
+
+Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
+Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
+You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
+Upgrading to any other version or database system is abolutely required BEFORE trying to
+make a Dolibarr upgrade.
+
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
+- Path to save photos of products was moved to match path of other attached files. If you had loose your photo
+  on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to restore old path.
 - If you can't see trips and expenses records, check that you have the new permission "read all
   trips and expenses".
 - Deprecated module "oscommerce" were removed.
@@ -177,8 +205,9 @@ Dolibarr better:
 - A lot of pages called fiche.php were renamed into card.php
 - A lot of pages called liste.php were renamed into list.php
 - If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
-  warehouse module and your Point Of Sale module if you use one.
-- Replaced USER_UPDATE_SESSION trigger with an updateSession hook
+  warehouse module and your Point Of Sale module setup if you use one.
+- Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
+
 
 ***** ChangeLog for 3.6.3 compared to 3.6.2 *****
 - Fix: ref_ext was not saved when recording a customer order from web service
@@ -388,6 +417,7 @@ Fix: [ bug #1905 ] Custom deplacement types do not get translated in deplacement
 Fix: [ bug #2583 ] Unable to create a bank transfer with localized numbers
 Fix: [ bug #2577 ] Incorrect invoice status in "Linked objects" page of a project
 Fix: [ bug #2576 ] Unable to edit a dictionary entry that has # in its ref
+Fix: [ bug #2758 ] Product::update sets product note to "null" when $prod->note is null
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

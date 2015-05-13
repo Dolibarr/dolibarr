@@ -1480,10 +1480,10 @@ class User extends CommonObject
 
 
 	/**
-	 *  Envoie mot de passe par mail
+	 *  Send new password by email
 	 *
-	 *  @param	User	$user           Object user de l'utilisateur qui fait l'envoi
-	 *  @param	string	$password       Nouveau mot de passe
+	 *  @param	User	$user           Object user that send email
+	 *  @param	string	$password       New password
 	 *	@param	int		$changelater	1=Change password only after clicking on confirm email
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
@@ -1529,7 +1529,7 @@ class User extends CommonObject
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
 			$mesg.= "\n";
-			$url = $urlwithroot;
+			$url = $urlwithroot.'/';
 			$mesg.= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $conf->global->MAIN_APPLICATION_TITLE).': '.$url."\n\n";
 			$mesg.= "--\n";
 			$mesg.= $user->getFullName($outputlangs);	// Username that make then sending

@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
@@ -253,6 +254,7 @@ class pdf_strato extends ModelePDFContract
 					$objectligne = $object->lines[$i];
 
 					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
+
 					if ($valide > 0 || $object->specimen)
 					{
 						$curX = $this->posxdesc-1;
@@ -278,12 +280,20 @@ class pdf_strato extends ModelePDFContract
 							$durationi = $langs->trans("Unknown");
 						}
 
+						$txtpredefinedservice='';
+                        $txtpredefinedservice = $objectligne->product_ref;
+                        if ($objectligne->product_label)
+                        {
+                        	$txtpredefinedservice .= ' - ';
+                        	$txtpredefinedservice .= $objectligne->product_label;
+                        }
+
 						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".$datei." - ".$outputlangs->transnoentities("Duration")." : ".$durationi,1,$outputlangs->charset_output).'</strong>';
 						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
-						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
+						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,dol_concatdesc($txtpredefinedservice,$desc)), 0, 1, 0);
 
-						$nexY = $pdf->GetY();
+						$nexY = $pdf->GetY() + 2;
 						$pageposafter=$pdf->getPage();
 						$pdf->setPage($pageposbefore);
 						$pdf->setTopMargin($this->marge_haute);

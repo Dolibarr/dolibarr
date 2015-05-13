@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP-Verbindungseinstellungen
-NewFTPClient=Neue FTP-Verbindung
+NewFTPClient=Neue FTP-Verbindungseinstellungen
 FTPArea=FTP-Übersicht
 FTPAreaDesc=Dieser Bildschirm zeigt Ihnen den Inhalt eines FTP-Servers
 SetupOfFTPClientModuleNotComplete=Die Einstellungen des FTP-Verbindungsmoduls scheinen unvollständig zu sein.
