@@ -540,7 +540,7 @@ class ExpenseReport extends CommonObject
 			$line->total_ttc=120;
 			$line->qty=1;
 			$line->fk_c_tva=20;
-			$line->tva_taux=20;
+			$line->tva_tx=20;
 			$line->value_unit=120;
 			$line->fk_expensereport=0;
 			$line->type_fees_code='TRA';
@@ -761,7 +761,7 @@ class ExpenseReport extends CommonObject
 
 				$deplig->type_fees_code 	= $objp->code_type_fees;
 				$deplig->type_fees_libelle 	= $objp->libelle_type_fees;
-				$deplig->tva_taux			= $objp->taux_tva;
+				$deplig->tva_tx				= $objp->vatrate;
 				$deplig->projet_ref			= $objp->ref_projet;
 				$deplig->projet_title		= $objp->title_projet;
 
@@ -1207,7 +1207,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			// Select du taux de tva par rapport au code
-			$sql = "SELECT t.taux as taux_tva";
+			$sql = "SELECT t.taux as vatrate";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 			$sql.= " WHERE t.rowid = ".$c_tva;
 			$result = $this->db->query($sql);
@@ -1217,7 +1217,7 @@ class ExpenseReport extends CommonObject
 			$total_ttc	= $qty*$value_unit;
 			$total_ttc 	= number_format($total_ttc,2,'.','');
 
-			$tx_tva = $objp_tva->taux_tva/100;
+			$tx_tva = $objp_tva->vatrate/100;
 			$tx_tva	= $tx_tva + 1;
 			$total_ht 	= $total_ttc/$tx_tva;
 			$total_ht 	= number_format($total_ht,2,'.','');
@@ -1239,7 +1239,7 @@ class ExpenseReport extends CommonObject
 			$ligne->total_ht		= $total_ht;
 			$ligne->total_tva		= $total_tva;
 			$ligne->total_ttc		= $total_ttc;
-			$ligne->tva_taux		= $objp_tva->taux_tva;
+			$ligne->tva_tx			= $objp_tva->vatrate;
 			$ligne->rowid			= $rowid;
 
 			// Select des infos sur le type fees
@@ -1487,7 +1487,7 @@ class ExpenseReportLine
 	var $projet_ref;
 	var $projet_title;
 
-	var $tva_taux;
+	var $tva_tx;
 
 	var $total_ht;
 	var $total_tva;
@@ -1512,7 +1512,7 @@ class ExpenseReportLine
 	function fetch($rowid)
 	{
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-		$sql.= ' fde.fk_c_tva as tva_taux, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+		$sql.= ' fde.fk_c_tva as tva_tx, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 		$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 		$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -1539,7 +1539,7 @@ class ExpenseReportLine
 			$this->type_fees_libelle = $objp->type_fees_libelle;
 			$this->projet_ref = $objp->projet_ref;
 			$this->projet_title = $objp->projet_title;
-			$this->tva_taux = $objp->tva_taux;
+			$this->tva_tx = $objp->tva_tx;
 			$this->total_ht = $objp->total_ht;
 			$this->total_tva = $objp->total_tva;
 			$this->total_ttc = $objp->total_ttc;

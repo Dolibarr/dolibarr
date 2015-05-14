@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2015 Alexandre Spangaro     <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +24,9 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -252,7 +253,7 @@ class pdf_standard extends ModeleExpenseReport
 				$tab_height = 110;
 				$tab_height_newpage = 110;
 
-				// Affiche notes
+				// Show notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 				{
@@ -340,9 +341,10 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell($this->posxtva-$this->posxprojet-1, 3,$object->lines[$i]->projet_ref, 0, 'C');
 
 					// VAT Rate
+					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3,vatrate($object->lines[$i]->tva_taux,true), 0, 'R');
+					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3,$vat_rate, 0, 'R');
 
 					// Unit price
 					$pdf->SetFont('','', $default_font_size - 1);
@@ -438,6 +440,13 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY(160, $posy);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_ht), 1, 'R');
 				$pdf->SetFillColor(248,248,248);
+				
+				$posy+=5;
+				$pdf->SetXY(100, $posy);
+				$pdf->SetTextColor(0,0,60);
+				$pdf->MultiCell(60, 5, $outputlangs->transnoentities("TotalVAT"), 1,'L');
+				$pdf->SetXY(160, $posy);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 160, 5, price($object->total_tva),1, 'R');
 
 				$posy+=5;
 				$pdf->SetXY(100, $posy);
@@ -766,7 +775,7 @@ class pdf_standard extends ModeleExpenseReport
 		// Unit price
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxup-1, $tab_top+1);
-		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("UP"),'','C');
+		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceU"),'','C');
 
 		// Quantity
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
