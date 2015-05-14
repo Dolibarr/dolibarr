@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe permettant de generer les factures au modele Crabe
+ *	Class to generate expense report based on standard model
  */
 class pdf_standard extends ModeleExpenseReport
 {
@@ -308,7 +308,7 @@ class pdf_standard extends ModeleExpenseReport
 
 					$showpricebeforepagebreak=1;
 
-					// Piece comptable
+					// Accountancy piece
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-1, 3, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
 
@@ -334,7 +334,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($this->posxtype, $curY);
 					$pdf->MultiCell($this->posxprojet-$this->posxtype-1, 3,$outputlangs->transnoentities($object->lines[$i]->type_fees_code), 0, 'C');
 
-					// Projet
+					// Project
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxprojet, $curY);
 					$pdf->MultiCell($this->posxtva-$this->posxprojet-1, 3,$object->lines[$i]->projet_ref, 0, 'C');
@@ -344,7 +344,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($this->posxtva, $curY);
 					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3,vatrate($object->lines[$i]->tva_taux,true), 0, 'R');
 
-					// UP
+					// Unit price
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3,price($object->lines[$i]->value_unit), 0, 'R');
@@ -354,7 +354,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->postotalttc-$this->posxqty, 3,$object->lines[$i]->qty, 0, 'C');
 
-					// TotalTTC
+					// Total with all taxes
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->postotalttc-2, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R');
@@ -507,7 +507,7 @@ class pdf_standard extends ModeleExpenseReport
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 		*/
 
-	    // Filligrane brouillon
+	    // Draft watermark
 		if ($object->fk_statut==1 && ! empty($conf->global->EXPENSEREPORT_FREE_TEXT))
 		{
  			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->EXPENSEREPORT_FREE_TEXT);
@@ -551,25 +551,25 @@ class pdf_standard extends ModeleExpenseReport
 
 		$pdf->SetFont('','', $default_font_size -1);
 
-   		// Réf complète
+   		// Ref complete
    		$posy+=8;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
    		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'L');
 
-   		// Date début période
+   		// Date start period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
    		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outpulangs):''), '', 'L');
 
-   		// Date fin période
+   		// Date end period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
    		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outpulangs):''), '', 'L');
 
-   		// Statut NDF
+   		// Status Expense Report
    		$posy+=6;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetFont('','B',18);
@@ -581,7 +581,7 @@ class pdf_standard extends ModeleExpenseReport
    		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
    		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->zip).' '.$outputlangs->convToOutputCharset($this->emetteur->town);
    		$carac_emetteur .= "\n";
-   		// Tel
+   		// Phone
    		if ($this->emetteur->phone) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
    		// Fax
    		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
@@ -734,46 +734,46 @@ class pdf_standard extends ModeleExpenseReport
 
 		$pdf->SetFont('','',8);
 
-		//Piece comptable
+		// Accountancy piece
 		$pdf->SetXY($this->posxpiece-1, $tab_top+1);
 		$pdf->MultiCell($this->posxdesc-$this->posxpiece-1,1,'','','R');
 
-		//Comments
+		// Comments
 		$pdf->line($this->posxdesc-1, $tab_top, $this->posxdesc-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 		$pdf->MultiCell($this->posxdate-$this->posxdesc-1,1,$outputlangs->transnoentities("Description"),'','L');
 
-		//Date
+		// Date
 		$pdf->line($this->posxdate-1, $tab_top, $this->posxdate-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxdate-1, $tab_top+1);
 		$pdf->MultiCell($this->posxtype-$this->posxdate-1,2, $outputlangs->transnoentities("Date"),'','C');
 
-		//Type
+		// Type
 		$pdf->line($this->posxtype-1, $tab_top, $this->posxtype-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxtype-1, $tab_top+1);
 		$pdf->MultiCell($this->posxprojet-$this->posxtype-1,2, $outputlangs->transnoentities("Type"),'','C');
 
-		// Projet
+		// Project
 		$pdf->line($this->posxprojet-1, $tab_top, $this->posxprojet-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxprojet-1, $tab_top+1);
 		$pdf->MultiCell($this->posxtva-$this->posxprojet-1,2, $outputlangs->transnoentities("Project"),'','C');
 
-		//TVA
+		// VAT
 		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxtva-1, $tab_top+1);
 		$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 
-		//PU
+		// Unit price
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxup-1, $tab_top+1);
 		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("UP"),'','C');
 
-		//QTY
+		// Quantity
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY($this->posxqty-1, $tab_top+1);
 		$pdf->MultiCell($this->postotalttc-$this->posxqty,2, $outputlangs->transnoentities("Qty"),'','R');
 
-		//TOTALTTC
+		// Total with all taxes
 		$pdf->line($this->postotalttc, $tab_top, $this->postotalttc, $tab_top + $tab_height);
 		$pdf->SetXY($this->postotalttc-1, $tab_top+1);
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 2, $outputlangs->transnoentities("TotalTTC"),'','R');
