@@ -62,6 +62,11 @@ $search_ua   = GETPOST("search_ua");
 
 $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
 $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+
+// checks: if date_start<0 then date_start=01/01/1970 and if date_start>date_end  then date_end=date_start + 24 hours
+if($date_start<0) $date_start=0; 
+if($date_start>$date_end) $date_end=$date_start+86400;
+
 $params = "&amp;search_code=$search_code&amp;search_ip=$search_ip&amp;search_user=$search_user&amp;search_desc=$search_desc&amp;search_ua=$search_ua";
 $params.= "&amp;date_startmonth=".$_REQUEST["date_startmonth"];
 $params.= "&amp;date_startday=".$_REQUEST["date_startday"];
@@ -72,8 +77,8 @@ $params.= "&amp;date_endyear=".$_REQUEST["date_endyear"];
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-    $date_start=mktime(0,0,0,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
-    $date_end=mktime(23,59,59,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
+    $date_start=dol_mktime(0,0,0,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
+    $date_end=dol_mktime(23,59,59,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
 }
 
 
