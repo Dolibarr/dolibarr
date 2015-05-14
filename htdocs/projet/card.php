@@ -679,7 +679,7 @@ else
         print '</td></tr>';
 
         // Description
-        print '<td valign="top">'.$langs->trans("Description").'</td><td>';
+        print '<td class="tdtop">'.$langs->trans("Description").'</td><td>';
         print nl2br($object->description);
         print '</td></tr>';
 

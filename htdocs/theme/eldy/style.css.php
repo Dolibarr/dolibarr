@@ -1680,8 +1680,11 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 .border tbody tr, .border tbody tr td {
 	height: 20px;
 }
-div.tabBar table.border tr, div.tabBar table.border tr td {
-	height: 28px;
+div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	height: 24px;
+}
+div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
+	vertical-align: middle;
 }
 div.tabBar .tdtop {
     vertical-align: top;
@@ -1860,7 +1863,9 @@ table.liste td {
 
 	background: #ffffff;
 }
-
+#GanttChartDIV {
+	background: #ffffff;
+}
 
 .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
 	font-family: <?php print $fontlist ?>;

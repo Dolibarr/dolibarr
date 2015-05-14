@@ -547,7 +547,7 @@ $now=dol_now();
 
 llxHeader('',$langs->trans("Subscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-if ($rowid)
+if ($rowid > 0)
 {
     $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
@@ -556,8 +556,6 @@ if ($rowid)
 
     $head = member_prepare_head($object);
 
-    dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
-
     $rowspan=10;
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
     if (! empty($conf->societe->enabled)) $rowspan++;
@@ -565,6 +563,9 @@ if ($rowid)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
+
+    dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
+
     print '<table class="border" width="100%">';
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
@@ -696,9 +697,10 @@ if ($rowid)
     print '</td></tr>';
 
     print "</table>\n";
-    print '</form>';
 
     dol_fiche_end();
+
+    print '</form>';
 
 
     dol_htmloutput_errors($errmsg,$errmsgs);
@@ -1008,7 +1010,7 @@ if ($rowid)
                     {
                     	$prodtmp=new Product($db);
                     	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(0));
+                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
                     }
                     print '<br>';
                 }
@@ -1033,7 +1035,7 @@ if ($rowid)
                     {
                     	$prodtmp=new Product($db);
                     	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(0));
+                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
                     }
                     print '<br>';
                 }
