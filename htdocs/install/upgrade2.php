@@ -134,7 +134,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
 
-    if ($db->connected != 1)
+    if (!$db->connected)
     {
         print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
         dolibarr_install_syslog('upgrade2: Failed to connect to database : '.$conf->db->name.' on '.$conf->db->host.' for user '.$conf->db->user, LOG_ERR);
@@ -143,7 +143,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
     if (! $error)
     {
-        if($db->database_selected == 1)
+        if($db->database_selected)
         {
             dolibarr_install_syslog('upgrade2: Database connection successfull : '.$dolibarr_main_db_name);
         }

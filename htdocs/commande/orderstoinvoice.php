@@ -512,10 +512,10 @@ if (($action != 'create' && $action != 'add') || !$error)
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
 		jQuery("#checkall").click(function() {
-			jQuery(".checkformerge").attr('checked', true);
+			jQuery(".checkformerge").prop('checked', true);
 		});
 		jQuery("#checknone").click(function() {
-			jQuery(".checkformerge").attr('checked', false);
+			jQuery(".checkformerge").prop('checked', false);
 		});
 	});
 	</script>
@@ -655,12 +655,12 @@ if (($action != 'create' && $action != 'add') || !$error)
 			print '<td>'.$objp->ref_client.'</td>';
 
 			// Order date
-			print '<td align="center" nowrap>';
+			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->date_commande),'day');
 			print '</td>';
 
 			//Delivery date
-			print '<td align="center" nowrap>';
+			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($objp->date_livraison),'day');
 			print '</td>';
 

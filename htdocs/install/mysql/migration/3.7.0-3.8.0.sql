@@ -85,7 +85,7 @@ ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
 
 
-ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime;
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
@@ -112,12 +112,12 @@ ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NUL
 
 
 --create table for user conf of printing driver
-CREATE TABLE llx_printing 
+CREATE TABLE llx_printing
 (
  rowid integer AUTO_INCREMENT PRIMARY KEY,
  tms timestamp,
  datec datetime,
- printer_name text NOT NULL, 
+ printer_name text NOT NULL,
  printer_location text NOT NULL,
  printer_id varchar(255) NOT NULL,
  copy integer NOT NULL DEFAULT '1',
@@ -199,7 +199,7 @@ CREATE TABLE llx_expensereport (
   total_ht 			double(24,8) DEFAULT 0,
   total_tva 		double(24,8) DEFAULT 0,
   localtax1			double(24,8) DEFAULT 0,				-- amount total localtax1
-  localtax2			double(24,8) DEFAULT 0,				-- amount total localtax2	
+  localtax2			double(24,8) DEFAULT 0,				-- amount total localtax2
   total_ttc 		double(24,8) DEFAULT 0,
   date_debut 		date NOT NULL,
   date_fin 			date NOT NULL,
@@ -292,11 +292,11 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN special_code	 integer DEFAULT
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN rang integer DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL after fk_commande;
 
-ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;    
+ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;
 ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
 
 
-  
+
 -- Module AskPriceSupplier --
 CREATE TABLE llx_askpricesupplier (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -602,11 +602,19 @@ ALTER TABLE llx_user DROP INDEX idx_user_fk_societe;
 ALTER TABLE llx_user CHANGE COLUMN fk_societe fk_soc INTEGER;
 ALTER TABLE llx_user ADD INDEX idx_user_fk_societe (fk_soc);
 
+-- API module
+ALTER TABLE llx_user ADD api_key VARCHAR(128) DEFAULT NULL AFTER pass_temp;
+ALTER TABLE llx_user ADD INDEX idx_user_api_key (api_key);
+
+
+
 ALTER TABLE llx_actioncomm ADD COLUMN email_msgid varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);
+
+ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
 
 

@@ -159,7 +159,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         $result=$objMod->init();
         if (! $result) print 'ERROR in activating module file='.$file;
 
-        if ($db->connected == 1)
+        if ($db->connected)
         {
             $conf->setValues($db);
 
@@ -255,7 +255,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     // If upgrade
     elseif (empty($action) || preg_match('/upgrade/i',$action))
     {
-        if ($db->connected == 1)
+        if ($db->connected)
         {
             $conf->setValues($db);
 

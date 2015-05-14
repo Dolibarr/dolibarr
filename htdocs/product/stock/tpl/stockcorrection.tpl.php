@@ -29,8 +29,8 @@ $langs->load("productbatch");
 		jQuery(document).ready(function() {
 			function init_price()
 			{
-				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr(\'disabled\');
-				else jQuery("#unitprice").attr(\'disabled\',\'disabled\');
+				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
+				else jQuery("#unitprice").prop("disabled", true);
 			}
 			init_price();
 			jQuery("#mouvement").change(function() {

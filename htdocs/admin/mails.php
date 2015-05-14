@@ -271,12 +271,12 @@ if ($action == 'edit')
                         {
                             jQuery(".drag").hide();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
-                            jQuery("#MAIN_MAIL_EMAIL_TLS").attr(\'disabled\', \'disabled\');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").prop("disabled", true);
                             ';
 		if ($linuxlike)
 		{
-			print '         jQuery("#MAIN_MAIL_SMTP_SERVER").attr(\'disabled\', \'disabled\');';
-			print '         jQuery("#MAIN_MAIL_SMTP_PORT").attr(\'disabled\', \'disabled\');';
+			print '         jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);';
+			print '         jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);';
 		}
 		print '
                         }
@@ -284,9 +284,9 @@ if ($action == 'edit')
                         {
                             jQuery(".drag").show();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
-                            jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr(\'disabled\');
-                            jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr(\'disabled\');
-                            jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr(\'disabled\');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
                         }
                     }
                     initfields();

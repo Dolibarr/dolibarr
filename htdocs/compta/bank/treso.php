@@ -134,13 +134,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
-	print '<td align="right" nowrap>'.price($solde).'</td>';
+	print '<td align="right" class="nowrap">'.price($solde).'</td>';
 	print '</tr>';
 
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="right" nowrap>&nbsp;</td>';
+	print '<td align="right" class="nowrap">&nbsp;</td>';
 	print '</tr>';
 
 
@@ -330,7 +330,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$acct->currency_code.')</td>';
-	print '<td align="right" nowrap>'.price($solde, 0, $langs, 0, 0, -1, $acct->currency_code).'</td>';
+	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $acct->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";

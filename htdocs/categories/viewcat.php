@@ -254,7 +254,7 @@ else
 		{
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td nowrap=\"nowrap\">";
+			print "\t\t".'<td class="nowrap">';
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
 			print "</td>\n";
 			print "\t\t".'<td colspan="2">'.$cat->description."</td>\n";
