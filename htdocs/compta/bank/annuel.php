@@ -144,7 +144,7 @@ print '<table class="border" width="100%">';
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 // Ref
-print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($_GET["account"])
 {
@@ -172,7 +172,7 @@ else
 print '</td></tr>';
 
 // Label
-print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+print '<tr><td>'.$langs->trans("Label").'</td>';
 print '<td colspan="3">';
 if (! empty($id))
 {

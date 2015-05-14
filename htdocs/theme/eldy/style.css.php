@@ -1680,8 +1680,12 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 .border tbody tr, .border tbody tr td {
 	height: 20px;
 }
-div.tabBar table.border tr {
-	height: 20px;
+div.tabBar table.border tr, div.tabBar table.border tr td {
+	height: 28px;
+}
+div.tabBar .tdtop {
+    vertical-align: top;
+	padding-top: 6px;
 }
 
 table.border td, div.border div div.tagtd {
