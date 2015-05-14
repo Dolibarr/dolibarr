@@ -342,7 +342,7 @@ class pdf_standard extends ModeleExpenseReport
 					// VAT Rate
 					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->SetXY($this->posxtva, $curY);
-					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3,vatrate($object->lines[$i]->tva_taux,true), 0, 'R');
+					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3,vatrate($object->lines[$i]->vatrate,true), 0, 'R');
 
 					// UP
 					$pdf->SetFont('','', $default_font_size - 1);

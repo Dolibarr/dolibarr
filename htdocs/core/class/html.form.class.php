@@ -56,9 +56,6 @@ class Form
     var $cache_types_fees=array();
     var $cache_vatrates=array();
 
-    var $tva_taux_value;
-    var $tva_taux_libelle;
-
 
     /**
      * Constructor
@@ -3969,10 +3966,6 @@ class Form
         		$return.= '>'.vatrate($rate['libtva']);
         		$return.= $rate['nprtva'] ? ' *': '';
         		$return.= '</option>';
-
-        		$this->tva_taux_value[]		= $rate['txtva'];
-        		$this->tva_taux_libelle[]	= $rate['libtva'];
-        		$this->tva_taux_npr[]		= $rate['nprtva'];
         	}
 
         	if (! $options_only) $return.= '</select>';

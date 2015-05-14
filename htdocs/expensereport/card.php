@@ -879,7 +879,7 @@ if ($action == "addline")
 		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type);
 
 		$object_ligne->total_ttc = $tmp[2];
-		$object_ligne->tva_taux = GETPOST('vatrate');
+		$object_ligne->vatrate = GETPOST('vatrate');
 		$object_ligne->total_ht = $tmp[0];
 		$object_ligne->total_tva = $tmp[1];
 
@@ -1649,17 +1649,17 @@ else
 									print '<textarea class="flat_ndf" name="comments" class="centpercent">'.$objp->comments.'</textarea>';
 									print '</td>';
 
-									// Sélection TVA
+									// VAT
 									print '<td style="text-align:right;">';
-									print $form->load_tva('fk_c_tva', (isset($_POST["fk_c_tva"])?$_POST["fk_c_tva"]:$objp->tva_taux), $mysoc, '');
+									print $form->load_tva('fk_c_tva', (isset($_POST["fk_c_tva"])?$_POST["fk_c_tva"]:$objp->vatrate), $mysoc, '');
 									print '</td>';
 
-									// Prix unitaire
+									// Unit price
 									print '<td style="text-align:right;">';
 									print '<input type="text" size="6" name="value_unit" value="'.$objp->value_unit.'" />';
 									print '</td>';
 
-									// Quantité
+									// Qty
 									print '<td style="text-align:right;">';
 									print '<input type="text" size="4" name="qty" value="'.$objp->qty.'" />';
 									print '</td>';
