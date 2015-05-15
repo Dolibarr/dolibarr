@@ -1835,8 +1835,13 @@ table.liste td {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
+
 /* Pagination */
-div.pagination ul, div.pagination li 
+
+div.pagination a {
+	font-weight: normal;
+}
+div.pagination ul, div.pagination li
 {
   list-style: none;
   display: inline-block;
@@ -1859,7 +1864,7 @@ div.pagination li span {
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
-  color: #337ab7;
+  color: #000;
   text-decoration: none;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -1879,7 +1884,7 @@ div.pagination li a:hover,
 div.pagination li span:hover,
 div.pagination li a:focus,
 div.pagination li span:focus {
-  color: #23527c;
+  color: #000;
   background-color: #eee;
   border-color: #ddd;
 }
@@ -1906,7 +1911,9 @@ div.pagination .disabled a:focus {
   background-color: #fff;
   border-color: #ddd;
 }
-
+div.pagination li .active {
+  text-decoration: underline;
+}
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {
