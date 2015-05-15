@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
@@ -196,13 +196,13 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Value'),$_SERVER['PHP_SELF'],'b.datev','',$param,'align="center"',$sortfield,$sortorder);
-	print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
-    print '<td class="liste_titre">'.$langs->trans("Numero").'</td>';
-	print '<td class="liste_titre">'.$langs->trans("Description").'</td>';
-	print '<td class="liste_titre">'.$langs->trans("ThirdParty").'</td>';
-	print '<td class="liste_titre" align="right">'.$langs->trans("Debit").'</td>';
-	print '<td class="liste_titre" align="right">'.$langs->trans("Credit").'</td>';
-	print '<td class="liste_titre" align="left"> &nbsp; '.$langs->trans("Account").'</td>';
+	print_liste_field_titre($langs->trans("Type"),$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Numero"));
+	print_liste_field_titre($langs->trans("Description"));
+	print_liste_field_titre($langs->trans("ThirdParty"));
+	print_liste_field_titre($langs->trans("Debit"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Credit"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Account"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -214,9 +214,9 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.GETPOST("req_nb").'" size="2"></td>';
     print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="description" size="24" value="'.$description.'">';
+	print '<input type="text" class="flat" name="description" size="10" value="'.$description.'">';
 	print '</td>';
-    print '<td class="liste_titre"><input type="text" class="flat" name="thirdparty" value="'.GETPOST("thirdparty").'" size="14"></td>';
+    print '<td class="liste_titre"><input type="text" class="flat" name="thirdparty" value="'.GETPOST("thirdparty").'" size="10"></td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="text" class="flat" name="debit" size="4" value="'.$debit.'">';
 	print '</td>';
@@ -267,7 +267,7 @@ if ($resql)
 	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
 	        // Payment type
-	        print '<td class="nowrap">';
+	        print '<td align="center" class="nowrap">';
 	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
 	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
 	        else print $labeltype;
@@ -305,7 +305,7 @@ if ($resql)
 			// Debit/Credit
 			if ($objp->amount < 0)
 			{
-				print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+				print '<td align="right">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 				$total_debit+=$objp->amount;
 			}
 			else
@@ -315,7 +315,7 @@ if ($resql)
 			}
 
 			// Bank account
-			print '<td align="left" class="nowrap">';
+			print '<td align="right" class="nowrap">';
 			$bankaccountstatic->id=$objp->bankid;
 			$bankaccountstatic->label=$objp->bankref;
 			print $bankaccountstatic->getNomUrl(1);

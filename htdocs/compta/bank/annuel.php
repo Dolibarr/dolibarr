@@ -496,9 +496,9 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<div class="fichecenter"><div class="fichehalfleft"><div class="center">';
+	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">';	// do not use class="center" here, it will have no effect for the js graph inside.
 	print $show1;
-	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div class="center">';
+	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div align="center">';		// do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
 	print '</div></div></div></div>';
 	print '<div style="clear:both"></div>';

@@ -42,6 +42,7 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','');
 
+
 /*
  * Actions
  */
@@ -158,7 +159,7 @@ if ($resql)
     }
     else
     {
-        print '<tr><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
+        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
     }
     print "</table><br>";
 }
