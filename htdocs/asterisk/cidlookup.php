@@ -32,7 +32,8 @@
 include '../master.inc.php';
 
 $phone = GETPOST('phone');
-
+$notfound = "Not found";
+$error = "Error"
 
 // Security check
 if (empty($conf->clicktodial->enabled)) {
@@ -64,13 +65,15 @@ if ($resql)
 	if ($obj)
 	{
 		$found = $obj->name;
+	} else {
+		$found = $notfound;
 	}
 	$db->free($resql);
 }
 else
 {
 	dol_print_error($db,'Error');
+	$found = $error;
 }
 
 echo $found;
-

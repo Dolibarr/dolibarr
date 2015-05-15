@@ -313,13 +313,13 @@ if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<tr><td>'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$object->label.'</td></tr>';
 
 	print '</table>';

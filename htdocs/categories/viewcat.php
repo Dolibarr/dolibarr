@@ -166,6 +166,7 @@ elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
 else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
+
 dol_fiche_head($head, 'card', $title, 0, 'category');
 
 
@@ -194,7 +195,7 @@ print '</td></tr>';
 // Description
 print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
-print nl2br($object->description);
+print dol_htmlentitiesbr($object->description);
 print '</td></tr>';
 
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -205,12 +206,13 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 
 print '</table>';
 
-print '</div>';
+dol_fiche_end();
 
 
 /*
  * Boutons actions
  */
+
 print "<div class='tabsAction'>\n";
 
 if ($user->rights->categorie->creer)

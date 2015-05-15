@@ -56,9 +56,6 @@ class Form
     var $cache_types_fees=array();
     var $cache_vatrates=array();
 
-    var $tva_taux_value;
-    var $tva_taux_libelle;
-
 
     /**
      * Constructor
@@ -3842,10 +3839,10 @@ class Form
     /**
      *  Output an HTML select vat rate
      *
-     *  @param	string	$htmlname           Nom champ html
-     *  @param  float	$selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-     *  @param  Societe	$societe_vendeuse   Objet societe vendeuse
-     *  @param  Societe	$societe_acheteuse  Objet societe acheteuse
+     *  @param	string	$htmlname           Name of html select field
+     *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
+     *  @param  Societe	$societe_vendeuse   Thirdparty seller
+     *  @param  Societe	$societe_acheteuse  Thirdparty buyer
      *  @param  int		$idprod             Id product
      *  @param  int		$info_bits          Miscellaneous information on line (1 for NPR)
      *  @param  int		$type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
@@ -3863,9 +3860,6 @@ class Form
         global $langs,$conf,$mysoc;
 
         $return='';
-        $txtva=array();
-        $libtva=array();
-        $nprtva=array();
 
         // Define defaultnpr and defaultttx
         $defaultnpr=($info_bits & 0x01);
@@ -3972,10 +3966,6 @@ class Form
         		$return.= '>'.vatrate($rate['libtva']);
         		$return.= $rate['nprtva'] ? ' *': '';
         		$return.= '</option>';
-
-        		$this->tva_taux_value[]		= $rate['txtva'];
-        		$this->tva_taux_libelle[]	= $rate['libtva'];
-        		$this->tva_taux_npr[]		= $rate['nprtva'];
         	}
 
         	if (! $options_only) $return.= '</select>';
@@ -4425,7 +4415,7 @@ class Form
     static function selectArrayAjax($url, $htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
     {
     	$out = '';
-    	
+
         // Add code for jquery to use multiselect
         if ($addjscombo && empty($conf->dol_use_jmobile))
         {
@@ -4466,14 +4456,14 @@ class Form
 		else
 		{
         	// TODO get values from ajax page to use a standard already completed array
-        		
+
 		}
-		
+
    		$out.=self::selectarray('.'.$htmlname, $array, $id, $show_empty, $key_in_label, $value_as_key, '', $translate, $maxlen, $disabled, $sort, '', 0);
-   		
+
 		return $out;
     }
-    
+
     /**
      *	Show a multiselect form from an array.
      *
@@ -4568,7 +4558,7 @@ class Form
     }
 
 
-    
+
 	/**
 	 * 	Render list of categories linked to object with id $id and type $type
 	 *

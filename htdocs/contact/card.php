@@ -798,19 +798,19 @@ else
             print '</td></tr>';
 
              // Note Public
-            print '<tr><td valign="top"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
+            print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
             $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);
             print '</td></tr>';
 
             // Note Private
-            print '<tr><td valign="top"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
+            print '<tr><td class="tdtop"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
             $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);
             print '</td></tr>';
 
             // Statut
-            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+            print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(5);
             print '</td></tr>';
@@ -1025,16 +1025,16 @@ else
         print '</td></tr>';
 
         // Note Public
-        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td><td colspan="3">';
         print nl2br($object->note_public);
         print '</td></tr>';
 
         // Note Private
-        print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
         print nl2br($object->note_private);
 
 	 	// Statut
-		print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+		print '<tr><td>'.$langs->trans("Status").'</td>';
 		print '<td>';
 		print $object->getLibStatut(5);
 		print '</td>';

@@ -25,15 +25,19 @@
 
 // $action must be defined
 // $object must be defined (object is loaded in this file with fetch)
+// $cancel must be defined
 // $id or $ref must be defined (object is loaded in this file with fetch)
 
-if ($id > 0 || ! empty($ref))
+if (($id > 0 || ! empty($ref)) && empty($cancel))
 {
     $ret = $object->fetch($id,$ref);
-    if ($ret > 0) {
+    if ($ret > 0)
+    {
         $object->fetch_thirdparty();
-        $id=$object->id;
-    } else {
+        $id = $object->id;
+    }
+    else
+    {
         setEventMessages($object->error, $object->errors, 'errors');
         $action='';
     }
