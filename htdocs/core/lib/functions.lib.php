@@ -2831,21 +2831,22 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
-			$pagelist.=$langs->trans('Page');
+			$pagelist.='<div class="pagination"><ul>';
+			
 			if ($cpt>=1)
 			{
-				$pagelist.=' <a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a>';
+				$pagelist.='<li><a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>';
 				if ($cpt >= 2) $pagelist.=' ...';
 			}
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= ' <u>'.($page+1).'</u>';
+					$pagelist.= '<li><span class="active">'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= ' <a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a>';
+					$pagelist.= '<li><a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
@@ -2853,12 +2854,12 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			if ($cpt<$nbpages)
 			{
 				if ($cpt<$nbpages-1) $pagelist.= ' ...';
-				$pagelist.= ' <a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a>';
+				$pagelist.= '<li><a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= $langs->trans('Page').' '.($page+1);
+			$pagelist.= ($page+1).'</ul></div>';
 		}
 	}
 	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
@@ -2883,17 +2884,19 @@ function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarr
 {
 	global $conf, $langs;
 
+	print '<div class="pagination"><ul>';
 	if ($page > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
-		else print '<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a>';
+		if (empty($conf->dol_use_jmobile)) print '<li><a href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
 	if ($nextpage > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
-		else print '<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a>';
+		if (empty($conf->dol_use_jmobile)) print '<li><a href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
 	}
+	print '</ul></div>';
 }
 
 
