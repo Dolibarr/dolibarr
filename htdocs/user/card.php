@@ -723,7 +723,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr>';
 
     // Lastname
-    print '<td valign="top" width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
+    print '<td width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
     {
@@ -737,7 +737,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     // Firstname
-    print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td>';
     print '<td>';
     if (! empty($ldap_firstname))
     {
@@ -751,13 +751,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     // Position/Job
-    print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
+    print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
     print '<td>';
     print '<input size="30" type="text" name="job" value="'.GETPOST('job').'">';
     print '</td></tr>';
 
     // Login
-    print '<tr><td valign="top"><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
+    print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
     print '<td>';
     if (! empty($ldap_login))
     {
@@ -784,7 +784,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     $password=$generated_password;
 
     // Password
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Password").'</td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
     print '<td>';
     if (! empty($ldap_sid))
     {
@@ -808,7 +808,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Administrator
     if (! empty($user->admin))
     {
-        print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
+        print '<tr><td>'.$langs->trans("Administrator").'</td>';
         print '<td>';
         print $form->selectyesno('admin',GETPOST('admin'),1);
 
@@ -850,13 +850,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
 
     // Type
-    print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
+    print '<tr><td>'.$langs->trans("Type").'</td>';
     print '<td>';
     print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
     print '</td></tr>';
 
     // Tel
-    print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
+    print '<tr><td>'.$langs->trans("PhonePro").'</td>';
     print '<td>';
     if (! empty($ldap_phone))
     {
@@ -870,7 +870,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     // Tel portable
-    print '<tr><td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
     print '<td>';
     if (! empty($ldap_mobile))
     {
@@ -884,7 +884,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     // Fax
-    print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
+    print '<tr><td>'.$langs->trans("Fax").'</td>';
     print '<td>';
     if (! empty($ldap_fax))
     {
@@ -900,7 +900,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Skype
     if (! empty($conf->skype->enabled))
     {
-        print '<tr><td valign="top">'.$langs->trans("Skype").'</td>';
+        print '<tr><td>'.$langs->trans("Skype").'</td>';
         print '<td>';
         if (! empty($ldap_skype))
         {
@@ -915,7 +915,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
 
     // EMail
-    print '<tr><td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
+    print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
     print '<td>';
     if (! empty($ldap_mail))
     {
@@ -929,7 +929,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     // Signature
-    print '<tr><td valign="top">'.$langs->trans("Signature").'</td>';
+    print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
     print '<td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,90);
@@ -941,7 +941,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity && is_object($mc))
         {
-            print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
             print "<td>".$mc->select_entities($conf->entity);
             print "</td></tr>\n";
         }
@@ -952,7 +952,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
 
     // Hierarchy
-    print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+    print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
     print '<td>';
     print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
     print '</td>';
@@ -963,21 +963,21 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		$langs->load("salaries");
 
 	    // THM
-	    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
+	    print '<tr><td>'.$langs->trans("THM").'</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
 	    print '</td>';
 	    print "</tr>\n";
 
 	    // TJM
-	    print '<tr><td valign="top">'.$langs->trans("TJM").'</td>';
+	    print '<tr><td>'.$langs->trans("TJM").'</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
 	    print '</td>';
 	    print "</tr>\n";
 
 	    // Salary
-	    print '<tr><td valign="top">'.$langs->trans("Salary").'</td>';
+	    print '<tr><td>'.$langs->trans("Salary").'</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="salary" value="'.GETPOST('salary').'">';
 	    print '</td>';
@@ -985,7 +985,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 
     // Weeklyhours
-    print '<tr><td valign="top">'.$langs->trans("WeeklyHours").'</td>';
+    print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
     print '<td>';
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
@@ -994,7 +994,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Accountancy code
 	if ($conf->salaries->enabled)
 	{
-		print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print '<input size="30" type="text" name="accountancy_code" value="'.GETPOST('accountancy_code').'">';
 		print '</td></tr>';
@@ -1003,14 +1003,14 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// User color
 	if (! empty($conf->agenda->enabled))
 	{
-		print '<tr><td valign="top">'.$langs->trans("ColorUser").'</td>';
+		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
 		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
     // Note
-    print '<tr><td valign="top">';
+    print '<tr><td class="tdtop">';
     print $langs->trans("Note");
     print '</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1149,7 +1149,7 @@ else
             print '<table class="border" width="100%">';
 
             // Ref
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
             print '<td colspan="3">';
             print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
             print '</td>';
@@ -1163,7 +1163,7 @@ else
 			if (! empty($conf->agenda->enabled)) $rowspan++;
 
             // Lastname
-            print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
+            print '<tr><td>'.$langs->trans("Lastname").'</td>';
             print '<td colspan="2">'.$object->lastname.'</td>';
 
             // Photo
@@ -1174,17 +1174,17 @@ else
             print '</tr>'."\n";
 
             // Firstname
-            print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
+            print '<tr><td>'.$langs->trans("Firstname").'</td>';
             print '<td colspan="2">'.$object->firstname.'</td>';
             print '</tr>'."\n";
 
             // Position/Job
-            print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
             print '<td colspan="2">'.$object->job.'</td>';
             print '</tr>'."\n";
 
             // Login
-            print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
+            print '<tr><td>'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
             {
                 print '<td colspan="2" class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
@@ -1196,7 +1196,7 @@ else
             print '</tr>'."\n";
 
             // Password
-            print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+            print '<tr><td>'.$langs->trans("Password").'</td>';
             if (! empty($object->ldap_sid))
             {
                 if ($passDoNotExpire)
@@ -1230,7 +1230,7 @@ else
             print '</tr>'."\n";
 
             // Administrator
-            print '<tr><td valign="top">'.$langs->trans("Administrator").'</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("Administrator").'</td><td colspan="2">';
             if (! empty($conf->multicompany->enabled) && $object->admin && ! $object->entity)
             {
                 print $form->textwithpicto(yn($object->admin),$langs->trans("SuperAdministratorDesc"),1,"superadmin");
@@ -1246,7 +1246,7 @@ else
             print '</td></tr>'."\n";
 
             // Type
-            print '<tr><td valign="top">'.$langs->trans("Type").'</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
             $type=$langs->trans("Internal");
             if ($object->societe_id) $type=$langs->trans("External");
             print $form->textwithpicto($type,$langs->trans("InternalExternalDesc"));
@@ -1256,46 +1256,46 @@ else
             // Ldap sid
             if ($object->ldap_sid)
             {
-            	print '<tr><td valign="top">'.$langs->trans("Type").'</td><td colspan="2">';
+            	print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
             	print $langs->trans("DomainUser",$ldap->domainFQDN);
             	print '</td></tr>'."\n";
             }
 
             // Tel pro
-            print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
+            print '<tr><td>'.$langs->trans("PhonePro").'</td>';
             print '<td colspan="2">'.dol_print_phone($object->office_phone,'',0,0,1).'</td>';
             print '</tr>'."\n";
 
             // Tel mobile
-            print '<tr><td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+            print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
             print '<td colspan="2">'.dol_print_phone($object->user_mobile,'',0,0,1).'</td>';
             print '</tr>'."\n";
 
             // Fax
-            print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
+            print '<tr><td>'.$langs->trans("Fax").'</td>';
             print '<td colspan="2">'.dol_print_phone($object->office_fax,'',0,0,1).'</td>';
             print '</tr>'."\n";
 
             // Skype
             if (! empty($conf->skype->enabled))
             {
-				print '<tr><td valign="top">'.$langs->trans("Skype").'</td>';
+				print '<tr><td>'.$langs->trans("Skype").'</td>';
                 print '<td colspan="2">'.dol_print_skype($object->skype,0,0,1).'</td>';
                 print "</tr>\n";
             }
 
             // EMail
-            print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
+            print '<tr><td>'.$langs->trans("EMail").'</td>';
             print '<td colspan="2">'.dol_print_email($object->email,0,0,1).'</td>';
             print "</tr>\n";
 
             // Signature
-            print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td colspan="2">';
+            print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td colspan="2">';
             print dol_htmlentitiesbr($object->signature);
             print "</td></tr>\n";
 
             // Hierarchy
-            print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td colspan="2">';
             if (empty($object->fk_user)) print $langs->trans("None");
             else {
@@ -1311,21 +1311,21 @@ else
             	$langs->load("salaries");
 
 	            // THM
-			    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
+			    print '<tr><td>'.$langs->trans("THM").'</td>';
 			    print '<td colspan="2">';
 			    print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
 			    print '</td>';
 			    print "</tr>\n";
 
 	            // TJM
-			    print '<tr><td valign="top">'.$langs->trans("TJM").'</td>';
+			    print '<tr><td>'.$langs->trans("TJM").'</td>';
 			    print '<td colspan="2">';
 			    print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
 			    print '</td>';
 			    print "</tr>\n";
 
 			    // Salary
-			    print '<tr><td valign="top">'.$langs->trans("Salary").'</td>';
+			    print '<tr><td>'.$langs->trans("Salary").'</td>';
 			    print '<td colspan="2">';
 			    print ($object->salary!=''?price($object->salary,'',$langs,1,-1,-1,$conf->currency):'');
 			    print '</td>';
@@ -1333,7 +1333,7 @@ else
             }
 
 		    // Weeklyhours
-		    print '<tr><td valign="top">'.$langs->trans("WeeklyHours").'</td>';
+		    print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 		    print '<td colspan="2">';
 			print price2num($object->weeklyhours);
 		    print '</td>';
@@ -1342,14 +1342,14 @@ else
 			// Accountancy code
 			if ($conf->salaries->enabled)
 			{
-				print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td colspan="2">'.$object->accountancy_code.'</td>';
 			}
 
 			// Color user
 			if (! empty($conf->agenda->enabled))
             {
-				print '<tr><td valign="top">'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td colspan="2">';
 				if ($object->color) print '<input type="text" disabled style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
 				print '</td>';
@@ -1357,23 +1357,23 @@ else
 			}
 
             // Status
-            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+            print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td colspan="2">';
             print $object->getLibStatut(4);
             print '</td>';
             print '</tr>'."\n";
 
-            print '<tr><td valign="top">'.$langs->trans("LastConnexion").'</td>';
+            print '<tr><td>'.$langs->trans("LastConnexion").'</td>';
             print '<td colspan="2">'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
 
-            print '<tr><td valign="top">'.$langs->trans("PreviousConnexion").'</td>';
+            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
             print '<td colspan="2">'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
-                print '<tr><td valign="top">'.$langs->trans("OpenIDURL").'</td>';
+                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
                 print '<td colspan="2">'.$object->openid.'</td>';
                 print "</tr>\n";
             }
@@ -1381,7 +1381,7 @@ else
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
-                print '<tr><td valign="top">'.$langs->trans("LinkToCompanyContact").'</td>';
+                print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
                 print '<td colspan="2">';
                 if (isset($object->societe_id) && $object->societe_id > 0)
                 {
@@ -1409,7 +1409,7 @@ else
             if (! empty($conf->adherent->enabled))
             {
                 $langs->load("members");
-                print '<tr><td valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+                print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
                 print '<td colspan="2">';
                 if ($object->fk_member)
                 {
@@ -1432,7 +1432,7 @@ else
             {
 	            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 	            {
-	            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
+	            	print '<tr><td>'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
 	            	if (empty($object->entity))
 	            	{
 	            		print $langs->trans("AllEntities");
@@ -1578,7 +1578,7 @@ else
                     {
                         if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
                         {
-                            print '</td><td valign="top">'.$langs->trans("Entity").'</td>';
+                            print '</td><td>'.$langs->trans("Entity").'</td>';
                             print "<td>".$mc->select_entities($conf->entity);
                         }
                         else
@@ -1691,7 +1691,7 @@ else
 
             print '<table width="100%" class="border">';
 
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
             print $object->id;
             print '</td>';
@@ -1699,7 +1699,7 @@ else
 
             // Lastname
             print "<tr>";
-            print '<td valign="top" class="fieldrequired">'.$langs->trans("Lastname").'</td>';
+            print '<td class="fieldrequired">'.$langs->trans("Lastname").'</td>';
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
@@ -1728,7 +1728,7 @@ else
             print '</tr>';
 
             // Firstname
-            print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
+            print "<tr>".'<td>'.$langs->trans("Firstname").'</td>';
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
@@ -1742,7 +1742,7 @@ else
             print '</td></tr>';
 
             // Position/Job
-            print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
             print '<td>';
             if ($caneditfield)
             {
@@ -1756,7 +1756,7 @@ else
             print '</td></tr>';
 
             // Login
-            print "<tr>".'<td valign="top"><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
+            print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
             print '<td>';
             if ($user->admin  && !$object->ldap_sid)
             {
@@ -1771,7 +1771,7 @@ else
             print '</tr>';
 
             // Pass
-            print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+            print '<tr><td>'.$langs->trans("Password").'</td>';
             print '<td>';
             if ($object->ldap_sid)
             {
@@ -1793,7 +1793,7 @@ else
             print "</td></tr>\n";
 
             // Administrator
-            print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
+            print '<tr><td>'.$langs->trans("Administrator").'</td>';
             if ($object->societe_id > 0)
             {
             	$langs->load("admin");
@@ -1870,7 +1870,7 @@ else
             }
 
            	// Type
-           	print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+           	print '<tr><td width="25%">'.$langs->trans("Type").'</td>';
            	print '<td>';
            	if ($user->id == $object->id || ! $user->admin)
            	{
@@ -1889,7 +1889,7 @@ else
            	print '</td></tr>';
 
             // Tel pro
-            print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
+            print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
             print '<td>';
             if ($caneditfield  && empty($object->ldap_sid))
             {
@@ -1903,7 +1903,7 @@ else
             print '</td></tr>';
 
             // Tel mobile
-            print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+            print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
             print '<td>';
             if ($caneditfield && empty($object->ldap_sid))
             {
@@ -1917,7 +1917,7 @@ else
             print '</td></tr>';
 
             // Fax
-            print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+            print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
             print '<td>';
             if ($caneditfield  && empty($object->ldap_sid))
             {
@@ -1933,7 +1933,7 @@ else
             // Skype
             if (! empty($conf->skype->enabled))
             {
-                print '<tr><td valign="top">'.$langs->trans("Skype").'</td>';
+                print '<tr><td>'.$langs->trans("Skype").'</td>';
                 print '<td>';
                 if ($caneditfield  && empty($object->ldap_sid))
                 {
@@ -1948,7 +1948,7 @@ else
             }
 
             // EMail
-            print "<tr>".'<td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
+            print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
             print '<td>';
             if ($caneditfield  && empty($object->ldap_sid))
             {
@@ -1962,7 +1962,7 @@ else
             print '</td></tr>';
 
             // Signature
-            print "<tr>".'<td valign="top">'.$langs->trans("Signature").'</td>';
+            print "<tr>".'<td class="tdtop">'.$langs->trans("Signature").'</td>';
             print '<td>';
             if ($caneditfield)
             {
@@ -1979,7 +1979,7 @@ else
             // OpenID url
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
             {
-                print "<tr>".'<td valign="top">'.$langs->trans("OpenIDURL").'</td>';
+                print "<tr>".'<td>'.$langs->trans("OpenIDURL").'</td>';
                 print '<td>';
                 if ($caneditfield)
                 {
@@ -1994,7 +1994,7 @@ else
             }
 
             // Hierarchy
-            print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td>';
             if ($caneditfield)
             {
@@ -2015,21 +2015,21 @@ else
             	$langs->load("salaries");
 
             	// THM
-			    print '<tr><td valign="top">'.$langs->trans("THM").'</td>';
+			    print '<tr><td>'.$langs->trans("THM").'</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
 			    print '</td>';
 			    print "</tr>\n";
 
 			    // TJM
-			    print '<tr><td valign="top">'.$langs->trans("TJM").'</td>';
+			    print '<tr><td>'.$langs->trans("TJM").'</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
 			    print '</td>';
 			    print "</tr>\n";
 
 			    // Salary
-			    print '<tr><td valign="top">'.$langs->trans("Salary").'</td>';
+			    print '<tr><td>'.$langs->trans("Salary").'</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary')?GETPOST('salary'):$object->salary).'">';
 			    print '</td>';
@@ -2037,7 +2037,7 @@ else
             }
 
 		    // Weeklyhours
-		    print '<tr><td valign="top">'.$langs->trans("WeeklyHours").'</td>';
+		    print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
 		    print '<td>';
 		    print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
 		    print '</td>';
@@ -2047,7 +2047,7 @@ else
 			if ($conf->salaries->enabled)
 			{
 				print "<tr>";
-				print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
 				if ($caneditfield)
 				{
@@ -2065,14 +2065,14 @@ else
 			// User color
 			if (! empty($conf->agenda->enabled))
             {
-				print '<tr><td valign="top">'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', 'usercolorconfig', 1, '', 'hideifnotset');
 				print '</td></tr>';
 			}
 
             // Status
-            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+            print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(4);
             print '</td></tr>';
@@ -2080,7 +2080,7 @@ else
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
-                print '<tr><td width="25%" valign="top">'.$langs->trans("LinkToCompanyContact").'</td>';
+                print '<tr><td width="25%">'.$langs->trans("LinkToCompanyContact").'</td>';
                 print '<td>';
                 if ($object->societe_id > 0)
                 {
@@ -2107,7 +2107,7 @@ else
             if (! empty($conf->adherent->enabled))
             {
                 $langs->load("members");
-                print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+                print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
                 print '<td>';
                 if ($object->fk_member)
                 {
@@ -2129,7 +2129,7 @@ else
             {
             	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             	{
-            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
             		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
             		print "</td></tr>\n";
             	}
