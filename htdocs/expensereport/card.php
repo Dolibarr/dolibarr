@@ -828,9 +828,8 @@ if ($action == "addline")
 
 	$object_ligne->fk_c_type_fees = GETPOST('fk_c_type_fees');
 
-	$vatrate=GETPOST('vatrate');
-	$object_ligne->fk_c_tva = $vatrate;
-	$object_ligne->vatrate = $vatrate;
+	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
+	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 
 	$object_ligne->fk_projet = $fk_projet;
 
@@ -878,8 +877,8 @@ if ($action == "addline")
 		$type = 0;	// TODO What if service
 		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type);
 
+		$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 		$object_ligne->total_ttc = $tmp[2];
-		$object_ligne->tva_taux = GETPOST('vatrate');
 		$object_ligne->total_ht = $tmp[0];
 		$object_ligne->total_tva = $tmp[1];
 
@@ -906,11 +905,11 @@ if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 	$object->fetch($id);
 
 	$object_ligne = new ExpenseReportLine($db);
-	$object_ligne->fetch($_GET["rowid"]);
+	$object_ligne->fetch(GETPOST("rowid"));
 	$total_ht = $object_ligne->total_ht;
 	$total_tva = $object_ligne->total_tva;
 
-	$result=$object->deleteline($_GET["rowid"]);
+	$result=$object->deleteline(GETPOST("rowid"));
 	if ($result >= 0)
 	{
 		if ($result > 0)
@@ -950,12 +949,13 @@ if ($action == "updateligne" )
 
 	$rowid = $_POST['rowid'];
 	$type_fees_id = GETPOST('fk_c_type_fees');
-	$c_tva=GETPOST('vatrate');
-	$object_ligne->fk_c_tva = $c_tva;
+	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
+	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 	$projet_id = $fk_projet;
 	$comments = GETPOST('comments');
 	$qty = GETPOST('qty');
 	$value_unit = GETPOST('value_unit');
+	$vatrate = GETPOST('vatrate');
 
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
@@ -972,7 +972,7 @@ if ($action == "updateligne" )
 
 	if (! $error)
 	{
-		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $c_tva, $comments, $qty, $value_unit, $date, $object_id);
+		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id);
 		if ($result >= 0)
 		{
 			if ($result > 0)
@@ -995,8 +995,9 @@ if ($action == "updateligne" )
 				}
 			}
 
-			$object->recalculer($object_id);
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object_id);
+			$result = $object->recalculer($id);
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
 		else
@@ -1008,9 +1009,9 @@ if ($action == "updateligne" )
 
 
 /*
- * Generer ou regenerer le document PDF
+ * Generate or regenerate the PDF document
  */
-if ($action == 'builddoc')	// En get ou en post
+if ($action == 'builddoc')	// GET or POST
 {
 	$depl = new ExpenseReport($db, 0, $_GET['id']);
 	$depl->fetch($id);
@@ -1370,7 +1371,7 @@ else
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&amp;rowid=".$_GET['rowid'],$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 					if ($ret == 'html') print '<br>';
 				}
 
@@ -1528,7 +1529,7 @@ else
 
 				// Fetch Lines of current expense report
 				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-				$sql.= ' fde.fk_c_tva as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+				$sql.= ' fde.fk_c_tva as fk_c_tva, fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -1636,10 +1637,10 @@ else
 
 									// Select project
 									print '<td>';
-									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 0, 1);
+									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
 									print '</td>';
 
-									// Sélect type
+									// Select type
 									print '<td style="text-align:center;">';
 									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
 									print '</td>';
@@ -1649,17 +1650,17 @@ else
 									print '<textarea class="flat_ndf" name="comments" class="centpercent">'.$objp->comments.'</textarea>';
 									print '</td>';
 
-									// Sélection TVA
+									// VAT
 									print '<td style="text-align:right;">';
-									print $form->load_tva('fk_c_tva', (isset($_POST["fk_c_tva"])?$_POST["fk_c_tva"]:$objp->tva_taux), $mysoc, '');
+									print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$objp->vatrate), $mysoc, '');
 									print '</td>';
 
-									// Prix unitaire
+									// Unit price
 									print '<td style="text-align:right;">';
 									print '<input type="text" size="6" name="value_unit" value="'.$objp->value_unit.'" />';
 									print '</td>';
 
-									// Quantité
+									// Quantity
 									print '<td style="text-align:right;">';
 									print '<input type="text" size="4" name="qty" value="'.$objp->qty.'" />';
 									print '</td>';
@@ -1712,7 +1713,7 @@ else
 						print '<td style="text-align:center;"></td>';
 						print '</tr>';
 
-						print '<tr>';
+						print '<tr '.$bc[true].'>';
 
 						// Select date
 						print '<td style="text-align:center;">';
@@ -1744,7 +1745,7 @@ else
 						print '</select>';
 						print '</td>';
 
-						// Prix unitaire
+						// Unit price
 						print '<td style="text-align:right;">';
 						print '<input type="text" size="6" name="value_unit" value="'.GETPOST('value_unit').'">';
 						print '</td>';
@@ -1805,7 +1806,7 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if ($object->fk_user_author == $user->id)
 		{
-			// Modifier
+			// Modify
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
 			// Validate
@@ -1816,7 +1817,7 @@ if ($action != 'create' && $action != 'edit')
 
 			if ($user->rights->expensereport->supprimer)
 			{
-				// Supprimer
+				// Delete
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
@@ -1831,7 +1832,7 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
-			// Modifier
+			// Modify
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
 			// Brouillonner (le statut refusée est identique à brouillon)
@@ -1841,7 +1842,7 @@ if ($action != 'create' && $action != 'edit')
 
 			if ($user->rights->expensereport->supprimer)
 			{
-				// Supprimer
+				// Delete
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
@@ -1874,9 +1875,9 @@ if ($action != 'create' && $action != 'edit')
 	{
 		//if($object->fk_user_validator==$user->id)
 		//{
-			// Valider
+			// Validate
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Approve').'</a>';
-			// Refuser
+			// Deny
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$id.'">'.$langs->trans('Deny').'</a>';
 		//}
 
@@ -1888,7 +1889,7 @@ if ($action != 'create' && $action != 'edit')
 
 		if($user->rights->expensereport->supprimer)
 		{
-			// Supprimer
+			// Delete
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
@@ -1899,7 +1900,7 @@ if ($action != 'create' && $action != 'edit')
 	*/
 	if ($user->rights->expensereport->to_paid && $object->fk_statut == 5)
 	{
-		// Payer
+		// Pay
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$id.'">'.$langs->trans('TO_PAID').'</a>';
 
 		// Cancel
@@ -1910,7 +1911,7 @@ if ($action != 'create' && $action != 'edit')
 
 		if($user->rights->expensereport->supprimer)
 		{
-			// Supprimer
+			// Delete
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
@@ -1922,11 +1923,11 @@ if ($action != 'create' && $action != 'edit')
 	*/
 	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_statut==6)
 	{
-		// Annuler
+		// Cancel
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
 		if($user->rights->expensereport->supprimer)
 		{
-			// Supprimer
+			// Delete
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
@@ -1944,7 +1945,7 @@ if ($action != 'create' && $action != 'edit')
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('ReOpen').'</a>';
 		}
 
-		// Supprimer
+		// Delete
 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 
 	}
@@ -1959,7 +1960,7 @@ print '</div>';
 print '<div style="width:50%">';
 
 /*
- * Documents generes
+ * Generate documents
  */
 if($user->rights->expensereport->export && $object->fk_statut>0 && $action != 'edit')
 {

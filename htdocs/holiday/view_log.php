@@ -88,8 +88,8 @@ foreach($cp->logs as $logs_CP)
    	print '<td>'.$user_action->getNomUrl(1).'</td>';
    	print '<td>'.$user_update->getNomUrl(1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
-   	print '<td style="text-align: right;">'.$logs_CP['prev_solde'].' '.$langs->trans('days').'</td>';
-   	print '<td style="text-align: right;">'.$logs_CP['new_solde'].' '.$langs->trans('days').'</td>';
+   	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],8).' '.$langs->trans('days').'</td>';
+   	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],8).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";
 
 }

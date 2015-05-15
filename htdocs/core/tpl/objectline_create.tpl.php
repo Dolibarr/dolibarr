@@ -583,8 +583,8 @@ function setforfree() {
 	jQuery("#idprod").val('');
 	jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
 	jQuery("#search_idprodfournprice").val('');
-	jQuery("#prod_entry_mode_free").attr('checked',true);
-	jQuery("#prod_entry_mode_predef").attr('checked',false);
+	jQuery("#prod_entry_mode_free").prop('checked',true);
+	jQuery("#prod_entry_mode_predef").prop('checked',false);
 	jQuery("#price_ht").show();
 	jQuery("#price_ttc").show();	// May no exists
 	jQuery("#tva_tx").show();
@@ -601,8 +601,8 @@ function setforfree() {
 }
 function setforpredef() {
 	jQuery("#select_type").val(-1);
-	jQuery("#prod_entry_mode_free").attr('checked',false);
-	jQuery("#prod_entry_mode_predef").attr('checked',true);
+	jQuery("#prod_entry_mode_free").prop('checked',false);
+	jQuery("#prod_entry_mode_predef").prop('checked',true);
 	jQuery("#price_ht").hide();
 	jQuery("#title_up_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Alexandre Spangaro	  	<alexandre.spangaro@gmail.com>
@@ -64,6 +64,7 @@ $hookmanager->initHooks(array('doncard','globalcard'));
 /*
  * Actions
  */
+
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -227,6 +228,7 @@ if ($action == 'set_paid')
 /*
  * Build doc
  */
+
 if ($action == 'builddoc')
 {
 	$object = new Don($db);
@@ -265,21 +267,17 @@ $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Donation card in create mode                                               */
-/*                                                                            */
-/* ************************************************************************** */
-
 if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("AddDonation"));
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="border" width="100%">';
-
 	print '<input type="hidden" name="action" value="add">';
+	
+	dol_fiche_head('');
+	
+	print '<table class="border" width="100%">';
 
     $nbrows=11;
     if (! empty($conf->projet->enabled)) $nbrows++;
@@ -343,7 +341,7 @@ if ($action == 'create')
     	$formproject=new FormProjets($db);
     	
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $formproject->select_projects(-1, GETPOST("fk_projet"),'fk_projet', 0, 1, 0, 1);
+        $formproject->select_projects(-1, GETPOST("fk_projet"),'fk_projet', 0, 0, 1, 1);
 		print "</td></tr>\n";
     }
 
@@ -356,7 +354,11 @@ if ($action == 'create')
     }
 	
 	print "</table>\n";
-	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	
+	dol_fiche_end();
+	
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+
 	print "</form>\n";
 }
 

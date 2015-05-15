@@ -25,8 +25,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentSocialContribution
- *		\brief      Class to manage payments of social contributions
+/**
+ *	Class to manage payments of social contributions
  */
 class PaymentSocialContribution extends CommonObject
 {

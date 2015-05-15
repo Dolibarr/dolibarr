@@ -85,10 +85,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 
-	/*
-	 *
-	 *
-	 */
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
@@ -98,25 +94,26 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<tr><td>'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$acct->label.'</td></tr>';
 
 	print '</table>';
 
-	print '<br>';
+	dol_fiche_end();
+	
 
 	$solde = $acct->solde(0);
 
 	/*
 	 * Affiche tableau des echeances a venir
 	 */
-	print '<table class="notopnoleftnoright" width="100% border="1">';
+	print '<table class="noborder centpercent">';
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
@@ -134,13 +131,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
-	print '<td align="right" nowrap>'.price($solde).'</td>';
+	print '<td align="right" class="nowrap">'.price($solde).'</td>';
 	print '</tr>';
 
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="right" nowrap>&nbsp;</td>';
+	print '<td align="right" class="nowrap">&nbsp;</td>';
 	print '</tr>';
 
 
@@ -330,7 +327,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$var=!$var;
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$acct->currency_code.')</td>';
-	print '<td align="right" nowrap>'.price($solde, 0, $langs, 0, 0, -1, $acct->currency_code).'</td>';
+	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $acct->currency_code).'</td>';
 	print '</tr>';
 
 	print "</table>";

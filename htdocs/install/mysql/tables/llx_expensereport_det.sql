@@ -28,7 +28,7 @@ CREATE TABLE llx_expensereport_det
    qty real NOT NULL,
    value_unit real NOT NULL,
    remise_percent real,
-   tva_tx						double(6,3),						    -- Vat rat
+   tva_tx						double(6,3),						    -- Vat rate
    localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
    localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
    localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate

@@ -119,7 +119,8 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK1b='230,232,232';   // vmenu (not menu)
     $conf->global->THEME_ELDY_VERMENU_BACK2='240,240,240';
-    $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
+    $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays TO MATCH ELDY
+    //$conf->global->THEME_ELDY_BACKTITLE1='240,240,240';       // title of arrays TO MATCH BOOTSTRAP
     $conf->global->THEME_ELDY_BACKTITLE2='230,230,230';
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
     $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
@@ -438,6 +439,9 @@ textarea.centpercent {
 {
 	border-right: 1px solid #DDD;
 }
+#formuserfile {
+	margin-top: 4px;
+}
 #formuserfile_link {
 	margin-left: 1px;
 }
@@ -557,8 +561,20 @@ margin : 0px auto;
 <?php
 $minwidthtmenu=66;
 $heightmenu=46;			/* height of top menu, part with image */
-$heightmenu2=46;        /* height of top menu, ârt with login  */
+$heightmenu2=48;        /* height of top menu, part with login  */
 ?>
+
+div#id-top {
+	height: <?php print ($heightmenu2); ?>px;
+	background: rgb(<?php echo $colorbackhmenu1 ?>);
+
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
+}
 
 div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
@@ -566,14 +582,6 @@ div#tmenu_tooltip {
 <?php } else { ?>
 	height: <?php print ($heightmenu2+1); ?>px;
 	padding-<?php echo $right; ?>: 100px;
-	background: <?php echo $colorbackvmenu; ?>;
-	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
-	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
-	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(128,128,128,.3) 100%);
-	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(128,128,128,.3)) );
 <?php } ?>
 }
 
@@ -630,7 +638,7 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
+	/* box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important; */
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -921,6 +929,9 @@ div.login_block {
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+div.login_block a {
+	color: #fff;
 }
 div.login_block table {
 	display: inline;
@@ -1548,7 +1559,7 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
 
-/* Preapre for bootstrap look
+/* Prepare for bootstrap look
 .butAction, .butActionDelete, .butActionRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
@@ -1680,8 +1691,15 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 .border tbody tr, .border tbody tr td {
 	height: 20px;
 }
-div.tabBar table.border tr {
-	height: 20px;
+div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	height: 24px;
+}
+div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
+	vertical-align: middle;
+}
+div.tabBar .tdtop {
+    vertical-align: top;
+	padding-top: 6px;
 }
 
 table.border td, div.border div div.tagtd {
@@ -1712,6 +1730,10 @@ table.noborder, table.formdoc, div.noborder {
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
+
+	border-top-width: 1px;
+	border-top-color: #CCC;
+	border-top-style: solid;
 
 	border-right-width: 1px;
 	border-right-color: #CCC;
@@ -1759,7 +1781,7 @@ table.nobordernopadding tr {
 }
 table.nobordernopadding tr td {
 	border: 0px;
-	padding: 0 3px 0 0 !important;
+	padding: 0 3px 0 0;
 }
 table.border tr td table.nobordernopadding tr td {
 	padding-top: 0px;
@@ -1780,6 +1802,10 @@ table.liste {
 
 	border-collapse: collapse;
 	border-top-color: #FEFEFE;
+
+	border-top-width: 1px;
+	border-top-color: #CCC;
+	border-top-style: solid;
 
 	border-right-width: 1px;
 	border-right-color: #CCC;
@@ -1809,6 +1835,85 @@ table.liste td {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
+
+/* Pagination */
+
+div.pagination a {
+	font-weight: normal;
+}
+div.pagination ul, div.pagination li
+{
+  list-style: none;
+  display: inline-block;
+  padding-left: 0px;
+}
+
+div.pagination li {
+  display: inline;
+}
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  border-radius: 4px;
+}
+
+div.pagination li a,
+div.pagination li span {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #000;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+div.pagination li:first-child a,
+div.pagination li:first-child span {
+  margin-left: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+div.pagination li:last-child a,
+div.pagination li:last-child span {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+div.pagination li a:hover,
+div.pagination li span:hover,
+div.pagination li a:focus,
+div.pagination li span:focus {
+  color: #000;
+  background-color: #eee;
+  border-color: #ddd;
+}
+div.pagination li .active a,
+div.pagination li .active span,
+div.pagination li .active a:hover,
+div.pagination li .active span:hover,
+div.pagination li .active a:focus,
+div.pagination li .active span:focus {
+  z-index: 2;
+  color: #fff;
+  cursor: default;
+  background-color: <?php $colorbackhmenu1 ?>;
+  border-color: #337ab7;
+}
+div.pagination .disabled span,
+div.pagination .disabled span:hover,
+div.pagination .disabled span:focus,
+div.pagination .disabled a,
+div.pagination .disabled a:hover,
+div.pagination .disabled a:focus {
+  color: #777;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #ddd;
+}
+div.pagination li .active {
+  text-decoration: underline;
+}
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {
@@ -1856,7 +1961,9 @@ table.liste td {
 
 	background: #ffffff;
 }
-
+#GanttChartDIV {
+	background: #ffffff;
+}
 
 .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
 	font-family: <?php print $fontlist ?>;
@@ -1887,6 +1994,22 @@ div.liste_titre .tagtd {
 }
 div.liste_titre {
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
+
+	padding-left: 3px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+
+	border-right-width: 1px;
+	border-right-color: #CCC;
+	border-right-style: solid;
+
+	border-left-width: 1px;
+	border-left-color: #CCC;
+	border-left-style: solid;
+
+	border-top-width: 1px;
+	border-top-color: #CCC;
+	border-top-style: solid;
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -1894,15 +2017,19 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 }
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
-    background: rgb(<?php echo $colorbacktitle1; ?>);
-    background-repeat: repeat-x;
+    /* TO MATCH BOOTSTRAP */
+	/*background: #ddd;
+	color: #000 !important;*/
 
+	/* TO MATCH ELDY */
+	background: rgb(<?php echo $colorbacktitle1; ?>);
 	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-    font-weight: bold;
+
+	font-weight: bold;
 
     color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>;
@@ -1917,7 +2044,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 {
     font-family: <?php print $fontlist ?>;
     font-weight: bold;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+    /* text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>; */
     vertical-align: middle;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
@@ -1927,16 +2054,13 @@ tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, fo
 	text-shadow: none !important;
 	color: #<?php echo $colortexttitle; ?>;
 }
-div.liste_titre {
-	padding-left: 3px;
-}
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
     text-decoration: underline;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+	/* text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>; */
 }
 input.liste_titre {
     background: transparent;
@@ -2014,18 +2138,21 @@ div.tabBar .noborder {
 
 tr.box_titre {
     height: 26px;
-    background: rgb(<?php echo $colorbacktitle1; ?>);
-    background-repeat: repeat-x;
 
-	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
+    /* TO MATCH BOOTSTRAP */
+	/*background: #ddd;
+	color: #000 !important;*/
 
-    color: #<?php echo $colortexttitle; ?>;
-	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+	/* TO MATCH ELDY */
+	background: rgb(<?php echo $colorbacktitle1; ?>);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+
+	color: #<?php echo $colortexttitle; ?>;
+	// text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
     font-family: <?php print $fontlist ?>, sans-serif;
     font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
@@ -2269,24 +2396,25 @@ table.valid {
 /* ============================================================================== */
 
 #tooltip {
-position: absolute;
-width: <?php print dol_size(450,'width'); ?>px;
-border-top: solid 1px #BBBBBB;
-border-<?php print $left; ?>: solid 1px #BBBBBB;
-border-<?php print $right; ?>: solid 1px #444444;
-border-bottom: solid 1px #444444;
-padding: 2px;
-z-index: 3000;
-background-color: #EFCFAA;
-opacity: 1;
--moz-border-radius:6px;
--webkit-border-radius: 6px;
-border-radius: 6px;
+	position: absolute;
+	width: <?php print dol_size(450,'width'); ?>px;
+	border-top: solid 1px #BBBBBB;
+	border-<?php print $left; ?>: solid 1px #BBBBBB;
+	border-<?php print $right; ?>: solid 1px #444444;
+	border-bottom: solid 1px #444444;
+	padding: 2px;
+	z-index: 3000;
+	background-color: #FFF;
+	opacity: 1;
+	-moz-border-radius:6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
 }
 #tiptip_content {
-    background-color: rgb(252,248,246);
-	background-color: rgba(252,248,246,0.95);
+	background-color: rgb(255,255,255);
+	background-color: rgba(255,255,255,0.95);
 	line-height: 1.4em;
+	min-width: 200px;
 }
 
 /* ============================================================================== */

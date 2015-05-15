@@ -106,7 +106,7 @@ window.onload = function()
 							<tr>
 								<td><?php echo img_picto_common('','treemenu/folder.gif','width="16" height="16"'); ?></td>
 								<td>&nbsp;</td>
-								<td id="tdName" width="100%" nowrap class="ActualFolder">/</td>
+								<td id="tdName" width="100%" class="ActualFolder nowrap">/</td>
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>
 								<td>&nbsp;</td>

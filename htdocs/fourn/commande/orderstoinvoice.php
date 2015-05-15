@@ -386,10 +386,10 @@ if (($action != 'create' && $action != 'add') && !$error) {
 <script type="text/javascript">
 		jQuery(document).ready(function() {
 		jQuery("#checkall").click(function() {
-			jQuery(".checkformerge").attr('checked', true);
+			jQuery(".checkformerge").prop('checked', true);
 		});
 		jQuery("#checknone").click(function() {
-			jQuery(".checkformerge").attr('checked', false);
+			jQuery(".checkformerge").prop('checked', false);
 		});
 	});
 	</script>

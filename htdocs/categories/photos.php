@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Jean-François Ferry  <jfefe@aternatik.fr>
@@ -128,7 +128,7 @@ if ($object->id)
 	// Description
 	print '<tr><td width="20%" class="notopnoleft">';
 	print $langs->trans("Description").'</td><td>';
-	print nl2br($object->description);
+	print dol_htmlentitiesbr($object->description);
 	print '</td></tr>';
 
 	// Visibility

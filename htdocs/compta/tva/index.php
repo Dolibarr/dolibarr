@@ -93,7 +93,7 @@ function pt ($db, $sql, $date)
 
             $i++;
         }
-        print '<tr class="liste_total"><td align="right">'.$langs->trans("Total")." :</td><td nowrap=\"nowrap\" align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
+        print '<tr class="liste_total"><td align="right">'.$langs->trans("Total")." :</td><td class=\"nowrap\" align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
 
         print "</table>";
         $db->free($result);
@@ -216,7 +216,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
     }
 }
-print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td nowrap align="right">'.price($total).'</td>';
+print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td class="nowrap" align="right">'.price($total).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 

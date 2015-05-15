@@ -78,6 +78,15 @@ ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
 
 ALTER TABLE llx_payment_salary ADD COLUMN salary real after datev;
 
+ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_ref (num_payment);
+ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_user (fk_user, entity);
+ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_datep (datep);
+ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_datesp (datesp);
+ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_dateep (dateep);
+
+ALTER TABLE llx_payment_salary ADD CONSTRAINT fk_payment_salary_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+
+
 UPDATE llx_projet_task_time SET task_datehour = task_date where task_datehour IS NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN task_date_withhour integer DEFAULT 0 after task_datehour;
 
@@ -235,8 +244,8 @@ CREATE TABLE llx_expensereport_det
    rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
-   fk_projet integer NOT NULL,
-   fk_c_tva integer NOT NULL,
+   fk_projet integer,
+   fk_c_tva integer,
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
@@ -258,6 +267,9 @@ CREATE TABLE llx_expensereport_det
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14)
 ) ENGINE=innodb;
+
+ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_projet integer NULL;
+ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_c_tva integer NULL;
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);

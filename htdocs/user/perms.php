@@ -64,7 +64,7 @@ if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user-
 	$canreaduser=1;
 }
 
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 

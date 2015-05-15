@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
+$cancel=GETPOST('cancel');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
@@ -48,7 +49,7 @@ $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 if ($id > 0 || ! empty($ref))
 {
@@ -85,7 +86,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
 	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 
-	if (empty($_POST["cancel"]))
+	if (! $cancel)
 	{
 		if (empty($label))
 		{
@@ -271,9 +272,10 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="createtask">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
+
+	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
 
@@ -342,7 +344,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print '</table>';
 
-	print '<div align="center"><br>';
+	dol_fiche_end();
+
+	print '<div align="center">';
 	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
