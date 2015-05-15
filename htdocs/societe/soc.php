@@ -1787,6 +1787,20 @@ else
             print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
         }
 
+	    if ($action == 'merge') {
+		    $form = new Form($db);
+
+		    $options = array(
+			    array(
+				    'label' => $langs->trans('MergeOriginThirdparty'),
+				    'type' => 'other',
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1)
+			    )
+		    );
+
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("MergeThirdparties"),$langs->trans("ConfirmMergeThirdparties"),"confirm_merge",$options,'',1);
+	    }
+
         dol_htmloutput_errors($error,$errors);
 
         $showlogo=$object->logo;
@@ -2233,6 +2247,8 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("Merge")).'">'.$langs->trans('Merge').'</a></div>';
+
 	        if (! empty($object->email))
 	        {
 	        	$langs->load("mails");

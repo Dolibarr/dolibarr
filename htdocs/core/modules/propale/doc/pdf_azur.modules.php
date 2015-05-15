@@ -645,6 +645,9 @@ class pdf_azur extends ModelePDFPropales
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 				*/
+				
+				// Customer signature area
+				$posy=$this->_signature_area($pdf, $object, $posy, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -1529,5 +1532,35 @@ class pdf_azur extends ModelePDFPropales
 		return pdf_pagefoot($pdf,$outputlangs,'PROPALE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
+	/**
+	 *	Show area for the customer to sign
+	 *
+	 *	@param	PDF			$pdf            Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@return int							Position pour suite
+	 */
+	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	{
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$tab_top = $posy + 4;
+		$tab_hl = 4;
+		$pdf->SetFont('','', $default_font_size - 1);
+
+		$posx = 120;
+		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
+		$useborder=0;
+		$index = 0;
+		// Total HT
+		$pdf->SetFillColor(255,255,255);
+		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
+		
+		$pdf->SetXY($posx, $tab_top + $tab_hl);
+		$pdf->MultiCell($largcol, $tab_hl*6, '', 1, 'R');
+		
+		return ($tab_hl*7);
+	}
 }
 

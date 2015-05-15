@@ -61,8 +61,9 @@ else
 
 <h1>
 This page is a sample of page using tables. It is designed to make test with<br>
-- css (add parameter &theme=newthem to test another theme or edit css of current theme)<br>
+- css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
 - jmobile (add parameter dol_use_jmobile=1&dol_optimize_smallscreen=1 to enable view with jmobile)<br>
+- no javascript / usage for bind people (add parameter nojs=1 to force disable javascript)<br>
 - dataTables<br>
 - tablednd<br>
 </h1>
