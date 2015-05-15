@@ -186,12 +186,14 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br>';
+dol_fiche_end();
+
 
 // Affiche tableau
-print '<table class="notopnoleftnoright" width="100%">';
+print '<div class="floatright">'.$link.'</div>';
 
-print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$link.'</td></tr>';
+
+print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -245,16 +247,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print "</tr>\n";
 
-// Ligne vierge
-print '<tr><td>&nbsp;</td>';
-$nbcol=0;
-for ($annee = $year_start ; $annee <= $year_end ; $annee++)
-{
-	$nbcol+=2;
-}
-print "</tr>\n";
+print "</table>";
 
-// Solde actuel
+
+print '<br>';
+
+
+// Current balance
 $balance=0;
 
 $sql = "SELECT SUM(b.amount) as total";
@@ -274,6 +273,9 @@ if ($resql)
 else {
 	dol_print_error($db);
 }
+
+print '<table class="noborder" width="100%">';
+
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';
 print "</tr>\n";
@@ -496,9 +498,9 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<div class="fichecenter"><div class="fichehalfleft"><div class="center">';
+	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">';
 	print $show1;
-	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div class="center">';
+	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div align="center">';
 	print $show2;
 	print '</div></div></div></div>';
 	print '<div style="clear:both"></div>';
