@@ -235,8 +235,8 @@ CREATE TABLE llx_expensereport_det
    rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
-   fk_projet integer NOT NULL,
-   fk_c_tva integer NOT NULL,
+   fk_projet integer,
+   fk_c_tva integer,
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
@@ -258,6 +258,9 @@ CREATE TABLE llx_expensereport_det
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14)
 ) ENGINE=innodb;
+
+ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_projet integer NULL;
+ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_c_tva integer NULL;
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);

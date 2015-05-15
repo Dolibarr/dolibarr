@@ -439,6 +439,9 @@ textarea.centpercent {
 {
 	border-right: 1px solid #DDD;
 }
+#formuserfile {
+	margin-top: 4px;
+}
 #formuserfile_link {
 	margin-left: 1px;
 }

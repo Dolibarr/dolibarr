@@ -829,7 +829,7 @@ if ($action == "addline")
 	$object_ligne->fk_c_type_fees = GETPOST('fk_c_type_fees');
 
 	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
-	$object_ligne->vatrate = GETPOST('vatrate');
+	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 
 	$object_ligne->fk_projet = $fk_projet;
 
@@ -877,7 +877,7 @@ if ($action == "addline")
 		$type = 0;	// TODO What if service
 		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type);
 
-		$object_ligne->vatrate = GETPOST('vatrate');
+		$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 		$object_ligne->total_ttc = $tmp[2];
 		$object_ligne->total_ht = $tmp[0];
 		$object_ligne->total_tva = $tmp[1];
@@ -905,11 +905,11 @@ if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 	$object->fetch($id);
 
 	$object_ligne = new ExpenseReportLine($db);
-	$object_ligne->fetch($_GET["rowid"]);
+	$object_ligne->fetch(GETPOST("rowid"));
 	$total_ht = $object_ligne->total_ht;
 	$total_tva = $object_ligne->total_tva;
 
-	$result=$object->deleteline($_GET["rowid"]);
+	$result=$object->deleteline(GETPOST("rowid"));
 	if ($result >= 0)
 	{
 		if ($result > 0)
@@ -950,11 +950,12 @@ if ($action == "updateligne" )
 	$rowid = $_POST['rowid'];
 	$type_fees_id = GETPOST('fk_c_type_fees');
 	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
-	$object_ligne->vatrate = GETPOST('vatrate');
+	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 	$projet_id = $fk_projet;
 	$comments = GETPOST('comments');
 	$qty = GETPOST('qty');
 	$value_unit = GETPOST('value_unit');
+	$vatrate = GETPOST('vatrate');
 
 	if (! GETPOST('fk_c_type_fees') > 0)
 	{
@@ -971,7 +972,7 @@ if ($action == "updateligne" )
 
 	if (! $error)
 	{
-		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $c_tva, $comments, $qty, $value_unit, $date, $object_id);
+		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id);
 		if ($result >= 0)
 		{
 			if ($result > 0)
@@ -994,8 +995,9 @@ if ($action == "updateligne" )
 				}
 			}
 
-			$object->recalculer($object_id);
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object_id);
+			$result = $object->recalculer($id);
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
 		else
@@ -1369,7 +1371,7 @@ else
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&amp;rowid=".$_GET['rowid'],$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 					if ($ret == 'html') print '<br>';
 				}
 
@@ -1635,7 +1637,7 @@ else
 
 									// Select project
 									print '<td>';
-									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 0, 1);
+									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
 									print '</td>';
 
 									// Select type
@@ -1711,7 +1713,7 @@ else
 						print '<td style="text-align:center;"></td>';
 						print '</tr>';
 
-						print '<tr>';
+						print '<tr '.$bc[true].'>';
 
 						// Select date
 						print '<td style="text-align:center;">';

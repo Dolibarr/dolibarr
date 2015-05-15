@@ -282,7 +282,7 @@ class ExpenseReport extends CommonObject
 	 */
 	function fetch($id, $ref='')
 	{
-		global $conf,$db;
+		global $conf;
 
 		$sql = "SELECT d.rowid, d.ref, d.note_public, d.note_private,";									// DEFAULT
 		$sql.= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; 				// ACTIONS
@@ -298,10 +298,10 @@ class ExpenseReport extends CommonObject
 		$sql.= $restrict;
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-		$result = $db->query($sql) ;
-		if ($result)
+		$resql = $this->db->query($sql) ;
+		if ($resql)
 		{
-			$obj = $db->fetch_object($result);
+			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
 				$this->id       	= $obj->rowid;
@@ -367,7 +367,7 @@ class ExpenseReport extends CommonObject
 
 				$result=$this->fetch_lines();
 
-				return 1;
+				return $result;
 			}
 			else
 			{
@@ -376,7 +376,7 @@ class ExpenseReport extends CommonObject
 		}
 		else
 		{
-			$this->error=$db->lasterror();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -663,6 +663,7 @@ class ExpenseReport extends CommonObject
 
 	/**
 	 * recalculer
+	 * TODO Replace this with call to update_price if not already done
 	 *
 	 * @param 	int			$id		Id of expense report
 	 * @return 	int					<0 if KO, >0 if OK
@@ -733,14 +734,15 @@ class ExpenseReport extends CommonObject
 		$sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
 
 		dol_syslog('ExpenseReport::fetch_lines sql='.$sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows($result);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
 			{
-				$objp = $this->db->fetch_object($result);
+				$objp = $this->db->fetch_object($resql);
+
 				$deplig = new ExpenseReportLine($this->db);
 
 				$deplig->rowid	    	= $objp->rowid;
@@ -769,13 +771,13 @@ class ExpenseReport extends CommonObject
 
 				$i++;
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 			return 1;
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog('ExpenseReport::fetch_lines: Error '.$this->error,LOG_ERR);
+			dol_syslog('ExpenseReport::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}
@@ -1198,30 +1200,36 @@ class ExpenseReport extends CommonObject
 	}
 
 
-
-	function updateline($rowid, $type_fees_id, $projet_id, $c_tva, $comments, $qty, $value_unit, $date, $expensereport_id)
+	/**
+	 * updateline
+	 *
+	 * @param 	int			$rowid					Line to edit
+	 * @param 	int			$type_fees_id			Type payment
+	 * @param 	int			$projet_id				Project id
+	 * @param 	double		$vatrate				Vat rate
+	 * @param 	string		$comments				Description
+	 * @param 	real		$qty					Qty
+	 * @param 	double		$value_unit				Value init
+	 * @param 	int			$date					Date
+	 * @param 	int			$expensereport_id		Expense report id
+	 * @return	int									<0 if KO, >0 if OK
+	 */
+	function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id)
 	{
+		global $user;
+
 		if ($this->fk_statut==0 || $this->fk_statut==99)
 		{
 			$this->db->begin();
 
-			// Select du taux de tva par rapport au code
-			$sql = "SELECT t.taux as vatrate";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
-			$sql.= " WHERE t.rowid = ".$c_tva;
-			$result = $this->db->query($sql);
-			$objp_tva = $this->db->fetch_object($result);
-
 			// calcul de tous les totaux de la ligne
-			$total_ttc	= $qty*$value_unit;
-			$total_ttc 	= number_format($total_ttc,2,'.','');
+			$total_ttc	= price2num($qty*$value_unit, 'MT');
 
-			$tx_tva = $objp_tva->vatrate/100;
+			$tx_tva = $vatrate / 100;
 			$tx_tva	= $tx_tva + 1;
-			$total_ht 	= $total_ttc/$tx_tva;
-			$total_ht 	= number_format($total_ht,2,'.','');
+			$total_ht 	= price2num($total_ttc/$tx_tva, 'MT');
 
-			$total_tva = $total_ttc - $total_ht;
+			$total_tva = price2num($total_ttc - $total_ht, 'MT');
 			// fin calculs
 
 			$ligne = new ExpenseReportLine($this->db);
@@ -1230,15 +1238,14 @@ class ExpenseReport extends CommonObject
 			$ligne->value_unit 		= $value_unit;
 			$ligne->date			= $date;
 
-			$ligne->fk_expensereport 	= $expensereport_id;
+			$ligne->fk_expensereport= $expensereport_id;
 			$ligne->fk_c_type_fees 	= $type_fees_id;
 			$ligne->fk_projet		= $projet_id;
-			$ligne->fk_c_tva		= $c_tva;
 
 			$ligne->total_ht		= $total_ht;
 			$ligne->total_tva		= $total_tva;
 			$ligne->total_ttc		= $total_ttc;
-			$ligne->vatrate			= $objp_tva->vatrate;
+			$ligne->vatrate			= price2num($vatrate);
 			$ligne->rowid			= $rowid;
 
 			// Select des infos sur le type fees
@@ -1259,16 +1266,19 @@ class ExpenseReport extends CommonObject
 			$ligne->projet_ref			= $objp_projet->ref_projet;
 			$ligne->projet_title		= $objp_projet->title_projet;
 
-			$result = $ligne->update();
-			if ($result > 0):
-			$this->db->commit();
-			return 1;
-			else:
-			$this->error=$ligne->error;
-			$this->db->rollback();
-			return -2;
-			endif;
-
+			$result = $ligne->update($user);
+			if ($result > 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$ligne->error;
+				$this->errors=$ligne->errors;
+				$this->db->rollback();
+				return -2;
+			}
 		}
 	}
 
@@ -1566,15 +1576,17 @@ class ExpenseReportLine
 		$this->comments=trim($this->comments);
 		if (!$this->value_unit_HT) $this->value_unit_HT=0;
 		$this->qty = price2num($this->qty);
+		$this->vatrate = price2num($this->vatrate);
 
 		$this->db->begin();
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
 		$sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-		$sql.= ' fk_c_tva, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
+		$sql.= ' fk_c_tva, tva_tx, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
 		$sql.= " VALUES (".$this->fk_expensereport.",";
 		$sql.= " ".$this->fk_c_type_fees.",";
 		$sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
+		$sql.= " ".($this->fk_c_tva?$this->fk_c_tva:"null").",";
 		$sql.= " ".$this->vatrate.",";
 		$sql.= " '".$this->db->escape($this->comments)."',";
 		$sql.= " ".$this->qty.",";
@@ -1631,6 +1643,7 @@ class ExpenseReportLine
 
 		// Clean parameters
 		$this->comments=trim($this->comments);
+		$this->vatrate = price2num($this->vatrate);
 
 		$this->db->begin();
 
@@ -1639,14 +1652,11 @@ class ExpenseReportLine
 		$sql.= " comments='".$this->db->escape($this->comments)."'";
 		$sql.= ",value_unit=".$this->value_unit."";
 		$sql.= ",qty=".$this->qty."";
-		if ($this->date) {
-			$sql.= ",date='".$this->date."'";
-		}
-		else { $sql.=',date=null';
-		}
+		$sql.= ",date='".$this->db->idate($this->date)."'";
 		$sql.= ",total_ht=".$this->total_ht."";
 		$sql.= ",total_tva=".$this->total_tva."";
 		$sql.= ",total_ttc=".$this->total_ttc."";
+		$sql.= ",tva_tx=".$this->vatrate;
 		if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->fk_c_type_fees;
 		else $sql.= ",fk_c_type_fees=null";
 		if ($this->fk_projet) $sql.= ",fk_projet=".$this->fk_projet;
@@ -1660,15 +1670,29 @@ class ExpenseReportLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$tmpparent=new ExpenseReport($db);
-			$tmpparent->fetch($this->fk_expensereport);
-			$result = $tmpparent->update_price();
-			if ($result < 0)
+			$tmpparent=new ExpenseReport($this->db);
+			$result = $tmpparent->fetch($this->fk_expensereport);
+			if ($result > 0)
+			{
+				$result = $tmpparent->update_price();
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $tmpparent->error;
+					$this->errors = $tmpparent->errors;
+				}
+			}
+			else
 			{
 				$error++;
 				$this->error = $tmpparent->error;
 				$this->errors = $tmpparent->errors;
 			}
+		}
+		else
+		{
+			$error++;
+			dol_print_error($this->db);
 		}
 
 		if (! $error)
