@@ -313,13 +313,13 @@ if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<tr><td>'.$langs->trans("Label").'</td>';
 	print '<td colspan="3">'.$object->label.'</td></tr>';
 
 	print '</table>';
@@ -776,11 +776,11 @@ if ($id > 0 || ! empty($ref))
 				{
 					if ($total >= 0)
 					{
-						print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
+						print '<td align="right" class="nowrap">&nbsp;'.price($total).'</td>';
 					}
 					else
 					{
-						print '<td align="right" class="error" nowrap>&nbsp;'.price($total).'</td>';
+						print '<td align="right" class="error nowrap">&nbsp;'.price($total).'</td>';
 					}
 				}
 				else
@@ -791,7 +791,7 @@ if ($id > 0 || ! empty($ref))
 				// Transaction reconciliated or edit link
 				if ($objp->rappro && $object->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
 				{
-					print '<td align="center" nowrap>';
+					print '<td align="center" class="nowrap">';
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'&amp;page='.$page.'">';
 					print img_edit();
 					print '</a>';
@@ -844,7 +844,7 @@ if ($id > 0 || ! empty($ref))
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" nowrap><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

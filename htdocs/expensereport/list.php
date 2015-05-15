@@ -177,7 +177,7 @@ if ($resql)
 	if ($search_amount_ht)		$param.="&search_amount_ht=".$search_amount_ht;
 	if ($search_amount_ttc)		$param.="&search_amount_ttc=".$search_amount_ttc;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	
+
 	print_barre_liste($langs->trans("ListTripsAndExpenses"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 	print '<table class="noborder" width="100%">';
@@ -221,9 +221,9 @@ if ($resql)
 
 	// Amount with no taxe
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
-	
+
 	print '<td class="liste_titre">&nbsp;</td>';
-	
+
 	// Amount with all taxes
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
 
@@ -288,7 +288,7 @@ if ($resql)
 		}
 	else
 	{
-		print '<td colspan="9">'.$langs->trans("NoRecordFound").'</td>';
+		print '<tr '.$bc[false].'>'.'<td colspan="9">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 	print "</table>";
 

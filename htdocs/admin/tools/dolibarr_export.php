@@ -96,7 +96,7 @@ jQuery(document).ready(function() {
 	jQuery("#select_sql_compat").click(function() {
 		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
 		{
-			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
+			jQuery("#checkbox_dump_disable-add-locks").prop('checked',true);
 		}
 	});
 

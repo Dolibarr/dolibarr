@@ -487,8 +487,8 @@ jQuery(document).ready(function() {
 
 	function init_needroot()
 	{
-		/*alert(jQuery("#db_create_database").attr("checked")); */
-		if (jQuery("#db_create_database").attr("checked") || jQuery("#db_create_user").attr("checked"))
+		/*alert(jQuery("#db_create_database").prop("checked")); */
+		if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 		{
 			jQuery(".hideroot").show();
 			jQuery(".needroot").removeAttr('disabled');
@@ -496,7 +496,7 @@ jQuery(document).ready(function() {
 		else
 		{
 			jQuery(".hideroot").hide();
-			jQuery(".needroot").attr('disabled','disabled');
+			jQuery(".needroot").prop('disabled', true);
 		}
 	}
 

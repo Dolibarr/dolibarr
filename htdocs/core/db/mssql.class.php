@@ -21,7 +21,7 @@
 
 /**
  *	\file       	htdocs/core/db/mssql.class.php
- *	\brief			Fichier de la classe permettant de gerer une base mssql
+ *	\brief			Fichier de la classe permettant de gerer une base MSSQL
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
@@ -41,7 +41,7 @@ class DoliDBMssql extends DoliDB
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	const VERSIONMIN='2000';
-	//! Resultset of last query
+	/** @var resource Resultset of last query */
 	private $_results;
 
     /**
@@ -57,7 +57,7 @@ class DoliDBMssql extends DoliDB
      */
 	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{
-		global $conf,$langs;
+		global $langs;
 
 		$this->database_user=$user;
         $this->database_host=$host;
@@ -66,8 +66,8 @@ class DoliDBMssql extends DoliDB
 
 		if (! function_exists("mssql_connect"))
 		{
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
 			dol_syslog(get_class($this)."::DoliDBMssql : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
@@ -75,8 +75,8 @@ class DoliDBMssql extends DoliDB
 
 		if (! $host)
 		{
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
@@ -88,14 +88,14 @@ class DoliDBMssql extends DoliDB
 		{
 			// Si client connecte avec charset different de celui de la base Dolibarr
 			// (La base Dolibarr a ete forcee en this->forcecharset a l'install)
-			$this->connected = 1;
-			$this->ok = 1;
+			$this->connected = true;
+			$this->ok = true;
 		}
 		else
 		{
 			// host, login ou password incorrect
-			$this->connected = 0;
-			$this->ok = 0;
+			$this->connected = false;
+			$this->ok = false;
 			$this->error=mssql_get_last_message();
 			dol_syslog(get_class($this)."::DoliDBMssql : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
 		}
@@ -105,15 +105,15 @@ class DoliDBMssql extends DoliDB
 		{
 			if ($this->select_db($name))
 			{
-				$this->database_selected = 1;
+				$this->database_selected = true;
 				$this->database_name = $name;
-				$this->ok = 1;
+				$this->ok = true;
 			}
 			else
 			{
-				$this->database_selected = 0;
+				$this->database_selected = false;
 				$this->database_name = '';
-				$this->ok = 0;
+				$this->ok = false;
 				$this->error=$this->error();
 				dol_syslog(get_class($this)."::DoliDBMssql : Erreur Select_db ".$this->error,LOG_ERR);
 			}
@@ -121,7 +121,7 @@ class DoliDBMssql extends DoliDB
 		else
 		{
 			// Pas de selection de base demandee, ok ou ko
-			$this->database_selected = 0;
+			$this->database_selected = false;
 		}
 
 		return $this->ok;
@@ -157,8 +157,8 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
-	 *	@return		resource			Database access handler
+	 *	@param		int		$port		Port of database server
+	 *	@return		false|resource|true	Database access handler
 	 *	@see		close
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
@@ -212,7 +212,7 @@ class DoliDBMssql extends DoliDB
     /**
      *  Close database connexion
      *
-     *  @return     boolean     True if disconnect successfull, false otherwise
+     *  @return     bool     True if disconnect successfull, false otherwise
      *  @see        connect
      */
     function close()
@@ -220,7 +220,7 @@ class DoliDBMssql extends DoliDB
         if ($this->db)
         {
           if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened,LOG_ERR);
-          $this->connected=0;
+          $this->connected=false;
           return mssql_close($this->db);
         }
         return false;
@@ -230,7 +230,7 @@ class DoliDBMssql extends DoliDB
 	/**
 	 * Start transaction
 	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @return	    bool         true if transaction successfuly opened or already opened, false if error
 	 */
 	function begin()
 	{
@@ -250,7 +250,7 @@ class DoliDBMssql extends DoliDB
 		}
 		else
 		{
-			return 1;
+			return true;
 		}
 	}
 
@@ -258,7 +258,7 @@ class DoliDBMssql extends DoliDB
      * Validate a database transaction
      *
      * @param	string	$log        Add more log to default log line
-     * @return  int         		1 if validation is OK or transaction level no started, 0 if ERROR
+     * @return  bool         		true if validation is OK or transaction level no started, false if ERROR
 	 */
 	function commit($log='')
 	{
@@ -272,25 +272,26 @@ class DoliDBMssql extends DoliDB
 			if ($ret)
 			{
 				dol_syslog("COMMIT Transaction",LOG_DEBUG);
-				return 1;
+				return true;
 			}
 			else
 			{
-				return 0;
+				return false;
 			}
 		}
 		elseif ($this->transaction_opened > 1)
 		{
-			return 1;
-		} else
-		    trigger_error("Commit requested but no transaction remain");
+			return true;
+		}
+		trigger_error("Commit requested but no transaction remain");
+		return false;
 	}
 
 	/**
 	 * Annulation d'une transaction et retour aux anciennes valeurs
 	 *
 	 * @param	string	$log	Add more log to default log line
-	 * @return	int             1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * @return	bool             true si annulation ok ou transaction non ouverte, false en cas d'erreur
 	 */
 	function rollback($log='')
 	{
@@ -305,9 +306,10 @@ class DoliDBMssql extends DoliDB
 		}
 		elseif ($this->transaction_opened > 1)
 		{
-			return 1;
-		} else
-		    trigger_error("Rollback requested but no transaction remain");
+			return true;
+		}
+		trigger_error("Rollback requested but no transaction remain");
+		return false;
 	}
 
 	/**
@@ -317,7 +319,7 @@ class DoliDBMssql extends DoliDB
      *  @param  int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
      *                   		 		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
      *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *  @return resource        		Resultset of answer
+     *  @return false|resource|true		Resultset of answer
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
@@ -459,8 +461,8 @@ class DoliDBMssql extends DoliDB
 	/**
 	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 *	@param	Resultset	$resultset  Curseur de la requete voulue
-	 *	@return	Object					Object result line or false if KO or end of cursor
+	 *	@param	resource	$resultset  Curseur de la requete voulue
+	 *	@return	object|false			Object result line or false if KO or end of cursor
 	 */
 	function fetch_object($resultset)
 	{
@@ -472,8 +474,8 @@ class DoliDBMssql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
-     *	@return	array					Array
+     *	@param	resource	$resultset  Resultset of request
+     *	@return	array|false				Array or false if KO or end of cursor
 	 */
 	function fetch_array($resultset)
 	{
@@ -486,8 +488,8 @@ class DoliDBMssql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
-     *	@return	array					Array
+     *	@param	resource	$resultset  Resultset of request
+     *	@return	array|false				Array or false if KO or end of cursor
 	 */
 	function fetch_row($resultset)
 	{
@@ -499,7 +501,7 @@ class DoliDBMssql extends DoliDB
 	/**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	Resultset	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
      *	@see    affected_rows
 	 */
@@ -513,7 +515,7 @@ class DoliDBMssql extends DoliDB
 	/**
 	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 *	@param	resultset	$resultset   Curseur de la requete voulue
+	 *	@param	resource	$resultset   Curseur de la requete voulue
 	 *	@return int		    Nombre de lignes
 	 *	@see    num_rows
 	 */
@@ -532,10 +534,10 @@ class DoliDBMssql extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  resultset	$resultset   Curseur de la requete voulue
-	 *	@return	void
+	 *	@param  resource	$resultset   Curseur de la requete voulue
+	 *	@return	bool
 	 */
-	function free($resultset=0)
+	function free($resultset=null)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->_results; }
@@ -641,7 +643,7 @@ class DoliDBMssql extends DoliDB
 	 *
 	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
 	 * @param	string	$fieldid	Field name
-	 * @return  int     			Id of row
+	 * @return  int     			Id of row or -1 on error
 	 */
 	function last_insert_id($tab,$fieldid='rowid')
 	{
@@ -662,7 +664,7 @@ class DoliDBMssql extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return return          		XXX(field) or XXX('value') or field or 'value'
+     *  @return string          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -720,7 +722,7 @@ class DoliDBMssql extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	resource				resource defined if OK, null if KO
+	 * 	@return	false|resource|true		resource defined if OK, false if KO
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
@@ -786,11 +788,13 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    string	$type 			Type de la table
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    string	$keys 			Tableau des champs cles noms => valeur
+	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
 	 *	@return	    int						<0 if KO, >=0 if OK
 	 */
-	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
+	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys=null,$fulltext_keys=null,$keys=null)
 	{
+		// FIXME: $fulltext_keys parameter is unused
+
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "create table ".$table."(";
@@ -820,7 +824,7 @@ class DoliDBMssql extends DoliDB
 		if($primary_key != "")
 		$pk = "primary key(".$primary_key.")";
 
-		if($unique_keys != "")
+		if(is_array($unique_keys))
 		{
 			$i = 0;
 			foreach($unique_keys as $key => $value)
@@ -829,7 +833,7 @@ class DoliDBMssql extends DoliDB
 				$i++;
 			}
 		}
-		if($keys != "")
+		if(is_array($keys))
 		{
 			$i = 0;
 			foreach($keys as $key => $value)
@@ -841,9 +845,9 @@ class DoliDBMssql extends DoliDB
 		$sql .= implode(',',$sqlfields);
 		if($primary_key != "")
 		$sql .= ",".$pk;
-		if($unique_keys != "")
+		if(is_array($unique_keys))
 		$sql .= ",".implode(',',$sqluq);
-		if($keys != "")
+		if(is_array($keys))
 		$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
 
@@ -859,7 +863,7 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resource			Resource
+	 *	@return	false|resource|true	Resource
 	 */
 	function DDLDescTable($table,$field="")
 	{
@@ -1047,7 +1051,7 @@ class DoliDBMssql extends DoliDB
 		// FIXME: Dummy method
 		// TODO: Implement
 
-		return '';
+		return array();
 	}
 
 	/**
@@ -1123,7 +1127,7 @@ class DoliDBMssql extends DoliDB
 	 *
 	 * @param      string  $table      Table name which contains fields
 	 * @param      mixed   $fields     String for one field or array of string for multiple field
-	 * @return boolean|multitype:object
+	 * @return false|object
 	 */
 	function GetFieldInformation($table,$fields) {
 	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";

@@ -1018,6 +1018,8 @@ if ($action == 'create')
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+		dol_fiche_head('');
+		
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
@@ -1122,7 +1124,9 @@ if ($action == 'create')
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
-		print '<br><div class="center">';
+		dol_fiche_end();
+		
+		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '</div>';
 
@@ -1130,6 +1134,8 @@ if ($action == 'create')
 	}
 	else
 	{
+		dol_fiche_head('');
+		
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
@@ -1137,7 +1143,9 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		print '<br><div class="center">';
+		dol_fiche_end();
+		
+		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '</div>';

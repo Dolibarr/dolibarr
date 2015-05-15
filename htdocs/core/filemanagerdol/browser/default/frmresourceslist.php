@@ -77,7 +77,7 @@ oListManager.GetFolderRowHtml = function( folderName, folderPath )
 			'<td width="16">' +
 				sLink +
 				'<img alt="" src="images/Folder.gif" width="16" height="16" border="0"><\/a>' +
-			'<\/td><td nowrap colspan="2">&nbsp;' +
+			'<\/td><td class="nowrap" colspan="2">&nbsp;' +
 				sLink +
 				folderName +
 				'<\/a>' +
@@ -100,7 +100,7 @@ oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 				sLink +
 				fileName +
 				'<\/a>' +
-			'<\/td><td align="right" nowrap>&nbsp;' +
+			'<\/td><td align="right" class="nowrap">&nbsp;' +
 				fileSize +
 				' KB' +
 		'<\/td><\/tr>' ;

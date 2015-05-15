@@ -464,7 +464,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Icon update et delete
-				print '<td align="center" nowrap>';
+				print '<td align="center" class="nowrap">';
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';

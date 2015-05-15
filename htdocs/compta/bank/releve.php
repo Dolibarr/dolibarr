@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -128,13 +128,13 @@ if (empty($num))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
-		print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td>';
 		print '<td colspan="3">'.$acct->label.'</td></tr>';
 
 		print '</table>';
@@ -489,15 +489,15 @@ else
 			if ($objp->amount < 0)
 			{
 				$totald = $totald + abs($objp->amount);
-				print '<td align="right" nowrap=\"nowrap\">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+				print '<td align="right" class="nowrap">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 			}
 			else
 			{
 				$totalc = $totalc + abs($objp->amount);
-				print "<td>&nbsp;</td><td align=\"right\" nowrap=\"nowrap\">".price($objp->amount)."</td>\n";
+				print '<td>&nbsp;</td><td align="right" class="nowrap">'.price($objp->amount)."</td>\n";
 			}
 
-			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
+			print '<td align="right" class="nowrap">'.price($total)."</td>\n";
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{

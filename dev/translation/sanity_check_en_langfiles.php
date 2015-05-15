@@ -18,20 +18,7 @@
 echo "<html>";
 echo "<head>";
 
-echo "<STYLE type=\"text/css\"> 
-body {
-	color: #444;
-	font: 100%/30px 'Helvetica Neue', helvetica, arial, sans-serif;
-	text-shadow: 0 1px 0 #fff;
-}
-
-strong {
-	font-weight: bold; 
-}
-
-em {
-	font-style: italic; 
-}
+echo "<STYLE type=\"text/css\">
 
 table {
 	background: #f5f5f5;
@@ -42,7 +29,7 @@ table {
 	margin: 30px auto;
 	text-align: left;
 	width: 800px;
-}	
+}
 
 th {
 	background-color: #777;
@@ -50,33 +37,11 @@ th {
 	border-right: 1px solid #777;
 	border-top: 1px solid #555;
 	border-bottom: 1px solid #333;
-	box-shadow: inset 0 1px 0 #999;
 	color: #fff;
-  font-weight: bold;
+  	font-weight: bold;
 	padding: 10px 15px;
 	position: relative;
-	text-shadow: 0 1px 0 #000;	
-}
-
-th:after {
-	background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,.08));
-	content: '';
-	display: block;
-	height: 25%;
-	left: 0;
-	margin: 1px 0 0 0;
-	position: absolute;
-	top: 25%;
-	width: 100%;
-}
-
-th:first-child {
-	border-left: 1px solid #777;	
-	box-shadow: inset 1px 1px 0 #999;
-}
-
-th:last-child {
-	box-shadow: inset -1px 1px 0 #999;
+	text-shadow: 0 1px 0 #000;
 }
 
 td {
@@ -86,17 +51,8 @@ td {
 	border-bottom: 1px solid #e8e8e8;
 	padding: 10px 15px;
 	position: relative;
-	transition: all 300ms;
 }
 
-td:first-child {
-	box-shadow: inset 1px 0 0 #fff;
-}	
-
-td:last-child {
-	border-right: 1px solid #e8e8e8;
-	box-shadow: inset -1px 0 0 #fff;
-}	
 
 tr {
 	background-color: #f1f1f1;
@@ -104,42 +60,35 @@ tr {
 }
 
 tr:nth-child(odd) td {
-	background-color: #f1f1f1;	
+	background-color: #f1f1f1;
 }
 
-tr:last-of-type td {
-	box-shadow: inset 0 -1px 0 #fff; 
-}
-
-tr:last-of-type td:first-child {
-	box-shadow: inset 1px -1px 0 #fff;
-}	
-
-tr:last-of-type td:last-child {
-	box-shadow: inset -1px -1px 0 #fff;
-}	
-
-tbody:hover td {
-	color: transparent;
-	text-shadow: 0 0 3px #aaa;
-}
-
-tbody:hover tr:hover td {
-	color: #444;
-	text-shadow: 0 1px 0 #fff;
-} </STYLE>";
+</STYLE>";
 
 echo "<body>";
-echo "<h3>If you call this file with the argument \"?unused=true\" it searches for the translation strings that exist in en_US but are never used</h3>";
-echo "<h2>IMPORTANT: that can take quite a lot of time (up to 10 minutes), you need to tune the max_execution_time on your php.ini accordingly</h2>";
-echo "<h3>Happy translating :)</h3>";
 
-// directory containing the php and lang files 
-$htdocs 	= "../../htdocs/"; 
+echo "If you call this file with the argument \"?unused=true\" it searches for the translation strings that exist in en_US but are never used.<br>";
+echo "IMPORTANT: that can take quite a lot of time (up to 10 minutes), you need to tune the max_execution_time on your php.ini accordingly.<br>";
+echo "Happy translating :)<br>";
+
+
+// STEP 1 - Search duplicates keys
+
+
+// directory containing the php and lang files
+$htdocs 	= "../../htdocs/";
+
 // directory containing the english lang files
 $workdir 	= $htdocs."langs/en_US/";
 
+
 $files = scandir($workdir);
+if (empty($files))
+{
+	echo "Can't scan workdir = ".$workdir;
+	exit;
+}
+
 $exludefiles = array('.','..','README');
 $files = array_diff($files,$exludefiles);
 $langstrings_3d = array();
@@ -154,11 +103,12 @@ foreach ($files AS $file) {
 			if (substr($row,0,1) !== '#') {
 				// don't want lines without the separator (why should those even be here, anyway...)
 				if (strpos($row,'=')!==false) {
-					$row_array = explode('=',$row);
+					$row_array = explode('=',$row);		// $row_array[0] = key
 					$langstrings_3d[$path_file['basename']][$line+1]=$row_array[0];
+					$langstrings_3dtrans[$path_file['basename']][$line+1]=$row_array[1];
 					$langstrings_full[]=$row_array[0];
 					$langstrings_dist[$row_array[0]]=$row_array[0];
-				}				
+				}
 			}
 		}
 	}
@@ -167,16 +117,16 @@ foreach ($files AS $file) {
 foreach ($langstrings_3d AS $filename => $file) {
 	foreach ($file AS $linenum => $value) {
 		$keys = array_keys($langstrings_full, $value);
-		if (count($keys)>1) {
+		if (count($keys)>1)
+		{
 				foreach ($keys AS $key) {
-					$dups[$value][$filename][$linenum] = '';
+					$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
 				}
 		}
 	}
 }
 
 echo "<h2>Duplicate strings in lang files in $workdir - ".count($dups)." found</h2>";
-echo "<pre>";
 
 echo "<table border_bottom=1> ";
 echo "<thead><tr><th align=\"center\">#</th><th>String</th><th>File and lines</th></thead>";
@@ -190,22 +140,27 @@ foreach ($dups as $string => $pages) {
 	echo "<td>";
 	foreach ($pages AS $page => $lines ) {
 		echo "$page ";
-		foreach ($lines as $line => $nothing) {
-			echo "($line) ";
+		foreach ($lines as $line => $translatedvalue) {
+			//echo "($line - ".(substr($translatedvalue,0,20)).") ";
+			echo "($line - ".htmlentities($translatedvalue).") ";
 		}
 		echo "<br>";
 	}
-	echo "</td></tr>";
+	echo "</td></tr>\n";
 }
 echo "</tbody>";
 echo "</table>";
 
 
-if ($_REQUEST['unused'] == 'true') {
+// STEP 2 - Search key not used
 
-	foreach ($langstrings_dist AS $value){
+
+if (! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true')
+{
+	foreach ($langstrings_dist AS $value)
+	{
 		$search = '\'trans("'.$value.'")\'';
-		$string =  'grep -R -m 1 -F --include=*.php '.$search.' '.$htdocs.'*';
+		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'*';
 		exec($string,$output);
 		if (empty($output)) {
 			$unused[$value] = true;
@@ -216,6 +171,9 @@ if ($_REQUEST['unused'] == 'true') {
 	echo "<h2>Strings in en_US that are never used</h2>";
 	echo "<pre>";
 	print_r($unused);
+	echo "</pre>";
 }
+
+echo "\n";
 echo "</body>";
 echo "</html>";

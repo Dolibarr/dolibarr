@@ -255,12 +255,12 @@ if ($action == 'create')
     	{
     		if (jQuery("#topleft").val() == \'top\')
     		{
-	    		jQuery("#menuId").attr(\'disabled\',\'disabled\');
+				jQuery("#menuId").prop("disabled", true);
 	    		jQuery("#menuId").val(\'\');
 			}
     		else
     		{
-    			jQuery("#menuId").removeAttr(\'disabled\');
+				jQuery("#menuId").removeAttr("disabled");
     		}
     	}
     	init_topleft();

@@ -1478,6 +1478,8 @@ if ($action=='create')
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
 
+	dol_fiche_head('');
+	
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -1600,7 +1602,9 @@ if ($action=='create')
 	// Bouton "Create Draft"
     print "</table>\n";
 
-	print '<br><div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
+    dol_fiche_end();
+    
+	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
 
 	print "</form>\n";
 

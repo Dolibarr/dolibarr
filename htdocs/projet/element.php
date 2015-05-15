@@ -609,7 +609,7 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("proposals");
 $langs->load("margins");
-print_fiche_titre($langs->trans("Profit"),'');
+print_fiche_titre($langs->trans("Profit"),'','title_accountancy');
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
