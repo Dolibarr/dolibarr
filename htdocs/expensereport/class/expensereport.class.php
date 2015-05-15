@@ -539,7 +539,6 @@ class ExpenseReport extends CommonObject
 			$line->total_tva=20;
 			$line->total_ttc=120;
 			$line->qty=1;
-			$line->fk_c_tva=20;
 			$line->vatrate=20;
 			$line->value_unit=120;
 			$line->fk_expensereport=0;
@@ -1207,7 +1206,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			// Select du taux de tva par rapport au code
-			$sql = "SELECT t.taux as taux_tva";
+			$sql = "SELECT t.taux as vatrate";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 			$sql.= " WHERE t.rowid = ".$c_tva;
 			$result = $this->db->query($sql);
@@ -1217,7 +1216,7 @@ class ExpenseReport extends CommonObject
 			$total_ttc	= $qty*$value_unit;
 			$total_ttc 	= number_format($total_ttc,2,'.','');
 
-			$tx_tva = $objp_tva->taux_tva/100;
+			$tx_tva = $objp_tva->vatrate/100;
 			$tx_tva	= $tx_tva + 1;
 			$total_ht 	= $total_ttc/$tx_tva;
 			$total_ht 	= number_format($total_ht,2,'.','');
