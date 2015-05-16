@@ -670,15 +670,24 @@ class pdf_azur extends ModelePDFPropales
 							}
 					
 							$already_merged[] = $line->fk_product;
+							
+							$product = new Product($this->db);
+							$product->fetch($line->fk_product);
+							
+							if ($product->entity!=$conf->entity) {
+								$entity_product_file=$product->entity;
+							} else {
+								$entity_product_file=$conf->entity;
+							}
 					
 							// If PDF is selected and file is not empty
 							if (count($filetomerge->lines) > 0) {
 								foreach ( $filetomerge->lines as $linefile ) {
 									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
 										if (! empty($conf->product->enabled))
-											$filetomerge_dir = $conf->product->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($line->product_ref);
+											$filetomerge_dir = $conf->product->multidir_output[$entity_product_file] . '/' . dol_sanitizeFileName($line->product_ref);
 										elseif (! empty($conf->service->enabled))
-											$filetomerge_dir = $conf->service->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($line->product_ref);
+											$filetomerge_dir = $conf->service->multidir_output[$entity_product_file] . '/' . dol_sanitizeFileName($line->product_ref);
 											
 										dol_syslog(get_class($this) . ':: upload_dir=' . $filetomerge_dir, LOG_DEBUG);
 											

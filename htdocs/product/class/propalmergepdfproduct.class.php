@@ -227,7 +227,7 @@ class Propalmergepdfproduct extends CommonObject
      *
      *  @param	int		$product_id    	Id object
      *  @param	string	$lang  			Lang string code
-     *  @return int          			<0 if KO, >0 if OK
+     *  @return int          	<0 if KO, >0 if OK
      */
     function fetch_by_product($product_id, $lang='')
     {
@@ -656,5 +656,4 @@ class PropalmergepdfproductLine
 	function __construct() {
 		return 1;
 	}
-
 }
