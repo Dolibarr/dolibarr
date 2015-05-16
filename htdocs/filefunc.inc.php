@@ -31,6 +31,7 @@
  */
 
 if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0-alpha');
+
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
