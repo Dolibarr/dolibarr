@@ -280,11 +280,9 @@ class modProjet extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_extrafields as extra ON p.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task as pt ON p.rowid = pt.fk_projet";
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task,";
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .=' WHERE p.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND p.entity = '.$conf->entity;
-
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
 	}
 
 
