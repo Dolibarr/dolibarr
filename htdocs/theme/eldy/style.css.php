@@ -1781,7 +1781,7 @@ table.nobordernopadding tr {
 }
 table.nobordernopadding tr td {
 	border: 0px;
-	padding: 0 3px 0 0 !important;
+	padding: 0 3px 0 0;
 }
 table.border tr td table.nobordernopadding tr td {
 	padding-top: 0px;

@@ -85,10 +85,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 
-	/*
-	 *
-	 *
-	 */
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dol_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0,'account');
@@ -109,14 +105,15 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	print '</table>';
 
-	print '<br>';
+	dol_fiche_end();
+	
 
 	$solde = $acct->solde(0);
 
 	/*
 	 * Affiche tableau des echeances a venir
 	 */
-	print '<table class="notopnoleftnoright" width="100% border="1">';
+	print '<table class="noborder centpercent">';
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';

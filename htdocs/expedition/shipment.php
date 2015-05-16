@@ -546,7 +546,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				print "</tr>\n";
 
-				// Show subproducts details
+				// Show subproducts lines
 				if ($objp->fk_product > 0 && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
 				{
 					// Set tree of subproducts in product->sousprods
@@ -560,20 +560,16 @@ if ($id > 0 || ! empty($ref))
 					{
 						foreach($prods_arbo as $key => $value)
 						{
-							print '<tr><td colspan="4">';
-
 							$img='';
 							if ($value['stock'] < $value['stock_alert'])
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<tr '.$bc[$var].'><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 							print '<td align="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';
 							print '<td align="center">'.$value['stock'].' '.$img.'</td></tr>'."\n";
-
-							print '</td></tr>'."\n";
 						}
 					}
 				}

@@ -88,6 +88,9 @@ else {
 	$builddate=time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
+
+$hselected='report';
+
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array('modecompta'=>$modecompta),$calcmode);
 
 

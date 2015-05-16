@@ -139,11 +139,10 @@ if (empty($num))
 
 		print '</table>';
 
-		print '<br>';
+		dol_fiche_end();
 
 
-
-		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&amp;account=".$acct->id, $sortfield, $sortorder,'',$numrows);
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$acct->id, $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';

@@ -646,7 +646,7 @@ if ($resql)
     print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"f.fk_reglement_mode","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Taxes"),$_SERVER["PHP_SELF"],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
@@ -683,7 +683,7 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre" align="left">';
-	$form->select_types_paiements($search_paymentmode, 'search_paymentmode');
+	$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -799,7 +799,7 @@ if ($resql)
 			print '</td>';
 
 			// Remain to receive
-			print '<td align="right">'.((! empty($objp->am) || ! empty($cn) || ! empty($dep))?price($objp->total_ttc-$objp->am-$cn-$dep):'&nbsp;').'</td>';
+			print '<td align="right">'.(((! empty($objp->total_ttc) || ! empty($objp->am) || ! empty($cn) || ! empty($dep)) && ($objp->total_ttc - $objp->am - $cn - $dep)) ? price($objp->total_ttc - $objp->am - $cn - $dep):'&nbsp;').'</td>';
 
 			// Status of invoice
 			print '<td align="right" class="nowrap">';
