@@ -17,9 +17,9 @@
 ; ----- Change this -----
 AppName=DoliWamp
 ; DoliWamp-x.x.x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
-AppVerName=DoliWamp-3.5.6
+AppVerName=DoliWamp-3.5.7
 ; DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
-OutputBaseFilename=DoliWamp-3.5.6
+OutputBaseFilename=DoliWamp-3.5.7
 ; ----- End of change
 ;OutputManifestFile=build\doliwampbuild.log
 ; Define full path from which all relative path are defined
@@ -32,7 +32,7 @@ AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-AppCopyright=Copyright (C) 2008-2013 Laurent Destailleur, NLTechno
+AppCopyright=Copyright (C) 2008-2015 Laurent Destailleur, NLTechno
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING
