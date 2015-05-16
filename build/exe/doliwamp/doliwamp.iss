@@ -32,11 +32,7 @@ AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-<<<<<<< HEAD
-AppCopyright=Copyright (C) 2008-2014 Laurent Destailleur, NLTechno
-=======
 AppCopyright=Copyright (C) 2008-2015 Laurent Destailleur, NLTechno
->>>>>>> refs/remotes/origin/3.5
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING
