@@ -12,7 +12,6 @@ beta version of Dolibarr, step by step.
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
 - Update version number with x.y.z-w in build/debian/changelog
 - Update version number with x.y.z-w in build/exe/doliwamp/doliwamp.iss
-- Update version number with x.y.z-w in build/rpm/*.spec
 - Commit all changes.
 - Add a Tag (x.y.betaz_YYYYMMDD) and push it: git push --tags
 - Create a branch (x.y).
@@ -34,7 +33,6 @@ complete release of Dolibarr, step by step.
 - Update version number with x.y.z in htdocs/filefunc.inc.php
 - Update version number with x.y.z in build/debian/changelog
 - Update version number with x.y.z in build/exe/doliwamp/doliwamp.iss
-- Update version number with x.y.z in build/rpm/*.spec
 - Commit all changes.
 
 - Build Dolibarr and DoliWamp packages with makepack-dolibarr.pl
