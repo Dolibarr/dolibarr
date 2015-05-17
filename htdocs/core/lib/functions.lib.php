@@ -2876,7 +2876,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	string			$options         	Other url paramaters to propagate ("" by default)
  *	@param	integer			$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML content to show between arrows. Must contains '<li> </li>' tags.
- *  @param	string			$afterarraws		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
+ *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
  *	@return	void
  */
 function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='',$afterarrows='')
