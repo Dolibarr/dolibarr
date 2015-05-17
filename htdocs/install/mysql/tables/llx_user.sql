@@ -34,7 +34,8 @@ create table llx_user
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			    -- temporary password when asked for forget password
-  api_key           varchar(128),
+  api_key           varchar(128),				-- key to use REST API by this user
+  gender            varchar(10),
   civility          varchar(6),
   lastname          varchar(50),
   firstname         varchar(50),
