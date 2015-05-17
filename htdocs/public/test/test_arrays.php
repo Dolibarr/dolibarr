@@ -10,6 +10,10 @@ if ($dolibarr_main_prod) {
 
 $usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
+$form=new Form($db);
+
+
+
 
 // HEADER
 //--------
@@ -124,6 +128,21 @@ $sortorder='ASC';
 $tasksarray=array(1,2,3);	// To force having several lines
 $tagidfortablednd='tablelines3';
 if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+
+$nav='';
+$nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
+if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
+if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
+if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.='</form>';
 
 print_barre_liste('Title of my list', 3, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 5000, '', 0, $nav);
 

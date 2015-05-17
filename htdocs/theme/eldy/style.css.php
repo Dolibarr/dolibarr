@@ -1837,19 +1837,26 @@ table.liste td {
 
 
 /* Pagination */
-
+div.pagination {
+	float: right;
+}
 div.pagination a {
 	font-weight: normal;
 }
-div.pagination ul, div.pagination li
+div.pagination ul
 {
   list-style: none;
   display: inline-block;
   padding-left: 0px;
+  padding-right: 0px;
+  margin: 0;
 }
-
 div.pagination li {
-  display: inline;
+  display: inline-block;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 .pagination {
   display: inline-block;
@@ -1859,8 +1866,8 @@ div.pagination li {
 
 div.pagination li a,
 div.pagination li span {
-  position: relative;
-  float: left;
+  /*position: relative;*/
+  /*float: left;*/
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
@@ -1913,6 +1920,9 @@ div.pagination .disabled a:focus {
 }
 div.pagination li .active {
   text-decoration: underline;
+}
+div.pagination li.paginationafterarrows {
+	margin-left: 10px;
 }
 
 /* Prepare to remove class pair - impair
@@ -2305,7 +2315,6 @@ div.titre {
 	color: rgb(<?php print $colortext; ?>);
 	text-decoration: none;
 	text-shadow: 1px 1px 2px #FFFFFF;
-	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }

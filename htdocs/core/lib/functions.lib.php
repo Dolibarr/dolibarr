@@ -2826,7 +2826,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=10;
+			$maxnbofpage=10;		// nb before and after selected page
 
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
 			$cpt=($page-$maxnbofpage);
@@ -2834,36 +2834,34 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt>=1)
 			{
-				$pagelist.= '<li><a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>'."\n";
-				if ($cpt >= 2) $pagelist.='<li><span>...</span></li>';
+				$pagelist.= '<li><a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>';
+				if ($cpt >= 2) $pagelist.='<li><span class="inactive">...</span></li>';
 			}
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= '<li><span class="active">'.($page+1).'</span></li>'."\n";
+					$pagelist.= '<li><span class="active">'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= '<li><a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>'."\n";
+					$pagelist.= '<li><a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
 			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-1) $pagelist.= '<li><span>...</span></li>';
-				$pagelist.= '<li><a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>'."\n";
+				if ($cpt<$nbpages-1) $pagelist.= '<li><span class="inactive">...</span></li>';
+				$pagelist.= '<li><a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= '<li><span class="active">'.($page+1)."</li>\n";
+			$pagelist.= '<li><span class="active">'.($page+1)."</li>";
 		}
 	}
-	print "\n";
-	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
-	if ($morehtml) print $morehtml;
+	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist,$morehtml);
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -2874,28 +2872,35 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	Function to show navigation arrows into lists
  *
  *	@param	int				$page				Number of page
- *	@param	string			$file				Page
+ *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
  *	@param	string			$options         	Other url paramaters to propagate ("" by default)
  *	@param	integer			$nextpage	    	Do we show a next page button
- *	@param	string			$betweenarrows		HTML Content to show between arrows
+ *	@param	string			$betweenarrows		HTML content to show between arrows. Must contains '<li> </li>' tags.
+ *  @param	string			$afterarraws		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
  *	@return	void
  */
-function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='')
+function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='',$afterarrows='')
 {
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
 	if ($page > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>'."\n";
-		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>'."\n";
+		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	//if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
 	print $betweenarrows;
 	if ($nextpage > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>'."\n";
-		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>'."\n";
+		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
+	}
+	if ($afterarrows)
+	{
+		print '<li class="paginationafterarrows">';
+		print $afterarrows;
+		print '</li>';
 	}
 	print '</ul></div>'."\n";
 }
