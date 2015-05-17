@@ -626,6 +626,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);
+ALTER TABLE llx_actioncomm ADD COLUMN recurrule varchar(128);
+ALTER TABLE llx_actioncomm ADD COLUMN ecurdateend datetime;
 
 ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
 
