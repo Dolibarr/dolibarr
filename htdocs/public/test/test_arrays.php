@@ -112,7 +112,7 @@ This page is a sample of page using tables. It is designed to make test with<br>
 
 
 
-<br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines<br>
+<br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines or for long result tables<br>
 
 <?php
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -124,6 +124,9 @@ $sortorder='ASC';
 $tasksarray=array(1,2,3);	// To force having several lines
 $tagidfortablednd='tablelines3';
 if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+
+print_barre_liste('Title of my list', 3, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 5000, '', 0, $nav);
+
 ?>
 <table class="liste noborder tagtable centpercent" id="tablelines3">
 <tr class="liste_titre">
@@ -138,7 +141,7 @@ if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/aj
 
 
 
-<br><hr><br>Example 2 : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for long result tables<br>
+<br><hr><br>Example 2 : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for short result tables<br>
 
 
 
