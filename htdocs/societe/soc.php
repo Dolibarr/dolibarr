@@ -759,11 +759,11 @@ else
         }
         $modCodeFournisseur = new $module;
 
-        //if ($_GET["type"]=='cp') { $object->client=3; }
-        if (GETPOST("type")!='f')  { $object->client=3; }
+        // Define if customer/prospect or supplier status is set or not
+        if (GETPOST("type")!='f' && empty($conf->global->THIRDPARTY_NOTCUSTOMERPROSPECT_BY_DEFAULT))  { $object->client=3; }
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
-        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
+        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || (GETPOST("type")=='' && empty($conf->global->THIRDPARTY_NOTSUPPLIER_BY_DEFAULT))))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('nom', 'alpha');
         $object->firstname			= GETPOST('firstname', 'alpha');
