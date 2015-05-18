@@ -62,12 +62,6 @@ class Product extends CommonObject
     /**
      * Product label
      * @var string
-     * @deprecated use $label
-     */
-	var $libelle;
-    /**
-     * Product label
-     * @var string
      */
 	var $label;
     /**
