@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2015           Bahfir Abbes		<bafbes@gmail.com>
+/* Copyright (C) 2004-2015  Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 if (! $user->admin)
 	accessforbidden();
@@ -64,7 +65,10 @@ $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startd
 $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
 
 // checks:if date_start>date_end  then date_end=date_start + 24 hours
-if($date_start>$date_end) $date_end=$date_start+86400;
+if ($date_start > $date_end) $date_end=$date_start+86400;
+
+$now = dol_now();
+$nowarray = dol_getdate($now);
 
 $params = "&amp;search_code=$search_code&amp;search_ip=$search_ip&amp;search_user=$search_user&amp;search_desc=$search_desc&amp;search_ua=$search_ua";
 $params.= "&amp;date_startmonth=".$_REQUEST["date_startmonth"];
@@ -74,10 +78,13 @@ $params.= "&amp;date_endmonth=".$_REQUEST["date_endmonth"];
 $params.= "&amp;date_endday=".$_REQUEST["date_endday"];
 $params.= "&amp;date_endyear=".$_REQUEST["date_endyear"];
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+if (empty($date_start)) // We define date_start and date_end
 {
-    $date_start=dol_mktime(0,0,0,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
-    $date_end=dol_mktime(23,59,59,strftime("%m",time()),strftime("%d",time()),strftime("%Y",time()));
+    $date_start=dol_get_first_day($nowarray['year'],$nowarray['mon'],false);
+}
+if (empty($date_end))
+{
+    $date_end=dol_mktime(23,59,59,$nowarray['mon'],$nowarray['mday'],$nowarray['year']);
 }
 
 

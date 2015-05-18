@@ -1127,19 +1127,6 @@ function dol_getdate($timestamp,$fast=false)
 	else
 	{
 		$arrayinfo=getdate($timestamp);
-
-		/*$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
-		if($startday==1)
-		{
-			if ($arrayinfo["wday"]==0)
-			{
-				$arrayinfo["wday"]=6;
-			}
-			else
-			{
-				$arrayinfo["wday"]=$arrayinfo["wday"]-1;
-			}
-		}*/
 	}
 
 	return $arrayinfo;
@@ -2886,14 +2873,14 @@ function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarr
 	print '<div class="pagination"><ul>';
 	if ($page > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
 		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	//if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
 	print $betweenarrows;
 	if ($nextpage > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
 		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
 	}
 	if ($afterarrows)
