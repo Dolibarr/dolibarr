@@ -1083,8 +1083,8 @@ if (empty($reshook))
 		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result	<= 0)
 	    {
-	        dol_print_error($db,$result);
-	        exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+    	    $action='';
 	    }
 	}
 	// Make calculation according to calculationrule

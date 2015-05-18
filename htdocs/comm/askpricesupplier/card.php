@@ -847,13 +847,10 @@ if (empty($reshook))
 		}
 		$ret = $object->fetch($id); // Reload to get new records
 		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-		if ($result <= 0) {
-			dol_print_error($db, $result);
-			exit();
-		} else {
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
-			exit();
+		if ($result <= 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 		}
 	}
 
@@ -1760,7 +1757,8 @@ if ($action == 'create')
 		// Build document if it not exists
 		if (! $file || ! is_readable($file)) {
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
+			if ($result <= 0)
+			{
 				dol_print_error($db, $result);
 				exit();
 			}

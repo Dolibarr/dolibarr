@@ -274,8 +274,8 @@ if (empty($reshook))
 	    $result= $object->generateDocument($object->modelpdf, $outputlangs);
 	    if ($result <= 0)
 	    {
-	        dol_print_error($db,$result);
-	        exit;
+	        setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 	    }
 	}
 
