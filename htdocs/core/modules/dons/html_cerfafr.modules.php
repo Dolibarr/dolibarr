@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ class html_cerfafr extends ModeleDon
 			else
 			{
 				$donref = dol_sanitizeFileName($don->ref);
-				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2);
+				$dir = $conf->don->dir_output . "/" . get_exdir($donref,2,0,0,$don,'donation');
 				$file = $dir . "/" . $donref . ".html";
 			}
 
@@ -168,18 +168,18 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__Message__',$outputlangs->trans("Message"),$form);
 		        $form = str_replace('__IConfirmDonationReception__',$outputlangs->trans("IConfirmDonationReception"),$form);
 		        $form = str_replace('__DonationMessage__',$conf->global->DONATION_MESSAGE,$form);
-				
+
 				$frencharticle='';
 		        if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
 				$form = str_replace('__FrenchArticle__',$frencharticle,$form);
-				
+
 				$frencheligibility='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencheligibility='Le bénéficiaire certifie sur l\'honneur que les dons et versements qu\'il reçoit ouvrent droit à la réduction d\'impôt prévue à l\'article :';
 				$form = str_replace('__FrenchEligibility__',$frencheligibility,$form);
-				
+
 				$art200='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART200 >= 1) 
+					if ($conf->global->DONATION_ART200 >= 1)
 					{
 						$art200='<input type="checkbox" checked>200 du CGI';
 					}
@@ -192,7 +192,7 @@ class html_cerfafr extends ModeleDon
 
 				$art238='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART238 >= 1) 
+					if ($conf->global->DONATION_ART238 >= 1)
 					{
 						$art238='<input type="checkbox" checked>238 bis du CGI';
 					}
@@ -202,10 +202,10 @@ class html_cerfafr extends ModeleDon
 					}
 				}
 				$form = str_replace('__ARTICLE238__',$art238,$form);
-				
+
 				$art885='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
-					if ($conf->global->DONATION_ART885 >= 1) 
+					if ($conf->global->DONATION_ART885 >= 1)
 					{
 						$art885='<input type="checkbox" checked>885-0 V bis du CGI';
 					}
@@ -215,7 +215,7 @@ class html_cerfafr extends ModeleDon
 					}
 				}
 				$form = str_replace('__ARTICLE885__',$art885,$form);
-				
+
 				// Save file on disk
 		        dol_syslog("html_cerfafr::write_file $file");
 		        $handle=fopen($file,"w");

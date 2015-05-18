@@ -736,7 +736,7 @@ class FactureFournisseur extends CommonInvoice
         		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         		$ref = dol_sanitizeFileName($this->ref);
-        		$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2).$ref;
+        		$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoive_supplier').$ref;
         		$file = $dir . "/" . $ref . ".pdf";
         		if (file_exists($file))
         		{
@@ -975,8 +975,8 @@ class FactureFournisseur extends CommonInvoice
             		$oldref = dol_sanitizeFileName($this->ref);
             		$newref = dol_sanitizeFileName($num);
 
-            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$oldref;
-            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$newref;
+            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoive_supplier').$oldref;
+            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoive_supplier').$newref;
             		if (file_exists($dirsource))
             		{
             			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -985,7 +985,7 @@ class FactureFournisseur extends CommonInvoice
             			{
             				dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoive_supplier').$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];

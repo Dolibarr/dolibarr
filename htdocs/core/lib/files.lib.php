@@ -1817,7 +1817,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->banque->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf"),2,1).$original_file;
+		$original_file=$conf->banque->dir_output.'/bordereau/'.get_exdir(basename($original_file,".pdf"),2,1,0,null,'cheque').$original_file;
 	}
 
 	// Wrapping for export module

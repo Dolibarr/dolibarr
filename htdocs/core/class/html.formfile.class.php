@@ -581,7 +581,7 @@ class FormFile
 					$relativepath=$file["name"];								// Cas general
 					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
 					// Autre cas
-					if ($modulepart == 'donation')            { $relativepath = get_exdir($modulesubdir,2).$file["name"]; }
+					if ($modulepart == 'donation')            { $relativepath = get_exdir($modulesubdir,2,0,0,null,'donation').$file["name"]; }
 					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
 					$out.= "<tr ".$bc[$var].">";
@@ -700,14 +700,14 @@ class FormFile
     			if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
     			// Autre cas
     			if ($modulepart == 'donation')            {
-    				$relativepath = get_exdir($modulesubdir,2).$file["name"];
+    				$relativepath = get_exdir($modulesubdir,2,0,0,null,'donation').$file["name"];
     			}
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
     			}
-	                if ($modulepart == 'facture_fournisseur') {
-	                    $relativepath = get_exdir($modulesubdir, 2). $modulesubdir. "/" . $file["name"];
-	                }
+	            if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_fournisseur') {
+	                $relativepath = get_exdir($modulesubdir, 2,0,0,null,'invoice_supplier'). $modulesubdir. "/" . $file["name"];
+	            }
 
     			// Show file name with link to download
     			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
@@ -801,8 +801,8 @@ class FormFile
 					if (empty($relativepath))
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
-						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;	// TODO Call using a defined value for $relativepath
-						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;				// TODO Call using a defined value for $relativepath
+						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
+						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
 

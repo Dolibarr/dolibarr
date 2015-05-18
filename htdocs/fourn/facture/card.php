@@ -926,143 +926,131 @@ if (empty($reshook))
 	    $result=$object->fetch_thirdparty();
 	    if ($result > 0)
 	    {
-	//        $ref = dol_sanitizeFileName($object->ref);
-	//        $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'/'.$ref.'.pdf';
+            if ($_POST['sendto'])
+            {
+                // Le destinataire a ete fourni via le champ libre
+                $sendto = $_POST['sendto'];
+                $sendtoid = 0;
+            }
+            elseif ($_POST['receiver'] != '-1')
+            {
+                // Recipient was provided from combo list
+                if ($_POST['receiver'] == 'thirdparty') // Id of third party
+                {
+                    $sendto = $object->client->email;
+                    $sendtoid = 0;
+                }
+                else	// Id du contact
+                {
+                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
+                    $sendtoid = $_POST['receiver'];
+                }
+            }
 
-	//        if (is_readable($file))
-	//        {
-	            if ($_POST['sendto'])
-	            {
-	                // Le destinataire a ete fourni via le champ libre
-	                $sendto = $_POST['sendto'];
-	                $sendtoid = 0;
-	            }
-	            elseif ($_POST['receiver'] != '-1')
-	            {
-	                // Recipient was provided from combo list
-	                if ($_POST['receiver'] == 'thirdparty') // Id of third party
-	                {
-	                    $sendto = $object->client->email;
-	                    $sendtoid = 0;
-	                }
-	                else	// Id du contact
-	                {
-	                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
-	                    $sendtoid = $_POST['receiver'];
-	                }
-	            }
+            if (dol_strlen($sendto))
+            {
+                $langs->load("commercial");
 
-	            if (dol_strlen($sendto))
-	            {
-	                $langs->load("commercial");
+                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+                $message = $_POST['message'];
+                $sendtocc = $_POST['sendtocc'];
+                $deliveryreceipt = $_POST['deliveryreceipt'];
 
-	                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-	                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-	                $message = $_POST['message'];
-	                $sendtocc = $_POST['sendtocc'];
-	                $deliveryreceipt = $_POST['deliveryreceipt'];
+                if ($action == 'send')
+                {
+                    if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
+                    else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
+                    $actiontypecode='AC_SUP_INV';
+                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+                    if ($message)
+                    {
+						if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+						$actionmsg = dol_concatdesc($actionmsg, $message);
+                    }
+                    $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
+                }
 
-	                if ($action == 'send')
-	                {
-	                    if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
-	                    else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
-	                    $actiontypecode='AC_SUP_INV';
-	                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-	                    if ($message)
-	                    {
-							if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-							$actionmsg = dol_concatdesc($actionmsg, $message);
-	                    }
-	                    $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-	                }
+                // Create form object
+                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+                $formmail = new FormMail($db);
 
-	                // Create form object
-	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	                $formmail = new FormMail($db);
+                $attachedfiles=$formmail->get_attached_files();
+                $filepath = $attachedfiles['paths'];
+                $filename = $attachedfiles['names'];
+                $mimetype = $attachedfiles['mimes'];
 
-	                $attachedfiles=$formmail->get_attached_files();
-	                $filepath = $attachedfiles['paths'];
-	                $filename = $attachedfiles['names'];
-	                $mimetype = $attachedfiles['mimes'];
+                // Send mail
+                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+                if ($mailfile->error)
+                {
+                    setEventMessage($mailfile->error,'errors');
+                }
+                else
+                {
+                    $result=$mailfile->sendfile();
+                    if ($result)
+                    {
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
+                        setEventMessage($mesg);
 
-	                // Send mail
-	                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
-	                if ($mailfile->error)
-	                {
-	                    setEventMessage($mailfile->error,'errors');
-	                }
-	                else
-	                {
-	                    $result=$mailfile->sendfile();
-	                    if ($result)
-	                    {
-	                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-	                        setEventMessage($mesg);
+                        $error=0;
 
-	                        $error=0;
+                        // Initialisation donnees
+                        $object->sendtoid		= $sendtoid;
+                        $object->actiontypecode	= $actiontypecode;
+                        $object->actionmsg		= $actionmsg;
+                        $object->actionmsg2		= $actionmsg2;
+                        $object->fk_element		= $object->id;
+                        $object->elementtype	= $object->element;
 
-	                        // Initialisation donnees
-	                        $object->sendtoid		= $sendtoid;
-	                        $object->actiontypecode	= $actiontypecode;
-	                        $object->actionmsg		= $actionmsg;
-	                        $object->actionmsg2		= $actionmsg2;
-	                        $object->fk_element		= $object->id;
-	                        $object->elementtype	= $object->element;
+                        // Appel des triggers
+                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                        $interface=new Interfaces($db);
+                        $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
+                        if ($result < 0) {
+                            $error++; $object->errors=$interface->errors;
+                        }
+                        // Fin appel triggers
 
-	                        // Appel des triggers
-	                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	                        $interface=new Interfaces($db);
-	                        $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
-	                        if ($result < 0) {
-	                            $error++; $object->errors=$interface->errors;
-	                        }
-	                        // Fin appel triggers
+                        if ($error)
+                        {
+                            dol_print_error($db);
+                        }
+                        else
+                        {
+                            // Redirect here
+                            // This avoid sending mail twice if going out and then back to page
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+                            exit;
+                        }
+                    }
+                    else
+                    {
+                        $langs->load("other");
+                        if ($mailfile->error)
+                        {
+                            $mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+                            $mesg.='<br>'.$mailfile->error;
+                        }
+                        else
+                        {
+                            $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+                        }
+	                    setEventMessage($mesg, 'errors');
+                    }
+                }
+            }
 
-	                        if ($error)
-	                        {
-	                            dol_print_error($db);
-	                        }
-	                        else
-	                        {
-	                            // Redirect here
-	                            // This avoid sending mail twice if going out and then back to page
-	                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-	                            exit;
-	                        }
-	                    }
-	                    else
-	                    {
-	                        $langs->load("other");
-	                        if ($mailfile->error)
-	                        {
-	                            $mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-	                            $mesg.='<br>'.$mailfile->error;
-	                        }
-	                        else
-	                        {
-	                            $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-	                        }
-		                    setEventMessage($mesg, 'errors');
-	                    }
-	                }
-	            }
-
-	            else
-	            {
-	                $langs->load("other");
-		            setEventMessage($langs->trans('ErrorMailRecipientIsEmpty'), 'errors');
-	                dol_syslog('Recipient email is empty');
-	            }
-	/*        }
-	        else
-	        {
-	            $langs->load("errors");
-	            $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
-	            dol_syslog('Failed to read file: '.$file);
-	        }*/
+            else
+            {
+                $langs->load("other");
+	            setEventMessage($langs->trans('ErrorMailRecipientIsEmpty'), 'errors');
+                dol_syslog('Recipient email is empty');
+            }
 	    }
 	    else
 	    {
@@ -1319,7 +1307,7 @@ if ($action == 'create')
     }
 
     dol_fiche_head();
-    
+
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -1575,7 +1563,7 @@ if ($action == 'create')
     print "</table>\n";
 
     dol_fiche_end();
-    
+
     print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
 
     print "</form>\n";
@@ -2405,8 +2393,8 @@ else
                 */
 
                 $ref=dol_sanitizeFileName($object->ref);
-                $subdir = get_exdir($object->id,2).$ref;
-                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref;
+                $subdir = get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
+                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
@@ -2512,7 +2500,7 @@ else
         {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Define output language
@@ -2539,7 +2527,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

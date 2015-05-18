@@ -65,7 +65,7 @@ if ($id > 0 || ! empty($ref))
 	$result = $object->fetch($id, $ref);
 
 	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id);
+	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id,0,0,0,$object,'thirdparty');
 }
 
 

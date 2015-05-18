@@ -64,7 +64,7 @@ if ($object->fetch($id, $ref))
 {
 	$object->fetch_thirdparty();
 	$ref=dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref;
+	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
 }
 
 

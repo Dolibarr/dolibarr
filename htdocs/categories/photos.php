@@ -224,7 +224,7 @@ if ($object->id)
 		$maxWidth = 160;
 		$maxHeight = 120;
 
-		$pdir = get_exdir($object->id,2) . $object->id ."/photos/";
+		$pdir = get_exdir($object->id,2,0,0,$object,'category') . $object->id ."/photos/";
 		$dir = $upload_dir.'/'.$pdir;
 
 		print '<br>';

@@ -153,7 +153,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 			if ($object->statut == 0)
 			{
@@ -398,7 +398,7 @@ if (empty($reshook))
 	{
 		$error=0;
 
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		$object->sendto = $_POST["sendto"];
 		if (! $object->sendto)
@@ -495,7 +495,7 @@ if (empty($reshook))
 	// Action update description of emailing
 	if ($action == 'settitre' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
 		else if ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
@@ -527,7 +527,7 @@ if (empty($reshook))
 	 */
 	if (! empty($_POST['addfile']))
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -540,7 +540,7 @@ if (empty($reshook))
 	// Action remove file
 	if (! empty($_POST["removedfile"]))
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -719,7 +719,7 @@ else
 {
 	if ($object->id > 0)
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		$head = emailing_prepare_head($object);
 
