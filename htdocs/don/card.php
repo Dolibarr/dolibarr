@@ -173,6 +173,10 @@ if ($action == 'add')
 			header("Location: index.php");
 			exit;
 		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->don->supprimer)
@@ -232,7 +236,7 @@ if ($action == 'set_paid')
 if ($action == 'builddoc')
 {
 	$object = new Don($db);
-	$object->fetch($id);
+	$result=$object->fetch($id);
 
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
@@ -380,6 +384,7 @@ if (! empty($id) && $action == 'edit')
 		dol_print_error($db); exit;
 	}
 
+	$hselected='card';
 	$head = donation_prepare_head($object);
 	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
@@ -506,6 +511,8 @@ if (! empty($id) && $action != 'edit')
 	if ($result < 0) {
 		dol_print_error($db); exit;
 	}
+
+	$hselected='card';
 
 	$head = donation_prepare_head($object);
 	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
@@ -720,7 +727,7 @@ if (! empty($id) && $action != 'edit')
 	 * Documents generes
 	 */
 	$filename=dol_sanitizeFileName($object->id);
-	$filedir=$conf->don->dir_output . '/' . get_exdir($filename,2,0,0,$object,'donation');
+	$filedir=$conf->don->dir_output . '/' . get_exdir($filename,2,0,1,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
 	$urlsource=$_SERVER['PHP_SELF'].'?rowid='.$object->id;
 	//            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);
 	//            $delallowed=$user->rights->facture->supprimer;
@@ -730,7 +737,7 @@ if (! empty($id) && $action != 'edit')
 	$var=true;
 
 	print '<br>';
-	$formfile->show_documents('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+	$formfile->show_documents('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 	print '</td><td>&nbsp;</td>';
 

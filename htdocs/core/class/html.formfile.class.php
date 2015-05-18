@@ -578,11 +578,9 @@ class FormFile
 					$var=!$var;
 
 					// Define relative path for download link (depends on module)
-					$relativepath=$file["name"];								// Cas general
+					$relativepath=$file["name"];										// Cas general
 					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
-					// Autre cas
-					if ($modulepart == 'donation')            { $relativepath = get_exdir($modulesubdir,2,0,0,null,'donation').$file["name"]; }
-					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
+					if ($modulepart == 'export') $relativepath = $file["name"];			// Other case
 
 					$out.= "<tr ".$bc[$var].">";
 

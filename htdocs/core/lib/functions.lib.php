@@ -3713,13 +3713,16 @@ function yn($yesno, $case=1, $color=0)
  *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')
  *  @return	string					Dir to use ending. Example '' or '1/' or '1/2/'
  */
-function get_exdir($num,$level,$alpha=0,$withoutslash=0,$object=null,$modulepart='')
+function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 {
 	global $conf;
 
 	$path = '';
 
-	if (! empty($level) && in_array($modulepart, array('shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
+	// TODO if object is null, load it from id and modulepart.
+
+
+	if (! empty($level) && in_array($modulepart, array('cheque','user','category','shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
 	{
 		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);

@@ -19,7 +19,7 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
-UPDATE TABLE llx_facture_fourn set ref=id where ref IS NULL;
+UPDATE llx_facture_fourn set ref=rowid where ref IS NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN ref varchar(255) NOT NULL;
 
 
@@ -451,6 +451,7 @@ ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
 ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
 ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_projet integer NULL;
+ALTER TABLE llx_don CHANGE COLUMN fk_project fk_projet integer NULL;
 
 create table llx_don_extrafields
 (
