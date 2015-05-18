@@ -1863,17 +1863,18 @@ div.pagination li {
   padding-left: 0;
   border-radius: 4px;
 }
-
-div.pagination li a,
-div.pagination li span {
-  /*position: relative;*/
-  /*float: left;*/
+div.pagination li.pagination a,
+div.pagination li.pagination span {
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
-  background-color: #fff;
+}
+<?php if (empty($conf->dol_use_jmobile)) { ?>
+div.pagination li a,
+div.pagination li span {
+	background-color: #fff;
   border: 1px solid #ddd;
 }
 div.pagination li:first-child a,
@@ -1918,7 +1919,8 @@ div.pagination .disabled a:focus {
   background-color: #fff;
   border-color: #ddd;
 }
-div.pagination li .active {
+<?php } ?>
+div.pagination li.pagination .active {
   text-decoration: underline;
 }
 div.pagination li.paginationafterarrows {

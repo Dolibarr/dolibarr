@@ -17,27 +17,25 @@
 
 /**
  *	\file       htdocs/asterisk/cidlookup.php
- *  \brief      Script to search companies names based on incoming calls
+ *  \brief      Script to search companies names based on incoming calls, from caller phone number
  *	\remarks    To use this script, your Asterisk must be compiled with CURL,
  *	            and your dialplan must be something like this:
  *
- * exten => s,1,Set(CALLERID(name)=${CURL(http://IP-DOLIBARR:80/asterisk/cidlookup.php?phone=${CALLERID(num)})})
+ *              exten => s,1,Set(CALLERID(name)=${CURL(http://IP-DOLIBARR:80/asterisk/cidlookup.php?phone=${CALLERID(num)})})
  *
- *			Change IP-DOLIBARR to the IP address of your dolibarr
- *			server
- *
+ *			    Change IP-DOLIBARR to the IP address of your dolibarr server
  */
 
 
 include '../master.inc.php';
 
 $phone = GETPOST('phone');
-$notfound = "Not found";
-$error = "Error"
-
+$notfound = $langs->trans("Unknown");
+ 
 // Security check
-if (empty($conf->clicktodial->enabled)) {
-    print "Error: Module Click to dial not active\n";
+if (empty($conf->clicktodial->enabled)) 
+{
+    print "Error: Module Click to dial is not enabled.\n";
     exit;
 }
 
@@ -73,7 +71,7 @@ if ($resql)
 else
 {
 	dol_print_error($db,'Error');
-	$found = $error;
+	$found = 'Error';
 }
 
 echo $found;
