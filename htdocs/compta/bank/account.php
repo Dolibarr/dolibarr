@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2015 	   Florian Henry	    <florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Florian Henry	    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->m
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("FinancialAccount").'-'.$langs->trans("Transactions"));
 
 $societestatic=new Societe($db);
 $userstatic=new User($db);
@@ -598,7 +598,7 @@ if ($id > 0 || ! empty($ref))
 		$var=true;
 
 		$num = $db->num_rows($result);
-		$i = 0; $total = 0; $sep = -1;
+		$i = 0; $total = 0; $sep = -1; $total_deb=0; $total_cred=0;
 
 		while ($i < $num)
 		{
@@ -833,10 +833,12 @@ if ($id > 0 || ! empty($ref))
 				if ($objp->amount < 0)
 				{
 					print '<td align="right" class="nowrap">'.price($objp->amount * -1).'</td><td>&nbsp;</td>'."\n";
+					$total_deb +=$objp->amount;
 				}
 				else
 				{
 					print '<td>&nbsp;</td><td align="right" class="nowrap">&nbsp;'.price($objp->amount).'</td>'."\n";
+					$total_cred +=$objp->amount;
 				}
 
 				// Balance
@@ -905,14 +907,26 @@ if ($id > 0 || ! empty($ref))
 			$i++;
 		}
 
-		// Show total
+	    // Show total
 		if ($page == 0 && ! $mode_search)
 		{
+			//Real account situation
 			print '<tr class="liste_total"><td align="left" colspan="8">';
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
 			print ' '.$object->currency_code.'</td>';
-			print '<td align="right" class="nowrap"><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
+		} else {
+			// Only total according row displays
+			print '<tr class="liste_total"><td align="left" colspan="6">';
+			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
+			else print $langs->trans("Total");
+			print ' '.$object->currency_code.'</td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_deb*-1, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
+			print '<td align="right" class="nowrap"><b>'.price($total_cred-($total_deb*-1), 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
