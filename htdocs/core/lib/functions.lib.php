@@ -4020,7 +4020,7 @@ function dol_nboflines($s,$maxchar=0)
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
  * 	@param	string	$charset		Give the charset used to encode the $text variable in memory.
  *	@return int						Number of lines
- *	@see	dol_nboflines
+ *	@see	dol_nboflines, dolGetFirstLineOfText
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
