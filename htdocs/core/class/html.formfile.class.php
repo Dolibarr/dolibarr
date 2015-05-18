@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -265,7 +265,6 @@ class FormFile
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        // filedir = $conf->...->dir_ouput."/".get_exdir(id)
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         // For backward compatibility
@@ -707,7 +706,7 @@ class FormFile
     				$relativepath = $file["name"];
     			}
 	                if ($modulepart == 'facture_fournisseur') {
-	                    $relativepath = get_exdir($modulesubdir, 2). $modulesubdir. "/" . $file["name"];                    
+	                    $relativepath = get_exdir($modulesubdir, 2). $modulesubdir. "/" . $file["name"];
 	                }
 
     			// Show file name with link to download

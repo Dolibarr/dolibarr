@@ -184,8 +184,8 @@ class pdf_azur extends ModelePDFPropales
 				}
 				else
 				{
-					$pdir[0] = dol_sanitizeFileName($objphoto->ref).'/';
-					$pdir[1] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";
+					$pdir[0] = dol_sanitizeFileName($objphoto->ref).'/';				// default
+					$pdir[1] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";	// alternative
 				}
 
 				$arephoto = false;
@@ -331,7 +331,7 @@ class pdf_azur extends ModelePDFPropales
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
-				
+
 				// Incoterm
 				$height_incoterms = 0;
 				if ($conf->incoterm->enabled)
@@ -345,11 +345,11 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
-	
+
 						// Rect prend une longueur en 3eme param
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
-	
+
 						$tab_top = $nexY+6;
 						$height_incoterms += 4;
 					}
@@ -644,7 +644,7 @@ class pdf_azur extends ModelePDFPropales
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 				*/
-				
+
 				// Customer signature area
 				$posy=$this->_signature_area($pdf, $object, $posy, $outputlangs);
 
@@ -653,33 +653,33 @@ class pdf_azur extends ModelePDFPropales
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
 				//If propal merge product PDF is active
-				if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) 
+				if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
-					
+
 					$already_merged = array ();
 					foreach ( $object->lines as $line ) {
 						if (! empty($line->fk_product) && ! (in_array($line->fk_product, $already_merged))) {
 							// Find the desire PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
-					
+
 							if ($conf->global->MAIN_MULTILANGS) {
 								$filetomerge->fetch_by_product($line->fk_product, $outputlangs->defaultlang);
 							} else {
 								$filetomerge->fetch_by_product($line->fk_product);
 							}
-					
+
 							$already_merged[] = $line->fk_product;
-							
+
 							$product = new Product($this->db);
 							$product->fetch($line->fk_product);
-							
+
 							if ($product->entity!=$conf->entity) {
 								$entity_product_file=$product->entity;
 							} else {
 								$entity_product_file=$conf->entity;
 							}
-					
+
 							// If PDF is selected and file is not empty
 							if (count($filetomerge->lines) > 0) {
 								foreach ( $filetomerge->lines as $linefile ) {
@@ -688,9 +688,9 @@ class pdf_azur extends ModelePDFPropales
 											$filetomerge_dir = $conf->product->multidir_output[$entity_product_file] . '/' . dol_sanitizeFileName($line->product_ref);
 										elseif (! empty($conf->service->enabled))
 											$filetomerge_dir = $conf->service->multidir_output[$entity_product_file] . '/' . dol_sanitizeFileName($line->product_ref);
-											
+
 										dol_syslog(get_class($this) . ':: upload_dir=' . $filetomerge_dir, LOG_DEBUG);
-											
+
 										$infile = $filetomerge_dir . '/' . $linefile->file_name;
 										if (is_file($infile)) {
 											$pagecount = $pdf->setSourceFile($infile);
@@ -707,11 +707,11 @@ class pdf_azur extends ModelePDFPropales
 						}
 					}
 				}
-				
+
 				//exit;
-				
-				
-				
+
+
+
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
@@ -1567,10 +1567,10 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($posx, $tab_top + 0);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
-		
+
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
 		$pdf->MultiCell($largcol, $tab_hl*6, '', 1, 'R');
-		
+
 		return ($tab_hl*7);
 	}
 }

@@ -3701,26 +3701,42 @@ function yn($yesno, $case=1, $color=0)
 
 
 /**
- *	Return a path to have a directory according to an id
+ *	Return a path to have a directory according to object.
  *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
  *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  *
- *	@param	string	$num            Id to develop
- *	@param  int		$level		    Level of development (1, 2 or 3 level)
+ *	@param	string	$num            Id of object
+ *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels)
  * 	@param	int		$alpha		    Use alpha ref
- *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end
- *  @return	string					Dir to use
+ *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end (except if '/', we return '')
+ *  @param	string	$ref			Not used yet. May be used to manage different option of directory path according to element.
+ *  @param	string	$modulepart		Not used yet. May be used to manage different option of directory path according to element.
+ *  @return	string					Dir to use ending. Example '' or '1/' or '1/2/'
  */
-function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
+function get_exdir($num,$level,$alpha=0,$withoutslash=0,$ref='',$modulepart='')
 {
+	global $conf;
+
 	$path = '';
-	if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
-	else $num = preg_replace('/^.*\-/i','',$num);
-	$num = substr("000".$num, -$level);
-	if ($level == 1) $path = substr($num,0,1);
-	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
-	if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
-	if (empty($withoutslash)) $path.='/';
+
+	if (in_array($modulepart, array('don','donation','supplier_invoice','invoice_supplier')))
+	{
+		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
+		else $num = preg_replace('/^.*\-/i','',$num);
+		$num = substr("000".$num, -$level);
+		if ($level == 1) $path = substr($num,0,1);
+		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
+		if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
+	}
+	else
+	{
+		// TODO
+		// We will introduce here a common way of forging path for document storage
+		// Here, $num=id, ref and modulepart are required.
+
+	}
+
+	if (empty($withoutslash) && ! empty($path)) $path.='/';
 	return $path;
 }
 
