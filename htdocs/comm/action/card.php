@@ -746,6 +746,9 @@ if ($action == 'create')
 	}
 	if(!empty($origin) && !empty($originid))
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+		print '<td colspan="3">'.dolGetElementUrl($originid,$origin,1).'</td></tr>';
 		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
 		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
 	}

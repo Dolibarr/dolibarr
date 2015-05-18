@@ -12,7 +12,6 @@ Notify_FICHINTER_VALIDATE=تدخل المصادق
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=فاتورة مصادق
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
-Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=من أجل الموافقة على المورد
 Notify_ORDER_SUPPLIER_REFUSE=من أجل رفض الموردين
 Notify_ORDER_VALIDATE=التحقق من صحة النظام العميل

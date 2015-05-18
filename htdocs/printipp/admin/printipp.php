@@ -159,7 +159,7 @@ if ($mode == 'config' && $user->admin)
     $var=!$var;
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("PRINTIPP_PASSWORD").'</td><td>';
-    print '<input size="32" type="text" name="PRINTIPP_PASSWORD" value="'.$conf->global->PRINTIPP_PASSWORD.'">';
+    print '<input size="32" type="password" name="PRINTIPP_PASSWORD" value="'.$conf->global->PRINTIPP_PASSWORD.'">';
     print '</td></tr>';
 
     //$var=true;

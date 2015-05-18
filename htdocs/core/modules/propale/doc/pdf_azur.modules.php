@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2010-2015 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,28 +158,60 @@ class pdf_azur extends ModelePDFPropales
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
 		{
+			$objphoto = new Product($this->db);
+
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
 
-				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
-				$pdir = get_exdir($object->lines[$i]->fk_product,2) . $object->lines[$i]->fk_product ."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
-
-				$realpath='';
-				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 				{
-					$filename=$obj['photo'];
-					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
-					$realpath = $dir.$filename;
-					break;
+					$pdir[0] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";
+					$pdir[1] = dol_sanitizeFileName($objphoto->ref).'/';
+				}
+				else
+				{
+					$pdir[0] = dol_sanitizeFileName($objphoto->ref).'/';
+					$pdir[1] = get_exdir($objphoto->id,2) . $objphoto->id ."/photos/";
 				}
 
-				if ($realpath) $realpatharray[$i]=$realpath;
+				$arephoto = false;
+				foreach ($pdir as $midir)
+				{
+					if (! $arephoto)
+					{
+						$dir = $conf->product->dir_output.'/'.$midir;
+
+						foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+						{
+							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							{
+								if ($obj['photo_vignette'])
+								{
+									$filename= $obj['photo_vignette'];
+								}
+								else
+								{
+									$filename=$obj['photo'];
+								}
+							}
+							else
+							{
+								$filename=$obj['photo'];
+							}
+
+							$realpath = $dir.$filename;
+							$arephoto = true;
+						}
+					}
+				}
+
+				if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
 			}
 		}
+
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
 		if ($conf->propal->dir_output)

@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
@@ -72,30 +72,35 @@ if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
 
 if (! empty($tag) && ($unsuscrib=='1'))
 {
-	//Udate status of mail in Destinaries maling list
+	// Update status of mail in recipient mailing list table
 	$statut='3';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
 
-	//Update status communication of thirdparty prospect
+	// Update status communication of thirdparty prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe thirdparty : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
 
-    //Update status communication of contact prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+    // Update status communication of contact prospect
+	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
+
 
 	$sql = "SELECT mc.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.tag='".$db->escape($tag)."'";
 
 	$resql=$db->query($sql);
+	if (! $resql) dol_print_error($db);
 
 	$obj = $db->fetch_object($resql);
 
@@ -106,8 +111,8 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	print "<html>\n";
 	print "<head>\n";
 	print '<meta name="robots" content="noindex,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,mailing">'."\n";
-	print '<meta name="description" content="Welcome on Dolibarr Mailing unsubcribe">'."\n";
+	print '<meta name="keywords" content="dolibarr,emailing">'."\n";
+	print '<meta name="description" content="Dolibarr EMailing unsubcribe page">'."\n";
 	print "<title>".$langs->trans("MailUnsubcribe")."</title>\n";
 	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
 	print '<style type="text/css">';

@@ -163,5 +163,5 @@ LabelRIB=Etiqueta del codi BAN
 NoBANRecord=Codi BAN no registrat
 DeleteARib=Codi BAN eliminat
 ConfirmDeleteRib=Segur que vols eliminar aquest registre BAN?
-StartDate=Start date
-EndDate=End date
+StartDate=Data d'inici
+EndDate=Data final

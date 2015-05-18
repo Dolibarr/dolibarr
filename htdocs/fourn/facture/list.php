@@ -5,6 +5,7 @@
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +154,7 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
 	else $sql .= natural_search('fac.ref', $search_ref);
 }
-if (search_ref_supplier)
+if ($search_ref_supplier)
 {
 	$sql .= natural_search('fac.ref_supplier', $search_ref_supplier);
 }

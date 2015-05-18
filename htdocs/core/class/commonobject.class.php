@@ -3242,13 +3242,13 @@ abstract class CommonObject
 	/**
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
-	 * @param string $modelspath Relative folder where models are placed
-	 * @param string $modele Model to use
-	 * @param Translate $outputlangs Language to use
-	 * @param int $hidedetails 1 to hide details. 0 by default
-	 * @param int $hidedesc 1 to hide product description. 0 by default
-	 * @param int $hideref 1 to hide product reference. 0 by default
-	 * @return int 1 if OK -1 if not OK
+	 * @param 	string 		$modelspath Relative folder where models are placed
+	 * @param 	string 		$modele Model to use
+	 * @param 	Translate 	$outputlangs Language to use
+	 * @param 	int 		$hidedetails 1 to hide details. 0 by default
+	 * @param 	int 		$hidedesc 1 to hide product description. 0 by default
+	 * @param 	int 		$hideref 1 to hide product reference. 0 by default
+	 * @return 	int 		1 if OK -1 if KO
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref)
 	{

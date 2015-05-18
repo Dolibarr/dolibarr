@@ -83,7 +83,7 @@ DoStandingOrdersBeforePayments=This tab allows you to request a standing order. 
 WithdrawalFile=Datei abbuchen
 SetToStatusSent=Setze in Status "Datei versandt"
 ThisWillAlsoAddPaymentOnInvoice=Dies wird auch Zahlungen auf Rechnungen erstellen und diese als bezahlt markieren
-StatisticsByLineStatus=Statistics by status of lines
+StatisticsByLineStatus=Statistiken nach Statuszeilen
 
 ### Notifications
 InfoCreditSubject=Zahlung des Dauerauftrags %s
