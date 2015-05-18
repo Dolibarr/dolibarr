@@ -439,6 +439,26 @@ print "\n";
 <div align="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
+
+<?php
+if (! empty($_SESSION["commandbackuplastdone"]))
+{
+	print '<br><b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
+    print '<textarea rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuplastdone"].'</textarea><br>'."\n";
+    print '<br>';
+
+    //print $paramclear;
+
+    // Now run command and show result
+    print '<b>'.$langs->trans("BackupResult").':</b> ';
+	print $_SESSION["commandbackupresult"];
+
+	$_SESSION["commandbackuplastdone"]='';
+	$_SESSION["commandbackuptorun"]='';
+	$_SESSION["commandbackupresult"]='';
+}
+?>
+
 </div>
 
 <?php
