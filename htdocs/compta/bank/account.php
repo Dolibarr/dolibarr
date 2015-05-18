@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015 	   Florian Henry	    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +68,8 @@ $thirdparty=GETPOST("thirdparty",'',3);
 $req_desc=GETPOST("req_desc",'',3);
 $req_debit=GETPOST("req_debit",'',3);
 $req_credit=GETPOST("req_credit",'',3);
+$req_month = GETPOST('req_month', 'aplha');
+$req_year = GETPOST('req_year', 'int');
 
 $vline=GETPOST("vline");
 $page=GETPOST('page','int');
@@ -87,6 +90,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$req_desc="";
     $req_debit="";
 	$req_credit="";
+	$req_month="";
+	$req_year="";
 }
 
 /*
@@ -253,6 +258,18 @@ if ($id > 0 || ! empty($ref))
 		$param.='&amp;paiementtype='.urlencode($paiementtype);
 		$mode_search = 1;
 	}
+	if ($req_month)
+	{
+		$sql_rech.=" AND MONTH(b.datev) IN (".$db->escape($req_month).")";
+		$param.='&amp;req_month='.urlencode($req_month);
+		$mode_search = 1;
+	}
+	if ($req_year)
+	{
+		$sql_rech.=" AND YEAR(b.datev) = '".$db->escape($req_year)."'";
+		$param.='&amp;req_year='.urlencode($req_year);
+		$mode_search = 1;
+	}
 
 	$sql = "SELECT count(*) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -398,6 +415,8 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="thirdparty"   value="'.$thirdparty.'">';
 	print '<input type="hidden" name="nbpage"       value="'.$totalPages.'">';
 	print '<input type="hidden" name="id"           value="'.$object->id.'">';
+	print '<input type="hidden" name="req_year"     value="'.$req_year.'">';
+	print '<input type="hidden" name="req_month"    value="'.$req_month.'">';
 
 	$navig ='<div data-role="fieldcontain">';
 	if ($limitsql > $viewline) $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
@@ -489,9 +508,12 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+	$period_filter .= $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="req_month" value="' . $req_month . '">';
+	$period_filter .= $langs->trans('Year') . ':' . $formother->selectyear($req_year ? $req_year : - 1, 'req_year', 1, 20, 5);
+	
 	print '<tr class="liste_titre">';
 	print '<td>&nbsp;</td>';
-	print '<td>&nbsp;</td>';
+	print '<td>'.$period_filter.'</td>';
 	print '<td>';
 	//$filtertype=array('TIP'=>'TIP','PRE'=>'PRE',...)
 	$filtertype='';
