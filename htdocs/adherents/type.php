@@ -241,8 +241,12 @@ if ($action == 'create')
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="border" width="100%">';
 
+    dol_fiche_head('');
+
+	print '<table class="border" width="100%">';
+	print '<tbody>';
+	
 	print '<input type="hidden" name="action" value="add">';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
@@ -271,9 +275,12 @@ if ($action == 'create')
 	{
 		print $adht->showOptionals($extrafields,'edit');
 	}
+	print '<tbody>';
 	print "</table>\n";
+	
+	dol_fiche_end();
 
-	print '<br><div class="center">';
+	print '<div class="center">';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
