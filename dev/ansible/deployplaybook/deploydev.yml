@@ -1,5 +1,8 @@
 #!/usr/bin/env ansible-playbook
 
+# Run script with ansible-playbook deploydev.yml
+# or ./deploydev.yml
+
 - name: Configure webserver with apache
   hosts: webservers
   sudo: True
