@@ -258,16 +258,10 @@ if ($id > 0 || ! empty($ref))
 		$param.='&amp;paiementtype='.urlencode($paiementtype);
 		$mode_search = 1;
 	}
-	if ($req_month)
+	if ($req_dtstart || $req_dtend)
 	{
-		$sql_rech.=" AND MONTH(b.datev) IN (".$db->escape($req_month).")";
-		$param.='&amp;req_month='.urlencode($req_month);
-		$mode_search = 1;
-	}
-	if ($req_year)
-	{
-		$sql_rech.=" AND YEAR(b.datev) = '".$db->escape($req_year)."'";
-		$param.='&amp;req_year='.urlencode($req_year);
+		$sql_rech.=" AND (b.datev BETWEN '".$db->escape($req_dtstart)."' AND '".$db->escape($req_dtend)."')";
+		$param.='&amp;req_dtstart='.urlencode($req_month);
 		$mode_search = 1;
 	}
 
