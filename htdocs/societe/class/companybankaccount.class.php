@@ -76,7 +76,7 @@ class CompanyBankAccount extends Account
      *
      * @return	int		<0 if KO, >= 0 if OK
      */
-    function create()
+    function create($user='')
     {
         $now=dol_now();
 
