@@ -19,6 +19,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+UPDATE llx_facture_fourn set ref=rowid where ref IS NULL;
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref varchar(255) NOT NULL;
+
+
 -- IVORY COST (id country=21)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (211, 21,  '0','0',0,0,0,0,'IVA Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values (212, 21,  '18','0',7.5,2,0,0,'IVA standard rate',1);
@@ -447,6 +451,7 @@ ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL after country;
 ALTER TABLE llx_don CHANGE COLUMN fk_paiement fk_payment integer;
 ALTER TABLE llx_don ADD COLUMN paid smallint default 0 NOT NULL after fk_payment;
 ALTER TABLE llx_don CHANGE COLUMN fk_don_projet fk_projet integer NULL;
+ALTER TABLE llx_don CHANGE COLUMN fk_project fk_projet integer NULL;
 
 create table llx_don_extrafields
 (

@@ -124,7 +124,7 @@ $server->wsdl->addComplexType(
  				)
  		)
  );
- 
+
  /*
   * An image
  */
@@ -217,7 +217,7 @@ function getCategory($authentication,$id)
 			if ($result > 0)
 			{
 					$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
-					$pdir = get_exdir($categorie->id,2) . $categorie->id ."/photos/";
+					$pdir = get_exdir($categorie->id,2,0,0,$categorie,'category') . $categorie->id ."/photos/";
 					$dir = $dir . '/'. $pdir;
 
 					$cat = array(
@@ -238,7 +238,7 @@ function getCategory($authentication,$id)
 					 	foreach($cats as $fille)
 						{
 							$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($fille->id,2) . $fille->id ."/photos/";
+							$pdir = get_exdir($fille->id,2,0,0,$categorie,'category') . $fille->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
 							$cat['filles'][] = array(
 								'id'=>$fille->id,

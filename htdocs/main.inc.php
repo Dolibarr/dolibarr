@@ -151,13 +151,16 @@ if (! empty($_SERVER["PHP_SELF"]))
     analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost,2);
 }
 // Sanity check on GET parameters
-if (! empty($_SERVER["QUERY_STRING"]))
+if (! defined('NOSCANGETFORINJECTION') && ! empty($_SERVER["QUERY_STRING"]))
 {
     $morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
     analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget,1);
 }
 // Sanity check on POST
-analyseVarsForSqlAndScriptsInjection($_POST,0);
+if (! defined('NOSCANPOSTFORINJECTION'))
+{
+	analyseVarsForSqlAndScriptsInjection($_POST,0);
+}
 
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
@@ -28,6 +28,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("categories");
 
@@ -151,8 +152,7 @@ foreach($fulltree as $key => $val)
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.
-	'</td><td width="50%">'.
-	' '.$val['description'].'</td>'.
+	'</td><td width="50%">'.dolGetFirstLineOfText($val['description']).'</td>'.
 	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
@@ -160,7 +160,7 @@ foreach($fulltree as $key => $val)
 
 
 print '<table class="liste" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td>'.$langs->trans("Description").'</td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
 if (! empty($conf->use_javascript_ajax))
 {
 	print '<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';

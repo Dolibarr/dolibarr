@@ -2066,7 +2066,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= ",total_localtax2='".price2num($total_localtax2)."'";
             $sql.= ",total_ttc='".price2num($total_ttc)."'";
             $sql.= ",product_type=".$type;
-	        $sql.= ($fk_unit ? "'".$this->db->escape($fk_unit)."'":"null");
+			$sql.= ($fk_unit ? ",fk_unit='".$this->db->escape($fk_unit)."'":", fk_unit=null");
             $sql.= " WHERE rowid = ".$rowid;
 
             dol_syslog(get_class($this)."::updateline", LOG_DEBUG);

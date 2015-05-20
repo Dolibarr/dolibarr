@@ -69,7 +69,7 @@ function facturefourn_prepare_head($object)
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$object->ref;
+	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');

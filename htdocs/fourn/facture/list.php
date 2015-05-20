@@ -8,7 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -309,7 +309,7 @@ if ($resql)
 		$facturestatic->ref_supplier=$obj->ref_supplier;
 		print $facturestatic->getNomUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
-		$filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2).dol_sanitizeFileName($object->ref?$obj->ref:$obj->facid);
+		$filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink('facture_fournisseur', $filename, $filedir);
 		print "</td>\n";
 

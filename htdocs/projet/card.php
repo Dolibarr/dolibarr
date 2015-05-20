@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -274,8 +274,8 @@ if (empty($reshook))
 	    $result= $object->generateDocument($object->modelpdf, $outputlangs);
 	    if ($result <= 0)
 	    {
-	        dol_print_error($db,$result);
-	        exit;
+	        setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 	    }
 	}
 
@@ -713,19 +713,6 @@ else
 
     if ($action != "edit" )
     {
-    	// Validate
-        if ($object->statut == 0 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-            }
-            else
-            {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
-            }
-        }
-
         // Modify
         if ($object->statut != 2 && $user->rights->projet->creer)
         {
@@ -739,8 +726,21 @@ else
             }
         }
 
+    	// Validate
+        if ($object->statut == 0 && $user->rights->projet->creer)
+        {
+            if ($userWrite > 0)
+            {
+                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+            }
+            else
+            {
+                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
+            }
+        }
+
         // Close
-        if ($object->statut == 1 && $user->rights->projet->creer)
+        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
         {
             if ($userWrite > 0)
             {

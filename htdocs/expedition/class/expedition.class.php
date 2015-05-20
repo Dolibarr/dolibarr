@@ -497,7 +497,7 @@ class Expedition extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				$file = $conf->expedition->dir_output . "/" .get_exdir($this->id, 2) . "/" . $this->id.".pdf";
+				$file = $conf->expedition->dir_output . "/" .get_exdir($this->id, 2, 0, 0, $this, 'shipment') . "/" . $this->id.".pdf";
 				$this->pdf_filename = $file;
 
 				// Tracking url

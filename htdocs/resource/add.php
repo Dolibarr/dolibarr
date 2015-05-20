@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013	Jean-François Ferry	 <jfefe@aternatik.fr>
+ * Copyright (C) 2015	Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +23,10 @@
  *					Initialy built by build_class_from_table on 2013-07-24 16:03
  */
 
+require '../main.inc.php';
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-$res=@include("../main.inc.php");				// For root directory
-if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
-if (! $res) die("Include of main fails");
-
-require_once 'class/resource.class.php';
-require_once 'class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 // Load traductions files required by page
 $langs->load("resource");
@@ -132,6 +128,8 @@ if (! $action)
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="add_resource">';
 	print '<input type="hidden" name="action" value="confirm_add_resource" />';
 
+	dol_fiche_head('');
+
 	print '<table class="border" width="100%">';
 
 	// Ref / label
@@ -161,7 +159,7 @@ if (! $action)
 	print '</label>';
 	print '</td>';
 	print '<td>';
-	require_once (DOL_DOCUMENT_ROOT . "/core/class/doleditor.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor($field, $$field, 160, '', '', false);
 	$doleditor->Create();
 	print '</td>';
@@ -169,9 +167,11 @@ if (! $action)
 
 	print '</table>';
 
-	echo '<br><div align="center">',
+	dol_fiche_end('');
+
+	echo '<div align="center">',
 	'<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
-	'&nbsp;',
+	'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 	'<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
 	'</div>';
 

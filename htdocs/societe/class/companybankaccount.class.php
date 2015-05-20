@@ -74,9 +74,10 @@ class CompanyBankAccount extends Account
     /**
      * Create bank information record
      *
-     * @return	int		<0 if KO, >= 0 if OK
+     * @param   Object   $user		User
+     * @return	int					<0 if KO, >= 0 if OK
      */
-    function create()
+    function create($user='')
     {
         $now=dol_now();
 

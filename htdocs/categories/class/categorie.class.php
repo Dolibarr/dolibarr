@@ -1302,7 +1302,7 @@ class Categorie extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
+		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
 		$dir .= "photos/";
 
 		if (! file_exists($dir))

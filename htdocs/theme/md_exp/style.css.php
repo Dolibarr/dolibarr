@@ -1867,6 +1867,94 @@ table.liste td {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
+/* Pagination */
+div.pagination {
+	float: right;
+}
+div.pagination a {
+	font-weight: normal;
+}
+div.pagination ul
+{
+  list-style: none;
+  display: inline-block;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin: 0;
+}
+div.pagination li {
+  display: inline-block;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  border-radius: 4px;
+}
+
+div.pagination li a,
+div.pagination li span {
+  /*position: relative;*/
+  /*float: left;*/
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #000;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+div.pagination li:first-child a,
+div.pagination li:first-child span {
+  margin-left: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+div.pagination li:last-child a,
+div.pagination li:last-child span {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+div.pagination li a:hover,
+div.pagination li span:hover,
+div.pagination li a:focus,
+div.pagination li span:focus {
+  color: #000;
+  background-color: #eee;
+  border-color: #ddd;
+}
+div.pagination li .active a,
+div.pagination li .active span,
+div.pagination li .active a:hover,
+div.pagination li .active span:hover,
+div.pagination li .active a:focus,
+div.pagination li .active span:focus {
+  z-index: 2;
+  color: #fff;
+  cursor: default;
+  background-color: <?php $colorbackhmenu1 ?>;
+  border-color: #337ab7;
+}
+div.pagination .disabled span,
+div.pagination .disabled span:hover,
+div.pagination .disabled span:focus,
+div.pagination .disabled a,
+div.pagination .disabled a:hover,
+div.pagination .disabled a:focus {
+  color: #777;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #ddd;
+}
+div.pagination li .active {
+  text-decoration: underline;
+}
+div.pagination li.paginationafterarrows {
+	margin-left: 10px;
+}
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {

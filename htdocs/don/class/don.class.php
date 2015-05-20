@@ -60,8 +60,9 @@ class Don extends CommonObject
     var $note_private;
     var $note_public;
     var $statut;
-
+	var $modelpdf;
     var $projet;
+
 
     /**
      *  Constructor
@@ -306,14 +307,14 @@ class Don extends CommonObject
      * @return  int  		        <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
-    function create($user, $notrigger)
+    function create($user, $notrigger=0)
     {
         global $conf, $langs;
-		
+
 		$error = 0;
 		$ret = 0;
         $now=dol_now();
-		
+
         // Clean parameters
         $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->zip);
@@ -391,7 +392,7 @@ class Don extends CommonObject
             $this->errno = $this->db->lasterrno();
             $error++;
         }
-		
+
 		// Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -403,7 +404,7 @@ class Don extends CommonObject
         		}
         	}
         }
-		
+
 		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
             $res = $this->setValid($user);
@@ -434,7 +435,7 @@ class Don extends CommonObject
         global $langs, $conf;
 
 		$error=0;
-		
+
         // Clean parameters
         $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->zip);
@@ -523,11 +524,11 @@ class Don extends CommonObject
     {
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		
+
 		$error = 0;
-        
+
 		$this->db->begin();
-		
+
         // Delete donation
         if (! $error)
         {
@@ -601,7 +602,7 @@ class Don extends CommonObject
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
-        $sql.= " d.phone_mobile, d.fk_projet,";
+        $sql.= " d.phone_mobile, d.fk_projet, d.model_pdf,";
         $sql.= " p.title as project_label,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -651,12 +652,13 @@ class Don extends CommonObject
                 $this->public         = $obj->public;
                 $this->modepaymentid  = $obj->fk_payment;
                 $this->modepayment    = $obj->libelle;
-				$this->paid			  = $obj->paid;	
+				$this->paid			  = $obj->paid;
                 $this->amount         = $obj->amount;
                 $this->note_private	  = $obj->note_private;
                 $this->note_public	  = $obj->note_public;
+                $this->modelpdf       = $obj->model_pdf;
                 $this->commentaire    = $obj->note;	// deprecated
-				
+
 				// Retrieve all extrafield for thirdparty
                 // fetch optionals attributes and labels
                 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -821,7 +823,7 @@ class Don extends CommonObject
         if ($withpicto != 2) $result.=$link.$this->id.$linkend;
         return $result;
     }
-	
+
 	/**
 	 * Information on record
 	 *
