@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along withthis program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,8 +68,15 @@ $thirdparty=GETPOST("thirdparty",'',3);
 $req_desc=GETPOST("req_desc",'',3);
 $req_debit=GETPOST("req_debit",'',3);
 $req_credit=GETPOST("req_credit",'',3);
-$req_month = GETPOST('req_month', 'aplha');
-$req_year = GETPOST('req_year', 'int');
+
+$req_stdtmonth=GETPOST('req_stdtmonth', 'int');
+$req_stdtday=GETPOST('req_stdtday', 'int');
+$req_stdtyear=GETPOST('req_stdtyear', 'int');
+$req_stdt = dol_mktime(0, 0, 0, $req_stdtmonth, $req_stdtday, $req_stdtyear);
+$req_enddtmonth=GETPOST('req_enddtmonth', 'int');
+$req_enddtday=GETPOST('req_enddtday', 'int');
+$req_enddtyear=GETPOST('req_enddtyear', 'int');
+$req_enddt = dol_mktime(23, 59, 59, $req_enddtmonth, $req_enddtday, $req_enddtyear);
 
 $vline=GETPOST("vline");
 $page=GETPOST('page','int');
@@ -90,8 +97,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$req_desc="";
     $req_debit="";
 	$req_credit="";
-	$req_month="";
-	$req_year="";
+	$req_stdtmonth="";
+	$req_stdtday="";
+	$req_stdtyear="";
+	$req_stdt = "";
+	$req_enddtmonth="";
+	$req_enddtday="";
+	$req_enddtyear="";
+	$req_enddt = "";
 }
 
 /*
@@ -258,12 +271,27 @@ if ($id > 0 || ! empty($ref))
 		$param.='&amp;paiementtype='.urlencode($paiementtype);
 		$mode_search = 1;
 	}
-	if ($req_dtstart || $req_dtend)
+	
+	if ($req_stdt && $req_enddt)
 	{
-		$sql_rech.=" AND (b.datev BETWEN '".$db->escape($req_dtstart)."' AND '".$db->escape($req_dtend)."')";
-		$param.='&amp;req_dtstart='.urlencode($req_month);
+		$sql_rech.=" AND (b.datev BETWEEN '".$db->escape($db->idate($req_stdt))."' AND '".$db->escape($db->idate($req_enddt))."')";
+		$param.='&amp;req_stdtmonth='.$req_stdtmonth.'&amp;req_stdtyear='.$req_stdtyear.'&amp;req_stdtday='.$req_stdtday;
+		$param.='&amp;req_enddtmonth='.$req_enddtmonth.'&amp;req_enddtday='.$req_enddtday.'&amp;req_enddtyear='.$req_enddtyear;
 		$mode_search = 1;
+	} 
+	elseif ($req_stdt) 
+	{
+			$sql_rech.=" AND b.datev >= '".$db->escape($db->idate($req_stdt))."'";
+			$param.='&amp;req_stdtmonth='.$req_stdtmonth.'&amp;req_stdtyear='.$req_stdtyear.'&amp;req_stdtday='.$req_stdtday;
+			$mode_search = 1;
 	}
+	elseif ($req_enddt) 
+	{
+			$sql_rech.=" AND b.datev <= '".$db->escape($db->idate($req_enddt))."'";
+			$param.='&amp;req_enddtmonth='.$req_enddtmonth.'&amp;req_enddtday='.$req_enddtday.'&amp;req_enddtyear='.$req_enddtyear;
+			$mode_search = 1;
+	}
+	
 
 	$sql = "SELECT count(*) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -409,9 +437,13 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="thirdparty"   value="'.$thirdparty.'">';
 	print '<input type="hidden" name="nbpage"       value="'.$totalPages.'">';
 	print '<input type="hidden" name="id"           value="'.$object->id.'">';
-	print '<input type="hidden" name="req_year"     value="'.$req_year.'">';
-	print '<input type="hidden" name="req_month"    value="'.$req_month.'">';
-
+	print '<input type="hidden" name="req_stdtmonth"     value="'.$req_stdtmonth.'">';
+	print '<input type="hidden" name="req_stdtyear"     value="'.$req_stdtyear.'">';
+	print '<input type="hidden" name="req_stdtday"     value="'.$req_stdtday.'">';
+	print '<input type="hidden" name="req_enddtmonth"     value="'.$req_enddtmonth.'">';
+	print '<input type="hidden" name="req_enddtday"     value="'.$req_enddtday.'">';
+	print '<input type="hidden" name="req_enddtyear"     value="'.$req_enddtyear.'">';
+	
 	$navig ='<div data-role="fieldcontain">';
 	if ($limitsql > $viewline) $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
 	$navig.= '<label for="negpage">'.$langs->trans("Page")."</label> "; // ' Page ';
@@ -502,8 +534,8 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	$period_filter .= $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="req_month" value="' . $req_month . '">';
-	$period_filter .= $langs->trans('Year') . ':' . $formother->selectyear($req_year ? $req_year : - 1, 'req_year', 1, 20, 5);
+	$period_filter .= $langs->trans('From').'&nbsp;'.$form->select_date($req_stdt,'req_stdt',0,0,1,null,1,1,1);
+	$period_filter .= '<BR>'. $langs->trans('to').'&nbsp;'.$form->select_date($req_enddt,'req_enddt',0,0,1,null,1,1,1);
 	
 	print '<tr class="liste_titre">';
 	print '<td>&nbsp;</td>';
