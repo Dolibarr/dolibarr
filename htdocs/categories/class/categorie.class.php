@@ -493,7 +493,6 @@ class Categorie extends CommonObject
 		 * llx_categorie_fournisseur, llx_categorie_societe => fk_soc
 		 * llx_categorie_member => fk_member
 		 * llx_categorie_product => fk_product
-		 * llx_categories_extrafields => fk_object
 		 */
 		if ($type == 'contact') {
 			$column_name = 'socpeople';
