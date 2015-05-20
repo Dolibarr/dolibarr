@@ -70,6 +70,10 @@ if ($action == 'delete')
  * View
  */
 
+$_SESSION["commandbackuplastdone"]='';
+$_SESSION["commandbackuptorun"]='';
+$_SESSION["commandbackupresult"]='';
+
 // Increase limit of time. Works only if we are not in safe mode
 $ExecTimeLimit=600;
 if (!empty($ExecTimeLimit))
@@ -354,21 +358,24 @@ if ($what == 'postgresql')
     if ($errormsg)
     {
     	setEventMessage($langs->trans("Error")." : ".$errormsg, 'errors');
-    	/*
-        print '<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
-        print '<br>';
-        print '<br>';*/
+
+    	$resultstring='';
+        $resultstring.='<div class="error">'.$langs->trans("Error")." : ".$errormsg.'</div>';
+
+        $_SESSION["commandbackupresult"]=$resultstring;
     }
     else
 	{
 		if ($what)
 		{
 	        setEventMessage($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"));
-	        /*print '<div class="ok">';
-	        print $langs->trans("BackupFileSuccessfullyCreated").'.<br>';
-	        print $langs->trans("YouCanDownloadBackupFile");
-	        print '</div>';
-	        print '<br>';*/
+
+	        $resultstring='<div class="ok">';
+	        $resultstring.=$langs->trans("BackupFileSuccessfullyCreated").'.<br>';
+	        $resultstring.=$langs->trans("YouCanDownloadBackupFile");
+	        $resultstring.='<div>';
+
+	        $_SESSION["commandbackupresult"]=$resultstring;
 		}
 		else
 		{

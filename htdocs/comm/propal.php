@@ -1065,13 +1065,10 @@ if (empty($reshook))
 		}
 		$ret = $object->fetch($id); // Reload to get new records
 		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-		if ($result <= 0) {
-			dol_print_error($db, $result);
-			exit();
-		} else {
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
-			exit();
+		if ($result <= 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 		}
 	}
 

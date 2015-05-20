@@ -1030,13 +1030,8 @@ if ($action == 'builddoc')	// GET or POST
 	$result=expensereport_pdf_create($db, $depl, '', $depl->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
-		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$depl->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
-		exit;
+		setEventMessages($object->error, $object->errors, 'errors');
+        $action='';
 	}
 }
 

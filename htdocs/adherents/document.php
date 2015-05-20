@@ -60,7 +60,6 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $id;
 $form = new Form($db);
 $object=new Adherent($db);
 $membert=new AdherentType($db);
@@ -70,6 +69,9 @@ if ($result < 0)
 	dol_print_error($db);
 	exit;
 }
+$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'member') . '/' . dol_sanitizeFileName($object->ref);
+
+
 /*
  * Actions
  */

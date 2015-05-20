@@ -434,8 +434,8 @@ foreach ($listofreferent as $key => $value)
 					}
 					else if($element_doc === 'invoice_supplier') {
 						$element_doc='facture_fournisseur';
-						$filename = get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2).dol_sanitizeFileName($element->ref);
+						$filename = get_exdir($element->id,2,0,0,$this,'product').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($element->id,2,0,0,null,'invoice_supplier').dol_sanitizeFileName($element->ref);
 					}
 
 					print $formfile->getDocumentsLink($element_doc, $filename, $filedir);

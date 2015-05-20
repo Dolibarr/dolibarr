@@ -4806,19 +4806,19 @@ class Form
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2).$object->photo;
+            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }else {
         	$dir=$conf->$modulepart->dir_output;
-        	if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+        	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }

@@ -322,15 +322,15 @@ if (empty($reshook))
 			if ($result >= 0 && ! count($object->errors))
 			{
 				// Logo/Photo save
-				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1).'/photos';
+				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1,$object,'member').'/photos';
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 				if ($file_OK)
 				{
 					if (GETPOST('deletephoto'))
 					{
 						require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-						$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/'.$object->photo;
-						$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/thumbs';
+						$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1,$object,'member').'/photos/'.$object->photo;
+						$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1,$object,'member').'/photos/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
 					}

@@ -45,7 +45,7 @@ class pdf_standard extends CommonStickerGenerator
 	function addSticker(&$pdf,$outputlangs,$param) {
 		// use this method in future refactoring
 	}
-	
+
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
@@ -96,7 +96,7 @@ class pdf_standard extends CommonStickerGenerator
 		$dir=$conf->adherent->dir_output;
 		if (! empty($photo))
 		{
-			$file=get_exdir($idmember,2).'photos/'.$photo;
+			$file=get_exdir($idmember,2,0,0,null,'member').'photos/'.$photo;
 			$photo=$dir.'/'.$file;
 			if (! is_readable($photo)) $photo='';
 		}

@@ -1091,10 +1091,10 @@ if (empty($reshook))
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
-		if ($result <= 0) {
-			dol_print_error($db, $result);
-			exit();
+		if ($result <= 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 		}
 	}
 
@@ -1316,7 +1316,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
 
 	dol_fiche_head('');
-	
+
 	print '<table class="border" width="100%">';
 
 	// Reference
@@ -1548,7 +1548,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '</table>';
 
 	dol_fiche_end();
-	
+
 	// Button "Create Draft"
 	print '<div class="center"><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '"></div>';
 
