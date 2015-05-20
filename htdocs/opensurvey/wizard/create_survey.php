@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2015	   Alexandre Spangaro  <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +136,8 @@ print_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 //debut du formulaire
 print '<form name="formulaire" action="" method="POST">'."\n";
 
+dol_fiche_head();
+
 //Affichage des différents champs textes a remplir
 print '<table class="border" width="100%">'."\n";
 
@@ -157,6 +160,8 @@ print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',
 
 print '</tr>'."\n";
 print '</table>'."\n";
+
+dol_fiche_end();
 
 //focus javascript sur le premier champ
 print '<script type="text/javascript">'."\n";
