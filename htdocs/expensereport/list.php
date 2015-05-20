@@ -88,10 +88,10 @@ if ($page == -1) {
 	$page = 0 ;
 }
 
-$limit = $conf->liste_limit;
-$offset = $limit * $page;
+$offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$limit = $conf->liste_limit;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin,";
@@ -219,7 +219,7 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 
-	// Amount with no taxe
+	// Amount with no tax
 	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -245,9 +245,9 @@ if ($resql)
 	$total_total_ttc = 0;
 	$total_total_tva = 0;
 
-	if($num>0)
+	if($num > 0)
 	{
-		while ($i < $num)
+		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($resql);
 
