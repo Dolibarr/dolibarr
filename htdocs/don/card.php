@@ -282,6 +282,7 @@ if ($action == 'create')
 	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
+	print '<tbody>';
 
     $nbrows=11;
     if (! empty($conf->projet->enabled)) $nbrows++;
@@ -357,11 +358,12 @@ if ($action == 'create')
 		print $object->showOptionals($extrafields,'edit',$parameters);
     }
 
+    print '</tbody>';
 	print "</table>\n";
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print "</form>\n";
 }
