@@ -472,7 +472,7 @@ class Categorie extends CommonObject
 	 * 	Link an object to the category
 	 *
 	 *	@param		Object	$obj	Object to link to category
-	 * 	@param		string	$type	Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * 	@param		string	$type	Type of category ('societe', 'member', 'customer', 'supplier', 'product', 'contact')
 	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
 	function add_type($obj,$type)
@@ -488,9 +488,20 @@ class Categorie extends CommonObject
 		if ($type == 'customer') $type='societe';
 		if ($type == 'supplier') $type='fournisseur';
 
-		$column_name=$type;
-        if ($type=='contact') $column_name='socpeople';
-        if ($type=='fournisseur') $column_name='societe';
+		/**
+		 * llx_categorie_contact => fk_socpeople
+		 * llx_categorie_fournisseur, llx_categorie_societe => fk_soc
+		 * llx_categorie_member => fk_member
+		 * llx_categorie_product => fk_product
+		 * llx_categories_extrafields => fk_object
+		 */
+		if ($type == 'contact') {
+			$column_name = 'socpeople';
+		} elseif ($type == 'supplier' || ($type == 'societe')) {
+			$column_name = 'soc';
+		} else {
+			$column_name = 'type';
+		}
 
         $this->db->begin();
 
