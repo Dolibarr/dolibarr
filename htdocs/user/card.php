@@ -1474,6 +1474,7 @@ else
                 else
                 {
                     print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+                	print '<div class="inline-block divButAction"><button class="btn btn-primary" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</button></div>';
                 }
             }
             elseif ($caneditpassword && ! $object->ldap_sid &&

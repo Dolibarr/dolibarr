@@ -118,7 +118,7 @@ class FormFile
             $out .= '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
-            $out .= ' &nbsp; ';
+            $out .= '&nbsp;';
             $out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
@@ -183,6 +183,7 @@ class FormFile
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
+	            $out .= '&nbsp;';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';

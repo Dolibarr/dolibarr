@@ -2239,8 +2239,6 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("Merge")).'">'.$langs->trans('Merge').'</a></div>';
-
 	        if (! empty($object->email))
 	        {
 	        	$langs->load("mails");
@@ -2257,6 +2255,11 @@ else
 	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 	        }
 
+	        if ($user->rights->societe->supprimer)
+	        {
+	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+	        }
+	        
 	        if ($user->rights->societe->supprimer)
 	        {
 	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile

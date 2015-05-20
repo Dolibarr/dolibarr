@@ -252,7 +252,6 @@ input, input.flat, textarea, textarea.flat, form.flat select select, select.flat
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
-    /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
 }
 
@@ -443,6 +442,9 @@ textarea.centpercent {
 {
 	border-right: 1px solid #f4f4f4;
 }
+#formuserfile {
+	margin-top: 4px;
+}
 #formuserfile_link {
 	margin-left: 1px;
 }
@@ -603,6 +605,10 @@ margin : 0px auto;
 #pictotitle {
 	margin-right: 8px;
 	margin-bottom: 4px;
+}
+.pictosubstatus {
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 
@@ -1064,7 +1070,7 @@ a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php p
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
@@ -1457,7 +1463,6 @@ a.tabTitle {
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
 	padding: 5px 12px 5px;
-	/*	padding: 3px 6px 2px 6px;*/
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
