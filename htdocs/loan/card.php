@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014-2015	Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -191,6 +191,8 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
+	dol_fiche_head();
+
     print '<table class="border" width="100%">';
 
 	// Label
@@ -287,8 +289,10 @@ if ($action == 'create')
 
 	print '</table>';
 
-    print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	dol_fiche_end();
+
+    print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
     print '</form>';
 }

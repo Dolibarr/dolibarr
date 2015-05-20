@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -128,7 +128,6 @@ else if ($action == 'delete')
 
 /*
  * View
- *
  */
 llxheader('', $langs->trans('AccountAccounting'));
 
@@ -142,7 +141,9 @@ if ($action == 'create')
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
-	
+
+	dol_fiche_head();
+
 	print '<table class="border" width="100%">';
 	
 	print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
@@ -163,8 +164,10 @@ if ($action == 'create')
 	print '</td></tr>';
 	
 	print '</table>';
-	
-	print '<br><div class="center">';
+
+	dol_fiche_end();
+
+	print '<div class="center">';
 	print '<input class="button" type="submit" value="' . $langs->trans("Save") . '">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -216,16 +219,16 @@ else if ($id)
 			print '</td></tr>';
 			
 			print '</table>';
-			
-			print '<br><div class="center">';
+
+			dol_fiche_end();
+
+			print '<div class="center">';
 			print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" name="cancel" class="button" value="' . $langs->trans("Cancel") . '">';
 			print '</div>';
 			
 			print '</form>';
-			
-			print '</div>';
 		}
 		else
 		{
@@ -268,8 +271,8 @@ else if ($id)
 			print '</td></tr>';
 			
 			print '</table>';
-			
-			print '</div>';
+
+			dol_fiche_end();
 			
 			/*
 			 * Barre d'actions
@@ -297,6 +300,6 @@ else if ($id)
 		dol_print_error($db);
 	}
 }
+$db->close();
 
 llxFooter();
-$db->close();
