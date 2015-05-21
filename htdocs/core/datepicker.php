@@ -27,9 +27,9 @@
  */
 
 if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// disabled
-//if (! defined('NOREQUIREDB'))     define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 if (! defined('NOLOGIN')) define('NOLOGIN',1);					// disabled
@@ -122,7 +122,7 @@ print '</body></html>'."\n";
  * 	Convert date to timestamp
  *
  * 	@param	string		$mysqldate		Date YYYMMDD
- *  @return	timestamp					Timestamp
+ *  @return	integer					Timestamp
  */
 function xyzToUnixTimestamp($mysqldate)
 {
@@ -194,7 +194,6 @@ function displayBox($selectedDate,$month,$year)
 		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";
 	}
 	?>
-	
 	</tr>
 	<?php
 	//print "x ".$thedate." y";			// $thedate = first day of month
@@ -290,4 +289,3 @@ function displayBox($selectedDate,$month,$year)
 </table>
 		<?php
 }//end function
-

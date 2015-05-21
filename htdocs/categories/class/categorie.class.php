@@ -7,6 +7,7 @@
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  * Copyright (C) 2013      Juanjo Menent      	<jmenent@2byte.es>
  * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,7 +202,7 @@ class Categorie extends CommonObject
 				$action='create';
 
 				// Actions on extra fields (by external module or standard code)
-				// FIXME le hook fait double emploi avec le trigger !!
+				// TODO le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
 				$parameters=array('socid'=>$this->id);
 				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -294,7 +295,7 @@ class Categorie extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-			// FIXME le hook fait double emploi avec le trigger !!
+			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -642,8 +643,8 @@ class Categorie extends CommonObject
 	{
 		$field=''; $classname=''; $category_table=''; $object_table='';
 		if ($type=='product')  { $field='product'; $classname='Product'; }
-		if ($type=='customer') { $field='societe'; $classname='Societe'; }
-		if ($type=='supplier') { $field='societe'; $classname='Fournisseur'; $category_table='fournisseur'; }
+		if ($type=='customer') { $field='soc'; $classname='Societe'; $category_table='societe'; $object_table='societe'; }
+		if ($type=='supplier') { $field='soc'; $classname='Fournisseur'; $category_table='fournisseur'; $object_table='societe'; }
 		if ($type=='member')   { $field='member'; $classname='Adherent'; $category_table=''; $object_table='adherent'; }
 		if ($type=='contact')  { $field='socpeople'; $classname='Contact'; $category_table='contact'; $object_table='socpeople'; }
 
@@ -1000,7 +1001,7 @@ class Categorie extends CommonObject
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
-	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
+	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{
@@ -1063,11 +1064,11 @@ class Categorie extends CommonObject
 	 */
 	function print_all_ways($sep = " &gt;&gt; ", $url='')
 	{
-		$ways = array ();
+		$ways = array();
 
 		foreach ($this->get_all_ways() as $way)
 		{
-			$w = array ();
+			$w = array();
 			foreach ($way as $cat)
 			{
 				if ($url == '')
@@ -1164,10 +1165,10 @@ class Categorie extends CommonObject
 	{
 		$cats = array();
 
-		$typeid=-1; $table='';;
+		$typeid=-1; $table='';
 		if ($type == '0' || $type == 'product')	       { $typeid=0; $table='product';   $type='product'; }
-		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='societe';   $type='fournisseur'; }
-		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='societe';   $type='societe'; }
+		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='soc';   $type='fournisseur'; }
+		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='soc';   $type='societe'; }
 		else if ($type == '3' || $type == 'member')   { $typeid=3; $table='member';    $type='member'; }
         else if ($type == '4' || $type == 'contact')  { $typeid=4; $table='socpeople'; $type='contact'; }
 
@@ -1265,7 +1266,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Return name and link of category (with picto)
 	 *
-	 *	@param		int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien ('', 'xyz')
 	 * 	@param		int		$maxlength		Max length of text
 	 *	@return		string					Chaine avec URL
@@ -1275,17 +1276,17 @@ class Categorie extends CommonObject
 		global $langs;
 
 		$result='';
-
-		$lien = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'">';
 		$label=$langs->trans("ShowCategory").': '. ($this->ref?$this->ref:$this->label);
-		$lienfin='</a>';
+
+        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='category';
 
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$lienfin;
+		if ($withpicto != 2) $result.=$link.dol_trunc(($this->ref?$this->ref:$this->label),$maxlength).$linkend;
 		return $result;
 	}
 
@@ -1295,15 +1296,13 @@ class Categorie extends CommonObject
 	 *
 	 *  @param      string	$sdir       Repertoire destination finale
 	 *  @param      string	$file		Nom du fichier uploade
-	 *  @param      int		$maxWidth   Largeur maximum que dois faire la miniature (160 par defaut)
-	 *  @param      int		$maxHeight  Hauteur maximum que dois faire la miniature (120 par defaut)
 	 *	@return		void
 	 */
-	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
+	function add_photo($sdir, $file)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
+		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
 		$dir .= "photos/";
 
 		if (! file_exists($dir))
@@ -1321,35 +1320,10 @@ class Categorie extends CommonObject
 			if (file_exists($originImage))
 			{
 				// Cree fichier en taille vignette
-				$this->add_thumb($originImage,$maxWidth,$maxHeight);
+				$this->add_thumb($originImage);
 			}
 		}
 	}
-
-	/**
-	 *  Build thumb
-	 *
-	 *  @param      string	$file           Chemin du fichier d'origine
-	 *	@return		void
-	 */
-	function add_thumb($file)
-	{
-		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
-
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';		// This define also $maxwidthsmall, $quality, ...
-
-		if (file_exists($file))
-		{
-			// Create small thumbs for company (Ratio is near 16/9)
-	        // Used on logon for example
-	        $imgThumbSmall = vignette($file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-	        // Create mini thumbs for company (Ratio is near 16/9)
-	        // Used on menu or for setup page for example
-	        $imgThumbMini = vignette($file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-		}
-	}
-
 
 	/**
 	 *    Return tableau de toutes les photos de la categorie
@@ -1578,4 +1552,21 @@ class Categorie extends CommonObject
         $this->socid = 1;
         $this->type = 0;
     }
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'categorie_societe'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

@@ -35,7 +35,7 @@ $action=GETPOST('action');
 
 llxHeader();
 
-print_fiche_titre("XCache",'','setup');
+print_fiche_titre("XCache",'','title_setup');
 
 print "<br>\n";
 

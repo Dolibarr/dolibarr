@@ -88,7 +88,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("LimitsSetup"),'','setup');
+print_fiche_titre($langs->trans("LimitsSetup"),'','title_setup');
 
 
 print $langs->trans("LimitsDesc")."<br>\n";
@@ -126,9 +126,9 @@ if ($action == 'edit')
 
     print '</table>';
 
-    print '<br><center>';
+    print '<br><div class="center">';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-    print '</center>';
+    print '</div>';
 
     print '</form>';
     print '<br>';

@@ -75,6 +75,7 @@ $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -569,11 +570,11 @@ if ($action == 'create')
 	            			$(".fulldayendmin").removeAttr("disabled");
 	            			$("#p2").removeAttr("disabled");
 	            		} else {
-	            			$(".fulldaystarthour").attr("disabled","disabled").val("00");
-	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
-	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
-	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
-	            			$("#p2").removeAttr("disabled");
+							$(".fulldaystarthour").prop("disabled", true).val("00");
+							$(".fulldaystartmin").prop("disabled", true).val("00");
+							$(".fulldayendhour").prop("disabled", true).val("23");
+							$(".fulldayendmin").prop("disabled", true).val("59");
+							$("#p2").removeAttr("disabled");
 	            		}
 	            	}
                     setdatefields();
@@ -622,7 +623,7 @@ if ($action == 'create')
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
-    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
+    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
 
 	// Date start
 	$datep=($datep?$datep:$object->datep);
@@ -683,7 +684,7 @@ if ($action == 'create')
 		}
 	}
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
-	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'> '.$langs->trans("Busy");
+	if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked':'').'> '.$langs->trans("Busy");
 	print '</td></tr>';
 
 	// Realised by
@@ -746,6 +747,9 @@ if ($action == 'create')
 	}
 	if(!empty($origin) && !empty($originid))
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+		print '<td colspan="3">'.dolGetElementUrl($originid,$origin,1).'</td></tr>';
 		print '<input type="hidden" name="fk_element" size="10" value="'.GETPOST('originid').'">';
 		print '<input type="hidden" name="elementtype" size="10" value="'.GETPOST('origin').'">';
 	}
@@ -780,11 +784,11 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<center><br>';
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print ' &nbsp; &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</center>';
+	print '</div>';
 
 	print "</form>";
 }
@@ -837,10 +841,10 @@ if ($id > 0)
 	            				$(".fulldayendhour").removeAttr("disabled");
 	            				$(".fulldayendmin").removeAttr("disabled");
 	            			} else {
-	            				$(".fulldaystarthour").attr("disabled","disabled").val("00");
-	            				$(".fulldaystartmin").attr("disabled","disabled").val("00");
-	            				$(".fulldayendhour").attr("disabled","disabled").val("23");
-	            				$(".fulldayendmin").attr("disabled","disabled").val("59");
+								$(".fulldaystarthour").prop("disabled", true).val("00");
+								$(".fulldaystartmin").prop("disabled", true).val("00");
+								$(".fulldayendhour").prop("disabled", true).val("23");
+								$(".fulldayendmin").prop("disabled", true).val("59");
 	            			}
 	            		}
 	            		setdatefields();
@@ -878,7 +882,7 @@ if ($id > 0)
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
 
         // Full day event
-        print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked="checked"':'').'></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
@@ -930,7 +934,7 @@ if ($id > 0)
 			}
 		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
-		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked="checked"':'').'">'.$langs->trans("Busy");
+		if (in_array($user->id,array_keys($listofuserid))) print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'">'.$langs->trans("Busy");
 		print '</td></tr>';
 
 		// Realised by
@@ -982,7 +986,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td nowrap width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="nowrap" width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 
@@ -1014,9 +1018,11 @@ if ($id > 0)
 
 		dol_fiche_end();
 
-		print '<center><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1044,7 +1050,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
         // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent).'</td></tr>';
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($object->fulldayevent, 3).'</td></tr>';
 
 		$rowspan=4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) $rowspan++;
@@ -1168,7 +1174,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td nowrap width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="nowrap" width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print ($object->priority?$object->priority:'');
 		print '</td></tr>';
 

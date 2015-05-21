@@ -206,9 +206,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 			// Extrafields
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+			$array_options = $extrafields->getOptionalsFromPost($extralabels);
 
-	        $object->array_options = $array_option;
+	        $object->array_options = $array_options;
 
 			$id = $object->create($user);
 
@@ -288,7 +288,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							// Extrafields
 							$extrafieldsline = new ExtraFields($db);
 							$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-							$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+							$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
 
 
 		                    $result = $object->addline(
@@ -297,7 +297,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 		                        $desc,
 					            $date_intervention,
                  				$duration,
-                 				$array_option
+                 				$array_options
 		                    );
 
 							if ($result < 0)
@@ -327,9 +327,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    	// Extrafields
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+			$array_options = $extrafields->getOptionalsFromPost($extralabels);
 
-	        $object->array_options = $array_option;
+	        $object->array_options = $array_options;
 
 			$result = $object->create($user);
 	        if ($result > 0)
@@ -470,7 +470,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 
         $result=$object->addline(
 			$user,
@@ -478,7 +478,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
             $desc,
             $date_intervention,
             $duration,
-            $array_option
+            $array_options
         );
 
 		// Define output language
@@ -568,8 +568,8 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
 	// Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
-	$objectline->array_options = $array_option;
+	$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$objectline->array_options = $array_options;
 
 	$result = $objectline->update($user);
     if ($result < 0)
@@ -847,7 +847,7 @@ else if ($action == 'update_extras')
 	if (! $error)
 	{
 		// Actions on extra fields (by external module or standard code)
-		// FIXME le hook fait double emploi avec le trigger !!
+		// TODO le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('interventiondao'));
 		$parameters=array('id'=>$object->id);
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1018,6 +1018,8 @@ if ($action == 'create')
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+		dol_fiche_head('');
+		
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
@@ -1122,14 +1124,18 @@ if ($action == 'create')
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
-		print '<center><br>';
+		dol_fiche_end();
+		
+		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
 	else
 	{
+		dol_fiche_head('');
+		
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
@@ -1137,10 +1143,12 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		print '<br><center>';
+		dol_fiche_end();
+		
+		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-		print '</center>';
+		print '</div>';
 
 		print '</form>';
 	}
@@ -1210,7 +1218,9 @@ else if ($id > 0 || ! empty($ref))
 	if (!$formconfirm)
 	{
 		$parameters=array('lineid'=>$lineid);
-		$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm
@@ -1270,11 +1280,11 @@ else if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($action == 'classify')
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid');
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'projectid', 0, 0, 1);
 		}
 		else
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none');
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project,'none', 0, 0);
 		}
 		print '</td>';
 		print '</tr>';
@@ -1488,7 +1498,9 @@ else if ($id > 0 || ! empty($ref))
 
 					// Duration
 					print '<td align="right">';
-					$form->select_duration('duration',$objp->duree);
+					$selectmode='select';
+					if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+					$form->select_duration('duration',$objp->duree, $selectmode);
 					print '</td>';
 
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1728,6 +1740,9 @@ else if ($id > 0 || ! empty($ref))
 	/*
 	 * Action presend
 	 */
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1815,6 +1830,7 @@ else if ($id > 0 || ! empty($ref))
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='fichinter_send';
+		$formmail->param['models_id']=GETPOST('modelmailselected','int');
 		$formmail->param['fichinter_id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 

@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/dev/generate-produit.php
+ *      \file       dev/initdata/generate-produit.php
  *		\brief      Script de generation de donnees aleatoires pour les produits
  */
 
@@ -88,7 +88,7 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     $produit->type = rand(0,1);
     $produit->status = 1;
     $produit->ref = ($produit->type?'S':'P').time().$s;
-    $produit->libelle = 'Label '.time().$s;
+    $produit->label = 'Label '.time().$s;
     $produit->description = 'Description '.time().$s;
     $produit->price = rand(1,1000);
     $produit->tva_tx = "19.6";

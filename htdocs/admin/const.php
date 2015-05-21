@@ -165,14 +165,14 @@ jQuery(document).ready(function() {
 		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
 		jQuery("#action").val('update');
-		jQuery("#check_" + row_num[1]).attr("checked",true);
+		jQuery("#check_" + row_num[1]).prop("checked",true);
 	});
 });
 </script>
 <?php
 }
 
-print_fiche_titre($langs->trans("OtherSetup"),'','setup');
+print_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";

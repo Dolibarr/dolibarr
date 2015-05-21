@@ -99,7 +99,7 @@ if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$db->escape($catid);
 if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
-$sql.= " AND d.entity = ".$conf->entity;
+$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
 if ($sall)
 {
         // For natural search
@@ -110,7 +110,7 @@ if ($sall)
             if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
             $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
-            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
+            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note_public LIKE '%".$db->escape($sall)."%' OR d.note_private LIKE '%".$db->escape($sall)."%')";
         }
 }
 if ($type > 0)
@@ -233,7 +233,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters fields
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
@@ -264,7 +264,6 @@ if ($resql)
 	print '</td>';
 
 	print "</tr>\n";
-	print '</form>';
 
 	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
@@ -366,6 +365,7 @@ if ($resql)
 	}
 
 	print "</table>\n";
+	print '</form>';
 
 	if ($num > $conf->liste_limit)
 	{

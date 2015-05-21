@@ -41,7 +41,11 @@ if ($user->societe_id > 0)
 
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
+$search_login=GETPOST('search_login','alpha');
+$search_lastname=GETPOST('search_lastname','alpha');
+$search_firstname=GETPOST('search_firstname','alpha');
 $search_statut=GETPOST('search_statut','alpha');
+$search_thirdparty=GETPOST('search_thirdparty','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -65,9 +69,11 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("ListOfUsers"));
 
-print_fiche_titre($langs->trans("ListOfUsers"), '<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>');
+$buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_societe, u.login,";
+print_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
+
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login,";
 $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
@@ -75,7 +81,7 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2,";
 $sql.= " s.nom as name, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 {
@@ -85,16 +91,14 @@ else
 {
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
-if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
-if (! empty($search_user))
-{
-    $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
-}
-if ($search_statut != '' && $search_statut >= 0)
-{
-	$sql.= " AND (u.statut=".$search_statut.")";
-}
-if ($sall) $sql.= " AND (u.login LIKE '%".$db->escape($sall)."%' OR u.lastname LIKE '%".$db->escape($sall)."%' OR u.firstname LIKE '%".$db->escape($sall)."%' OR u.email LIKE '%".$db->escape($sall)."%' OR u.note LIKE '%".$db->escape($sall)."%')";
+if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
+if ($search_user != '') $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
+if ($search_thirdparty != '') $sql.=natural_search(array('s.nom'), $search_thirdparty);
+if ($search_login != '') $sql.= natural_search("u.login", $search_login);
+if ($search_lastname != '') $sql.= natural_search("u.lastname", $search_lastname);
+if ($search_firstname != '') $sql.= natural_search("u.firstname", $search_firstname);
+if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
+if ($sall) $sql.= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email', 'u.note'), $sall);
 $sql.=$db->order($sortfield,$sortorder);
 
 $result = $db->query($sql);
@@ -113,7 +117,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LastName"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_societe",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_soc",$param,"","",$sortfield,$sortorder);
     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))
     {
 	    print_liste_field_titre($langs->trans("Entity"),$_SERVER['PHP_SELF'],"u.entity",$param,"","",$sortfield,$sortorder);
@@ -122,13 +126,17 @@ if ($result)
     print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u2.login",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"u.statut",$param,"",'align="center"',$sortfield,$sortorder);
-    print '<td width="1%">&nbsp;</td>';
+    print_liste_field_titre('');
     print "</tr>\n";
 
-    // SearchBar
-    $colspan=7;
+    // Search bar
+    $colspan=3;
     if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode)) $colspan++;
     print '<tr class="liste_titre">';
+    print '<td><input type="text" name="search_login" size="6" value="'.$search_login.'"></td>';
+    print '<td><input type="text" name="search_lastname" size="6" value="'.$search_lastname.'"></td>';
+    print '<td><input type="text" name="search_firstname" size="6" value="'.$search_firstname.'"></td>';
+    print '<td><input type="text" name="search_thirdparty" size="6" value="'.$search_thirdparty.'"></td>';
     print '<td colspan="'.$colspan.'">&nbsp;</td>';
 
 	// Status
@@ -164,9 +172,9 @@ if ($result)
         print '<td>'.ucfirst($obj->lastname).'</td>';
         print '<td>'.ucfirst($obj->firstname).'</td>';
         print "<td>";
-        if ($obj->fk_societe)
+        if ($obj->fk_soc)
         {
-            $companystatic->id=$obj->fk_societe;
+            $companystatic->id=$obj->fk_soc;
             $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);

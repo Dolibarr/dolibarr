@@ -34,6 +34,7 @@ function categories_prepare_head($object,$type)
 	global $langs, $conf, $user;
 
 	$langs->load("categories");
+	$langs->load("products");
 
 	$h = 0;
 	$head = array();

@@ -87,7 +87,15 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 			$object->progress = GETPOST('progress', 'int');
 			$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
 			$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
-			$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+	        if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0)	// If hour was entered
+	        {
+				$object->timespent_date = dol_mktime(GETPOST("timehour"),GETPOST("timemin"),0,GETPOST("timemonth"),GETPOST("timeday"),GETPOST("timeyear"));
+				$object->timespent_withhour = 1;
+	        }
+	        else
+			{
+				$object->timespent_date = dol_mktime(12,0,0,GETPOST("timemonth"),GETPOST("timeday"),GETPOST("timeyear"));
+			}
 			$object->timespent_fk_user = $_POST["userid"];
 			$result=$object->addTimeSpent($user);
 			if ($result >= 0)
@@ -126,7 +134,15 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 		$object->timespent_old_duration = $_POST["old_duration"];
 		$object->timespent_duration = $_POST["new_durationhour"]*60*60;	// We store duration in seconds
 		$object->timespent_duration+= $_POST["new_durationmin"]*60;		// We store duration in seconds
-		$object->timespent_date = dol_mktime(12,0,0,$_POST["timelinemonth"],$_POST["timelineday"],$_POST["timelineyear"]);
+        if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
+        {
+			$object->timespent_date = dol_mktime(GETPOST("timelinehour"),GETPOST("timelinemin"),0,GETPOST("timelinemonth"),GETPOST("timelineday"),GETPOST("timelineyear"));
+			$object->timespent_withhour = 1;
+        }
+        else
+		{
+			$object->timespent_date = dol_mktime(12,0,0,GETPOST("timelinemonth"),GETPOST("timelineday"),GETPOST("timelineyear"));
+		}
 		$object->timespent_fk_user = $_POST["userid_line"];
 
 		$result=$object->updateTimeSpent($user);
@@ -341,7 +357,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		/*
-		 * Add time spent
+		 * Form to add time spent
 		 */
 		if ($user->rights->projet->creer)
 		{
@@ -367,8 +383,9 @@ if ($id > 0 || ! empty($ref))
 
 			// Date
 			print '<td class="nowrap">';
-			$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-			print $form->select_date($newdate,'time','','','',"timespent_date");
+			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+			$newdate='';
+			print $form->select_date($newdate,'time',1,1,2,"timespent_date");
 			print '</td>';
 
 			// Contributor
@@ -413,13 +430,13 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 *  List of time spent
 		 */
-		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
+		$sql = "SELECT t.rowid, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_task =".$object->id;
 		$sql .= " AND t.fk_user = u.rowid";
-		$sql .= " ORDER BY t.task_date DESC";
+		$sql .= " ORDER BY t.task_date DESC, t.task_datehour DESC, t.rowid DESC";
 
 		$var=true;
 		$resql = $db->query($sql);
@@ -462,15 +479,18 @@ if ($id > 0 || ! empty($ref))
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 
+			$date1=$db->jdate($task_time->task_date);
+			$date2=$db->jdate($task_time->task_datehour);
+
 			// Date
-			print '<td>';
+			print '<td class="nowrap">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
+				print $form->select_date($db->jdate($date2?$date2:$date1),'timeline',1,1,2,"timespent_date");
 			}
 			else
 			{
-				print dol_print_date($db->jdate($task_time->task_date),'day');
+				print dol_print_date($date2?$date2:$date1,($task_time->task_date_withhour?'dayhour':'day'));
 			}
 			print '</td>';
 
@@ -483,6 +503,7 @@ if ($id > 0 || ! empty($ref))
 					$contactsoftask[]=$task_time->fk_user;
 				}
 				if (count($contactsoftask)>0) {
+					print img_object('','user','class="hideonsmartphone"');
 					print $form->select_dolusers($task_time->fk_user,'userid_line',0,'',0,'',$contactsoftask);
 				}else {
 					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');

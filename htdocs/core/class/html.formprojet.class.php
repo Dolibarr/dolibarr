@@ -43,7 +43,7 @@ class FormProjets
 	}
 
 	/**
-	 *	Show a combo list with projects qualified for a third party
+	 *	Output a combo list with projects qualified for a third party
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id project preselected
@@ -52,9 +52,10 @@ class FormProjets
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
 	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16, $option_only=0, $show_empty=1, $discard_closed=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0)
 	{
 		global $user,$conf,$langs;
 
@@ -85,8 +86,21 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$minmax='';
+
+			// Use select2 selector
+			$nodatarole='';
+			if (! empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+            	$minmax='minwidth100 maxwidth300';
+			}
+
 			if (empty($option_only)) {
-				$out.= '<select class="flat" name="'.$htmlname.'">';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -132,10 +146,10 @@ class FormProjets
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
-						
+
 						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						}
 						else
 						{
@@ -146,7 +160,7 @@ class FormProjets
 							else
 							{
 								$resultat='<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat.=' disabled="disabled"';
+								if ($disabled) $resultat.=' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
 								$resultat.='>';
@@ -162,6 +176,7 @@ class FormProjets
 			if (empty($option_only)) {
 				$out.= '</select>';
 			}
+
 			print $out;
 
 			$this->db->free($resql);
@@ -204,6 +219,11 @@ class FormProjets
 				$sql = "SELECT id as rowid, label as ref";
 				$projectkey="fk_project";
 				break;
+			case "expensereport_det":
+				return '';
+				/*$sql = "SELECT rowid, '' as ref";	// table is llx_expensereport_det
+				$projectkey="fk_projet";
+				break;*/
 			default:
 				$sql = "SELECT rowid, ref";
 				break;
@@ -211,10 +231,8 @@ class FormProjets
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($socid)) {
-			$sql.= " AND fk_soc=".$socid;
-		}
-		$sql.= ' AND entity='.getEntity('project');
+		if (!empty($socid)) $sql.= " AND fk_soc=".$socid;
+		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
@@ -240,14 +258,17 @@ class FormProjets
 			/*else
 			{
 				$sellist = '<select class="flat" name="elementselect">';
-				$sellist.= '<option value="0" disabled="disabled">'.$langs->trans("None").'</option>';
+				$sellist.= '<option value="0" disabled>'.$langs->trans("None").'</option>';
 				$sellist.= '</select>';
 			}*/
 			$this->db->free($resql);
 
-			return $sellist ;
-		}else {
+			return $sellist;
+		}
+		else
+		{
 			$this->error=$this->db->lasterror();
+			$this->errors[]=$this->db->lasterror();
 			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
 			return -1;
 		}

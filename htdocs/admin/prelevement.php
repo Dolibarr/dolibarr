@@ -119,7 +119,7 @@ llxHeader('',$langs->trans("WithdrawalsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
 print '<br>';
 
 print '<form method="post" action="prelevement.php?action=set">';
@@ -161,7 +161,7 @@ print '</td></tr>';
 print '</table>';
 print '<br>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 
@@ -180,7 +180,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     $langs->load("mails");
     print_titre($langs->trans("Notifications"));
 
-    $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_societe, u.email";
+    $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE entity IN (0,".$conf->entity.")";
 
@@ -194,7 +194,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
         {
             $obj = $db->fetch_object($resql);
             $var=!$var;
-            if (!$obj->fk_societe)
+            if (!$obj->fk_soc)
             {
                 $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
                 $internalusers[$obj->rowid] = $username;

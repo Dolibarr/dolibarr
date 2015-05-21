@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,9 @@ if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
+if ($dolibarr_main_db_type == "sqlite")  $choix=4;
+if ($dolibarr_main_db_type == "sqlite3")  $choix=5;
+
 //if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into etape2.php page');
 
 // Now we load forced value from install.forced.php file.
@@ -84,7 +88,7 @@ if ($action == "set")
 
     $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-    if ($db->connected == 1)
+    if ($db->connected)
     {
         print "<tr><td>";
         print $langs->trans("ServerConnection")." : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
@@ -97,7 +101,7 @@ if ($action == "set")
 
     if ($ok)
     {
-        if($db->database_selected == 1)
+        if($db->database_selected)
         {
             dolibarr_install_syslog("etape2: Connexion successful to database : ".$conf->db->name);
         }
@@ -135,7 +139,7 @@ if ($action == "set")
 
 
     // To say sql requests are escaped for mysql so we need to unescape them
-    $db->unescapeslashquot=1;
+    $db->unescapeslashquot=true;
 
 
     /**************************************************************************************
@@ -192,6 +196,11 @@ if ($action == "set")
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
+                else if ($conf->db->type == 'mssql')
+                {
+                    $buffer=preg_replace('/type=innodb/i','',$buffer);
+                    $buffer=preg_replace('/ENGINE=innodb/i','',$buffer);
+                }
 
                 // Replace the prefix tables
                 if ($dolibarr_main_db_prefix != 'llx_')
@@ -219,7 +228,7 @@ if ($action == "set")
                     else
                     {
                         print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
-                        print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+                        print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer.' <br>Executed query : '.$db->lastquery;
                         print "\n</td>";
                         print '<td><font class="error">'.$langs->trans("ErrorSQL")." ".$db->errno()." ".$db->error().'</font></td></tr>';
                         $error++;
@@ -405,6 +414,7 @@ if ($action == "set")
         if ($choix==1) $dir = "mysql/functions/";
         elseif ($choix==2) $dir = "pgsql/functions/";
         elseif ($choix==3) $dir = "mssql/functions/";
+		elseif ($choix==4) { $dir = "sqlite3/functions/"; }
 
         // Creation donnees
         $file = "functions.sql";

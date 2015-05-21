@@ -66,17 +66,18 @@ if (!empty($actionsave))
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CronSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
 
 // Configuration header
 $head = cronadmin_prepare_head();
+
+print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 dol_fiche_head($head,'setup',$langs->trans("Module2300Name"),0,'cron');
 
 print "<br>\n";
 
-print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
@@ -96,13 +97,14 @@ print '</tr>';
 
 print '</table>';
 
-print '<br><center>';
+dol_fiche_end();
+
+print '<div class="center">';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
-print '</center>';
+print '</div>';
 
 print '</form>';
 
-dol_fiche_end();
 
 print '<br><br>';
 

@@ -79,7 +79,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	$testdate = false;
 	$champdatefin = dol_mktime(0,0,0,GETPOST('champdatefinmonth'),GETPOST('champdatefinday'),GETPOST('champdatefinyear'));
 
-	if (GETPOST('champdatefin') && ($champdatefin > 0))	// A date was provided
+	if ($champdatefin && ($champdatefin > 0))	// A date was provided
 	{
 		// Expire date is not before today
 		if ($champdatefin >= dol_now())
@@ -90,16 +90,17 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		else
 		{
 			$testdate = true;
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
 			//$testdate = false;
 			//$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
-			//setEventMessage($langs->trans('ExpiredDate'),'errors');
+			setEventMessage($langs->trans('ExpiredDate'),'warnings');
 		}
 	}
 
 	if (! $testdate) {
 		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), 'errors');
 	}
-
+	
 	if ($titre && $testdate)
 	{
 		if (! empty($creation_sondage_date))
@@ -170,12 +171,12 @@ if ($_SESSION["mailsonde"]) $cochemail="checked";
 
 print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
 
-if ($_SESSION['allow_comments']) $allow_comments = 'checked="checked"';
-if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked="checked"':'';
+if ($_SESSION['allow_comments']) $allow_comments = 'checked';
+if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked':'';
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br />'."\n";
 
-if ($_SESSION['allow_spy']) $allow_spy = 'checed="checked"';
-if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked="checked"':'';
+if ($_SESSION['allow_spy']) $allow_spy = 'checed';
+if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked':'';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br />'."\n";
 
 if (GETPOST('choix_sondage'))

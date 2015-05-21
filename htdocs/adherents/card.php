@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ $langs->load("users");
 $langs->load('other');
 
 $action=GETPOST('action','alpha');
+$cancel=GETPOST('cancel');
 $backtopage=GETPOST('backtopage','alpha');
 $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST('rowid','int');
@@ -113,7 +115,8 @@ $hookmanager->initHooks(array('membercard','globalcard'));
 
 /*
  * 	Actions
-*/
+ */
+if ($cancel) $action='';
 
 $parameters=array('rowid'=>$rowid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -236,7 +239,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
+	if ($action == 'update' && $cancel='' && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -249,7 +252,7 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
-		$morphy=$morphy=$_POST["morphy"];;
+		$morphy=$morphy=$_POST["morphy"];
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
@@ -322,15 +325,15 @@ if (empty($reshook))
 			if ($result >= 0 && ! count($object->errors))
 			{
 				// Logo/Photo save
-				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1).'/photos';
+				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1,$object,'member').'/photos';
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 				if ($file_OK)
 				{
 					if (GETPOST('deletephoto'))
 					{
 						require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-						$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/'.$object->photo;
-						$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/thumbs';
+						$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1,$object,'member').'/photos/'.$object->photo;
+						$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1,$object,'member').'/photos/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
 					}
@@ -725,7 +728,7 @@ else
 	{
 		/* ************************************************************************** */
 		/*                                                                            */
-		/* Creation card                                                             */
+		/* Creation mode                                                              */
 		/*                                                                            */
 		/* ************************************************************************** */
 		$object->canvas=$canvas;
@@ -779,7 +782,10 @@ else
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 
+        dol_fiche_head('');
+
 		print '<table class="border" width="100%">';
+		print '<tbody>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -868,13 +874,13 @@ else
 			print '</td></tr>';
 		}
 
-		// Tel pro
+		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(GETPOST('phone','alpha')?GETPOST('phone','alpha'):$object->phone).'"></td></tr>';
 
-		// Tel perso
+		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(GETPOST('phone_perso','alpha')?GETPOST('phone_perso','alpha'):$object->phone_perso).'"></td></tr>';
 
-		// Tel mobile
+		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
 	    // Skype
@@ -888,7 +894,7 @@ else
 		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
-		// Profil public
+		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
 		print $form->selectyesno("public",$object->public,1);
 		print "</td></tr>\n";
@@ -915,21 +921,25 @@ else
 		print $form->select_dolusers($object->user_id,'userid',1);
 		print '</td></tr>';
 		*/
-
+        print '<tbody>';
 		print "</table>\n";
-		print '<br>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></center>';
+        dol_fiche_end();
+
+	    print '<div class="center">';
+	    print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
+	    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
+	    print '</div>';
 
 		print "</form>\n";
-
 	}
 
 	if ($action == 'edit')
 	{
 		/********************************************
-		 *
-		* Fiche en mode edition
+		*
+		* Edition mode
 		*
 		********************************************/
 
@@ -1027,6 +1037,7 @@ else
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
 		print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 		print "</td>";
+
 		// Photo
 		print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="'.$rowspan.'">';
 		print $form->showphoto('memberphoto',$object)."\n";
@@ -1107,13 +1118,13 @@ else
 			print '</td></tr>';
 		}
 
-		// Tel
+		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?$_POST["phone"]:$object->phone).'"></td></tr>';
 
-		// Tel perso
+		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
 
-		// Tel mobile
+		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
 
 	    // Skype
@@ -1127,7 +1138,7 @@ else
 		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
-		// Profil public
+		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
 		print $form->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
 		print "</td></tr>\n";
@@ -1168,11 +1179,11 @@ else
 
 		print '</table>';
 
-		print '<br><center>';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</center';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
+		print '</div>';
 
 		print '</form>';
 
@@ -1183,7 +1194,7 @@ else
 	{
 		/* ************************************************************************** */
 		/*                                                                            */
-		/* Mode affichage                                                             */
+		/* View mode                                                                  */
 		/*                                                                            */
 		/* ************************************************************************** */
 
@@ -1204,8 +1215,8 @@ else
 
 
 		/*
-		 * Affichage onglets
-		*/
+		 * Show tabs
+		 */
 		$head = member_prepare_head($object);
 
 		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
@@ -1296,7 +1307,7 @@ else
 			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
 		}
 
-		// Confirm resiliate
+		// Confirm terminate
 		if ($action == 'resign')
 		{
 			$langs->load("mails");
@@ -1536,9 +1547,8 @@ else
 
 
 		/*
-		 * Barre d'actions
-		*
-		*/
+		 * Hotbar
+		 */
 		print '<div class="tabsAction">';
 
 		if ($action != 'valid' && $action != 'editlogin' && $action != 'editthirdparty')
@@ -1553,7 +1563,7 @@ else
 				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
 			}
 
-			// Valider
+			// Validate
 			if ($object->statut == -1)
 			{
 				if ($user->rights->adherent->creer)
@@ -1566,7 +1576,7 @@ else
 				}
 			}
 
-			// Reactiver
+			// Reactivate
 			if ($object->statut == 0)
 			{
 				if ($user->rights->adherent->creer)
@@ -1597,7 +1607,7 @@ else
 				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 			}
 
-			// Resilier
+			// Terminate
 			if ($object->statut >= 1)
 			{
 				if ($user->rights->adherent->supprimer)

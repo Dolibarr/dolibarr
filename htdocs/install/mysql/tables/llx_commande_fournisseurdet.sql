@@ -2,6 +2,7 @@
 -- Copyright (C) 2007      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2007-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
 -- Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
+-- Copyright (C) 2015      Marcos García    <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@ create table llx_commande_fournisseurdet
 (
   rowid                      integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande                integer      NOT NULL,
+  fk_parent_line             integer NULL,
   fk_product                 integer,
   ref                        varchar(50),  -- supplier product ref
   label                      varchar(255), -- product label
@@ -44,5 +46,8 @@ create table llx_commande_fournisseurdet
   date_start                 datetime     DEFAULT NULL,       -- date debut si service
   date_end                   datetime     DEFAULT NULL,       -- date fin si service
   info_bits	                 integer      DEFAULT 0,     -- TVA NPR ou non
-  import_key				 varchar(14)
+  special_code				 integer      DEFAULT 0,      -- code pour les lignes speciales
+  rang						 integer      DEFAULT 0,
+  import_key				 varchar(14),
+  fk_unit         integer    DEFAULT NULL
 )ENGINE=innodb;

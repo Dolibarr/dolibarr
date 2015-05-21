@@ -38,7 +38,7 @@ $langs->load("members");
 llxHeader();
 
 
-print_fiche_titre("Dolibarr",'','setup');
+print_fiche_titre("Dolibarr",'','title_setup');
 
 print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 
@@ -51,8 +51,8 @@ print '</ul>';
 
 print $langs->trans("Developpers").':';
 print '<ul>';
+print '<li>'.$langs->trans("SourcesRepository").': <a href="http://www.github.com/Dolibarr/dolibarr" target="_blank" rel="external">http://www.github.com/Dolibarr/dolibarr</a></li>';
 print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="http://wiki.dolibarr.org/index.php/Dolibarr_Project" target="_blank" rel="external">http://wiki.dolibarr.org/index.php/Dolibarr_Project</a></li>';
-print '<li>'.$langs->trans("DoliForge").': <a href="http://www.doliforge.org" target="_blank" rel="external">http://wwww.doliforge.org</a></li>';
 print '</ul>';
 
 //print "<br>\n";

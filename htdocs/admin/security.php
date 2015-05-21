@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Passwords"));
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
+print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";
@@ -470,18 +470,18 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
 print '<td align="center" width="60">';
-if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
+if(! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
 	print img_picto($langs->trans("Active"),'tick');
 }
 print '</td>';
-if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 0)
+if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
+if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';

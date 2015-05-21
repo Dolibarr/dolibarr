@@ -96,7 +96,7 @@ $sql .= " JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = fd.fk_factu
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 ";
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity = " . $conf->entity;
+	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 	$sql .= " AND f.type IN (0,1,2)";
@@ -240,7 +240,7 @@ if ($action == 'writebookkeeping') {
  * View
  */
 
-$companystatic = new Societe($db);
+$companystatic = new Fournisseur($db);
 
 // Export
 if ($action == 'export_csv')
@@ -249,7 +249,11 @@ if ($action == 'export_csv')
 	$purchase_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 
 	header('Content-Type: text/csv');
-	header('Content-Disposition: attachment;filename=journal_achats.csv');
+	if ($conf->global->EXPORT_PREFIX_SPEC)
+		$filename=$conf->global->EXPORT_PREFIX_SPEC."_"."journal_achats.csv";
+	else
+		$filename="journal_achats.csv";
+	header('Content-Disposition: attachment;filename='.$filename);
 
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
@@ -408,7 +412,6 @@ if ($action == 'export_csv')
 	$r = '';
 
 	$invoicestatic = new FactureFournisseur($db);
-	$companystatic = new Fournisseur($db);
 
 	foreach ( $tabfac as $key => $val ) {
 		$invoicestatic->id = $key;

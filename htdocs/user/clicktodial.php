@@ -39,14 +39,14 @@ if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 }
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 
 /*
  * Actions
  */
 
-if ($action == 'update' && ! $_POST['cancel'])
+if ($action == 'update' && ! GETPOST('cancel'))
 {
 	$edituser = new User($db);
 	$edituser->fetch($id);
@@ -138,6 +138,11 @@ if ($id > 0)
         	print '</tr>';
         }
 
+        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+        print '<td class="valeur">';
+        print '<input name="poste" value="'.(! empty($fuser->clicktodial_poste)?$fuser->clicktodial_poste:'').'"></td>';
+        print "</tr>\n";
+
         print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">';
         print '<input name="login" value="'.(! empty($fuser->clicktodial_login)?$fuser->clicktodial_login:'').'"></td>';
@@ -148,17 +153,12 @@ if ($id > 0)
         print '<input name="password" value="'.(! empty($fuser->clicktodial_password)?$fuser->clicktodial_password:'').'"></td>';
         print "</tr>\n";
 
-        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
-        print '<td class="valeur">';
-        print '<input name="poste" value="'.(! empty($fuser->clicktodial_poste)?$fuser->clicktodial_poste:'').'"></td>';
-        print "</tr>\n";
-
         print '</table>';
 
-        print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
-        print ' &nbsp; &nbsp; ';
+        print '<br><div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+        print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
         print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</center>';
+        print '</div>';
 
         print '</form>';
     }
@@ -185,15 +185,20 @@ if ($id > 0)
         	print '</td>';
         	print '</tr>';
         }
+
+        print '<tr><td width="25%" valign="top" class="fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+        print '<td class="valeur">'.(! empty($fuser->clicktodial_poste)?$fuser->clicktodial_poste:'').'</td>';
+        print "</tr>";
+        
         print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">'.(! empty($fuser->clicktodial_login)?$fuser->clicktodial_login:'').'</td>';
         print '</tr>';
+        
         print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">'.preg_replace('/./','*',(! empty($fuser->clicktodial_password)?$fuser->clicktodial_password:'')).'</a></td>';
         print "</tr>\n";
-        print '<tr><td width="25%" valign="top">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
-        print '<td class="valeur">'.(! empty($fuser->clicktodial_poste)?$fuser->clicktodial_poste:'').'</td>';
-        print "</tr></table>\n";
+        
+        print "</table>\n";
     }
 
     print "</div>\n";

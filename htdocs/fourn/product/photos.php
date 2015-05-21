@@ -102,7 +102,7 @@ if ($id)
 		print '<td colspan="2">';
 		print $object->getLibStatut(2);
 		print '</td></tr>';
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td>';
 		print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($object->price).'</td></tr>';
 		print "</table><br>\n";
 
@@ -138,7 +138,7 @@ if ($id)
 			$nbphoto=0;
 			$nbbyrow=5;
 
-			$pdir = get_exdir($object->id,2) . $object->id ."/photos/";
+			$pdir = get_exdir($object->id,2,0,0,$object,'product') . $object->id ."/photos/";
 			$dir = $conf->product->multidir_output[$object->entity] . '/'. $pdir;
 
 			print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';

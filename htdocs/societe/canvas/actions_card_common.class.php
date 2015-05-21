@@ -355,7 +355,7 @@ abstract class ActionsCardCommon
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param	string	$action    Type of action
-	 *    @param	string	$id			Id of object
+	 *    @param	integer	$id			Id of object
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
      */
@@ -437,10 +437,10 @@ abstract class ActionsCardCommon
 
             // TODO create a function
             $this->tpl['select_customertype'] = '<select class="flat" name="client">';
-            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
-            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
             $this->tpl['select_customertype'].= '</select>';
 
             // Customer

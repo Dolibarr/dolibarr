@@ -135,7 +135,6 @@ DocumentModelBaleine=Eksiksiz bir proje rapor modeli (logo. ..)
 PlannedWorkload=Planlı işyükü
 PlannedWorkloadShort=İşyükü
 WorkloadOccupation=İşyükü ataması
-ProjectReferers=Yönlendirme nesneleri
 SearchAProject=Bir proje ara
 ProjectMustBeValidatedFirst=Projeler önce doğrulanmalıdır
 ProjectDraft=Taslak projeler

@@ -85,7 +85,7 @@ $formproduct=new FormProduct($db);
 llxHeader('',$langs->trans("CashDeskSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("CashDeskSetup"),$linkback,'title_setup');
 print '<br>';
 
 
@@ -164,7 +164,7 @@ if (! empty($conf->service->enabled))
     $var=! $var;
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("CashdeskShowServices");
-    print '<td colspan="2">';;
+    print '<td colspan="2">';
     print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
     print "</td></tr>\n";
 }
@@ -172,7 +172,7 @@ if (! empty($conf->service->enabled))
 print '</table>';
 print '<br>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

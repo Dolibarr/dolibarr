@@ -5,7 +5,10 @@
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- *
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -70,6 +73,7 @@ $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax","alpha");
+$search_status=GETPOST('search_status','alpha');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 $filter = GETPOST("filtre");
@@ -118,18 +122,18 @@ if ($mode == 'search')
 
 $now=dol_now();
 $form=new Form($db);
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 $formfile = new FormFile($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
 $sql = "SELECT s.rowid as socid, s.nom as name, ";
 $sql.= " fac.rowid as facid, fac.ref, fac.ref_supplier, fac.datef, fac.date_lim_reglement as date_echeance,";
-$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
-if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=", p.rowid as project_id, p.ref as project_ref";
+$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle,";
+$sql.= " p.rowid as project_id, p.ref as project_ref";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
-if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = fac.fk_projet";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = fac.fk_projet";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE fac.entity = ".$conf->entity;
 $sql.= " AND fac.fk_soc = s.rowid";
@@ -153,7 +157,7 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql .= natural_search(array('fac.ref'), $search_ref);
 	else $sql .= natural_search('fac.ref', $search_ref);
 }
-if (search_ref_supplier)
+if ($search_ref_supplier)
 {
 	$sql .= natural_search('fac.ref_supplier', $search_ref_supplier);
 }
@@ -178,14 +182,19 @@ if ($search_company)
     $sql .= natural_search('s.nom', $search_company);
 }
 
-if ($search_amount_no_tax)
+if ($search_amount_no_tax != '')
 {
-	$sql .= " AND fac.total_ht = '".$db->escape(price2num($search_amount_no_tax))."'";
+	$sql .= natural_search('fac.total_ht', $search_amount_no_tax, 1);
 }
 
-if ($search_amount_all_tax)
+if ($search_amount_all_tax != '')
 {
-	$sql .= " AND fac.total_ttc = '".$db->escape(price2num($search_amount_all_tax))."'";
+	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
+}
+
+if ($search_status != '')
+{
+	$sql.= " AND fac.fk_statut = '".$db->escape($search_status)."'";
 }
 
 $nbtotalofrecords = 0;
@@ -226,7 +235,7 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.ref,fac.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"ref_supplier","",$param,"",$sortfield,$sortorder);
+	if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"ref_supplier","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fac.datef,fac.rowid","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"fac.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"fac.libelle","",$param,"",$sortfield,$sortorder);
@@ -238,21 +247,22 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Line for filters
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'">';
-	print '</td>';
+	if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER))
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" size="6" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'">';
+		print '</td>';
+	}
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
-	//if ($syear == '') $syear = date("Y");
-	$htmlother->select_year($syear?$syear:-1,'year',1, 20, 5);
+	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left">';
@@ -267,9 +277,9 @@ if ($resql)
 		print '</td>';
 	}
 	print '<td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
+	print '<input class="flat" type="text" size="6" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
-	print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
+	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('paye:0'=>$langs->trans("Unpaid"), 'paye:1'=>$langs->trans("Paid"));
 	print $form->selectarray('filtre', $liststatus, $filter, 1);
@@ -292,16 +302,20 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
+
 		print '<td class="nowrap">';
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
 		$facturestatic->ref_supplier=$obj->ref_supplier;
 		print $facturestatic->getNomUrl(1);
 		$filename=dol_sanitizeFileName($obj->ref);
-		$filedir=$conf->fournisseur->dir_output.'/facture' . '/' . dol_sanitizeFileName($obj->facid).'/0/'.dol_sanitizeFileName($obj->ref);
-		print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+		$filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
+		print $formfile->getDocumentsLink('facture_fournisseur', $filename, $filedir);
 		print "</td>\n";
-		print '<td class="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
+
+		// Ref supplier
+		if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) print '<td class="nowrap">'.$obj->ref_supplier."</td>";
+
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
 		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
 		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
@@ -325,7 +339,7 @@ if ($resql)
 		$total+=$obj->total_ht;
 		$total_ttc+=$obj->total_ttc;
 
-		// Affiche statut de la facture
+		// Status
 		print '<td align="right" class="nowrap">';
 		// TODO  le montant deja paye objp->am n'est pas definie
 		//print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
@@ -339,9 +353,12 @@ if ($resql)
 
 		if ($i == min($num,$limit))
 		{
+			$rowspan=5;
+			if (empty($conf->global->SUPPLIER_INVOICE_HIDE_REF_SUPPLIER)) $rowspan++;
+
 			// Print total
 			print '<tr class="liste_total">';
-			print '<td class="liste_total" colspan="6" align="left">'.$langs->trans("Total").'</td>';
+			print '<td class="liste_total" colspan="'.$rowspan.'" align="left">'.$langs->trans("Total").'</td>';
 			if (! empty($conf->global->PROJECT_SHOW_REF_INTO_LISTS)) print '<td></td>';
 			print '<td class="liste_total" align="right">'.price($total).'</td>';
 			print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';

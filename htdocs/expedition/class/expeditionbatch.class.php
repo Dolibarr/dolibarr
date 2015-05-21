@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,25 +17,24 @@
  */
 
 /**
- *  \file       expedition/class/productbatch.class.php
+ *  \file       expedition/class/expeditionbatch.class.php
  *  \ingroup    productbatch
- *  \brief      This file implements CRUD method for managing product's shipment
- *				with batch record 
+ *  \brief      This file implements CRUD method for managing shipment batch lines
+ *				with batch record
  */
 
- /**
+/**
  *	CRUD class for batch number management within shipment
  */
-
-class ExpeditionLigneBatch extends CommonObject
+class ExpeditionLineBatch extends CommonObject
 {
 	var $element='expeditionlignebatch';			//!< Id that identify managed objects
 	private static $_table_element='expeditiondet_batch';		//!< Name of table without prefix where object is stored
 
 	var $id;
-	var $sellby='';
-	var $eatby='';
-	var $batch='';
+	var $sellby;
+	var $eatby;
+	var $batch;
 	var $dluo_qty;
 	var $entrepot_id;
 	var $fk_origin_stock;
@@ -53,18 +52,19 @@ class ExpeditionLigneBatch extends CommonObject
     }
 
 	/**
-	 * Fill object based on a product-warehouse-batch's record 
+	 * Fill object based on a product-warehouse-batch's record
 	 *
 	 * @param	int		$id_stockdluo	Rowid in product_batch table
 	 * @return	int      		   	 -1 if KO, 1 if OK
 	 */
-	function fetchFromStock($id_stockdluo) {
+	function fetchFromStock($id_stockdluo)
+	{
         $sql = "SELECT";
 		$sql.= " t.sellby,";
 		$sql.= " t.eatby,";
 		$sql.= " t.batch,";
 		$sql.= " e.fk_entrepot";
-		
+
         $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t inner join ";
         $sql.= MAIN_DB_PREFIX."product_stock as e on t.fk_product_stock=e.rowid ";
         $sql.= " WHERE t.rowid = ".(int) $id_stockdluo;
@@ -82,7 +82,6 @@ class ExpeditionLigneBatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->entrepot_id= $obj->fk_entrepot;
 				$this->fk_origin_stock=(int) $id_stockdluo;
-                
             }
             $this->db->free($resql);
 
@@ -98,14 +97,15 @@ class ExpeditionLigneBatch extends CommonObject
 	/**
 	 * Create an expeditiondet_batch DB record link to an expedtiondet record
 	 *
-	 * @param	int		$id_line_expdet	rowid of expedtiondet record 
-	 * @return	int						<0 if KO, Id of record (>0) if OK
+	 * @param	int		$id_line_expdet		rowid of expedtiondet record
+	 * @return	int							<0 if KO, Id of record (>0) if OK
 	 */
-	function create($id_line_expdet) {
+	function create($id_line_expdet)
+	{
 		$error = 0;
 
 		$id_line_expdet = (int) $id_line_expdet;
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::$_table_element." (";
 		$sql.= "fk_expeditiondet";
 		$sql.= ", sellby";
@@ -115,23 +115,25 @@ class ExpeditionLigneBatch extends CommonObject
 		$sql.= ", fk_origin_stock";
 		$sql.= ") VALUES (";
 		$sql.= $id_line_expdet.",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':$this->db->idate($this->sellby)).",";
-		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':$this->db->idate($this->eatby)).",";
-		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
+		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':("'".$this->db->idate($this->sellby))."'").",";
+		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':("'".$this->db->idate($this->eatby))."'").",";
+		$sql.= " ".(! isset($this->batch)?'NULL':("'".$this->db->escape($this->batch)."'")).",";
 		$sql.= " ".(! isset($this->dluo_qty)?'NULL':$this->dluo_qty).",";
 		$sql.= " ".(! isset($this->fk_origin_stock)?'NULL':$this->fk_origin_stock);
 		$sql.= ")";
 
-		dol_syslog(__METHOD__ ."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
-
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error){
+		if (! $error)
+		{
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 			$this->fk_expeditiondet=$id_line_expdet;
 			return $this->id;
-		} else {
+		}
+		else
+		{
 			foreach($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
@@ -145,22 +147,24 @@ class ExpeditionLigneBatch extends CommonObject
 	/**
 	 * Delete batch record attach to a shipment
 	 *
-	 * @param	object	$db				Database object
+	 * @param	DoliDB	$db				Database object
 	 * @param	int		$id_expedition	rowid of shipment
-	 *
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
-	static function deletefromexp($db,$id_expedition) {
+	static function deletefromexp($db,$id_expedition)
+	{
 		$id_expedition = (int) $id_expedition;
-		
+
 		$sql="DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element;
 		$sql.=" WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".$id_expedition.")";
-		
-		dol_syslog(__METHOD__ ."", LOG_DEBUG);
-		if ( $db->query($sql) )
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		if ($db->query($sql))
 		{
 			return 1;
-		} else {
+		}
+		else
+		{
 			return -1;
 		}
 	}
@@ -168,12 +172,12 @@ class ExpeditionLigneBatch extends CommonObject
 	/**
 	 * Retrieve all batch number details link to a shipment line
 	 *
-	 * @param	object	$db				Database object
-	 * @param	int		$id_line_expdet	id of shipment line
-	 *
-	 * @return	variant				-1 if KO, array of ExpeditionLigneBatch if OK
+	 * @param	DoliDB	$db					Database object
+	 * @param	int		$id_line_expdet		id of shipment line
+	 * @return	variant						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
-	static function FetchAll($db,$id_line_expdet) {
+	static function fetchAll($db,$id_line_expdet)
+	{
 		$sql="SELECT rowid,";
 		$sql.= "fk_expeditiondet";
 		$sql.= ", sellby";
@@ -190,7 +194,8 @@ class ExpeditionLigneBatch extends CommonObject
         {
 			$num=$db->num_rows($resql);
             $i=0;
-			while ($i<$num) {
+			while ($i<$num)
+			{
 				$tmp=new self($db);
 
 				$obj = $db->fetch_object($resql);
@@ -208,7 +213,9 @@ class ExpeditionLigneBatch extends CommonObject
 			}
 			$db->free($resql);
 			return $ret;
-		} else {
+		}
+		else
+		{
 			return -1;
 		}
 	}

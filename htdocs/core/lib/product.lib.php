@@ -27,13 +27,12 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param	User	$user		Object user
+ * @param   Product	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function product_prepare_head($object, $user)
+function product_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	$langs->load("products");
 
 	$h = 0;
@@ -58,13 +57,14 @@ function product_prepare_head($object, $user)
 	}
 
 	// Show category tab
+	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=0';
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;
-	}
+	}*/
 
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
@@ -94,7 +94,7 @@ function product_prepare_head($object, $user)
 	$head[$h][2] = 'referers';
 	$h++;
 
-    if($object->isproduct())    // Si produit stockable
+    if ($object->isproduct() || ($object->isservice() && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
     {
         if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
         {
@@ -183,7 +183,7 @@ function product_admin_prepare_head()
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	void
+ * @return	integer
  */
 function show_stats_for_company($product,$socid)
 {

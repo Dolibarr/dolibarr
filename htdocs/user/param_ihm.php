@@ -55,7 +55,7 @@ if ($user->id == $id)	// A user can always read its own card
     $feature2='';
     $canreaduser=1;
 }
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 $dirtop = "../core/menus/standard";
@@ -155,11 +155,11 @@ if ($action == 'edit')
 	print '<script type="text/javascript" language="javascript">
 	jQuery(document).ready(function() {
 		$("#main_lang_default").change(function() {
-			$("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
+			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
 		});
 		$("#main_size_liste_limit").keyup(function() {
-			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
-			else $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
+			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
+			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
 		});
 	});
 	</script>';
@@ -179,7 +179,7 @@ if ($action == 'edit')
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($fuser->conf->MAIN_LANG_DEFAULT)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     print $formadmin->select_language((! empty($fuser->conf->MAIN_LANG_DEFAULT)?$fuser->conf->MAIN_LANG_DEFAULT:''),'main_lang_default',1,null,0,0,(! empty($dolibarr_main_demo)));
@@ -190,7 +190,7 @@ if ($action == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($fuser->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
-    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print empty($dolibarr_main_demo)?'':' disabled';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($fuser->conf->MAIN_SIZE_LISTE_LIMIT)?$fuser->conf->MAIN_SIZE_LISTE_LIMIT:'') . '"></td></tr>';
 
@@ -202,11 +202,11 @@ if ($action == 'edit')
     dol_fiche_end();
 
 
-    print '<center>';
+    print '<div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</center>';
+    print '</div>';
 
     print '</form>';
 

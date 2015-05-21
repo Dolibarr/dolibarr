@@ -3,7 +3,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,9 @@
  */
 
 /**
- * 	    \file       htdocs/compta/facture/apercu.php
- * 		\ingroup    facture
- * 		\brief      Page de l'onglet apercu d'une facture
+ *      \file       htdocs/compta/facture/apercu.php
+ *      \ingroup    facture
+ *      \brief      Preview Tab of invoice
  */
 
 require '../../main.inc.php';
@@ -67,12 +68,6 @@ if ($id > 0 || ! empty($ref))
         $soc = new Societe($db);
         $soc->fetch($object->socid);
 
-        $author = new User($db);
-        if ($object->user_author)
-        {
-            $author->fetch($object->user_author);
-        }
-
         $head = facture_prepare_head($object);
         dol_fiche_head($head, 'preview', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
@@ -80,32 +75,28 @@ if ($id > 0 || ! empty($ref))
         $totalpaye  = $object->getSommePaiement();
 
         /*
-         *   Facture
+         *   Invoice
          */
         print '<table class="border" width="100%">';
-        $rowspan=3;
 
         // Ref
-        print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
+        print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
+        print '<td colspan="5">'.$object->ref.'</td>';
+        print '</tr>';
 
         // Ref customer
-        print '<tr><td width="20%">';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('RefCustomer');
-        print '</td>';
-        print '</tr></table>';
-        print '</td>';
-        print '<td colspan="5">';
-        print $object->ref_client;
-        print '</td></tr>';
+        print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+        print '<td colspan="5">'.$object->ref_client.'</td>';
+        print '</tr>';
 
-        // Societe
+        // Thirdparty
         print '<tr><td>'.$langs->trans("Company").'</td>';
         print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
         print '</tr>';
 
         // Type
-        print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
+        print '<tr><td>'.$langs->trans('Type').'</td>';
+        print '<td colspan="5">';
         print $object->getLibType();
         if ($object->type == Facture::TYPE_REPLACEMENT)
         {
@@ -141,30 +132,31 @@ if ($id > 0 || ! empty($ref))
             $facthatreplace->fetch($objectidnext);
             print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
         }
-        print '</td></tr>';
+        print '</td>';
+        print '</tr>';
 
         // Relative and absolute discounts
         $addabsolutediscount=' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddGlobalDiscount").'</a>';
         $addcreditnote=' <a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
 
-        print '<tr><td>'.$langs->trans('Discounts');
-        print '</td><td colspan="5">';
+        print '<tr><td>'.$langs->trans('Discounts').'</td>';
+        print '<td colspan="5">';
         if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
 
         if ($absolute_discount > 0)
         {
             print '. ';
-            if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+            if ($object->statut > Facture::STATUS_DRAFT || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
-                if ($object->statut == 0)
+                if ($object->statut == Facture::STATUS_DRAFT)
                 {
                     print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                     print '. ';
                 }
                 else
                 {
-                    if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+                    if ($object->statut < Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
@@ -187,9 +179,9 @@ if ($id > 0 || ! empty($ref))
         }
         else
         {
-            if ($absolute_creditnote > 0)    // If not linke will be added later
+            if ($absolute_creditnote > 0)    // If not linked will be added later
             {
-                if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
+                if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
                 else print '.';
             }
             else print '. ';
@@ -197,9 +189,9 @@ if ($id > 0 || ! empty($ref))
         if ($absolute_creditnote > 0)
         {
             // If validated, we show link "add credit note to payment"
-            if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
+            if ($object->statut != Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
-                if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT)
+                if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
                 {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
                     print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
@@ -220,7 +212,7 @@ if ($id > 0 || ! empty($ref))
         if (! $absolute_discount && ! $absolute_creditnote)
         {
             print $langs->trans("CompanyHasNoAbsoluteDiscount");
-            if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
+            if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
             else print '. ';
         }
         /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
@@ -230,66 +222,17 @@ if ($id > 0 || ! empty($ref))
          print $addabsolutediscount;
          //print ' &nbsp; - &nbsp; '.$addcreditnote;      // We disbale link to credit note
          }*/
-        print '</td></tr>';
+        print '</td>';
+        print '</tr>';
 
         // Dates
         print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="5">'.dol_print_date($object->date,"daytext").'</td>';
-        print "</tr>";
+        print '<td>'.dol_print_date($object->date,"daytext").'</td>';
 
-        // Date payment term
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('DateMaxPayment');
-        print '</td>';
-        if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="5">';
-        if ($object->type != Facture::TYPE_CREDIT_NOTE)
-        {
-            if ($action == 'editpaymentterm')
-            {
-                $form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->date_lim_reglement,'paymentterm');
-            }
-            else
-            {
-                print dol_print_date($object->date_lim_reglement,'daytext');
-                if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! $object->am) print img_warning($langs->trans('Late'));
-            }
-        }
-        else
-        {
-            print '&nbsp;';
-        }
-        print '</td></tr>';
-
-        // Conditions reglement
-        print '<tr><td>'.$langs->trans("PaymentConditionsShort").'</td><td colspan="5">';
-        $form->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$object->id",$object->cond_reglement_id,"none");
-        print '</td>';
-        print '</td></tr>';
-
-        // Mode de reglement
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('PaymentMode');
-        print '</td>';
-        if ($action != 'editmode' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-        if ($action == 'editmode')
-        {
-            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
-        }
-        else
-        {
-            $form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->mode_reglement_id,'none');
-        }
-        print '</td>';
-
-        $nbrows=5;
-        if (! empty($conf->projet->enabled)) $nbrows++;
-        print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
+        // Right part with $rowspan lines
+        $rowspan=5;
+        if (! empty($conf->projet->enabled)) $rowspan++;
+        print '<td rowspan="'.$rowspan.'" valign="top" width="50%">';
 
         /*
          * Documents
@@ -303,7 +246,7 @@ if ($id > 0 || ! empty($ref))
         $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
 
         // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-        $fileimage = $file.'_preview.png';          	// If PDF has 1 page
+        $fileimage = $file.'_preview.png';              // If PDF has 1 page
         $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
         $relativepathimage = $relativepath.'_preview.png';
 
@@ -313,8 +256,8 @@ if ($id > 0 || ! empty($ref))
         if (file_exists($file))
         {
             $encfile = urlencode($file);
-            print_titre($langs->trans("Documents"));
-            print '<table class="border" width="100%">';
+            print '<table class="nobordernopadding" width="100%">';
+            print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Documents").'</td></tr>';
 
             print "<tr ".$bc[$var]."><td>".$langs->trans("Bill")." PDF</td>";
 
@@ -353,24 +296,32 @@ if ($id > 0 || ! empty($ref))
         }
         print "</td></tr>";
 
+        // Total HT
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-        print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
 
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        // Total VAT
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
+
+        // Total TTC
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td>';
+        print '<td align="right" class="nowrap"><b>' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
+        print '</tr>';
 
         // Statut
-        print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
+        print '<tr><td>'.$langs->trans('Status').'</td>';
+        print '<td align="left">'.($object->getLibStatut(4,$totalpaye)).'</td>';
+        print '</tr>';
 
         // Projet
         if (! empty($conf->projet->enabled))
         {
             $langs->load("projects");
-            print '<tr>';
-            print '<td>'.$langs->trans("Project").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("Project").'</td>';
+            print '<td>';
             if ($object->fk_project > 0)
             {
                 $project = New Project($db);
@@ -391,14 +342,17 @@ if ($id > 0 || ! empty($ref))
     else
     {
         // Facture non trouvee
-        print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
+        print $langs->trans("ErrorBillNotFound",$id);
     }
 }
 
+print '<table class="border" width="100%">';
+print '<tr><td>';
+print '<div class="photolist">';
 // Si fichier png PDF d'1 page trouve
 if (file_exists($fileimage))
 {
-    print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
+    print '<img class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&amp;file='.urlencode($relativepathimage).'">';
 }
 // Si fichier png PDF de plus d'1 page trouve
 elseif (file_exists($fileimagebis))
@@ -411,11 +365,13 @@ elseif (file_exists($fileimagebis))
 
         if (file_exists($dir_output.$preview))
         {
-            print '<img style="background: #FFF" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($preview).'"><p>';
+            print '<img class="photo photowithmargin" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&amp;file='.urlencode($preview).'"><p>';
         }
     }
 }
-
+print '</div>';
+print '</td></tr>';
+print '</table>';
 
 llxFooter();
 

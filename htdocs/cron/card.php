@@ -231,7 +231,7 @@ if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute'
 }
 elseif ($action=='create')
 {
-	print_fiche_titre($langs->trans("CronTask"),'','setup');
+	print_fiche_titre($langs->trans("CronTask"),'','title_setup');
 }
 
 if ($conf->use_javascript_ajax)
@@ -357,7 +357,7 @@ if (($action=="create") || ($action=="edit"))
 	{
 		if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i)
 		{
-			print "<option value='".$i."' selected='selected'>".$i."</option>";
+			print "<option value='".$i."' selected>".$i."</option>";
 		}
 		else
 		{
@@ -367,7 +367,7 @@ if (($action=="create") || ($action=="edit"))
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
 	if($object->unitfrequency=="60")
 	{
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -377,7 +377,7 @@ if (($action=="create") || ($action=="edit"))
 
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
 	if($object->unitfrequency=="3600"){
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -387,7 +387,7 @@ if (($action=="create") || ($action=="edit"))
 
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
 	if($object->unitfrequency=="86400"){
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -397,7 +397,7 @@ if (($action=="create") || ($action=="edit"))
 
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
 	if($object->unitfrequency=="604800"){
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -476,8 +476,9 @@ if (($action=="create") || ($action=="edit"))
 
 	print '<div align="center"><br>';
 	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-	print "</center>";
+	print "</div>";
 
 	print "</form>\n";
 

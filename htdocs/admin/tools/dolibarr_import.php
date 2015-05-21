@@ -63,16 +63,27 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Restore"),'','setup');
+print_fiche_titre($langs->trans("Restore"),'','title_setup');
 
 print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
+?>
+<fieldset>
+<legend style="font-size: 3em">1</legend>
+<?php
 print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
-print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
+?>
+</fieldset>
 
+<br>
+
+<fieldset>
+<legend style="font-size: 3em">2</legend>
+<?php
+print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
 ?>
 
-<fieldset id="fieldsetexport">
-<?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
+<?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
+
 <table><tr><td valign="top">
 
 <?php if ($conf->use_javascript_ajax) { ?>

@@ -99,3 +99,6 @@ RuleForStockAvailability=Regras sobre os requisitos de ações
 StockMustBeEnoughForInvoice=Banco de nível deve ser o suficiente para adicionar o produto / serviço em fatura
 StockMustBeEnoughForOrder=Banco de nível deve ser o suficiente para adicionar o produto / serviço em ordem
 StockMustBeEnoughForShipment=Banco de nível deve ser o suficiente para adicionar o produto / serviço no transporte
+MovementLabel=Rótulo de Movimento
+ShowWarehouse=Mostrar armazém
+MovementCorrectStock=Correção da conteúdo para o produto %s

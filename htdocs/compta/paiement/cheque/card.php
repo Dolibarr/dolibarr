@@ -262,7 +262,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 
 		$langs->load("other");
 
-		$file=$dir.get_exdir($object->number,2,1) . GETPOST('file');
+		$file=$dir.get_exdir($object->number,2,1,0,$object,'cheque') . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
 		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
@@ -322,7 +322,7 @@ else
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
-		
+
 	}
 
 	/*
@@ -331,7 +331,7 @@ else
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
-		
+
 	}
 }
 
@@ -358,14 +358,14 @@ if ($action == 'new')
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
-    print '<center>';
+    print '<div class="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
     if ($filterdate || $filteraccountid > 0)
     {
     	print ' &nbsp; ';
     	print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     }
-	print '</center>';
+	print '</div>';
     //print '</fieldset>';
 	print '</form>';
 	print '<br>';
@@ -376,7 +376,7 @@ if ($action == 'new')
 	$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_type = 'CHQ'";
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
 	if ($filterdate)          $sql.=" AND b.dateo = '".$db->idate($filterdate)."'";
@@ -414,11 +414,11 @@ if ($action == 'new')
         {
             jQuery("#checkall_'.$bid.'").click(function()
             {
-                jQuery(".checkforremise_'.$bid.'").attr(\'checked\', true);
+                jQuery(".checkforremise_'.$bid.'").prop(\'checked\', true);
             });
             jQuery("#checknone_'.$bid.'").click(function()
             {
-                jQuery(".checkforremise_'.$bid.'").attr(\'checked\', false);
+                jQuery(".checkforremise_'.$bid.'").prop(\'checked\', false);
             });
         });
         </script>
@@ -462,7 +462,7 @@ if ($action == 'new')
 			print '<td>'.$value["banque"]."</td>\n";
 			print '<td align="right">'.price($value["amount"]).'</td>';
 			print '<td align="center">';
-			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked="checked" type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 			print '</td>' ;
 			print '</tr>';
 
@@ -599,7 +599,7 @@ else
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
 	$sql.= " WHERE ba.rowid = b.fk_account";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$object->id;
 	$sql.= " ORDER BY $sortfield $sortorder";
@@ -704,7 +704,7 @@ if ($action != 'new')
 	if ($object->statut == 1)
 	{
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$dir.get_exdir($object->number,2,1) . dol_sanitizeFileName($object->ref);
+		$filedir=$dir.get_exdir($object->number,2,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
 		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);

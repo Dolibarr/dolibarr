@@ -42,7 +42,7 @@ llxHeader("","");
 
 $form = new Form($db);
 
-print_fiche_titre($langs->trans("TriggersAvailable"),'','setup');
+print_fiche_titre($langs->trans("TriggersAvailable"),'','title_setup');
 
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";

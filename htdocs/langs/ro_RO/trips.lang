@@ -69,9 +69,11 @@ MOTIF_CANCEL=Motiv
 DATE_REFUS=Dată respingere
 DATE_SAVE=Dată validare
 DATE_VALIDE=Dată validare
+DateApprove=Data Aprobare
 DATE_CANCEL=Data anulare
 DATE_PAIEMENT=Data Plata 
 
+Deny=Respinge
 TO_PAID=Plăteşte
 BROUILLONNER=Redeschide
 SendToValid=Trimis la aprobare
@@ -98,5 +100,6 @@ ConfirmBrouillonnerTrip=Are you sure you want to move this expense report to sta
 
 SaveTrip=Valideaza raport de cheltuieli
 ConfirmSaveTrip=Are you sure you want to validate this expense report ?
+
 
 NoTripsToExportCSV=No expense report to export for this period.

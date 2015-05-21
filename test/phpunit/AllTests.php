@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +19,39 @@
 
 /**
  *      \file       test/phpunit/AllTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 print "PHP Version: ".phpversion()."\n";
 print "Memory: ". ini_get('memory_limit')."\n";
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
+
 
 if ($langs->defaultlang != 'en_US')
 {
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
     exit;
 }
+if (! empty($conf->adherents->enabled))
+{
+	print "Error: Module member must be enabled to have significatn results.\n";
+	exit;
+}
 if (! empty($conf->google->enabled))
 {
-	print "Warning: Google module should not be enabled.\n";
+    print "Warning: Google module should not be enabled.\n";
 }
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -59,37 +66,38 @@ class AllTests
      *
      * @return	void
      */
-	public static function suite()
+    public static function suite()
     {
-		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
+
+        $suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';
         //$suite->addTestSuite('CoreTest');
-		require_once dirname(__FILE__).'/AdminLibTest.php';
-		$suite->addTestSuite('AdminLibTest');
-		require_once dirname(__FILE__).'/DateLibTest.php';
-		$suite->addTestSuite('DateLibTest');
-		//require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
-		//$suite->addTestSuite('DateLibTzFranceTest');
-		require_once dirname(__FILE__).'/MarginsLibTest.php';
-		$suite->addTestSuite('MarginsLibTest');
-		require_once dirname(__FILE__).'/FilesLibTest.php';
-		$suite->addTestSuite('FilesLibTest');
-		require_once dirname(__FILE__).'/JsonLibTest.php';
-		$suite->addTestSuite('JsonLibTest');
-		require_once dirname(__FILE__).'/ImagesLibTest.php';
-		$suite->addTestSuite('ImagesLibTest');
-		require_once dirname(__FILE__).'/FunctionsLibTest.php';
-		$suite->addTestSuite('FunctionsLibTest');
-		require_once dirname(__FILE__).'/Functions2LibTest.php';
-		$suite->addTestSuite('Functions2LibTest');
-		require_once dirname(__FILE__).'/XCalLibTest.php';
-		$suite->addTestSuite('XCalLibTest');
+        require_once dirname(__FILE__).'/AdminLibTest.php';
+        $suite->addTestSuite('AdminLibTest');
+        require_once dirname(__FILE__).'/DateLibTest.php';
+        $suite->addTestSuite('DateLibTest');
+        //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
+        //$suite->addTestSuite('DateLibTzFranceTest');
+        require_once dirname(__FILE__).'/MarginsLibTest.php';
+        $suite->addTestSuite('MarginsLibTest');
+        require_once dirname(__FILE__).'/FilesLibTest.php';
+        $suite->addTestSuite('FilesLibTest');
+        require_once dirname(__FILE__).'/JsonLibTest.php';
+        $suite->addTestSuite('JsonLibTest');
+        require_once dirname(__FILE__).'/ImagesLibTest.php';
+        $suite->addTestSuite('ImagesLibTest');
+        require_once dirname(__FILE__).'/FunctionsLibTest.php';
+        $suite->addTestSuite('FunctionsLibTest');
+        require_once dirname(__FILE__).'/Functions2LibTest.php';
+        $suite->addTestSuite('Functions2LibTest');
+        require_once dirname(__FILE__).'/XCalLibTest.php';
+        $suite->addTestSuite('XCalLibTest');
 
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/SqlTest.php';
-		$suite->addTestSuite('SqlTest');
+        require_once dirname(__FILE__).'/LangTest.php';
+        $suite->addTestSuite('LangTest');
+        require_once dirname(__FILE__).'/SqlTest.php';
+        $suite->addTestSuite('SqlTest');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
@@ -98,8 +106,8 @@ class AllTests
         $suite->addTestSuite('NumberingModulesTest');
         require_once dirname(__FILE__).'/PgsqlTest.php';
         $suite->addTestSuite('PgsqlTest');
-		require_once dirname(__FILE__).'/PdfDocTest.php';
-		$suite->addTestSuite('PdfDocTest');
+        require_once dirname(__FILE__).'/PdfDocTest.php';
+        $suite->addTestSuite('PdfDocTest');
         require_once dirname(__FILE__).'/BuildDocTest.php';
         $suite->addTestSuite('BuildDocTest');
         require_once dirname(__FILE__).'/CMailFileTest.php';
@@ -147,9 +155,9 @@ class AllTests
         require_once dirname(__FILE__).'/FactureFournisseurTest.php';
         $suite->addTestSuite('FactureFournisseurTest');
 
-		require_once dirname(__FILE__).'/UserTest.php';
+        require_once dirname(__FILE__).'/UserTest.php';
         $suite->addTestSuite('UserTest');
-		require_once dirname(__FILE__).'/UserGroupTest.php';
+        require_once dirname(__FILE__).'/UserGroupTest.php';
         $suite->addTestSuite('UserGroupTest');
         require_once dirname(__FILE__).'/BankAccountTest.php';
         $suite->addTestSuite('BankAccountTest');
@@ -166,7 +174,7 @@ class AllTests
         $suite->addTestSuite('EntrepotTest');
         require_once dirname(__FILE__).'/MouvementStockTest.php';
         $suite->addTestSuite('MouvementStockTest');
-        
+
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
@@ -200,7 +208,7 @@ class AllTests
 
         // GUI
         require_once dirname(__FILE__).'/FormAdminTest.php';
-		$suite->addTestSuite('FormAdminTest');
+        $suite->addTestSuite('FormAdminTest');
 
 
         return $suite;

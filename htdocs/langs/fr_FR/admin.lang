@@ -269,6 +269,7 @@ MAIN_MAIL_EMAIL_FROM=Adresse email de l'émetteur pour l'envoi d'emails automati
 MAIN_MAIL_ERRORS_TO=Adresse email utilisée pour les retours d'erreurs des emails envoyés
 MAIN_MAIL_AUTOCOPY_TO= Envoyer systématiquement une copie cachée des emails envoyés à
 MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Envoyer systématiquement une copie cachée des propositions envoyées par email à
+MAIN_MAIL_AUTOCOPY_ASKPRICESUPPLIER_TO= Envoyer systématiquement une copie cachée des demandes de prix envoyées par email à
 MAIN_MAIL_AUTOCOPY_ORDER_TO= Envoyer systématiquement une copie cachée des commandes envoyées par emails à
 MAIN_MAIL_AUTOCOPY_INVOICE_TO= Envoyer systématiquement une copie cachée des factures envoyées par email à
 MAIN_DISABLE_ALL_MAILS=Désactiver globalement tout envoi d'emails (pour mode test ou démos)
@@ -395,7 +396,7 @@ ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur<br><br> pa
 ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpsellist=La liste vient d'une table<br>Syntaxe: <br>nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : <br>c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
-ExtrafieldParamHelpchkbxlst=La liste vient d'une table<br>Syntaxe: nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
+ExtrafieldParamHelpchkbxlst=Les cases à cocher viennent d'une table<br>Syntaxe: <br>nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : <br>c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 WarningUsingFPDF=Attention : votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalités (Unicode, transparence des images, langues cyrilliques, arabes ou asiatiques...), aussi vous pouvez rencontrer des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir une prise en charge complète de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">bibliothèque TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>
 LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (vat is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
@@ -717,9 +718,14 @@ Permission512=Créer/modifier les salaires
 Permission514=Supprimer les salaires
 Permission517=Exporter les salaires
 Permission520=Consulter les emprunts
+<<<<<<< HEAD
+Permission522=Créer/modifier les emprunts
+Permission524=Supprimer les emprunts
+=======
 Permission522=Créer/Modifier les emprunts
 Permission524=Supprimer les emprunts
 Permission525=Utiliser le calculateur d'emprunts
+>>>>>>> refs/remotes/origin/3.7
 Permission527=Exporter les emprunts
 Permission531=Consulter les services
 Permission532=Créer/modifier les services

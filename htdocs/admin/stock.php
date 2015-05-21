@@ -87,6 +87,9 @@ if($action)
 	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') {
 	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT','alpha'),'chaine',0,'',$conf->entity);
 	}
+	if($action == 'INDEPENDANT_SUBPRODUCT_STOCK') {
+	    $res = dolibarr_set_const($db, "INDEPENDANT_SUBPRODUCT_STOCK", GETPOST('INDEPENDANT_SUBPRODUCT_STOCK','alpha'),'chaine',0,'',$conf->entity);
+	}
 
 	if (! $res > 0) $error++;
 
@@ -110,7 +113,7 @@ if($action)
 llxHeader('',$langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("StockSetup"),$linkback,'title_setup');
 
 $form=new Form($db);
 
@@ -119,7 +122,7 @@ $disabled='';
 if (! empty($conf->productbatch->enabled))
 {
 	$langs->load("productbatch");
-	$disabled=' disabled="disabled"';
+	$disabled=' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 
@@ -368,9 +371,29 @@ print '</form>';
 print "</td>\n";
 print "</tr>\n";
 print '<br>';
-print '</table>';
-print '<br>';
 
+/* I keep the option/feature, but hidden to end users for the moment. If feature is used by module, no need to have users see it.
+If not used by a module, I still need to understand in which case user may need this now we can set rule on product page.
+if ($conf->global->PRODUIT_SOUSPRODUITS) 
+{
+	$var=!$var;
+	
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("IndependantSubProductStock").'</td>';
+	
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
+	print $form->selectyesno("INDEPENDANT_SUBPRODUCT_STOCK",$conf->global->INDEPENDANT_SUBPRODUCT_STOCK,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print "</td>\n";
+	print "</tr>\n";
+}
+*/
+
+print '</table>';
 
 llxFooter();
 

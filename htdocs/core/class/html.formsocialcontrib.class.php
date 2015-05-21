@@ -94,7 +94,7 @@ class FormSocialContrib
                 {
                     $obj = $db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
-                    if ($obj->id == $selected) print ' selected="selected"';
+                    if ($obj->id == $selected) print ' selected';
                     print '>'.dol_trunc($obj->type,$maxlen);
                     $i++;
                 }

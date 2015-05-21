@@ -148,7 +148,7 @@ class TCPDF_FILTERS {
 	 * @public static
 	 */
 	public static function decodeFilterASCIIHexDecode($data) {
-		// intialize string to return
+		// initialize string to return
 		$decoded = '';
 		// all white-space characters shall be ignored
 		$data = preg_replace('/[\s]/', '', $data);
@@ -188,7 +188,7 @@ class TCPDF_FILTERS {
 	 * @public static
 	 */
 	public static function decodeFilterASCII85Decode($data) {
-		// intialize string to return
+		// initialize string to return
 		$decoded = '';
 		// all white-space characters shall be ignored
 		$data = preg_replace('/[\s]/', '', $data);
@@ -272,7 +272,7 @@ class TCPDF_FILTERS {
 	 * @public static
 	 */
 	public static function decodeFilterLZWDecode($data) {
-		// intialize string to return
+		// initialize string to return
 		$decoded = '';
 		// data length
 		$data_length = strlen($data);
@@ -353,7 +353,7 @@ class TCPDF_FILTERS {
 	 * @public static
 	 */
 	public static function decodeFilterFlateDecode($data) {
-		// intialize string to return
+		// initialize string to return
 		$decoded = @gzuncompress($data);
 		if ($decoded === false) {
 			self::Error('decodeFilterFlateDecode: invalid code');
@@ -369,7 +369,7 @@ class TCPDF_FILTERS {
 	 * @public static
 	 */
 	public static function decodeFilterRunLengthDecode($data) {
-		// intialize string to return
+		// initialize string to return
 		$decoded = '';
 		// data length
 		$data_length = strlen($data);

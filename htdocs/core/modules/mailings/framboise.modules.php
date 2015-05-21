@@ -150,8 +150,8 @@ class mailing_framboise extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param	string	$sql		Requete sql de comptage
-	 *	@return		int			Nb of recipients
+	 *  @param		string	$sql		Requete sql de comptage
+	 *	@return		int					Nb of recipients
 	 */
 	function getNbOfRecipients($sql='')
 	{
@@ -198,7 +198,7 @@ class mailing_framboise extends MailingTargets
 			$num = $this->db->num_rows($resql);
 
 			$s.='<option value="0">&nbsp;</option>';
-			if (! $num) $s.='<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+			if (! $num) $s.='<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
 
 			$i = 0;
 			while ($i < $num)

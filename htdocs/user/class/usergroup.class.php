@@ -189,7 +189,7 @@ class UserGroup extends CommonObject
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
 	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	array 						Array of users
+	 * 	@return	mixed						Array of users or -1 on error
 	 */
 	function listUsersForGroup($excludefilter='', $mode=0)
 	{
@@ -623,7 +623,7 @@ class UserGroup extends CommonObject
 			$action='create';
 
 			// Actions on extra fields (by external module or standard code)
-            // FIXME le hook fait double emploi avec le trigger !!
+            // TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('groupdao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -694,7 +694,7 @@ class UserGroup extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-            // FIXME le hook fait double emploi avec le trigger !!
+            // TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('groupdao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

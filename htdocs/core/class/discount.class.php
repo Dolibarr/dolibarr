@@ -433,27 +433,25 @@ class DiscountAbsolute
 
         $result='';
 
-        if ($option == 'invoice')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'">';
-            $lienfin='</a>';
+        if ($option == 'invoice') {
             $label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
             $ref=$this->ref_facture_source;
             $picto='bill';
         }
-        if ($option == 'discount')
-        {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'">';
-            $lienfin='</a>';
+        if ($option == 'discount') {
             $label=$langs->trans("Discount");
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
             $ref=$langs->trans("Discount");
             $picto='generic';
         }
 
 
-        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$lien.$ref.$lienfin;
+        $result.=$link.$ref.$linkend;
         return $result;
     }
 

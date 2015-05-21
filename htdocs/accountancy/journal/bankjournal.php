@@ -167,7 +167,10 @@ if ($result) {
 		}
 		$links = $object->get_url($obj->rowid);
 
-
+		// get_url may return -1 which is not traversable
+		if (is_array($links))
+		{
+		
 		foreach ( $links as $key => $val )
 		{
 			$tabtype[$obj->rowid] = $links[$key]['type'];
@@ -249,11 +252,14 @@ if ($result) {
 				$tabtp [$obj->rowid] [$accountancy_account_salary] += $obj->amount;
 			}*/
 		}
+		
+		}
+		
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 
-		$i ++;
+		$i++;
 	}
 } else {
 	dol_print_error($db);
@@ -417,7 +423,7 @@ if ($action == 'export_csv')
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 	// Model Cegid Expert Export
 	{
 		$sep = ";";
-		
+
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
@@ -502,7 +508,7 @@ if ($action == 'export_csv')
 			// Third party
 			if (is_array ( $tabtp[$key]))
 			{
-				foreach ( $tabtp[$key] as $k => $mt ) 
+				foreach ( $tabtp[$key] as $k => $mt )
 				{
 					if ($mt) {
 						print '"' . $date . '"' . $sep;
@@ -516,7 +522,7 @@ if ($action == 'export_csv')
 				}
 			}
 			else
-			{				
+			{
 				foreach ( $tabbq[$key] as $k => $mt )
 				{
 					if (1)
@@ -589,7 +595,7 @@ else
 
 	print '</div>';
 	// End report
-	
+
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writeBookKeeping();" />';

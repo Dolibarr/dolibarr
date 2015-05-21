@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin 		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 
 /**
  *      \file       test/phpunit/BuildDocTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -56,11 +56,13 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/project/modules_proje
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/modules_fichinter.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/modules_expedition.php';
 
-if (empty($user->id))
-{
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+
+
+if (empty($user->id)) {
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -74,35 +76,35 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class BuildDocTest extends PHPUnit_Framework_TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return BuildDocTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return BuildDocTest
+     */
+    function __construct()
     {
-    	global $conf,$user,$langs,$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
+
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
 
         if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
         if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
@@ -110,43 +112,45 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
         if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
         if (! $conf->ficheinter->enabled) { print __METHOD__." intervention module not enabled\n"; die(); }
-        if (! $conf->deplacement->enabled) { print __METHOD__." trip module not enabled\n"; die(); }
+        if (! $conf->expensereport->enabled) { print __METHOD__." expensereport module not enabled\n"; die(); }
 
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -156,76 +160,76 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
      */
     public function testFactureBuild()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$conf->facture->dir_output.='/temp';
+        $conf->facture->dir_output.='/temp';
 
-		$localobjectcom=new Commande($this->savdb);
-		$localobjectcom->initAsSpecimen();
+        $localobjectcom=new Commande($this->savdb);
+        $localobjectcom->initAsSpecimen();
 
-		$localobject=new Facture($this->savdb);
-    	$localobject->createFromOrder($localobjectcom);
-    	$localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
+        $localobject=new Facture($this->savdb);
+        $localobject->createFromOrder($localobjectcom);
+        $localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
 
-    	// Crabe (english)
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
-		$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (english)
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	// Crabe (japanese)
-    	$newlangs1=new Translate("",$conf);
-    	$newlangs1->setDefaultLang('ja_JP');
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (japanese)
+        $newlangs1=new Translate("",$conf);
+        $newlangs1->setDefaultLang('ja_JP');
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	// Crabe (saudiarabia)
-    	$newlangs2a=new Translate("",$conf);
-    	$newlangs2a->setDefaultLang('sa_SA');
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (saudiarabia)
+        $newlangs2a=new Translate("",$conf);
+        $newlangs2a->setDefaultLang('sa_SA');
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	// Crabe (english_saudiarabia)
-    	$newlangs2b=new Translate("",$conf);
-    	$newlangs2b->setDefaultLang('en_SA');
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (english_saudiarabia)
+        $newlangs2b=new Translate("",$conf);
+        $newlangs2b->setDefaultLang('en_SA');
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	// Crabe (greek)
-    	$newlangs3=new Translate("",$conf);
-    	$newlangs3->setDefaultLang('el_GR');
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (greek)
+        $newlangs3=new Translate("",$conf);
+        $newlangs3->setDefaultLang('el_GR');
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	// Crabe (chinese)
-    	$newlangs4=new Translate("",$conf);
-    	$newlangs4->setDefaultLang('zh_CN');
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (chinese)
+        $newlangs4=new Translate("",$conf);
+        $newlangs4->setDefaultLang('zh_CN');
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	// Crabe (russian)
-    	$newlangs5=new Translate("",$conf);
-    	$newlangs5->setDefaultLang('ru_RU');
-    	$localobject->modelpdf='crabe';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+        // Crabe (russian)
+        $newlangs5=new Translate("",$conf);
+        $newlangs5->setDefaultLang('ru_RU');
+        $localobject->modelpdf='crabe';
+        $result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
+        $this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
 
-    	return 0;
+        return 0;
     }
 
     /**
@@ -247,7 +251,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Canelle
         $localobject->modelpdf='canelle';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -274,7 +278,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Einstein
         $localobject->modelpdf='einstein';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -285,9 +289,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
     /**
      * testCommandeFournisseurBuild
-      *
-    * @return int
-    */
+     *
+     * @return int
+     */
     public function testCommandeFournisseurBuild()
     {
         global $conf,$user,$langs,$db;
@@ -329,7 +333,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Azur
         $localobject->modelpdf='azur';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -355,7 +359,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Baleine
         $localobject->modelpdf='baleine';
-	    $result = $localobject->generateDocument($localobject->modelpdf, $langs);
+        $result = $localobject->generateDocument($localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";

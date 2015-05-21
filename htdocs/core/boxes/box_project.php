@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -16,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_activite.php
- *	\ingroup    projet
- *	\brief      Module to show Projet activity of the current Year
+ *  \file       htdocs/core/boxes/box_activite.php
+ *  \ingroup    projet
+ *  \brief      Module to show Projet activity of the current Year
  */
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
@@ -37,23 +39,27 @@ class box_project extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-	 *      \brief      Constructeur de la classe
-	 */
-	function box_project()
-	{
-		global $langs;
-		$langs->load("boxes");
-		$langs->load("projects");
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    function __construct($db,$param='')
+    {
+        global $langs;
+        $langs->load("boxes");
+        $langs->load("projects");
 
-		$this->boxlabel="Projects";
-	}
+        $this->db = $db;
+        $this->boxlabel="Projects";
+    }
 
 	/**
 	*  Load data for box to show them later
 	*
-	*  @param	int		$max        Maximum number of records to load
-	*  @return	void
+	*  @param   int		$max        Maximum number of records to load
+	*  @return  void
 	*/
 	function loadBox($max=5)
 	{
@@ -69,8 +75,7 @@ class box_project extends ModeleBoxes
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
-		if ($user->rights->projet->lire)
-		{
+		if ($user->rights->projet->lire) {
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -79,45 +84,54 @@ class box_project extends ModeleBoxes
 			$sql.= " ORDER BY p.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
-			$result = $db->query($sql);
+            $result = $db->query($sql);
 
-			if ($result)
-			{
-				$num = $db->num_rows($result);
-				$i = 0;
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
+            if ($result) {
+                $num = $db->num_rows($result);
+                $i = 0;
+                while ($i < $num) {
+                    $objp = $db->fetch_object($result);
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-						'logo' => 'object_project',
-						'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid);
+                    $tooltip = $langs->trans('Project') . ': ' . $objp->ref;
+                    $this->info_box_contents[$i][0] = array(
+                        'td' => 'align="left" width="16"',
+                        'logo' => 'object_project',
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/projet/card.php?id=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-						'text' => $objp->ref,
-						'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$i][1] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->ref,
+                        'tooltip' => $tooltip,
+                        'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
-					'text' => $objp->title
-					);
+                    $this->info_box_contents[$i][2] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->title,
+                    );
 
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
 					$sql.=" WHERE p.entity = ".$conf->entity;
 
 					$resultTask = $db->query($sql);
-					if ($resultTask)
-					{
+					if ($resultTask) {
 						$objTask = $db->fetch_object($resultTask);
-						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+                        $this->info_box_contents[$i][3] = array(
+                            'td' => 'align="right"',
+                            'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"),
+                        );
 						if ($objTask->nb  > 0 )
-							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')."%");
+                            $this->info_box_contents[$i][4] = array(
+                                'td' => 'align="right"',
+                                'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')."%",
+                            );
 						else
 							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
-					}
-					else
-					{
+					} else {
 						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format(0, 0, ',', ' '));
 						$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 					}
@@ -129,11 +143,28 @@ class box_project extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][1] = array('td' => '', 'text' => "");
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][4] = array('td' => '', 'text' => "");
+        $this->info_box_contents[$i][0] = array(
+            'tr' => 'class="liste_total"',
+            'td' => 'align="left" ',
+            'text' => "&nbsp;",
+       );
+        $this->info_box_contents[$i][1] = array(
+            'td' => '',
+            'text' => $langs->trans("Total")."&nbsp;".$textHead,
+             'text' => "&nbsp;",
+        );
+        $this->info_box_contents[$i][2] = array(
+            'td' => 'align="right" ',
+            'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"),
+        );
+        $this->info_box_contents[$i][3] = array(
+            'td' => 'align="right" ',
+            'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"),
+        );
+        $this->info_box_contents[$i][4] = array(
+            'td' => '',
+            'text' => "&nbsp;",
+        );
 
 	}
 

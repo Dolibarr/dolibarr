@@ -29,8 +29,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 echo '<br>';
-if ($num > 1) print_titre($langs->trans("RelatedBills"));
-else print_titre($langs->trans("RelatedBill"));
+print_titre($langs->trans("RelatedSupplierInvoices"));
 ?>
 
 <table class="noborder allwidth">

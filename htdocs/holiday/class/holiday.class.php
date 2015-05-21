@@ -655,21 +655,20 @@ class Holiday extends CommonObject
      */
     function getNomUrl($withpicto=0)
     {
-    	global $langs;
+        global $langs;
 
-    	$result='';
+        $result='';
+        $label=$langs->trans("Show").': '.$this->ref;
 
-    	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'">';
-    	$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/holiday/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkend='</a>';
 
-    	$picto='holiday';
+        $picto='holiday';
 
-    	$label=$langs->trans("Show").': '.$this->ref;
-
-    	if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-    	if ($withpicto && $withpicto != 2) $result.=' ';
-    	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-    	return $result;
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+        return $result;
     }
 
 
@@ -750,7 +749,7 @@ class Holiday extends CommonObject
         // Boucle des statuts
         for($i=1; $i < $nb; $i++) {
             if($i==$selected) {
-                $statut.= '<option value="'.$i.'" selected="selected">'.$langs->trans($name[$i-1]).'</option>'."\n";
+                $statut.= '<option value="'.$i.'" selected>'.$langs->trans($name[$i-1]).'</option>'."\n";
             }
             else {
                 $statut.= '<option value="'.$i.'">'.$langs->trans($name[$i-1]).'</option>'."\n";
@@ -798,7 +797,7 @@ class Holiday extends CommonObject
             while ($obj = $this->db->fetch_object($result))
             {
                 if($groupe==$obj->rowid) {
-                    $selectGroup.= '<option value="'.$obj->rowid.'" selected="selected">'.$obj->name.'</option>'."\n";
+                    $selectGroup.= '<option value="'.$obj->rowid.'" selected>'.$obj->name.'</option>'."\n";
                 } else {
                     $selectGroup.= '<option value="'.$obj->rowid.'">'.$obj->name.'</option>'."\n";
                 }
@@ -971,7 +970,7 @@ class Holiday extends CommonObject
 
             // Si la valeur est 1 on retourne checked
             if($obj->value) {
-                return 'checked="checked"';
+                return 'checked';
             }
         }
     }

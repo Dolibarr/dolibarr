@@ -102,10 +102,10 @@ while($type = $db->fetch_array($types))
                <div>
                   <label>' . $langs->trans('TypeAffect') . '</label>
                   <select name="affect">
-                     <option value="1"'.($type['affect']?' selected="selected"':'').'>
+                     <option value="1"'.($type['affect']?' selected':'').'>
                         '.$langs->trans('TypeAffectYes').'
                      </option>
-                     <option value="0"'.($type['affect']?'':' selected="selected"').'>
+                     <option value="0"'.($type['affect']?'':' selected').'>
                         '.$langs->trans('TypeAffectNo').'
                      </option>
                   </select>

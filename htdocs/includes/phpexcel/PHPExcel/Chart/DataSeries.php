@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel_Chart
- * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version	1.7.8, 2012-10-12
+ * @version	1.8.0, 2014-03-02
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category	PHPExcel
  * @package		PHPExcel_Chart
- * @copyright	Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Chart_DataSeries
 {
@@ -52,6 +52,7 @@ class PHPExcel_Chart_DataSeries
 	const TYPE_RADARCHART		= 'radarChart';
 	const TYPE_BUBBLECHART		= 'bubbleChart';
 	const TYPE_STOCKCHART		= 'stockChart';
+	const TYPE_CANDLECHART		= self::TYPE_STOCKCHART;	   //	Synonym
 
 	const GROUPING_CLUSTERED			= 'clustered';
 	const GROUPING_STACKED				= 'stacked';
@@ -169,9 +170,11 @@ class PHPExcel_Chart_DataSeries
 	 * Set Plot Type
 	 *
 	 * @param string $plotType
+     * @return PHPExcel_Chart_DataSeries
 	 */
 	public function setPlotType($plotType = '') {
 		$this->_plotType = $plotType;
+        return $this;
 	}
 
 	/**
@@ -187,9 +190,11 @@ class PHPExcel_Chart_DataSeries
 	 * Set Plot Grouping Type
 	 *
 	 * @param string $groupingType
+     * @return PHPExcel_Chart_DataSeries
 	 */
 	public function setPlotGrouping($groupingType = null) {
 		$this->_plotGrouping = $groupingType;
+        return $this;
 	}
 
 	/**
@@ -205,9 +210,11 @@ class PHPExcel_Chart_DataSeries
 	 * Set Plot Direction
 	 *
 	 * @param string $plotDirection
+     * @return PHPExcel_Chart_DataSeries
 	 */
 	public function setPlotDirection($plotDirection = null) {
 		$this->_plotDirection = $plotDirection;
+        return $this;
 	}
 
 	/**
@@ -280,9 +287,11 @@ class PHPExcel_Chart_DataSeries
 	 * Set Plot Style
 	 *
 	 * @param string $plotStyle
+     * @return PHPExcel_Chart_DataSeries
 	 */
 	public function setPlotStyle($plotStyle = null) {
 		$this->_plotStyle = $plotStyle;
+        return $this;
 	}
 
 	/**
@@ -331,9 +340,11 @@ class PHPExcel_Chart_DataSeries
 	 * Set Smooth Line
 	 *
 	 * @param boolean $smoothLine
+     * @return PHPExcel_Chart_DataSeries
 	 */
 	public function setSmoothLine($smoothLine = TRUE) {
 		$this->_smoothLine = $smoothLine;
+        return $this;
 	}
 
 	public function refresh(PHPExcel_Worksheet $worksheet) {

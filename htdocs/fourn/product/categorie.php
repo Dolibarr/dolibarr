@@ -115,7 +115,7 @@ if ($_GET["id"])
       print "<tr>";
       print '<td>'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
 
-      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->label.'</td>';
       print "</table><br>\n";
 
       $c = new Categorie($db);

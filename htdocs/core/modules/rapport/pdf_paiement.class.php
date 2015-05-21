@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Charles-Fr BENKE  	 <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,16 +60,18 @@ class pdf_paiement
 		$this->tab_top = 30;
 
 		$this->line_height = 5;
-		$this->line_per_page = 25;
-		$this->tab_height = 230;	//$this->line_height * $this->line_per_page;
+		$this->line_per_page = 40;
+		$this->tab_height = $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5;	// must be > $this->line_height * $this->line_per_page and < $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5;
 
 		$this->posxdate=$this->marge_gauche+2;
 		$this->posxpaymenttype=42;
 		$this->posxinvoice=82;
-		$this->posxinvoiceamount=122;
+		$this->posxbankaccount=110;
+		$this->posxinvoiceamount=132;
 		$this->posxpaymentamount=162;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
+			$this->line_per_page = 35;
 			$this->posxpaymenttype-=10;
 			$this->posxinvoice-=0;
 			$this->posxinvoiceamount-=10;
@@ -91,7 +94,7 @@ class pdf_paiement
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		global $user,$langs,$conf;
+		global $conf, $hookmanager, $langs, $user;
 
 		$socid=0;
 		if ($user->societe_id) $socid=$user->societe_id;
@@ -126,7 +129,7 @@ class pdf_paiement
 			$hookmanager=new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+		$parameters=array('file'=>$file,'outputlangs'=>$outputlangs);
 		global $action;
 		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -143,20 +146,33 @@ class pdf_paiement
         $num=0;
         $lines=array();
 
+		// count number of ligne of payement
+		$sql = "SELECT p.rowid as prowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$numpaiement = $this->db->num_rows($result);
+		}
+
+		// number of bill
 		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 		$sql.= ", c.code as paiement_code, p.num_paiement";
 		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
-		$sql.= ", pf.amount as pf_amount ";
+		$sql.= ", pf.amount as pf_amount , ba.ref as bankaccount ";
 		$sql.= ", p.rowid as prowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
 		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
+		$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		if (! $user->rights->societe->client->voir && ! $socid)
 		{
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+		$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND p.fk_paiement = c.id ";
 		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
@@ -188,6 +204,7 @@ class pdf_paiement
 				$lines[$i][5] = price($objp->facture_amount);
 				$lines[$i][6] = price($objp->pf_amount);
 				$lines[$i][7] = $objp->prowid;
+				$lines[$i][8] = $objp->bankaccount;
 				$i++;
 			}
 		}
@@ -196,9 +213,9 @@ class pdf_paiement
 			dol_print_error($this->db);
 		}
 
-		$pages = intval($num / $this->line_per_page);
+		$pages = intval(($num + $numpaiement) / $this->line_per_page);
 
-		if (($lines % $this->line_per_page)>0)
+		if ((($num + $numpaiement) % $this->line_per_page)>0)
 		{
 			$pages++;
 		}
@@ -226,7 +243,7 @@ class pdf_paiement
 		// New page
 		$pdf->AddPage();
 		$pagenb++;
-		$this->_pagehead($pdf, $pages, 1, $outputlangs);
+		$this->_pagehead($pdf, $pagenb, 1, $outputlangs);
 		$pdf->SetFont('','', 9);
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3
 		$pdf->SetTextColor(0,0,0);
@@ -275,7 +292,8 @@ class pdf_paiement
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
+		$title=$conf->global->MAIN_INFO_SOCIETE_NOM;
+		$title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
 		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
 		$pdf->SetFont('','B',$default_font_size + 1);
 		$pdf->SetXY($this->marge_gauche,10);
@@ -286,8 +304,8 @@ class pdf_paiement
         $pdf->SetXY($this->posxdate, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true), 0, 'L');
 
-        $pdf->SetXY($this->posxdate, 22);
-		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'L');
+        $pdf->SetXY($this->posxdate+100, 16);
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'R');
 
 
 		// Title line
@@ -300,7 +318,12 @@ class pdf_paiement
 
 		$pdf->line($this->posxinvoice - 1, $this->tab_top, $this->posxinvoice - 1, $this->tab_top + $this->tab_height + 10);
         $pdf->SetXY($this->posxinvoice, $this->tab_top+2);
-		$pdf->MultiCell($this->posxinvoiceamount - $this->posxinvoice, 2, $outputlangs->transnoentities("Invoice"), 0, 'L');
+		$pdf->MultiCell($this->posxbankaccount - $this->posxinvoice, 2, $outputlangs->transnoentities("Invoice"), 0, 'L');
+
+		$pdf->line($this->posxbankaccount - 1, $this->tab_top, $this->posxbankaccount - 1, $this->tab_top + $this->tab_height + 10);
+        $pdf->SetXY($this->posxbankaccount, $this->tab_top+2);
+		$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, 2, $outputlangs->transnoentities("Account"), 0, 'L');
+
 
 		$pdf->line($this->posxinvoiceamount - 1, $this->tab_top, $this->posxinvoiceamount - 1, $this->tab_top + $this->tab_height + 10);
         $pdf->SetXY($this->posxinvoiceamount, $this->tab_top+2);
@@ -337,9 +360,17 @@ class pdf_paiement
 		for ($j = 0 ; $j < $numlines ; $j++)
 		{
 			$i = $j;
+			if ($yp > $this->tab_height -5)
+			{
+				$page++;
+				$pdf->AddPage();
+				$this->_pagehead($pdf, $page, 0, $outputlangs);
+				$pdf->SetFont('','', $default_font_size - 1);
+				$yp = 0;
+			}
 			if ($oldprowid <> $lines[$j][7])
 			{
-				if ($yp > 200)
+				if ($yp > $this->tab_height -10)
 				{
 					$page++;
 					$pdf->AddPage();
@@ -364,7 +395,11 @@ class pdf_paiement
 
 			// Invoice number
 			$pdf->SetXY($this->posxinvoice, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell($this->posxinvoiceamount - $this->posxdate, $this->line_height, $lines[$j][0], 0, 'L', 0);
+			$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, $this->line_height, $lines[$j][0], 0, 'L', 0);
+
+			// BankAccount
+			$pdf->SetXY($this->posxbankaccount, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell($this->posxbankaccount - $this->posxdate, $this->line_height, $lines[$j][8], 0, 'L', 0);
 
 			// Invoice amount
 			$pdf->SetXY($this->posxinvoiceamount, $this->tab_top + 10 + $yp);
@@ -381,6 +416,5 @@ class pdf_paiement
 			}
 		}
 	}
-
 }
 

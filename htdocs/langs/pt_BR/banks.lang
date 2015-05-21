@@ -4,6 +4,7 @@ MenuSetupBank=Configuração Banco/Caixa
 BankName=Nome do Banco
 BankAccount=Conta Bancaria
 BankAccounts=Contas Bancarias
+ShowAccount=Visualizar Conta
 AccountRef=Ref. Conta Financeira
 AccountLabel=Etiqueta da Conta Financeira
 CashAccount=Conta Caixa/Efetivo

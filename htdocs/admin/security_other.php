@@ -37,19 +37,11 @@ if (! $user->admin)
 
 $action=GETPOST('action','alpha');
 
-$upload_dir=$conf->admin->dir_temp;
 
 
 /*
  * Actions
  */
-
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-    dol_add_file_process($upload_dir, 0, 0, 'userfile');
-}
 
 if (preg_match('/set_(.*)/',$action,$reg))
 {
@@ -84,26 +76,10 @@ else if ($action == 'updateform')
 {
 	$res1=dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_APPLICATION_TITLE"],'chaine',0,'',$conf->entity);
     $res2=dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity);
-	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity);
-    $res4=dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
-    $res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
-    $res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
-	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+	if ($res1 && $res2) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
 
-
-// Delete file
-else if ($action == 'delete')
-{
-	$langs->load("other");
-	$file = $conf->admin->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	Header('Location: '.$_SERVER["PHP_SELF"]);
-	exit;
-}
 
 /*
  * View
@@ -113,7 +89,7 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Miscellaneous"));
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
+print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("MiscellaneousDesc")."<br>\n";
 print "<br>\n";
@@ -127,7 +103,6 @@ print '<input type="hidden" name="action" value="updateform">';
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'misc', $langs->trans("Security"));
-
 
 
 // Other Options
@@ -231,90 +206,12 @@ print '</tr>';
 
 print '</table>';
 
-print '<br>';
-
-// Upload options
-$var=false;
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print '</tr>';
-
-print '<tr '.$bc[$var].'>';
-print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
-$max=@ini_get('upload_max_filesize');
-if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
-else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
-print '</td>';
-print '</tr>';
-
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UMask").'</td><td align="right">';
-print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
-print '</td>';
-print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';
-print '</td>';
-print '</tr>';
-
-// Use anti virus
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
-print $langs->trans("AntiVirusCommandExample");
-// Check command in inside safe_mode
-print '</td>';
-print '<td>';
-if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
-{
-    $langs->load("errors");
-    $basedir=preg_replace('/"/','',dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
-    $listdir=explode(';',ini_get('safe_mode_exec_dir'));
-    if (! in_array($basedir,$listdir))
-    {
-        print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
-        dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
-    }
-}
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" size="72" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
-print "</td>";
-print '</tr>';
-
-// Use anti virus
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
-print $langs->trans("AntiVirusParamExample");
-print '</td>';
-print '<td>';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" size="72" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
-print "</td>";
-print '</tr>';
-
-print '</table>';
-
 dol_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
-
-
-// Form to test upload
-print '<br>';
-$formfile=new FormFile($db);
-$formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestFileUploadForm"), 0, 0, 1, 50, '', '', 1, '', 0);
-
-// List of document
-$filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
-$formfile->list_of_documents($filearray, '', 'admin_temp', '');
 
 llxFooter();
 $db->close();

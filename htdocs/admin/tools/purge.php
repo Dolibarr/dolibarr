@@ -117,7 +117,7 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("Purge"),'','setup');
+print_fiche_titre($langs->trans("Purge"),'','title_setup');
 
 print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
 print '<br>';
@@ -134,16 +134,16 @@ print '<tr class="border"><td style="padding: 4px">';
 if (! empty($conf->syslog->enabled))
 {
 	print '<input type="radio" name="choice" value="logfile"';
-	print ($choice && $choice=='logfile') ? ' checked="checked"' : '';
+	print ($choice && $choice=='logfile') ? ' checked' : '';
 	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';
-print (! $choice || $choice=='tempfiles' || $choice=='allfiles') ? ' checked="checked"' : '';
+print (! $choice || $choice=='tempfiles' || $choice=='allfiles') ? ' checked' : '';
 print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
 print '<input type="radio" name="choice" value="confirm_allfiles"';
-print ($choice && $choice=='confirm_allfiles') ? ' checked="checked"' : '';
+print ($choice && $choice=='confirm_allfiles') ? ' checked' : '';
 print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';
@@ -151,7 +151,7 @@ print '</td></tr></table>';
 if ($choice != 'confirm_allfiles')
 {
 	print '<br>';
-	print '<center><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></center>';
+	print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></div>';
 }
 
 print '</form>';

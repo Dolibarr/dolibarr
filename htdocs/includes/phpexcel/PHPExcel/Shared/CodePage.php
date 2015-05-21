@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Shared
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.8, 2012-10-12
+ * @version    1.8.0, 2014-03-02
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Shared
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Shared_CodePage
 {
@@ -39,16 +39,16 @@ class PHPExcel_Shared_CodePage
 	 * Convert Microsoft Code Page Identifier to Code Page Name which iconv
 	 * and mbstring understands
 	 *
-	 * @param int $number Microsoft Code Page Indentifier
+	 * @param integer $codePage Microsoft Code Page Indentifier
 	 * @return string Code Page Name
-	 * @throws Exception
+	 * @throws PHPExcel_Exception
 	 */
-	public static function NumberToName($codePage = '1252')
+	public static function NumberToName($codePage = 1252)
 	{
 		switch ($codePage) {
 			case 367:	return 'ASCII';				break;	//	ASCII
 			case 437:	return 'CP437';				break;	//	OEM US
-			case 720:	throw new Exception('Code page 720 not supported.');
+			case 720:	throw new PHPExcel_Exception('Code page 720 not supported.');
 													break;	//	OEM Arabic
 			case 737:	return 'CP737';				break;	//	OEM Greek
 			case 775:	return 'CP775';				break;	//	OEM Baltic
@@ -85,17 +85,18 @@ class PHPExcel_Shared_CodePage
 			case 10000:	return 'MAC';				break;	//	Apple Roman
 			case 10006:	return 'MACGREEK';			break;	//	Macintosh Greek
 			case 10007:	return 'MACCYRILLIC';		break;	//	Macintosh Cyrillic
+            case 10008: return 'CP936';             break;  //  Macintosh - Simplified Chinese (GB 2312)
 			case 10029:	return 'MACCENTRALEUROPE';	break;	//	Macintosh Central Europe
 			case 10079: return 'MACICELAND';		break;	//	Macintosh Icelandic
 			case 10081: return 'MACTURKISH';		break;	//	Macintosh Turkish
 			case 32768:	return 'MAC';				break;	//	Apple Roman
-			case 32769:	throw new Exception('Code page 32769 not supported.');
+			case 32769:	throw new PHPExcel_Exception('Code page 32769 not supported.');
 													break;	//	ANSI Latin I (BIFF2-BIFF3)
 			case 65000:	return 'UTF-7';				break;	//	Unicode (UTF-7)
 			case 65001:	return 'UTF-8';				break;	//	Unicode (UTF-8)
 		}
 
-		throw new Exception('Unknown codepage: ' . $codePage);
+		throw new PHPExcel_Exception('Unknown codepage: ' . $codePage);
 	}
 
 }

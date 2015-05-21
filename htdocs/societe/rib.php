@@ -296,10 +296,26 @@ if ($socid && $action != 'edit' && $action != "create")
 	}
 
 	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban.'</td></tr>';
+	print '<td colspan="4">'.$account->iban . '&nbsp;';
+    if (! empty($account->iban)) {
+        if (! checkIbanForAccount($account)) {
+            print img_picto($langs->trans("IbanNotValid"),'warning');
+        } else {
+            print img_picto($langs->trans("IbanValid"),'info');
+        }
+    }
+    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4">'.$account->bic.'</td></tr>';
+	print '<td colspan="4">'.$account->bic.'&nbsp;';
+    if (! empty($account->bic)) {
+        if (! checkSwiftForAccount($account)) {
+            print img_picto($langs->trans("SwiftNotValid"),'warning');
+        } else {
+            print img_picto($langs->trans("SwiftValid"),'info');
+        }
+    }
+    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print $account->domiciliation;
@@ -400,8 +416,11 @@ if ($socid && $action != 'edit' && $action != "create")
             $var = !$var;
         }
 
-        if (count($rib_list) == 0) {
-            print '<tr '.$bc[0].'><td colspan="7" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
+        if (count($rib_list) == 0) 
+        {
+        	$colspan=7;
+        	if (! empty($conf->prelevement->enabled)) $colspan++;
+            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
         print '</table>';
@@ -516,9 +535,11 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
     print '</table><br>';
 
-    print '<center><input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</center>';
+    print '<div align="center">';
+	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '</div>';
 
     print '</form>';
 }
@@ -596,9 +617,11 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     print '</table><br>';
 
-    print '<center><input class="button" value="'.$langs->trans("Add").'" type="submit">';
-    print ' &nbsp; <input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</center>';
+    print '<div align="center">';
+	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
+	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
+    print '</div>';
 
     print '</form>';
 }

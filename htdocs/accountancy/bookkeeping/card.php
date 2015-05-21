@@ -358,7 +358,8 @@ else
 					print '<td><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
 					print '</tr>';
 				}
-				print "</table>";
+				print '</table>';
+				print '</form>';
 			}
 		}
 	}

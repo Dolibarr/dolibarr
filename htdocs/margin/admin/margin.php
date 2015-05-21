@@ -72,7 +72,6 @@ if ($action == 'remises')
 {
     if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_METHODE_FOR_DISCOUNT'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
@@ -85,7 +84,6 @@ if ($action == 'typemarges')
 {
     if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_TYPE'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
@@ -98,7 +96,6 @@ if ($action == 'contact')
 {
     if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          $conf->global->AGENT_CONTACT_TYPE = $_POST['AGENT_CONTACT_TYPE'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
@@ -115,7 +112,7 @@ llxHeader('',$langs->trans("margesSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("margesSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
 
 
 $head = marges_admin_prepare_head();

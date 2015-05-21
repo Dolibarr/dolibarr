@@ -43,7 +43,7 @@ $title='InfoPHP';
 
 if (isset($title))
 {
-	print_fiche_titre($langs->trans($title), '', 'setup');
+	print_fiche_titre($langs->trans($title), '', 'title_setup');
 }
 
 

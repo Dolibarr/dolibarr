@@ -300,7 +300,7 @@ if ($conf->use_javascript_ajax)
 	$s.='</script>' . "\n";
 	if (! empty($conf->use_javascript_ajax))
 	{
-		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 		if (is_array($showextcals) && count($showextcals) > 0)
 		{
 			foreach ($showextcals as $val)
@@ -314,7 +314,7 @@ if ($conf->use_javascript_ajax)
 				$s.='		});' . "\n";
 				$s.='});' . "\n";
 				$s.='</script>' . "\n";
-				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val ['name'] . ' &nbsp; </div>';
 			}
 		}
 	}
@@ -907,9 +907,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					$newcolor = ''; //init
 					if (empty($event->fulldayevent))
 					{
-						$a = dol_mktime((int) $h,0,0,$month,$day,$year,false,false);
-						$b = dol_mktime((int) $h,30,0,$month,$day,$year,false,false);
-						$c = dol_mktime((int) $h+1,0,0,$month,$day,$year,false,false);
+						$a = dol_mktime((int) $h,0,0,$month,$day,$year,false,0);
+						$b = dol_mktime((int) $h,30,0,$month,$day,$year,false,0);
+						$c = dol_mktime((int) $h+1,0,0,$month,$day,$year,false,0);
 
 						$dateendtouse=$event->date_end_in_calendar;
 						if ($dateendtouse==$event->date_start_in_calendar) $dateendtouse++;

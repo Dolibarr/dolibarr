@@ -190,7 +190,10 @@ class modProduct extends DolibarrModules
 						$typeFilter="Boolean";
 						break;
 					case 'sellist':
-						$typeFilter="List:".$obj->param;
+						$tmp='';
+						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 						break;
 				}
 		        $this->export_fields_array[$r][$fieldname]=$fieldlabel;
