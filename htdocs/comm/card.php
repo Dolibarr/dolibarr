@@ -483,6 +483,7 @@ if ($id > 0)
 	// Nbre max d'elements des petites listes
 	$MAXLIST=4;
 	$tableaushown=1;
+	$var=0;
 
 	// Lien recap
 	print '<table class="noborder" width="100%">';
@@ -490,6 +491,11 @@ if ($id > 0)
 	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id.'">'.$langs->trans("ShowCustomerPreview").'</a></td></tr></table></td>';
 	print '</tr>';
+	
+	// Outstanding Bill
+	$outstandigBills = $object->get_OutstandingBill();
+	print '<tr '.$bc[$var].'><td align="right">' . $langs->trans('CurrentOutstandingBill') . ' : ' . price($outstandigBills, '', $langs, 0, 0, - 1, $conf->currency) . '</td></tr>';
+	
 	print '</table>';
 	print '<br>';
 
