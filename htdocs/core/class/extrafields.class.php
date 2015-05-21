@@ -923,7 +923,12 @@ class ExtraFields
 		}
 		elseif ($type == 'chkbxlst')
 		{
-			$value_arr = explode(',', $value);
+			if (is_array($value)) {
+				$value_arr = $value;
+			}
+			else {
+				$value_arr = explode(',', $value);
+			}
 
 			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
