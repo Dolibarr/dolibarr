@@ -446,15 +446,15 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
                 {
                 	if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
-                    $sql = "SELECT sc.fk_soc";
+                   
+
+				    $sql = "SELECT dbt.id";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-                    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-                    $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+                    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (dbt.".$dbt_keyfield." = s.rowid)";
+                    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = dbt.".$dbt_keyfield.")";
                     $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
-                    $sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-                    $sql.= " AND dbt.".$dbt_keyfield." = s.rowid";
-                    $sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
-                    $sql.= " AND sc.fk_user = ".$user->id;
+                    $sql.= " AND ((s.entity IN (".getEntity($sharedelement, 1).")";
+                    $sql.= " AND sc.fk_user = ".$user->id." ) OR dbt.fk_soc IS NULL)";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
                 else if (! empty($conf->multicompany->enabled))
