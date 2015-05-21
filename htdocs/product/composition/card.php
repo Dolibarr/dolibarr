@@ -326,106 +326,120 @@ if ($id > 0 || ! empty($ref))
 
 			$class='pair';
 
-			foreach($prods_arbo as $value)
+			if (count($prods_arbo))
 			{
-				$productstatic->id=$value['id'];
-				$productstatic->type=$value['type'];
-				$productstatic->label=$value['label'];
-
-				if ($value['level'] <= 1)
+				foreach($prods_arbo as $value)
 				{
-					$class=($class=='impair')?'pair':'impair';
-					print '<tr class="'.$class.'">';
+					$productstatic->id=$value['id'];
+					$productstatic->type=$value['type'];
+					$productstatic->label=$value['label'];
 
-					$notdefined=0;
-					$productstatic->ref=$value['ref'];
-					$nb_of_subproduct = $value['nb'];
-
-					print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
-					print '<td>'.$productstatic->label.'</td>';
-
-					// Best buying price
-					print '<td align="right">';
-					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
+					if ($value['level'] <= 1)
 					{
-						print ' &nbsp; '.$langs->trans("BuyingPriceMinShort").': ';
-				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
-				    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
+						$class=($class=='impair')?'pair':'impair';
+						print '<tr class="'.$class.'">';
+
+						$notdefined=0;
+						$productstatic->ref=$value['ref'];
+						$nb_of_subproduct = $value['nb'];
+
+						print '<td>'.$productstatic->getNomUrl(1,'composition').'</td>';
+						print '<td>'.$productstatic->label.'</td>';
+
+						// Best buying price
+						print '<td align="right">';
+						if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
+						{
+							print ' &nbsp; '.$langs->trans("BuyingPriceMinShort").': ';
+					    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
+					    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
+						}
+						print '</td>';
+
+						$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
+						$total+=$totalline;
+						print '<td align="right">';
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));
+						print '</td>';
+
+						// Stock
+						if (! empty($conf->stock->enabled)) print '<td align="right">'.$value['stock'].'</td>';	// Real stock
+
+						// Qty + IncDec
+						if ($user->rights->produit->creer || $user->rights->service->creer)
+						{
+							print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
+							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
+
+						}
+						else{
+							print '<td>'.$nb_of_subproduct.'</td>';
+							print '<td>'.($value['incdec']==1?'x':''  ).'</td>';
+						}
+
+						print '</tr>'."\n";
 					}
-					print '</td>';
-
-					$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
-					$total+=$totalline;
-					print '<td align="right">';
-					print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));
-					print '</td>';
-
-					// Stock
-					if (! empty($conf->stock->enabled)) print '<td align="right">'.$value['stock'].'</td>';	// Real stock
-
-					// Qty + IncDec
-					if ($user->rights->produit->creer || $user->rights->service->creer)
+					else 	// By default, we do not show this. It makes screen very difficult to understand
 					{
-						print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
-						print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
+						$hide='';
+						if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide=' hideobject';
 
-					}
-					else{
-						print '<td>'.$nb_of_subproduct.'</td>';
-						print '<td>'.($value['incdec']==1?'x':''  ).'</td>';
-					}
+						$class=($class=='impair')?'pair':'impair';
+						print '<tr class="'.$class.$hide.'" id="sub-'.$value['id_parent'].'">';
 
-					print '</tr>'."\n";
+						//$productstatic->ref=$value['label'];
+						$productstatic->ref=$value['ref'];
+						print '<td>';
+						for ($i=0; $i < $value['level']; $i++)	print ' &nbsp; &nbsp; ';	// Add indentation
+						print $productstatic->getNomUrl(1,'composition').'</td>';
+						print '<td>'.$productstatic->label.'</td>';
+
+						print '<td>&nbsp;</td>';
+						print '<td>&nbsp;</td>';
+
+						if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
+						print '<td align="center">'.$value['nb'].'</td>';
+						print '<td>&nbsp;</td>';
+
+						print '</tr>'."\n";
+					}
 				}
-				else 	// By default, we do not show this. It makes screen very difficult to understand
+
+				print '<tr class="liste_total">';
+				print '<td class="liste_total"></td>';
+				print '<td class="liste_total"></td>';
+
+				// Minimum buying price
+				print '<td class="liste_total" align="right">';
+				print $langs->trans("TotalBuyingPriceMin");
+				print '</td>';
+
+				print '<td class="liste_total" align="right">';
+				if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
+				print ($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency));
+				print '</td>';
+
+				// Stock
+				if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
+
+				print '<td align="right" colspan="2">';
+				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
-					$hide='';
-					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide=' hideobject';
-
-					$class=($class=='impair')?'pair':'impair';
-					print '<tr class="'.$class.$hide.'" id="sub-'.$value['id_parent'].'">';
-
-					//$productstatic->ref=$value['label'];
-					$productstatic->ref=$value['ref'];
-					print '<td>';
-					for ($i=0; $i < $value['level']; $i++)	print ' &nbsp; &nbsp; ';	// Add indentation
-					print $productstatic->getNomUrl(1,'composition').'</td>';
-					print '<td>'.$productstatic->label.'</td>';
-
-					print '<td>&nbsp;</td>';
-					print '<td>&nbsp;</td>';
-
-					if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
-					print '<td align="center">'.$value['nb'].'</td>';
-					print '<td>&nbsp;</td>';
-
-					print '</tr>'."\n";
+					print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
 				}
+				print '</td>';
+				print '</tr>'."\n";
 			}
-			print '<tr class="liste_total">';
-			print '<td class="liste_total"></td>';
-			print '<td class="liste_total"></td>';
-
-			// Minimum buying price
-			print '<td class="liste_total" align="right">';
-			print $langs->trans("TotalBuyingPriceMin");
-			print '</td>';
-
-			print '<td class="liste_total" align="right">';
-			if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
-			print ($atleastonenotdefined?'':price($total,'','',0,0,-1,$conf->currency));
-			print '</td>';
-
-			// Stock
-			if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
-
-			print '<td align="right" colspan="2">';
-			if ($user->rights->produit->creer || $user->rights->service->creer)
+			else
 			{
-				print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
+				$colspan=6;
+				if (! empty($conf->stock->enabled)) $colspan++;
+
+				print '<tr>';
+				print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+				print '</tr>';
 			}
-			print '</td>';
-			print '</tr>'."\n";
+
 			print '</table>';
 
 			/*if($user->rights->produit->creer || $user->rights->service->creer) {

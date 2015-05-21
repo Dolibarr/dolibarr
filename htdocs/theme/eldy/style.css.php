@@ -1037,8 +1037,8 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     border-right: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
     border-top: 1px solid #BBB;
-    border-radius: 5px;
-	-moz-border-radius: 5px;
+    border-radius: 4px;
+	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
@@ -1061,8 +1061,8 @@ div.blockvmenusearch
     border-right: 1px solid #CCC;
     border-bottom: 1px solid #CCC;
     border-top: 1px solid #CCC;
-    border-radius: 5px;
-	-moz-border-radius: 5px;
+    border-radius: 4px;
+	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
@@ -1142,9 +1142,9 @@ td.photo {
     background-repeat: repeat-x !important;
 	border: 1px solid #CCC !important;
 
-    -moz-border-radius: 5px 5px 5px 5px !important;
-	-webkit-border-radius: 5px 5px 5px 5px !important;
-	border-radius: 5px 5px 5px 5px !important;
+    -moz-border-radius: 4px 4px 4px 4px !important;
+	-webkit-border-radius: 4px 4px 4px 4px !important;
+	border-radius: 4px 4px 4px 4px !important;
     -moz-box-shadow: 2px 2px 4px #DDD;
     -webkit-box-shadow: 2px 2px 4px #DDD;
     box-shadow: 2px 2px 4px #DDD;
@@ -1377,9 +1377,9 @@ div.tabBar {
     padding-right: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
     padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'12'); ?>px;
     margin: 0px 0px 14px 0px;
-    -moz-border-radius:6px;
-    -webkit-border-radius: 6px;
-	border-radius: 6px;
+    -moz-border-radius:4px;
+    -webkit-border-radius: 4px;
+	border-radius: 4px;
     border-right: 1px solid #AAA;
     border-bottom: 1px solid #AAA;
     border-left: 1px solid #AAA;
@@ -1433,7 +1433,14 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid #BBB;
 	border-top: 1px solid #CCC;
 	*/
-	
+
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
+	-moz-border-radius:4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+	border-radius: 4px 4px 0 0;
+
 	background-image: none !important;
 }
 
@@ -1447,6 +1454,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
 	border-top: 1px solid #BBB !important;
+	-moz-border-radius:4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+	border-radius: 4px 4px 0 0;
 }
 a.tab:hover
 {
@@ -1475,9 +1485,9 @@ span.tabspan {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
+    -moz-border-radius:4px 4px 0px 0px;
+	-webkit-border-radius:4px 4px 0px 0px;
+	border-radius:4px 4px 0px 0px;
 
     border-<?php print $right; ?>: 1px solid #555555;
     border-<?php print $left; ?>: 1px solid #D8D8D8;
@@ -1517,7 +1527,7 @@ div.divButAction { margin-bottom: 1.4em; }
   border: 1px solid transparent;
   border-radius: 4px;
   */
-  
+
   font-weight: normal;
   border-color: #c5c5c5;
   border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
@@ -2220,7 +2230,7 @@ div.tabBar .noborder {
     margin-bottom: 8px !important;*/
     border: 1px solid #AAA;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 .boxtable {
@@ -2317,9 +2327,9 @@ div.warning {
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #e0d0b0;
-  -moz-border-radius:6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   background: #EFDF9A;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -2329,9 +2339,9 @@ div.error {
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DC9CAB;
-  -moz-border-radius:6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   background: #EFCFCF;
 }
 
@@ -2341,9 +2351,9 @@ div.info {
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DFBF9A;
-  -moz-border-radius:6px;
-  -webkit-border-radius: 6px;
-  border-radius:6px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   background: #EFCFAA;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -2506,9 +2516,9 @@ table.valid {
 	z-index: 3000;
 	background-color: #FFF;
 	opacity: 1;
-	-moz-border-radius:6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
 }
 #tiptip_content {
 	background-color: rgb(255,255,255);

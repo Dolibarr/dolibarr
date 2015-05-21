@@ -283,7 +283,7 @@ if ($action == 'edit')	// Edit
 	{
 		 // Show bugtrack link
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
 		print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
 		print '</td>';
 		print '<td width="20">&nbsp;</td>';
@@ -469,7 +469,7 @@ else	// Show
     {
     	// Show bugtrack link
     	$var=!$var;
-    	print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+    	print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
     	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
     	print '<td width="20">&nbsp;</td>';
     	print "</tr>";
