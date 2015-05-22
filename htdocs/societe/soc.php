@@ -1012,7 +1012,7 @@ else
 
         // Address
         print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
-	    print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -2259,7 +2259,7 @@ else
 	        {
 	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
 	        }
-	        
+
 	        if ($user->rights->societe->supprimer)
 	        {
 	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile

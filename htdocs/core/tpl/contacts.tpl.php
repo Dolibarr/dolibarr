@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012      Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,6 +164,8 @@ $userstatic=new User($db);
 		</div>
 		<div class="tagtd">
 			<?php
+			$statusofcontact = $tab[$i]['status'];
+
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->id=$tab[$i]['id'];
@@ -182,24 +184,24 @@ $userstatic=new User($db);
 		</div>
 		<div class="tagtd"><?php echo $tab[$i]['libelle']; ?></div>
 		<div class="tagtd" align="center">
-			<?php if ($object->statut >= 0) echo '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">'; ?>
+			<?php //if ($object->statut >= 0) echo '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">'; ?>
 			<?php
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->id=$tab[$i]['id'];
 				$userstatic->lastname=$tab[$i]['lastname'];
 				$userstatic->firstname=$tab[$i]['firstname'];
-				//echo $userstatic->LibStatut($tab[$i]['status'],3);
+				echo $userstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->id=$tab[$i]['id'];
 				$contactstatic->lastname=$tab[$i]['lastname'];
 				$contactstatic->firstname=$tab[$i]['firstname'];
-				echo $contactstatic->LibStatut($tab[$i]['status'],3);
+				echo $contactstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			?>
-			<?php if ($object->statut >= 0) echo '</a>'; ?>
+			<?php //if ($object->statut >= 0) echo '</a>'; ?>
 		</div>
 		<div class="tagtd nowrap" align="right">
 			<?php if ($permission) { ?>
