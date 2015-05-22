@@ -675,6 +675,8 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewMailing"));
 
+	dol_fiche_head();
+
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
@@ -706,12 +708,14 @@ if ($action == 'create')
 	print '<td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
+	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 	print '</table>';
 
-	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
+	dol_fiche_end();
+
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
 
 	print '</form>';
 }
