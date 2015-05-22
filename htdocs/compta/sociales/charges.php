@@ -422,7 +422,7 @@ if ($id > 0)
 			}
 
 			// Emettre paiement
-			if ($object->paye == 0 && ((price2num($object->amount) < 0 && round($resteapayer) < 0) || (price2num($object->amount) > 0 && round($resteapayer) > 0)) && $user->rights->tax->charges->creer)
+			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
