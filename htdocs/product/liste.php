@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -181,7 +181,7 @@ else
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
     if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
-    if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$search_categ;
+    if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
     if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
@@ -233,9 +233,9 @@ else
     	// Displays product removal confirmation
     	if (GETPOST('delprod'))	dol_htmloutput_mesg($langs->trans("ProductDeleted",GETPOST('delprod')));
 
-    	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
+    	$param="&amp;sref=".htmlspecialchars($sref).($sbarcode?"&amp;sbarcode=".htmlspecialchars($sbarcode):"")."&amp;snom=".htmlspecialchars($snom)."&amp;sall=".htmlspecialchars($sall)."&amp;tosell=".htmlspecialchars($tosell)."&amp;tobuy=".htmlspecialchars($tobuy);
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+    	$param.=($search_categ?"&amp;search_categ=".htmlspecialchars($search_categ):"");
     	$param.=isset($type)?"&amp;type=".$type:"";
 
     	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
@@ -320,15 +320,15 @@ else
     		// Lignes des champs de filtre
     		print '<tr class="liste_titre">';
     		print '<td class="liste_titre" align="left">';
-    		print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
+    		print '<input class="flat" type="text" name="sref" size="8" value="'.htmlspecialchars($sref).'">';
     		print '</td>';
     		print '<td class="liste_titre" align="left">';
-    		print '<input class="flat" type="text" name="snom" size="12" value="'.$snom.'">';
+    		print '<input class="flat" type="text" name="snom" size="12" value="'.htmlspecialchars($snom).'">';
     		print '</td>';
     		if (! empty($conf->barcode->enabled))
     		{
     			print '<td class="liste_titre">';
-    			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
+    			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.htmlspecialchars($sbarcode).'">';
     			print '</td>';
     		}
     		print '<td class="liste_titre">';
@@ -510,9 +510,9 @@ else
     			$i++;
     		}
 
-    		$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
+    		$param="&amp;sref=".htmlspecialchars($sref).($sbarcode?"&amp;sbarcode=".htmlspecialchars($sbarcode):"")."&amp;snom=".htmlspecialchars($snom)."&amp;sall=".htmlspecialchars($sall)."&amp;tosell=".htmlspecialchars($tosell)."&amp;tobuy=".htmlspecialchars($tobuy);
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+    		$param.=($search_categ?"&amp;search_categ=".htmlspecialchars($search_categ):"");
     		$param.=isset($type)?"&amp;type=".$type:"";
     		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
