@@ -434,7 +434,16 @@ if (empty($reshook)) {
 				$from = $_POST ['fromname'] . ' <' . $_POST ['frommail'] . '>';
 				$replyto = $_POST ['replytoname'] . ' <' . $_POST ['replytomail'] . '>';
 				$message = $_POST ['message'];
-				$sendtocc = $_POST ['sendtocc'];
+				
+				$receivercc = GETPOST('receivercc');
+				if($_POST ['sendtocc']!=='') {
+					$sendtocc = $_POST ['sendtocc']  ;	
+				}
+				elseif($receivercc!=-1) {
+					$sendtocc = $object->client->contact_get_property($receivercc, 'email');
+				}
+				
+				
 				$deliveryreceipt = $_POST ['deliveryreceipt'];
 
 				if (dol_strlen($_POST ['subject']))
