@@ -4974,21 +4974,22 @@ function dol_getmypid()
 
 
 /**
- * Generate natural SQL search string
+ * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of fields in the SQL query
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR)
  * @param 	string 			$value 		The value to look for.
- *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
- *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
- * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
+ *                          		    If param $mode is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
+ *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
+ *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
+ * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofinaland	1=Do now output the final 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $numeric=0, $nofinaland=0)
+function natural_search($fields, $value, $mode=0, $nofinaland=0)
 {
     global $db,$langs;
 
-    if ($numeric)
+    if ($mode == 1)
     {
     	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
     }
@@ -5005,7 +5006,7 @@ function natural_search($fields, $value, $numeric=0, $nofinaland=0)
         $newres = '';
         foreach ($fields as $field)
         {
-            if ($numeric)
+            if ($mode == 1)
             {
             	$operator='=';
             	$newcrit = preg_replace('/([<>=]+)/','',trim($crit));
@@ -5029,8 +5030,13 @@ function natural_search($fields, $value, $numeric=0, $nofinaland=0)
             		$i2++;	// a criteria was added to string
             	}
             }
-            else
+            else if ($mode == 2)
             {
+				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
+            	$i2++;	// a criteria was added to string
+            }
+            else
+			{
             	$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
             	$i2++;	// a criteria was added to string
             }
