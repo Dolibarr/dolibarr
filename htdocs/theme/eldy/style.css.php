@@ -1975,6 +1975,9 @@ div.pagination li.pagination span {
   color: #000;
   text-decoration: none;
 }
+div.pagination li.pagination span.inactive {
+  cursor: default;
+}
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 div.pagination li a,
 div.pagination li span {
@@ -2058,7 +2061,7 @@ div.pagination li.paginationafterarrows {
 }
 */
 
-
+/* Set the color for hover lines */
 .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover, table.dataTable tr.even:hover, table.dataTable tr.odd:hover
 {
 <?php if ($colorbacklinepairhover) { if ($colorbacklinepairhover > 0) { ?>
@@ -2070,7 +2073,6 @@ div.pagination li.paginationafterarrows {
 
 .odd, .impair, .nohover .odd:hover, .nohover .impair:hover, tr.odd td.nohover, tr.impair td.nohover {
 	font-family: <?php print $fontlist ?>;
-	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
 	min-height: 18px; /* seems to not be used */
@@ -2083,15 +2085,21 @@ div.pagination li.paginationafterarrows {
 
 .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
 	font-family: <?php print $fontlist ?>;
-	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
 
 	background-color: #f9f9f9;
 }
+
 table.dataTable tr.odd {
 	background-color: #f9f9f9 !important;
 }
+
+/* For no hover style */
+table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td {
+	background-color: #ffffff !important;
+}
+
 table.dataTable td {
     padding: 5px 2px 5px 3px !important;
 }
@@ -3146,6 +3154,7 @@ div.dolEventError h1, div.dolEventError h2 {
 /* ============================================================================== */
 /*  Datatable                                                                     */
 /* ============================================================================== */
+
 table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
   background: none !important;
 }
@@ -3153,6 +3162,14 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 .sorting_desc { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc.png',1); ?>') no-repeat center right !important; }
 .sorting_asc_disabled  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc_disabled.png',1); ?>') no-repeat center right !important; }
 .sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled.png',1); ?>') no-repeat center right !important; }
+.dataTables_paginate {
+	margin-top: 8px;
+}
+.paginate_button_disabled {
+  opacity: 1 !important;
+  color: #888 !important;
+  cursor: default !important;
+}
 .paginate_disabled_previous:hover, .paginate_enabled_previous:hover, .paginate_disabled_next:hover, .paginate_enabled_next:hover
 {
 	font-weight: normal;
@@ -3161,10 +3178,36 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 {
 	text-decoration: underline !important;
 }
+.paginate_active
+{
+	text-decoration: underline !important;
+}
 .paginate_button
 {
 	font-weight: normal !important;
+    text-decoration: none !important;
 }
+.paging_full_numbers {
+	height: inherit !important;
+}
+.paging_full_numbers a.paginate_active:hover, .paging_full_numbers a.paginate_button:hover {
+	background-color: #DDD !important;
+}
+.paging_full_numbers, .paging_full_numbers a.paginate_active, .paging_full_numbers a.paginate_button {
+	background-color: #FFF !important;
+	border-radius: inherit !important;
+}
+.paging_full_numbers a.paginate_button_disabled:hover {
+    background-color: #FFF !important;
+}
+.paginate_button, .paginate_active {
+  border: 1px solid #ddd !important;
+  padding: 6px 12px !important;
+  margin-left: -1px !important;
+  line-height: 1.42857143 !important;
+  margin: 0 0 !important;
+}
+
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */
