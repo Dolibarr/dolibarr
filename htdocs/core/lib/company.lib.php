@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007		    Patrick Raguin			  <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012  Regis Houssin			    <regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2014  Florian Henry		  	  <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Juanjo Menent		  	  <jmenent@2byte.es>
- * Copyright (C) 2013       Christophe Battarel		<contact@altairis.fr>
+/* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,8 +84,8 @@ function societe_prepare_head(Societe $object)
     //show categorie tab
     if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
-        $type = 2;
-        if ($object->fournisseur) $type = 1;
+        $type = Categorie::TYPE_CUSTOMER;
+        if ($object->fournisseur) $type = Categorie::TYPE_SUPPLIER;
         $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$object->id."&type=".$type;
         $head[$h][1] = $langs->trans('Categories');
         $head[$h][2] = 'category';

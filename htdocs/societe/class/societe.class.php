@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
- * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
+ * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1334,11 +1335,11 @@ class Societe extends CommonObject
 	            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 	            if ($this->client || $this->prospect)
 	            {
-	                $toute_categs ['societe'] = $static_cat->containing($this->id,2);
+	                $toute_categs ['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
 	            }
 	            if ($this->fournisseur)
 	            {
-	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,1);
+	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
 	            }
 
 	            // Remove each "Categorie"
@@ -2747,7 +2748,7 @@ class Societe extends CommonObject
         $this->SupplierCategories = array();
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-        $sql.= " WHERE type = 1";
+        $sql.= " WHERE type = ".Categorie::TYPE_SUPPLIER;
 
         $resql=$this->db->query($sql);
         if ($resql)

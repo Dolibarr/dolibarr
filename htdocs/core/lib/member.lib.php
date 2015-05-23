@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2006-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Alexandre Spangaro  <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,8 @@ function member_prepare_head(Adherent $object)
 	// Show category tab
 	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=3';
+		$type = Categorie::TYPE_MEMBER;
+		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;

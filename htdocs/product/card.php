@@ -11,7 +11,8 @@
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -974,7 +975,7 @@ else
 
 		// Categories
 		print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
 		print "</td></tr>";
 
@@ -1265,9 +1266,9 @@ else
 
 			// Categories
 			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(0, '', 'parent', 64, 0, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
-			$cats = $c->containing($object->id,0);
+			$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
 			foreach($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
