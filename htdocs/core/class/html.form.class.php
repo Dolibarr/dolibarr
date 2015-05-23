@@ -1,21 +1,21 @@
 <?php
-/* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2014 Philippe Grand        <philippe.grand@atoo-net.com>
- * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
- * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+/* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2006       Marc Barilley/Ocebo     <marc@ocebo.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2014  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4593,7 +4593,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(0, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2006-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2009-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,8 @@ function product_prepare_head($object)
 	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=0';
+		$type = Categorie::TYPE_PRODUCT;
+		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;

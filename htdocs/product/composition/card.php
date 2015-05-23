@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,7 +474,7 @@ if ($id > 0 || ! empty($ref))
 			if (! empty($conf->categorie->enabled))
 			{
 				print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
-				print '<td class="maxwidthonsmartphone">'.$form->select_all_categories(0, $parent).'</td></tr>';
+				print '<td class="maxwidthonsmartphone">'.$form->select_all_categories(Categorie::TYPE_PRODUCT, $parent).'</td></tr>';
 			}
 			print '</table>';
 			print '</form>';

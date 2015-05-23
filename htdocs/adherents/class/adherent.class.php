@@ -8,6 +8,7 @@
  * Copyright (C) 2014-2015	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1584,7 +1585,8 @@ class Adherent extends CommonObject
         }
         if ($option == 'category')
         {
-            $link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3'.$linkclose;
+			$type = Categorie::TYPE_MEMBER;
+			$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type='.$type.$linkclose;
             $linkend='</a>';
         }
 
