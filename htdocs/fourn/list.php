@@ -168,6 +168,7 @@ if ($resql)
 	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_SUPPLIER,$search_categ,'search_categ',1);
 		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';

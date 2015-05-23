@@ -61,6 +61,7 @@ function product_prepare_head($object)
 	/* No more required. Replaced with new multiselect component
 	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$type = Categorie::TYPE_PRODUCT;
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
 		$head[$h][1] = $langs->trans('Categories');

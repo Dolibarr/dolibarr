@@ -71,6 +71,7 @@ function member_prepare_head(Adherent $object)
 	// Show category tab
 	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
 	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$type = Categorie::TYPE_MEMBER;
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
 		$head[$h][1] = $langs->trans('Categories');

@@ -209,6 +209,7 @@ if ($resql)
 	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_MEMBER,$search_categ,'search_categ',1);
 		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
