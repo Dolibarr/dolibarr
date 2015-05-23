@@ -70,8 +70,7 @@ abstract class CommonObject
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
 		
-		if($conf->multicompany->enabled)$sql.= " WHERE entity=".$conf->entity; 
-		else $sql.=" WHERE 1 ";
+		$sql.= " WHERE entity=".$conf->entity; 
 		
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
