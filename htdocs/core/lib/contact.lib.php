@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012  Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ function contact_prepare_head(Contact $object)
 
     if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
-    	$type = 4;
+    	$type = Categorie::TYPE_CONTACT;
     	$head[$tab][0] = DOL_URL_ROOT.'/categories/categorie.php?id='.$object->id."&type=".$type;
     	$head[$tab][1] = $langs->trans('Categories');
     	$head[$tab][2] = 'category';

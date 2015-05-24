@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014      Jean-François Ferry  <jfefe@aternatik.fr>
+/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,11 +94,11 @@ $form = new Form($db);
 if ($object->id)
 {
 	$title=$langs->trans("ProductsCategoryShort");
-	if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
-	elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
-	elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
-	elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
-	elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
+	if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
+	elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
+	elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
+	elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
+	elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 
 	$head = categories_prepare_head($object,$type);
 	dol_fiche_head($head, 'photos', $title, 0, 'category');

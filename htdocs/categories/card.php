@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,14 +51,14 @@ $parent=GETPOST('parent');
 
 if ($origin)
 {
-	if ($type == 0) $idProdOrigin 		= $origin;
-	if ($type == 1) $idSupplierOrigin 	= $origin;
-	if ($type == 2) $idCompanyOrigin 	= $origin;
-	if ($type == 3) $idMemberOrigin 	= $origin;
-	if ($type == 4) $idContactOrigin 	= $origin;
+	if ($type == Categorie::TYPE_PRODUCT)     $idProdOrigin     = $origin;
+	if ($type == Categorie::TYPE_SUPPLIER)    $idSupplierOrigin = $origin;
+	if ($type == Categorie::TYPE_CUSTOMER)    $idCompanyOrigin  = $origin;
+	if ($type == Categorie::TYPE_MEMBER)      $idMemberOrigin   = $origin;
+	if ($type == Categorie::TYPE_CONTACT)     $idContactOrigin  = $origin;
 }
 
-if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
+if ($catorigin && $type == Categorie::TYPE_PRODUCT) $idCatOrigin = $catorigin;
 
 $object = new Categorie($db);
 
