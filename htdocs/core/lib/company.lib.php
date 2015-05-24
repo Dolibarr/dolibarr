@@ -84,6 +84,7 @@ function societe_prepare_head(Societe $object)
     //show categorie tab
     if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $type = Categorie::TYPE_CUSTOMER;
         if ($object->fournisseur) $type = Categorie::TYPE_SUPPLIER;
         $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$object->id."&type=".$type;

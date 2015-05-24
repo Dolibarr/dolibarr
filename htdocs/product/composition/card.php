@@ -473,6 +473,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 			if (! empty($conf->categorie->enabled))
 			{
+				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 				print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
 				print '<td class="maxwidthonsmartphone">'.$form->select_all_categories(Categorie::TYPE_PRODUCT, $parent).'</td></tr>';
 			}
