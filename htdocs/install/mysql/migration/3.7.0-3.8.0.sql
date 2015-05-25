@@ -644,4 +644,6 @@ ALTER TABLE llx_actioncomm ADD COLUMN recurdateend datetime;
 
 ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
 
+ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+ALTER TABLE llx_adherent CHANGE COLUMN login login varchar(50) NOT NULL;
 
