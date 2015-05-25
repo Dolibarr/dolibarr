@@ -39,7 +39,7 @@ class ExtraFields
 	var $attribute_type;
 	// Tableau contenant le nom des champs en clef et le label de ces champs en value
 	var $attribute_label;
-	// Tableau contenant le nom des champs en clef et la taille de ces champs en value
+	// Tableau contenant le nom des champs en clef et la taille/longueur max de ces champs en value
 	var $attribute_size;
 	// Tableau contenant le nom des choix en clef et la valeur de ces choix en value
 	var $attribute_choice;
