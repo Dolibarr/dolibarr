@@ -499,7 +499,7 @@ class Categorie extends CommonObject
 		} elseif ($type == 'fournisseur' || ($type == 'societe')) {
 			$column_name = 'soc';
 		} else {
-			$column_name = 'type';
+			$column_name = $type;
 		}
 
         $this->db->begin();
