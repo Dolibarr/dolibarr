@@ -4157,7 +4157,7 @@ class Form
         	$out='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
         				$(document).ready(function () {
-        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({width:"resolve"
         				});
         			});
         		   </script>';
