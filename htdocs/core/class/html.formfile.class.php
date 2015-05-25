@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -118,7 +118,7 @@ class FormFile
             $out .= '<input class="flat" type="file" name="userfile" size="'.$maxlength.'"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
-            $out .= ' &nbsp; ';
+            $out .= '&nbsp;';
             $out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
             $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
             $out .= '>';
@@ -183,6 +183,7 @@ class FormFile
 	            $out .= '<input type="text" name="label" id="label">';
 	            $out .= '<input type="hidden" name="objecttype" value="' . $object->element . '">';
 	            $out .= '<input type="hidden" name="objectid" value="' . $object->id . '">';
+	            $out .= '&nbsp;';
 	            $out .= '<input type="submit" class="button" name="linkit" value="'.$langs->trans("ToLink").'"';
 	            $out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 	            $out .= '>';
@@ -265,7 +266,6 @@ class FormFile
 
         if (! is_object($form)) $form=new Form($this->db);
 
-        // filedir = $conf->...->dir_ouput."/".get_exdir(id)
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         // For backward compatibility
@@ -579,11 +579,9 @@ class FormFile
 					$var=!$var;
 
 					// Define relative path for download link (depends on module)
-					$relativepath=$file["name"];								// Cas general
+					$relativepath=$file["name"];										// Cas general
 					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
-					// Autre cas
-					if ($modulepart == 'donation')            { $relativepath = get_exdir($modulesubdir,2).$file["name"]; }
-					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
+					if ($modulepart == 'export') $relativepath = $file["name"];			// Other case
 
 					$out.= "<tr ".$bc[$var].">";
 
@@ -701,14 +699,14 @@ class FormFile
     			if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
     			// Autre cas
     			if ($modulepart == 'donation')            {
-    				$relativepath = get_exdir($modulesubdir,2).$file["name"];
+    				$relativepath = get_exdir($modulesubdir,2,0,0,null,'donation').$file["name"];
     			}
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
     			}
-	                if ($modulepart == 'facture_fournisseur') {
-	                    $relativepath = get_exdir($modulesubdir, 2). $modulesubdir. "/" . $file["name"];                    
-	                }
+	            if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_fournisseur') {
+	                $relativepath = get_exdir($modulesubdir, 2,0,0,null,'invoice_supplier'). $modulesubdir. "/" . $file["name"];
+	            }
 
     			// Show file name with link to download
     			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
@@ -802,8 +800,8 @@ class FormFile
 					if (empty($relativepath))
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
-						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;	// TODO Call using a defined value for $relativepath
-						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;				// TODO Call using a defined value for $relativepath
+						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
+						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
 

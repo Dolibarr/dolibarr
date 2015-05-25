@@ -323,7 +323,7 @@ if ($resql)
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre" align="left">&nbsp;</td>';
-    print '<td class="liste_titre" align="left"><input class="flat" type="text" name="search_societe" value="'.$search_societe.'"></td>';
+    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.$search_societe.'"></td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';

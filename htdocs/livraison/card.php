@@ -82,7 +82,7 @@ if ($action == 'add')
 	$object->note             = $_POST["note"];
 	$object->commande_id      = $_POST["commande_id"];
 	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
-	
+
 	if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 	{
 		$expedition->entrepot_id     = $_POST["entrepot_id"];
@@ -199,15 +199,12 @@ if ($action == 'builddoc')	// En get ou en post
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-	{
-	    $ret=$object->fetch($id);    // Reload to get new records
-		$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	}
+    $ret=$object->fetch($id);    // Reload to get new records
+	$result= $object->generateDocument($object->modelpdf, $outputlangs);
 	if ($result < 0)
 	{
-		dol_print_error($db,$result);
-		exit;
+		setEventMessages($object->error, $object->errors, 'errors');
+        $action='';
 	}
 }
 
@@ -589,7 +586,7 @@ else
 
 			// Incoterms
 			if (!empty($conf->incoterm->enabled))
-			{			
+			{
 				print '<tr><td>';
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
@@ -603,7 +600,7 @@ else
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 				}
-				else 
+				else
 				{
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}

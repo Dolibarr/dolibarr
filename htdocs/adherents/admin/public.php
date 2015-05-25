@@ -1,9 +1,8 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +84,11 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 $head = member_admin_prepare_head();
 
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="update">';
+
 dol_fiche_head($head, 'public', $langs->trans("Members"), 0, 'user');
 
 if ($conf->use_javascript_ajax)
@@ -130,8 +134,6 @@ if ($conf->use_javascript_ajax)
 
 print $langs->trans("BlankSubscriptionFormDesc").'<br><br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
 
@@ -198,19 +200,20 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
     print '<tr '.$bc[$var].' id="tremail"><td>';
     print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
     print '</td><td align="right">';
-	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';
+	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';;
     print "</td></tr>\n";
 }
 
 print '</table>';
 
-print '<br><div class="center">';
+dol_fiche_end();
+
+print '<center>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</div>';
+print '</center>';
 
 print '</form>';
 
-dol_fiche_end();
 
 
 print '<br>';

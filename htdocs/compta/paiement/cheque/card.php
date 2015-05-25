@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand      	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015	    Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,7 +263,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 
 		$langs->load("other");
 
-		$file=$dir.get_exdir($object->number,2,1) . GETPOST('file');
+		$file=$dir.get_exdir($object->number,2,1,0,$object,'cheque') . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
 		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
@@ -322,7 +323,7 @@ else
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
-		
+
 	}
 
 	/*
@@ -331,7 +332,7 @@ else
 	if ($action == 'valide')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
-		
+
 	}
 }
 
@@ -347,7 +348,9 @@ if ($action == 'new')
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="action" value="new">';
-    //print '<fieldset><legend>aaa</legend>';
+
+	dol_fiche_head();
+	
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
@@ -358,6 +361,9 @@ if ($action == 'new')
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
+	
+	dol_fiche_end();
+	
     print '<div class="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
     if ($filterdate || $filteraccountid > 0)
@@ -366,8 +372,7 @@ if ($action == 'new')
     	print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     }
 	print '</div>';
-    //print '</fieldset>';
-	print '</form>';
+    print '</form>';
 	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as chqid, ";
@@ -704,7 +709,7 @@ if ($action != 'new')
 	if ($object->statut == 1)
 	{
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$dir.get_exdir($object->number,2,1) . dol_sanitizeFileName($object->ref);
+		$filedir=$dir.get_exdir($object->number,2,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
 		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);

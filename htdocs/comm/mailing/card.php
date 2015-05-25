@@ -153,7 +153,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 			if ($object->statut == 0)
 			{
@@ -398,7 +398,7 @@ if (empty($reshook))
 	{
 		$error=0;
 
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		$object->sendto = $_POST["sendto"];
 		if (! $object->sendto)
@@ -495,7 +495,7 @@ if (empty($reshook))
 	// Action update description of emailing
 	if ($action == 'settitre' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto')
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
 		else if ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
@@ -527,7 +527,7 @@ if (empty($reshook))
 	 */
 	if (! empty($_POST['addfile']))
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -540,7 +540,7 @@ if (empty($reshook))
 	// Action remove file
 	if (! empty($_POST["removedfile"]))
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -675,6 +675,8 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewMailing"));
 
+	dol_fiche_head();
+
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
@@ -706,12 +708,14 @@ if ($action == 'create')
 	print '<td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
+	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,'90%');
 	$doleditor->Create();
 	print '</td></tr>';
 	print '</table>';
 
-	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
+	dol_fiche_end();
+
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
 
 	print '</form>';
 }
@@ -719,7 +723,7 @@ else
 {
 	if ($object->id > 0)
 	{
-		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'mailing');
 
 		$head = emailing_prepare_head($object);
 

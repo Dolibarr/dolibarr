@@ -685,6 +685,10 @@ class ActionComm extends CommonObject
 
 				foreach($this->userassigned as $key => $val)
 				{
+			        if (! is_array($val))	// For backward compatibility when val=id
+			        {
+			        	$val=array('id'=>$val);
+			        }
 					$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 					$sql.=" VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['manadatory'])?'0':$val['manadatory']).", ".(empty($val['transparency'])?'0':$val['transparency']).", ".(empty($val['answer_status'])?'0':$val['answer_status']).")";
 

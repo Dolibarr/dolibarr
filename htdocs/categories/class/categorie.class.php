@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
- * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
- * Copyright (C) 2013      Juanjo Menent      	<jmenent@2byte.es>
- * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
+ * Copyright (C) 2005       Davoleau Brice          <brice.davoleau@gmail.com>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class Categorie extends CommonObject
 {
+	// Categories types
+	const TYPE_PRODUCT = 0;
+	const TYPE_SUPPLIER = 1;
+	const TYPE_CUSTOMER = 2;
+	const TYPE_MEMBER = 3;
+	const TYPE_CONTACT = 4;
+
 	public $element='category';
 	public $table_element='categories';
 
@@ -1166,11 +1174,17 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		$typeid=-1; $table='';
-		if ($type == '0' || $type == 'product')	       { $typeid=0; $table='product';   $type='product'; }
-		else if ($type == '1' || $type == 'supplier') { $typeid=1; $table='soc';   $type='fournisseur'; }
-		else if ($type == '2' || $type == 'customer') { $typeid=2; $table='soc';   $type='societe'; }
-		else if ($type == '3' || $type == 'member')   { $typeid=3; $table='member';    $type='member'; }
-        else if ($type == '4' || $type == 'contact')  { $typeid=4; $table='socpeople'; $type='contact'; }
+		if ($type == '0' || $type == 'product') {
+			$typeid=self::TYPE_PRODUCT;     $table='product';   $type='product';
+		} else if ($type == '1' || $type == 'supplier') {
+			$typeid=self::TYPE_SUPPLIER;    $table='soc';       $type='fournisseur';
+		} else if ($type == '2' || $type == 'customer') {
+			$typeid=self::TYPE_CUSTOMER;    $table='soc';       $type='societe';
+		} else if ($type == '3' || $type == 'member') {
+			$typeid=self::TYPE_MEMBER;      $table='member';    $type='member';
+		} else if ($type == '4' || $type == 'contact') {
+			$typeid=self::TYPE_CONTACT;     $table='socpeople'; $type='contact';
+		}
 
 		$sql = "SELECT ct.fk_categorie, c.label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";
@@ -1220,11 +1234,11 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		$typeid=-1;
-		if ($type == 0 || $type == 'product')	     { $typeid=0; }
-		else if ($type == 1 || $type == 'supplier') { $typeid=1; }
-		else if ($type == 2 || $type == 'customer') { $typeid=2; }
-		else if ($type == 3 || $type == 'member')   { $typeid=3; }
-        else if ($type == 4 || $type == 'contact')	 { $typeid=4; }
+		if ($type == 0 || $type == 'product')       { $typeid=self::TYPE_PRODUCT; }
+		else if ($type == 1 || $type == 'supplier') { $typeid=self::TYPE_SUPPLIER; }
+		else if ($type == 2 || $type == 'customer') { $typeid=self::TYPE_CUSTOMER; }
+		else if ($type == 3 || $type == 'member')   { $typeid=self::TYPE_MEMBER; }
+        else if ($type == 4 || $type == 'contact')  { $typeid=self::TYPE_CONTACT; }
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -1302,7 +1316,7 @@ class Categorie extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
+		$dir = $sdir .'/'. get_exdir($this->id,2,0,0,$this,'category') . $this->id ."/";
 		$dir .= "photos/";
 
 		if (! file_exists($dir))
@@ -1550,7 +1564,7 @@ class Categorie extends CommonObject
         $this->specimen=1;
         $this->description = 'This is a description';
         $this->socid = 1;
-        $this->type = 0;
+        $this->type = self::TYPE_PRODUCT;
     }
 
 	/**

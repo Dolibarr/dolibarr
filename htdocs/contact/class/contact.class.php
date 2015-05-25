@@ -970,7 +970,7 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('StatusContactDraft');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)

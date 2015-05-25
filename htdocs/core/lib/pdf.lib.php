@@ -6,7 +6,7 @@
  * Copyright (C) 2010		Juanjo Menent       	<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
@@ -1127,7 +1127,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categstatic=new Categorie($db);
 		// recovering the list of all the categories linked to product
-		$tblcateg=$categstatic->containing($idprod,0);
+		$tblcateg=$categstatic->containing($idprod, Categorie::TYPE_PRODUCT);
 		foreach ($tblcateg as $cate)
 		{
 			// Adding the descriptions if they are filled

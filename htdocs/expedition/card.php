@@ -409,8 +409,8 @@ if (empty($reshook))
 		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result <= 0)
 	    {
-	        dol_print_error($db,$result);
-	        exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 	    }
 	}
 
@@ -611,7 +611,7 @@ if ($action == 'create')
 			$liste = ModelePdfExpedition::liste_modeles($db);
 			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
             print "</td></tr>\n";
-            
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook

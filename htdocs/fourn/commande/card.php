@@ -815,8 +815,8 @@ if (empty($reshook))
 	    $result= $object->generateDocument($object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result	<= 0)
 	    {
-	        dol_print_error($db,$result);
-	        exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+	        $action='';
 	    }
 	}
 
@@ -1479,7 +1479,7 @@ if ($action=='create')
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
 
 	dol_fiche_head('');
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -1603,7 +1603,7 @@ if ($action=='create')
     print "</table>\n";
 
     dol_fiche_end();
-    
+
 	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
 
 	print "</form>\n";

@@ -174,7 +174,7 @@ if ($savehandler == 'files')
 
 	if (count($listofsessions) == 0)
 	{
-		print '<tr><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoSessionFound",$savepath,$openbasedir).'</td></tr>';
 	}
 	print "</table>";
 

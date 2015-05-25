@@ -1,21 +1,21 @@
 <?php
-/* Copyright (c) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2014 Philippe Grand        <philippe.grand@atoo-net.com>
- * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
- * Copyright (C) 2012-2014 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014      Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+/* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2006       Marc Barilley/Ocebo     <marc@ocebo.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerker@telenet.be>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2014  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4304,36 +4304,40 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value.
-     *  Note: Do not use returned string into a langs->trans function, content may be entity encoded twice.
+     *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
      *
-     *	@param	string	$htmlname       Name of html select area
-     *	@param	array	$array          Array with key+value
-     *	@param	string	$id             Preselected key
-     *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
-     *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
-     *	@param	int		$value_as_key   1 to use value as key
-     *	@param  string	$moreparam      Add more parameters onto the select tag
-     *	@param  int		$translate		Translate and encode value
-     * 	@param	int		$maxlen			Length maximum for labels
-     * 	@param	int		$disabled		Html select box is disabled
-     *  @param	int		$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
-     *  @param	string	$morecss		Add more class to css styles
-     *  @param	int		$addjscombo		Add js combo
-     * 	@return	string					HTML select string.
+     *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
+     *	@param	array			$array          Array with key+value
+     *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
+     *	@param	int				$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
+     *	@param	int				$key_in_label   1 pour afficher la key dans la valeur "[key] value"
+     *	@param	int				$value_as_key   1 to use value as key
+     *	@param  string			$moreparam      Add more parameters onto the select tag
+     *	@param  int				$translate		Translate and encode value
+     * 	@param	int				$maxlen			Length maximum for labels
+     * 	@param	int				$disabled		Html select box is disabled
+     *  @param	int				$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' = Do not sort
+     *  @param	string			$morecss		Add more class to css styles
+     *  @param	int				$addjscombo		Add js combo
+     * 	@return	string							HTML select string.
      *  @see multiselectarray
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
     {
         global $conf, $langs;
 
+        // Do we want a multiselect ?
+        $multiselect = 0;
+        if (preg_match('/^multi/',$htmlname)) $multiselect = 1;
+
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='';
 
         // Add code for jquery to use multiselect
-        if ($addjscombo && empty($conf->dol_use_jmobile) && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))
+        if ($addjscombo && empty($conf->dol_use_jmobile) && $multiselect)
         {
-        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
+        	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2':$conf->global->MAIN_USE_JQUERY_MULTISELECT;
         	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
         				$(document).ready(function () {
@@ -4393,12 +4397,11 @@ class Form
 
 
     /**
-     *	Return a HTML select string, built from an array of key+value.
-     *  Note: Do not use returned string into a langs->trans function, content may be entity encoded twice.
+     *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
+     *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
      *
-     *	@param	string	$url			Url
      *	@param	string	$htmlname       Name of html select area
-     *	@param	array	$array          Array with key+value
+     *	@param	string	$url			Url
      *	@param	string	$id             Preselected key
      *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
@@ -4412,7 +4415,7 @@ class Form
      *  @param	int		$addjscombo		Add js combo
      * 	@return	string					HTML select string.
      */
-    static function selectArrayAjax($url, $htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
+    static function selectArrayAjax($htmlname, $url, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0)
     {
     	$out = '';
 
@@ -4455,7 +4458,7 @@ class Form
         }
 		else
 		{
-        	// TODO get values from ajax page to use a standard already completed array
+        	// TODO get all values from $url into $array
 
 		}
 
@@ -4590,7 +4593,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
-			$cate_arbo = $this->select_all_categories(0, '', 'parent', 64, 0, 1);
+			$cate_arbo = $this->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
 			}
@@ -4806,19 +4809,19 @@ class Form
         else if ($modulepart=='userphoto')
         {
             $dir=$conf->user->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2).$object->photo;
+            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'user').$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+            if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
         }else {
         	$dir=$conf->$modulepart->dir_output;
-        	if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+        	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
         	$email=$object->email;
         }

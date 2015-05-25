@@ -761,11 +761,11 @@ else
         }
         $modCodeFournisseur = new $module;
 
-        //if ($_GET["type"]=='cp') { $object->client=3; }
-        if (GETPOST("type")!='f')  { $object->client=3; }
+        // Define if customer/prospect or supplier status is set or not
+        if (GETPOST("type")!='f' && empty($conf->global->THIRDPARTY_NOTCUSTOMERPROSPECT_BY_DEFAULT))  { $object->client=3; }
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
-        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
+        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || (GETPOST("type")=='' && empty($conf->global->THIRDPARTY_NOTSUPPLIER_BY_DEFAULT))))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('nom', 'alpha');
         $object->firstname			= GETPOST('firstname', 'alpha');
@@ -1020,7 +1020,7 @@ else
 
         // Address
         print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
-	    print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -2247,8 +2247,6 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("Merge")).'">'.$langs->trans('Merge').'</a></div>';
-
 	        if (! empty($object->email))
 	        {
 	        	$langs->load("mails");
@@ -2263,6 +2261,11 @@ else
 	        if ($user->rights->societe->creer)
 	        {
 	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+	        }
+
+	        if ($user->rights->societe->supprimer)
+	        {
+	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
 	        }
 
 	        if ($user->rights->societe->supprimer)

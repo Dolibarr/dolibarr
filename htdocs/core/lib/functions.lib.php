@@ -1127,19 +1127,6 @@ function dol_getdate($timestamp,$fast=false)
 	else
 	{
 		$arrayinfo=getdate($timestamp);
-
-		/*$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
-		if($startday==1)
-		{
-			if ($arrayinfo["wday"]==0)
-			{
-				$arrayinfo["wday"]=6;
-			}
-			else
-			{
-				$arrayinfo["wday"]=$arrayinfo["wday"]-1;
-			}
-		}*/
 	}
 
 	return $arrayinfo;
@@ -2826,7 +2813,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=10;
+			$maxnbofpage=(empty($conf->dol_optimize_smallscreen)?10:3);		// nb before and after selected page
 
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
 			$cpt=($page-$maxnbofpage);
@@ -2834,36 +2821,34 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt>=1)
 			{
-				$pagelist.= '<li><a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>'."\n";
-				if ($cpt >= 2) $pagelist.='<li><span>...</span></li>';
+				$pagelist.= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>';
+				if ($cpt >= 2) $pagelist.='<li><span class="inactive">...</span></li>';
 			}
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= '<li><span class="active">'.($page+1).'</span></li>'."\n";
+					$pagelist.= '<li class="pagination"><span class="active">'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= '<li><a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>'."\n";
+					$pagelist.= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
 			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-1) $pagelist.= '<li><span>...</span></li>';
-				$pagelist.= '<li><a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>'."\n";
+				if ($cpt<$nbpages-1) $pagelist.= '<li class="pagination"><span class="inactive">...</span></li>';
+				$pagelist.= '<li class="pagination"><a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= '<li><span class="active">'.($page+1)."</li>\n";
+			$pagelist.= '<li class="pagination"><span class="active">'.($page+1)."</li>";
 		}
 	}
-	print "\n";
-	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
-	if ($morehtml) print $morehtml;
+	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist,$morehtml);
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -2874,28 +2859,35 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	Function to show navigation arrows into lists
  *
  *	@param	int				$page				Number of page
- *	@param	string			$file				Page
+ *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
  *	@param	string			$options         	Other url paramaters to propagate ("" by default)
  *	@param	integer			$nextpage	    	Do we show a next page button
- *	@param	string			$betweenarrows		HTML Content to show between arrows
+ *	@param	string			$betweenarrows		HTML content to show between arrows. Must contains '<li> </li>' tags.
+ *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
  *	@return	void
  */
-function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='')
+function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='',$afterarrows='')
 {
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
 	if ($page > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>'."\n";
-		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>'."\n";
+		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
 	//if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
 	print $betweenarrows;
 	if ($nextpage > 0)
 	{
-		if (empty($conf->dol_use_jmobile)) print '<li><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>'."\n";
-		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>'."\n";
+		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';
+		else print '<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a></li>';
+	}
+	if ($afterarrows)
+	{
+		print '<li class="paginationafterarrows">';
+		print $afterarrows;
+		print '</li>';
 	}
 	print '</ul></div>'."\n";
 }
@@ -3709,26 +3701,46 @@ function yn($yesno, $case=1, $color=0)
 
 
 /**
- *	Return a path to have a directory according to an id
+ *	Return a path to have a directory according to object.
  *  Examples:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
  *  Examples:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
  *
- *	@param	string	$num            Id to develop
- *	@param  int		$level		    Level of development (1, 2 or 3 level)
+ *	@param	string	$num            Id of object
+ *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels)
  * 	@param	int		$alpha		    Use alpha ref
- *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end
- *  @return	string					Dir to use
+ *  @param  int		$withoutslash   0=With slash at end, 1=without slash at end (except if '/', we return '')
+ *  @param	Object	$object			Object
+ *  @param	string	$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...')
+ *  @return	string					Dir to use ending. Example '' or '1/' or '1/2/'
  */
-function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
+function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 {
+	global $conf;
+
 	$path = '';
-	if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
-	else $num = preg_replace('/^.*\-/i','',$num);
-	$num = substr("000".$num, -$level);
-	if ($level == 1) $path = substr($num,0,1);
-	if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
-	if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
-	if (empty($withoutslash)) $path.='/';
+
+	// TODO if object is null, load it from id and modulepart.
+
+
+	if (! empty($level) && in_array($modulepart, array('cheque','user','category','shipment', 'member','don','donation','supplier_invoice','invoice_supplier')))
+	{
+		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided
+		if (empty($alpha)) $num = preg_replace('/([^0-9])/i','',$num);
+		else $num = preg_replace('/^.*\-/i','',$num);
+		$num = substr("000".$num, -$level);
+		if ($level == 1) $path = substr($num,0,1);
+		if ($level == 2) $path = substr($num,1,1).'/'.substr($num,0,1);
+		if ($level == 3) $path = substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1);
+	}
+	else
+	{
+		// TODO
+		// We will introduce here a common way of forging path for document storage
+		// Here, $num=id, ref and modulepart are required.
+
+	}
+
+	if (empty($withoutslash) && ! empty($path)) $path.='/';
 	return $path;
 }
 
@@ -4008,7 +4020,7 @@ function dol_nboflines($s,$maxchar=0)
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
  * 	@param	string	$charset		Give the charset used to encode the $text variable in memory.
  *	@return int						Number of lines
- *	@see	dol_nboflines
+ *	@see	dol_nboflines, dolGetFirstLineOfText
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
@@ -4962,21 +4974,22 @@ function dol_getmypid()
 
 
 /**
- * Generate natural SQL search string
+ * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of fields in the SQL query
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR)
  * @param 	string 			$value 		The value to look for.
- *                          		    If param $numeric is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
- *                             			If param $numeric is 1, can contains an operator <>= like "<10" or ">=100.5 < 1000"
- * @param	integer			$numeric	0=value is list of keywords, 1=value is a numeric test
+ *                          		    If param $mode is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
+ *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
+ *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
+ * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofinaland	1=Do now output the final 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $numeric=0, $nofinaland=0)
+function natural_search($fields, $value, $mode=0, $nofinaland=0)
 {
     global $db,$langs;
 
-    if ($numeric)
+    if ($mode == 1)
     {
     	$value=preg_replace('/([<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"),'/').'\-])/','\1\2',$value);	// Clean string '< 10' into '<10' so we can the explode on space to get all tests to do
     }
@@ -4993,7 +5006,7 @@ function natural_search($fields, $value, $numeric=0, $nofinaland=0)
         $newres = '';
         foreach ($fields as $field)
         {
-            if ($numeric)
+            if ($mode == 1)
             {
             	$operator='=';
             	$newcrit = preg_replace('/([<>=]+)/','',trim($crit));
@@ -5017,8 +5030,13 @@ function natural_search($fields, $value, $numeric=0, $nofinaland=0)
             		$i2++;	// a criteria was added to string
             	}
             }
-            else
+            else if ($mode == 2)
             {
+				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
+            	$i2++;	// a criteria was added to string
+            }
+            else
+			{
             	$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
             	$i2++;	// a criteria was added to string
             }

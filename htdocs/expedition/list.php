@@ -122,16 +122,17 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
+
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"e.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"],"s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDeliveryPlanned"), $_SERVER["PHP_SELF"],"e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
-    if($conf->livraison_bon->enabled) 
+    if($conf->livraison_bon->enabled)
     {
 		print_liste_field_titre($langs->trans("DeliveryOrder"), $_SERVER["PHP_SELF"],"l.ref","",$param, '',$sortfield,$sortorder);
     	print_liste_field_titre($langs->trans("DateReceived"), $_SERVER["PHP_SELF"],"l.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
 	}
 	print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	print '<td class="liste_titre">&nbsp;</td>';
+	print_liste_field_titre('');
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -149,7 +150,7 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
 		print '</td>';
-    	
+
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -168,7 +169,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$var=!$var;
-		
+
 		// Ref
 		print "<tr ".$bc[$var].">";
 		print "<td>";
@@ -198,17 +199,17 @@ if ($resql)
 		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->date_expedition),"day");
 		print '</td>'."\n";
-        
-        if ($conf->livraison_bon->enabled) 
+
+        if ($conf->livraison_bon->enabled)
         {
 		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
             $receiving=(! empty($shipment->linkedObjects['delivery'][0])?$shipment->linkedObjects['delivery'][0]:'');
-            
+
         	// Ref
             print '<td>';
             print !empty($receiving) ? $receiving->getNomUrl($db) : '';
             print '</td>';
-            
+
         	print '<td align="center">';
 			print dol_print_date($db->jdate($objp->date_reception),"day");
 			print '</td>'."\n";

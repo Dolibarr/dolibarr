@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,8 +275,9 @@ if ($result)
 
     if (! empty($conf->categorie->enabled))
     {
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
     	$moreforfilter.=$langs->trans('Categories'). ': ';
-    	$moreforfilter.=$formother->select_categories(4,$search_categ,'search_categ',1);
+    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
     	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     }
     if ($moreforfilter)

@@ -813,6 +813,9 @@ print '</td></tr>';
 
 print '</table>';
 
+dol_fiche_end();
+
+
 print '<table class="notopnoleftnoright" width="100%">';
 
 // Navigation links
@@ -875,8 +878,6 @@ if ($mode == 'showalltime')
 }
 
 print '</table>';
-
-print "\n</div>\n";
 
 
 llxFooter();

@@ -375,9 +375,20 @@ else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_
 dol_htmloutput_errors($errmsg);
 
 print '<div align="center">';
+print '<div id="divsubscribe">';
+
+
+// Print form
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" / >';
+print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="action" value="add" />';
+
 
 print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
+
+dol_fiche_head('');
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -403,13 +414,7 @@ jQuery(document).ready(function () {
 });
 </script>';
 
-// Print form
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" / >';
-print '<input type="hidden" name="entity" value="'.$entity.'" />';
-print '<input type="hidden" name="action" value="add" />';
 
-print '<div id="divsubscribe">';
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Type
@@ -591,8 +596,10 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
 }
 print "</table>\n";
 
+dol_fiche_end();
+
 // Save
-print '<br><div class="center">';
+print '<div class="center">';
 print '<input type="submit" value="'.$langs->trans("Save").'" id="submitsave" class="button">';
 if (! empty($backtopage))
 {
@@ -600,10 +607,12 @@ if (! empty($backtopage))
 }
 print '</div>';
 
-print "<br></div></form>\n";
-print '</div>';
 
-print
+print "</form>\n";
+print "<br>";
+print '</div></div>';
+
+
 llxFooterVierge();
 
 $db->close();

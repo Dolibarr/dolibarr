@@ -151,13 +151,16 @@ if (! empty($_SERVER["PHP_SELF"]))
     analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost,2);
 }
 // Sanity check on GET parameters
-if (! empty($_SERVER["QUERY_STRING"]))
+if (! defined('NOSCANGETFORINJECTION') && ! empty($_SERVER["QUERY_STRING"]))
 {
     $morevaltochecklikeget=array($_SERVER["QUERY_STRING"]);
     analyseVarsForSqlAndScriptsInjection($morevaltochecklikeget,1);
 }
 // Sanity check on POST
-analyseVarsForSqlAndScriptsInjection($_POST,0);
+if (! defined('NOSCANPOSTFORINJECTION'))
+{
+	analyseVarsForSqlAndScriptsInjection($_POST,0);
+}
 
 // This is to make Dolibarr working with Plesk
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -1001,39 +1004,38 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-            if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext?'?'.$ext:'').'" />'."\n";  // JQuery
-            else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css'.($ext?'?'.$ext:'').'" />'."\n";    // JQuery
-            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css'.($ext?'?'.$ext:'').'" />'."\n";                           // Tooltip
-            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext?'?'.$ext:'').'" />'."\n";          // JNotify
+            if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext?'?'.$ext:'').'">'."\n";  // JQuery
+            else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css'.($ext?'?'.$ext:'').'">'."\n";    // JQuery
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css'.($ext?'?'.$ext:'').'">'."\n";                           // Tooltip
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext?'?'.$ext:'').'">'."\n";          // JNotify
             /*if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) || (defined('REQUIRE_JQUERY_FILEUPLOAD') && constant('REQUIRE_JQUERY_FILEUPLOAD')))     // jQuery fileupload
             {
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/jquery.fileupload-ui.css'.($ext?'?'.$ext:'').'" />'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/jquery.fileupload-ui.css'.($ext?'?'.$ext:'').'">'."\n";
             }*/
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES) || (defined('REQUIRE_JQUERY_DATATABLES') && constant('REQUIRE_JQUERY_DATATABLES')))     // jQuery datatables
             {
-                //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables.css'.($ext?'?'.$ext:'').'" />'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables_jui.css'.($ext?'?'.$ext:'').'" />'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColReorder/css/ColReorder.css'.($ext?'?'.$ext:'').'" />'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVis.css'.($ext?'?'.$ext:'').'" />'."\n";
-                //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVisAlt.css'.($ext?'?'.$ext:'').'" />'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/css/TableTools.css'.($ext?'?'.$ext:'').'" />'."\n";
+                //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables_jui.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColReorder/css/ColReorder.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVis.css'.($ext?'?'.$ext:'').'">'."\n";
+                //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVisAlt.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/css/TableTools.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
             {
             	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.css'.($ext?'?'.$ext:'').'" />'."\n";
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/'.$tmpplugin.'.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             // jQuery Timepicker
             if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
             {
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'" />'."\n";
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css'.($ext?'?'.$ext:'').'" />'."\n";
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css'.($ext?'?'.$ext:'').'">'."\n";
             }
-
         }
 
         print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1062,7 +1064,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
         if (GETPOST('dol_use_jmobile'))            { $themeparam.='&dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
-        print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
+        print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
+	    if (! empty($conf->global->MAIN_FIX_FLASH_ON_CHROME)) print '<!-- Includes CSS that does not exists as workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
 
         // CSS forced by modules (relative url starting with /)
         if (! empty($conf->modules_parts['css']))
@@ -1075,7 +1078,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         		{
         			if (empty($cssfile)) dol_syslog("Warning: module ".$modcss." declared a css path file into its descriptor that is empty.", LOG_WARNING);
         			// cssfile is a relative path
-	        		print '<!-- Includes CSS added by module '.$modcss. ' -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+	        		print '<!-- Includes CSS added by module '.$modcss. ' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.dol_buildpath($cssfile,1);
 	        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
 	        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
 	        		print '">'."\n";

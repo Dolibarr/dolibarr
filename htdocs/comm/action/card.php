@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015	   Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -609,6 +610,8 @@ if ($action == 'create')
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre($langs->trans("AddAnAction"));
 
+	dol_fiche_head();
+
 	print '<table class="border" width="100%">';
 
 	// Type of event
@@ -784,7 +787,9 @@ if ($action == 'create')
 
 	print '</table>';
 
-	print '<br><div class="center">';
+	dol_fiche_end();
+
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

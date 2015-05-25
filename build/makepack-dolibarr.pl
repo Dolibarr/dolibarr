@@ -676,6 +676,11 @@ if ($nboftargetok) {
 			if ($target =~ /MAND/i) { $BUILDFICSRC="${FILENAME}_mandriva.spec"; }
 			if ($target =~ /OPEN/i) { $BUILDFICSRC="${FILENAME}_opensuse.spec"; }
 			
+			use Date::Language;
+			$lang=Date::Language->new('English');
+			$datestring = $lang->time2str("%a %b %e %Y", time);
+    		$changelogstring="* ".$datestring." Laurent Destailleur $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n- Upstream release\n";
+
 			print "Generate file $BUILDROOT/$BUILDFIC from $SOURCE/build/rpm/${BUILDFICSRC}\n";
 			open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFICSRC}") || die "Error";
 			open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
@@ -683,6 +688,7 @@ if ($nboftargetok) {
 				$_ =~ s/__FILENAMETGZ__/$FILENAMETGZ/;
 				$_ =~ s/__VERSION__/$MAJOR.$MINOR.$REL1/;
 				$_ =~ s/__RELEASE__/$RPMSUBVERSION/;
+                $_ =~ s/__CHANGELOGSTRING__/$changelogstring/;
 				print SPECTO $_;
 			}
 			close SPECFROM;
