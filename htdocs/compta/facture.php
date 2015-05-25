@@ -287,12 +287,12 @@ else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 	$object->fetch($id);
 	$old_date_lim_reglement=$object->date_lim_reglement;
 	$date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
-	if (empty($date)) 
+	if (empty($date))
 	{
 	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 	    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
 	    exit;
-	     
+
 	}
     $object->date=$date;
 	$new_date_lim_reglement=$object->calculate_date_lim_reglement();
@@ -1702,6 +1702,27 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 		}
 
+		if ($_POST['sendtocc'])
+		{
+		        // Le destinataire a ete fourni via le champ libre
+		        $sendtocc = $_POST['sendtocc'];
+		        $sendtoccid = 0;
+		}
+		elseif ($_POST['receivercc'] != '-1')
+		{
+		        // Recipient was provided from combo list
+		        if ($_POST['receivercc'] == 'thirdparty') // Id of third party
+		        {
+		                $sendtocc = $object->client->email;
+		                $sendtoccid = 0;
+		        }
+		        else    // Id du contact
+		        {
+		                $sendtocc = $object->client->contact_get_property($_POST['receivercc'],'email');
+		                $sendtoccid = $_POST['receivercc'];
+		        }
+		}
+
 		if (dol_strlen($sendto))
 		{
 			$langs->load("commercial");
@@ -1709,8 +1730,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 			$message = $_POST['message'];
-			$sendtocc = $_POST['sendtocc'];
 			$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
+
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send')
@@ -3801,7 +3822,7 @@ else if ($id > 0 || ! empty($ref))
 		// Linked object block
 		$somethingshown=$object->showLinkedObjectBlock();
 
-		if (empty($somethingshown) && ! empty($conf->commande->enabled)) 
+		if (empty($somethingshown) && ! empty($conf->commande->enabled))
 		{
 			print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
 
