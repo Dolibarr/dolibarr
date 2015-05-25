@@ -812,7 +812,7 @@ else
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td>';
-            print $object->getLibStatut(5);
+            print $object->getLibStatut(4);
             print '</td></tr>';
 
             // Other attributes
@@ -1036,7 +1036,7 @@ else
 	 	// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td>';
 		print '<td>';
-		print $object->getLibStatut(5);
+		print $object->getLibStatut(4);
 		print '</td>';
 		print '</tr>'."\n";
         // Other attributes

@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,34 +220,23 @@ $sql.= " AND s.client IN (2, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
 if ($socid) $sql.= " AND s.rowid = " .$socid;
-if ($search_stcomm != '') $sql.= " AND s.fk_stcomm=".$search_stcomm;
-if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
-if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
-if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom) {
-	$sql .= natural_search('s.nom', $search_nom);
-}
+if ($search_stcomm != '') $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
+if ($catid > 0)           $sql.= " AND cs.fk_categorie = ".$catid;
+if ($catid == -2)         $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$search_categ;
+if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_nom)     $sql .= natural_search('s.nom', $search_nom);
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape(strtolower($search_zipcode))."%'";
-if ($search_town) {
-	$sql .= natural_search('s.town', $search_town);
-}
-if ($search_state) {
-	$sql .= natural_search('d.nom', $search_state);
-}
-if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
+if ($search_town)    $sql .= natural_search('s.town', $search_town);
+if ($search_state)   $sql .= natural_search('d.nom', $search_state);
+if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 // Insert levels filters
-if ($search_levels)
-{
-	$sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
-}
+if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
 // Insert sale filter
-if ($search_sale > 0)
+if ($search_sale > 0) $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+if ($socname)
 {
-	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
-}
-if ($socname) {
 	$sql .= natural_search('s.nom', $search_nom);
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
@@ -309,8 +299,9 @@ if ($resql)
  	$moreforfilter='';
 	if (! empty($conf->categorie->enabled))
 	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ',1);
+		$moreforfilter.=$formother->select_categories(Categorie::TYPE_CUSTOMER,$search_categ,'search_categ',1);
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
  	// If the user can view prospects other than his'
@@ -362,22 +353,17 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
 
- 	// Added by Matelli
+ 	// Prospect levelt
  	print '<td class="liste_titre" align="center">';
- 	// Generate in $options_from the list of each option sorted
- 	$options_from = '<option value="">&nbsp;</option>';
+ 	$options_from = '<option value="">&nbsp;</option>';	 	// Generate in $options_from the list of each option sorted
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
  		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected':'').'>';
  		$options_from .= $langs->trans($tab_level_label);
  		$options_from .= '</option>';
  	}
-
- 	// Reverse the list
- 	array_reverse($tab_level, true);
-
- 	// Generate in $options_to the list of each option sorted in the reversed order
- 	$options_to = '<option value="">&nbsp;</option>';
+ 	array_reverse($tab_level, true);	// Reverse the list
+ 	$options_to = '<option value="">&nbsp;</option>';		// Generate in $options_to the list of each option sorted in the reversed order
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
  		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected':'').'>';
@@ -392,8 +378,11 @@ if ($resql)
 
     print '</td>';
 
+    // Prospect status
     print '<td class="liste_titre" align="center">';
-	print '&nbsp;';
+	// TODO Add here a list of prospect status
+    //print $form->selectarray($htmlname, $array, $search_stcomm);
+    //print '&nbsp;';
     print '</td>';
 
     print '<td class="liste_titre" align="center">';

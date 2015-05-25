@@ -418,7 +418,7 @@ abstract class CommonObject
     /**
      *    Get array of all contacts for an object
      *
-     *    @param	int			$statut		Status of lines to get (-1=all)
+     *    @param	int			$statut		Status of links to get (-1=all)
      *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
      *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
      *    @return	array		            Array of contacts
@@ -429,9 +429,9 @@ abstract class CommonObject
 
         $tab=array();
 
-        $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
-        if ($source == 'internal') $sql.=", '-1' as socid";
-        if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
+        $sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact";    // This field contains id of llx_socpeople or id of llx_user
+        if ($source == 'internal') $sql.=", '-1' as socid, t.statut as statuscontact";
+        if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid, t.statut as statuscontact";
         $sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
         $sql.= ", tc.source, tc.element, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
@@ -463,8 +463,8 @@ abstract class CommonObject
                     $libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
                     $tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
 					               'nom'=>$obj->lastname,      // For backward compatibility
-					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email,
-					               'rowid'=>$obj->rowid,'code'=>$obj->code,'libelle'=>$libelle_type,'status'=>$obj->statut, 'fk_c_type_contact' => $obj->fk_c_type_contact);
+					               'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'statuscontact'=>$obj->statuscontact,
+					               'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
                 }
                 else
                 {

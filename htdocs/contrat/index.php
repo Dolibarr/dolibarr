@@ -177,7 +177,7 @@ else
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</td></tr>'."\n";
 $var=true;
 $listofstatus=array(0,4,4,5); $bool=false;

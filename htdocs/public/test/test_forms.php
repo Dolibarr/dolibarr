@@ -51,7 +51,7 @@ print "Test 4c: a select with ajax refresh<br>\n";
 //$array=array(0=>'',1=>'Search into xxx',2=>'Search into yyy',3=>'Search into zzz');
 $array=array();
 $selected=-1;
-print $form->selectArrayAjax(DOL_URL_ROOT.'/core/ajax/selecsearchbox.php', 'testselectc', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selecsearchbox.php', $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
 */
 
 print '<br><br>'."\n";

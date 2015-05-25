@@ -384,7 +384,7 @@ class FormOther
         }
         // Select each sales and print them in a select input
         $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
-        if ($showempty) $out.='<option value="-1">&nbsp;</option>';
+        if ($showempty) $out.='<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
