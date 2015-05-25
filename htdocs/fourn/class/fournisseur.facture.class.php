@@ -8,6 +8,7 @@
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ *	Copyright (C) 2015      Bahfir Abbes			<bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1073,7 +1074,14 @@ class FactureFournisseur extends CommonInvoice
                     }
                 }
             }
-
+            // Triggers call
+            if (! $error && empty($notrigger))
+            {
+                // Call trigger
+                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
             if ($error == 0)
             {
                 $this->db->commit();
