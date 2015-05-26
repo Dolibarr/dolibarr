@@ -625,17 +625,24 @@ ALTER TABLE llx_user ADD gender VARCHAR(10);
 ALTER TABLE llx_user ADD api_key VARCHAR(128) DEFAULT NULL AFTER pass_temp;
 ALTER TABLE llx_user ADD INDEX idx_user_api_key (api_key);
 
+-- Deprecated fields
+ALTER TABLE llx_actioncomm DROP COLUMN datea;
+ALTER TABLE llx_actioncomm DROP INDEX idx_actioncomm_datea;
+ALTER TABLE llx_actioncomm DROP COLUMN datea2;
 
-
+-- Email tracking
 ALTER TABLE llx_actioncomm ADD COLUMN email_msgid varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
+
+-- Recuring events
 ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);
 ALTER TABLE llx_actioncomm ADD COLUMN recurrule varchar(128);
-ALTER TABLE llx_actioncomm ADD COLUMN ecurdateend datetime;
+ALTER TABLE llx_actioncomm ADD COLUMN recurdateend datetime;
 
 ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
 
-
+-- New trigger for Supplier invoice unvalidation
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);

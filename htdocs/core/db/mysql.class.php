@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to manage Dolibarr database access for a MySQL database using the mysql extension
+ *
+ * @deprecated Use DoliDBMysqli
  */
 class DoliDBMysql extends DoliDB
 {

@@ -115,7 +115,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</td></tr>'."\n";
     $listofstatus=array(0,1,2,3,3,-1);
     $bool=false;

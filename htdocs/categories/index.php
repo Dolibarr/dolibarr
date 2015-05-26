@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005       Matthieu Valleton   <mv@seeschloss.org>
+ * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ $langs->load("categories");
 if (! $user->rights->categorie->lire) accessforbidden();
 
 $id=GETPOST('id','int');
-$type=(GETPOST('type') ? GETPOST('type') : 0);
+$type=(GETPOST('type') ? GETPOST('type') : Categorie::TYPE_PRODUCT);
 $catname=GETPOST('catname','alpha');
 $section=(GETPOST('section')?GETPOST('section'):0);
 
@@ -47,12 +48,12 @@ $section=(GETPOST('section')?GETPOST('section'):0);
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == 0) $title=$langs->trans("ProductsCategoriesArea");
-elseif ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
-elseif ($type == 2) $title=$langs->trans("CustomersCategoriesArea");
-elseif ($type == 3) $title=$langs->trans("MembersCategoriesArea");
-elseif ($type == 4) $title=$langs->trans("ContactsCategoriesArea");
-else $title=$langs->trans("CategoriesArea");
+if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoriesArea");
+elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoriesArea");
+elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoriesArea");
+elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoriesArea");
+elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactsCategoriesArea");
+else                                        $title=$langs->trans("CategoriesArea");
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');

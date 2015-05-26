@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013 Antoine Iauch        <aiauch@gpcsolutions.fr>
- * Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013   Antoine Iauch       <aiauch@gpcsolutions.fr>
+ * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015   Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 $langs->load("products");
 $langs->load("categories");
@@ -245,7 +247,7 @@ if ($modecompta == 'CREANCES-DETTES')
     // Category filter
     print '<tr class="liste_titre">';
     print '<td>';
-    print $langs->trans("Category") . ': ' . $formother->select_categories(0, $selected_cat, 'search_categ', true);
+    print $langs->trans("Category") . ': ' . $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', true);
     print ' ';
     print $langs->trans("SubCats") . '? ';
     print '<input type="checkbox" name="subcat" value="yes"';
