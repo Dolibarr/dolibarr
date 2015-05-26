@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -2077,10 +2077,10 @@ div.pagination li.paginationafterarrows {
 	color: #202020;
 	min-height: 18px; /* seems to not be used */
 
-	background: #ffffff;
+	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
-	background: #ffffff;
+	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
 .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
@@ -2088,16 +2088,16 @@ div.pagination li.paginationafterarrows {
 	margin-bottom: 1px;
 	color: #202020;
 
-	background-color: #f9f9f9;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 table.dataTable tr.odd {
-	background-color: #f9f9f9 !important;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
 
 /* For no hover style */
 table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td {
-	background-color: #ffffff !important;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
 
 table.dataTable td {
@@ -2244,6 +2244,9 @@ div.tabBar .noborder {
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 4px;
+}
+.boxstats:hover {
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 .boxtable {
