@@ -2825,7 +2825,7 @@ class Form
     /**
      *      Creates HTML units selector (code => label)
      *
-     *      @param	string	$selected       Preselected code ('km', 'm', 'l', 'p', ...)
+     *      @param	string	$selected       Preselected Unit ID
      *      @param  string	$htmlname       Select name
      *      @param	int		$showempty		Add a nempty line
      * 		@return	string                  HTML select
@@ -2846,13 +2846,13 @@ class Form
 
             while($res = $this->db->fetch_object($resql))
             {
-                if ($selected == $res[0])
+                if ($selected == $res->rowid)
                 {
-                    $return.='<option value="'.$res->code.'" selected>'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'" selected>'.$langs->trans($res->label).'</option>';
                 }
                 else
                 {
-                    $return.='<option value="'.$res->code.'">'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'">'.$langs->trans($res->label).'</option>';
                 }
             }
             $return.='</select>';
