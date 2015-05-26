@@ -2414,11 +2414,12 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-top: 2px;
 }
 .photointooltip {
-	-webkit-box-shadow: -1px -1px 5px #777;
-	-moz-box-shadow: -1px -1px 5px #777;
-	box-shadow: -1px -1px 5px #777;
+	-webkit-box-shadow: 0px 0px 3px #777;
+	-moz-box-shadow: 0px 0px 3px #777;
+	box-shadow: 0px 0px 3px #777;
 	margin-top: 6px;
 	float: left;
+	/*text-align: center; */
 }
 
 .logo_setup
