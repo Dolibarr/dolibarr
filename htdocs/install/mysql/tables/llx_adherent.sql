@@ -34,7 +34,7 @@ create table llx_adherent
   civility         varchar(6),
   lastname         varchar(50),
   firstname        varchar(50),
-  login            varchar(50) NOT NULL,        -- login
+  login            varchar(50),                 -- login
   pass             varchar(50),                 -- password
   pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
