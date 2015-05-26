@@ -644,5 +644,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN recurdateend datetime;
 
 ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
 
+ALTER TABLE llx_adherent ADD COLUMN pass_crypted varchar(128) after pass;
+
 -- New trigger for Supplier invoice unvalidation
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);

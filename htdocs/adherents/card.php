@@ -1088,7 +1088,14 @@ else
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$object->pass).'"></td></tr>';
+			// Pass
+            print '<tr><td>'.$langs->trans("Password").'</td>';
+            print '<td class="fieldrequired">';
+            $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$_POST["pass"].'" autocomplete="off">';
+            print $text;
+            print "</td></tr>\n";
+			
+			// print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$object->pass).'"></td></tr>';
 		}
 
 		// Address
@@ -1418,7 +1425,14 @@ else
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Password").'</td><td>';
+                if ($object->pass) print preg_replace('/./i','*',$object->pass);
+                else
+                {
+                    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+                    else print $langs->trans("Hidden");
+                }
+                print "</td></tr>";
 		}
 
 		// Address

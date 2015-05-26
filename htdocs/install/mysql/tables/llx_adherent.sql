@@ -3,6 +3,7 @@
 -- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,12 +34,13 @@ create table llx_adherent
   civility         varchar(6),
   lastname         varchar(50),
   firstname        varchar(50),
-  login            varchar(50),          -- login
-  pass             varchar(50),          -- password
+  login            varchar(50),                 -- login
+  pass             varchar(50),                 -- password
+  pass_crypted     varchar(128),
   fk_adherent_type integer NOT NULL,
-  morphy           varchar(3) NOT NULL, -- personne morale / personne physique
-  societe          varchar(128),			-- company name (should be same lenght than societe.name)
-  fk_soc           integer NULL,		-- Link to third party linked to member
+  morphy           varchar(3) NOT NULL,         -- personne morale / personne physique
+  societe          varchar(128),                -- company name (should be same lenght than societe.name)
+  fk_soc           integer NULL,                -- Link to third party linked to member
   address          text,
   zip              varchar(30),
   town             varchar(50),
@@ -49,19 +51,19 @@ create table llx_adherent
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
-  birth            date,             -- birthday
-  photo            varchar(255),     -- filename or url of photo
+  birth            date,                        -- birthday
+  photo            varchar(255),                -- filename or url of photo
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
-  datefin          datetime,  -- date de fin de validite de la cotisation
+  datefin          datetime,                    -- date de fin de validite de la cotisation
   note_private     text DEFAULT NULL,
   note_public      text DEFAULT NULL,
-  datevalid        datetime,  -- date de validation
-  datec            datetime,  -- date de creation
-  tms              timestamp, -- date de modification
-  fk_user_author   integer,   -- can be null because member can be create by a guest
+  datevalid        datetime,                    -- date de validation
+  datec            datetime,                    -- date de creation
+  tms              timestamp,                   -- date de modification
+  fk_user_author   integer,                     -- can be null because member can be create by a guest
   fk_user_mod      integer,
   fk_user_valid    integer,
-  canvas		   varchar(32),			                        -- type of canvas if used (null by default)
+  canvas		   varchar(32),			        -- type of canvas if used (null by default)
   import_key       varchar(14)                  -- Import key
 )ENGINE=innodb;

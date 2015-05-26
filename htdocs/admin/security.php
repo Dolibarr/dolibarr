@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007  Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2015  Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2015       Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,40 @@ if ($action == 'activate_encrypt')
                 $sql.= " WHERE rowid=".$obj->rowid;
                 //print $sql;
 
-                $resql2 = $db->query($sql);
+                $resqla = $db->query($sql);
+                if (! $resqla)
+                {
+                    dol_print_error($db);
+                    $error++;
+                    break;
+                }
+
+                $i++;
+            }
+        }
+    }
+    else dol_print_error($db);
+	
+	$sql2 = "SELECT a.rowid, a.pass, a.pass_crypted";
+    $sql2.= " FROM ".MAIN_DB_PREFIX."adherent as a";
+    $sql2.= " WHERE a.pass IS NOT NULL AND LENGTH(a.pass) < 32"; // Not a MD5 value
+
+    $resql2=$db->query($sql2);
+    if ($resql2)
+    {
+        $numrows=$db->num_rows($resql2);
+        $i=0;
+        while ($i < $numrows)
+        {
+            $obj=$db->fetch_object($resql2);
+            if (dol_hash($obj->pass))
+            {
+                $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+                $sql.= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
+                $sql.= " WHERE rowid=".$obj->rowid;
+                //print $sql;
+
+                $resqlb = $db->query($sql);
                 if (! $resql2)
                 {
                     dol_print_error($db);
