@@ -197,7 +197,7 @@ if (empty($reshook))
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
 		{
-			 $error++; // This increment output "1" as text error
+			 $error++;
 			 $action = ($action=='add'?'create':'edit'); 
 		}
 
