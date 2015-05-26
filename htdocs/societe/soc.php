@@ -195,7 +195,11 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
+		if ($ret < 0)
+		{
+			 $error++; // This increment output "1" as text error
+			 $action = ($action=='add'?'create':'edit'); 
+		}
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
