@@ -637,10 +637,21 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
     //$date=dol_stringtotime('20130101');
 
+    $hasglobalcounter=false;
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
-    $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
-    $maskcounter=$reg[1];
+    if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg))
+    {
+        $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
+        $maskcounter=$reg[1];
+        $hasglobalcounter=true;
+    }
+    else
+    {
+        // setting some defaults so the rest of the code won't fail if there is a third party counter
+        $masktri='00000';
+        $maskcounter='00000';
+    }
+    
     $maskraz=-1;
     $maskoffset=0;
     $resetEveryMonth=false;
@@ -659,6 +670,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
     else $maskrefclient='';
+    
+    // fail if there is neither a global nor a third party counter
+    if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
+    {
+        return 'ErrorBadMask';
+    }
 
     // Extract value for third party type
     if (preg_match('/\{(t+)\}/i',$mask,$regType))
@@ -993,10 +1010,21 @@ function check_value($mask,$value)
 {
     $result=0;
 
+    $hasglobalcounter=false;
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
-    $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
-    $maskcounter=$reg[1];
+    if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg))
+    {
+        $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
+        $maskcounter=$reg[1];
+        $hasglobalcounter=true;
+    }
+    else
+    {
+        // setting some defaults so the rest of the code won't fail if there is a third party counter
+        $masktri='00000';
+        $maskcounter='00000';
+    }
+
     $maskraz=-1;
     $maskoffset=0;
     if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
@@ -1014,6 +1042,12 @@ function check_value($mask,$value)
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
     else $maskrefclient='';
+
+    // fail if there is neither a global nor a third party counter
+    if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
+    {
+        return 'ErrorBadMask';
+    }
 
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
