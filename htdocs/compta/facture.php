@@ -3754,7 +3754,7 @@ if ($action == 'create')
 	}
 	print '<br>';
 
-	//Select mail models is same action as presend
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
@@ -3834,7 +3834,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {
@@ -3919,6 +3919,8 @@ if ($action == 'create')
 		print_titre($langs->trans($titreform));
 
 		// Cree l'objet formulaire mail
+		dol_fiche_head();
+
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
@@ -3990,7 +3992,7 @@ if ($action == 'create')
 
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 }
 
