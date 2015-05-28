@@ -751,8 +751,8 @@ function updateInvoice($authentication,$invoice)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice->id.
-    		", ref=".$invoice->ref.", ref_ext=".$invoice->ref_ext);
+	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
+    		", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -782,10 +782,13 @@ function updateInvoice($authentication,$invoice)
 	
 			if (isset($invoice['status']))
 			{
-				if ($invoice['status'] == Facture::STATUS_DRAFT)  $result=$object->set_draft($fuser);
+				if ($invoice['status'] == Facture::STATUS_DRAFT)
+				{
+					$result = $object->set_draft($fuser);
+				}
 				if ($invoice['status'] == Facture::STATUS_VALIDATED)
 				{
-					$result=$object->validate($fuser);
+					$result = $object->validate($fuser);
 						
 					if ($result	>= 0)
 					{
@@ -798,7 +801,8 @@ function updateInvoice($authentication,$invoice)
 				{
 					$result = $object->set_paid($fuser,$invoice->close_code,$invoice->close_note);			
 				}
-				if ($invoice['status'] == Facture::STATUS_ABANDONED)  $result=$object->set_canceled($fuser,$invoice->close_code,$invoice->close_note);
+				if ($invoice['status'] == Facture::STATUS_ABANDONED)
+					$result = $object->set_canceled($fuser,$invoice->close_code,$invoice->close_note);
 			}
 		}
 	
