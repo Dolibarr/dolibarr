@@ -109,24 +109,9 @@ class ExpenseReport extends CommonObject
 		$this->total_tva = 0;
 
 		// List of language codes for status
-		$this->statuts[0]='Draft';
-		$this->statuts[2]='Validated';
-		$this->statuts[4]='Canceled';
-		$this->statuts[5]='Approved';
-		$this->statuts[6]='Paid';
-		$this->statuts[99]='Refused';
-		$this->statuts_short[0]='Draft';
-		$this->statuts_short[2]='Validated';
-		$this->statuts_short[4]='Canceled';
-		$this->statuts_short[5]='Approved';
-		$this->statuts_short[6]='Paid';
-		$this->statuts_short[99]='Refused';
-		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[2]='statut1';
-		$this->statuts_logo[4]='statut5';
-		$this->statuts_logo[5]='statut3';
-		$this->statuts_logo[6]='statut6';
-		$this->statuts_logo[99]='statut8';
+        $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
+        $this->statuts = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
+        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut8');
 
 		return 1;
 	}
