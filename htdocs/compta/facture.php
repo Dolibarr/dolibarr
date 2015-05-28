@@ -2479,7 +2479,7 @@ if ($action == 'create')
 	// Button "Create Draft"
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
-	print '&nbsp; &nbsp; &nbsp;';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
