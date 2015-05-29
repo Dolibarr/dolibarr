@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ if ($sall)
         foreach ($scrit as $crit)
         {
             $sql.=" AND (";
-            if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
+            if (is_numeric($sall)) $sql.= "d.rowid = ".$db->escape($sall)." OR ";
             $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
@@ -115,7 +115,7 @@ if ($sall)
 }
 if ($type > 0)
 {
-	$sql.=" AND t.rowid=".$type;
+	$sql.=" AND t.rowid=".$db->escape($type);
 }
 if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {
@@ -189,17 +189,17 @@ if ($resql)
 	}
 
 	$param="";
-	if ($statut != "") $param.="&statut=".$statut;
-	if ($search_nom)   $param.="&search_nom=".$search_nom;
-	if ($search_login) $param.="&search_login=".$search_login;
-	if ($search_email) $param.="&search_email=".$search_email;
-	if ($filter)       $param.="&filter=".$filter;
-	if ($type > 0)     $param.="&type=".$type;
+	if ($statut != "") $param.="&statut=".htmlspecialchars($statut);
+	if ($search_nom)   $param.="&search_nom=".htmlspecialchars($search_nom);
+	if ($search_login) $param.="&search_login=".htmlspecialchars($search_login);
+	if ($search_email) $param.="&search_email=".htmlspecialchars($search_email);
+	if ($filter)       $param.="&filter=".htmlspecialchars($filter);
+	if ($type > 0)     $param.="&type=".htmlspecialchars($type);
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	if ($sall)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".htmlspecialchars($sall);
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
@@ -237,13 +237,13 @@ if ($resql)
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
+	print '<input class="flat" type="text" name="search_ref" value="'.htmlspecialchars($search_ref).'" size="4"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_lastname" value="'.htmlspecialchars($search_lastname).'" size="12"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
+	print '<input class="flat" type="text" name="search_login" value="'.htmlspecialchars($search_login).'" size="7"></td>';
 
 	print '<td class="liste_titre">';
 	$listetype=$membertypestatic->liste_array();
@@ -253,7 +253,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_email" value="'.htmlspecialchars($search_email).'" size="12"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
