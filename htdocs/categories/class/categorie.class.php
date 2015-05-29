@@ -48,6 +48,67 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;
 	const TYPE_CONTACT = 4;
 
+	/**
+	 * @var array ID mapping from type string
+	 *
+	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 */
+	private $MAP_ID = array(
+		'product'  => 0,
+		'supplier' => 1,
+		'customer' => 2,
+		'member'   => 3,
+		'contact'  => 4,
+	);
+	/**
+	 * @var array Foreign keys mapping from type string
+	 *
+	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 */
+	private $MAP_CAT_FK = array(
+		'product'  => 'product',
+		'customer' => 'soc',
+		'supplier' => 'soc',
+		'member'   => 'member',
+		'contact'  => 'socpeople',
+	);
+	/**
+	 * @var array Category tables mapping from type string
+	 *
+	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 */
+	private $MAP_CAT_TABLE = array(
+		'product'  => 'product',
+		'customer' => 'societe',
+		'supplier' => 'fournisseur',
+		'member'   => 'member',
+		'contact'  => 'contact',
+	);
+	/**
+	 * @var array Object class mapping from type string
+	 *
+	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 */
+	private $MAP_OBJ_CLASS = array(
+		'product'  => 'Product',
+		'customer' => 'Societe',
+		'supplier' => 'Fournisseur',
+		'member'   => 'Adherent',
+		'contact'  => 'Contact',
+	);
+	/**
+	 * @var array Object table mapping from type string
+	 *
+	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 */
+	private $MAP_OBJ_TABLE = array(
+		'product'  => 'product',
+		'customer' => 'societe',
+		'supplier' => 'societe',
+		'member'   => 'adherent',
+		'contact'  => 'socpeople',
+	);
+
 	public $element='category';
 	public $table_element='categories';
 
@@ -56,12 +117,20 @@ class Categorie extends CommonObject
 	var $label;
 	var $description;
 	var $socid;
-	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member, 4=Contact
+	/**
+	 * @var int Category type
+	 *
+	 * @see Categorie::TYPE_PRODUCT
+	 * @see Categorie::TYPE_SUPPLIER
+	 * @see Categorie::TYPE_CUSTOMER
+	 * @see Categorie::TYPE_MEMBER
+	 * @see Categorie::TYPE_CONTACT
+	 */
+	var $type;
 	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof=array();
-
 
 	/**
 	 *	Constructor
@@ -480,7 +549,7 @@ class Categorie extends CommonObject
 	 * 	Link an object to the category
 	 *
 	 *	@param		Object	$obj	Object to link to category
-	 * 	@param		string	$type	Type of category ('societe', 'member', 'product', 'contact', 'fournisseur)
+	 * 	@param		string	$type	Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
 	function add_type($obj,$type)
@@ -492,28 +561,21 @@ class Categorie extends CommonObject
 		if ($this->id == -1) return -2;
 
 		// For backward compatibility
-		if ($type == 'company')  $type='societe';
-		elseif ($type == 'customer') $type='societe';
-		elseif ($type == 'supplier') $type='fournisseur';
-
-		/**
-		 * llx_categorie_contact => fk_socpeople
-		 * llx_categorie_fournisseur, llx_categorie_societe => fk_soc
-		 * llx_categorie_member => fk_member
-		 * llx_categorie_product => fk_product
-		 */
-		if ($type == 'contact') {
-			$column_name = 'socpeople';
-		} elseif ($type == 'fournisseur' || ($type == 'societe')) {
-			$column_name = 'soc';
-		} else {
-			$column_name = $type;
+		if ($type == 'societe') {
+			$type='customer';
+			dol_syslog( get_class( $this ) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",
+				LOG_WARNING );
+		} elseif ($type == 'fournisseur') {
+			$type='supplier';
+			dol_syslog( get_class( $this ) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead",
+				LOG_WARNING );
 		}
 
         $this->db->begin();
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
-		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
+		$sql .= " (fk_categorie, fk_" . $this->MAP_CAT_FK[$type] . ")";
+		$sql .= " VALUES (" . $this->id . ", " . $obj->id . ")";
 
 		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -597,7 +659,7 @@ class Categorie extends CommonObject
 	 * Delete object from category
 	 *
 	 * @param 	Object	$obj	Object
-	 * @param	string	$type	Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param	string	$type	Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @return 	int				1 if OK, -1 if KO
 	 */
 	function del_type($obj,$type)
@@ -607,19 +669,21 @@ class Categorie extends CommonObject
 		$error=0;
 
 		// For backward compatibility
-		if ($type == 'company')  $type='societe';
-		if ($type == 'customer') $type='societe';
-		if ($type == 'supplier') $type='fournisseur';
-
-		$column_name=$type;
-        if ($type=='contact') $column_name='socpeople';
-        if ($type=='fournisseur') $column_name='societe';
+		if ($type == 'societe') {
+			$type='customer';
+			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead",
+				LOG_WARNING );
+		} elseif ($type == 'fournisseur') {
+			$type='supplier';
+			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead",
+				LOG_WARNING );
+		}
 
         $this->db->begin();
 
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
-		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
+		$sql .= " WHERE fk_categorie = " . $this->id;
+		$sql .= " AND   fk_" . $this->MAP_CAT_FK[$type] . "  = " . $obj->id;
 
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -654,30 +718,21 @@ class Categorie extends CommonObject
 	/**
 	 * 	Return list of fetched instance of elements having this category
 	 *
- 	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+ 	 * 	@param		string	$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 *	@return		mixed					-1 if KO, array of instance of object if OK
 	 */
 	function getObjectsInCateg($type)
 	{
-		$field=''; $classname=''; $category_table=''; $object_table='';
-		if ($type=='product')  { $field='product'; $classname='Product'; }
-		if ($type=='customer') { $field='soc'; $classname='Societe'; $category_table='societe'; $object_table='societe'; }
-		if ($type=='supplier') { $field='soc'; $classname='Fournisseur'; $category_table='fournisseur'; $object_table='societe'; }
-		if ($type=='member')   { $field='member'; $classname='Adherent'; $category_table=''; $object_table='adherent'; }
-		if ($type=='contact')  { $field='socpeople'; $classname='Contact'; $category_table='contact'; $object_table='socpeople'; }
-
 		$objs = array();
 
-		// Clean parameters
-		if (empty($category_table)) $category_table=$field;
-		if (empty($object_table)) $object_table=$field;
+		$obj = new $this->MAP_OBJ_CLASS[$type]($this->db);
 
-		$sql = "SELECT c.fk_".$field;
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$category_table." as c";
-		$sql.= ", ".MAIN_DB_PREFIX.$object_table." as o";
-		$sql.= " WHERE o.entity IN (".getEntity($field, 1).")";
+		$sql = "SELECT c.fk_".$this->MAP_CAT_FK[$type];
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type]." as c";
+		$sql.= ", ".MAIN_DB_PREFIX.$this->MAP_OBJ_TABLE[$type]." as o";
+		$sql.= " WHERE o.entity IN (".getEntity($obj->element, 1).")";
 		$sql.= " AND c.fk_categorie = ".$this->id;
-		$sql.= " AND c.fk_".$field." = o.rowid";
+		$sql.= " AND c.fk_".$this->MAP_CAT_FK[$type]." = o.rowid";
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -685,8 +740,8 @@ class Categorie extends CommonObject
 		{
 			while ($rec = $this->db->fetch_array($resql))
 			{
-				$obj = new $classname($this->db);
-				$obj->fetch($rec['fk_'.$field]);
+				$obj = new $this->MAP_OBJ_CLASS[$type]($this->db);
+				$obj->fetch($rec['fk_'.$this->MAP_CAT_FK[$type]]);
 				$objs[] = $obj;
 			}
 			return $objs;
@@ -701,38 +756,14 @@ class Categorie extends CommonObject
 	/**
 	 * check for the presence of an object in a category
 	 *
-	 * @param	string	$type				Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param	string	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param 	int    	$object_id			id of the object to search
 	 * @return 	int   						number of occurrences
 	 */
 	function containsObject($type, $object_id)
 	{
-		$field = '';
-		$category_table = '';
-
-		if ($type == 'product') {
-			$field = 'product';
-		}
-		if ($type == 'customer') {
-			$field = 'societe';
-		}
-		if ($type == 'supplier') {
-			$field = 'societe';
-			$category_table = 'fournisseur';
-		}
-		if ($type == 'member') {
-			$field = 'member';
-			$category_table = '';
-		}
-		if ($type == 'contact') {
-			$field = 'socpeople';
-			$category_table = 'contact';
-		}
-		if (empty($category_table)) {
-			$category_table = $field;
-		}
-		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
-		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
+		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
+		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $this->MAP_CAT_FK[$type] . " = " . $object_id;
 		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -771,7 +802,6 @@ class Categorie extends CommonObject
 			return -1;
 		}
 	}
-
 
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
@@ -837,7 +867,7 @@ class Categorie extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
-		$sql.= " AND c.type = ".$type;
+		$sql.= " AND c.type = ".$this->MAP_ID[$type];
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1175,7 +1205,7 @@ class Categorie extends CommonObject
 	 *  Should be named getListOfCategForObject
 	 *
 	 * 	@param		int		$id			Id of element
- 	 * 	@param		string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
+ 	 * 	@param		string	$type		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * 	@param		string	$mode		'object'=Get array of fetched category instances, 'label'=Get array of category labels
 	 * 	@return		mixed				Array of category objects or < 0 if KO
 	 */
@@ -1183,22 +1213,18 @@ class Categorie extends CommonObject
 	{
 		$cats = array();
 
-		$typeid=-1; $table='';
-		if ($type == '0' || $type == 'product') {
-			$typeid=self::TYPE_PRODUCT;     $table='product';   $type='product';
-		} else if ($type == '1' || $type == 'supplier') {
-			$typeid=self::TYPE_SUPPLIER;    $table='soc';       $type='fournisseur';
-		} else if ($type == '2' || $type == 'customer') {
-			$typeid=self::TYPE_CUSTOMER;    $table='soc';       $type='societe';
-		} else if ($type == '3' || $type == 'member') {
-			$typeid=self::TYPE_MEMBER;      $table='member';    $type='member';
-		} else if ($type == '4' || $type == 'contact') {
-			$typeid=self::TYPE_CONTACT;     $table='socpeople'; $type='contact';
+		// For backward compatibility
+		if (is_numeric($type)) {
+			// We want to reverse lookup
+			$map_type = array_flip($this->MAP_ID);
+			$type = $map_type;
+			dol_syslog( get_class( $this ) . "::containing(): numeric types are deprecated, please use string instead",
+				LOG_WARNING );
 		}
 
 		$sql = "SELECT ct.fk_categorie, c.label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";
-		$sql.= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$this->MAP_CAT_TABLE[$type]." as ct, ".MAIN_DB_PREFIX."categorie as c";
+		$sql.= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$this->MAP_CAT_FK[$type]." = ".$id." AND c.type = ".$this->MAP_ID[$type];
 		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
 		dol_syslog(get_class($this).'::containing', LOG_DEBUG);
@@ -1243,16 +1269,18 @@ class Categorie extends CommonObject
 	{
 		$cats = array();
 
-		$typeid=-1;
-		if ($type == 0 || $type == 'product')       { $typeid=self::TYPE_PRODUCT; }
-		else if ($type == 1 || $type == 'supplier') { $typeid=self::TYPE_SUPPLIER; }
-		else if ($type == 2 || $type == 'customer') { $typeid=self::TYPE_CUSTOMER; }
-		else if ($type == 3 || $type == 'member')   { $typeid=self::TYPE_MEMBER; }
-        else if ($type == 4 || $type == 'contact')  { $typeid=self::TYPE_CONTACT; }
+		// For backward compatibility
+		if (is_numeric($type)) {
+			// We want to reverse lookup
+			$map_type = array_flip($this->MAP_ID);
+			$type = $map_type;
+			dol_syslog( get_class( $this ) . "::rechercher(): numeric types are deprecated, please use string instead",
+				LOG_WARNING );
+		}
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE type = ".$typeid;
+		$sql.= " WHERE type = ".$this->MAP_ID[$type];
 		$sql.= " AND entity IN (".getEntity('category',1).")";
 		if ($nom)
 		{
