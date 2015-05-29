@@ -525,9 +525,9 @@ abstract class CommonObject
      *      Return array with list of possible values for type of contacts
      *
      *      @param	string	$source     'internal', 'external' or 'all'
-     *      @param	string	$order		Sort order by : 'code' or 'rowid'
-     *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly 0=all status of contact, 1=only the active
+     *      @param	string	$order		Sort order by 'code' or 'rowid'
+     *      @param  int		$option     0=Return array id->label, 1=Return array code->label
+     *      @param  int		$activeonly 0=all status of contact, 1=only the active
      *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
@@ -541,7 +541,7 @@ abstract class CommonObject
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
-        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
+        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active types
         if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
         if (! empty($code)) $sql.= " AND tc.code='".$code."'";
         $sql.= " ORDER by tc.".$order;
@@ -626,12 +626,12 @@ abstract class CommonObject
     }
 
     /**
-     *		Charge le contact d'id $id dans this->contact
+     *		Load object contact with id=$this->contactid into $this->contact
      *
      *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
      *		@return	int						<0 if KO, >0 if OK
      */
-    function fetch_contact($contactid='')
+    function fetch_contact($contactid=null)
     {
     	if (empty($contactid)) $contactid=$this->contactid;
 
@@ -858,14 +858,14 @@ abstract class CommonObject
     /**
      *	Update a specific field into database
      *
-     *	@param	string	$field		Field to update
-     *	@param	mixed	$value		New value
-     *	@param	string	$table		To force other table element or element line (should not be used)
-     *	@param	int		$id			To force other object id (should not be used)
-     *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
-     *	@param	string	$id_field	To force rowid field name. 'rowid' is used it not defined
-     *	@param	string	$user		Update last update fields also if user object provided
-     *	@return	int					<0 if KO, >0 if OK
+     *	@param	string		$field		Field to update
+     *	@param	mixed		$value		New value
+     *	@param	string		$table		To force other table element or element line (should not be used)
+     *	@param	int			$id			To force other object id (should not be used)
+     *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
+     *	@param	string		$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	User|string	$user		Update last update fields also if user object provided
+     *	@return	int						<0 if KO, >0 if OK
      */
     function setValueFrom($field, $value, $table='', $id='', $format='', $id_field='', $user='')
     {
@@ -1655,10 +1655,10 @@ abstract class CommonObject
      *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
      *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force use total of rounding, '1'=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object. For this, we need seller object.
+     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
-    function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller='')
+    function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
     {
     	global $conf;
 
@@ -2684,9 +2684,9 @@ abstract class CommonObject
 	 *	But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
-	 *	@param  string		$seller            	Object of seller third party
-	 *	@param  string  	$buyer             	Object of buyer third party
-	 *	@param	string		$selected		   	Object line selected
+	 *	@param  Societe		$seller            	Object of seller third party
+	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *	@return	void
 	 */
@@ -2799,16 +2799,16 @@ abstract class CommonObject
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
-	 *	@param	string		$action				GET/POST action
-	 *	@param CommonObjectLine $line		       	Selected object line to output
-	 *	@param  string	    $var               	Is it a an odd line (true)
-	 *	@param  int		    $num               	Number of line (0)
-	 *	@param  int		    $i					I
-	 *	@param  int		    $dateSelector      	1=Show also date range input fields
-	 *	@param  string	    $seller            	Object of seller third party
-	 *	@param  string	    $buyer             	Object of buyer third party
-	 *	@param	string		$selected		   	Object line selected
-	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
+	 *	@param	string				$action				GET/POST action
+	 *	@param 	CommonObjectLine 	$line		       	Selected object line to output
+	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  int		    		$num               	Number of line (0)
+	 *	@param  int		    		$i					I
+	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
+	 *	@param  Societe	    		$seller            	Object of seller third party
+	 *	@param  Societe	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	Object line selected
+	 *  @param  object				$extrafieldsline	Object of extrafield line attribute
 	 *	@return	void
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
@@ -3086,7 +3086,7 @@ abstract class CommonObject
 	/**
 	 *	get Margin info
 	 *
-	 * 	@param 	string 	$force_price	True of not
+	 * 	@param 	boolean	$force_price	True of not
 	 * 	@return mixed					Array with info
 	 */
 	function getMarginInfos($force_price=false)
@@ -3212,7 +3212,7 @@ abstract class CommonObject
 	/**
 	 * Show the array with all margin infos
 	 *
-	 * @param 	string 	$force_price	Force price
+	 * @param 	boolean	$force_price	Force price
 	 * @return	void
 	 */
 	function displayMarginInfos($force_price=false)
@@ -3304,7 +3304,7 @@ abstract class CommonObject
 
 	/**
 	 *	Add resources to the current object : add entry into llx_element_resources
-	 *Need $this->element & $this->id
+	 *	Need $this->element & $this->id
 	 *
 	 *	@param		int		$resource_id		Resource id
 	 *	@param		string	$resource_element	Resource element
@@ -3726,7 +3726,7 @@ abstract class CommonObject
             {
                	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
-               	$attributeSize  = $extrafields->attribute_size[$attributeKey];
+               	//$attributeSize  = $extrafields->attribute_size[$attributeKey];	Not required to insert an extrafield value. Only used for definition.
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
                	$attributeParam = $extrafields->attribute_param[$attributeKey];
                	switch ($attributeType)
@@ -3751,19 +3751,19 @@ abstract class CommonObject
             		case 'datetime':
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
-           		case 'link':
-				$param_list=array_keys($attributeParam ['options']);
-				// 0 : ObjectName
-				// 1 : classPath
-				$InfoFieldList = explode(":", $param_list[0]);
-				dol_include_once($InfoFieldList[1]);
-				$object = new $InfoFieldList[0]($this->db);
-				if ($value)
-				{
-					$object->fetch(0,$value);
-					$this->array_options[$key]=$object->id;
-				}
-				break;
+           			case 'link':
+						$param_list=array_keys($attributeParam ['options']);
+						// 0 : ObjectName
+						// 1 : classPath
+						$InfoFieldList = explode(":", $param_list[0]);
+						dol_include_once($InfoFieldList[1]);
+						$object = new $InfoFieldList[0]($this->db);
+						if ($value)
+						{
+							$object->fetch(0,$value);
+							$this->array_options[$key]=$object->id;
+						}
+						break;
                	}
             }
             $this->db->begin();
@@ -3771,6 +3771,7 @@ abstract class CommonObject
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
             dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
             $this->db->query($sql_del);
+
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
             {
@@ -3825,7 +3826,7 @@ abstract class CommonObject
      *
      * @return string
      */
-    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
+    function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
     {
 		global $_POST, $conf;
 

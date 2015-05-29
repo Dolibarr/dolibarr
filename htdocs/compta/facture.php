@@ -1759,10 +1759,8 @@ if (empty($reshook))
 			$upload_dir = $conf->facture->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret)
-				setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-			else
-				setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+			if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+			else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 			$action = '';
 		}
 	}

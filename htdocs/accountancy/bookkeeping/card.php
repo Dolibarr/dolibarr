@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,36 +205,42 @@ if ($action == 'create') {
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" name="create_mvt" method="POST">';
 	print '<input type="hidden" name="action" value="confirm_create">' . "\n";
 	print '<input type="hidden" name="next_num_mvt" value="' . $next_num_mvt . '">' . "\n";
-	
+
+	dol_fiche_head();
+
 	print '<table class="border" width="100%">';
-	print '<tr class="pair">';
+	print '<tr>';
 	print '<td>' . $langs->trans("NumMvts") . '</td>';
 	print '<td>' . $next_num_mvt . '</td>';
 	print '</tr>';
-	print '<tr class="impair">';
+	print '<tr>';
 	print '<td>' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
 	print $html->select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	
 	print '</tr>';
-	print '<tr class="pair">';
+	print '<tr>';
 	print '<td>' . $langs->trans("Codejournal") . '</td>';
 	
 	print '<td>' . $html->selectarray('code_journal', $code_journal_array) . '</td>';
 	print '</tr>';
-	print '<tr class="impair">';
+	print '<tr>';
 	print '<td>' . $langs->trans("Docref") . '</td>';
 	print '<td><input type="text" size="20" name="doc_ref" value=""/></td>';
 	print '</tr>';
-	print '<tr class="pair">';
+	print '<tr>';
 	print '<td>' . $langs->trans("Doctype") . '</td>';
 	print '<td><input type="text" size="20" name="doc_type" value=""/></td>';
 	print '</tr>';
 	print '</table>';
-	print '<br>';
-	print '<input type="submit" class="butAction" value="' . $langs->trans("Save") . '">';
-	
+
+    dol_fiche_end();
+
+	print '<div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Save") . '">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
+    print '</div>';
+
 	print '</form>';
 } 
 else
