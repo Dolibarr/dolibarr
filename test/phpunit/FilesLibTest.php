@@ -339,9 +339,10 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result,'delete file');
 
+        // Again to test no error when deleteing a non existing file
         $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertFalse($result,'delete file that does not exists');
+        $this->assertTrue($result,'delete file that does not exists');
 
         // Test copy with special char / delete with blob
         $result=dol_copy($file, $conf->admin->dir_temp.'/file with [x] and é.csv',0,1);
