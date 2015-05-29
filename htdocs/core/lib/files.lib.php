@@ -802,7 +802,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
-	global $langs;
+	global $db, $conf, $user, $langs;
 	global $hookmanager;
 
 	$langs->load("other");
@@ -829,8 +829,10 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 	}
 	else
 	{
+		$error=0;
+
 		//print "x".$file." ".$disableglob;exit;
-		$ok=false;
+		$ok=true;
 		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && ! empty($file_osencoded))
 		{
