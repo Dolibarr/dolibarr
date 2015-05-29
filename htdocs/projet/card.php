@@ -698,7 +698,7 @@ else
 	if ($action == 'edit' && $userWrite > 0)
 	{
 	    print '<div align="center">';
-    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; &nbsp; ';
+    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     	print '</div>';
 	}
