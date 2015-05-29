@@ -1567,6 +1567,7 @@ KeyForApiAccess=Key to use API (parameter "api_key")
 ApiEndPointIs=You can access to the API at url
 ApiExporerIs=You can explore the API at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
+ApiKey=Key for API
 ##### Bank #####
 BankSetupModule=Bank module setup
 FreeLegalTextOnChequeReceipts=Free text on cheque receipts

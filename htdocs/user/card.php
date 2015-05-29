@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,6 +189,7 @@ if ($action == 'add' && $canadduser)
         $object->lastname		= GETPOST("lastname",'alpha');
         $object->firstname	    = GETPOST("firstname",'alpha');
         $object->login		    = GETPOST("login",'alpha');
+        $object->api_key		= GETPOST("api_key",'alpha');
         $object->admin		    = GETPOST("admin",'alpha');
         $object->office_phone	= GETPOST("office_phone",'alpha');
         $object->office_fax	    = GETPOST("office_fax",'alpha');
@@ -340,6 +342,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->firstname	= GETPOST("firstname",'alpha');
             $object->login		= GETPOST("login",'alpha');
             $object->pass		= GETPOST("password");
+            $object->api_key    = GETPOST("api_key");
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone",'alpha');
             $object->office_fax	= GETPOST("office_fax",'alpha');
@@ -804,7 +807,18 @@ if (($action == 'create') || ($action == 'adduserldap'))
         }
     }
     print '</td></tr>';
-
+    
+    // API key
+    $generated_api_key = '';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+        $generated_password=getRandomPassword(false);
+    print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+    print '<td>';
+    print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$api_key.'" autocomplete="off">';
+    if (! empty($conf->use_javascript_ajax))
+        print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+    print '</td></tr>';
+    
     // Administrator
     if (! empty($user->admin))
     {
@@ -1228,7 +1242,16 @@ else
                 print "</td>";
             }
             print '</tr>'."\n";
-
+            
+            // API key
+            if($user->admin) {
+                print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+                print '<td colspan="2">';
+                if (! empty($object->api_key))
+                    print $langs->trans("Hidden");
+                print '<td>';
+            }
+            
             // Administrator
             print '<tr><td>'.$langs->trans("Administrator").'</td><td colspan="2">';
             if (! empty($conf->multicompany->enabled) && $object->admin && ! $object->entity)
@@ -1791,6 +1814,16 @@ else
             }
             print $text;
             print "</td></tr>\n";
+            
+            // API key
+            if($user->admin) {
+                print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+                print '<td>';
+                print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
+                if (! empty($conf->use_javascript_ajax))
+                    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+                print '</td></tr>';
+            }
 
             // Administrator
             print '<tr><td>'.$langs->trans("Administrator").'</td>';
@@ -2164,6 +2197,22 @@ else
     }
 }
 
+if (! empty($conf->use_javascript_ajax))
+{
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
+            $("#generate_api_key").click(function() {
+                $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                    action: \'getrandompassword\',
+                    generic: true
+                },
+                function(token) {
+                    $("#api_key").val(token);
+                });
+            });
+    });';
+    print '</script>';
+}
 
 llxFooter();
 $db->close();

@@ -60,6 +60,7 @@ class User extends CommonObject
 	var $user_mobile;
 	var $admin;
 	var $login;
+    var $api_key;
 	var $entity;
 
 	//! Clear password in memory
@@ -153,7 +154,7 @@ class User extends CommonObject
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.note,";
-		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
+		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
@@ -216,6 +217,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass			= $obj->pass;
 				$this->pass_temp	= $obj->pass_temp;
+                $this->api_key		= $obj->api_key;
 				$this->office_phone	= $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
@@ -1130,6 +1132,7 @@ class User extends CommonObject
 		$this->firstname    = trim($this->firstname);
 		$this->login        = trim($this->login);
 		$this->pass         = trim($this->pass);
+        $this->api_key      = trim($this->api_key);
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
@@ -1161,6 +1164,7 @@ class User extends CommonObject
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
+        $sql.= ", api_key = '".$this->db->escape($this->api_key)."'";
 		$sql.= ", admin = ".$this->admin;
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
