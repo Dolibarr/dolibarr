@@ -3680,7 +3680,7 @@ function migrate_delete_old_files($db,$langs,$conf)
                 print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
             }
             else
-            {
+			{
                 //print $langs->trans("FileWasRemoved",$filetodelete);
             }
         }
