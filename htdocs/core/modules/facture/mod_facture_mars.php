@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -127,10 +127,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 */
 	function getNextValue($objsoc,$facture,$mode='next')
 	{
-		global $db,$conf;
+		global $db;
 
 		$prefix=$this->prefixinvoice;
-		
+
 		if ($facture->type == 1) $prefix=$this->prefixreplacement;
 		else if ($facture->type == 2) $prefix=$this->prefixcreditnote;
 		else if ($facture->type == 3) $prefix=$this->prefixdeposit;
@@ -141,7 +141,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity IN (".getEntity('facture', 1).")";
 
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -165,7 +165,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql = "SELECT facnumber as ref";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
-            $sql.= " AND entity = ".$conf->entity;
+            $sql.= " AND entity IN (".getEntity('facture', 1).")";
 
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
