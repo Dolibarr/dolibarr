@@ -2,10 +2,11 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry	<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,6 +129,8 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
+		
+		dol_fiche_head();
 
 		$rowspan=4;
 		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
@@ -139,7 +142,7 @@ if ($action == 'create')
 		// Third party
 		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$object->client->getNomUrl(1,'customer').'</td>';
 		print '<td>';
-		//print $langs->trans("NotePrivate");
+		print $langs->trans("Comment");
 		print '</td></tr>';
 
 		// Title
@@ -371,10 +374,15 @@ if ($action == 'create')
 			print '</select>';
 			print '</td></tr>';
 		}
-		print '<tr><td colspan="3" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-		print "</form>\n";
 		print "</table>\n";
 
+        dol_fiche_end();
+
+		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
+        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	    print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+        print '</div>';
+		print "</form>\n";
 	}
 	else
 	{
@@ -432,7 +440,7 @@ else
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id,'none');
 			print "</td></tr>";
 
-			print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($object->note_private)."</td></tr>";
+			print '<tr><td>'.$langs->trans("Comment").'</td><td colspan="3">'.nl2br($object->note_private)."</td></tr>";
 
 			print "</table>";
 
