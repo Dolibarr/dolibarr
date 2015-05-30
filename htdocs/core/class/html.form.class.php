@@ -4701,15 +4701,15 @@ class Form
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
      *    @param	object	$object			Object to show
-     *    @param   string	$paramid   		Name of parameter to use to name the id into the URL link
-     *    @param   string	$morehtml  		More html content to output just before the nav bar
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+     *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param   string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
-     *    @param   string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-     *    @param   string	$morehtmlref  	Code html supplementaire a afficher apres ref
-     *    @param   string	$moreparam  	More param to add in nav link url.
+     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
+     *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
+     *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     * 	  @return  string    				Portion HTML avec ref + boutons nav
+     * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
     {

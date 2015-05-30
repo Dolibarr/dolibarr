@@ -71,7 +71,9 @@ create table llx_product
   volume					float        DEFAULT NULL,
   volume_units				tinyint      DEFAULT NULL,
   stock						integer,						-- Current physical stock (dernormalized field)
-  pmp						double(24,8) DEFAULT 0 NOT NULL,
+  pmp						double(24,8) DEFAULT 0 NOT NULL,		-- To store valuation of stock calculated using average price method, for this product
+  fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product
+  lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product
   canvas					varchar(32)  DEFAULT NULL,
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.

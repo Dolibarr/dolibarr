@@ -3232,6 +3232,15 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-image: none;
 }
 
+div.dataTables_length {
+	float: right !important;
+	padding-left: 8px;
+}
+div.dataTables_length select {
+	background: #fff;
+}
+
+
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
