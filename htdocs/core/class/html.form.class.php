@@ -4788,11 +4788,12 @@ class Form
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
      *     	@param  object		$object			Object containing data to retrieve file name
      * 		@param	int			$width			Width of photo
+     * 		@param	int			$caneditfield	Add edit fields
      * 	  	@return string    					HTML code to output photo
      */
-    static function showphoto($modulepart,$object,$width=100)
+    static function showphoto($modulepart,$object,$width=100,$caneditfield=0)
     {
-        global $conf;
+        global $conf,$langs;
 
         $entity = (! empty($object->entity) ? $object->entity : $conf->entity);
         $id = (! empty($object->id) ? $object->id : $object->rowid);
@@ -4819,7 +4820,7 @@ class Form
             if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        }else {
+        } else {
         	$dir=$conf->$modulepart->dir_output;
         	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
@@ -4833,13 +4834,13 @@ class Form
             {
                 // TODO Link to large image
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0"'.($width?' width="'.$width:'').'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0"'.($width?' width="'.$width:'').'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
                 $ret.='</a>';
             }
             else
@@ -4848,13 +4849,24 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
+                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0"'.($width?' width="'.$width:'').'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
                 }
                 else
                 {
-                    $ret.='<img alt="No photo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+                    $ret.='<img alt="No photo" border="0"'.($width?' width="'.$width:'').'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
                 }
             }
+
+            if ($caneditfield)
+            {
+                if ($object->photo) $ret.="<br>\n";
+                $ret.='<table class="nobordernopadding hideonsmartphone">';
+                if ($object->photo) $ret.='<tr><td align="center"><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                $ret.='<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+                $ret.='<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+                $ret.='</table>';
+            }
+
         }
         else dol_print_error('','Call of showphoto with wrong parameters');
 

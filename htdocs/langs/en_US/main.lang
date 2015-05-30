@@ -704,6 +704,8 @@ GoIntoSetupToChangeLogo=Go into Home - Setup - Company to change logo or go into
 Deny=Deny
 Denied=Denied
 ListOfTemplates=List of templates
+Genderman=Man
+Genderwoman=Woman
 # Week day
 Monday=Monday
 Tuesday=Tuesday
