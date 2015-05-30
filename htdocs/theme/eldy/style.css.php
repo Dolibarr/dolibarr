@@ -281,6 +281,7 @@ input.liste_titre {
 input.removedfile {
 	padding: 0px !important;
 	border: 0px !important;
+	vertical-align: text-bottom;
 }
 textarea:disabled {
 	background:#ddd;
@@ -554,6 +555,9 @@ margin : 0px auto;
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
+}
+.pictowarning {
+    padding-left: 3px;
 }
 
 
@@ -1787,7 +1791,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
-	border: 1px solid #D0D0D0;
+	border: 1px solid #E0E0E0;
 	border-collapse: collapse;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -1796,7 +1800,7 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 	height: 20px;
 }
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 24px;
+	height: 20px;
 }
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
@@ -1808,7 +1812,7 @@ div.tabBar .tdtop {
 
 table.border td, div.border div div.tagtd {
 	padding: 2px 2px 2px 2px;
-	border: 1px solid #D0D0D0;
+	border: 1px solid #E0E0E0;
 	border-collapse: collapse;
 }
 

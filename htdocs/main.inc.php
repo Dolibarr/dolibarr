@@ -1436,8 +1436,16 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // Add login user link
 	    $toprightmenu.='<div class="login_block_user">';
-	    //$toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'login_block_elem2',2);	// This include div class="login"
-        $toprightmenu.= $user->getNomurl(0, '', true, 0, 11);
+
+	    // User photo
+	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
+	    $toprightmenu.=$user->getPhotoUrl();
+	    $toprightmenu.='</div></div>';
+
+		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
+        $toprightmenu.='</div></div>';
+
 		$toprightmenu.='</div>';
 
 	    $toprightmenu.='<div class="login_block_other">';
@@ -1451,7 +1459,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 		else $toprightmenu.=$result;	// For backward compatibility
 
-	    // Logout link
+		// Logout link
 	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
 	    // Link to print main content area

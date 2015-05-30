@@ -789,7 +789,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 	if ($displaytab > $limittoshow)
 	{
-		$tabsname=str_replace ("@", "", $picto);		
+		$tabsname=str_replace ("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
 		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").'...</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
@@ -2217,7 +2217,7 @@ function img_warning($titlealt = 'default', $float = 0)
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', ($float ? 'style="float: right"' : ''));
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($float ? ' style="float: right"' : ''));
 }
 
 /**

@@ -4844,16 +4844,24 @@ class Form
                 $ret.='</a>';
             }
             else
-            {
-                if (! empty($conf->gravatar->enabled) && $email)
+			{
+				$nophoto='/theme/common/nophoto.jpg';
+				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
+				{
+					$nophoto='/theme/common/user_anonymous.png';
+					if ($object->gender == 'man') $nophoto='/theme/common/user_man.png';
+					if ($object->gender == 'woman') $nophoto='/theme/common/user_woman.png';
+				}
+
+				if (! empty($conf->gravatar->enabled) && $email)
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0"'.($width?' width="'.$width:'').'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.'" alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0"'.($width?' width="'.$width:'').'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
                 }
                 else
-                {
-                    $ret.='<img alt="No photo" border="0"'.($width?' width="'.$width:'').'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+				{
+                    $ret.='<img class="photo'.$modulepart.'" alt="No photo" border="0"'.($width?' width="'.$width:'').'" src="'.DOL_URL_ROOT.$nophoto.'">';
                 }
             }
 
