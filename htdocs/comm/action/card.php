@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -671,7 +671,7 @@ if ($action == 'create')
     }
 
 	// Assigned to
-	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$listofuserid=array();
 	if (empty($donotclearsession))
 	{
@@ -727,7 +727,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-	$form->select_contacts(GETPOST('socid','int'),GETPOST('contactid'),'contactid',1);
+	$form->select_contacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
 	print '</td></tr>';
 
 
@@ -739,7 +739,7 @@ if ($action == 'create')
 		// Projet associe
 		$langs->load("projects");
 
-		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
@@ -768,7 +768,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Description
-    print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_6,90);
     $doleditor->Create();
@@ -915,7 +915,7 @@ if ($id > 0)
 	    }
 
 		// Assigned to
-		print '<tr><td class="nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
+		print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAssignedTo").'</td><td colspan="3">';
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
@@ -968,7 +968,7 @@ if ($id > 0)
 
 			// Contact
 			print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-			$form->select_contacts($object->socid, $object->contactid,'contactid',1);
+			$form->select_contacts($object->socid, $object->contactid, 'contactid', 1, '', '', 0, 'minwidth200');
 			print '</td></tr>';
 		}
 
@@ -981,7 +981,7 @@ if ($id > 0)
 			// Projet associe
 			$langs->load("project");
 
-			print '<tr><td width="30%" valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td width="30%">'.$langs->trans("Project").'</td><td colspan="3">';
 			$numprojet=$formproject->select_projects($object->socid,$object->fk_project,'projectid');
 			if ($numprojet==0)
 			{
@@ -1004,7 +1004,7 @@ if ($id > 0)
 		}
 
         // Description
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
         // Editeur wysiwyg
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,90);
@@ -1168,7 +1168,7 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			print '<tr><td width="30%" valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td width="30%">'.$langs->trans("Project").'</td><td colspan="3">';
 			if ($object->fk_project)
 			{
 				$project=new Project($db);
@@ -1192,7 +1192,7 @@ if ($id > 0)
 		}
 
 		// Description
-		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 		print dol_htmlentitiesbr($object->note);
 		print '</td></tr>';
 

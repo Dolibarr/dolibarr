@@ -1813,7 +1813,8 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div.tabBar .tdtop {
     vertical-align: top;
-	padding-top: 6px;
+	padding-top: 5px;
+	padding-bottom: 0px;
 }
 
 table.border td, div.border div div.tagtd {

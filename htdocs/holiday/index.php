@@ -78,11 +78,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_statut="";
 }
 
+
 /*
  * Actions
  */
 
 // None
+
+
 
 /*
  * View
@@ -219,19 +222,19 @@ if ($id > 0)
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
 	print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 	print '</td>';
 	print '</tr>';
 
 	// LastName
-	print '<tr><td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
 	print '<td colspan="2">'.$fuser->lastname.'</td>';
 	print "</tr>\n";
 
 	// FirstName
-	print '<tr><td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
+	print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
 	print '<td colspan="2">'.$fuser->firstname.'</td>';
 	print "</tr>\n";
 
@@ -250,14 +253,10 @@ $nbdeduced=$holiday->getConfCP('nbHolidayDeducted');
 $nb_holiday = $nbaquis / $nbdeduced;
 print $langs->trans('SoldeCPUser',round($nb_holiday,2)).($nbdeduced != 1 ? ' ('.$nbaquis.' / '.$nbdeduced.')' : '');
 
-if ($id > 0)
-{
-	dol_fiche_end();
-	print '</br>';
-}
-else {
-	dol_fiche_end();
-}
+dol_fiche_end();
+
+if ($id > 0) print '</br>';
+
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';
@@ -387,7 +386,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="9" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('None').'</td>';
+    print '<td colspan="9" '.$bc[false].'">'.$langs->trans('None').'</td>';
     print '</tr>';
 }
 

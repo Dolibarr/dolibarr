@@ -1781,26 +1781,19 @@ class User extends CommonObject
 
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
-	 * 	Use this->id,this->lastname, this->firstname
+	 *  Return a link with photo
+	 * 	Use this->id,this->photo
 	 *
-	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option			On what the link point to
-     *  @param  integer $infologin      Add connection info to the tooltip
-     *  @param	integer	$notooltip		1=Disable tooltip
-     *  @param	int		$maxlen			Max length of visible user name
-	 *	@return	string					String with URL
+	 *	@param	int		$width			Width of image
+	 *	@param	int		$height			Height of image
+	 *	@return	string					String with URL link
 	 */
-	function getPhotoUrl($with=0)
+	function getPhotoUrl($width, $height)
 	{
-		global $form;
-
-		if (! is_object($form)) $form=new Form($this->db);
-
 		$result='';
 
 		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-	    $result.=$form->showphoto('userphoto', $this, ($with?$with:16));
+	    $result.=Form::showphoto('userphoto', $this, $width, $height);
 	    $result.='</a>';
 
 	    return $result;

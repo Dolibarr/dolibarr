@@ -112,8 +112,8 @@ if ($id)
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$fuser->login.'&nbsp;</td></tr>';
 
 	// Note
-    print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-	print '<td valign="top" colspan="3">';
+    print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
+	print '<td colspan="3">';
 	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
@@ -159,6 +159,6 @@ if ($id)
 	print "</form>\n";
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();

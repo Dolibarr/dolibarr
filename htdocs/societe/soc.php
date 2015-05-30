@@ -1011,7 +1011,7 @@ else
         }
 
         // Address
-        print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
+        print '<tr><td class="tdtop"><label for="address">'.$langs->trans('Address').'</label></td>';
 	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
@@ -1503,7 +1503,7 @@ else
             // Barcode
             if (! empty($conf->barcode->enabled))
             {
-                print '<tr><td valign="top"><label for="barcode">'.$langs->trans('Gencod').'</label></td>';
+                print '<tr><td class="tdtop"><label for="barcode">'.$langs->trans('Gencod').'</label></td>';
 	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
                 print '</td></tr>';
             }
@@ -1514,8 +1514,8 @@ else
             print '</td></tr>';
 
             // Address
-            print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
-	        print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
+            print '<tr><td class="tdtop"><label for="address">'.$langs->trans('Address').'</label></td>';
+	        print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
@@ -1799,7 +1799,7 @@ else
 
         // Ref
         /*
-        print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+        print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
         print '<td colspan="2">';
         print $fuser->id;
         print '</td>';
@@ -1885,14 +1885,14 @@ else
         print '</tr>';
 
         // Address
-        print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
+        print '<tr><td class="tdtop">'.$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
-        print "</td></tr>";
+        print '</td></tr>';
 
         // Zip / Town
         print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print $object->zip.($object->zip && $object->town?" / ":"").$object->town;
-        print "</td>";
+        print '</td>';
         print '</tr>';
 
         // Country
@@ -2202,7 +2202,7 @@ else
         if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
-            print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<tr><td width="25%" class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
             print '<td colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);

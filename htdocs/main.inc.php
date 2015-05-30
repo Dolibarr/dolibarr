@@ -1439,7 +1439,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // User photo
 	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
-	    $toprightmenu.=$user->getPhotoUrl();
+	    $toprightmenu.=$user->getPhotoUrl(16,16);
 	    $toprightmenu.='</div></div>';
 
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
