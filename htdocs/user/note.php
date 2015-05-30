@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,22 +131,22 @@ if ($id)
 
     print "</table>";
 
+	dol_fiche_end();
+
 	if ($action == 'edit')
 	{
-		print '<br><div class="center">';
+		print '<div class="center">';
 		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
 
-	print "</form>\n";
 
+	/*
+     * Actions
+     */
 
-    /*
-    * Actions
-    */
-    print '</div>';
     print '<div class="tabsAction">';
 
     if ($user->rights->user->user->creer && $action != 'edit')
@@ -156,7 +156,7 @@ if ($id)
 
     print "</div>";
 
-
+	print "</form>\n";
 }
 
 $db->close();

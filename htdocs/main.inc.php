@@ -1459,9 +1459,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 		else $toprightmenu.=$result;	// For backward compatibility
 
-		// Logout link
-	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
-
 	    // Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	    {
@@ -1472,7 +1469,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $text.='</a>';
 	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
-		$toprightmenu.='</div>';
+
+		// Logout link
+	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
+
+	    $toprightmenu.='</div>';
 
 	    print $toprightmenu;
 

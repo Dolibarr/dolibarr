@@ -1377,7 +1377,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td colspan="2">';
-				if ($object->color) print '<input type="text" disabled style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
+				if ($object->color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
 				print '</td>';
 				print "</tr>\n";
 			}

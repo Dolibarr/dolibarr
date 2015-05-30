@@ -1795,6 +1795,8 @@ class User extends CommonObject
 	{
 		global $form;
 
+		if (! is_object($form)) $form=new Form($this->db);
+
 		$result='';
 
 		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';

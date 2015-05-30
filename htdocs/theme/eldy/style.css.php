@@ -544,8 +544,8 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
-display : table;
-margin : 0px auto;
+	display : table;
+	margin : 0px auto;
 }
 
 #pictotitle {
@@ -558,6 +558,12 @@ margin : 0px auto;
 }
 .pictowarning {
     padding-left: 3px;
+}
+.colorthumb {
+	padding-left: 1px !important;
+	padding-right: 1px;
+	padding-top: 1px;
+	padding-bottom: 1px;
 }
 
 
