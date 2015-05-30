@@ -415,7 +415,7 @@ class Form
         if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
-                $s .= ' valign="top" width="14"';
+                $s .= ' valign="middle" width="14"';
             }
             $s.= '>'.$img.'</'.$tag.'>';
         }

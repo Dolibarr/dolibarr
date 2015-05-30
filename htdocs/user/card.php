@@ -184,7 +184,7 @@ if ($action == 'add' && $canadduser)
         }
     }
 
-    if (!$error) 
+    if (!$error)
     {
         $object->lastname		= GETPOST("lastname",'alpha');
         $object->firstname	    = GETPOST("firstname",'alpha');
@@ -452,7 +452,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     $dir= $conf->user->dir_output . '/' . get_exdir($object->id,2,0,1,$object,'user');
 
                     dol_mkdir($dir);
-                    
+
                     if (@is_dir($dir))
                     {
                         $newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
@@ -477,7 +477,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     {
                     	$error++;
                     	$langs->load("errors");
-                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');                    	
+                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 }
             }
@@ -868,7 +868,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Type
     print '<tr><td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+    print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
     print '</td></tr>';
 
     // Tel
@@ -1051,7 +1051,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     //print '&nbsp; &nbsp; &nbsp;';
     //print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
     print '</div>';
-    
+
     print "</form>";
 }
 else
@@ -1208,7 +1208,7 @@ else
 		    print '<td>';
 		    if ($object->gender) print $langs->trans("Gender".$object->gender);
 		    print '</td></tr>';
-            
+
             // Login
             print '<tr><td>'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
@@ -1275,7 +1275,7 @@ else
             print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
             $type=$langs->trans("Internal");
             if ($object->societe_id) $type=$langs->trans("External");
-            print $form->textwithpicto($type,$langs->trans("InternalExternalDesc"));
+            print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
             if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
 
@@ -1737,7 +1737,7 @@ else
                 print $object->lastname;
             }
             print '</td>';
-            
+
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             print $form->showphoto('userphoto',$object,0,$caneditfield);
@@ -1779,7 +1779,7 @@ else
     		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
     		print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
     		print '</td></tr>';
-            
+
             // Login
             print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
             print '<td>';
