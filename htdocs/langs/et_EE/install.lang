@@ -155,8 +155,8 @@ MigrationFinished=Migreerimine lõpetatud
 LastStepDesc=<strong>Viimane samm:</strong> Määra siin tarkvaraga ühendumiseks kasutatav kasutajanimi ja parool. Hoia neid alles, kuna selle kontoga saab administreerida kõiki teisi kasutajaid.
 ActivateModule=Aktiveeri moodul %s
 ShowEditTechnicalParameters=Klõpsa siia lisaparameetrite näitamiseks/muutmiseks (spetsialisti režiim)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=Hoiatus:\nKas oled oma andmebaasi varundanud?\nSoovitame seda tungivalt teha: mõningate andmebaaside puukide tõttu (nt MySQL 5.5.40), võib selle protsessi käigus kaduma minna andmeid või tabeleid, seega on enne migratsiooni alustamist tungivalt soovitatav teha andmebaasist täielik tõmmis.\n\nKlõpsa OK migratsiooni alustamiseks...
+ErrorDatabaseVersionForbiddenForMigration=Sinu andmebaasi versioon on %s. Selles versioonis on tõsine puuk, mis põhjustab andmebaasi struktuuri muutmisel andmekadu, nagu seda teeb migratsiooni protsess. Seega ei ole migratsioon lubatud seni, kuni uuendad oma andmebaasi parandustega versioonile (teadaolevate vigaste versioonide nimekiri: %s)
 
 #########
 # upgrade
@@ -208,7 +208,7 @@ MigrationProjectTaskTime=Uuendamiseks kulutatud aeg sekundites
 MigrationActioncommElement=Uuenda tegevuste andmec
 MigrationPaymentMode=Maksete režiimi andmete migreerimine
 MigrationCategorieAssociation=Kategooriate migreerimine
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Sündmuste migreerimine sündmuse omaniku lisamiseks seoste tabelisse
 
 ShowNotAvailableOptions=Näita mitte saadaval olevaid lisavalikuid
 HideNotAvailableOptions=Peida mitte saadaval olevad lisavalikud

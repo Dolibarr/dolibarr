@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-IdAgenda=ID hendelse
+IdAgenda=Hendelses-ID
 Actions=Handlinger
 ActionsArea=Handlingsområde (Hendelser og oppgaver)
 Agenda=Agenda
@@ -17,7 +17,7 @@ MyEvents=Mine hendelser
 OtherEvents=Andre hendelser
 ListOfActions=Oversikt over hendelser
 Location=Lokasjon
-EventOnFullDay=Hendelse på full dag
+EventOnFullDay=Hendelse over hele dagen(e)
 SearchAnAction= Finn handling/oppgave
 MenuToDoActions=Alle åpne handlinger
 MenuDoneActions=Alle avsluttede handlinger
@@ -38,30 +38,30 @@ ViewDay=Dagsvisning
 ViewWeek=Ukesvisning
 ViewPerUser=Visning pr. bruker
 ViewWithPredefinedFilters= Vis med forhåndsdefinerte filtere
-AutoActions= Automatisk utfylling av agenda
+AutoActions= Automatisk utfylling
 AgendaAutoActionDesc= Her angir du hvilke handlinger du ønsker at Dolibarr automatisk skal registrere i agendaen. Hvis du ikke velger noe (forhåndsinnstilt), vil bare manuelle handlinger bli registrert i agendaen.
 AgendaSetupOtherDesc= Her kan du gjøre andre innstillinger i agendamodulen.
-AgendaExtSitesDesc=Denne siden lar deg erklære eksterne kilder til kalendere for å se sine arrangementer inn Dolibarr agenda.
+AgendaExtSitesDesc=Denne siden lar deg sette opp eksterne kalendere for å visning i Dolibarr agenda.
 ActionsEvents=Handlinger som Dolibarr automatisk registrerer i agendaen
 PropalValidatedInDolibarr=Tilbud godkjent
 InvoiceValidatedInDolibarr=Faktura godkjent
 InvoiceValidatedInDolibarrFromPos=Faktura %s godkjent fra POS
-InvoiceBackToDraftInDolibarr=Faktura %s gå tilbake til utkast status
+InvoiceBackToDraftInDolibarr=Sett  faktura %s tilbake til utkaststatus
 InvoiceDeleteDolibarr=Faktura %s slettet
 OrderValidatedInDolibarr=Ordre godkjent
-OrderDeliveredInDolibarr=Order %s classified delivered
-OrderCanceledInDolibarr=Bestill %s kansellert
-OrderBilledInDolibarr=Order %s classified billed
-OrderApprovedInDolibarr=Bestill %s godkjent
-OrderRefusedInDolibarr=Ordre %s nektet
-OrderBackToDraftInDolibarr=Bestill %s gå tilbake til utkast status
-OrderCanceledInDolibarr=Bestill %s kansellert
-ProposalSentByEMail=Kommersielle forslag %s på e-post
-OrderSentByEMail=Kundeordrer %s på e-post
-InvoiceSentByEMail=Faktura %s på e-post
-SupplierOrderSentByEMail=Leverandør bestill %s på e-post
-SupplierInvoiceSentByEMail=Leverandørfaktura %s på e-post
-ShippingSentByEMail=Forsendelse %s sendt på epost
+OrderDeliveredInDolibarr=Ordre %s klassifisert som levert
+OrderCanceledInDolibarr=Ordre %s kansellert
+OrderBilledInDolibarr=Ordre %s klassifisert som fakturert
+OrderApprovedInDolibarr=Ordre %s godkjent
+OrderRefusedInDolibarr=Ordre %s avvist
+OrderBackToDraftInDolibarr=Sett ordre %s tilbake til utkaststatus
+OrderCanceledInDolibarr=Ordre %s kansellert
+ProposalSentByEMail=Kommersielle tilbud %s sendt på epost
+OrderSentByEMail=Kundeordrer %s sendt på epost
+InvoiceSentByEMail=Faktura %s sendt på epost
+SupplierOrderSentByEMail=Leverandørordre %s sendt på epost
+SupplierInvoiceSentByEMail=Leverandørfaktura %s sendt på epost
+ShippingSentByEMail=Forsendelsesdetaljer %s sendt på epost
 ShippingValidated= Forsendelse %s godkjent
 InterventionSentByEMail=Intervensjon %s sendt på epost
 NewCompanyToDolibarr= Tredjepart opprettet
@@ -72,14 +72,14 @@ DateActionDoneEnd= Virkelig sluttdato
 DateActionStart= Startdato
 DateActionEnd= Sluttdato
 AgendaUrlOptions1=Du kan også bruke følgende parametere til å filtrere listen:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> for å begrense data til hendelser eiet av en bruker <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> for å begrense utvalg til handlinger relatert til bruker <b>%s</b>.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> for å begrense data til handlinger som er knyttet til prosjektet <b>PROJECT_ID</b>.
+AgendaUrlOptions2=<b>login=%s</b> for å begrense resultat til hendelse som er opprettet av eller tildelt bruker<b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet av en bruker <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> for å begrense resultat til handlinger relatert til bruker <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> for å begrense resultat til handlinger som er knyttet til prosjektet <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Vis fødselsdager
 AgendaHideBirthdayEvents=Skjul fødselsdager
 Busy=Opptatt
-ExportDataset_event1=Liste over agenda hendelser
+ExportDataset_event1=Liste over hendelser i agendaen
 DefaultWorkingDays=Standard arbeidsuke (f.eks 1-5, 1-6)
 DefaultWorkingHours=Standard arbeidstid (f.eks 9-18)
 # External Sites ical
@@ -88,11 +88,11 @@ ExtSites=Importer eksterne kalendere
 ExtSitesEnableThisTool=Vis eksterne kalendere (definert i global setup) i agenda. Påvirker ikke eksterne kalendere definert av brukere.
 ExtSitesNbOfAgenda=Antall kalendere
 AgendaExtNb=Kalender nb %s
-ExtSiteUrlAgenda=URL tilgang til. ICal-fil
+ExtSiteUrlAgenda=URL til. ical-fil
 ExtSiteNoLabel=Ingen beskrivelse
 WorkingTimeRange=Arbeidstid
 WorkingDaysRange=Arbeidsuke
 AddEvent=Opprett hendelse
 MyAvailability=Min tilgjengelighet
-ActionType=Event type
-DateActionBegin=Start event date
+ActionType=Hendelsestype
+DateActionBegin=Startdato for hendelse

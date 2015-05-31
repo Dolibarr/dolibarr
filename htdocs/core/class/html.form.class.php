@@ -4342,6 +4342,7 @@ class Form
         			<script type="text/javascript">
         				$(document).ready(function () {
         					$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        					width:"resolve",
         				    dir: \'ltr\',
         					width: \'off\',
         					minimumInputLength: 0
