@@ -1786,14 +1786,15 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$width			Width of image
 	 *	@param	int		$height			Height of image
+	 *  @param	string	$cssclass		Force a css class
 	 *	@return	string					String with URL link
 	 */
-	function getPhotoUrl($width, $height)
+	function getPhotoUrl($width, $height, $cssclass='')
 	{
 		$result='';
 
 		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-	    $result.=Form::showphoto('userphoto', $this, $width, $height);
+	    $result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass);
 	    $result.='</a>';
 
 	    return $result;

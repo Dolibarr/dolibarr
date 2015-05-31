@@ -995,7 +995,9 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-
+img.loginphoto {
+	border-radius: 2px;
+}
 .span-icon-user {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
 }
@@ -2435,13 +2437,13 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
-.photointooltip, .photologo {
+.photowithmargin {
 	-webkit-box-shadow: 0px 0px 3px #777;
 	-moz-box-shadow: 0px 0px 3px #777;
 	box-shadow: 0px 0px 3px #777;
-	margin-top: 6px;
 }
 .photointoolitp {
+	margin-top: 6px;
 	float: left;
 	/*text-align: center; */
 }
