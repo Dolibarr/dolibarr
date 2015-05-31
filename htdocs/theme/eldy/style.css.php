@@ -448,6 +448,7 @@ textarea.centpercent {
 #formuserfile_link {
 	margin-left: 1px;
 }
+
 /* Style to move picto into left of button */
 /*
 .buttonactionview {
@@ -2434,13 +2435,18 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
-.photointooltip {
+.photointooltip, .photologo {
 	-webkit-box-shadow: 0px 0px 3px #777;
 	-moz-box-shadow: 0px 0px 3px #777;
 	box-shadow: 0px 0px 3px #777;
 	margin-top: 6px;
+}
+.photointoolitp {
 	float: left;
 	/*text-align: center; */
+}
+.photodelete {
+	margin-top: 6px !important;
 }
 
 .logo_setup

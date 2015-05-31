@@ -53,7 +53,9 @@ print '<br><br>';
 
 
 // Show logo
-print '<div class="center"><div class="logo_setup"></div></div>';
+//print '<div class="center"><div class="logo_setup"></div></div>';
+print '<center><div class="logo_setup"></div></center>';				// For a reason I don't know, the div class="center does not works, we must keep the <center>
+
 
 llxFooter();
 $db->close();
