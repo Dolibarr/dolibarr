@@ -29,7 +29,7 @@ ActionsToDoBy=Eventi assegnati a
 ActionsDoneBy=Azioni fatte da
 ActionsForUser=Eventi per utente
 ActionsForUsersGroup=Eventi per tutti gli utenti del gruppo
-ActionAssignedTo=Event assigned to
+ActionAssignedTo=Evento assegnato a
 AllMyActions= Tutte i miei compiti/azioni
 AllActions= Tutte i compiti/azioni
 ViewList=Vista elenco
@@ -49,9 +49,9 @@ InvoiceValidatedInDolibarrFromPos=Ricevute %s validate dal POS
 InvoiceBackToDraftInDolibarr=Fattura %s riportata allo stato di bozza
 InvoiceDeleteDolibarr=La fattura %s è stata cancellata
 OrderValidatedInDolibarr=Ordine convalidato
-OrderDeliveredInDolibarr=Order %s classified delivered
+OrderDeliveredInDolibarr=Ordine %s classificato consegnato
 OrderCanceledInDolibarr=ordine %s annullato
-OrderBilledInDolibarr=Order %s classified billed
+OrderBilledInDolibarr=Ordine %s classificato fatturato
 OrderApprovedInDolibarr=Ordine %s approvato
 OrderRefusedInDolibarr=Ordine %s rifiutato
 OrderBackToDraftInDolibarr=Ordine %s riportato allo stato di bozza
@@ -61,9 +61,9 @@ OrderSentByEMail=Ordine cliente %s inviato per email
 InvoiceSentByEMail=Fattura attiva %s inviata per email
 SupplierOrderSentByEMail=Ordine fornitore %s inviato per email
 SupplierInvoiceSentByEMail=Fornitore %s fattura inviata per email
-ShippingSentByEMail=Shipment %s sent by EMail
-ShippingValidated= Shipment %s validated
-InterventionSentByEMail=Intervention %s sent by EMail
+ShippingSentByEMail=Spedizione %s inviata per Email
+ShippingValidated= Spedizione %s convalidata
+InterventionSentByEMail=Intervento %s inviato via Email
 NewCompanyToDolibarr= Soggetto terzo creato
 DateActionPlannedStart= Data di inizio prevista
 DateActionPlannedEnd= Data di fine prevista
@@ -72,7 +72,7 @@ DateActionDoneEnd= Data effettiva di fine
 DateActionStart= Data di inizio
 DateActionEnd= Data di fine
 AgendaUrlOptions1=È inoltre possibile aggiungere i seguenti parametri ai filtri di output:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
+AgendaUrlOptions2=<b>login = %s</b> ​​per limitare l'uscita di azioni create da o assegnate <b>all'utente %s.</b>
 AgendaUrlOptions3=<b>logina = %s</b> per limitare l'output alle azioni amministrate dall'utente<b>%s</b>
 AgendaUrlOptions4=<b>logint = %s</b> per limitare l'output alle azioni modificate dall'<b>utente %s</b>.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per limitare l'output alle azioni associate al progetto <b>PROJECT_ID</b>.
@@ -94,5 +94,5 @@ WorkingTimeRange=Intervallo di tempo di lavoro
 WorkingDaysRange=Intervallo di giorni di lavoro
 AddEvent=Crea evento
 MyAvailability=Mie disponibilità
-ActionType=Event type
-DateActionBegin=Start event date
+ActionType=Tipo di evento
+DateActionBegin=Data di inizio evento

@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - errors
 
 # No errors
-NoErrorCommitIsDone=No error, we commit
+NoErrorCommitIsDone=Ingen feil funnet
 # Errors
 Error=Feil
 Errors=Feil
-ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorButCommitIsDone=Valider selv om feil ble funnet
 ErrorBadEMail=E-post %s er feil
 ErrorBadUrl=Url %s er feil
 ErrorLoginAlreadyExists=brukernavnet %s eksisterer allerede.
@@ -149,15 +149,15 @@ ErrorPriceExpression6=Wrong number of arguments (%s given, %s expected)
 ErrorPriceExpression8=Unexpected operator '%s'
 ErrorPriceExpression9=An unexpected error occured
 ErrorPriceExpression10=Iperator '%s' lacks operand
-ErrorPriceExpression11=Expecting '%s'
-ErrorPriceExpression14=Division by zero
-ErrorPriceExpression17=Undefined variable '%s'
-ErrorPriceExpression19=Expression not found
-ErrorPriceExpression20=Empty expression
-ErrorPriceExpression21=Empty result '%s'
-ErrorPriceExpression22=Negative result '%s'
-ErrorPriceExpressionInternal=Internal error '%s'
-ErrorPriceExpressionUnknown=Unknown error '%s'
+ErrorPriceExpression11=Forventet '%s'
+ErrorPriceExpression14=Delt på null
+ErrorPriceExpression17=Udefinert variabel '%s'
+ErrorPriceExpression19=Uttrykk ikke funnet
+ErrorPriceExpression20=Tomt uttrykk
+ErrorPriceExpression21=Tomt resultat '%s'
+ErrorPriceExpression22=Negativt resultat '%s'
+ErrorPriceExpressionInternal=Intern feil '%s'
+ErrorPriceExpressionUnknown=Ukjent feil '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
 ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
 ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action

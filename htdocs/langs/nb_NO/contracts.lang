@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Kontraktsområde
 ListOfContracts=Oversikt over kontrakter
-LastModifiedContracts=Last %s modified contracts
+LastModifiedContracts=Siste %s endrede kontrakter
 AllContracts=Alle kontrakter
 ContractCard=Kontraktskort
 ContractStatus=Kontraktstatus
@@ -19,7 +19,7 @@ ServiceStatusLateShort=Utløpt
 ServiceStatusClosed=Lukket
 ServicesLegend=Tjeneste legend
 Contracts=Kontrakter
-ContractsAndLine=Contracts and line of contracts
+ContractsAndLine=Kontrakter og kontraktlinjer
 Contract=Kontrakt
 NoContracts=Ingen kontrakter
 MenuServices=Tjenester
@@ -28,7 +28,7 @@ MenuRunningServices=Løpende tjenester
 MenuExpiredServices=Utløpte tjenester
 MenuClosedServices=Lukkede tjenester
 NewContract=Ny kontrakt
-AddContract=Create contract
+AddContract=Opprett kontrakt
 SearchAContract=Finn kontrakt
 DeleteAContract=Slett kontrakt
 CloseAContract=Lukk kontrakt
@@ -54,7 +54,7 @@ ListOfRunningContractsLines=Oversikt over løpende kontraktslinjer
 ListOfRunningServices=Overikt over løpende tjenster
 NotActivatedServices=Ikke aktiverte tjenester (blant godkjente kontrakter)
 BoardNotActivatedServices=Tjenester til aktivering blant godkjente kontrakter
-LastContracts=Last %s contracts
+LastContracts=Siste %s kontrakter
 LastActivatedServices=Siste %s aktiverte tjenester
 LastModifiedServices=Siste %s endrede tjenester
 EditServiceLine=Rediger tjenestelinje
@@ -92,7 +92,7 @@ ListOfServicesToExpire=Liste over utløpende tjenester
 NoteListOfYourExpiredServices=Denne listen inneholder kun tjenester av kontrakter for tredjeparter du er koblet til som salgsrepresentant.
 StandardContractsTemplate=Standard kontraktskjema
 ContactNameAndSignature=For %s, navn og signatur:
-OnlyLinesWithTypeServiceAreUsed=Only lines with type "Service" will be cloned.
+OnlyLinesWithTypeServiceAreUsed=Kun linjer med type "Service" vi bli klonet.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten

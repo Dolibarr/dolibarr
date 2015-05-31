@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Fügen Sie diese Seite zu Ihren Lesezeichen hinzu
+AddThisPageToBookmarks=Anfügen dieser Seite zu den Lesezeichen
 Bookmark=Lesezeichen
 Bookmarks=Lesezeichen
 NewBookmark=Neues Lesezeichen
@@ -9,11 +9,11 @@ ReplaceWindow=Aktuelles Fenster ersetzen
 BookmarkTargetNewWindowShort=Neues Fenster
 BookmarkTargetReplaceWindowShort=Aktuelles Fenster
 BookmarkTitle=Titel des Lesezeichens
-UrlOrLink=URL
+UrlOrLink=Link
 BehaviourOnClick=Verhalten bei Klick auf den Link
-CreateBookmark=Erstelle Lesezeichen
-SetHereATitleForLink=Geben Sie hier einen Linktitel ein
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie eine externe http-URL oder eine URL relativ zum Systempfad
+CreateBookmark=Lesezeichen erstellen
+SetHereATitleForLink=Erfasse hier einen Titel für das Lesezeichen
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie eine absolute externe URL oder eine relative Dolibarr URL
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bitte wählen Sie, ob sich ein geklickter Link in einem neuen oder demselben Fenster öffnet
-BookmarksManagement=Lesezeichen verwalten
+BookmarksManagement=Verwalten von Lesezeichen
 ListOfBookmarks=Liste der Lesezeichen

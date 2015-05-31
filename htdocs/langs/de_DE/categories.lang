@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
-Rubrique=Kategorie
-Rubriques=Kategorien
-categories=Kategorien
+Rubrique=Schlagwort/Kategorie
+Rubriques=Schlagwörter/Kategorien
+categories=Schlagwörter/Kategorien
 TheCategorie=Die Kategorie
 NoCategoryYet=Keine Kategorie von dieser Art erstellt
 In=In
@@ -51,7 +51,7 @@ MemberIsInCategories=Dieses Mitglied ist folgenden Kategorien zugewiesen
 ContactIsInCategories=Dieser Kontakt ist folgenden Kategorien zugewiesen
 ProductHasNoCategory=Dieses Produkt/Service ist keiner Kategorie zugewiesen.
 SupplierHasNoCategory=Dieser Lieferant ist keiner Kategorie zugewiesen.
-CompanyHasNoCategory= Dieses Unternehmen ist keiner Kategorie zugewiesen.
+CompanyHasNoCategory= Dieser Partner ist keiner Kategorie zugewiesen.
 MemberHasNoCategory= Dieses Mitglied ist keiner Kategorie zugewiesen.
 ContactHasNoCategory= Dieser Kontakt ist keiner Kategorie zugewiesen.
 ClassifyInCategory=Folgender Kategorie zuweisen

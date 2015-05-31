@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - errors
 
 # No errors
-NoErrorCommitIsDone=Nessun errore, assegnamo
+NoErrorCommitIsDone=Nessun errore, committiamo
 # Errors
 Error=Errore
 Errors=Errori
@@ -25,7 +25,7 @@ ErrorFromToAccountsMustDiffers=I conti bancari di origine e destinazione devono 
 ErrorBadThirdPartyName=Valore non valido per il nome del soggetto terzo
 ErrorProdIdIsMandatory=%s obbligatorio
 ErrorBadCustomerCodeSyntax=Sintassi del codice cliente errata
-ErrorBadBarCodeSyntax=Bad syntax for bar code. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
+ErrorBadBarCodeSyntax=Sintassi del codice a barre errata. Potresti aver impostato un barcode errato o definito una maschera di barcode per la numerazione che non corrisponde al valore letto.
 ErrorCustomerCodeRequired=Il codice cliente è obbligatorio
 ErrorBarCodeRequired=Barcode richiesto
 ErrorCustomerCodeAlreadyUsed=Codice cliente già utilizzato
@@ -79,7 +79,7 @@ ErrorModuleRequireJavascript=Per questa funzionalità Javascript deve essere att
 ErrorPasswordsMustMatch=Le due password digitate devono essere identiche
 ErrorContactEMail=Si è verificato un errore tecnico. Si prega di contattare l'amministratore all'indirizzo <b>%s</b> <b>%s</b> indicando il codice di errore nel messaggio, o, meglio ancora, allegando uno screenshot della schermata attuale.
 ErrorWrongValueForField=Valore errato nel campo numero <b>%s</b> (il valore <b>'%s'</b>non corrisponde alla regex <b>%s</b>)
-ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b> = <b>%s</b>)
+ErrorFieldValueNotIn=Valore errato per il campo numerico <b>%s</b> (valore '<b>%s'</b>' non è un valore consentito nel campo <b>%s</b> della tabella<b>%s =%s)</b>
 ErrorFieldRefNotIn=Valore errato nel campo numero <b>%s</b> (il valore <b>%s</b>non è un riferimento <b>%s</b> esistente)
 ErrorsOnXLines=Errori in <b>%s</b> righe del sorgente
 ErrorFileIsInfectedWithAVirus=Il programma antivirus non è stato in grado di convalidare il file (il file potrebbe essere infetto)
@@ -91,8 +91,8 @@ ErrorModuleSetupNotComplete=L'installazione del modulo pare incompleta. Vai su <
 ErrorBadMask=Errore sulla maschera
 ErrorBadMaskFailedToLocatePosOfSequence=Errore, maschera senza numero di sequenza
 ErrorBadMaskBadRazMonth=Errore, valore di reset non valido
-ErrorMaxNumberReachForThisMask=Max number reach for this mask
-ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
+ErrorMaxNumberReachForThisMask=Numero massimo raggiunto per questa maschera
+ErrorCounterMustHaveMoreThan3Digits=Il contatore deve avere più di 3 cifre
 ErrorSelectAtLeastOne=Errore. Selezionare almeno una voce.
 ErrorProductWithRefNotExist=Il prodotto con riferimento %s non esiste
 ErrorDeleteNotPossibleLineIsConsolidated=Impossibile cancellare il record perché è collegato ad una transazione bancaria conciliata
@@ -140,26 +140,26 @@ ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Errore, questo membro non è s
 ErrorThereIsSomeDeliveries=Errore, ci sono alcune consegne collegate a questa spedizione. Cancellazione rifiutata.
 ErrorCantDeletePaymentReconciliated=Impossibile cancellare un pagamento che ha generato una transazione bancaria che è stata conciliata
 ErrorCantDeletePaymentSharedWithPayedInvoice=Impossibile cancellare un pagamento condiviso con almeno una fattura con lo stato Pagato
-ErrorPriceExpression1=Cannot assign to constant '%s'
-ErrorPriceExpression2=Cannot redefine built-in function '%s'
-ErrorPriceExpression3=Undefined variable '%s' in function definition
-ErrorPriceExpression4=Illegal character '%s'
-ErrorPriceExpression5=Unexpected '%s'
-ErrorPriceExpression6=Wrong number of arguments (%s given, %s expected)
-ErrorPriceExpression8=Unexpected operator '%s'
-ErrorPriceExpression9=An unexpected error occured
-ErrorPriceExpression10=Iperator '%s' lacks operand
-ErrorPriceExpression11=Expecting '%s'
-ErrorPriceExpression14=Division by zero
-ErrorPriceExpression17=Undefined variable '%s'
-ErrorPriceExpression19=Expression not found
-ErrorPriceExpression20=Empty expression
-ErrorPriceExpression21=Empty result '%s'
-ErrorPriceExpression22=Negative result '%s'
-ErrorPriceExpressionInternal=Internal error '%s'
-ErrorPriceExpressionUnknown=Unknown error '%s'
-ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
-ErrorTryToMakeMoveOnProductRequiringBatchData=Error, trying to make a stock movement without lot/serial information, on a product requiring lot/serial information
+ErrorPriceExpression1=Impossibile assegnare la costante '%s'
+ErrorPriceExpression2=Impossibile ridefinire la funzione integrata '%s'
+ErrorPriceExpression3=Variabile non definita '%s' nella definizione della funzione
+ErrorPriceExpression4=Carattere '%s' non valido 
+ErrorPriceExpression5=Valore imprevisto '%s'
+ErrorPriceExpression6=Numero errato di argomenti (inserito %s ,atteso %s)
+ErrorPriceExpression8=Operatore imprevisto '%s'
+ErrorPriceExpression9=Si è verificato un errore imprevisto
+ErrorPriceExpression10=Operatore '%s' senza operando
+ErrorPriceExpression11=Atteso '%s'
+ErrorPriceExpression14=Divisione per zero
+ErrorPriceExpression17=Variabile non definita '%s'
+ErrorPriceExpression19=Espressione non trovata
+ErrorPriceExpression20=Espressione vuota
+ErrorPriceExpression21=Risultato vuoto '%s'
+ErrorPriceExpression22=Risultato negativo '%s'
+ErrorPriceExpressionInternal=Errore interno '%s'
+ErrorPriceExpressionUnknown=Errore sconosciuto '%s'
+ErrorSrcAndTargetWarehouseMustDiffers=I magazzini di origine e di destinazione devono essere diversi
+ErrorTryToMakeMoveOnProductRequiringBatchData=Errore durante il movimento dello stock senza molte/una serie di informazioni, su un prodotto che richiede molte/una serie di informazioni
 ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=All recorded receptions must first be verified (approved or denied) before being allowed to do this action
 ErrorCantSetReceptionToTotalDoneWithReceptionDenied=All recorded receptions must first be verified (approved) before being allowed to do this action
 ErrorGlobalVariableUpdater0=HTTP request failed with error '%s'
@@ -168,8 +168,8 @@ ErrorGlobalVariableUpdater2=Parametro mancante: '%s'
 ErrorGlobalVariableUpdater3=The requested data was not found in result
 ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
-ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
-ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
+ErrorFieldMustBeANumeric=Il campo <b>%s</b> deve essere un valore numerico
+ErrorFieldMustBeAnInteger=Il campo <b>%s</b> deve essere un numero intero
 
 # Warnings
 WarningMandatorySetupNotComplete=I parametri di configurazione obbligatori non sono ancora stati definiti

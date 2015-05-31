@@ -1,7 +1,0 @@
-# Dolibarr language file - Source file is en_US - companies
-State=Estado
-Town=Municipio
-VATIntra=RFC
-VATIntraShort=RFC
-VATIntraVeryShort=RFC
-CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> notas de crédito/anticipos disponibles
