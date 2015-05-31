@@ -10,14 +10,31 @@ make a Dolibarr upgrade.
 
 
 ***** ChangeLog for 3.7.1 compared to 3.7.* *****
-- Fix: Bug in the new photo system
-- Fix: Error management
-- Fix: [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
-- Fix: [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
+FIX Bug in the new photo system
+FIX Error management
+FIX [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
+FIX [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
+FIX #2901
+FIX when we create an agenda event with "Not applicable" status, it is automatically saved with "To do" status
+FIX check the user status during authentication
+FIX top links menu have target attribute with wrong value
+FIX extrafields required on thirdparty
+FIX create contact with extrafield is null when it is require
+FIX width multiselect
+FIX "script" tag with wrong syntax
+Fix bug debian 786479
+FIX update usergroup name
+Fix facturestats was not filtering on invoice type
+FIX #2856 : Wrong table design
+FIX button create payment hide if tax amount is less than 1
+FIX event for restricted user was restricted if company null
+FIX send mail, copy sendto don't read the list of contact
+FIX Properly escape untrusted data to prevent HTML injection.
+FIX send mail, copy sendto don't read the list of contact
 
-- Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose 
-  your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
-  restore old path.
+Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose 
+your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
+restore old path.
 
 WARNING: 
 
