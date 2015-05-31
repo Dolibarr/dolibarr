@@ -1,6 +1,5 @@
 <?php
-/* Module to manage resources into Dolibarr ERP/CRM
- * Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Module to manage resources into Dolibarr ERP/CRM
  */
 
 /**
@@ -151,8 +152,7 @@ class modResource extends DolibarrModules
 		// (reresource 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 
 		$this->tabs = array(
-			'action:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=action&element_id=__ID__',
-			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
+//			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
 		);
 
 		// Boxes

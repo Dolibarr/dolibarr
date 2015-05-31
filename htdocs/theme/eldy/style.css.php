@@ -448,7 +448,17 @@ textarea.centpercent {
 #formuserfile_link {
 	margin-left: 1px;
 }
-
+/* Style to move picto into left of button */
+/*
+.buttonactionview {
+	padding-left: 15px;
+}
+.pictoactionview {
+	padding-left: 10px;
+	margin-right: -24px;
+	z-index: 999999;
+}
+*/
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
