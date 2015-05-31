@@ -3256,6 +3256,10 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.selectoptiondisabledwhite {
+	background: #FFFFFF !important;
+}
+
 .select2-choice,
 .select2-drop.select2-drop-above.select2-drop-active,
 .select2-container-active .select2-choice,
@@ -3281,6 +3285,8 @@ a span.select2-chosen
 }
 .select2-container .select2-choice {
 	background-image: none;
+	height: 24px;
+	line-height: 24px;
 }
 .select2-choices .select2-search-choice {
   border: 1px solid #aaa !important;
@@ -3298,6 +3304,7 @@ a span.select2-chosen
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 2px;
 }
+
 
 /* ============================================================================== */
 /*  JMobile                                                                       */
