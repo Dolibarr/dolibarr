@@ -202,8 +202,8 @@ Dolibarr better:
 - Table llx_c_pays were renamed into llx_c_country.  
 - Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
-- A lot of pages called fiche.php were renamed into card.php
-- A lot of pages called liste.php were renamed into list.php
+- A lot of pages named fiche.php were renamed into card.php
+- A lot of pages named liste.php were renamed into list.php
 - If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
