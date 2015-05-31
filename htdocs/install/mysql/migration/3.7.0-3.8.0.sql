@@ -170,7 +170,9 @@ create table llx_bank_account_extrafields
 
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN label varchar(255);
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN price double(24,8) DEFAULT 0;
 ALTER TABLE llx_stock_mouvement ADD COLUMN inventorycode varchar(128);
+
 
 ALTER TABLE llx_product_association ADD COLUMN incdec integer DEFAULT 1;
 
