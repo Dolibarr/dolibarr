@@ -20,8 +20,8 @@
 /**
  *      \file       scripts/product/migrate_picture_path.php
  *		\ingroup    scripts
- *      \brief      migrate pictures from old system to 3.7 and more system
- *					
+ *      \brief      Migrate pictures from old system prior to 3.7 to new path for 3.7+
+ *
  */
 
 $sapi_type = php_sapi_name();
@@ -34,12 +34,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-// Global variables
-$version='1.0';
-$error=0;
-
-
-// -------------------- START OF YOUR CODE HERE --------------------
 @set_time_limit(0);							// No timeout for this script
 define('EVEN_IF_ONLY_LOGIN_ALLOWED',1);		// Set this define to 0 if you want to lock your script when dolibarr setup is "locked to admin user only".
 
@@ -54,24 +48,72 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 $langs->load("main");				// To load language file for default language
 
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+$forcecommit=0;
+
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
+
+if (! isset($argv[1]) || $argv[1] != 'product') {
+    print "Usage:  $script_file product\n";
+	exit(-1);
+}
 
 print '--- start'."\n";
 
+// Case to migrate products path
+if ($argv[1] == 'product')
+{
+	$product = new Product($db);
+
+	$sql = "SELECT rowid as pid from ".MAIN_DB_PREFIX."product";	// Get list of all products
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		while ($obj = $db->fetch_object($resql))
+		{
+			$product->fetch($obj->pid);
+			print " migrating product id=".$product->id." ref=".$product->ref."\n";
+			migrate_product_photospath($product);
+		}
+	}
+	else
+	{
+		print "\n sql error ".$sql;
+		exit;
+	}
+}
+
+
+$db->close();	// Close $db database opened handler
+
+exit($error);
+
+
+
+/**
+ * Migrate file from old path to new one for product $product
+ *
+ * @param 	Product	$product 	Object product
+ * @return	void
+ */
 function migrate_product_photospath($product)
 {
 	global $conf;
-	
+
 	$dir = $conf->product->multidir_output[$product->entity];
 	$origin = $dir .'/'. get_exdir($product->id,2) . $product->id ."/photos";
 	$destin = $dir.'/'.dol_sanitizeFileName($product->ref);
-	
+
 	$error = 0;
-	
+
 	$origin_osencoded=dol_osencode($origin);
 	$destin_osencoded=dol_osencode($destin);
 	dol_mkdir($destin);
-	
+
 	if (dol_is_dir($origin))
 	{
 		$handle=opendir($origin_osencoded);
@@ -84,53 +126,23 @@ function migrate_product_photospath($product)
     				$thumbs = opendir($origin_osencoded.'/'.$file);
     				if (is_resource($thumbs))
         			{
-	     				dol_mkdir($destin.'/'.$file); 
+	     				dol_mkdir($destin.'/'.$file);
 	     				while (($thumb = readdir($thumbs)) != false)
 		    			{
-		    				dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);	
+		    				dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
 		    			}
-//		    			dol_delete_dir($origin.'/'.$file); 
-        			}	
+//		    			dol_delete_dir($origin.'/'.$file);
+        			}
     			}
-    			else 
+    			else
     			{
-    				if (dol_is_file($origin.'/'.$file) ) 
+    				if (dol_is_file($origin.'/'.$file) )
     				{
     					dol_move($origin.'/'.$file, $destin.'/'.$file);
     				}
-    				
-    			}	
+
+    			}
     		}
         }
 	}
 }
-
-$product = new Product($db);
-
-$sql = "SELECT rowid as pid from ".MAIN_DB_PREFIX."product ";
-
-$resql = $db->query($sql);
-
-if (!resql )
-{
-	print "\n sql error ".$sql;
-	exit;
-}	
-
-while ($obj = $db->fetch_object($resql))
-{
-	print "\n migrating ".$product->ref;
-	$product->fetch($obj->pid);
-	migrate_product_photospath($product);	
-}		
-
-
-
-
-
-// -------------------- END OF YOUR CODE --------------------
-
-
-$db->close();	// Close $db database opened handler
-
-exit($error);
