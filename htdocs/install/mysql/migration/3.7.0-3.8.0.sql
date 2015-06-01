@@ -29,7 +29,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
 
+ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) after default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) default 'FRST' after rum;
 
+  
 -- Loan
 create table llx_loan
 (
