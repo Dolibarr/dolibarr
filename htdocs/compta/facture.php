@@ -1759,10 +1759,8 @@ if (empty($reshook))
 			$upload_dir = $conf->facture->dir_output;
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret)
-				setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-			else
-				setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+			if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+			else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 			$action = '';
 		}
 	}
@@ -2479,7 +2477,7 @@ if ($action == 'create')
 	// Button "Create Draft"
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
-	print '&nbsp; &nbsp; &nbsp;';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
@@ -3754,7 +3752,7 @@ if ($action == 'create')
 	}
 	print '<br>';
 
-	//Select mail models is same action as presend
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
@@ -3834,7 +3832,7 @@ if ($action == 'create')
 					$i ++;
 				}
 				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 				print '</form>';
 				$db->free($resqlorderlist);
 			} else {
@@ -3887,7 +3885,7 @@ if ($action == 'create')
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/'));
-		$file = $fileparams ['fullname'];
+		$file = $fileparams['fullname'];
 
 		// Define output language
 		$outputlangs = $langs;
@@ -3912,13 +3910,15 @@ if ($action == 'create')
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/'));
-			$file = $fileparams ['fullname'];
+			$file = $fileparams['fullname'];
 		}
 
 		print '<br>';
 		print_titre($langs->trans($titreform));
 
 		// Cree l'objet formulaire mail
+		dol_fiche_head();
+
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
@@ -3990,7 +3990,7 @@ if ($action == 'create')
 
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 }
 

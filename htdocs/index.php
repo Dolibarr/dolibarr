@@ -270,14 +270,14 @@ if (empty($user->societe_id))
 	            $var=!$var;
 	            if ($langfile[$key]) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            print '<div class="boxstats">';
 	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
+	            print '<div class="boxstats">';
 	            print img_object("",$icons[$key]).' '.$text.'<br>';
-	            print '</a>';
-	            print '<a href="'.$links[$key].'">';
+	            //print '</a>';
+	            //print '<a href="'.$links[$key].'">';
 	            print $board->nb[$val];
-	            print '</a>';
 	            print '</div>';
+	            print '</a>';
 	        }
 	    }
     }

@@ -184,10 +184,12 @@ if ($action == 'add' && $canadduser)
         }
     }
 
-    if (!$error) {
+    if (!$error)
+    {
         $object->lastname		= GETPOST("lastname",'alpha');
         $object->firstname	    = GETPOST("firstname",'alpha');
         $object->login		    = GETPOST("login",'alpha');
+        $object->gender		    = GETPOST("gender",'alpha');
         $object->admin		    = GETPOST("admin",'alpha');
         $object->office_phone	= GETPOST("office_phone",'alpha');
         $object->office_fax	    = GETPOST("office_fax",'alpha');
@@ -339,6 +341,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->lastname	= GETPOST("lastname",'alpha');
             $object->firstname	= GETPOST("firstname",'alpha');
             $object->login		= GETPOST("login",'alpha');
+            $object->gender		= GETPOST("gender",'alpha');
             $object->pass		= GETPOST("password");
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone",'alpha');
@@ -469,6 +472,12 @@ if ($action == 'update' && ! $_POST["cancel"])
                             // Used on menu or for setup page for example
                             $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
                         }
+                    }
+                    else
+                    {
+                    	$error++;
+                    	$langs->load("errors");
+                    	setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
                     }
                 }
             }
@@ -756,6 +765,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="30" type="text" name="job" value="'.GETPOST('job').'">';
     print '</td></tr>';
 
+    // Gender
+    print '<tr><td>'.$langs->trans("Gender").'</td>';
+    print '<td>';
+    $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+    print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
+    print '</td></tr>';
+
     // Login
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
     print '<td>';
@@ -852,7 +868,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Type
     print '<tr><td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+    print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
     print '</td></tr>';
 
     // Tel
@@ -1030,7 +1046,11 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
  	dol_fiche_end();
 
-    print '<div align="center"><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></div>';
+    print '<div align="center">';
+    print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
+    //print '&nbsp; &nbsp; &nbsp;';
+    //print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+    print '</div>';
 
     print "</form>";
 }
@@ -1183,6 +1203,12 @@ else
             print '<td colspan="2">'.$object->job.'</td>';
             print '</tr>'."\n";
 
+            // Gender
+		    print '<tr><td>'.$langs->trans("Gender").'</td>';
+		    print '<td>';
+		    if ($object->gender) print $langs->trans("Gender".$object->gender);
+		    print '</td></tr>';
+
             // Login
             print '<tr><td>'.$langs->trans("Login").'</td>';
             if (! empty($object->ldap_sid) && $object->statut==0)
@@ -1249,7 +1275,7 @@ else
             print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
             $type=$langs->trans("Internal");
             if ($object->societe_id) $type=$langs->trans("External");
-            print $form->textwithpicto($type,$langs->trans("InternalExternalDesc"));
+            print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
             if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
 
@@ -1351,7 +1377,7 @@ else
             {
 				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 				print '<td colspan="2">';
-				if ($object->color) print '<input type="text" disabled style="padding: 0; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
+				if ($object->color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$object->color.'" value="'.$object->color.'">';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -1681,7 +1707,7 @@ else
 
             dol_fiche_head($head, 'user', $title, 0, 'user');
 
-        	$rowspan=16;
+        	$rowspan=17;
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
@@ -1711,18 +1737,10 @@ else
                 print $object->lastname;
             }
             print '</td>';
+
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print $form->showphoto('userphoto',$object);
-            if ($caneditfield)
-            {
-                if ($object->photo) print "<br>\n";
-                print '<table class="nobordernopadding hideonsmartphone">';
-                if ($object->photo) print '<tr><td align="center"><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
-                print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-                print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
-                print '</table>';
-            }
+            print $form->showphoto('userphoto',$object,100,0,$caneditfield);
             print '</td>';
 
             print '</tr>';
@@ -1754,6 +1772,13 @@ else
           		print $object->job;
             }
             print '</td></tr>';
+
+		    // Gender
+    		print '<tr><td>'.$langs->trans("Gender").'</td>';
+    		print '<td>';
+    		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+    		print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+    		print '</td></tr>';
 
             // Login
             print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';

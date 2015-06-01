@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -281,6 +281,7 @@ input.liste_titre {
 input.removedfile {
 	padding: 0px !important;
 	border: 0px !important;
+	vertical-align: text-bottom;
 }
 textarea:disabled {
 	background:#ddd;
@@ -448,6 +449,17 @@ textarea.centpercent {
 	margin-left: 1px;
 }
 
+/* Style to move picto into left of button */
+/*
+.buttonactionview {
+	padding-left: 15px;
+}
+.pictoactionview {
+	padding-left: 10px;
+	margin-right: -24px;
+	z-index: 999999;
+}
+*/
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -543,8 +555,8 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
-display : table;
-margin : 0px auto;
+	display : table;
+	margin : 0px auto;
 }
 
 #pictotitle {
@@ -554,6 +566,15 @@ margin : 0px auto;
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
+}
+.pictowarning {
+    padding-left: 3px;
+}
+.colorthumb {
+	padding-left: 1px !important;
+	padding-right: 1px;
+	padding-top: 1px;
+	padding-bottom: 1px;
 }
 
 
@@ -974,7 +995,9 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-
+img.loginphoto {
+	border-radius: 2px;
+}
 .span-icon-user {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png',1); ?>) no-repeat scroll 7px 7px;
 }
@@ -1787,7 +1810,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
-	border: 1px solid #D0D0D0;
+	border: 1px solid #E0E0E0;
 	border-collapse: collapse;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -1796,19 +1819,20 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 	height: 20px;
 }
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 24px;
+	height: 20px;
 }
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
 div.tabBar .tdtop {
     vertical-align: top;
-	padding-top: 6px;
+	padding-top: 5px;
+	padding-bottom: 0px;
 }
 
 table.border td, div.border div div.tagtd {
 	padding: 2px 2px 2px 2px;
-	border: 1px solid #D0D0D0;
+	border: 1px solid #E0E0E0;
 	border-collapse: collapse;
 }
 
@@ -2077,10 +2101,10 @@ div.pagination li.paginationafterarrows {
 	color: #202020;
 	min-height: 18px; /* seems to not be used */
 
-	background: #ffffff;
+	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 #GanttChartDIV {
-	background: #ffffff;
+	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
 .even, .pair, .nohover .even:hover, .nohover .pair:hover, tr.even td.nohover, tr.pair td.nohover {
@@ -2088,16 +2112,16 @@ div.pagination li.paginationafterarrows {
 	margin-bottom: 1px;
 	color: #202020;
 
-	background-color: #f9f9f9;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 table.dataTable tr.odd {
-	background-color: #f9f9f9 !important;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
 
 /* For no hover style */
 table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td {
-	background-color: #ffffff !important;
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
 
 table.dataTable td {
@@ -2244,6 +2268,9 @@ div.tabBar .noborder {
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 4px;
+}
+.boxstats:hover {
+	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 }
 
 .boxtable {
@@ -2410,12 +2437,18 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-bottom: 2px;
 	margin-top: 2px;
 }
-.photointooltip {
-	-webkit-box-shadow: -1px -1px 5px #777;
-	-moz-box-shadow: -1px -1px 5px #777;
-	box-shadow: -1px -1px 5px #777;
+.photowithmargin {
+	-webkit-box-shadow: 0px 0px 3px #777;
+	-moz-box-shadow: 0px 0px 3px #777;
+	box-shadow: 0px 0px 3px #777;
+}
+.photointoolitp {
 	margin-top: 6px;
 	float: left;
+	/*text-align: center; */
+}
+.photodelete {
+	margin-top: 6px !important;
 }
 
 .logo_setup
@@ -3218,9 +3251,22 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 	background-image: none;
 }
 
+div.dataTables_length {
+	float: right !important;
+	padding-left: 8px;
+}
+div.dataTables_length select {
+	background: #fff;
+}
+
+
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+.selectoptiondisabledwhite {
+	background: #FFFFFF !important;
+}
 
 .select2-choice,
 .select2-drop.select2-drop-above.select2-drop-active,
@@ -3247,6 +3293,8 @@ a span.select2-chosen
 }
 .select2-container .select2-choice {
 	background-image: none;
+	height: 24px;
+	line-height: 24px;
 }
 .select2-choices .select2-search-choice {
   border: 1px solid #aaa !important;
@@ -3264,6 +3312,7 @@ a span.select2-chosen
 .select2-container-multi .select2-choices .select2-search-choice {
   margin-bottom: 2px;
 }
+
 
 /* ============================================================================== */
 /*  JMobile                                                                       */

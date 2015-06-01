@@ -155,8 +155,8 @@ MigrationFinished=Migrace dokončena
 LastStepDesc=<strong>Poslední krok:</strong> Definujte zde přihlašovací jméno a heslo které budete používat pro připojení k softwaru. Toto heslo neztraťte - jedná se o jediný administrátorský účet.
 ActivateModule=Aktivace modulu %s
 ShowEditTechnicalParameters=Klikněte zde pro zobrazení / editaci pokročilých parametrů (pro experty)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=Výstraha:\n\nSpustili jste napřed zálohování databáze?\n\nToto je důrazně doporučováno: Například, kvůli některým chybám v  databázových systémech (například mysql verze 5.5.40), může dojít ke ztrátě některých dat nebo tabulek v průběhu tohoto procesu, takže je důrazně doporučováno mít kompletní výpis a kompletní zálohu databáze před zahájením migrace.\n\n\nPokud jste tomu dobře porozuměli, klepnutím na tlačítko OK spusťte proces migrace...
+ErrorDatabaseVersionForbiddenForMigration=Vaše verze databáze  je %s. Ta bohužel obsahuje kritickou chybu mající zásadní vliv na ztrátu dat, pokud provedete změnu struktury ve vaší databázi, stejně jako je to vyžadováno v procesu migrace. Z tohoto důvodu nebude migrace povolena, dokud neprovedete upgrade databáze na vyšší fixní verzi (seznam známých chybných verzí: %s)
 
 #########
 # upgrade
@@ -208,7 +208,7 @@ MigrationProjectTaskTime=Čas aktualizace v sekundách
 MigrationActioncommElement=Aktualizovat údaje na činnostech
 MigrationPaymentMode=Migrace dat platebního režimu
 MigrationCategorieAssociation=Migrace kategorií
-MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEvents=Migrace událostí přidá vlastníka události do přiřazené tabulky
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Ukázat nedostupné možnosti
+HideNotAvailableOptions=Skrýt nedostupné možnosti

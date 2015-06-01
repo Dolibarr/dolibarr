@@ -415,7 +415,7 @@ class Form
         if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
-                $s .= ' valign="top" width="14"';
+                $s .= ' valign="middle" width="14"';
             }
             $s.= '>'.$img.'</'.$tag.'>';
         }
@@ -503,7 +503,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry" name="'.$htmlname.'" '.$htmloption.'>';
+            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry minwidth300" name="'.$htmlname.'" '.$htmloption.'>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -531,7 +531,7 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option value="" disabled>----------------------</option>';
+						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
 					}
                     if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
@@ -553,6 +553,10 @@ class Form
 		{
             dol_print_error($this->db);
         }
+
+        // Make select dynamic
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        $out .= ajax_combobox('select'.$htmlname);
 
         return $out;
     }
@@ -1451,7 +1455,7 @@ class Form
 			$out.='<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
 			$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
 			$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out.='<input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out.=' <input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		}
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
@@ -2825,7 +2829,7 @@ class Form
     /**
      *      Creates HTML units selector (code => label)
      *
-     *      @param	string	$selected       Preselected code ('km', 'm', 'l', 'p', ...)
+     *      @param	string	$selected       Preselected Unit ID
      *      @param  string	$htmlname       Select name
      *      @param	int		$showempty		Add a nempty line
      * 		@return	string                  HTML select
@@ -2846,13 +2850,13 @@ class Form
 
             while($res = $this->db->fetch_object($resql))
             {
-                if ($selected == $res[0])
+                if ($selected == $res->rowid)
                 {
-                    $return.='<option value="'.$res->code.'" selected>'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'" selected>'.$langs->trans($res->label).'</option>';
                 }
                 else
                 {
-                    $return.='<option value="'.$res->code.'">'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'">'.$langs->trans($res->label).'</option>';
                 }
             }
             $return.='</select>';
@@ -4343,8 +4347,8 @@ class Form
         				$(document).ready(function () {
         					$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         				    dir: \'ltr\',
-        					width: \'off\',
-        					minimumInputLength: 0
+        					width: \'resolve\',		/* off or resolve */
+        					minimumInputLength: '.$minLengthToAutocomplete.'
         				});
         			});
         		   </script>';
@@ -4701,15 +4705,15 @@ class Form
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
      *    @param	object	$object			Object to show
-     *    @param   string	$paramid   		Name of parameter to use to name the id into the URL link
-     *    @param   string	$morehtml  		More html content to output just before the nav bar
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+     *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param   string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
-     *    @param   string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-     *    @param   string	$morehtmlref  	Code html supplementaire a afficher apres ref
-     *    @param   string	$moreparam  	More param to add in nav link url.
+     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
+     *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
+     *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     * 	  @return  string    				Portion HTML avec ref + boutons nav
+     * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
     {
@@ -4788,11 +4792,14 @@ class Form
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
      *     	@param  object		$object			Object containing data to retrieve file name
      * 		@param	int			$width			Width of photo
+     * 		@param	int			$height			Height of photo (auto if 0)
+     * 		@param	int			$caneditfield	Add edit fields
+     * 		@param	string		$photologo		CSS name to use on img for photo
      * 	  	@return string    					HTML code to output photo
      */
-    static function showphoto($modulepart,$object,$width=100)
+    static function showphoto($modulepart,$object,$width=100,$height=0,$caneditfield=0,$cssclass='photowithmargin')
     {
-        global $conf;
+        global $conf,$langs;
 
         $entity = (! empty($object->entity) ? $object->entity : $conf->entity);
         $id = (! empty($object->id) ? $object->id : $object->rowid);
@@ -4819,7 +4826,7 @@ class Form
             if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        }else {
+        } else {
         	$dir=$conf->$modulepart->dir_output;
         	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
@@ -4833,28 +4840,47 @@ class Form
             {
                 // TODO Link to large image
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
                 $ret.='</a>';
             }
             else
-            {
-                if (! empty($conf->gravatar->enabled) && $email)
+			{
+				$nophoto='/theme/common/nophoto.jpg';
+				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
+				{
+					$nophoto='/theme/common/user_anonymous.png';
+					if ($object->gender == 'man') $nophoto='/theme/common/user_man.png';
+					if ($object->gender == 'woman') $nophoto='/theme/common/user_woman.png';
+				}
+
+				if (! empty($conf->gravatar->enabled) && $email)
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.'" alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
                 }
                 else
-                {
-                    $ret.='<img alt="No photo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+				{
+                    $ret.='<img class="photo'.$modulepart.'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
                 }
             }
+
+            if ($caneditfield)
+            {
+                if ($object->photo) $ret.="<br>\n";
+                $ret.='<table class="nobordernopadding hideonsmartphone">';
+                if ($object->photo) $ret.='<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                $ret.='<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+                $ret.='<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+                $ret.='</table>';
+            }
+
         }
         else dol_print_error('','Call of showphoto with wrong parameters');
 

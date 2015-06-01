@@ -1,160 +1,160 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
-Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+Accounting=Účetnictví
+Globalparameters=Globální parametry
+Chartofaccounts=Graf účtů
+Fiscalyear=Fiskální roky
+Menuaccount=Účetní závěrka
+Menuthirdpartyaccount=Účty třetích stran
+MenuTools=Nástroje
 
-ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
-JournalFinancial=Financial journals
-Exports=Exports
+ConfigAccountingExpert=Konfigurace modulu účetního experta
+Journaux=Deníky
+JournalFinancial=Finanční deníky
+Exports=Exporty
 Export=Export
-Modelcsv=Model of export
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
-BackToChartofaccounts=Return chart of accounts
-Back=Return
+Modelcsv=Model exportu
+OptionsDeactivatedForThisExportModel=Možnosti pro tento exportní model jsou deaktivovány
+Selectmodelcsv=Vyberte způsob exportu
+Modelcsv_normal=Klasický export
+Modelcsv_CEGID=Export směrem CEGID Expert
+BackToChartofaccounts=Návrat účtové osnovy
+Back=Návrat
 
-Definechartofaccounts=Define a chart of accounts
-Selectchartofaccounts=Select a chart of accounts
-Validate=Validate
-Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
-Ventilation=Breakdown
-ToDispatch=To dispatch
-Dispatched=Dispatched
+Definechartofaccounts=Definovat účtové osnovy
+Selectchartofaccounts=Vyberte účtové osnovy
+Validate=Potvrdit
+Addanaccount=Přidat účetní účet
+AccountAccounting=Účetní účet
+Ventilation=Přerušení
+ToDispatch=Nahlásit
+Dispatched=Odesláno
 
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
-TradeMargin=Trade margin
-Reports=Reports
-ByCustomerInvoice=By invoices customers
-ByMonth=By Month
-NewAccount=New accounting account
-Update=Update
-List=List
-Create=Create
-UpdateAccount=Modification of an accounting account
-UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
-Bookkeeping=General ledger
-AccountBalanceByMonth=Account balance by month
+CustomersVentilation=Členění zákazníků
+SuppliersVentilation=Členění dodvatelů
+TradeMargin=Obchodní marže
+Reports=Zprávy
+ByCustomerInvoice=Fakturováno zákazníky
+ByMonth=Měsíčně
+NewAccount=Nový účetní účet
+Update=Aktualizovat
+List=Seznam
+Create=Vytvořit
+UpdateAccount=Změna účetního účtu
+UpdateMvts=Změna pohybu
+WriteBookKeeping=Účetní záznamy v hlavní účetní knize
+Bookkeeping=Hlavní účetní kniha
+AccountBalanceByMonth=Zůstatek na účtu podle měsíce
 
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
-Line=Line
+AccountingVentilation=Členění účetnictví
+AccountingVentilationSupplier=Členění účetnictví dodavatel
+AccountingVentilationCustomer=Členění účetnictví zákazník
+Line=Linka
 
-CAHTF=Total purchase supplier HT
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=In the accounting account
+CAHTF=Celkové platby dodavatele HT
+InvoiceLines=Řádky faktury, které mají být prověřeny
+InvoiceLinesDone=Prověření řádků faktury
+IntoAccount=V účetním účtu 
 
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
+Ventilate=Prověřit
+VentilationAuto=Automatické členění
 
-Processing=Processing
-EndProcessing=The end of processing
-AnyLineVentilate=Any lines to ventilate
-SelectedLines=Selected lines
-Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+Processing=Pracuji .....
+EndProcessing=Konec zpracování
+AnyLineVentilate=Prověřit všechny řádky
+SelectedLines=Vybrané řádky
+Lineofinvoice=Řádky faktury
+VentilatedinAccount=Úspěšně prověření v účetním účtu
+NotVentilatedinAccount=Neprověřeno v účetním účtu
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
+ACCOUNTING_SEPARATORCSV=Oddělovač sloupců v souboru exportu
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvků, které mají být zobrazeny rozdělením podle stránky (doporučené maximum: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Začněte třídění rozkladných stránek "Má k rozdělení" nejnovějšími elementy
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začněte třídění rozpisu stránek "Breakdown", podle nejnovějších prvků
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Délka účetnické osnovy uvedené v Dolibarr
+AccountLengthDesc=Funkce povolující simulovat délku účetního účtu nahrazením místa prostřednictvím nulového obrázku. Tato funkce se týká pouze zobrazení, to nemění účetní účty zaregistrované v Dolibarr. Pro export této funkce je nutné, aby byla kompatibilní s daným softwarem.
+ACCOUNTING_LENGTH_GACCOUNT=Délka hlavních účtů
+ACCOUNTING_LENGTH_AACCOUNT=Délka účtů třetích stran
 
-ACCOUNTING_SELL_JOURNAL=Sell journal
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
-ACCOUNTING_BANK_JOURNAL=Bank journal
-ACCOUNTING_CASH_JOURNAL=Cash journal
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_SELL_JOURNAL=Prodejní deník
+ACCOUNTING_PURCHASE_JOURNAL=Nákupní deník
+ACCOUNTING_BANK_JOURNAL=Bankovní deník
+ACCOUNTING_CASH_JOURNAL=Peněžní deník
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Ostatní deník
+ACCOUNTING_SOCIAL_JOURNAL=Sociální deník
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Převodní účet
+ACCOUNTING_ACCOUNT_SUSPENSE=Čekající účet
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené produkty (pokud není definován v listu produktu)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané produkty (pokud není definován v listu produktu)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené služby (pokud není definován v servisním listu)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané služby (pokud není definován v servisním listu)
 
-Doctype=Type of document
-Docdate=Date
+Doctype=Typ dokumentu
+Docdate=Datum
 Docref=Reference
-Numerocompte=Account
-Code_tiers=Thirdparty
-Labelcompte=Label account
-Debit=Debit
-Credit=Credit
-Amount=Amount
+Numerocompte=Účet
+Code_tiers=Třetí strana
+Labelcompte=Štítek účtu
+Debit=Debet
+Credit=Kredit
+Amount=Částka
 Sens=Sens
-Codejournal=Journal
+Codejournal=Deník
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Odstranit záznamy hlavní knihy
 
-SellsJournal=Sells journal
-PurchasesJournal=Purchases journal
-DescSellsJournal=Sells journal
-DescPurchasesJournal=Purchases journal
-BankJournal=Bank journal
-DescBankJournal=Bank journal including all the types of payments other than cash
-CashJournal=Cash journal
-DescCashJournal=Cash journal including the type of payment cash
+SellsJournal=Prodejní denák
+PurchasesJournal=Nákupní deník
+DescSellsJournal=Prodejní deník
+DescPurchasesJournal=Nákupní deník
+BankJournal=Bankovní deník
+DescBankJournal=Bankovní deník včetně všech typů jiných než hotovostních plateb
+CashJournal=Peněžní deník
+DescCashJournal=Peněžní deník včetně typů platby v hotovosti
 
-CashPayment=Cash Payment
+CashPayment=Platba v hotovosti
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Platba dodavatelské faktury
+CustomerInvoicePayment=Platba zákaznické faktury
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Účet třetí strany
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=Nový pohyb
+NumMvts=Číslo pohybu
+ListeMvts=Seznam pohybů
+ErrorDebitCredit=Debetní a kreditní nemůže mít hodnotu ve stejnou dobu
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Seznam účtů třetí strany
+DescThirdPartyReport=Poraďte se zde seznam třetích stran, zákazníky a dodavateli a jejich účetní účty
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Seznam účetních účtů
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
-Active=Statement
+Pcgversion=Verze plánu
+Pcgtype=Třída účtu
+Pcgsubtype=Podle třídy účtu
+Accountparent=kořen účtu
+Active=Prohlášení
 
-NewFiscalYear=New fiscal year
+NewFiscalYear=Nový fiskální rok
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
-TotalVente=Total turnover HT
-TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilCustomer=Seznamte se zde s ročním rozdělením účetnictví faktur zákazníků
+TotalVente=Celkový obrat HT
+TotalMarge=Celkové tržby marže
+DescVentilDoneCustomer=Seznamte se zde se seznamem linek faktur zákazníků a jejich účetních účtů
+DescVentilTodoCustomer=Prověřte své řádky zákaznické faktury s účetním účtem.
+ChangeAccount=Změna účetních účtů pro řádky vybraných účtů:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Poraďte se zde s ročním rozdělením účetnictví faktur dodavatelů
+DescVentilTodoSupplier=Prověřte zde své řádky dodavatelských faktur s účetním účtem
+DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jejich účetních účtů 
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Ověřit automaticky
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
 
-FicheVentilation=Breakdown card
+FicheVentilation=Karta členění

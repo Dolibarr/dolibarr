@@ -29,7 +29,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
 
+ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) after default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) default 'FRST' after rum;
 
+  
 -- Loan
 create table llx_loan
 (
@@ -123,7 +126,10 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_supplier_price_expressio
 ALTER TABLE llx_product ADD COLUMN fk_price_expression integer DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
 
+ALTER TABLE llx_product ADD COLUMN fifo double(24,8) after pmp;
+ALTER TABLE llx_product ADD COLUMN lifo double(24,8) after fifo;
 
+  
 --create table for user conf of printing driver
 CREATE TABLE llx_printing
 (
@@ -167,7 +173,9 @@ create table llx_bank_account_extrafields
 
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN label varchar(255);
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN price double(24,8) DEFAULT 0;
 ALTER TABLE llx_stock_mouvement ADD COLUMN inventorycode varchar(128);
+
 
 ALTER TABLE llx_product_association ADD COLUMN incdec integer DEFAULT 1;
 

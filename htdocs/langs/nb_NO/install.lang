@@ -156,7 +156,7 @@ LastStepDesc=<strong>Siste trinn:</strong> Definer her login og passord du har t
 ActivateModule=Aktiver modulen %s
 ShowEditTechnicalParameters=Klikk her for å vise/endre avanserte parametre (expert mode)
 WarningUpgrade=Advarsel!\nTok du en backup av databasen først?\nDette anbefales på det sterkeste! F.eks: Pga. feil/bugs i databasesystemer (f.eks. Mysql versjon 5.5.40), kan data eller tabeller gå tapt i denne prosessen. Det er sterkt anbefalt å ha en komplett kopi av databasen før du starter overføringen.\n\n\nKlikk OK for å starte overføringsprosessen...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+ErrorDatabaseVersionForbiddenForMigration=Din databaseversjon er %s. Den har en kritisk feil som gjør at du mister data hvis du gjør strukturelle endringer i databasen, som vil skje ved migrasjonen. På grunn av dette vil du ikke kunne migrere før databasen er oppgradert til en høyere versjon. (liste over versjoner med bekreftede feil: %s)
 
 #########
 # upgrade

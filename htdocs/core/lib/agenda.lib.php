@@ -421,6 +421,15 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+    // Tab to link resources
+	if ($conf->resource->enabled)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
+		$head[$h][1] = $langs->trans("Resources");
+		$head[$h][2] = 'resources';
+		$h++;
+	}
+
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;

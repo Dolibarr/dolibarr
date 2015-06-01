@@ -72,6 +72,11 @@ $mandatory 		= GETPOST('mandatory','int');
 $cancel			= GETPOST('cancel','alpha');
 $confirm                = GETPOST('confirm','alpha');
 
+
+/*
+ * Actions
+ */
+
 if($action == 'add_element_resource' && ! $cancel)
 {
 	$objstat = fetchObjectByElement($element_id,$element);
@@ -147,17 +152,15 @@ $reshook=$hookmanager->executeHooks('getElementResources',$parameters,$object,$a
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-/***************************************************
- * VIEW
-*
-* Put here all code to build page
-****************************************************/
+
+/*
+ * View
+ */
+
+$form=new Form($db);
 
 $pagetitle=$langs->trans('ResourceElementPage');
 llxHeader('',$pagetitle,'');
-
-
-$form=new Form($db);
 
 
 // Load available resource, declared by modules
@@ -212,16 +215,17 @@ else
 			print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 			print '</table>';
 
-			print '</div>';
+			dol_fiche_end();
 		}
 	}
+
 	/*
 	 * Specific to thirdparty module
 	 */
-	if($element_id && $element == 'societe')
+	if ($element_id && $element == 'societe')
 	{
 		$socstatic = fetchObjectByElement($element_id,$element);
-		if(is_object($socstatic)) {
+		if (is_object($socstatic)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
 
@@ -240,13 +244,13 @@ else
 	        print '</tr>';
 			print '</table>';
 
-			print '</div>';
+			dol_fiche_end();
 		}
 	}
 
 
 
-	print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','resource.png@resource');
+	//print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 
 
 
@@ -257,7 +261,8 @@ else
 		{
 			$element_prop = getElementProperties($resource_obj);
 
-			print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
+
+
 
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
 
@@ -267,21 +272,21 @@ else
 
 			$linked_resources = $object->getElementResources($element,$element_id,$resource_obj);
 
-			if ( $mode == 'add' && $resource_obj == $resource_type)
+
+			// If we have a specific template we use it
+			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
 			{
-				// If we have a specific template we use it
-				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php')))
-				{
-					$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php');
-				}
-				else
-				{
-					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
-				}
+				$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
 			}
 			else
 			{
-				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php';
+				$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+			}
+
+
+			if ($mode != 'add' || $resource_obj != $resource_type)
+			{
+				//print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
 
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
@@ -293,15 +298,6 @@ else
 				{
 					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
 				}
-			}
-
-			if($resource_obj!=$resource_type )
-			{
-				print '<div class="tabsAction">';
-				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_obj.'&element='.$element.'&element_id='.$element_id.'">'.$langs->trans('AddResource').'</a>';
-				print '</div>';
-				print '</div>';
 			}
 		}
 	}

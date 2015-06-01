@@ -50,6 +50,7 @@ class User extends CommonObject
 	var $search_sid;
 	var $lastname;
 	var $firstname;
+	var $gender;
 	var $note;
 	var $email;
 	var $skype;
@@ -151,7 +152,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
@@ -212,6 +213,7 @@ class User extends CommonObject
 				$this->firstname 	= $obj->firstname;
 
 				$this->login		= $obj->login;
+				$this->gender       = $obj->gender;
 				$this->pass_indatabase = $obj->pass;
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass			= $obj->pass;
@@ -936,6 +938,7 @@ class User extends CommonObject
 		$this->admin		= 0;
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
+		$this->gender		= $contact->gender;
 		$this->email		= $contact->email;
     	$this->skype 		= $contact->skype;
 		$this->office_phone	= $contact->phone_pro;
@@ -1007,6 +1010,7 @@ class User extends CommonObject
 		$this->admin = 0;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
+		$this->gender		= $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
 		$this->pass         = $member->pass;
@@ -1129,6 +1133,7 @@ class User extends CommonObject
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->login        = trim($this->login);
+		$this->gender       = trim($this->gender);
 		$this->pass         = trim($this->pass);
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
@@ -1156,11 +1161,12 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Mise a jour autres infos
+		// Update datas
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
+		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", admin = ".$this->admin;
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
@@ -1235,6 +1241,7 @@ class User extends CommonObject
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
 						$adh->login=$this->login;
+						$adh->gender=$this->gender;
 						$adh->pass=$this->pass;
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
@@ -1772,6 +1779,27 @@ class User extends CommonObject
 		}
 	}
 
+
+	/**
+	 *  Return a link with photo
+	 * 	Use this->id,this->photo
+	 *
+	 *	@param	int		$width			Width of image
+	 *	@param	int		$height			Height of image
+	 *  @param	string	$cssclass		Force a css class
+	 *	@return	string					String with URL link
+	 */
+	function getPhotoUrl($width, $height, $cssclass='')
+	{
+		$result='';
+
+		$result.='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+	    $result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass);
+	    $result.='</a>';
+
+	    return $result;
+	}
+
 	/**
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
@@ -2047,6 +2075,7 @@ class User extends CommonObject
 
 		$this->lastname='DOLIBARR';
 		$this->firstname='SPECIMEN';
+		$this->gender='man';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
     	$this->skype='tom.hanson';
