@@ -54,8 +54,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     protected $savdb;
     protected $soapclient;
     
-    private $WS_DOL_URL;
-    private $ns='http://www.dolibarr.org/ns/';
+    private $_WS_DOL_URL;
+    private $_ns='http://www.dolibarr.org/ns/';
     
     
     
@@ -75,11 +75,11 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
         $this->savlangs=$langs;
         $this->savdb=$db;
         
-        $this->WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
+        $this->_WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
         
         // Set the WebService URL
-        print __METHOD__." create nusoap_client for URL=".$this->WS_DOL_URL."\n";
-        $this->soapclient = new nusoap_client($this->WS_DOL_URL);
+        print __METHOD__." create nusoap_client for URL=".$this->_WS_DOL_URL."\n";
+        $this->soapclient = new nusoap_client($this->_WS_DOL_URL);
         if ($this->soapclient) {
         	$this->soapclient->soap_defencoding='UTF-8';
         	$this->soapclient->decodeUTF8(false);
@@ -137,7 +137,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     /**
      * testWSThirdpartycreateThirdParty
      *
-     * @return int
+     * @return array thirdparty created
      */
     public function testWSThirdpartycreateThirdParty()
     {
@@ -229,7 +229,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      * Use id to retrieve thirdparty
      * @depends testWSThirdpartycreateThirdParty
      *
-     * @return int
+     * @return array thirpdarty updated
      */
     public function testWSThirdpartygetThirdPartyById($result)
     {
@@ -254,7 +254,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication, 'id'=>$id);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
+            $result = $this->soapclient->call($WS_METHOD,$parameters,$this->_ns,'');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -288,7 +288,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      * Use ref_ext to retrieve thirdparty
      *
 	 * @depends testWSThirdpartycreateThirdParty
-     * @return int
+     * @return array thirdparty
      */
     public function testWSThirdpartygetThirdPartyByRefExt($result)
     {
@@ -314,7 +314,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication, 'id'=>'', 'ref'=>'', 'ref_ext'=>'12');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->_ns,'');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;
@@ -348,7 +348,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      *
      * @depends testWSThirdpartycreateThirdParty
      *
-     * @return int
+     * @return array thirdparty
      */
     public function testWSThirdpartydeleteThirdPartyById($result)
     {
@@ -373,7 +373,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$parameters = array('authentication'=>$authentication, 'id'=>$id, 'ref'=>'', 'ref_ext'=>'');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->_ns,'');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;
