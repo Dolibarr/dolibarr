@@ -39,8 +39,6 @@ class AdherentType extends CommonObject
 
     /**
      * @var int
-     * @deprecated Use id
-     * @see id
      */
     public $ref;
 
