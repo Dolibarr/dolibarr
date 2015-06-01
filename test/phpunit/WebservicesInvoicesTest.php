@@ -258,6 +258,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
      * 
      * Retrieve an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
+     * 
+     * @param result invoice created by create method
      * @return array Invoice
      */
     public function testWSInvoicesGetInvoiceByRefExt($result)
@@ -312,7 +314,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
      * 
      * Update an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     *
+     * 
+     * @param result invoice created by create method
      * @return array Invoice
      */
     public function testWSInvoicesUpdateInvoiceByRefExt($result)

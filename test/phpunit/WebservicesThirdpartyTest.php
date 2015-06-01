@@ -228,7 +228,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      * 
      * Use id to retrieve thirdparty
      * @depends testWSThirdpartycreateThirdParty
-     *
+     * 
+     * @param result thirdparty created by create method
      * @return array thirpdarty updated
      */
     public function testWSThirdpartygetThirdPartyById($result)
@@ -288,6 +289,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      * Use ref_ext to retrieve thirdparty
      *
 	 * @depends testWSThirdpartycreateThirdParty
+	 * 
+     * @param result thirdparty created by create method
      * @return array thirdparty
      */
     public function testWSThirdpartygetThirdPartyByRefExt($result)
@@ -348,6 +351,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      *
      * @depends testWSThirdpartycreateThirdParty
      *
+     * @param result thirdparty created by create method
      * @return array thirdparty
      */
     public function testWSThirdpartydeleteThirdPartyById($result)
