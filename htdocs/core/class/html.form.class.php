@@ -4794,10 +4794,10 @@ class Form
      * 		@param	int			$width			Width of photo
      * 		@param	int			$height			Height of photo (auto if 0)
      * 		@param	int			$caneditfield	Add edit fields
-     * 		@param	string		$photologo		CSS name to use on img for photo
+     * 		@param	string		$cssclass		CSS name to use on img for photo
      * 	  	@return string    					HTML code to output photo
      */
-    static function showphoto($modulepart,$object,$width=100,$height=0,$caneditfield=0,$cssclass='photowithmargin')
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin')
     {
         global $conf,$langs;
 
