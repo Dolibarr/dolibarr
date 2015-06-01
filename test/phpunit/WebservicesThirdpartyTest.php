@@ -229,8 +229,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      * Use id to retrieve thirdparty
      * @depends testWSThirdpartycreateThirdParty
      * 
-     * @param result thirdparty created by create method
-     * @return array thirpdarty updated
+     * @param	array	$result		thirdparty created by create method
+     * @return	array				thirpdarty updated
      */
     public function testWSThirdpartygetThirdPartyById($result)
     {
@@ -290,8 +290,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      *
 	 * @depends testWSThirdpartycreateThirdParty
 	 * 
-     * @param result thirdparty created by create method
-     * @return array thirdparty
+     * @param	array	$result		thirdparty created by create method
+     * @return	array				thirdparty
      */
     public function testWSThirdpartygetThirdPartyByRefExt($result)
     {
@@ -351,8 +351,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      *
      * @depends testWSThirdpartycreateThirdParty
      *
-     * @param result thirdparty created by create method
-     * @return array thirdparty
+     * @param	array	$result		thirdparty created by create method
+     * @return	array				thirdparty
      */
     public function testWSThirdpartydeleteThirdPartyById($result)
     {
@@ -382,14 +382,14 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     		echo $exception;
     		$result=0;
     	}
-    	//if (! $result || ! empty($result['faultstring'])) {
+    	if (! $result || ! empty($result['faultstring'])) {
     		print $this->soapclient->error_str;
     		print "\n<br>\n";
     		print $this->soapclient->request;
     		print "\n<br>\n";
     		print $this->soapclient->response;
     		print "\n";
-    	//}
+    	}
 
     	print __METHOD__." result=".$result['result']['result_code']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
