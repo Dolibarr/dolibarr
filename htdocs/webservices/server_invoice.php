@@ -557,25 +557,25 @@ function createInvoice($authentication,$invoice)
     
     if (! $error)
     {
-        $newobject=new Facture($db);
-        $newobject->socid=$invoice['thirdparty_id'];
-        $newobject->type=$invoice['type'];
-        $newobject->ref_ext=$invoice['ref_ext'];
-        $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
-        $newobject->note_private=$invoice['note_private'];
-        $newobject->note_public=$invoice['note_public'];
-        $newobject->statut= Facture::STATUS_DRAFT;	// We start with status draft
-        $newobject->fk_project=$invoice['project_id'];
-        $newobject->date_creation=$now;
+        $new_invoice=new Facture($db);
+        $new_invoice->socid=$invoice['thirdparty_id'];
+        $new_invoice->type=$invoice['type'];
+        $new_invoice->ref_ext=$invoice['ref_ext'];
+        $new_invoice->date=dol_stringtotime($invoice['date'],'dayrfc');
+        $new_invoice->note_private=$invoice['note_private'];
+        $new_invoice->note_public=$invoice['note_public'];
+        $new_invoice->statut= Facture::STATUS_DRAFT;	// We start with status draft
+        $new_invoice->fk_project=$invoice['project_id'];
+        $new_invoice->date_creation=$now;
         
 	//take mode_reglement and cond_reglement from thirdparty
         $soc = new Societe($db);
-        $res=$soc->fetch($newobject->socid);
+        $res=$soc->fetch($new_invoice->socid);
         if ($res > 0) {
-    	    $newobject->mode_reglement_id = ! empty($invoice['payment_mode_id'])?$invoice['payment_mode_id']:$soc->mode_reglement_id;
-            $newobject->cond_reglement_id  = $soc->cond_reglement_id; 
+    	    $new_invoice->mode_reglement_id = ! empty($invoice['payment_mode_id'])?$invoice['payment_mode_id']:$soc->mode_reglement_id;
+            $new_invoice->cond_reglement_id  = $soc->cond_reglement_id; 
         }
-        else $newobject->mode_reglement_id = $invoice['payment_mode_id'];
+        else $new_invoice->mode_reglement_id = $invoice['payment_mode_id'];
 
         // Trick because nusoap does not store data with same structure if there is one or several lines
         $arrayoflines=array();
@@ -598,22 +598,22 @@ function createInvoice($authentication,$invoice)
             $newline->date_start=dol_stringtotime($line['date_start']);
             $newline->date_end=dol_stringtotime($line['date_end']);
             $newline->fk_product=$line['product_id'];
-            $newobject->lines[]=$newline;
+            $new_invoice->lines[]=$newline;
         }
         //var_dump($newobject->date_lim_reglement); exit;
         //var_dump($invoice['lines'][0]['type']);
 
         $db->begin();
 
-        $result=$newobject->create($fuser,0,dol_stringtotime($invoice['date_due'],'dayrfc'));
+        $result=$new_invoice->create($fuser,0,dol_stringtotime($invoice['date_due'],'dayrfc'));
         if ($result < 0)
         {
             $error++;
         }
 
-        if ($invoice['status'] == 1)   // We want invoice to have status validated
+        if (!$error && $invoice['status'] == Facture::STATUS_VALIDATED)   // We want invoice to have status validated
         {
-            $result=$newobject->validate($fuser);
+            $result=$new_invoice->validate($fuser);
             if ($result < 0)
             {
                 $error++;
@@ -623,15 +623,16 @@ function createInvoice($authentication,$invoice)
         if (! $error)
         {
             $db->commit();
-            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,
-            		'ref'=>$newobject->ref,'ref_ext'=>$newobject->ref_ext);
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$new_invoice->id,
+            		'ref'=>$new_invoice->ref,'ref_ext'=>$new_invoice->ref_ext);
         }
         else
         {
             $db->rollback();
             $error++;
             $errorcode='KO';
-            $errorlabel=$newobject->error;
+            $errorlabel=$new_invoice->error;
+            dol_syslog("Function: createInvoice error while creating".$errorlabel);
         }
 
     }
@@ -750,8 +751,8 @@ function updateInvoice($authentication,$invoice)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice->id.
-    		", ref=".$invoice->ref.", ref_ext=".$invoice->ref_ext);
+	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
+    		", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -781,10 +782,13 @@ function updateInvoice($authentication,$invoice)
 	
 			if (isset($invoice['status']))
 			{
-				if ($invoice['status'] == 0)  $result=$object->set_draft($fuser);
-				if ($invoice['status'] == 1)
+				if ($invoice['status'] == Facture::STATUS_DRAFT)
 				{
-					$result=$object->validate($fuser);
+					$result = $object->set_draft($fuser);
+				}
+				if ($invoice['status'] == Facture::STATUS_VALIDATED)
+				{
+					$result = $object->validate($fuser);
 						
 					if ($result	>= 0)
 					{
@@ -793,11 +797,12 @@ function updateInvoice($authentication,$invoice)
 						$order->generateDocument($invoice->modelpdf, $outputlangs);		
 					}
 				}
-				if ($invoice['status'] == 2)
+				if ($invoice['status'] == Facture::STATUS_CLOSED)
 				{
 					$result = $object->set_paid($fuser,$invoice->close_code,$invoice->close_note);			
 				}
-				if ($invoice['status'] == 3)  $result=$object->set_canceled($fuser,$invoice->close_code,$invoice->close_note);
+				if ($invoice['status'] == Facture::STATUS_ABANDONED)
+					$result = $object->set_canceled($fuser,$invoice->close_code,$invoice->close_note);
 			}
 		}
 	
