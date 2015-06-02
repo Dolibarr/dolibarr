@@ -47,8 +47,8 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
-use Luracast\Restler\Defaults;
-Defaults::setProperty('authenticationMethod','_isAllowed');
+use \Luracast\Restler\Defaults;
+Defaults::setProperty('authenticationMethod','__isAllowed');
 
 $api = new DolibarrApi($db);
 
