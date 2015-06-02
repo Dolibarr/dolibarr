@@ -27,7 +27,7 @@
  *	@param	Donation	$object		Donation
  *	@return	array					Array of tabs to show
  */
-function donation_admin_prepare_head($object)
+function donation_admin_prepare_head()
 {
 	global $langs, $conf;
 
@@ -43,14 +43,14 @@ function donation_admin_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin');
 	
 	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'donation_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin', 'remove');
 
 	return $head;
 }
