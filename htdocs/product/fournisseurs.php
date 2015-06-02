@@ -502,10 +502,15 @@ if ($id || $ref)
 
 			if ($action != 'add_price' && $action != 'updateprice')
 			{
-				if ($user->rights->produit->creer || $user->rights->service->creer)
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+				if (empty($reshook))
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
-					print $langs->trans("AddSupplierPrice").'</a>';
+					if ($user->rights->produit->creer || $user->rights->service->creer)
+					{
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
+						print $langs->trans("AddSupplierPrice").'</a>';
+					}
 				}
 			}
 

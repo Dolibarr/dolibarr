@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ else
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
+if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 
 if ($search_firstlast_only) {
@@ -256,11 +256,11 @@ if ($result)
 {
 	$contactstatic=new Contact($db);
 
-    $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
-    if (!empty($search_categ)) $param.='&search_categ='.$search_categ;
-    if ($search_status != '') $param.='&amp;search_status='.$search_status;
-    if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
+    $param ='&begin='.htmlspecialchars($begin).'&view='.htmlspecialchars($view).'&userid='.htmlspecialchars($userid).'&contactname='.htmlspecialchars($sall);
+    $param.='&type='.htmlspecialchars($type).'&view='.htmlspecialchars($view).'&search_lastname='.htmlspecialchars($search_lastname).'&search_firstname='.htmlspecialchars($search_firstname).'&search_societe='.htmlspecialchars($search_societe).'&search_email='.htmlspecialchars($search_email);
+    if (!empty($search_categ)) $param.='&search_categ='.htmlspecialchars($search_categ);
+    if ($search_status != '') $param.='&amp;search_status='.htmlspecialchars($search_status);
+    if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".htmlspecialchars($search_priv);
 
 	$num = $db->num_rows($result);
     $i = 0;
@@ -269,14 +269,15 @@ if ($result)
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="view" value="'.$view.'">';
+    print '<input type="hidden" name="view" value="'.htmlspecialchars($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
     if (! empty($conf->categorie->enabled))
     {
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
     	$moreforfilter.=$langs->trans('Categories'). ': ';
-    	$moreforfilter.=$formother->select_categories(4,$search_categ,'search_categ',1);
+    	$moreforfilter.=$formother->select_categories(Categorie::TYPE_CONTACT,$search_categ,'search_categ',1);
     	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     }
     if ($moreforfilter)
@@ -316,36 +317,36 @@ if ($result)
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_lastname" size="9" value="'.$search_lastname.'">';
+    print '<input class="flat" type="text" name="search_lastname" size="9" value="'.dol_escape_htmltag($search_lastname).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_firstname" size="9" value="'.$search_firstname.'">';
+    print '<input class="flat" type="text" name="search_firstname" size="9" value="'.dol_escape_htmltag($search_firstname).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_poste" size="9" value="'.$search_poste.'">';
+    print '<input class="flat" type="text" name="search_poste" size="9" value="'.dol_escape_htmltag($search_poste).'">';
     print '</td>';
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_societe" size="9" value="'.$search_societe.'">';
+        print '<input class="flat" type="text" name="search_societe" size="9" value="'.dol_escape_htmltag($search_societe).'">';
         print '</td>';
     }
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_phonepro" size="8" value="'.$search_phonepro.'">';
+    print '<input class="flat" type="text" name="search_phonepro" size="8" value="'.dol_escape_htmltag($search_phonepro).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_phonemob" size="8" value="'.$search_phonemob.'">';
+    print '<input class="flat" type="text" name="search_phonemob" size="8" value="'.dol_escape_htmltag($search_phonemob).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_fax" size="8" value="'.$search_fax.'">';
+    print '<input class="flat" type="text" name="search_fax" size="8" value="'.dol_escape_htmltag($search_fax).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_email" size="8" value="'.$search_email.'">';
+    print '<input class="flat" type="text" name="search_email" size="8" value="'.dol_escape_htmltag($search_email).'">';
     print '</td>';
     if (! empty($conf->skype->enabled))
     {
         print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_skype" size="8" value="'.$search_skype.'">';
+        print '<input class="flat" type="text" name="search_skype" size="8" value="'.dol_escape_htmltag($search_skype).'">';
         print '</td>';
     }
 	print '<td class="liste_titre">&nbsp;</td>';

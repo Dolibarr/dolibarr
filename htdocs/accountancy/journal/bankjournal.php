@@ -555,9 +555,9 @@ else
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal;
 	$head[$h][1] = $langs->trans("Report");
-	$head[$h][2] = 'report';
+	$head[$h][2] = 'card';
 
-	dol_fiche_head($head, $hselected);
+	dol_fiche_head($head, 'card', $langs->trans("BankJournal"), 0, 'payment');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id_account='.$id_accountancy_journal.'">';
 	print '<table width="100%" class="border">';

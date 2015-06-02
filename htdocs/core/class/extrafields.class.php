@@ -39,7 +39,7 @@ class ExtraFields
 	var $attribute_type;
 	// Tableau contenant le nom des champs en clef et le label de ces champs en value
 	var $attribute_label;
-	// Tableau contenant le nom des champs en clef et la taille de ces champs en value
+	// Tableau contenant le nom des champs en clef et la taille/longueur max de ces champs en value
 	var $attribute_size;
 	// Tableau contenant le nom des choix en clef et la valeur de ces choix en value
 	var $attribute_choice;
@@ -124,6 +124,7 @@ class ExtraFields
 		if (empty($label)) return -1;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate')
@@ -169,6 +170,7 @@ class ExtraFields
 	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0, $default_value='',$param='', $perms='', $list=0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
 
@@ -248,6 +250,7 @@ class ExtraFields
 		global $conf;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		// Clean parameters
 		if (empty($pos)) $pos=0;
@@ -308,6 +311,7 @@ class ExtraFields
 	function delete($attrname, $elementtype='member')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
 
@@ -342,6 +346,7 @@ class ExtraFields
 		global $conf;
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -389,6 +394,7 @@ class ExtraFields
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$table=$elementtype.'_extrafields';
 
@@ -486,6 +492,8 @@ class ExtraFields
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
+
 		if (empty($list)) $list=0;
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
@@ -570,6 +578,7 @@ class ExtraFields
 		if ( empty($elementtype) ) return array();
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
+		if ($elementtype == 'contact') $elementtype='socpeople';
 
 		$array_name_label=array();
 

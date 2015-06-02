@@ -3,6 +3,7 @@
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -707,7 +708,7 @@ if ($rowid > 0)
 
 
     /*
-     * Barre d'actions
+     * Hotbar
      */
 
     // Lien nouvelle cotisation si non brouillon et non resilie
@@ -908,9 +909,13 @@ if ($rowid > 0)
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->societe).'">';
-        print "<table class=\"border\" width=\"100%\">\n";
 
-        $today=dol_now();
+		dol_fiche_head('');
+
+		print "<table class=\"border\" width=\"100%\">\n";
+        print '<tbody>';
+
+		$today=dol_now();
         $datefrom=0;
         $dateto=0;
         $paymentdate=-1;
@@ -1102,8 +1107,10 @@ if ($rowid > 0)
             print $form->textwithpicto($tmp,$helpcontent,1,'help');
         }
         print '</td></tr>';
+        print '</tbody>';
         print '</table>';
-        print '<br>';
+
+        dol_fiche_end();
 
         print '<div class="center">';
         print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';

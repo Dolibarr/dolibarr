@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Adolfo segura        <adolfo.segura@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2013  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013       Jean Heimburger         <jean@tiaris.info>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ else
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
     if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
-    if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$search_categ;
+    if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
     if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
@@ -292,7 +292,7 @@ else
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
-    			$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ',1);
+    			$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
     		 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     		}
     	 	if ($moreforfilter)
@@ -322,16 +322,16 @@ else
     		// Lignes des champs de filtre
     		print '<tr class="liste_titre">';
     		print '<td class="liste_titre" align="left">';
-    		print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
+    		print '<input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'">';
     		print '</td>';
     		print '<td class="liste_titre" align="left">';
-    		print '<input class="flat" type="text" name="snom" size="12" value="'.$snom.'">';
+    		print '<input class="flat" type="text" name="snom" size="12" value="'.dol_escape_htmltag($snom).'">';
     		print '</td>';
     		// Barcode
     		if (! empty($conf->barcode->enabled))
     		{
     			print '<td class="liste_titre">';
-    			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
+    			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($sbarcode).'">';
     			print '</td>';
     		}
     		// Date modification
@@ -541,10 +541,10 @@ else
     			$i++;
     		}
 
-    		$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
-    		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
-    		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
-    		$param.=isset($type)?"&amp;type=".$type:"";
+    		$param="&sref=".$sref.($sbarcode?"&sbarcode=".$sbarcode:"")."&snom=".$snom."&sall=".$sall."&tosell=".$tosell."&tobuy=".$tobuy;
+    		$param.=($fourn_id?"&fourn_id=".$fourn_id:"");
+    		$param.=($search_categ?"&search_categ=".$search_categ:"");
+    		$param.=isset($type)?"&type=".$type:"";
     		print_barre_liste('', $page, "list.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);

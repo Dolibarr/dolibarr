@@ -7,7 +7,7 @@
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -294,7 +294,11 @@ if (empty($reshook))
 		}
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
+		if ($ret < 0)
+		{
+			 $error++;
+			 $action = ($action=='add'?'create':'edit');
+		}
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -1011,8 +1015,8 @@ else
         }
 
         // Address
-        print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
-	    print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
+        print '<tr><td class="tdtop"><label for="address">'.$langs->trans('Address').'</label></td>';
+	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -1132,7 +1136,7 @@ else
         print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code);
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
         }
         else
         {
@@ -1503,7 +1507,7 @@ else
             // Barcode
             if (! empty($conf->barcode->enabled))
             {
-                print '<tr><td valign="top"><label for="barcode">'.$langs->trans('Gencod').'</label></td>';
+                print '<tr><td class="tdtop"><label for="barcode">'.$langs->trans('Gencod').'</label></td>';
 	            print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
                 print '</td></tr>';
             }
@@ -1514,8 +1518,8 @@ else
             print '</td></tr>';
 
             // Address
-            print '<tr><td valign="top"><label for="address">'.$langs->trans('Address').'</label></td>';
-	        print '<td colspan="3"><textarea name="address" id="address" cols="40" rows="3" wrap="soft">';
+            print '<tr><td class="tdtop"><label for="address">'.$langs->trans('Address').'</label></td>';
+	        print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
@@ -1682,7 +1686,7 @@ else
 
             // Juridical type
             print '<tr><td><label for="legal_form">'.$langs->trans('JuridicalStatus').'</label></td><td colspan="3">';
-            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code,'',0);
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'legal_form');
             print '</td></tr>';
 
             // Capital
@@ -1734,7 +1738,7 @@ else
             {
                 if ($object->logo) print "<br>\n";
                 print '<table class="nobordernopadding">';
-                if ($object->logo) print '<tr><td><input type="checkbox" class="flat" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                if ($object->logo) print '<tr><td><input type="checkbox" class="flat" name="deletephoto photodelete" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
                 //print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
                 print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
                 print '</table>';
@@ -1799,7 +1803,7 @@ else
 
         // Ref
         /*
-        print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+        print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
         print '<td colspan="2">';
         print $fuser->id;
         print '</td>';
@@ -1885,14 +1889,14 @@ else
         print '</tr>';
 
         // Address
-        print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
+        print '<tr><td class="tdtop">'.$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
-        print "</td></tr>";
+        print '</td></tr>';
 
         // Zip / Town
         print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print $object->zip.($object->zip && $object->town?" / ":"").$object->town;
-        print "</td>";
+        print '</td>';
         print '</tr>';
 
         // Country
@@ -2202,7 +2206,7 @@ else
         if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
-            print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+            print '<tr><td width="25%" class="tdtop">'.$langs->trans("LinkedToDolibarrMember").'</td>';
             print '<td colspan="3">';
             $adh=new Adherent($db);
             $result=$adh->fetch('','',$object->id);
@@ -2239,8 +2243,6 @@ else
 		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("Merge")).'">'.$langs->trans('Merge').'</a></div>';
-
 	        if (! empty($object->email))
 	        {
 	        	$langs->load("mails");
@@ -2255,6 +2257,11 @@ else
 	        if ($user->rights->societe->creer)
 	        {
 	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+	        }
+
+	        if ($user->rights->societe->supprimer)
+	        {
+	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="soc.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
 	        }
 
 	        if ($user->rights->societe->supprimer)

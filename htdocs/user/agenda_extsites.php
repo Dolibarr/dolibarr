@@ -33,8 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-if (!$user->admin) accessforbidden();
-
 $langs->load("agenda");
 $langs->load("admin");
 $langs->load("other");
@@ -53,6 +51,21 @@ $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5')
 $id = GETPOST('id','int');
 $fuser = new User($db);
 $fuser->fetch($id);
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+if ($user->id == $id)	// A user can always read its own card
+{
+	$feature2='';
+}
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+
+// If user is not user that read and no permission to read other users, we stop
+if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
+  accessforbidden();
+
 
 
 /*

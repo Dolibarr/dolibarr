@@ -522,27 +522,28 @@ class Don extends CommonObject
      */
     function delete($user, $notrigger=0)
     {
-		global $conf, $langs;
+		global $user, $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error = 0;
 
 		$this->db->begin();
 
-        // Delete donation
-        if (! $error)
+   		if (! $error)
         {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don";
-	        $sql.= " WHERE rowid=" . $this->id;
+            if (!$notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('DON_DELETE',$user);
 
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
+                if ($result < 0) {
+                    $error++;
+                }
+                // End call triggers
+            }
         }
 
+        // Delete donation
         if (! $error)
         {
 	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don_extrafields";
@@ -558,16 +559,15 @@ class Don extends CommonObject
 
 		if (! $error)
         {
-            if (!$notrigger)
-            {
-                // Call trigger
-                $result=$this->call_trigger('DON_DELETE',$user);
+	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "don";
+	        $sql.= " WHERE rowid=" . $this->id;
 
-                if ($result < 0) {
-                    $error++;
-                }
-                // End call triggers
-            }
+	        $resql = $this->db->query($sql);
+	        if (!$resql)
+	        {
+	        	$this->errors[] = $this->db->lasterror();
+	        	$error++;
+	        }
         }
 
     	if (! $error)
@@ -577,7 +577,7 @@ class Don extends CommonObject
         }
         else
        {
-        	foreach ( $this->errors as $errmsg )
+        	foreach($this->errors as $errmsg)
         	{
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);

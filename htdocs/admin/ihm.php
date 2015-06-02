@@ -78,10 +78,10 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_MOTD",						dol_htmlcleanlastbr($_POST["main_motd"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
 	// This one is not always defined
 	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
-	if (isset($_POST["MAIN_BUGTRACK_ENABLELINK"])) dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
@@ -279,16 +279,13 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || ! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
-	{
-		 // Show bugtrack link
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-		print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
-		print '</td>';
-		print '<td width="20">&nbsp;</td>';
-		print '</tr>';
-	}
+	// Show bugtrack link
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+	print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
+	print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     // Message on login page
 	$var=!$var;
@@ -465,15 +462,12 @@ else	// Show
     print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
     print '</td></tr>';
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || ! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
-    {
-    	// Show bugtrack link
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-    	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
-    	print '<td width="20">&nbsp;</td>';
-    	print "</tr>";
-    }
+	// Show bugtrack link
+	$var=!$var;
+	print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     // Message login
     $var=!$var;

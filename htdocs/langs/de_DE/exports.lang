@@ -97,7 +97,7 @@ EmptyLine=Leerzeile (verworfen)
 CorrectErrorBeforeRunningImport=Beheben Sie zuerst alle Fehler bevor Sie den endgültigen Import starten.
 FileWasImported=Datei wurde mit der Nummer <b>%s</b> importiert.
 YouCanUseImportIdToFindRecord=Sie können alle importierten Einträge in Ihrer Datenbank finden, indem Sie nach dem Feld <b>import_key='%s'</b> filtern.
-NbOfLinesOK=Anzahl der Zeilen ohne Fehler und Warnungen: <b>%s</b>.
+NbOfLinesOK=Zeilenanzahl ohne Fehler und Warnungen: <b>%s</b>.
 NbOfLinesImported=Anzahl der erfolgreich importierten Zeilen: <b>%s</b>.
 DataComeFromNoWhere=Der einzufügende Wert kommt nicht aus der Quelldatei.
 DataComeFromFileFieldNb=Der einzufügende Wert stammt aus Feldnummer <b>%s</b> der Quelldatei.
@@ -125,7 +125,7 @@ BankAccountNumber=Kontonummer
 BankAccountNumberKey=Schlüssel
 SpecialCode=Spezialcode
 ExportStringFilter=%% erlaubt die Ersetzung eines oder mehrerer Zeichen im Text
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
+ExportDateFilter='YYYY' 'YYYYMM' 'YYYYMMDD': filtert nach einem Jahr/Monat/Tag<br>'YYYY+YYYY' 'YYYYMM+YYYYMM' 'YYYYMMDD+YYYYMMDD': filtert über einen Bereich von Jahren/Monaten/Tagen<br>'>YYYY' '>YYYYMM' '>YYYYMMDD': filtert auf die folgenden Jahre/Monate/Tage<br>'<YYYY' '<YYYYMM' '<YYYYMMDD': filtert auf die vorhergehenden Jahre/Monate/Tage
 ExportNumericFilter='NNNNN' filtert genau einen Wert<br>'NNNNN+NNNNN' filtert einen Wertebereich<br>'&gt;NNNNN' filtert nach kleineren Werten<br>'&gt;NNNNN' filtert nach größeren Werten
 ## filters
 SelectFilterFields=Wenn Sie nach bestimmten Werten filtern wollen, geben Sie diese Werte hier ein.

@@ -328,14 +328,17 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
-	$msg = '<script type="text/javascript">
-		$(document).ready(function() {
-			$(\'#'.$htmlname.'\').select2({
-				width: \'resolve\',
-				minimumInputLength: '.$minLengthToAutocomplete.',
-			})';
+    $tmpplugin='select2';
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+          <script type="text/javascript">
+        	$(document).ready(function () {
+        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        		    dir: \'ltr\',
+        			width: \'resolve\',		/* off or resolve */
+					minimumInputLength: '.$minLengthToAutocomplete.'
+				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
-	$msg.= ';';
+	$msg.= ';'."\n";
 
 	if (count($event))
 	{

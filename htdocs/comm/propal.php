@@ -640,7 +640,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-
 	// Go back to draft
 	if ($action == 'modif' && $user->rights->propal->creer)
 	{
@@ -2312,7 +2311,7 @@ if ($action == 'create')
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
-		$file = $fileparams ['fullname'];
+		$file = $fileparams['fullname'];
 
 		// Define output language
 		$outputlangs = $langs;
@@ -2337,7 +2336,7 @@ if ($action == 'create')
 				exit();
 			}
 			$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
-			$file = $fileparams ['fullname'];
+			$file = $fileparams['fullname'];
 		}
 
 		print '<br>';

@@ -210,6 +210,7 @@ class FormCompany
 	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
+	 *    @see select_country
 	 */
 	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
@@ -234,7 +235,7 @@ class FormCompany
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+			if (!empty($htmlname)) $out.= '<select id="'.$htmlname.'" class="flat minwidth300" name="'.$htmlname.'">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($result);
 			$i = 0;
@@ -277,12 +278,16 @@ class FormCompany
 				}
 			}
 			if (! empty($htmlname)) $out.= '</select>';
-			if (! empty($htmlname) && $user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if (! empty($htmlname) && $user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
 		else
 		{
 			dol_print_error($this->db);
 		}
+
+        // Make select dynamic
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        $out .= ajax_combobox($htmlname);
 
 		return $out;
 	}
@@ -431,9 +436,10 @@ class FormCompany
 	 *    @param	string		$selected        	Preselected code of juridical type
 	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
      *    @param    string		$filter          	Add a SQL filter on list
+     *    @param	string		$htmlname			HTML name of select
      *    @return	string							String with HTML select
 	 */
-	function select_juridicalstatus($selected='', $country_codeid=0, $filter='')
+	function select_juridicalstatus($selected='', $country_codeid=0, $filter='', $htmlname='forme_juridique_code')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -454,7 +460,7 @@ class FormCompany
 		if ($resql)
 		{
 			$out.= '<div id="particulier2" class="visible">';
-			$out.= '<select class="flat" name="forme_juridique_code" id="legal_form">';
+			$out.= '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';	// When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
 
 			$num = $this->db->num_rows($resql);
@@ -488,7 +494,7 @@ class FormCompany
 						// Show break when we are in multi country mode
 						if (empty($country_codeid) && $val['country_code'])
 						{
-							$out.= '<option value="0">----- '.$val['country']." -----</option>\n";
+							$out.= '<option value="0" disabled class="selectoptiondisabledwhite">----- '.$val['country']." -----</option>\n";
 							$country=$val['country'];
 						}
 					}
@@ -508,6 +514,11 @@ class FormCompany
 			}
 			$out.= '</select>';
 			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+
+		    // Make select dynamic
+        	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	        $out .= ajax_combobox($htmlname);
+
 			$out.= '</div>';
 		}
 		else

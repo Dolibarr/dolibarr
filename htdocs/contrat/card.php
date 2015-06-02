@@ -823,10 +823,8 @@ else if ($action == 'remove_file' && $user->rights->contrat->creer) {
 		$upload_dir = $conf->contrat->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
-		if ($ret)
-			setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-		else
-			setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
 	}
 }
 

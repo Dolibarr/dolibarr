@@ -201,8 +201,12 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
-
+		if ($ret < 0) 
+		{
+			$error++;
+			$action = 'create';
+		}
+		
         if (! GETPOST("lastname"))
         {
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
@@ -812,7 +816,7 @@ else
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td>';
-            print $object->getLibStatut(5);
+            print $object->getLibStatut(4);
             print '</td></tr>';
 
             // Other attributes
@@ -1036,7 +1040,7 @@ else
 	 	// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td>';
 		print '<td>';
-		print $object->getLibStatut(5);
+		print $object->getLibStatut(4);
 		print '</td>';
 		print '</tr>'."\n";
         // Other attributes

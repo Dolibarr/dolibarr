@@ -420,7 +420,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<tr '.$bc[$var].'><td><label for="legal_form">'.$langs->trans("JuridicalStatus").'</label></td><td>';
     if ($mysoc->country_code)
     {
-        print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,$mysoc->country_code);
+        print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'legal_form');
     }
     else
     {

@@ -282,6 +282,7 @@ if ($action == 'create')
 	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
+	print '<tbody>';
 
     $nbrows=11;
     if (! empty($conf->projet->enabled)) $nbrows++;
@@ -357,11 +358,12 @@ if ($action == 'create')
 		print $object->showOptionals($extrafields,'edit',$parameters);
     }
 
+    print '</tbody>';
 	print "</table>\n";
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print "</form>\n";
 }
@@ -711,7 +713,14 @@ if (! empty($id) && $action != 'edit')
 	// Delete
 	if ($user->rights->don->supprimer)
 	{
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+		if ($don->statut == -1 || $don->statut == 0)
+		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$don->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+		}
+		else
+		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
+		}
 	}
 	else
 	{

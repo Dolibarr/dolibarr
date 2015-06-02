@@ -3,7 +3,7 @@
 This is a quick tutorial:
 
 * Install ansible:
-> apt-get install 
+> apt-get install ansible
 
 * Add ip of server to manage into
 /etc/ansible/hosts
