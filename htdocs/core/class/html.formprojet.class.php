@@ -231,7 +231,7 @@ class FormProjets
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($socid)) $sql.= " AND fk_soc=".$socid;
+		if (! empty($socid) && ! in_array($table_element, array('don'))) $sql.= " AND fk_soc=".$socid;
 		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
