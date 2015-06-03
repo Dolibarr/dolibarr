@@ -1248,10 +1248,11 @@ class Form
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      *  @param	string	$morefilter		Add more filters into sql request
      *  @param	string	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
+     *  @param	string	$enableonlytext	If option $enableonly is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='')
     {
         global $conf,$user,$langs;
 
@@ -1347,8 +1348,8 @@ class Form
                     $userstatic->lastname=$obj->lastname;
                     $userstatic->firstname=$obj->firstname;
 
-                    $disableline=0;
-                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+                    $disableline='';
+                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=($enableonlytext?$enableonlytext:'1');
 
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
@@ -1398,6 +1399,10 @@ class Form
                      	}
                     }
 					$out.=($moreinfo?')':'');
+					if ($disableline && $disableline != '1')
+					{
+						$out.=' - '.$disableline;	// This is text from $enableonlytext parameter
+					}
                     $out.= '</option>';
 
                     $i++;
@@ -4248,6 +4253,7 @@ class Form
 
     	$hourSelected=0; $minSelected=0;
 
+    	// Hours
         if ($iSecond != '')
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -4278,6 +4284,7 @@ class Form
 
         $retstring.=' '.$langs->trans('HourShort');
 
+        // Minutes
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
 

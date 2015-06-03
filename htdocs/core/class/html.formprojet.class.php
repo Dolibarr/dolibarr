@@ -147,13 +147,15 @@ class FormProjets
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
 
-						if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
+						if (!empty($selected) && $selected == $obj->rowid)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected';
+							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+							$out.= '>'.$labeltoshow.'</option>';
 						}
 						else
 						{
-							if ($hideunselectables && $disabled)
+							if ($hideunselectables && $disabled && ($selected != $obj->rowid))
 							{
 								$resultat='';
 							}
@@ -194,11 +196,13 @@ class FormProjets
 	 *
 	 *    @param	string		$table_element		Table of the element to update
 	 *    @param	int			$socid				socid to filter
-	 *    @return	string							The HTML select list of element
+	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
 	function select_element($table_element,$socid=0)
 	{
 		global $conf, $langs;
+
+		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
 		$projectkey="fk_projet";
 		switch ($table_element)

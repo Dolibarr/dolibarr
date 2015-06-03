@@ -298,12 +298,13 @@ if ($id > 0 || ! empty($ref))
 		    if ($res) break;
 		}
 */
-		print '<table class="noborder" width="100%">';
 
 		/*
 		 * Add a new contact line
 		 * Non affiche en mode modification de ligne
 		 */
+		print '<table class="noborder" width="100%">';
+
 		if ($action != 'editline' && $user->rights->projet->creer)
 		{
 			print '<tr class="liste_titre">';
@@ -336,8 +337,9 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
-			$contactsofproject=$projectstatic->getListContactId('internal');
-			print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1);
+			if ($object->project->public) $contactsofproject='';	// Everybody
+			else $contactsofproject=$projectstatic->getListContactId('internal');
+			print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');

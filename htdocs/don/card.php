@@ -657,7 +657,10 @@ if (! empty($id) && $action != 'edit')
     {
         print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td>';
-		print '<td>'.$object->projet.'</td>';
+		print '<td>';
+		$object->fetch_projet();
+		print $object->project->getNomUrl(4);
+		print '</td>';
 		print '</tr>';
     }
 

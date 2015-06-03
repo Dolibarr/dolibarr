@@ -2717,6 +2717,7 @@ function print_titre($title)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	void
+ *  @deprecated Use print load_fiche_titre instead
  */
 function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id='')
 {
