@@ -24,7 +24,6 @@
 /**
  *	Prepare array with list of admin tabs
  *
- *	@param	Donation	$object		Donation
  *	@return	array					Array of tabs to show
  */
 function donation_admin_prepare_head()
@@ -32,7 +31,7 @@ function donation_admin_prepare_head()
 	global $langs, $conf;
 
 	$h = 0;
-	$head = array ();
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
@@ -66,7 +65,7 @@ function donation_prepare_head($object)
 	global $langs, $conf;
 
 	$h = 0;
-	$head = array ();
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT . '/don/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
