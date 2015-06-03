@@ -940,6 +940,7 @@ CompanyZip=Zip
 CompanyTown=Town
 CompanyCountry=Country
 CompanyCurrency=Main currency
+CompanyObject=Object of the company
 Logo=Logo
 DoNotShow=Do not show
 DoNotSuggestPaymentMode=Do not suggest

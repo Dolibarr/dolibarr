@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,6 +152,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "MAIN_INFO_PROFID6",$_POST["MAIN_INFO_PROFID6"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT",$_POST["object"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"],'chaine',0,'',$conf->entity);
 
@@ -528,6 +530,12 @@ if ($action == 'edit' || $action == 'updateedit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%"><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
     print '<input name="tva" id="intra_vat" size="20" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
+    print '</td></tr>';
+	
+	// Object of the company
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%"><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
+    print '<textarea class="flat" name="object" id="object" cols="80" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
     print '</td></tr>';
 
     print '</table>';
@@ -929,6 +937,9 @@ else
     }
     print '</td>';
     print '</tr>';
+	
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%" valign="top">'.$langs->trans("CompanyObject").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? nl2br($conf->global->MAIN_INFO_SOCIETE_OBJECT) : '') . '</td></tr>';
 
     print '</table>';
     print '</form>';
