@@ -39,6 +39,7 @@ $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
+$status=GETPOST('status','int');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -139,6 +140,7 @@ if (empty($reshook))
 	        $object->datec=dol_now();
 	        $object->date_start=$date_start;
 	        $object->date_end=$date_end;
+	        $object->statuts         = $status;
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -167,8 +169,16 @@ if (empty($reshook))
 	        {
 	            $db->commit();
 
-	            header("Location:card.php?id=".$object->id);
-	            exit;
+        		if ($backtopage)
+				{
+			    	header("Location: ".$backtopage.'&projectid='.$object->id);
+			    	exit;
+				}
+				else
+				{
+	            	header("Location:card.php?id=".$object->id);
+	            	exit;
+				}
 	        }
 	        else
 	        {
@@ -443,6 +453,15 @@ if ($action == 'create' && $user->rights->projet->creer)
     }
     else print $text;
     print '</td></tr>';
+
+    // Status
+    if ($status != '')
+    {
+    	print '<tr><td>'.$langs->trans("Status").'</td><td>';
+    	print '<input type="hidden" name="status" value="'.$status.'">';
+    	print $object->LibStatut($status, 4);
+	    print '</td></tr>';
+    }
 
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';

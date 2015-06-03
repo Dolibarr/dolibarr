@@ -448,6 +448,10 @@ textarea.centpercent {
 #formuserfile_link {
 	margin-left: 1px;
 }
+.listofinvoicetype {
+	height: 28px;
+	vertical-align: middle;
+}
 
 /* Style to move picto into left of button */
 /*

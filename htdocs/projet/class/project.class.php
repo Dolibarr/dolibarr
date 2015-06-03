@@ -125,12 +125,12 @@ class Project extends CommonObject
         $sql.= ", '" . $this->db->escape($this->description) . "'";
         $sql.= ", " . ($this->socid > 0 ? $this->socid : "null");
         $sql.= ", " . $user->id;
-        $sql.= ", 0";
+        $sql.= ", ".(is_numeric($this->statuts) ? $this->statuts : '0');
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
-        $sql.= ", " . ($this->budget_amount != ''?price2num($this->budget_amount):'null');
+        $sql.= ", " . ($this->budget_amount != '' ? price2num($this->budget_amount) : 'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
