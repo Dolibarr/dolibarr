@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,6 +79,9 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_HOME",						dol_htmlcleanlastbr($_POST["main_home"]),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK",			$_POST["MAIN_HELP_DISABLELINK"],'chaine',0,'',0);	    // Param for all entities
 	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK",         $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
+
+	if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') dolibarr_set_const($db,"THEME_ELDY_USE_HOVER", 1,'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db,"THEME_ELDY_USE_HOVER",0,'chaine',0,'',$conf->entity);
 
 	// This one is not always defined
 	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
@@ -291,7 +294,7 @@ if ($action == 'edit')	// Edit
 	$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 
-    $doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, 90);
+    $doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
 
 	print '</td></tr>'."\n";
@@ -300,7 +303,7 @@ if ($action == 'edit')	// Edit
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 
-    $doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, 90);
+    $doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, '90%');
 	$doleditor->Create();
 
 	print '</td></tr>'."\n";

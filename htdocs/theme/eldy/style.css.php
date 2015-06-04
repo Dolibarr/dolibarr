@@ -154,7 +154,7 @@ $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
-// No hover by default, we keep only if we set var THEME_ELDY_USE_HOVER
+// Hover can be disabled with THEME_ELDY_USE_HOVER=0
 if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($user->conf->THEME_ELDY_USE_HOVER) && $user->conf->THEME_ELDY_USE_HOVER == '0'))
 	|| (empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0')))
 {

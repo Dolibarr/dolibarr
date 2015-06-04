@@ -455,8 +455,9 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/document`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
-		# Removed known external modules to avoir any error when packaging on test env 
+		# Removed known external modules to avoid any error when packaging from env where external modules are tested 
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/ancotec*`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/cabinetmed*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/calling*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/bootstrap*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;

@@ -317,7 +317,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print '</tr>';
     }
 
-    $var=!$var;
+    //$var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
@@ -372,6 +372,19 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     print '</div></td></tr></table>';
 
     print '</td></tr>';
+
+	if (! $foruserprofile)
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
+	    $hoverdisabled=(isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0');
+	    print '<td colspan="'.($colspan-1).'"><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
+	    print ' ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	    print '</tr>';
+	}
+
     print '</table>';
 }
 
