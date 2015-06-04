@@ -67,50 +67,49 @@ class modDon  extends DolibarrModules
 		$this->config_page_url = array("donation.php@don");
 
 		// Constants
-		$this->const = array ();
+		$this->const = array();
+		$r=0;
 
-		$this->const[0] = array (
-				"DON_ADDON_MODEL",
-				"chaine",
-				"html_cerfafr",
-				"Nom du gestionnaire de generation de recu de dons",
-				"0"
-		);
-		$this->const[1] = array (
-				"DONATION_ART200",
-				"yesno",
-				"0",
-				"Option Française - Eligibilité Art200 du CGI",
-				"0"
-		);
-		$this->const[2] = array (
-				"DONATION_ART238",
-				"yesno",
-				"0",
-				"Option Française - Eligibilité Art238 bis du CGI",
-				"0"
-		);
-		$this->const[3] = array (
-				"DONATION_ART885",
-				"yesno",
-				"0",
-				"Option Française - Eligibilité Art885-0 V bis du CGI",
-				"0"
-		);
-		$this->const[4] = array (
-				"DONATION_MESSAGE",
-				"chaine",
-				"Thank you",
-				"Message affiché sur le récépissé de versements ou dons",
-				"0"
-		);
-		$this->const[5] = array (
-				"DONATION_ACCOUNTINGACCOUNT",
-				"chaine",
-				"7581",
-				"Compte comptable de remise des versements ou dons",
-				"0"
-		);
+		$this->const[$r][0] = "DON_ADDON_MODEL";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "html_cerfafr";
+		$this->const[$r][3] = 'Nom du gestionnaire de generation de recu de dons';
+		$this->const[$r][4] = 0;
+
+		$r++;
+		$this->const[$r][0] = "DONATION_ART200";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = 'Option Française - Eligibilité Art200 du CGI';
+		$this->const[$r][4] = 0;
+
+		$r++;
+		$this->const[$r][0] = "DONATION_ART238";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = 'Option Française - Eligibilité Art238 bis du CGI';
+		$this->const[$r][4] = 0;
+
+		$r++;
+		$this->const[$r][0] = "DONATION_ART885";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = 'Option Française - Eligibilité Art885-0 V bis du CGI';
+		$this->const[$r][4] = 0;
+
+		$r++;
+		$this->const[$r][0] = "DONATION_MESSAGE";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "Thank you";
+		$this->const[$r][3] = 'Message affiché sur le récépissé de versements ou dons';
+		$this->const[$r][4] = 0;
+
+		$r++;
+		$this->const[$r][0] = "DONATION_ACCOUNTINGACCOUNT";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "7581";
+		$this->const[$r][3] = 'Compte comptable de remise des versements ou dons';
+		$this->const[$r][4] = 0;
 
 		// Boxes
 		$this->boxes = array();
@@ -153,8 +152,8 @@ class modDon  extends DolibarrModules
 		global $conf;
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][4]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][4]."','donation',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','donation',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);

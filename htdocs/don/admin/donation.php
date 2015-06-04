@@ -386,7 +386,7 @@ if (is_resource($handle))
                     {
                         print '&nbsp;';
                         print '</td><td align="center">';
-                        print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
                     }
                     print '</td>';
                 }
