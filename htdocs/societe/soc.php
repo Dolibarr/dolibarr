@@ -1124,11 +1124,11 @@ else
         // Type - Size
         print '<tr><td><label for="typent_id">'.$langs->trans("ThirdPartyType").'</label></td><td>'."\n";
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '<td><label for="effectif_id">'.$langs->trans("Staff").'</label></td><td>';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
         // Legal Form

@@ -83,14 +83,14 @@ class Societe extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-    
+
     /**
-     * State code 
+     * State code
      * @var string
      * @deprecated Use state_code instead
      */
     var $departement_code;
-    
+
     /**
      * @var string
      * @deprecated Use state instead
@@ -1762,7 +1762,8 @@ class Societe extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto)))
+		{
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
 			}
@@ -1834,7 +1835,7 @@ class Societe extends CommonObject
 
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
+        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }

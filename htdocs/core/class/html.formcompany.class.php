@@ -513,7 +513,7 @@ class FormCompany
 				}
 			}
 			$out.= '</select>';
-			if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if ($user->admin) $out.= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
 		    // Make select dynamic
         	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';

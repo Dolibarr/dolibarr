@@ -462,15 +462,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		{
 			$langs->load("users");
 
-			if ($user->admin)
-			{
-				$langs->load("admin");
-				$langs->load("help");
+			//if ($user->admin)
+			//{
 
 				// Setup
-				$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, 1, '', $mainmenu, 'setup');
+				$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup');
 				if (empty($leftmenu) || $leftmenu=="setup")
 				{
+					$langs->load("admin");
+					$langs->load("help");
+
 					$warnpicto='';
 					if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 					{
@@ -503,9 +504,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// System tools
-				$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
+				$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("SystemTools"), 0, $user->admin, '', $mainmenu, 'admintools');
 				if (empty($leftmenu) || preg_match('/^admintools/',$leftmenu))
 				{
+					$langs->load("admin");
+					$langs->load("help");
+
 					$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
 					if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
 					if (empty($leftmenu) || $leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
@@ -534,7 +538,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					if (empty($user->societe_id))
 					{
-						$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
+						$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, $user->admin, '', $mainmenu, 'modulesadmintools');
 						// Special case: This entry can't be embedded into modules because we need it for both module service and products and we don't want duplicate lines.
 						if ((empty($leftmenu) || $leftmenu=="modulesadmintools") && $user->admin)
 						{
@@ -543,18 +547,21 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 						}
 					}
 				}
-			}
+			//}
 
-			$newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, 1, '', $mainmenu, 'users');
-			if (empty($leftmenu) || $leftmenu == 'none' || $leftmenu=="users")
+			$newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, $user->rights->user->user->lire, '', $mainmenu, 'users');
+			if ($user->rights->user->user->lire)
 			{
-				$newmenu->add("", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
-				$newmenu->add("/user/card.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin, '', 'home');
-				$newmenu->add("/user/index.php", $langs->trans("ListOfUsers"), 2, $user->rights->user->user->lire || $user->admin);
-				$newmenu->add("/user/hierarchy.php", $langs->trans("HierarchicView"), 2, $user->rights->user->user->lire || $user->admin);
-				$newmenu->add("", $langs->trans("Groups"), 1, $user->rights->user->user->lire || $user->admin);
-				$newmenu->add("/user/group/card.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
-				$newmenu->add("/user/group/index.php", $langs->trans("ListOfGroups"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
+				if (empty($leftmenu) || $leftmenu == 'none' || $leftmenu=="users")
+				{
+					$newmenu->add("", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
+					$newmenu->add("/user/card.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin, '', 'home');
+					$newmenu->add("/user/index.php", $langs->trans("ListOfUsers"), 2, $user->rights->user->user->lire || $user->admin);
+					$newmenu->add("/user/hierarchy.php", $langs->trans("HierarchicView"), 2, $user->rights->user->user->lire || $user->admin);
+					$newmenu->add("", $langs->trans("Groups"), 1, $user->rights->user->user->lire || $user->admin);
+					$newmenu->add("/user/group/card.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
+					$newmenu->add("/user/group/index.php", $langs->trans("ListOfGroups"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
+				}
 			}
 		}
 

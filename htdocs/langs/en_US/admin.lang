@@ -149,7 +149,6 @@ MenuForUsers=Menu for users
 LangFile=.lang file
 System=System
 SystemInfo=System information
-SystemTools=System tools
 SystemToolsArea=System tools area
 SystemToolsAreaDesc=This area provides administration features. Use the menu to choose the feature you're looking for.
 Purge=Purge
