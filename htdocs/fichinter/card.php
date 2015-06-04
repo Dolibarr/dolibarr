@@ -248,7 +248,24 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 									$prod = new Product($db);
 									$prod->id=$lines[$i]->fk_product;
 									$prod->getMultiLangs();
+									// We show if duration is present on service (so we get it)
+									$prod->fetch($lines[$i]->fk_product);
+									if ($prod->duration_value) 
+									{
+										switch($prod->duration_unit)
+										{
+											case 'h':
+												$durationproduct=$prod->duration_value * 3600 * $lines[$i]->qty;
+												break;
+											case 'd':
+												$durationproduct=$prod->duration_value * 3600 * 24 * $lines[$i]->qty;
+												break;
+											case 'w':
+												$durationproduct=$prod->duration_value * 3600 * 24 * 7 * $lines[$i]->qty;
+												break;
 
+										}
+									}
 									$outputlangs = $langs;
 									$newlang='';
 									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
@@ -268,7 +285,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 
 								$desc = $label;
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
-							}
+							
 							else {
 								$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
@@ -277,7 +294,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$date_intervention=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 							if ($product_type == 1)
 							{ //service
-								$duration = 3600;
+								$duration = ($durationproduct ? $durationproduct : 3600);
 							}
 							else
 							{ //product
