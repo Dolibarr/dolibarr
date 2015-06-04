@@ -64,7 +64,8 @@ if (! $sortfield) $sortfield="name";
 $object = new Don($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->don->dir_output.'/'.dol_sanitizeFileName($object->id);
+$filename=dol_sanitizeFileName($object->id);
+$upload_dir=$conf->don->dir_output . '/' . get_exdir($filename,2,0,1,$object,'donation'). '/'. dol_sanitizeFileName($object->ref);
 $modulepart='don';
 
 
