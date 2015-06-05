@@ -1039,7 +1039,9 @@ class Commande extends CommonOrder
      */
     function createFromProposal($object)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $db, $conf,$user,$langs,$hookmanager;
+
+		dol_include_once('/core/class/extrafields.class.php');
 
         $error=0;
 
@@ -1110,9 +1112,15 @@ class Commande extends CommonOrder
 
             // get extrafields from original line
 			$object->fetch_optionals($object->id);
-			foreach($object->array_options as $options_key => $value)
-				$this->array_options[$options_key] = $value;
-
+			
+			$e = new ExtraFields($db);
+			$element_extrafields = $e->fetch_name_optionals_label($this->element);
+			
+			foreach($object->array_options as $options_key => $value) {
+				if(array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)){
+					$this->array_options[$options_key] = $value;
+				}
+			}
             // Possibility to add external linked objects with hooks
             $this->linked_objects[$this->origin] = $this->origin_id;
             if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
@@ -1734,6 +1742,7 @@ class Commande extends CommonOrder
 
                 $i++;
             }
+
             $this->db->free($result);
 
             return 1;

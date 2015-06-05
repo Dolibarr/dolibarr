@@ -165,6 +165,7 @@ class ProductFournisseur extends Product
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0)
     {
         global $conf, $langs;
+        //global $mysoc;
 
         // Clean parameter
         if (empty($qty)) $qty=0;
