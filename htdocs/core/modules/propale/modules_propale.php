@@ -157,9 +157,12 @@ abstract class ModeleNumRefPropales
  *  @param      int			$hideref        Hide ref
  * 	@return     int         				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of Propal class
+ * @see Propal::generateDocument()
  */
 function propale_pdf_create(DoliDB $db, Propal $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 

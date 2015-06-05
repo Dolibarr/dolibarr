@@ -38,6 +38,10 @@ class Holiday extends CommonObject
     var $error;
     var $errors=array();
 
+	/**
+	 * @deprecated
+	 * @see id
+	 */
     var $rowid;
     var $ref;
 
