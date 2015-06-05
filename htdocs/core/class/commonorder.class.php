@@ -43,6 +43,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product ref
 	 * @var string
 	 * @deprecated Use product_ref
+	 * @see product_ref
 	 */
 	public $ref;
 
@@ -56,6 +57,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product label
 	 * @var string
 	 * @deprecated Use product_label
+	 * @see product_label
 	 */
 	public $libelle;
 
@@ -78,7 +80,9 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $qty;
 
 	/**
+	 * Unit price
 	 * @deprecated
+	 * @see subprice
 	 */
 	var $price;
 

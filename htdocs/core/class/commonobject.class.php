@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ abstract class CommonObject
     /**
      * @var string 		Error string
      * @deprecated		Use instead the array of error strings
+     * @see             errors
      */
     public $error;
 
@@ -82,7 +83,7 @@ abstract class CommonObject
     public $errors=array();
 
     /**
-     * @var string		Can be used to pass information when only object is provided to method
+     * @var string[]	Can be used to pass information when only object is provided to method
      */
     public $context=array();
 
@@ -96,7 +97,24 @@ abstract class CommonObject
     public $lastname;
     public $firstname;
     public $civility_id;
+	/**
+	 * @deprecated
+	 * @see thirdparty
+	 */
+	public $client;
+	/**
+	 * @var Societe
+	 */
     public $thirdparty;
+	/**
+	 * @deprecated
+	 * @see project
+	 */
+	public $projet;
+	/**
+	 * @var Project
+	 */
+	public $project;
 
     // No constructor as it is an abstract class
 
@@ -113,13 +131,15 @@ abstract class CommonObject
      */
     static function isExistingObject($element, $id, $ref='', $ref_ext='')
     {
-    	global $db;
+    	global $db,$conf;
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		if ($id > 0) $sql.= " WHERE rowid = ".$db->escape($id);
-		else if ($ref) $sql.= " WHERE ref = '".$db->escape($ref)."'";
-		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$db->escape($ref_ext)."'";
+		$sql.= " WHERE entity IN (".getEntity($element).")" ; 
+		
+		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
+		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
+		else if ($ref_ext) $sql.= " AND ref_ext = '".$db->escape($ref_ext)."'";
 		else {
 			$error='ErrorWrongParameters';
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
@@ -1643,9 +1663,10 @@ abstract class CommonObject
     /**
      * 	Update public note (kept for backward compatibility)
      *
-     *  @param      string		$note		New value for note
-     *  @return     int      		   		<0 if KO, >0 if OK
-     *  @deprecated
+     * @param      string		$note		New value for note
+     * @return     int      		   		<0 if KO, >0 if OK
+     * @deprecated
+     * @see update_note()
      */
     function update_note_public($note)
     {
@@ -3960,15 +3981,16 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropiate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @param array $tables Tables that need to be changed
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
+	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
+	 * @param array 	$tables 		Tables that need to be changed
 	 * @return bool
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
 	{
-		foreach ($tables as $table) {
+		foreach ($tables as $table)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
 			if (!$db->query($sql)) {

@@ -186,13 +186,13 @@ if ($object->id > 0)
 				if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
 			}
 		}
-		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+		$_SESSION['assignedtouser']=json_encode($listofuserid);
 	}
 	else
 	{
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 		}
 	}
 	print $form->select_dolusers_forevent('view','assignedtouser',1);

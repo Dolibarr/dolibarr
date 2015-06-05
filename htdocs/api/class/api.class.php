@@ -22,24 +22,24 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
  * Class for API
- * 
+ *
  */
 class DolibarrApi
 {
-    
+
     /**
      * @var DoliDb        $db Database object
      */
     static protected $db;
-    
+
     /**
      * @var Restler     $r	Restler object
      */
     var $r;
-            
+
     /**
      * Constructor
-     * 
+     *
      * @param	DoliDb	$db		Database handler
      */
     function __construct($db) {
@@ -51,7 +51,7 @@ class DolibarrApi
      * Executed method when API is called without parameter
      *
      * Display a short message an return a http code 200
-     * 
+     *
      * @return array
      */
     function index()
@@ -67,10 +67,10 @@ class DolibarrApi
 
     /**
      * Clean sensible object datas
-     * 
+     *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
-     * 
+     *
      * @todo use an array for properties to clean
      *
      */
@@ -78,14 +78,16 @@ class DolibarrApi
 
         // Remove $db object property for object
 		unset($object->db);
-        
+
         // If object has lines, remove $db property
         if(isset($object->lines) && count($object->lines) > 0)  {
-            for($i=0; $i < count($object->lines); $i++) {
+            $nboflines = count($object->lines);
+        	for ($i=0; $i < $nbofline; $i++)
+            {
                 $this->_cleanObjectDatas($object->lines[$i]);
             }
         }
-        
+
         // If object has linked objects, remove $db property
         if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
             foreach($object->linkedObjects as $type_object => $linked_object) {
@@ -96,12 +98,12 @@ class DolibarrApi
         }
 		return $object;
     }
-	
+
 	/**
 	 * Check user access to a resource
-	 * 
+	 *
 	 * Check access by user to a given resource
-	 * 
+	 *
 	 * @param string	$resource		element to check
 	 * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
 	 * @param type		$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
@@ -111,18 +113,18 @@ class DolibarrApi
 	 * @throws RestException
 	 */
 	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
-		
+
 		// Features/modules to check
 		$featuresarray = array($resource);
-		if (preg_match('/&/', $resource)) { 
-			$featuresarray = explode("&", $resource); 
+		if (preg_match('/&/', $resource)) {
+			$featuresarray = explode("&", $resource);
 		}
-		else if (preg_match('/\|/', $resource)) { 
-			$featuresarray = explode("|", $resource); 
+		else if (preg_match('/\|/', $resource)) {
+			$featuresarray = explode("|", $resource);
 		}
 
 		// More subfeatures to check
-		if (! empty($feature2)) { 
+		if (! empty($feature2)) {
 			$feature2 = explode("|", $feature2);
 		}
 
@@ -141,18 +143,18 @@ class DolibarrApiInit extends DolibarrApi
 		global $db;
 		$this->db = $db;
 	}
-	
+
 	/**
 	 * Login
-	 * 
+	 *
 	 * Log user with username and password
-	 * 
+	 *
 	 * @param   string  $login			Username
 	 * @param   string  $password		User password
 	 * @param   int     $entity			User entity
      * @return  array   Response status and user token
-     * 
-	 * @throws RestException	
+     *
+	 * @throws RestException
 	 */
 	public function login($login, $password, $entity = 0) {
 
@@ -171,22 +173,22 @@ class DolibarrApiInit extends DolibarrApi
 		{
 			throw new RestException(403, 'Access denied');
 		}
-		
+
 		// Generate token for user
 		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
-		
+
 		// We store API token into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 		$sql.= " SET api_key = '".$this->db->escape($token)."'";
 		$sql.= " WHERE login = '".$this->db->escape($login)."'";
-		
+
 		dol_syslog(get_class($this)."::login", LOG_DEBUG);	// No log
 		$result = $this->db->query($sql);
 		if (!$result)
 		{
 			throw new RestException(500, 'Error when updating user :'.$this->db->error_msg);
 		}
-		
+
 		//return token
 		return array(
 			'success' => array(
@@ -199,7 +201,7 @@ class DolibarrApiInit extends DolibarrApi
 
 	/**
      * Get status (Dolibarr version)
-     * 
+     *
 	 * @access protected
 	 * @class  DolibarrApiAccess {@requires admin}
 	 */

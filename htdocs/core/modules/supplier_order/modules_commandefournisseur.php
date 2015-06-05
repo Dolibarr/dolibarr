@@ -151,9 +151,12 @@ abstract class ModeleNumRefSuppliersOrders
  *  @param      int			$hideref        Hide ref
  *  @return     int          				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of CommandeFournisseur class
+ * @see CommandeFournisseur::generateDocument()
  */
 function supplier_order_pdf_create(DoliDB $db, CommandeFournisseur $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 

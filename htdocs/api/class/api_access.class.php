@@ -18,7 +18,7 @@
 use \Luracast\Restler\iAuthenticate;
 use \Luracast\Restler\Resources;
 use \Luracast\Restler\Defaults;
-use Luracast\Restler\RestException;
+use \Luracast\Restler\RestException;
 
 
 /**
@@ -44,24 +44,14 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 
-    // @codingStandardsIgnoreStart
-
-    /**
-     * @return string string to be used with WWW-Authenticate header
-     * @example Basic
-     * @example Digest
-     * @example OAuth
-     */
-    public function __getWWWAuthenticateString();
-
 	/**
 	 * Check access
 	 *
-	 * @return boolean
+	 * @return bool
+	 * @throws RestException
 	 */
 	public function _isAllowed()
-    {
-    // @codingStandardsIgnoreEnd
+	{
 		global $db;
 
 		$stored_key = '';
@@ -74,7 +64,8 @@ class DolibarrApiAccess implements iAuthenticate
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
 
-			if ($db->query($sql))
+			$result = $db->query($sql);
+			if ($result)
 			{
 				if ($db->num_rows($result))
 				{
@@ -116,19 +107,26 @@ class DolibarrApiAccess implements iAuthenticate
 	}
 
     // @codingStandardsIgnoreStart
-	public function __getWWWAuthenticateString()
+	/**
+	 * @return string string to be used with WWW-Authenticate header
+	 * @example Basic
+	 * @example Digest
+	 * @example OAuth
+	 */
+	public function _getWWWAuthenticateString()
     {
         return '';
     }
     // @codingStandardsIgnoreEnd
 
 	/**
-     * Verify access
-     *
-     * @param   array   $m   Properties of method
-     *
-     * @access private
-     */
+	 * Verify access
+	 *
+	 * @param   array $m Properties of method
+	 *
+	 * @access private
+	 * @return bool
+	 */
     public static function verifyAccess(array $m)
     {
         $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])

@@ -45,10 +45,13 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	mixed				Return value of static property
- * @deprecated Dolibarr now requires 5.3.0+
+ * @deprecated Dolibarr now requires 5.3.0+, use $class::$property syntax
+ * @see https://php.net/manual/language.oop5.static.php
  */
 function getStaticMember($class, $member)
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	// This part is deprecated. Uncomment if for php 5.2.*, and comment next isset class::member
 	/*if (version_compare(phpversion(), '5.3.0', '<'))
 	{
@@ -387,11 +390,12 @@ function dol_buildpath($path, $type=0)
  *
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
- *  @deprecated Dolibarr no longer supports PHP4, you can now use native function
+ *  @deprecated Dolibarr no longer supports PHP4, use PHP5 native clone construct
+ *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object)
 {
-	dol_syslog("Functions.lib::dol_clone Clone object");
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
 	$myclone=clone($object);
 	return $myclone;
@@ -829,6 +833,25 @@ function dol_get_fiche_end($notab=0)
 {
 	if (! $notab) return "\n</div>\n";
 	else return '';
+}
+
+/**
+ * Show a string with the label tag dedicated to the HTML edit field.
+ *
+ * @param	string	$langkey		Translation key
+ * @param 	string	$fieldkey		Key of the html select field the text refers to
+ * @param	int		$fieldrequired	1=Field is mandatory
+ */
+function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
+{
+	global $conf, $langs;
+	$ret='';
+	if ($fieldrequired) $ret.='<span class="fieldrequired">';
+	if (empty($conf->dol_use_jmobile)) $ret.='<label for="'.$fieldkey.'">';
+	$ret.=$langs->trans($langkey);
+	if (empty($conf->dol_use_jmobile)) $ret.='</label>';
+	if ($fieldrequired) $ret.='</span>';
+	return $ret;
 }
 
 /**
@@ -1702,11 +1725,15 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *  @param		string	$url			Param to add an url to click values
  *  @return		void
  *  @deprecated
+ *  @see DolGraph
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	global $conf,$langs;
 	global $theme_datacolor;    // To have var kept when function is called several times
+
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
@@ -2380,9 +2407,12 @@ function img_mime($file, $titlealt = '')
  *	@param  int		$option		Option
  *	@return string      		Return img tag
  *  @deprecated
+ *  @see img_picto
  */
 function img_phone($titlealt = 'default', $option = 0)
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	global $conf,$langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Call');
@@ -2452,7 +2482,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), 'info', 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -2702,9 +2732,12 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
  *  @deprecated						Use print_fiche_titre instead
+ *  @see print_fiche_titre
  */
 function print_titre($title)
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	print '<div class="titre">'.$title.'</div>';
 }
 
@@ -4060,9 +4093,12 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
  *
  * @return		float		Time (millisecondes) with microsecondes in decimal part
  * @deprecated Dolibarr does not support PHP4, you should use native function
+ * @see microtime()
  */
 function dol_microtime_float()
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	return microtime(true);
 }
 
@@ -4282,6 +4318,8 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
  */
 function setEventMessage($mesgs, $style='mesgs')
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	if (! is_array($mesgs))		// If mesgs is a string
 	{
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;

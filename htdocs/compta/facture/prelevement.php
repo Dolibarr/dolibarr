@@ -36,6 +36,7 @@ if (!$user->rights->facture->lire) accessforbidden();
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("withdrawals");
+$langs->load('companies');
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
@@ -396,7 +397,7 @@ if ($object->id > 0)
 	}
 	print "</td>";
 	print '</tr>';
-	
+
 	// Montants
 	print '<tr><td>'.$langs->trans('AmountHT').'</td>';
 	print '<td align="right" colspan="2" class="nowrap">'.price($object->total_ht).'</td>';

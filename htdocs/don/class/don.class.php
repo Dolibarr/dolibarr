@@ -63,6 +63,11 @@ class Don extends CommonObject
 	var $modelpdf;
     var $projet;
 
+	/**
+	 * @deprecated
+	 * @see note_private, note_public
+	 */
+	var $commentaire;
 
     /**
      *  Constructor

@@ -55,6 +55,8 @@ abstract class ActionsAdherentCardCommon
 	 */
 	private function getInstanceDao()
 	{
+		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 		if (! is_object($this->object))
 		{
 			$modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');

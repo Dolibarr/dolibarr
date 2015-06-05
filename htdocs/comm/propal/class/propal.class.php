@@ -75,26 +75,35 @@ class Propal extends CommonObject
 
 	/**
 	 * Status of the quote
-	 * Check the following constants:
-	 * - STATUS_DRAFT
-	 * - STATUS_VALIDATED
-	 * - STATUS_SIGNED
-	 * - STATUS_NOTSIGNED
-	 * - STATUS_BILLED
 	 * @var int
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
 	 */
     var $statut;
 
 	/**
-	 * Date of creation
-	 * @var
+	 * @deprecated
+	 * @see date_creation
 	 */
     var $datec;
+
 	/**
-	 * Date of validation
-	 * @var
+	 * Creation date
+	 * @var int
+	 */
+	public $date_creation;
+
+	/**
+	 * @deprecated
+	 * @see date_validation
 	 */
     var $datev;
+
+	/**
+	 * Validation date
+	 * @var int
+	 */
+	public $date_validation;
+
 	/**
 	 * Date of the quote
 	 * @var
@@ -102,8 +111,8 @@ class Propal extends CommonObject
     var $date;
 
 	/**
-	 * Same than date ¿?
-	 * @var
+	 * @deprecated
+	 * @see date
 	 */
     var $datep;
     var $date_livraison;
@@ -121,14 +130,17 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
+	 * @see total_ht
 	 */
     var $price;
 	/**
 	 * @deprecated
+	 * @see total_tva
 	 */
     var $tva;
 	/**
 	 * @deprecated
+	 * @see total_ttc
 	 */
     var $total;
 
@@ -142,6 +154,7 @@ class Propal extends CommonObject
     var $remise_absolue;
 	/**
 	 * @deprecated
+	 * @see note_private, note_public
 	 */
     var $note;
     var $note_private;
@@ -1048,8 +1061,10 @@ class Propal extends CommonObject
      */
     function createFromClone($socid=0)
     {
-        global $user,$langs,$conf,$hookmanager;
-
+        global $db, $user,$langs,$conf,$hookmanager;
+		
+		dol_include_once('/projet/class.project.class.php');
+				
         $this->context['createfromclone']='createfromclone';
 
         $error=0;
@@ -1074,7 +1089,16 @@ class Propal extends CommonObject
                 $this->socid 				= $objsoc->id;
                 $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
                 $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-                $this->fk_project			= '';
+				
+				$project = new Project($db);
+				
+				if($objFrom->fk_project > 0 && $project->fetch($objFrom->fk_project)) {
+					if($project->socid <= 0) $this->fk_project = $objFrom->fk_project;
+					else $this->fk_project = '';
+				} else {
+					$this->fk_project = '';
+				}
+                
                 $this->fk_delivery_address	= '';
             }
 
@@ -1222,7 +1246,7 @@ class Propal extends CommonObject
                 $this->remise               = $obj->remise;
                 $this->remise_percent       = $obj->remise_percent;
                 $this->remise_absolue       = $obj->remise_absolue;
-                $this->total                = $obj->total; // TODO obsolete
+                $this->total                = $obj->total; // TODO deprecated
                 $this->total_ht             = $obj->total_ht;
                 $this->total_tva            = $obj->tva;
                 $this->total_localtax1		= $obj->localtax1;
@@ -1231,14 +1255,14 @@ class Propal extends CommonObject
                 $this->socid                = $obj->fk_soc;
                 $this->fk_project           = $obj->fk_projet;
                 $this->modelpdf             = $obj->model_pdf;
-                $this->note                 = $obj->note_private; // TODO obsolete
+                $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
 
-                $this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
-                $this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
+                $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
+                $this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
                 $this->date_creation		= $this->db->jdate($obj->datec); //Creation date
                 $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
                 $this->date                 = $this->db->jdate($obj->dp);	// Proposal date
@@ -1967,9 +1991,12 @@ class Propal extends CommonObject
      *
      *	@return     int     	<0 si ko, >0 si ok
      *  @deprecated
+     * @see classifyBilled()
      */
     function classer_facturee()
     {
+		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
     	return $this->classifyBilled();
     }
 
@@ -2724,7 +2751,7 @@ class Propal extends CommonObject
      *	Return clicable link of object (with eventually picto)
      *
      *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param      string	$option			Where point the link ('expedition', 'document', ...)
      *	@param      string	$get_params    	Parametres added to url
      *	@return     string          		String with URL
      */
@@ -2912,17 +2939,19 @@ class PropaleLigne  extends CommonObjectLine
     var $oldline;
 
     // From llx_propaldet
-    var $rowid;
     var $fk_propal;
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
 	/**
+	 * @deprecated
+	 * @see product_type
+	 */
+	var $fk_product_type;
+	/**
 	 * Product type.
-	 * Use the following constants:
-	 * - Product::TYPE_PRODUCT
-	 * - Product::TYPE_SERVICE
 	 * @var int
+	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
 	 */
     var $product_type = Product::TYPE_PRODUCT;
 
@@ -2952,14 +2981,43 @@ class PropaleLigne  extends CommonObjectLine
     var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
     var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    // Ne plus utiliser
+	/**
+	 * @deprecated
+	 * @see $remise_percent, $fk_remise_except
+	 */
     var $remise;
+	/**
+	 * @deprecated
+	 * @see subprice
+	 */
     var $price;
 
     // From llx_product
-    var $ref;						// Reference produit
-    var $libelle;       // Label produit
-    var $product_desc;  // Description produit
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
+    var $ref;
+	/**
+	 * Product reference
+	 * @var string
+	 */
+	public $product_ref;
+	/**
+	 * @deprecated
+	 * @see product_label
+	 */
+    var $libelle;
+	/**
+	 *  Product label
+	 * @var string
+	 */
+	public $product_label;
+	/**
+	 * Product description
+	 * @var string
+	 */
+    public $product_desc;
 
     var $localtax1_tx;		// Local tax 1
     var $localtax2_tx;		// Local tax 2
@@ -3007,7 +3065,8 @@ class PropaleLigne  extends CommonObjectLine
 		{
 			$objp = $this->db->fetch_object($result);
 
-			$this->rowid			= $objp->rowid;
+			$this->id               = $objp->rowid;
+			$this->rowid			= $objp->rowid;     // deprecated
 			$this->fk_propal		= $objp->fk_propal;
 			$this->fk_parent_line	= $objp->fk_parent_line;
 			$this->label			= $objp->custom_label;
@@ -3016,7 +3075,7 @@ class PropaleLigne  extends CommonObjectLine
 			$this->price			= $objp->price;		// deprecated
 			$this->subprice			= $objp->subprice;
 			$this->tva_tx			= $objp->tva_tx;
-			$this->remise			= $objp->remise;
+			$this->remise			= $objp->remise;    // deprecated
 			$this->remise_percent	= $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
 			$this->fk_product		= $objp->fk_product;

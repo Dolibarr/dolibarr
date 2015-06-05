@@ -48,7 +48,16 @@ class FormMail extends Form
 
     var $withsubstit;			// Show substitution array
     var $withfrom;
-    var $withto;				// Show recipient emails
+	/**
+	 * @var int
+	 * @deprecated Fill withto with array before calling method.
+	 * @see withto
+	 */
+	public $withtosocid;
+	/**
+	 * @var int|int[]
+	 */
+    public $withto;				// Show recipient emails
     var $withtofree;			// Show free text for recipient emails
     var $withtocc;
     var $withtoccc;
