@@ -37,7 +37,7 @@ $langs->load("projects");
 $langs->load("companies");
 
 $id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
+$ref=GETPOST("ref",'alpha',1);
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
@@ -81,6 +81,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$task_parent=$tmparray[1];
 		if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
 
+		$object->ref = GETPOST("ref",'alpha',2);
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
@@ -308,7 +309,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ref
 			print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
-			print '<td>'.$object->ref.'</td></tr>';
+			print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
 
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td>';
