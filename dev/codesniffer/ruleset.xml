@@ -350,6 +350,11 @@
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidVariableName" />
 
+	<!-- This is not in PSR2 -->
+	<rule ref="PEAR.NamingConventions.ValidVariableName.PrivateNoUnderscore">
+        <severity>0</severity>
+    </rule>
+	
 	<rule ref="PEAR.WhiteSpace.ObjectOperatorIndent" />
 
 	<!-- Need to be commented to be disabled
