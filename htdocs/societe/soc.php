@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $langs->load("companies");
@@ -400,6 +401,16 @@ if (empty($reshook))
                         }
                     }
 
+					// Categories association
+					$custcats = GETPOST( 'custcats', 'array' );
+					if (!empty( $custcats )) {
+						$cat = new Categorie( $db );
+						foreach ($custcats as $id_category) {
+							$cat->fetch( $id_category );
+							$cat->add_type( $object, 'customer' );
+						}
+					}
+
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
@@ -503,6 +514,22 @@ if (empty($reshook))
                 {
                     $error = $object->error; $errors = $object->errors;
                 }
+
+				// Categories association
+				// First we delete all categories association
+				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_societe';
+				$sql .= ' WHERE fk_soc = ' . $object->id;
+				$db->query( $sql );
+
+				// Then we add the associated categories
+				$categories = GETPOST( 'custcats', 'array' );
+				if (!empty( $categories )) {
+					$cat = new Categorie( $db );
+					foreach ($categories as $id_category) {
+						$cat->fetch( $id_category );
+						$cat->add_type( $object, 'customer' );
+					}
+				}
 
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
@@ -1201,6 +1228,12 @@ else
 			print '</td></tr>';
 		}
 
+		// Categories
+		print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+		print $form->multiselectarray('custcats', $cate_arbo, GETPOST( 'custcats', 'array' ), null, null, null, null, 250);
+		print "</td></tr>";
+
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1702,6 +1735,18 @@ else
                 print '</tr>';
             }
 
+			// Categories
+			print '<tr><td><label for="custcats">' . $langs->trans( "Categories" ) . '</label></td>';
+	        print '<td colspan="3">';
+			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CUSTOMER, null, null, null, null, 1 );
+			$c = new Categorie( $db );
+			$cats = $c->containing( $object->id, Categorie::TYPE_CUSTOMER );
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+			print $form->multiselectarray( 'custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%' );
+			print "</td></tr>";
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2127,6 +2172,12 @@ else
             print $labellang;
             print '</td></tr>';
         }
+
+		// Categories
+		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+		print '<td colspan="3">';
+		print $form->showCategories( $object->id, 'customer', 1 );
+		print "</td></tr>";
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))

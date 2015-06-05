@@ -227,7 +227,7 @@ function dol_shutdown()
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
- *  @return string||string[]     Value found (string or array), or '' if check fails
+ *  @return string|string[]      Value found (string or array), or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 {
