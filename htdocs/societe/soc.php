@@ -102,18 +102,23 @@ if (empty($reshook))
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
 
-		if ($soc_origin_id < 1) {
+		if ($soc_origin_id < 1)
+		{
 			$langs->load('errors');
 			$langs->load('companies');
 			setEventMessage($langs->trans('ErrorProdIdIsMandatory', $langs->trans('MergeOriginThirdparty')), 'errors');
-		} else {
+		}
+		else
+		{
 
-			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1) {
+			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
+			{
 				setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
 				$errors++;
 			}
 
-			if (!$errors) {
+			if (!$errors)
+			{
 				$db->begin();
 
 				$objects = array(
@@ -141,8 +146,8 @@ if (empty($reshook))
 				);
 
 				//First, all core objects must update their tables
-				foreach ($objects as $object_name => $object_file) {
-
+				foreach ($objects as $object_name => $object_file)
+				{
 					require_once DOL_DOCUMENT_ROOT.$object_file;
 
 					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {

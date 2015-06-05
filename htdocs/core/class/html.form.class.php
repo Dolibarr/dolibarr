@@ -3092,7 +3092,7 @@ class Form
 
         	// Now add questions
             $more.='<table class="paddingrightonly" width="100%">'."\n";
-            $more.='<tr><td colspan="3" valign="top">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
+            $more.='<tr><td colspan="3">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
                 if (is_array($input) && ! empty($input))
@@ -3101,15 +3101,15 @@ class Form
 
                     if ($input['type'] == 'text')
                     {
-                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+                        $more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
                     }
                     else if ($input['type'] == 'password')
                     {
-                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+                        $more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
                     }
                     else if ($input['type'] == 'select')
                     {
-                        $more.='<tr><td valign="top">';
+                        $more.='<tr><td>';
                         if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                         $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
                         $more.='</td></tr>'."\n";
@@ -3117,13 +3117,13 @@ class Form
                     else if ($input['type'] == 'checkbox')
                     {
                         $more.='<tr>';
-                        $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
+                        $more.='<td>'.$input['label'].' </td><td align="left">';
                         $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
                         if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked';
                         if (is_bool($input['value']) && $input['value']) $more.=' checked';
                         if (isset($input['disabled'])) $more.=' disabled';
                         $more.=' /></td>';
-                        $more.='<td valign="top" align="left">&nbsp;</td>';
+                        $more.='<td align="left">&nbsp;</td>';
                         $more.='</tr>'."\n";
                     }
                     else if ($input['type'] == 'radio')
@@ -3134,10 +3134,10 @@ class Form
                             $more.='<tr>';
                             if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
-                            $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
+                            $more.='<td width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                             if ($input['disabled']) $more.=' disabled';
                             $more.=' /></td>';
-                            $more.='<td valign="top" align="left">';
+                            $more.='<td align="left">';
                             $more.=$selval;
                             $more.='</td></tr>'."\n";
                             $i++;
@@ -3145,8 +3145,8 @@ class Form
                     }
                     else if ($input['type'] == 'other')
                     {
-                        $more.='<tr><td valign="top">';
-                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+                        $more.='<tr><td>';
+                        if (! empty($input['label'])) $more.=$input['label'].'</td><td colspan="2" align="left">';
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
                     }

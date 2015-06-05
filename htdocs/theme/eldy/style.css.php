@@ -1833,7 +1833,7 @@ div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
-div.tabBar .tdtop {
+div .tdtop {
     vertical-align: top;
 	padding-top: 5px;
 	padding-bottom: 0px;
