@@ -363,7 +363,13 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
        	    migrate_event_assignement($db,$langs,$conf);
-
+        }
+        
+        // Scripts for lat version
+        $afterversionarray=explode('.','3.7.9');
+        $beforeversionarray=explode('.','3.8.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
         	// Reload modules (this must be always and only into last targeted version)
 			$listofmodule=array(
 				    	'MAIN_MODULE_AGENDA',
