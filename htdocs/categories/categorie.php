@@ -208,7 +208,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				setEventMessages($cat->error,$this->errors,'errors');
+				setEventMessages( $cat->error, $cat->errors, 'errors' );
 			}
 		}
 	}
