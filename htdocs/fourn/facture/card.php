@@ -1508,7 +1508,16 @@ if ($action == 'create')
 	        $langs->load('orders');
 	        $txt=$langs->trans("SupplierOrder");
         }
-        print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+        print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1);
+        //We check if Origin document has already an invoice attached to it
+        $objectsrc->fetchObjectLinked($originid,'','','invoice_supplier');
+        $cntinvoice=count($objectsrc->linkedObjects['invoice_supplier']);
+        if ($cntinvoice>=1)
+        {
+        	setEventMessage('WarningBillExist','warnings');
+        	echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
+        }
+        echo '</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->country_code=='ES')
