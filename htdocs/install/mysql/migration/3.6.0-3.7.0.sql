@@ -1177,4 +1177,5 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 
 ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;
 
-INSERT INTO llx_const (name, value, type, note, visible, entity) SELECT __ENCRYPT('PRODUCT_USE_OLD_PATH_FOR_PHOTO')__,__ENCRYPT('1')__,'chaine','Use old path for products images',1,0 FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_INSTALL' AND __DECRYPT('value')__ <= '3.7.2';
+-- This constant is for compatibility if user come from 3.6 or lower. Must not be enabled on 3.7.0 or +
+INSERT INTO llx_const (name, value, type, note, visible, entity) SELECT __ENCRYPT('PRODUCT_USE_OLD_PATH_FOR_PHOTO')__,__ENCRYPT('1')__,'chaine','Use old path for products images',1,0 FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_INSTALL' AND __DECRYPT('value')__ < '3.7.0'; 
