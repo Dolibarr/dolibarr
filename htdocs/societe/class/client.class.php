@@ -108,7 +108,7 @@ class Client extends Societe
 		while ($i < $num)
 		{
 			$obj=$this->db->fetch_object($resql);
-			$this->cacheprospectstatus[$obj->id]=array('id'=>$obj->id, 'code'=>$obj->code, 'label'=> $langs->trans("aaa")?$obj->label:'');
+			$this->cacheprospectstatus[$obj->id]=array('id'=>$obj->id, 'code'=>$obj->code, 'label'=> ($langs->trans("ST_".strtoupper($obj->code))=="ST_".strtoupper($obj->code))?$obj->label:$langs->trans("ST_".strtoupper($obj->code)));
 			$i++;
 		}
 		return 1;

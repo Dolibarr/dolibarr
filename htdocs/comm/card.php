@@ -140,7 +140,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
-	// update prospect level
+	// set communication status
 	if ($action == 'setstcomm')
 	{
 		$object->fetch($id);
