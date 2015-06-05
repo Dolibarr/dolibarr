@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014-2015  Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,11 +181,11 @@ class html_cerfafr extends ModeleDon
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART200 >= 1)
 					{
-						$art200='<input type="checkbox" checked>200 du CGI';
+						$art200='<input type="checkbox" disabled="true" checked>200 du CGI';
 					}
 					else
 					{
-						$art200='<input type="checkbox">200 du CGI';
+						$art200='<input type="checkbox" disabled="true">200 du CGI';
 					}
 				}
 				$form = str_replace('__ARTICLE200__',$art200,$form);
@@ -194,11 +194,11 @@ class html_cerfafr extends ModeleDon
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART238 >= 1)
 					{
-						$art238='<input type="checkbox" checked>238 bis du CGI';
+						$art238='<input type="checkbox" disabled="true" checked>238 bis du CGI';
 					}
 					else
 					{
-						$art238='<input type="checkbox">238 bis du CGI';
+						$art238='<input type="checkbox" disabled="true">238 bis du CGI';
 					}
 				}
 				$form = str_replace('__ARTICLE238__',$art238,$form);
@@ -207,11 +207,11 @@ class html_cerfafr extends ModeleDon
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) {
 					if ($conf->global->DONATION_ART885 >= 1)
 					{
-						$art885='<input type="checkbox" checked>885-0 V bis du CGI';
+						$art885='<input type="checkbox" disabled="true" checked>885-0 V bis du CGI';
 					}
 					else
 					{
-						$art885='<input type="checkbox">885-0 V bis du CGI';
+						$art885='<input type="checkbox" disabled="true">885-0 V bis du CGI';
 					}
 				}
 				$form = str_replace('__ARTICLE885__',$art885,$form);
