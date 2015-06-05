@@ -311,7 +311,7 @@ if (empty($reshook))
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -320,7 +320,7 @@ if (empty($reshook))
 	    $result = $object->setClose($user);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -329,7 +329,7 @@ if (empty($reshook))
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -339,14 +339,14 @@ if (empty($reshook))
 	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
-	        header("Location: index.php");
+	        setEventMessage($langs->trans("RecordDeleted"), 'info');
+	    	header("Location: index.php");
 	        exit;
 	    }
 	    else
 	    {
 	        dol_syslog($object->error,LOG_DEBUG);
-	        setEventMessage($object->error,'errors');
-	        setEventMessage($object->errors,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
