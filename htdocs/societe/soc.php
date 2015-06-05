@@ -1229,11 +1229,14 @@ else
 		}
 
 		// Categories
-		print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-		print $form->multiselectarray('custcats', $cate_arbo, GETPOST( 'custcats', 'array' ), null, null, null, null, 250);
-		print "</td></tr>";
-
+	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+	    {
+			print '<tr><td class="toptd">'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
+			print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null, null, "90%");
+			print "</td></tr>";
+	    }
+	    
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1736,17 +1739,20 @@ else
             }
 
 			// Categories
-			print '<tr><td><label for="custcats">' . $langs->trans( "Categories" ) . '</label></td>';
-	        print '<td colspan="3">';
-			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CUSTOMER, null, null, null, null, 1 );
-			$c = new Categorie( $db );
-			$cats = $c->containing( $object->id, Categorie::TYPE_CUSTOMER );
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print $form->multiselectarray( 'custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%' );
-			print "</td></tr>";
-
+		    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		    {
+	            print '<tr><td><label for="custcats">' . $langs->trans("Categories") . '</label></td>';
+		        print '<td colspan="3">';
+				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
+				$c = new Categorie( $db );
+				$cats = $c->containing( $object->id, Categorie::TYPE_CUSTOMER );
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray( 'custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print "</td></tr>";
+		    }
+		    
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2174,11 +2180,14 @@ else
         }
 
 		// Categories
-		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
-		print '<td colspan="3">';
-		print $form->showCategories( $object->id, 'customer', 1 );
-		print "</td></tr>";
-
+	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+	    {
+	        print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+			print '<td colspan="3">';
+			print $form->showCategories( $object->id, 'customer', 1 );
+			print "</td></tr>";
+	    }
+	    
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
