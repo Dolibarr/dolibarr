@@ -50,7 +50,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 * @return bool
 	 * @throws RestException
 	 */
-	public function __isAllowed()
+	public function _isAllowed()
 	{
 		global $db;
 
@@ -113,7 +113,7 @@ class DolibarrApiAccess implements iAuthenticate
 	 * @example Digest
 	 * @example OAuth
 	 */
-	public function __getWWWAuthenticateString()
+	public function _getWWWAuthenticateString()
     {
         return '';
     }
