@@ -32,7 +32,9 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) after default_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) default 'FRST' after rum;
 
-  
+ALTER TABLE llx_cronjob ADD COLUMN entity integer DEFAULT 0;
+ALTER TABLE llx_cronjob MODIFY COLUMN params text NULL;
+
 -- Loan
 create table llx_loan
 (

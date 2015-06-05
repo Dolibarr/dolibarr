@@ -833,6 +833,7 @@ function unActivateModule($value, $requiredby=1)
     {
         $objMod = new $modName($db);
         $result=$objMod->remove();
+        if ($result <= 0) $ret=$objMod->error;
     }
     else
     {
@@ -846,7 +847,7 @@ function unActivateModule($value, $requiredby=1)
     }
 
     // Desactivation des modules qui dependent de lui
-    if ($requiredby)
+    if (! $ret && $requiredby)
     {
         $countrb=count($objMod->requiredby);
         for ($i = 0; $i < $countrb; $i++)

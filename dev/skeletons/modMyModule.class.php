@@ -167,6 +167,12 @@ class modMyModule extends DolibarrModules
 		// Example:
 		//$this->boxes=array(array(0=>array('file'=>'myboxa.php','note'=>'','enabledbydefaulton'=>'Home'),1=>array('file'=>'myboxb.php','note'=>''),2=>array('file'=>'myboxc.php','note'=>'')););
 
+		// Cronjobs
+		$this->cronjobs = array();			// List of cron jobs entries to add
+		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600),
+		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
+		// );
+
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
@@ -179,7 +185,6 @@ class modMyModule extends DolibarrModules
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
-
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
