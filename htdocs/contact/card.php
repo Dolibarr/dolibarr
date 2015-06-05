@@ -201,12 +201,12 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) 
+		if ($ret < 0)
 		{
 			$error++;
 			$action = 'create';
 		}
-		
+
         if (! GETPOST("lastname"))
         {
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
@@ -1105,18 +1105,14 @@ else
 		{
         	if ($user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
 
             if (! $object->user_id && $user->rights->user->user->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
             }
 
-            if ($user->rights->societe->contact->supprimer)
-            {
-                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
-            }
             // Activer
             if ($object->statut == 0 && $user->rights->societe->contact->creer)
             {
@@ -1126,6 +1122,12 @@ else
             if ($object->statut == 1 && $user->rights->societe->contact->creer)
             {
                 print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
+            }
+
+		    // Delete
+		    if ($user->rights->societe->contact->supprimer)
+            {
+                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
             }
         }
 
