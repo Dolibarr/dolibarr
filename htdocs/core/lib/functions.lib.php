@@ -832,6 +832,25 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
+ * Show a string with the label tag dedicated to the HTML edit field.
+ *
+ * @param	string	$langkey		Translation key
+ * @param 	string	$fieldkey		Key of the html select field the text refers to
+ * @param	int		$fieldrequired	1=Field is mandatory
+ */
+function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
+{
+	global $conf, $langs;
+	$ret='';
+	if ($fieldrequired) $ret.='<span class="fieldrequired">';
+	if (empty($conf->dol_use_jmobile)) $ret.='<label for="'.$fieldkey.'">';
+	$ret.=$langs->trans($langkey);
+	if (empty($conf->dol_use_jmobile)) $ret.='</label>';
+	if ($fieldrequired) $ret.='</span>';
+	return $ret;
+}
+
+/**
  * Return string to add class property on html element with pair/impair.
  *
  * @param	string	$var			0 or 1

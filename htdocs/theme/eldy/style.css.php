@@ -1400,7 +1400,12 @@ div.tabs {
 	clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 1px; }		/* To avoid overlap of tabs when not browser */
+div.tabsElem {
+	margin-top: 1px;
+	<?php if (! empty($conf->dol_use_jmobile)) { ?>;
+	margin-bottom: -1px;
+	<?php } ?>
+}		/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -1969,6 +1974,13 @@ table.liste td {
 
 
 /* Pagination */
+div.refid  {
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
+  	font-weight: bold;
+  	color: #766;
+  	font-size: 120%;
+}
+
 div.pagination {
 	float: right;
 }
@@ -1987,8 +1999,10 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
+<?php if (empty($conf->dol_use_jmobile)) { ?>
   padding-top: 6px;
-  padding-bottom: 6px;
+  padding-bottom: 5px;
+<?php } ?>
 }
 .pagination {
   display: inline-block;
@@ -1997,7 +2011,9 @@ div.pagination li {
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
+<?php if (empty($conf->dol_use_jmobile)) { ?>
   padding: 6px 12px;
+<?php } ?>
   margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
@@ -2006,10 +2022,26 @@ div.pagination li.pagination span {
 div.pagination li.pagination span.inactive {
   cursor: default;
 }
+div.pagination li.litext a {
+border: none;
+  padding-right: 10px;
+  padding-left: 4px;
+  font-weight: bold;
+}
+<?php if (! empty($conf->dol_use_jmobile)) { ?>
+div.pagination li.litext {
+  padding-top: 13px;
+  vertical-align: top;
+}
+<?php } ?>
 <?php if (empty($conf->dol_use_jmobile)) { ?>
+div.pagination li.noborder a:hover {
+  border: none;
+  background-color: transparent;
+}
 div.pagination li a,
 div.pagination li span {
-	background-color: #fff;
+  background-color: #fff;
   border: 1px solid #ddd;
 }
 div.pagination li:first-child a,
@@ -3470,6 +3502,14 @@ ul.ulmenu {
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
+}
+/*
+.ui-btn-up-c {
+	background: transparent;
+}
+*/
+div.tabsElem a.tab {
+	background: transparent;
 }
 .ui-controlgroup-horizontal .ui-btn.ui-first-child {
 -webkit-border-top-left-radius: 6px;
