@@ -57,7 +57,7 @@ class modDon  extends DolibarrModules
 		$this->picto='bill';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/dons/temp");
+		$this->dirs = array("/don/temp");
 
 		// Dependancies
 		$this->depends = array();
