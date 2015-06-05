@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ abstract class CommonObject
     /**
      * @var string 		Error string
      * @deprecated		Use instead the array of error strings
+     * @see             errors
      */
     public $error;
 
@@ -82,7 +83,7 @@ abstract class CommonObject
     public $errors=array();
 
     /**
-     * @var string		Can be used to pass information when only object is provided to method
+     * @var string[]	Can be used to pass information when only object is provided to method
      */
     public $context=array();
 
@@ -96,7 +97,24 @@ abstract class CommonObject
     public $lastname;
     public $firstname;
     public $civility_id;
+	/**
+	 * @deprecated
+	 * @see thirdparty
+	 */
+	public $client;
+	/**
+	 * @var Societe
+	 */
     public $thirdparty;
+	/**
+	 * @deprecated
+	 * @see project
+	 */
+	public $projet;
+	/**
+	 * @var Project
+	 */
+	public $project;
 
     // No constructor as it is an abstract class
 
@@ -1643,9 +1661,10 @@ abstract class CommonObject
     /**
      * 	Update public note (kept for backward compatibility)
      *
-     *  @param      string		$note		New value for note
-     *  @return     int      		   		<0 if KO, >0 if OK
-     *  @deprecated
+     * @param      string		$note		New value for note
+     * @return     int      		   		<0 if KO, >0 if OK
+     * @deprecated
+     * @see update_note()
      */
     function update_note_public($note)
     {

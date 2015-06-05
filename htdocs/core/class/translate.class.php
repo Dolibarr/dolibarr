@@ -707,6 +707,7 @@ class Translate
 	 *  @param	string	$amount				If not '', show currency + amount according to langs ($10, 10€).
 	 *  @return	string						Amount + Currency symbol encoded into UTF8
 	 *  @deprecated							Use method price to output a price
+	 *  @see price()
 	 */
 	function getCurrencyAmount($currency_code, $amount)
 	{

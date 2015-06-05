@@ -153,9 +153,12 @@ abstract class ModeleNumRefProjects
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of Project class
+ * @see Project::generateDocument()
  */
 function project_pdf_create(DoliDB $db, Project $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 

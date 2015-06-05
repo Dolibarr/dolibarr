@@ -55,6 +55,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * TODO: Remove
 	 * @deprecated
+	 * @see product_ref
 	 */
     var $ref;
     var $product_ref;
@@ -78,8 +79,13 @@ class CommandeFournisseur extends CommonOrder
     var $total_localtax2;   // Total Local tax 2
     var $total_ttc;
     var $source;
+	/**
+	 * @deprecated
+	 * @see note_private, note_public
+	 */
     var $note;
-    var $note_public;
+	public $note_private;
+    public $note_public;
     var $model_pdf;
     var $fk_project;
     var $cond_reglement_id;
@@ -2465,6 +2471,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 * Supplier ref
 	 * @var string
 	 * @deprecated Use ref_supplier
+	 * @see ref_supplier
 	 */
 	public $ref_fourn;
 

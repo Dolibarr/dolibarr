@@ -423,6 +423,7 @@ class FormCompany
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
+	 *    @see select_juridicalstatus()
 	 */
 	function select_forme_juridique($selected='', $country_codeid=0, $filter='')
 	{

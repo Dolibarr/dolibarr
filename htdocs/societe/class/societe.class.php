@@ -59,6 +59,7 @@ class Societe extends CommonObject
      * Thirdparty name
      * @var string
      * @deprecated Use $name instead
+     * @see name
      */
     public $nom;
 
@@ -88,18 +89,21 @@ class Societe extends CommonObject
      * State code
      * @var string
      * @deprecated Use state_code instead
+     * @see state_code
      */
     var $departement_code;
 
     /**
      * @var string
      * @deprecated Use state instead
+     * @see state
      */
     var $departement;
 
     /**
      * @var string
      * @deprecated Use country instead
+     * @see country
      */
     var $pays;
     var $country_id;
@@ -298,6 +302,7 @@ class Societe extends CommonObject
     /**
      * @var string
      * @deprecated Note is split in public and private notes
+     * @see note_public, note_private
      */
     var $note;
 
@@ -2804,7 +2809,7 @@ class Societe extends CommonObject
         if (empty($name)) $name=$member->getFullName($langs);
 
         // Positionne parametres
-        $this->nom=$name;				// TODO obsolete
+        $this->nom=$name;				// TODO deprecated
         $this->name=$name;
         $this->address=$member->address;
         $this->zip=$member->zip;

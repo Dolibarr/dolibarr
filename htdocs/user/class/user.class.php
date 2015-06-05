@@ -74,8 +74,16 @@ class User extends CommonObject
 	var $datem;
 
 	//! If this is defined, it is an external user
-	var $societe_id;	// deprecated
-	var $contact_id;	// deprecated
+	/**
+	 * @deprecated
+	 * @see socid
+	 */
+	var $societe_id;
+	/**
+	 * @deprecated
+	 * @see contactid
+	 */
+	var $contact_id;
 	var $socid;
 	var $contactid;
 

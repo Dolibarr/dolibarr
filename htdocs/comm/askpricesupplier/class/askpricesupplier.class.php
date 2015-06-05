@@ -59,13 +59,41 @@ class AskPriceSupplier extends CommonObject
     var $client;		// Objet societe client (a charger par fetch_client)
 
     var $fk_project;
+	/**
+	 * @deprecated
+	 * @see user_author_id
+	 */
     var $author;
     var $ref;
 	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
     var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
-    var $datec;						// Date of creation
     var $date;						// Date of proposal
     var $date_livraison;
+
+	/**
+	 * @deprecated
+	 * @see date_creation
+	 */
+	var $datec;
+
+	/**
+	 * Creation date
+	 * @var int
+	 */
+	public $date_creation;
+
+	/**
+	 * @deprecated
+	 * @see date_validation
+	 */
+	var $datev;
+
+	/**
+	 * Validation date
+	 * @var int
+	 */
+	public $date_validation;
+
 
     var $user_author_id;
     var $user_valid_id;
@@ -76,9 +104,22 @@ class AskPriceSupplier extends CommonObject
     var $total_localtax1;			// Total Local Taxes 1
     var $total_localtax2;			// Total Local Taxes 2
     var $total_ttc;					// Total with tax
-    var $price;						// deprecated (for compatibility)
-    var $tva;						// deprecated (for compatibility)
-    var $total;						// deprecated (for compatibility)
+
+	/**
+	 * @deprecated
+	 * @see price_ht
+	 */
+    var $price;
+	/**
+	 * @deprecated
+	 * @see total_tva
+	 */
+    var $tva;
+	/**
+	 * @deprecated
+	 * @see total_ttc
+	 */
+    var $total;
 
     var $cond_reglement_id;
     var $cond_reglement_code;
@@ -88,7 +129,11 @@ class AskPriceSupplier extends CommonObject
     var $remise;
     var $remise_percent;
     var $remise_absolue;
-    var $note;						// deprecated (for compatibility)
+	/**
+	 * @deprecated
+	 * @see note_public, note_private
+	 */
+    var $note;
     var $note_private;
     var $note_public;
     var $shipping_method_id;
@@ -1031,7 +1076,7 @@ class AskPriceSupplier extends CommonObject
                 $this->remise               = $obj->remise;
                 $this->remise_percent       = $obj->remise_percent;
                 $this->remise_absolue       = $obj->remise_absolue;
-                $this->total                = $obj->total; // TODO obsolete
+                $this->total                = $obj->total; // TODO deprecated
                 $this->total_ht             = $obj->total_ht;
                 $this->total_tva            = $obj->tva;
                 $this->total_localtax1		= $obj->localtax1;
@@ -1040,14 +1085,14 @@ class AskPriceSupplier extends CommonObject
                 $this->socid                = $obj->fk_soc;
                 $this->fk_project           = $obj->fk_projet;
                 $this->modelpdf             = $obj->model_pdf;
-                $this->note                 = $obj->note_private; // TODO obsolete
+                $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
 
-                $this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
-                $this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
+                $this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
+                $this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
                 $this->date_creation		= $this->db->jdate($obj->datec); //Creation date
                 $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
                 $this->date_livraison       = $this->db->jdate($obj->date_livraison);
@@ -2431,7 +2476,17 @@ class AskPriceSupplierLine  extends CommonObject
     var $fk_parent_line;
     var $desc;          	// Description ligne
     var $fk_product;		// Id produit predefini
-    var $product_type = 0;	// Type 0 = product, 1 = Service
+	/**
+	 * @deprecated
+	 * @see product_type
+	 */
+	var $fk_product_type;
+	/**
+	 * Product type
+	 * @var int
+	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
+	 */
+    public $product_type = Product::TYPE_PRODUCT;
 
     var $qty;
     var $tva_tx;
@@ -2459,14 +2514,43 @@ class AskPriceSupplierLine  extends CommonObject
     var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
     var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    // Ne plus utiliser
+	/**
+	 * @deprecated
+	 * @see remise_percent, fk_remise_except
+	 */
     var $remise;
+	/**
+	 * @deprecated
+	 * @see subprice
+	 */
     var $price;
 
     // From llx_product
-    var $ref;						// Reference produit
-    var $libelle;       // Label produit
-    var $product_desc;  // Description produit
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
+	var $ref;
+	/**
+	 * Product reference
+	 * @var string
+	 */
+	public $product_ref;
+	/**
+	 * @deprecated
+	 * @see product_label
+	 */
+	var $libelle;
+	/**
+	 *  Product label
+	 * @var string
+	 */
+	public $product_label;
+	/**
+	 * Product description
+	 * @var string
+	 */
+	public $product_desc;
 
     var $localtax1_tx;		// Local tax 1
     var $localtax2_tx;		// Local tax 2

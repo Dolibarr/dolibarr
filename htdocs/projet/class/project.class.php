@@ -46,6 +46,12 @@ class Project extends CommonObject
     var $id;
     var $ref;
     var $description;
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see title
+	 */
+	public $titre;
     var $title;
     var $date_start;
     var $date_end;
@@ -65,6 +71,27 @@ class Project extends CommonObject
 
     var $weekWorkLoad;			// Used to store workload details of a projet
     var $weekWorkLoadPerTask;	// Used to store workload details of tasks of a projet
+
+	/**
+	 * @var int Creation date
+	 * @deprecated
+	 * @see date_c
+	 */
+	public $datec;
+	/**
+	 * @var int Creation date
+	 */
+	public $date_c;
+	/**
+	 * @var int Modification date
+	 * @deprecated
+	 * @see date_m
+	 */
+	public $datem;
+	/**
+	 * @var int Modification date
+	 */
+	public $date_m;
 
 
     /**
