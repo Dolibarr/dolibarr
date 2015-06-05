@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
@@ -98,6 +98,8 @@ if (empty($reshook))
 {
 	if ($action == 'confirm_merge' && $confirm == 'yes')
 	{
+		$object->fetch($socid);
+
 		$errors = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
@@ -150,9 +152,9 @@ if (empty($reshook))
 				{
 					require_once DOL_DOCUMENT_ROOT.$object_file;
 
-					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
+					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+					{
 						$errors++;
-						$db->rollback();
 					}
 				}
 
@@ -161,32 +163,37 @@ if (empty($reshook))
 					'mergethirds'
 				));
 
-				if (!$errors) {
+				if (!$errors)
+				{
 					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
 						'soc_dest' => $object->id
 					), $soc_dest, $action);
 
-					if ($reshook < 0) {
+					if ($reshook < 0)
+					{
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$errors++;
 					}
 				}
 
-				if (!$errors) {
+				if (!$errors)
+				{
 					//We finally remove the old thirdparty
-					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
-						$db->rollback();
+					if ($soc_origin->delete($soc_origin->id, $user) < 1)
+					{
 						$errors++;
 					}
 				}
-			}
 
-			if (!$errors) {
-				setEventMessage($langs->trans('ThirdpartiesMergeSuccess'));
-				$db->commit();
-			} else {
-				setEventMessage($langs->trans('ErrorsThirdpartyMerge'), 'errors');
+				if (!$errors)
+				{
+					setEventMessage($langs->trans('ThirdpartiesMergeSuccess'));
+					$db->commit();
+				} else {
+					setEventMessage($langs->trans('ErrorsThirdpartyMerge'), 'errors');
+					$db->rollback();
+				}
 			}
 		}
 	}
@@ -1832,21 +1839,21 @@ else
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
         }
 
-	    if ($action == 'merge') {
-		    $form = new Form($db);
-
-		    $options = array(
+	    if ($action == 'merge')
+	    {
+		    $formquestion = array(
 			    array(
-				    'label' => $langs->trans('MergeOriginThirdparty'),
+				    'name' => 'soc_origin',
+			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1)
+				    'value' => $form->select_thirdparty('', 'soc_origin', 's.rowid != '.$object->id)
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("MergeThirdparties"),$langs->trans("ConfirmMergeThirdparties"),"confirm_merge",$options,'',1);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1);
 	    }
 
         dol_htmloutput_errors($error,$errors);
