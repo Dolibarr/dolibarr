@@ -41,6 +41,8 @@
 /**
  *	Class to manage generation of HTML components
  *	Only common components must be here.
+ *
+ *  TODO Merge all function load_cache_* into one generic function
  */
 class Form
 {
@@ -101,7 +103,7 @@ class Form
             }
         }
         else
-        {
+		{
             $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
             $ret.=$langs->trans($text);
             $ret.='</td>';
@@ -712,22 +714,23 @@ class Form
     /**
      *	Load into cache cache_types_fees, array of types of fees
      *
-     *	@return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
-     *	TODO move in DAO class
+     *	@return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_types_fees()
     {
         global $langs;
 
-        $langs->load("trips");
+        $num = count($this->cache_types_fees);
+        if ($num > 0) return 0;    // Cache already loaded
 
-        if (count($this->cache_types_fees)) return 0;    // Cache already load
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $langs->load("trips");
 
         $sql = "SELECT c.code, c.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-        //$sql.= " ORDER BY c.label ASC";				  // No sort here, sort must be done after translation
+        $sql.= " WHERE active > 0";
 
-        dol_syslog(get_class($this).'::load_cache_types_fees', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -749,7 +752,7 @@ class Form
             return $num;
         }
         else
-        {
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -767,7 +770,7 @@ class Form
     {
         global $user, $langs;
 
-        dol_syslog(get_class($this)."::select_type_fees ".$selected.", ".$htmlname, LOG_DEBUG);
+        dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         $this->load_cache_types_fees();
 
@@ -803,7 +806,7 @@ class Form
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      * 	@param		int			$forcecombo				Force to use combo box
      *  @return		string								Return select box for thirdparty.
-	 *  @deprecated	Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
+	 *  @deprecated	3.8 Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
      */
     function select_thirdparty($selected='', $htmlname='socid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
@@ -2321,19 +2324,22 @@ class Form
     /**
      *      Charge dans cache la liste des conditions de paiements possibles
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_conditions_paiements()
     {
         global $langs;
 
-        if (count($this->cache_conditions_paiements)) return 0;    // Cache deja charge
+        $num = count($this->cache_conditions_paiements);
+        if ($num > 0) return 0;    // Cache already loaded
 
-        $sql = "SELECT rowid, code, libelle";
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $sql = "SELECT rowid, code, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-        $sql.= " WHERE active=1";
+        $sql.= " WHERE active > 0";
         $sql.= " ORDER BY sortorder";
-        dol_syslog(get_class($this).'::load_cache_conditions_paiements', LOG_DEBUG);
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2344,14 +2350,18 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $label=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->label!='-'?$obj->label:''));
                 $this->cache_conditions_paiements[$obj->rowid]['code'] =$obj->code;
-                $this->cache_conditions_paiements[$obj->rowid]['label']=$libelle;
+                $this->cache_conditions_paiements[$obj->rowid]['label']=$label;
                 $i++;
             }
-            return 1;
+
+			//$this->cache_conditions_paiements=dol_sort_array($this->cache_conditions_paiements, 'label');		// We use the sortorder
+
+            return $num;
         }
-        else {
+        else
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2360,19 +2370,21 @@ class Form
     /**
      *      Charge dans cache la liste des délais de livraison possibles
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_availability()
     {
         global $langs;
 
-        if (count($this->cache_availability)) return 0;    // Cache deja charge
+        $num = count($this->cache_availability);
+        if ($num > 0) return 0;    // Cache already loaded
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
-        $sql.= " WHERE active=1";
-        $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this).'::load_cache_availability', LOG_DEBUG);
+        $sql.= " WHERE active > 0";
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2388,9 +2400,13 @@ class Form
                 $this->cache_availability[$obj->rowid]['label']=$label;
                 $i++;
             }
-            return 1;
+
+            $this->cache_availability = dol_sort_array($this->cache_availability, 'label');
+
+            return $num;
         }
-        else {
+        else
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2410,6 +2426,8 @@ class Form
         global $langs,$user;
 
         $this->load_cache_availability();
+
+        dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
@@ -2514,19 +2532,21 @@ class Form
     /**
      *      Charge dans cache la liste des types de paiements possibles
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_types_paiements()
     {
         global $langs;
 
-        if (count($this->cache_types_paiements)) return 0;    // Cache deja charge
+        $num=count($this->cache_types_paiements);
+        if ($num > 0) return $num;    // Cache already loaded
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
-        $sql.= " ORDER BY id";
-        dol_syslog(get_class($this)."::load_cache_types_paiements", LOG_DEBUG);
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2537,16 +2557,19 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $label=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
-                $this->cache_types_paiements[$obj->id]['label']=$libelle;
+                $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
                 $i++;
             }
+
+            $this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label');
+
             return $num;
         }
         else
-        {
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2565,6 +2588,8 @@ class Form
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
         global $langs,$user;
+
+        dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         $this->load_cache_conditions_paiements();
 
@@ -2604,7 +2629,7 @@ class Form
     {
         global $langs,$user;
 
-        dol_syslog(get_class($this)."::select_type_paiements ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
+        dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
         $filterarray=array();
         if ($filtertype == 'CRDT')  	$filterarray=array(0,2,3);
@@ -3518,9 +3543,9 @@ class Form
      *
      *  @param	string	$page        	Page
      *  @param  string	$selected    	Id of user preselected
-     *  @param  string	$htmlname    	Name of input html field
-     *  @param  array	$exclude         List of users id to exclude
-     *  @param  array	$include         List of users id to include
+     *  @param  string	$htmlname    	Name of input html field. If 'none', we just output the user link.
+     *  @param  array	$exclude		List of users id to exclude
+     *  @param  array	$include        List of users id to include
      *  @return	void
      */
     function form_users($page, $selected='', $htmlname='userid', $exclude='', $include='')
@@ -3540,12 +3565,10 @@ class Form
             print '</tr></table></form>';
         }
         else
-        {
+		{
             if ($selected)
             {
                 require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
-                //$this->load_cache_contacts();
-                //print $this->cache_contacts[$selected];
                 $theuser=new User($this->db);
                 $theuser->fetch($selected);
                 print $theuser->getNomUrl(1);
@@ -3656,12 +3679,12 @@ class Form
 
 
     /**
-     *    Affiche formulaire de selection des contacts
+     *    Show forms to select a contact
      *
-     *    @param	string	$page        	Page
-     *    @param	Societe	$societe		Third party
-     *    @param    int		$selected    	Id contact pre-selectionne
-     *    @param    string	$htmlname    	Nom du formulaire select
+     *    @param	string		$page        	Page
+     *    @param	Societe		$societe		Filter on third party
+     *    @param    int			$selected    	Id contact pre-selectionne
+     *    @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
      *    @return	void
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactid')
@@ -3691,8 +3714,6 @@ class Form
             if ($selected)
             {
                 require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
-                //$this->load_cache_contacts();
-                //print $this->cache_contacts[$selected];
                 $contact=new Contact($this->db);
                 $contact->fetch($selected);
                 print $contact->getFullName($langs);
@@ -3808,12 +3829,14 @@ class Form
     	global $langs;
 
     	$num = count($this->cache_vatrates);
-    	if ($num > 0) return $num;    // Cache deja charge
+    	if ($num > 0) return $num;    // Cache already loaded
 
-    	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
-    	$sql.= " AND t.active = 1";
+    	$sql.= " AND t.active > 0";
     	$sql.= " AND c.code IN (".$country_code.")";
     	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
@@ -4431,7 +4454,7 @@ class Form
     {
     	$out = '';
 
-        // Add code for jquery to use multiselect
+        // Add code for jquery to use select2
         if ($addjscombo && empty($conf->dol_use_jmobile))
         {
         	$tmpplugin='select2';
@@ -4938,7 +4961,6 @@ class Form
             $cache='0';
             if ($file && file_exists($dir."/".$file))
             {
-                // TODO Link to large image
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='</a>';
