@@ -4716,7 +4716,6 @@ class Form
      *  Show block with links to link to other objects.
      *
      *  @param	CommonObject	$object				Object we want to show links to
-     *  @param	Societe			$thirdparty			Object thirdparty
      *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
      *  @return	int									<0 if KO, >0 if OK
      */
