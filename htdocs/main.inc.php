@@ -110,7 +110,7 @@ function test_sql_and_script_inject($val, $type)
 }
 
 /**
- * Security: Return true if OK, false otherwise.
+ * Return true if security check on parameters are OK, false otherwise.
  *
  * @param		string			$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
