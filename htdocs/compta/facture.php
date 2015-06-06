@@ -2134,7 +2134,7 @@ if ($action == 'create')
 			print '</div></div>';
 
 			// Next situation invoice
-			$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
+			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
 			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture')) $tmp.=' disabled';

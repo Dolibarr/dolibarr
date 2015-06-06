@@ -1004,7 +1004,7 @@ else
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
-            print $form->select_PriceBaseType($object->price_base_type, "price_base_type");
+            print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
             print '</td></tr>';
 
             // MIN PRICE

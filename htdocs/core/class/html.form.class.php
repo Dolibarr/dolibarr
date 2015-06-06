@@ -42,7 +42,7 @@
  *	Class to manage generation of HTML components
  *	Only common components must be here.
  *
- *  TODO Merge all function load_cache_* into one generic function
+ *  TODO Merge all function load_cache_* and loadCache* (except load_cache_vatrates) into one generic function loadCacheTable
  */
 class Form
 {
@@ -499,7 +499,7 @@ class Form
 
         $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
-        $sql.= " WHERE active = 1";
+        $sql.= " WHERE active > 0";
         //$sql.= " ORDER BY code ASC";
 
         dol_syslog(get_class($this)."::select_country", LOG_DEBUG);
@@ -587,7 +587,7 @@ class Form
 
         $sql = "SELECT rowid, code";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_incoterms";
-        $sql.= " WHERE active = 1";
+        $sql.= " WHERE active > 0";
         $sql.= " ORDER BY code ASC";
 
         dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
@@ -896,7 +896,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
         if ($filter) $sql.= " AND (".$filter.")";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status<>0 ";
+        if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status <> 0";
         // Add criteria
         if ($filterkey && $filterkey != '')
         {
@@ -1123,7 +1123,7 @@ class Form
         if ($showsoc > 0) $sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc";
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
-        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0";
+        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut <> 0";
         $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
@@ -2451,19 +2451,19 @@ class Form
     /**
      *      Load into cache cache_demand_reason, array of input reasons
      *
-     *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function loadCacheInputReason()
     {
         global $langs;
 
-        if (count($this->cache_demand_reason)) return 0;    // Cache already loaded
+        $num = count($this->cache_demand_reason);
+        if ($num > 0) return 0;    // Cache already loaded
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
-        $sql.= " WHERE active=1";
-        $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this)."::loadCacheInputReason", LOG_DEBUG);
+        $sql.= " WHERE active > 0";
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2481,12 +2481,14 @@ class Form
                 $tmparray[$obj->rowid]['label']=$label;
                 $i++;
             }
+
             $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc');
 
             unset($tmparray);
-            return 1;
+            return $num;
         }
-        else {
+        else
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2669,26 +2671,13 @@ class Form
 
 
     /**
-     *      Selection HT or TTC
+     *  Selection HT or TTC
      *
-     *      @param	string	$selected        Id pre-selectionne
-     *      @param  string	$htmlname        Nom de la zone select
-     * 		@return	void
+     *  @param	string	$selected       Id pre-selectionne
+     *  @param  string	$htmlname       Nom de la zone select
+     * 	@return	string					Code of HTML select to chose tax or not
      */
-    function select_PriceBaseType($selected='',$htmlname='price_base_type')
-    {
-        print $this->load_PriceBaseType($selected,$htmlname);
-    }
-
-
-    /**
-     *      Selection HT or TTC
-     *
-     *      @param	string	$selected        Id pre-selectionne
-     *      @param  string	$htmlname        Nom de la zone select
-     * 		@return	void
-     */
-    function load_PriceBaseType($selected='',$htmlname='price_base_type')
+    function selectPriceBaseType($selected='',$htmlname='price_base_type')
     {
         global $langs;
 
@@ -2733,9 +2722,9 @@ class Form
         $langs->load("admin");
         $langs->load("deliveries");
 
-        $sql = "SELECT rowid, code, libelle";
+        $sql = "SELECT rowid, code, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
-        $sql.= " WHERE active = 1";
+        $sql.= " WHERE active > 0";
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY libelle ASC";
 
@@ -2756,7 +2745,7 @@ class Form
                     } else {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $langs->trans("SendingMethod".strtoupper($obj->code));
+                    print ($langs->trans("SendingMethod".strtoupper($obj->code)) != "SendingMethod".strtoupper($obj->code)) ? $langs->trans("SendingMethod".strtoupper($obj->code)) : $obj->label;
                     print '</option>';
                     $i++;
                 }
@@ -2808,12 +2797,12 @@ class Form
 	/**
 	 * Creates HTML last in cycle situation invoices selector
 	 *
-	 * @param       string  $selected   Preselected ID
-	 * @param       int     $socid      Company ID
+	 * @param     string  $selected   		Preselected ID
+	 * @param     int     $socid      		Company ID
 	 *
 	 * @return    string                     HTML select
 	 */
-	function load_situation_invoices($selected = '', $socid = '')
+	function selectSituationInvoices($selected = '', $socid = 0)
 	{
 		global $langs;
 
@@ -2821,7 +2810,7 @@ class Form
 
 		$opt = '<option value ="" selected></option>';
 		$sql = 'SELECT rowid, facnumber, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
-		$sql .= ' order by situation_cycle_ref, situation_counter desc';
+		$sql.= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
@@ -2847,10 +2836,13 @@ class Form
 					}
 				}
 			}
-		} else {
+		}
+		else
+		{
 				dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
-		if ($opt == '<option value ="" selected></option>') {
+		if ($opt == '<option value ="" selected></option>')
+		{
 			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
 		}
 		return $opt;
@@ -2872,7 +2864,9 @@ class Form
 
         $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-        $sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
+        $sql = 'SELECT rowid, label from '.MAIN_DB_PREFIX.'c_units';
+        $sql.= ' WHERE active > 0';
+
         $resql = $this->db->query($sql);
         if($resql && $this->db->num_rows($resql) > 0)
         {
@@ -3870,7 +3864,8 @@ class Form
     }
 
     /**
-     *  Output an HTML select vat rate
+     *  Output an HTML select vat rate.
+     *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
      *  @param	string	$htmlname           Name of html select field
      *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.

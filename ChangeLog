@@ -41,6 +41,7 @@ Dolibarr better:
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
 - All fields "fk_societe" were renamed into "fk_soc".
+- Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType
 
 ***** ChangeLog for 3.7.1 compared to 3.7.* *****
 FIX Bug in the new photo system

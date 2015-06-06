@@ -4867,7 +4867,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  * Print common footer :
  * 		conf->global->MAIN_HTML_FOOTER
  * 		conf->global->MAIN_GOOGLE_AN_ID
- * 		DOL_TUNING
+ * 		conf->global->MAIN_SHOW_TUNING_INFO or $_SERVER["MAIN_SHOW_TUNING_INFO"]
  * 		conf->logbuffer
  *
  * @param	string	$zone	'private' (for private pages) or 'public' (for public pages)
@@ -4904,7 +4904,7 @@ function printCommonFooter($zone='private')
 	}
 
 	// End of tuning
-	if (! empty($_SERVER['DOL_TUNING']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
+	if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 	{
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'window.console && console.log("';
