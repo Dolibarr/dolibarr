@@ -1701,7 +1701,6 @@ else if ($id > 0 || ! empty($ref))
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		//print '<table width="100%"><tr><td width="50%" valign="top">';
 
 		/*
 		 * Built documents
@@ -1719,12 +1718,14 @@ else if ($id > 0 || ! empty($ref))
 		//print "<br>\n";
 		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		/*
-		 * Linked object block
-		*/
-		$somethingshown=$form->showLinkedObjectBlock($object);
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
 
-		//print '</td><td valign="top" width="50%">';
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object);
+		//if ($linktoelem) print '<br>'.$linktoelem;
+
+
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
@@ -1733,7 +1734,6 @@ else if ($id > 0 || ! empty($ref))
 		$somethingshown=$formactions->showactions($object,'fichinter',$socid);
 
 		print '</div></div></div>';
-		//print "</td></tr></table>\n";
 	}
 
 
