@@ -3776,7 +3776,7 @@ if ($action == 'create')
 		$somethingshown = $formfile->numoffiles;
 
 		// Linked object block
-		$somethingshown = $object->showLinkedObjectBlock();
+		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		$linktoelem='';
 

@@ -1505,7 +1505,7 @@ else if ($id || $ref)
 		/*
 		 * Linked object block
 		*/
-		$somethingshown=$object->showLinkedObjectBlock();
+		$somethingshown=$form->showLinkedObjectBlock($object);
 
 		if ($genallowed && ! $somethingshown) $somethingshown=1;
 

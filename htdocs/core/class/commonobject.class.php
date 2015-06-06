@@ -135,8 +135,8 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		$sql.= " WHERE entity IN (".getEntity($element).")" ; 
-		
+		$sql.= " WHERE entity IN (".getEntity($element).")" ;
+
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
 		else if ($ref_ext) $sql.= " AND ref_ext = '".$db->escape($ref_ext)."'";
@@ -2580,86 +2580,17 @@ abstract class CommonObject
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
     // --------------------
 
-    /* This is to show linked object block */
-
     /**
-     *  Show linked object block
-     *  TODO Move this into html.class.php
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+     *  Show linked object block.
      *
-     *  @return	int
+     *  @return		int		<0 if KO, >0 if OK
+     *  @deprecated Use instead $form->shoLinkedObjectBlock($object)
      */
     function showLinkedObjectBlock()
     {
-        global $conf,$langs,$hookmanager;
-        global $bc;
-
-        $this->fetchObjectLinked();
-
-        // Bypass the default method
-        $hookmanager->initHooks(array('commonobject'));
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
-
-        if (empty($reshook))
-        {
-        	$num = count($this->linkedObjects);
-
-        	foreach($this->linkedObjects as $objecttype => $objects)
-        	{
-        		$tplpath = $element = $subelement = $objecttype;
-
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-        		{
-        			$element = $regs[1];
-        			$subelement = $regs[2];
-        			$tplpath = $element.'/'.$subelement;
-        		}
-
-        		// To work with non standard path
-        		if ($objecttype == 'facture')          {
-        			$tplpath = 'compta/'.$element;
-        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'propal')           {
-        			$tplpath = 'comm/'.$element;
-        			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'askpricesupplier')           {
-        			$tplpath = 'comm/'.$element;
-        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
-        			$tplpath = 'expedition';
-        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'delivery')         {
-        			$tplpath = 'livraison';
-        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'invoice_supplier') {
-        			$tplpath = 'fourn/facture';
-        		}
-        		else if ($objecttype == 'order_supplier')   {
-        			$tplpath = 'fourn/commande';
-        		}
-
-        		global $linkedObjectBlock;
-        		$linkedObjectBlock = $objects;
-
-        		// Output template part (modules that overwrite templates must declare this into descriptor)
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
-        			if ($res) break;
-        		}
-        	}
-
-        	return $num;
-        }
+    	global $form;
+    	return $form->showLinkedObjectBlock($this);
     }
-
 
 
     /* This is to show add lines */

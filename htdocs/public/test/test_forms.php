@@ -75,7 +75,7 @@ print '<br><br>'."\n";
 
 // Test4d: form->select_thirdparty
 print "Test 4d: Select thirdparty<br>\n";
-print $form->select_thirdparty(0,'thirdpartytest');
+print $form->select_company(0,'thirdpartytest');
 
 print '<br><br>'."\n";
 

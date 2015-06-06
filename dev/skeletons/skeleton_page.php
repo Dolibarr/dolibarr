@@ -353,7 +353,7 @@ if ($id && (empty($action) || $action == 'view'))
 
 	// Example 2 : Adding links to objects
 	// The class must extends CommonObject class to have this method available
-	//$somethingshown=$object->showLinkedObjectBlock();
+	//$somethingshown=$form->showLinkedObjectBlock($object);
 
 }
 

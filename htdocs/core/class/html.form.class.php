@@ -803,11 +803,28 @@ class Form
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      * 	@param		int			$forcecombo				Force to use combo box
      *  @return		string								Return select box for thirdparty.
+	 *  @deprecated	Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
      */
     function select_thirdparty($selected='', $htmlname='socid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
-    	global $langs,$conf;
+   		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    }
 
+    /**
+     *  Output html form to select a third party
+     *
+     *	@param	string	$selected       Preselected type
+     *	@param  string	$htmlname       Name of field in form
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
+     *	@param	int		$showempty		Add an empty field
+     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 	@param	int		$forcecombo		Force to use combo box
+     *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *	@param	int		$limit			Maximum number of elements
+     * 	@return	string					HTML string with select box for thirdparty.
+     */
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
+    {
     	$out='';
 
     	/* TODO Use ajax_autocompleter like for products (not finished)
@@ -840,30 +857,10 @@ class Form
     	}
     	else
     	{*/
-    		$out.=$this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
     	//}
 
     	return $out;
-    }
-
-    /**
-     *  Output html form to select a third party
-     *
-     *	@param	string	$selected       Preselected type
-     *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
-     *	@param	int		$showempty		Add an empty field
-     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
-     * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$events			Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-     *	@param	int		$limit			Maximum number of elements
-     * 	@return	string					HTML string with
-	 *  @deprecated						Use select_thirdparty instead
-     *  @see select_thirdparty()
-     */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
-    {
-		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
     }
 
     /**
@@ -4618,6 +4615,84 @@ class Form
 
 		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
 	}
+
+
+    /**
+     *  Show linked object block.
+     *
+     *  @param	CommonObject	$object		Object we want to show links to
+     *  @return	int							<0 if KO, >0 if OK
+     */
+    function showLinkedObjectBlock($object)
+    {
+        global $conf,$langs,$hookmanager;
+        global $bc;
+
+        $object->fetchObjectLinked();
+
+        // Bypass the default method
+        $hookmanager->initHooks(array('commonobject'));
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
+        if (empty($reshook))
+        {
+        	$num = count($object->linkedObjects);
+
+        	foreach($object->linkedObjects as $objecttype => $objects)
+        	{
+        		$tplpath = $element = $subelement = $objecttype;
+
+        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        		{
+        			$element = $regs[1];
+        			$subelement = $regs[2];
+        			$tplpath = $element.'/'.$subelement;
+        		}
+
+        		// To work with non standard path
+        		if ($objecttype == 'facture')          {
+        			$tplpath = 'compta/'.$element;
+        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'propal')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'askpricesupplier')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
+        			$tplpath = 'expedition';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'delivery')         {
+        			$tplpath = 'livraison';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'invoice_supplier') {
+        			$tplpath = 'fourn/facture';
+        		}
+        		else if ($objecttype == 'order_supplier')   {
+        			$tplpath = 'fourn/commande';
+        		}
+
+        		global $linkedObjectBlock;
+        		$linkedObjectBlock = $objects;
+
+        		// Output template part (modules that overwrite templates must declare this into descriptor)
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
+        			if ($res) break;
+        		}
+        	}
+
+        	return $num;
+        }
+    }
 
 
     /**

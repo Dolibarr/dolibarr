@@ -1019,7 +1019,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		dol_fiche_head('');
-		
+
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
@@ -1125,7 +1125,7 @@ if ($action == 'create')
 		}
 
 		dol_fiche_end();
-		
+
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '</div>';
@@ -1135,7 +1135,7 @@ if ($action == 'create')
 	else
 	{
 		dol_fiche_head('');
-		
+
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
@@ -1144,7 +1144,7 @@ if ($action == 'create')
 		print '</table>';
 
 		dol_fiche_end();
-		
+
 		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
@@ -1722,7 +1722,7 @@ else if ($id > 0 || ! empty($ref))
 		/*
 		 * Linked object block
 		*/
-		$somethingshown=$object->showLinkedObjectBlock();
+		$somethingshown=$form->showLinkedObjectBlock($object);
 
 		//print '</td><td valign="top" width="50%">';
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

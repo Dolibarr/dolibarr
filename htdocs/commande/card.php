@@ -2308,7 +2308,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			/*
 			 * Linked object block
 			 */
-			$somethingshown = $object->showLinkedObjectBlock();
+			$somethingshown = $form->showLinkedObjectBlock($object);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 			// print '</td><td valign="top" width="50%">';

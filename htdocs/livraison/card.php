@@ -788,7 +788,7 @@ else
 				$shipment = new Expedition($db);
 				$shipment->fetch($object->origin_id);
 
-				$somethingshown=$shipment->showLinkedObjectBlock();
+				$somethingshown=$form->showLinkedObjectBlock($shipment);
 			}
 
 			if ($genallowed && ! $somethingshown) $somethingshown=1;

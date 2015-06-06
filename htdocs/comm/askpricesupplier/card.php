@@ -1712,7 +1712,7 @@ if ($action == 'create')
 		/*
 		 * Linked object block
 		*/
-		$somethingshown = $object->showLinkedObjectBlock();
+		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
