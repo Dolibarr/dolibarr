@@ -509,7 +509,7 @@ class Task extends CommonObject
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->title))
+        if (! empty($this->label))
             $label .= '<br><b>' . $langs->trans('LabelTask') . ':</b> ' . $this->label;
         if ($this->date_start || $this->date_end)
         {
@@ -908,6 +908,59 @@ class Task extends CommonObject
         }
         else
         {
+            dol_print_error($this->db);
+            return $result;
+        }
+    }
+
+    /**
+     *  Calculate vamue of time consumed using the thm (hourly amount value of work for user entering time)
+     *
+     *	@param		User		$fuser		Filter on a dedicated user
+     *  @param		string		$dates		Start date (ex 00:00:00)
+     *  @param		string		$datee		End date (ex 23:59:59)
+     *  @return 	array	        		Array of info for task array('amount')
+     */
+    function getSumOfAmount($fuser='', $dates='', $datee='')
+    {
+        global $langs;
+
+        if (empty($id)) $id=$this->id;
+
+        $result=array();
+
+        $sql = "SELECT";
+        $sql.= " SUM(t.task_duration / 3600 * thm) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+        $sql.= " WHERE t.fk_task = ".$id;
+        if (is_object($fuser) && $fuser->id > 0)
+        {
+        	$sql.=" AND fk_user = ".$fuser->id;
+        }
+    	if ($dates > 0)
+		{
+			$datefieldname="task_datehour";
+			$sql.=" AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
+		}
+    	if ($datee > 0)
+		{
+			$datefieldname="task_datehour";
+			$sql.=" AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
+		}
+
+        dol_syslog(get_class($this)."::getSumOfAmount", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+
+            $result['amount'] = $obj->amount;
+
+            $this->db->free($resql);
+            return $result;
+        }
+        else
+		{
             dol_print_error($this->db);
             return $result;
         }

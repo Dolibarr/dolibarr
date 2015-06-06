@@ -388,15 +388,17 @@ if (! empty($id) && $action == 'edit')
 
 	$hselected='card';
 	$head = donation_prepare_head($object);
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
 	print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="border" width="100%">';
-
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
+
+
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
+
+	print '<table class="border" width="100%">';
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
@@ -468,7 +470,7 @@ if (! empty($id) && $action == 'edit')
 
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects(-1, $object->fk_projet,'fk_projet', 0, 1, 0, 1);
+		$formproject->select_projects(-1, $object->fk_projet,'fk_projet', 0, 0, 1, 1);
         print '</td></tr>';
     }
 
@@ -482,11 +484,11 @@ if (! empty($id) && $action == 'edit')
 
 	print "</table>\n";
 
-	print '<br><div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	dol_fiche_end();
+
+	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 
 	print "</form>\n";
-
-	print "</div>\n";
 }
 
 
@@ -655,7 +657,10 @@ if (! empty($id) && $action != 'edit')
     {
         print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td>';
-		print '<td>'.$object->projet.'</td>';
+		print '<td>';
+		$object->fetch_projet();
+		print $object->project->getNomUrl(4);
+		print '</td>';
 		print '</tr>';
     }
 

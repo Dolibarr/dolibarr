@@ -99,6 +99,13 @@ class modGravatar extends DolibarrModules
 		//$r++;
 
 
+		// Cronjobs
+		$this->cronjobs = array();			// List of cron jobs entries to add
+		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600),
+		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
+		// );
+		$r=0;
+
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;

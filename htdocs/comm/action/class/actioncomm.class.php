@@ -61,6 +61,7 @@ class ActionComm extends CommonObject
     /**
      * @var string
      * @deprecated Use $label
+     * @see label
      */
     public $libelle;
 
@@ -71,6 +72,7 @@ class ActionComm extends CommonObject
      * Object user that create action
      * @var User
      * @deprecated
+     * @see authorid
      */
     var $author;
 
@@ -78,6 +80,7 @@ class ActionComm extends CommonObject
      * Object user that modified action
      * @var User
      * @deprecated
+     * @see usermodid
      */
     var $usermod;
     var $authorid;		// Id user that create action
@@ -114,6 +117,7 @@ class ActionComm extends CommonObject
      * Object user of owner
      * @var User
      * @deprecated
+     * @see userownerid
      */
     var $usertodo;
 
@@ -121,6 +125,7 @@ class ActionComm extends CommonObject
      * Object user that did action
      * @var User
      * @deprecated
+     * @see userdoneid
      */
     var $userdone;
 
@@ -130,12 +135,16 @@ class ActionComm extends CommonObject
     /**
      * Company linked to action (optional)
      * @var Societe|null
+     * @deprecated
+     * @see socid
      */
     var $societe;
 
     /**
      * Contact linked to action (optional)
      * @var Contact|null
+     * @deprecated
+     * @see contactid
      */
     var $contact;
 
@@ -468,7 +477,7 @@ class ActionComm extends CommonObject
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
                 $this->transparency			= $obj->transparency;
-                $this->punctual				= $obj->punctual;
+                $this->punctual				= $obj->punctual;       // deprecated
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working

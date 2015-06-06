@@ -1272,10 +1272,12 @@ else
             print '</td></tr>'."\n";
 
             // Type
-            print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
+            print '<tr><td>';
+            $text=$langs->trans("Type");
+            print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
+            print '</td><td colspan="2">';
             $type=$langs->trans("Internal");
             if ($object->societe_id) $type=$langs->trans("External");
-            print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
             if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
 
@@ -1337,14 +1339,20 @@ else
             	$langs->load("salaries");
 
 	            // THM
-			    print '<tr><td>'.$langs->trans("THM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("THM");
+			    print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td colspan="2">';
 			    print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
 			    print '</td>';
 			    print "</tr>\n";
 
 	            // TJM
-			    print '<tr><td>'.$langs->trans("TJM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("TJM");
+			    print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
+			    print '</td>';
 			    print '<td colspan="2">';
 			    print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
 			    print '</td>';

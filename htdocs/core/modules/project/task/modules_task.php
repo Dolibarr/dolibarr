@@ -154,9 +154,12 @@ abstract class ModeleNumRefTask
  *  @param  HookManager	$hookmanager	Hook manager instance
  *  @return int         				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of Task class
+ * @see Task::generateDocument()
  */
 function task_pdf_create(DoliDB $db, Task $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 }
 

@@ -154,9 +154,9 @@ $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
-// No hover by default, we keep only if we set var THEME_ELDY_USE_HOVER
-if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->THEME_ELDY_USE_HOVER))
-	|| (empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($conf->global->THEME_ELDY_USE_HOVER)))
+// Hover can be disabled with THEME_ELDY_USE_HOVER=0
+if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($user->conf->THEME_ELDY_USE_HOVER) && $user->conf->THEME_ELDY_USE_HOVER == '0'))
+	|| (empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0')))
 {
 	$colorbacklineimpairhover='';
 	$colorbacklinepairhover='';
@@ -447,6 +447,10 @@ textarea.centpercent {
 }
 #formuserfile_link {
 	margin-left: 1px;
+}
+.listofinvoicetype {
+	height: 28px;
+	vertical-align: middle;
 }
 
 /* Style to move picto into left of button */
@@ -1036,11 +1040,11 @@ div.vmenu, td.vmenu {
 #menu_contenu_logo { padding-right: 4px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
+font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
-font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; }
+font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
@@ -1396,7 +1400,12 @@ div.tabs {
 	clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 1px; }		/* To avoid overlap of tabs when not browser */
+div.tabsElem {
+	margin-top: 1px;
+	<?php if (! empty($conf->dol_use_jmobile)) { ?>;
+	margin-bottom: -1px;
+	<?php } ?>
+}		/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -1824,7 +1833,7 @@ div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
-div.tabBar .tdtop {
+div .tdtop {
     vertical-align: top;
 	padding-top: 5px;
 	padding-bottom: 0px;
@@ -1965,6 +1974,13 @@ table.liste td {
 
 
 /* Pagination */
+div.refid  {
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
+  	font-weight: bold;
+  	color: #766;
+  	font-size: 120%;
+}
+
 div.pagination {
 	float: right;
 }
@@ -1983,8 +1999,10 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
+<?php if (empty($conf->dol_use_jmobile)) { ?>
   padding-top: 6px;
-  padding-bottom: 6px;
+  padding-bottom: 5px;
+<?php } ?>
 }
 .pagination {
   display: inline-block;
@@ -1993,7 +2011,9 @@ div.pagination li {
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
+<?php if (empty($conf->dol_use_jmobile)) { ?>
   padding: 6px 12px;
+<?php } ?>
   margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
@@ -2002,10 +2022,26 @@ div.pagination li.pagination span {
 div.pagination li.pagination span.inactive {
   cursor: default;
 }
+div.pagination li.litext a {
+border: none;
+  padding-right: 10px;
+  padding-left: 4px;
+  font-weight: bold;
+}
+<?php if (! empty($conf->dol_use_jmobile)) { ?>
+div.pagination li.litext {
+  padding-top: 13px;
+  vertical-align: top;
+}
+<?php } ?>
 <?php if (empty($conf->dol_use_jmobile)) { ?>
+div.pagination li.noborder a:hover {
+  border: none;
+  background-color: transparent;
+}
 div.pagination li a,
 div.pagination li span {
-	background-color: #fff;
+  background-color: #fff;
   border: 1px solid #ddd;
 }
 div.pagination li:first-child a,
@@ -3466,6 +3502,14 @@ ul.ulmenu {
 .ui-btn-up-c .vsmenudisabled {
 	color: #<?php echo $colorshadowtitle; ?> !important;
 	text-shadow: none !important;
+}
+/*
+.ui-btn-up-c {
+	background: transparent;
+}
+*/
+div.tabsElem a.tab {
+	background: transparent;
 }
 .ui-controlgroup-horizontal .ui-btn.ui-first-child {
 -webkit-border-top-left-radius: 6px;

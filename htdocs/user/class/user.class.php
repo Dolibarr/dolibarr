@@ -74,8 +74,16 @@ class User extends CommonObject
 	var $datem;
 
 	//! If this is defined, it is an external user
-	var $societe_id;	// deprecated
-	var $contact_id;	// deprecated
+	/**
+	 * @deprecated
+	 * @see socid
+	 */
+	var $societe_id;
+	/**
+	 * @deprecated
+	 * @see contactid
+	 */
+	var $contact_id;
 	var $socid;
 	var $contactid;
 
@@ -1829,10 +1837,11 @@ class User extends CommonObject
         $label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
         if (! empty($this->admin))
         $label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-        if (! empty($this->societe_id)) {
+        if (! empty($this->societe_id))	// Add thirdparty for external users
+        {
             $thirdpartystatic = new Societe($db);
             $thirdpartystatic->fetch($this->societe_id);
-            $companylink = ' ('.$thirdpartystatic->getNomUrl('','').')';
+            $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
             $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
@@ -1875,7 +1884,7 @@ class User extends CommonObject
             $result.=($link.img_object(($notooltip?'':$label), 'user', ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $link . $this->getFullName($langs,'',-1,$maxlen) . $companylink . $linkend;
+		$result.= $link . $this->getFullName($langs,'',-1,$maxlen) . $linkend . $companylink;
 		return $result;
 	}
 

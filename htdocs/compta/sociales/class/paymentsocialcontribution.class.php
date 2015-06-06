@@ -40,6 +40,11 @@ class PaymentSocialContribution extends CommonObject
 	var $datec='';
 	var $tms='';
 	var $datep='';
+	/**
+	 * @deprecated
+	 * @see amount
+	 */
+	var $total;
     var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
 	var $fk_typepaiement;

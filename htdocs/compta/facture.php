@@ -1854,6 +1854,8 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $bankaccountstatic = new Account($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+
 $now = dol_now();
 
 llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
@@ -2080,22 +2082,21 @@ if ($action == 'create')
 	}
 
 	print '<tr><td valign="top" class="fieldrequired">' . $langs->trans('Type') . '</td><td colspan="2">';
-	print '<table class="nobordernopadding">' . "\n";
+
+	print '<div class="tagtable">' . "\n";
 
 	// Standard invoice
-	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked' : '') . '>';
-	print '</td><td valign="middle">';
-	$desc = $form->textwithpicto($langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1);
+	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	$tmp='<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked' : '') . '> ';
+	$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print $desc;
-	print '</td></tr>' . "\n";
+	print '</div></div>';
 
 	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid))))
 	{
 		// Deposit
-		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '>';
-		print '</td><td valign="middle" class="nowrap">';
+		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+		$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '> ';
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
 			jQuery("#typedeposit, #valuedeposit").click(function() {
@@ -2103,9 +2104,13 @@ if ($action == 'create')
 			});
 		});
 		</script>';
-		$desc = $form->textwithpicto($langs->trans("InvoiceDeposit"), $langs->transnoentities("InvoiceDepositDesc"), 1);
-		print '<table class="nobordernopadding"><tr><td>' . $desc . '</td>';
-		if (($origin == 'propal') || ($origin == 'commande')) {
+
+		$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceDeposit"), $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
+		print '<table class="nobordernopadding"><tr><td>';
+		print $desc;
+		print '</td>';
+		if (($origin == 'propal') || ($origin == 'commande'))
+		{
 			print '<td class="nowrap" style="padding-left: 5px">';
 			$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
 			print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
@@ -2113,44 +2118,41 @@ if ($action == 'create')
 			print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . GETPOST('valuedeposit', 'int') . '"/>';
 		}
 		print '</td></tr></table>';
-		print '</td></tr>' . "\n";
+
+		print '</div></div>';
 	}
 
 	if ($socid > 0)
 	{
 		if (! empty($conf->global->INVOICE_USE_SITUATION))
 		{
-		// First situation invoice
-		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '>';
-		print '</td><td valign="middle">';
-		$desc = $form->textwithpicto($langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1);
-		print $desc;
-		print '</td></tr>' . "\n";
+			// First situation invoice
+			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
+			$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			print $desc;
+			print '</div></div>';
 
-		// Next situation invoice
-		$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
-		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '') . ' ';
-		if ($opt == '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>' || (GETPOST('origin') && GETPOST('origin') != 'facture')) print 'disabled';
-		print '>';
-		print '</td><td valign="middle">';
-		$text = $langs->trans("InvoiceSituationAsk") . ' ';
-		$text .= '<select class="flat" id="situations" name="situations">';
-		$text .= $opt;
-		$text .= '</select>';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1);
-		print $desc;
-		print '</td></tr>' . "\n";
+			// Next situation invoice
+			$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
+			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture')) $tmp.=' disabled';
+			$tmp.= '> ';
+			$text = $tmp.$langs->trans("InvoiceSituationAsk") . ' ';
+			$text .= '<select class="flat" id="situations" name="situations">';
+			$text .= $opt;
+			$text .= '</select>';
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
+			print $desc;
+			print '</div></div>';
 		}
 
 		// Replacement
-		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
-		if (! $options)
-			print ' disabled';
-		print '>';
-		print '</td><td valign="middle">';
+		print '<!-- replacement line --><div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+		$tmp='<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
+		if (! $options) $tmp.=' disabled';
+		$tmp.='> ';
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
 			jQuery("#fac_replacement").change(function() {
@@ -2158,7 +2160,7 @@ if ($action == 'create')
 			});
 		});
 		</script>';
-		$text = $langs->trans("InvoiceReplacementAsk") . ' ';
+		$text = $tmp.$langs->trans("InvoiceReplacementAsk") . ' ';
 		$text .= '<select class="flat" name="fac_replacement" id="fac_replacement"';
 		if (! $options)
 			$text .= ' disabled';
@@ -2170,20 +2172,19 @@ if ($action == 'create')
 			$text .= '<option value="-1">' . $langs->trans("NoReplacableInvoice") . '</option>';
 		}
 		$text .= '</select>';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1);
+		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
 		print $desc;
-		print '</td></tr>' . "\n";
+		print '</div></div>';
 	}
 	else
 	{
-		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" id="radio_replacement" value="0" disabled>';
-		print '</td><td valign="middle">';
-		$text = $langs->trans("InvoiceReplacement") . ' ';
+		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
+		$text = $tmp.$langs->trans("InvoiceReplacement") . ' ';
 		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1);
+		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
 		print $desc;
-		print '</td></tr>' . "\n";
+		print '</div></div>';
 	}
 
 	if (empty($origin))
@@ -2191,12 +2192,10 @@ if ($action == 'create')
 		if ($socid > 0)
 		{
 			// Credit note
-			print '<tr height="18"><td valign="top">';
-			print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
-			if (! $optionsav)
-				print ' disabled';
-			print '>';
-			print '</td><td valign="top">';
+			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+			$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
+			if (! $optionsav) $tmp.=' disabled';
+			$tmp.= '> ';
 			// Show credit note options only if we checked credit note
 			print '<script type="text/javascript" language="javascript">
 			jQuery(document).ready(function() {
@@ -2212,7 +2211,7 @@ if ($action == 'create')
 				});
 			});
 			</script>';
-			$text = $langs->transnoentities("InvoiceAvoirAsk") . ' ';
+			$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
 			// $text.='<input type="text" value="">';
 			$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
 			if (! $optionsav)
@@ -2225,7 +2224,7 @@ if ($action == 'create')
 				$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
 			}
 			$text .= '</select>';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 
 			print '<div id="credit_note_options">';
@@ -2233,22 +2232,22 @@ if ($action == 'create')
 	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop("checked", true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 			print '</div>';
 
-			print '</td></tr>' . "\n";
+			print '</div></div>';
 		}
 		else
 		{
-			print '<tr height="18"><td valign="middle">';
-			print '<input type="radio" name="type" id="radio_creditnote" value="0" disabled>';
-			print '</td><td valign="middle">';
-			$text = $langs->trans("InvoiceAvoir") . ' ';
+			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+			$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
 			$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
-			print '</td></tr>' . "\n";
+			print '</div></div>' . "\n";
 		}
 	}
 
-	print '</table>';
+	print '</div>';
+
 	print '</td></tr>';
 
 	if ($socid > 0)
@@ -2293,12 +2292,15 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled) && $socid > 0) {
-		$formproject = new FormProjets($db);
+	if (! empty($conf->projet->enabled) && $socid > 0)
+	{
+		$projectid = GETPOST('projectid')?GETPOST('projectid'):0;
+		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+		print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td></tr>';
 	}
 
@@ -2320,7 +2322,7 @@ if ($action == 'create')
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
-	// Modele PDF
+	// Template to use by default
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
 	print '<td>';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
@@ -2337,7 +2339,7 @@ if ($action == 'create')
 	{
 		$note_public = $objectsrc->note_public;
 	}
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 
 	// Private note
@@ -2351,7 +2353,7 @@ if ($action == 'create')
 		{
 			$note_private = $objectsrc->note_private;
 		}
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 		print '</td></tr>';
@@ -2418,7 +2420,9 @@ if ($action == 'create')
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
-	} else {
+	}
+	else
+	{
 		// Show deprecated optional form to add product line here
 		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) {
 			print '<tr><td colspan="3">';
@@ -3486,50 +3490,50 @@ if ($action == 'create')
 	// Show global modifiers
 	if (! empty($conf->global->INVOICE_US_SITUATION))
 	{
-	if ($object->situation_cycle_ref && $object->statut == 0) {
-		print '<tr class="liste_titre nodrag nodrop">';
-		print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
-		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
-		print '<input type="hidden" name="action" value="updatealllines" />';
-		print '<input type="hidden" name="id" value="' . $object->id . '" />';
+		if ($object->situation_cycle_ref && $object->statut == 0) {
+			print '<tr class="liste_titre nodrag nodrop">';
+			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '"#updatealllines" method="POST">';
+			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '" />';
+			print '<input type="hidden" name="action" value="updatealllines" />';
+			print '<input type="hidden" name="id" value="' . $object->id . '" />';
 
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-			print '<td align="center" width="5">&nbsp;</td>';
-		}
-		print '<td>' . $langs->trans('ModifyAllLines') . '</td>';
-		print '<td align="right" width="50">&nbsp;</td>';
-		print '<td align="right" width="80">&nbsp;</td>';
-		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
-		print '<td align="right" width="50">&nbsp</td>';
-		print '<td align="right" width="50">&nbsp</td>';
-		print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
-		if (! empty($conf->margin->enabled) && empty($user->societe_id))
-		{
-			print '<td align="right" class="margininfos" width="80">&nbsp;</td>';
-			if ((! empty($conf->global->DISPLAY_MARGIN_RATES) || ! empty($conf->global->DISPLAY_MARK_RATES)) && $user->rights->margins->liretous) {
-				print '<td align="right" class="margininfos" width="50">&nbsp;</td>';
+			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+				print '<td align="center" width="5">&nbsp;</td>';
 			}
-		}
-		print '<td align="right" width="50">&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td width="10">&nbsp;</td>';
-		print '<td width="10">&nbsp;</td>';
-		print "</tr>\n";
+			print '<td>' . $langs->trans('ModifyAllLines') . '</td>';
+			print '<td align="right" width="50">&nbsp;</td>';
+			print '<td align="right" width="80">&nbsp;</td>';
+			if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
+			print '<td align="right" width="50">&nbsp</td>';
+			print '<td align="right" width="50">&nbsp</td>';
+			print '<td align="right" width="50">' . $langs->trans('Progress') . '</td>';
+			if (! empty($conf->margin->enabled) && empty($user->societe_id))
+			{
+				print '<td align="right" class="margininfos" width="80">&nbsp;</td>';
+				if ((! empty($conf->global->DISPLAY_MARGIN_RATES) || ! empty($conf->global->DISPLAY_MARK_RATES)) && $user->rights->margins->liretous) {
+					print '<td align="right" class="margininfos" width="50">&nbsp;</td>';
+				}
+			}
+			print '<td align="right" width="50">&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '<td width="10">&nbsp;</td>';
+			print '<td width="10">&nbsp;</td>';
+			print "</tr>\n";
 
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-			print '<td align="center" width="5">&nbsp;</td>';
+			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+				print '<td align="center" width="5">&nbsp;</td>';
+			}
+			print '<tr width="100%" class="nodrag nodrop">';
+			print '<td>&nbsp;</td>';
+			print '<td width="50">&nbsp;</td>';
+			print '<td width="80">&nbsp;</td>';
+			print '<td width="50">&nbsp;</td>';
+			print '<td width="50">&nbsp;</td>';
+			print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
+			print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '</tr>';
+			print '</form>';
 		}
-		print '<tr width="100%" height="18" class="nodrag nodrop">';
-		print '<td>&nbsp;</td>';
-		print '<td width="50">&nbsp;</td>';
-		print '<td width="80">&nbsp;</td>';
-		print '<td width="50">&nbsp;</td>';
-		print '<td width="50">&nbsp;</td>';
-		print '<td align="right" class="nowrap"><input type="text" size="1" value="" name="all_progress">%</td>';
-		print '<td colspan="4" align="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
-		print '</tr>';
-		print '</form>';
-	}
 	}
 
 	// Show object lines

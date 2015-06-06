@@ -140,7 +140,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
-	// update prospect level
+	// set communication status
 	if ($action == 'setstcomm')
 	{
 		$object->fetch($id);
@@ -467,6 +467,12 @@ if ($id > 0)
 		}
 		print '</div></td></tr>';
 	}
+
+	// Categories
+	print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+	print '<td colspan="3">';
+	print $form->showCategories( $object->id, 'customer', 1 );
+	print "</td></tr>";
 
 	// Other attributes
 	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');

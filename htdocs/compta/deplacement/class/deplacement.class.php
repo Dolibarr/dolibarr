@@ -44,7 +44,11 @@ class Deplacement extends CommonObject
 	var $fk_user_author;
 	var $fk_user;
 	var $km;
-	var $note;			// TODO obsolete
+	/**
+	 * @deprecated
+	 * @see note_private, note_public
+	 */
+	var $note;			// TODO deprecated
 	var $note_private;
 	var $note_public;
 	var $socid;

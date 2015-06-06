@@ -376,7 +376,7 @@ class Form
      *	@return	string							Code html du tooltip (texte+picto)
      *	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 0, $incbefore = '', $noencodehtmltext = 0)
+    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0)
     {
         global $conf;
 
@@ -391,14 +391,19 @@ class Form
         $htmltext=str_replace("\r","",$htmltext);
         $htmltext=str_replace("\n","",$htmltext);
 
+        $extrastyle='';
+        if ($direction < 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-left: 3px !important;'; }
+        if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
+
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
-        else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
-        else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
+        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+        else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
+        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
+        else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
         $s="";
         if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
         elseif ($notabs == 2) $s.='<div class="inline-block nowrap">';
+        // Define value if value is before
         if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
@@ -407,16 +412,12 @@ class Form
             $s.= '>'.$img.'</'.$tag.'>';
         }
         // Use another method to help avoid having a space in value in order to use this value with jquery
-        // TODO add this in css
-        //if ($text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
-        $paramfortooltiptd.= (($direction < 0)?' class="inline-block" style="padding: 0px; padding-left: 3px !important;"':'');
-        $paramfortooltiptd.= (($direction > 0)?' class="inline-block" style="padding: 0px; padding-right: 3px !important;"':'');
+        // Define label
         if ((string) $text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
+        // Define value if value is after
         if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
-            if ($tag == 'td') {
-                $s .= ' valign="middle" width="14"';
-            }
+            if ($tag == 'td') $s .= ' valign="middle" width="14"';
             $s.= '>'.$img.'</'.$tag.'>';
         }
         if (empty($notabs)) $s.='</tr></table>';
@@ -437,7 +438,7 @@ class Form
      *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 0)
+    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2)
     {
         global $conf;
 
@@ -858,6 +859,7 @@ class Form
      *	@param	int		$limit			Maximum number of elements
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
+     *  @see select_thirdparty()
      */
     function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
     {
@@ -1227,6 +1229,7 @@ class Form
      *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	void
      *  @deprecated
+     *  @see select_dolusers()
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
@@ -1248,10 +1251,11 @@ class Form
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      *  @param	string	$morefilter		Add more filters into sql request
      *  @param	string	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
+     *  @param	string	$enableonlytext	If option $enableonly is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='')
     {
         global $conf,$user,$langs;
 
@@ -1347,8 +1351,8 @@ class Form
                     $userstatic->lastname=$obj->lastname;
                     $userstatic->firstname=$obj->firstname;
 
-                    $disableline=0;
-                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+                    $disableline='';
+                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=($enableonlytext?$enableonlytext:'1');
 
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
@@ -1398,6 +1402,10 @@ class Form
                      	}
                     }
 					$out.=($moreinfo?')':'');
+					if ($disableline && $disableline != '1')
+					{
+						$out.=' - '.$disableline;	// This is text from $enableonlytext parameter
+					}
                     $out.= '</option>';
 
                     $i++;
@@ -1460,7 +1468,7 @@ class Form
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
 		}
 		$nbassignetouser=count($assignedtouser);
 
@@ -3029,6 +3037,7 @@ class Form
      *     @param	int			$width				Force width of box
      *     @return 	void
      *     @deprecated
+     *     @see formconfirm()
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
@@ -3086,7 +3095,7 @@ class Form
 
         	// Now add questions
             $more.='<table class="paddingrightonly" width="100%">'."\n";
-            $more.='<tr><td colspan="3" valign="top">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
+            $more.='<tr><td colspan="3">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
                 if (is_array($input) && ! empty($input))
@@ -3095,15 +3104,15 @@ class Form
 
                     if ($input['type'] == 'text')
                     {
-                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+                        $more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
                     }
                     else if ($input['type'] == 'password')
                     {
-                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+                        $more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
                     }
                     else if ($input['type'] == 'select')
                     {
-                        $more.='<tr><td valign="top">';
+                        $more.='<tr><td>';
                         if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                         $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
                         $more.='</td></tr>'."\n";
@@ -3111,13 +3120,13 @@ class Form
                     else if ($input['type'] == 'checkbox')
                     {
                         $more.='<tr>';
-                        $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
+                        $more.='<td>'.$input['label'].' </td><td align="left">';
                         $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
                         if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked';
                         if (is_bool($input['value']) && $input['value']) $more.=' checked';
                         if (isset($input['disabled'])) $more.=' disabled';
                         $more.=' /></td>';
-                        $more.='<td valign="top" align="left">&nbsp;</td>';
+                        $more.='<td align="left">&nbsp;</td>';
                         $more.='</tr>'."\n";
                     }
                     else if ($input['type'] == 'radio')
@@ -3128,10 +3137,10 @@ class Form
                             $more.='<tr>';
                             if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
-                            $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
+                            $more.='<td width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                             if ($input['disabled']) $more.=' disabled';
                             $more.=' /></td>';
-                            $more.='<td valign="top" align="left">';
+                            $more.='<td align="left">';
                             $more.=$selval;
                             $more.='</td></tr>'."\n";
                             $i++;
@@ -3139,8 +3148,8 @@ class Form
                     }
                     else if ($input['type'] == 'other')
                     {
-                        $more.='<tr><td valign="top">';
-                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+                        $more.='<tr><td>';
+                        if (! empty($input['label'])) $more.=$input['label'].'</td><td colspan="2" align="left">';
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
                     }
@@ -4248,6 +4257,7 @@ class Form
 
     	$hourSelected=0; $minSelected=0;
 
+    	// Hours
         if ($iSecond != '')
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -4278,6 +4288,7 @@ class Form
 
         $retstring.=' '.$langs->trans('HourShort');
 
+        // Minutes
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
 
@@ -4726,33 +4737,47 @@ class Form
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
 
-        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
-        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
+        //$previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
+        //$next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
+        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'<':'&nbsp;').'</a>':'';
+        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        if ($previous_ref || $next_ref || $morehtml) {
-            $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-        }
+        //if ($previous_ref || $next_ref || $morehtml) {
+            //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid">';
+        //}
 
         $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
         }
+			$ret.='</div>';
 
+        if ($previous_ref || $next_ref || $morehtml)
+        {
+        	$ret.='<div class="pagination"><ul>';
+        }
         if ($morehtml)
         {
-            $ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
+            //$ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
+            $ret.='<li class="noborder litext">'.$morehtml.'</li>';
         }
         if ($shownav && ($previous_ref || $next_ref))
         {
-            $ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
-            $ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
+            //$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
+            //$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
+            $ret.='<li class="pagination">'.$previous_ref.'</li>';
+            $ret.='<li class="pagination">'.$next_ref.'</li>';
         }
         if ($previous_ref || $next_ref || $morehtml)
         {
-            $ret.='</td></tr></table>';
+            //$ret.='</td></tr></table>';
+            $ret.='</ul></div>';
         }
+		$ret.='</div>';
+
         return $ret;
     }
 
@@ -4794,10 +4819,10 @@ class Form
      * 		@param	int			$width			Width of photo
      * 		@param	int			$height			Height of photo (auto if 0)
      * 		@param	int			$caneditfield	Add edit fields
-     * 		@param	string		$photologo		CSS name to use on img for photo
+     * 		@param	string		$cssclass		CSS name to use on img for photo
      * 	  	@return string    					HTML code to output photo
      */
-    static function showphoto($modulepart,$object,$width=100,$height=0,$caneditfield=0,$cssclass='photowithmargin')
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin')
     {
         global $conf,$langs;
 

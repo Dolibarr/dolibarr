@@ -96,7 +96,7 @@ if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
 {
 	$idtoremove=GETPOST('removedassigned');
 
-	if (! empty($_SESSION['assignedtouser'])) $tmpassigneduserids=dol_json_decode($_SESSION['assignedtouser'],1);
+	if (! empty($_SESSION['assignedtouser'])) $tmpassigneduserids=json_decode($_SESSION['assignedtouser'],1);
 	else $tmpassigneduserids=array();
 
 	foreach ($tmpassigneduserids as $key => $val)
@@ -104,7 +104,7 @@ if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
 		if ($val['id'] == $idtoremove || $val['id'] == -1) unset($tmpassigneduserids[$key]);
 	}
 	//var_dump($_POST['removedassigned']);exit;
-	$_SESSION['assignedtouser']=dol_json_encode($tmpassigneduserids);
+	$_SESSION['assignedtouser']=json_encode($tmpassigneduserids);
 	$donotclearsession=1;
 	if ($action == 'add') $action = 'create';
 	if ($action == 'update') $action = 'edit';
@@ -119,10 +119,10 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 		$assignedtouser=array();
 		if (! empty($_SESSION['assignedtouser']))
 		{
-			$assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
 		}
 		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'),'mandatory'=>1);
-		$_SESSION['assignedtouser']=dol_json_encode($assignedtouser);
+		$_SESSION['assignedtouser']=json_encode($assignedtouser);
 	}
 	$donotclearsession=1;
 	if ($action == 'add') $action = 'create';
@@ -215,7 +215,7 @@ if ($action == 'add')
 		$object->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
 		$listofuserid=array();
-		if (! empty($_SESSION['assignedtouser'])) $listofuserid=dol_json_decode($_SESSION['assignedtouser']);
+		if (! empty($_SESSION['assignedtouser'])) $listofuserid=json_decode($_SESSION['assignedtouser']);
 		$i=0;
 		foreach($listofuserid as $key => $value)
 		{
@@ -387,7 +387,7 @@ if ($action == 'update')
 		if (! empty($_SESSION['assignedtouser']))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
-			$tmplist1=dol_json_decode($_SESSION['assignedtouser'], true); $tmplist2=array();
+			$tmplist1=json_decode($_SESSION['assignedtouser'], true); $tmplist2=array();
 			foreach($tmplist1 as $key => $val)
 			{
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
@@ -677,13 +677,13 @@ if ($action == 'create')
 	{
 		$assignedtouser=GETPOST("assignedtouser")?GETPOST("assignedtouser"):(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
 		if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser,'mandatory'=>0,'transparency'=>$object->transparency);	// Owner first
-		$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+		$_SESSION['assignedtouser']=json_encode($listofuserid);
 	}
 	else
 	{
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+			$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 		}
 	}
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
@@ -929,13 +929,13 @@ if ($id > 0)
 					if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
 				}
 			}
-			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+			$_SESSION['assignedtouser']=json_encode($listofuserid);
 		}
 		else
 		{
 			if (!empty($_SESSION['assignedtouser']))
 			{
-				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
@@ -1101,13 +1101,13 @@ if ($id > 0)
 					if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
 				}
 			}
-			$_SESSION['assignedtouser']=dol_json_encode($listofuserid);
+			$_SESSION['assignedtouser']=json_encode($listofuserid);
 		}
 		else
 		{
 			if (!empty($_SESSION['assignedtouser']))
 			{
-				$listofuserid=dol_json_decode($_SESSION['assignedtouser'], true);
+				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
 		print $form->select_dolusers_forevent('view','assignedtouser',1);

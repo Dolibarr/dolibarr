@@ -82,7 +82,7 @@ function societe_prepare_head(Societe $object)
     	$h++;
     }
     //show categorie tab
-    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+    /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $type = Categorie::TYPE_CUSTOMER;
@@ -91,7 +91,7 @@ function societe_prepare_head(Societe $object)
         $head[$h][1] = $langs->trans('Categories');
         $head[$h][2] = 'category';
         $h++;
-    }
+    }*/
 
     // Tab to link resources
 	if ($conf->resource->enabled && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))

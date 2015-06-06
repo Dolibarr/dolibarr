@@ -59,6 +59,7 @@ class Societe extends CommonObject
      * Thirdparty name
      * @var string
      * @deprecated Use $name instead
+     * @see name
      */
     public $nom;
 
@@ -83,23 +84,26 @@ class Societe extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-    
+
     /**
-     * State code 
+     * State code
      * @var string
      * @deprecated Use state_code instead
+     * @see state_code
      */
     var $departement_code;
-    
+
     /**
      * @var string
      * @deprecated Use state instead
+     * @see state
      */
     var $departement;
 
     /**
      * @var string
      * @deprecated Use country instead
+     * @see country
      */
     var $pays;
     var $country_id;
@@ -298,6 +302,7 @@ class Societe extends CommonObject
     /**
      * @var string
      * @deprecated Note is split in public and private notes
+     * @see note_public, note_private
      */
     var $note;
 
@@ -1762,7 +1767,8 @@ class Societe extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto)))
+		{
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
 			}
@@ -1834,7 +1840,7 @@ class Societe extends CommonObject
 
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
+        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }
@@ -2803,7 +2809,7 @@ class Societe extends CommonObject
         if (empty($name)) $name=$member->getFullName($langs);
 
         // Positionne parametres
-        $this->nom=$name;				// TODO obsolete
+        $this->nom=$name;				// TODO deprecated
         $this->name=$name;
         $this->address=$member->address;
         $this->zip=$member->zip;
