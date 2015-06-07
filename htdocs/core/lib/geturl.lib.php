@@ -74,9 +74,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     else if ($postorget == 'PUT')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-    	if ( ! is_array($param) )
-		parse_str($param, $array_param);
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
+    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as PUT fields
     }
     else if ($postorget == 'HEAD')
     {
