@@ -1215,7 +1215,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return list of categories (id or instances) linked to element of id $id and type $type
+	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
 	 * Should be named getListOfCategForObject
 	 *
 	 * @param   int    $id   Id of element
@@ -1228,20 +1228,15 @@ class Categorie extends CommonObject
 	 */
 	function containing($id,$type,$mode='object')
 	{
-		// Deprecation warning
-		if (is_numeric($type)) {
-			dol_syslog(__METHOD__ . ': using numeric types is deprecated.', LOG_WARNING);
-		}
-
 		$cats = array();
 
 		// For backward compatibility
-		if (is_numeric( $type )) {
+		if (is_numeric($type))
+		{
+			dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
 			// We want to reverse lookup
-			$map_type = array_flip( $this->MAP_ID );
+			$map_type = array_flip($this->MAP_ID);
 			$type = $map_type[$type];
-			dol_syslog( get_class( $this ) . "::containing(): numeric types are deprecated, please use string instead",
-				LOG_WARNING );
 		}
 
 		$sql = "SELECT ct.fk_categorie, c.label";
@@ -1249,7 +1244,6 @@ class Categorie extends CommonObject
 		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . $id . " AND c.type = " . $this->MAP_ID[$type];
 		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
 
-		dol_syslog(get_class($this).'::containing', LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
