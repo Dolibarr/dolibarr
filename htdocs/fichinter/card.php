@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,7 +249,14 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 									$prod = new Product($db);
 									$prod->id=$lines[$i]->fk_product;
 									$prod->getMultiLangs();
-
+									// We show if duration is present on service (so we get it)
+									$prod->fetch($lines[$i]->fk_product);
+									if ($prod->duration_value && $prod->duration_unit == 'h' && $conf->global->FICHINTER_USE_SERVICE_DURATION) 
+									{
+										$durationproduct=$prod->duration_value * 3600 * $lines[$i]->qty;
+									}
+									else
+										$durationproduct=3600;
 									$outputlangs = $langs;
 									$newlang='';
 									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
@@ -268,7 +276,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 
 								$desc = $label;
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
-							}
+							
 							else {
 								$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
@@ -277,11 +285,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$date_intervention=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 							if ($product_type == 1)
 							{ //service
-								$duration = 3600;
+								$duration = $durationproduct;
 							}
 							else
 							{ //product
-							    $duration = 0;
+								$duration = 0;
 							}
 
 							$predef = '';
