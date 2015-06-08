@@ -1833,7 +1833,6 @@ class User extends CommonObject
         $label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'','');
         if (! empty($this->login))
         $label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
-        if (! empty($this->email))
         $label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
         if (! empty($this->admin))
         $label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);

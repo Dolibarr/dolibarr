@@ -1974,9 +1974,12 @@ table.liste td {
 
 
 /* Pagination */
-div.refid  {
+div.refidpadding  {
 	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
-  	font-weight: bold;
+}
+div.refid  {
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px;
+	font-weight: bold;
   	color: #766;
   	font-size: 120%;
 }

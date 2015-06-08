@@ -4964,7 +4964,7 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
+     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
      *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
      *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
      *    @param	string	$moreparam  	More param to add in nav link url.
@@ -4990,7 +4990,7 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         //if ($previous_ref || $next_ref || $morehtml) {
             //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid">';
+            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
         //}
 
         $ret.=dol_htmlentities($object->$fieldref);
