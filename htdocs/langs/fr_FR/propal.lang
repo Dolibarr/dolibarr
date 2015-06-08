@@ -98,3 +98,4 @@ DocModelJauneDescription=Modèle de proposition Jaune
 DefaultModelPropalCreate=Modèle par défaut à la création
 DefaultModelPropalToBill=Modèle par défaut lors de la clôture d'une proposition commerciale (à facturer)
 DefaultModelPropalClosed=Modèle par défaut lors de la clôture d'une proposition commerciale (non facturée)
+ProposalCustomerSignature=Cachet, Date, Signature et mention "Bon pour Accord"
