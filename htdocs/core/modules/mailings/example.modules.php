@@ -69,7 +69,7 @@ class mailing_example extends MailingTargets
 		// ...
 	    // $target[n]=array('email'=>'email_n','name'=>'name_n','firstname'=>'firstname_n', 'other'=>'other_n');
 
-		// Example: $target[0]=array('email'=>'myemail@mydomain.com', 'name'=>'Doe', 'firstname'=>'John', 'other'=>'Other information');
+		// Example: $target[0]=array('email'=>'myemail@example.com', 'name'=>'Doe', 'firstname'=>'John', 'other'=>'Other information');
 
 		// ----- Your code end here -----
 
