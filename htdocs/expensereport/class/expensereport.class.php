@@ -1573,7 +1573,7 @@ class ExpenseReportLine
 		$sql.= " VALUES (".$this->fk_expensereport.",";
 		$sql.= " ".$this->fk_c_type_fees.",";
 		$sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
-		$sql.= " ".($this->fk_c_tva?$this->fk_c_tva:"null").",";
+		$sql.= " ".($this->vatrate?$this->vatrate:"null").",";
 		$sql.= " ".$this->vatrate.",";
 		$sql.= " '".$this->db->escape($this->comments)."',";
 		$sql.= " ".$this->qty.",";

@@ -1641,9 +1641,9 @@ else
 
 							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
 							{
-									//modif ligne!!!!!
+									// Update line
 									print '<tr '.$bc[$var].'>';
-									// Sélection date
+									// Select date
 									print '<td style="text-align:center;">';
 									$form->select_date($objp->date,'date');
 									print '</td>';
