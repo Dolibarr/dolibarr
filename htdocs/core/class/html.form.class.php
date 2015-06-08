@@ -4357,16 +4357,18 @@ class Form
         global $conf, $langs;
 
         // Do we want a multiselect ?
-        $multiselect = 0;
-        if (preg_match('/^multi/',$htmlname)) $multiselect = 1;
+        //$jsbeautify = 0;
+        //if (preg_match('/^multi/',$htmlname)) $jsbeautify = 1;
+		$jsbeautify = 1;
 
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='';
 
         // Add code for jquery to use multiselect
-        if ($addjscombo && empty($conf->dol_use_jmobile) && $multiselect)
+        if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
         {
+        	$minLengthToAutocomplete=0;
         	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2':$conf->global->MAIN_USE_JQUERY_MULTISELECT;
         	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
@@ -4964,7 +4966,7 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
+     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
      *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
      *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
      *    @param	string	$moreparam  	More param to add in nav link url.
@@ -4990,7 +4992,7 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         //if ($previous_ref || $next_ref || $morehtml) {
             //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid">';
+            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
         //}
 
         $ret.=dol_htmlentities($object->$fieldref);
@@ -5120,19 +5122,22 @@ class Form
             }
             else
 			{
-				$nophoto='/theme/common/nophoto.jpg';
+				$nophoto='/public/theme/common/nophoto.jpg';
 				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
 				{
-					$nophoto='/theme/common/user_anonymous.png';
-					if ($object->gender == 'man') $nophoto='/theme/common/user_man.png';
-					if ($object->gender == 'woman') $nophoto='/theme/common/user_woman.png';
+					$nophoto='/public/theme/common/user_anonymous.png';
+					if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+					if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 				}
 
 				if (! empty($conf->gravatar->enabled) && $email)
                 {
+	                /**
+	                 * @see https://gravatar.com/site/implement/images/php/
+	                 */
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img class="photo'.$modulepart.'" alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
                 }
                 else
 				{

@@ -41,7 +41,7 @@ $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int');
 
 // Security check
 global $dolibarr_main_demo;
-if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
+if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',0,0,1);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $res=$hookmanager->initHooks(array('demo'));

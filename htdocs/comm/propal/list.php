@@ -56,6 +56,7 @@ $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
+$search_product_category=GETPOST('search_product_category','int');
 $search_town=GETPOST('search_town','alpha');
 $viewstatut=$db->escape(GETPOST('viewstatut'));
 $object_statut=$db->escape(GETPOST('propal_statut'));
@@ -91,6 +92,7 @@ if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both 
     $search_societe='';
     $search_montant_ht='';
     $search_author='';
+    $search_product_category='';
     $search_town='';
     $year='';
     $month='';
@@ -145,14 +147,15 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
 
-if (! $sall) $sql = 'SELECT';
-else $sql = 'SELECT DISTINCT';
+$sql = 'SELECT';
+if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as propalid, p.note_private, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -190,7 +193,8 @@ if ($search_montant_ht != '')
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'p.note_private', 'p.note_public', 'pd.description'), $sall);
 }
-if ($socid) $sql.= ' AND s.rowid = '.$socid;
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
+if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut <> '')
 {
 	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
@@ -223,7 +227,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
+//print $sql;
 
 $sql.= $db->plimit($limit + 1,$offset);
 $result=$db->query($sql);
@@ -265,15 +269,28 @@ if ($result)
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		$langs->load("commercial");
-	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+	 	$moreforfilter.='<div class="divsearchfield">';
+ 		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+	 	$moreforfilter.='</div>';
  	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
-	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+	 	$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
 	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+	    $moreforfilter.='</div>';
+	}
+	// If the user can view prospects other than his'
+	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.='</div>';
 	}
 	if (! empty($moreforfilter))
 	{

@@ -348,7 +348,8 @@ class ExpenseReport extends CommonObject
 				$this->code_statut 		= $obj->code_statut;
 				$this->code_paiement 	= $obj->code_paiement;
 
-				$this->lignes = array();
+				$this->lignes = array();	// deprecated
+				$this->lines = array();
 
 				$result=$this->fetch_lines();
 
@@ -772,9 +773,10 @@ class ExpenseReport extends CommonObject
 	 * delete
 	 *
 	 * @param 	int		$rowid		Id to delete (optional)
+	 * @param	User	$fuser		User that delete
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function delete($rowid=0)
+	function delete($rowid=0, User $fuser=null)
 	{
 		global $user,$langs,$conf;
 
@@ -810,10 +812,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Set to status validate
 	 *
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function setValidate($user)
+	function setValidate($fuser)
 	{
 		global $conf,$langs;
 
@@ -836,13 +838,13 @@ class ExpenseReport extends CommonObject
 		{
 			$prefix="ER";
 			if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-			$this->ref = strtoupper($user->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+			$this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
 		}
 
 		if ($this->fk_statut != 2)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$user->id.",";
+			$sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.",";
 			$sql.= " ref_number_int = ".$ref_number_int;
 			$sql.= ' WHERE rowid = '.$this->id;
 
@@ -867,10 +869,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * set_save_from_refuse
 	 *
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function set_save_from_refuse($user)
+	function set_save_from_refuse($fuser)
 	{
 		global $conf,$langs;
 
@@ -912,10 +914,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Set status to approved
 	 *
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function setApproved($user)
+	function setApproved($fuser)
 	{
 		$now=dol_now();
 
@@ -924,7 +926,7 @@ class ExpenseReport extends CommonObject
 		if ($this->fk_statut != 5)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET ref = '".$this->ref."', fk_statut = 5, fk_user_approve = ".$user->id.",";
+			$sql.= " SET ref = '".$this->ref."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
 			$sql.= " date_approve='".$this->date_approve."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql))
@@ -946,10 +948,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * setDeny
 	 *
-	 * @param User		$user		User
+	 * @param User		$fuser		User
 	 * @param Details	$details	Details
 	 */
-	function setDeny($user,$details)
+	function setDeny($fuser,$details)
 	{
 		$now = dol_now();
 
@@ -957,7 +959,7 @@ class ExpenseReport extends CommonObject
 		if ($this->fk_statut != 99)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET ref = '".$this->ref."', fk_statut = 99, fk_user_refuse = ".$user->id.",";
+			$sql.= " SET ref = '".$this->ref."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
 			$sql.= " date_refuse='".$this->db->idate($now)."',";
 			$sql.= " detail_refuse='".$this->db->escape($details)."'";
 			$sql.= " fk_user_approve=NULL,";
@@ -965,7 +967,7 @@ class ExpenseReport extends CommonObject
 			if ($this->db->query($sql))
 			{
 				$this->fk_statut = 99;
-				$this->fk_user_refuse = $user->id;
+				$this->fk_user_refuse = $fuser->id;
 				$this->detail_refuse = $details;
 				$this->date_refuse = $now;
 				return 1;
@@ -985,10 +987,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * setPaid
 	 *
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function setPaid($user)
+	function setPaid($fuser)
 	{
 		$now= dol_now();
 
@@ -996,7 +998,7 @@ class ExpenseReport extends CommonObject
 		if ($this->fk_statut != 6)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET fk_statut = 6, fk_user_paid = ".$user->id.",";
+			$sql.= " SET fk_statut = 6, fk_user_paid = ".$fuser->id.",";
 			$sql.= " date_paiement='".$this->db->idate($this->date_paiement)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
@@ -1020,10 +1022,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * set_unpaid
 	 *
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function set_unpaid($user)
+	function set_unpaid($fuser)
 	{
 		if ($this->fk_c_deplacement_statuts != 5)
 		{
@@ -1049,17 +1051,17 @@ class ExpenseReport extends CommonObject
 	/**
 	 * set_cancel
 	 *
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @param	string	$detail		Detail
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function set_cancel($user,$detail)
+	function set_cancel($fuser,$detail)
 	{
 		$this->date_cancel = $this->db->idate(gmmktime());
 		if ($this->fk_statut != 4)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET fk_statut = 4, fk_user_cancel = ".$user->id;
+			$sql.= " SET fk_statut = 4, fk_user_cancel = ".$fuser->id;
 			$sql.= ", date_cancel='".$this->date_cancel."'";
 			$sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
@@ -1271,10 +1273,10 @@ class ExpenseReport extends CommonObject
 	 * deleteline
 	 *
 	 * @param 	int		$rowid		Row id
-	 * @param 	User	$user		User
+	 * @param 	User	$fuser		User
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	function deleteline($rowid, $user='')
+	function deleteline($rowid, $fuser='')
 	{
 		$this->db->begin();
 
@@ -1299,16 +1301,16 @@ class ExpenseReport extends CommonObject
 	/**
 	 * periode_existe
 	 *
-	 * @param 	User	$user			User
+	 * @param 	User	$fuser			User
 	 * @param 	Date	$date_debut		Start date
 	 * @param 	Date	$date_fin		End date
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	function periode_existe($user, $date_debut, $date_fin)
+	function periode_existe($fuser, $date_debut, $date_fin)
 	{
 		$sql = "SELECT rowid, date_debut, date_fin";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE fk_user_author = '{$user->id}'";
+		$sql.= " WHERE fk_user_author = '{$fuser->id}'";
 
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
@@ -1617,12 +1619,12 @@ class ExpenseReportLine
 	/**
 	 * update
 	 *
-	 * @param	User	$user		User
+	 * @param	User	$fuser		User
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	function update($user)
+	function update($fuser)
 	{
-		global $user,$langs,$conf;
+		global $fuser,$langs,$conf;
 
 		$error=0;
 

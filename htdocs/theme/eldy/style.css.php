@@ -452,6 +452,10 @@ textarea.centpercent {
 	height: 28px;
 	vertical-align: middle;
 }
+div.divsearchfield {
+	float: <?php print $left; ?>;
+	margin-<?php print $right; ?>: 12px;
+}
 
 /* Style to move picto into left of button */
 /*
@@ -1974,9 +1978,12 @@ table.liste td {
 
 
 /* Pagination */
-div.refid  {
+div.refidpadding  {
 	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
-  	font-weight: bold;
+}
+div.refid  {
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px;
+	font-weight: bold;
   	color: #766;
   	font-size: 120%;
 }
@@ -3541,6 +3548,18 @@ border-top-right-radius: 6px;
 }
 
 
+
+/* The theme for public pages */
+.public_body {
+	margin: 20px;
+}
+.public_border {
+	border: 1px solid #888;
+}
+.public_liste_titre {
+
+
+
 /* CSS style used for small screen */
 
 .imgopensurveywizard
@@ -3551,6 +3570,8 @@ border-top-right-radius: 6px;
 {
 	.imgopensurveywizard { width:95%; height: auto; }
 }
+
+
 
 <?php
 if (is_object($db)) $db->close();

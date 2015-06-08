@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  * The following vars must be defined
  * $type2label
  * $form
- * $conf, $lang, 
+ * $conf, $lang,
  */
 
 ?>
@@ -113,6 +113,12 @@
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo (GETPOST('required')?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo (GETPOST('alwayseditable')?' checked':''); ?>></td></tr>
+<?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
+<!-- By default visible into list -->
+<tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
+<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
+</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo (GETPOST('list')?' checked':''); ?>></td></tr>
+<?php } ?>
 </table>
 
 <div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;
