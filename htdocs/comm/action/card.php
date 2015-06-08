@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -56,6 +57,7 @@ $backtopage=GETPOST('backtopage','alpha');
 $contactid=GETPOST('contactid','int');
 $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
+$confirm = GETPOST('confirm', 'alpha');
 
 $fulldayevent=GETPOST('fullday');
 $datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
@@ -75,6 +77,10 @@ $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
+
+$form = new Form($db);
+$formfile = new FormFile($db);
+$formactions = new FormActions($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -125,6 +131,29 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 	$donotclearsession=1;
 	if ($action == 'add') $action = 'create';
 	if ($action == 'update') $action = 'edit';
+}
+
+// Action clone object
+if ($action == 'confirm_clone' && $confirm == 'yes')
+{
+	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
+		setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
+	}
+	else
+	{
+		if ($id > 0) {
+			$object->fetch($id);
+			$result = $object->createFromClone(GETPOST('fk_userowner'), GETPOST('socid'));
+			if ($result > 0) {
+				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
+				exit();
+			} else {
+				setEventMessage($object->error, 'errors');
+				$action = '';
+			}
+		}
+	}
 }
 
 // Add event
@@ -539,10 +568,6 @@ if ($action == 'mupdate')
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
-
-$form = new Form($db);
-$formfile = new FormFile($db);
-$formactions = new FormActions($db);
 
 if ($action == 'create')
 {
@@ -1027,6 +1052,15 @@ if ($id > 0)
 	{
 		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
 
+
+		// Clone event
+		if($action == 'clone')
+		{
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('CloneAction'), $langs->trans('ConfirmCloneAction', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
+			
+			print $formconfirm;
+		}
+
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
@@ -1233,7 +1267,17 @@ if ($id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
-
+			
+			if ($user->rights->agenda->allactions->create ||
+			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+			}
+			else
+			{
+				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
+			}
+			
 			if ($user->rights->agenda->allactions->delete ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete))
 			{

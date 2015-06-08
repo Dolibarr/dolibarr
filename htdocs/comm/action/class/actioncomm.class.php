@@ -374,6 +374,63 @@ class ActionComm extends CommonObject
     }
 
     /**
+     *		Load an object from its id and create a new one in database
+     *
+     *		@param		int				$socid			Id of thirdparty
+     * 	 	@return		int								New id of clone
+     */
+    function createFromClone()
+    {
+        global $db, $user,$langs,$conf,$hookmanager;
+				
+        $this->context['createfromclone']='createfromclone';
+
+        $error=0;
+        $now=dol_now();
+
+        $this->db->begin();
+
+        // Load source object
+        $objFrom = dol_clone($this);
+        $this->id=0;
+
+        // Create clone
+        $result=$this->add($user);
+        if ($result < 0) $error++;
+
+        if (! $error)
+        {
+            // Hook of thirdparty module
+            if (is_object($hookmanager))
+            {
+                $parameters=array('objFrom'=>$objFrom);
+                $action='';
+                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if ($reshook < 0) $error++;
+            }
+
+            // Call trigger
+            $result=$this->call_trigger('ACTION_CLONE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+        }
+
+        unset($this->context['createfromclone']);
+
+        // End
+        if (! $error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
+    }
+
+    /**
      *    Load object from database
      *
      *    @param	int		$id     Id of action to get
