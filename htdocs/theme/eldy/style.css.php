@@ -452,6 +452,10 @@ textarea.centpercent {
 	height: 28px;
 	vertical-align: middle;
 }
+div.divsearchfield {
+	float: <?php print $left; ?>;
+	margin-<?php print $right; ?>: 12px;
+}
 
 /* Style to move picto into left of button */
 /*

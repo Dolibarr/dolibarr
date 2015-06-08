@@ -4357,16 +4357,18 @@ class Form
         global $conf, $langs;
 
         // Do we want a multiselect ?
-        $multiselect = 0;
-        if (preg_match('/^multi/',$htmlname)) $multiselect = 1;
+        //$jsbeautify = 0;
+        //if (preg_match('/^multi/',$htmlname)) $jsbeautify = 1;
+		$jsbeautify = 1;
 
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='';
 
         // Add code for jquery to use multiselect
-        if ($addjscombo && empty($conf->dol_use_jmobile) && $multiselect)
+        if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
         {
+        	$minLengthToAutocomplete=0;
         	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2':$conf->global->MAIN_USE_JQUERY_MULTISELECT;
         	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
