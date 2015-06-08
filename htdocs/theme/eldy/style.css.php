@@ -3548,6 +3548,18 @@ border-top-right-radius: 6px;
 }
 
 
+
+/* The theme for public pages */
+.public_body {
+	margin: 20px;
+}
+.public_border {
+	border: 1px solid #888;
+}
+.public_liste_titre {
+
+
+
 /* CSS style used for small screen */
 
 .imgopensurveywizard
@@ -3558,6 +3570,8 @@ border-top-right-radius: 6px;
 {
 	.imgopensurveywizard { width:95%; height: auto; }
 }
+
+
 
 <?php
 if (is_object($db)) $db->close();
