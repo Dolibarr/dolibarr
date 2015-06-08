@@ -251,7 +251,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 									$prod->getMultiLangs();
 									// We show if duration is present on service (so we get it)
 									$prod->fetch($lines[$i]->fk_product);
-									if ($prod->duration_value && $prod->duration_unit == 'h' && $conf->global->FICHINTER_USE_SERVICE_DURATION) 
+									if ($prod->duration_value && $prod->duration_unit == 'h' && $conf->global->FICHINTER_USE_SERVICE_DURATION)
 									{
 										$durationproduct=$prod->duration_value * 3600 * $lines[$i]->qty;
 									}
@@ -276,7 +276,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 
 								$desc = $label;
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
-							
+							}
 							else {
 								$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
