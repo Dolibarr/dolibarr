@@ -777,7 +777,7 @@ else
     }
     else
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+        print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
     }
     print '</td></tr></table>';
 
