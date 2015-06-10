@@ -3079,5 +3079,17 @@ border-top-right-radius: 6px;
 	padding-left: 54px;
 }
 
+
+/* The theme for public pages */
+.public_body {
+	margin: 20px;
+}
+.public_border {
+	border: 1px solid #888;
+}
+.public_liste_titre {
+
+}
+
 <?php
 if (is_object($db)) $db->close();
