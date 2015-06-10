@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin	<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -268,7 +268,7 @@ if (empty($user->societe_id))
 	            else $board=$boardloaded[$classe];
 
 	            $var=!$var;
-	            if ($langfile[$key]) $langs->load($langfile[$key]);
+	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
 	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
 	            print '<div class="boxstats">';

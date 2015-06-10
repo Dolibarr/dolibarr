@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -1823,6 +1823,7 @@ class User extends CommonObject
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
+        global $menumanager;
 
 
         $result = '';

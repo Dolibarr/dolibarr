@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
@@ -1803,7 +1803,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 {
     global $conf,$langs;
 
-    if (!$htmlinputid) {
+    if (empty($htmlinputid)) {
         $htmlinputid = $htmlinputname;
     }
 
