@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -43,9 +43,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 $langs->load("products");
 $langs->load("bills");
 
+$mesg=''; $error=0; $errors=array(); $_error=0;
+
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $eid = GETPOST('eid', 'int');
 
 // Security check
@@ -54,302 +57,301 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid = $user->societe_id;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
-$object = new Product($db);
+if ($id > 0 || ! empty($ref))
+{
+	$object = new Product($db);
+	$object->fetch($id, $ref);
+}
 
 // Clean param
 if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) $conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 
-$error=0;
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('productpricecard','globalcard'));
 
 
 /*
  * Actions
  */
 
-if (GETPOST("cancel")) $action='';
+if ($cancel) $action='';
 
-if ($action == 'update_price' && ! GETPOST("cancel") && ($user->rights->produit->creer || $user->rights->service->creer))
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-	$result = $object->fetch($id);
-
-	$error=0;
-	$maxpricesupplier = $object->min_recommended_price();
-	$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
-
-	// MultiPrix
-	if (! empty($conf->global->PRODUIT_MULTIPRICES))
+	if ($action == 'update_price' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-		$newprice = '';
-		$newprice_min = '';
-		$newpricebase = '';
-		$newvat = '';
+		$maxpricesupplier = $object->min_recommended_price();
+		$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
 
-		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
+		// MultiPrix
+		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
-			if (isset($_POST ["price_" . $i]))
+			$newprice = '';
+			$newprice_min = '';
+			$newpricebase = '';
+			$newvat = '';
+
+			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++)
 			{
-				$level = $i;
-				$newprice = price2num($_POST ["price_" . $i], 'MU');
-				$newprice_min = price2num($_POST ["price_min_" . $i], 'MU');
-				$newpricebase = $_POST ["multiprices_base_type_" . $i];
-				$newnpr = (preg_match('/\*/', $_POST ["tva_tx_" . $i]) ? 1 : 0);
-				$newvat = str_replace('*', '', $_POST ["tva_tx_" . $i]);
-				$newpsq = GETPOST('psqflag');
-				$newpsq = empty($newpsq) ? 0 : $newpsq;
-				break; // We found submited price
+				if (isset($_POST ["price_" . $i]))
+				{
+					$level = $i;
+					$newprice = price2num($_POST ["price_" . $i], 'MU');
+					$newprice_min = price2num($_POST ["price_min_" . $i], 'MU');
+					$newpricebase = $_POST ["multiprices_base_type_" . $i];
+					$newnpr = (preg_match('/\*/', $_POST ["tva_tx_" . $i]) ? 1 : 0);
+					$newvat = str_replace('*', '', $_POST ["tva_tx_" . $i]);
+					$newpsq = GETPOST('psqflag');
+					$newpsq = empty($newpsq) ? 0 : $newpsq;
+					break; // We found submited price
+				}
 			}
+		} else {
+			$level = 0;
+			$newprice = price2num($_POST ["price"], 'MU');
+			$newprice_min = price2num($_POST ["price_min"], 'MU');
+			$newpricebase = $_POST ["price_base_type"];
+			$newnpr = (preg_match('/\*/', $_POST ["tva_tx"]) ? 1 : 0);
+			$newvat = str_replace('*', '', $_POST ["tva_tx"]);
+			$newpsq = GETPOST('psqflag');
+			$newpsq = empty($newpsq) ? 0 : $newpsq;
 		}
-	} else {
-		$level = 0;
-		$newprice = price2num($_POST ["price"], 'MU');
-		$newprice_min = price2num($_POST ["price_min"], 'MU');
-		$newpricebase = $_POST ["price_base_type"];
-		$newnpr = (preg_match('/\*/', $_POST ["tva_tx"]) ? 1 : 0);
-		$newvat = str_replace('*', '', $_POST ["tva_tx"]);
-		$newpsq = GETPOST('psqflag');
-		$newpsq = empty($newpsq) ? 0 : $newpsq;
-	}
 
-	if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier)
-	{
-		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
-		$error++;
-		$action='edit_price';
-	}
-
-	if ($newprice < $newprice_min && ! empty($object->fk_price_expression)) {
-		$newprice = $newprice_min; //Set price same as min, the user will not see the
-	}
-
-	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
-	{
-		if ($object->fk_price_expression != 0) {
-			//Check the expression validity by parsing it
-			$priceparser = new PriceParser($db);
-			$price_result = $priceparser->parseProduct($object);
-			if ($price_result < 0) { //Expression is not valid
-				$error++;
-				$action='edit_price';
-				setEventMessage($priceparser->translatedError(), 'errors');
-			}
-		}
-		if (empty($error) && ! empty($conf->dynamicprices->enabled))
+		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier)
 		{
-			$ret=$object->setPriceExpression($object->fk_price_expression);
-			if ($ret < 0)
+			setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+			$error++;
+			$action='edit_price';
+		}
+
+		if ($newprice < $newprice_min && ! empty($object->fk_price_expression)) {
+			$newprice = $newprice_min; //Set price same as min, the user will not see the
+		}
+
+		if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
+		{
+			if ($object->fk_price_expression != 0) {
+				//Check the expression validity by parsing it
+				$priceparser = new PriceParser($db);
+				$price_result = $priceparser->parseProduct($object);
+				if ($price_result < 0) { //Expression is not valid
+					$error++;
+					$action='edit_price';
+					setEventMessage($priceparser->translatedError(), 'errors');
+				}
+			}
+			if (empty($error) && ! empty($conf->dynamicprices->enabled))
 			{
-				$error++;
-				$action='edit_price';
-				setEventMessage($object->error, 'errors');
+				$ret=$object->setPriceExpression($object->fk_price_expression);
+				if ($ret < 0)
+				{
+					$error++;
+					$action='edit_price';
+					setEventMessage($object->error, 'errors');
+				}
+			}
+			if (empty($error))
+			{
+				$action = '';
+				setEventMessage($langs->trans("RecordSaved"));
+			}
+		} else {
+			$action = 'edit_price';
+			setEventMessage($object->error, 'errors');
+		}
+	}
+
+	if ($action == 'delete' && $user->rights->produit->supprimer)
+	{
+		$result = $object->log_price_delete($user, $_GET ["lineid"]);
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
+	}
+
+	/**
+	 * ***************************************************
+	 * Price by quantity
+	 * ***************************************************
+	 */
+	if ($action == 'activate_price_by_qty') { // Activating product price by quantity add a new price, specified as by quantity
+
+		$level = GETPOST('level');
+
+		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+	}
+
+	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+		$rowid = GETPOST('rowid');
+	}
+
+	if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par quantité
+
+		// Récupération des variables
+		$rowid = GETPOST('rowid');
+		$priceid = GETPOST('priceid');
+		$newprice = price2num(GETPOST("price"), 'MU');
+		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
+		$quantity = GETPOST('quantity');
+		$remise_percent = price2num(GETPOST('remise_percent'));
+		$remise = 0; // TODO : allow discount by amount when available on documents
+
+		if (empty($quantity)) {
+			$error ++;
+			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), 'errors');
+		}
+		if (empty($newprice)) {
+			$error ++;
+			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), 'errors');
+		}
+		if (! $error) {
+			// Calcul du prix HT et du prix unitaire
+			if ($object->price_base_type == 'TTC') {
+				$price = price2num($newprice) / (1 + ($object->tva_tx / 100));
+			}
+
+			$price = price2num($newprice, 'MU');
+			$unitPrice = price2num($price / $quantity, 'MU');
+
+			// Ajout / mise à jour
+			if ($rowid > 0) {
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "product_price_by_qty SET";
+				$sql .= " price='" . $price . "',";
+				$sql .= " unitprice=" . $unitPrice . ",";
+				$sql .= " quantity=" . $quantity . ",";
+				$sql .= " remise_percent=" . $remise_percent . ",";
+				$sql .= " remise=" . $remise;
+				$sql .= " WHERE rowid = " . GETPOST('rowid');
+
+				$result = $db->query($sql);
+			} else {
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_price_by_qty (fk_product_price,price,unitprice,quantity,remise_percent,remise) values (";
+				$sql .= $priceid . ',' . $price . ',' . $unitPrice . ',' . $quantity . ',' . $remise_percent . ',' . $remise . ')';
+
+				$result = $db->query($sql);
 			}
 		}
-		if (empty($error))
+	}
+
+	if ($action == 'delete_price_by_qty') {
+		$rowid = GETPOST('rowid');
+
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
+		$sql .= " WHERE rowid = " . GETPOST('rowid');
+
+		$result = $db->query($sql);
+	}
+
+	if ($action == 'delete_all_price_by_qty') {
+		$priceid = GETPOST('priceid');
+
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
+		$sql .= " WHERE fk_product_price = " . $priceid;
+
+		$result = $db->query($sql);
+	}
+
+	/**
+	 * ***************************************************
+	 * Price by customer
+	 * ****************************************************
+	 */
+	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
+
+		$maxpricesupplier = $object->min_recommended_price();
+
+		$update_child_soc = GETPOST('updatechildprice');
+
+		// add price by customer
+		$prodcustprice->fk_soc = GETPOST('socid', 'int');
+		$prodcustprice->fk_product = $object->id;
+		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
+		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
+
+		if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $prodcustprice->price_min<$maxpricesupplier)
 		{
+			setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+			$error++;
+			$action='add_customer_price';
+		}
+
+		if (! $error)
+		{
+			$result = $prodcustprice->create($user, 0, $update_child_soc);
+
+			if ($result < 0) {
+				setEventMessage($prodcustprice->error, 'errors');
+			} else {
+				setEventMessage($langs->trans('Save'), 'mesgs');
+			}
+
 			$action = '';
-			setEventMessage($langs->trans("RecordSaved"));
-		}
-	} else {
-		$action = 'edit_price';
-		setEventMessage($object->error, 'errors');
-	}
-}
-
-if ($action == 'delete' && $user->rights->produit->supprimer)
-{
-	$result = $object->log_price_delete($user, $_GET ["lineid"]);
-	if ($result < 0) {
-		setEventMessage($object->error, 'errors');
-	}
-}
-
-/**
- * ***************************************************
- * Price by quantity
- * ***************************************************
- */
-$error = 0;
-if ($action == 'activate_price_by_qty') { // Activating product price by quantity add a new price, specified as by quantity
-	$result = $object->fetch($id);
-	$level = GETPOST('level');
-
-	$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
-}
-
-if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
-	$rowid = GETPOST('rowid');
-}
-
-if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par quantité
-	$result = $object->fetch($id);
-
-	// Récupération des variables
-	$rowid = GETPOST('rowid');
-	$priceid = GETPOST('priceid');
-	$newprice = price2num(GETPOST("price"), 'MU');
-	// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-	$quantity = GETPOST('quantity');
-	$remise_percent = price2num(GETPOST('remise_percent'));
-	$remise = 0; // TODO : allow discount by amount when available on documents
-
-	if (empty($quantity)) {
-		$error ++;
-		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), 'errors');
-	}
-	if (empty($newprice)) {
-		$error ++;
-		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), 'errors');
-	}
-	if (! $error) {
-		// Calcul du prix HT et du prix unitaire
-		if ($object->price_base_type == 'TTC') {
-			$price = price2num($newprice) / (1 + ($object->tva_tx / 100));
-		}
-
-		$price = price2num($newprice, 'MU');
-		$unitPrice = price2num($price / $quantity, 'MU');
-
-		// Ajout / mise à jour
-		if ($rowid > 0) {
-			$sql = "UPDATE " . MAIN_DB_PREFIX . "product_price_by_qty SET";
-			$sql .= " price='" . $price . "',";
-			$sql .= " unitprice=" . $unitPrice . ",";
-			$sql .= " quantity=" . $quantity . ",";
-			$sql .= " remise_percent=" . $remise_percent . ",";
-			$sql .= " remise=" . $remise;
-			$sql .= " WHERE rowid = " . GETPOST('rowid');
-
-			$result = $db->query($sql);
-		} else {
-			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_price_by_qty (fk_product_price,price,unitprice,quantity,remise_percent,remise) values (";
-			$sql .= $priceid . ',' . $price . ',' . $unitPrice . ',' . $quantity . ',' . $remise_percent . ',' . $remise . ')';
-
-			$result = $db->query($sql);
 		}
 	}
-}
 
-if ($action == 'delete_price_by_qty') {
-	$rowid = GETPOST('rowid');
-
-	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
-	$sql .= " WHERE rowid = " . GETPOST('rowid');
-
-	$result = $db->query($sql);
-}
-
-if ($action == 'delete_all_price_by_qty') {
-	$priceid = GETPOST('priceid');
-
-	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
-	$sql .= " WHERE fk_product_price = " . $priceid;
-
-	$result = $db->query($sql);
-}
-
-/**
- * ***************************************************
- * Price by customer
- * ****************************************************
- */
-if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
-	$error=0;
-	$maxpricesupplier = $object->min_recommended_price();
-
-	$update_child_soc = GETPOST('updatechildprice');
-
-	$result = $object->fetch($id);
-
-	// add price by customer
-	$prodcustprice->fk_soc = GETPOST('socid', 'int');
-	$prodcustprice->fk_product = $object->id;
-	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
-	if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $prodcustprice->price_min<$maxpricesupplier)
-	{
-		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
-		$error++;
-		$action='add_customer_price';
-	}
-
-	if (! $error)
-	{
-		$result = $prodcustprice->create($user, 0, $update_child_soc);
+	if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer)) {
+		// Delete price by customer
+		$prodcustprice->id = GETPOST('lineid');
+		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
+			setEventMessage($prodcustprice->error, 'mesgs');
 		} else {
-			setEventMessage($langs->trans('Save'), 'mesgs');
+			setEventMessage($langs->trans('Delete'), 'errors');
 		}
-
 		$action = '';
 	}
-}
 
-if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer)) {
-	// Delete price by customer
-	$prodcustprice->id = GETPOST('lineid');
-	$result = $prodcustprice->delete($user);
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
 
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'mesgs');
-	} else {
-		setEventMessage($langs->trans('Delete'), 'errors');
-	}
-	$action = '';
-}
+		$maxpricesupplier = $object->min_recommended_price();
 
-if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		$update_child_soc = GETPOST('updatechildprice');
 
-	$result = $object->fetch($id);
+		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
-	$error=0;
-	$maxpricesupplier = $object->min_recommended_price();
+		// update price by customer
+		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
+		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
+		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 
-	$update_child_soc = GETPOST('updatechildprice');
-
-	$prodcustprice->fetch(GETPOST('lineid', 'int'));
-
-	// update price by customer
-	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-
-	if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
-	{
-		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
-		$error++;
-		$action='update_customer_price';
-	}
-
-	if ( ! $error)
-	{
-		$result = $prodcustprice->update($user, 0, $update_child_soc);
-
-		if ($result < 0) {
-			setEventMessage($prodcustprice->error, 'errors');
-		} else {
-			setEventMessage($langs->trans('Save'), 'mesgs');
+		if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
+		{
+			setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+			$error++;
+			$action='update_customer_price';
 		}
 
-		$action = '';
+		if ( ! $error)
+		{
+			$result = $prodcustprice->update($user, 0, $update_child_soc);
+
+			if ($result < 0) {
+				setEventMessage($prodcustprice->error, 'errors');
+			} else {
+				setEventMessage($langs->trans('Save'), 'mesgs');
+			}
+
+			$action = '';
+		}
 	}
 }
+
 
 /*
  * View
  */
 
 $form = new Form($db);
-
-if (! empty($id) || ! empty($ref))
-	$result = $object->fetch($id, $ref);
 
 llxHeader("", "", $langs->trans("CardProduct" . $object->type));
 
