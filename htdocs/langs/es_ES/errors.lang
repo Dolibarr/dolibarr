@@ -170,6 +170,7 @@ ErrorGlobalVariableUpdater4=El cliente SOAP ha fallado con el error '%s'
 ErrorGlobalVariableUpdater5=Sin variable global seleccionada
 ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
 ErrorFieldMustBeAnInteger=El campo <b>%s</b> debe de ser un entero
+ErrorMandatoryParametersNotProvided=Los parámetro(s) obligatorio(s) no están todavía definidos
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

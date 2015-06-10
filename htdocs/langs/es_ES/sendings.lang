@@ -67,7 +67,7 @@ SendingRunning=Producto de pedidos de clientes
 SuppliersReceiptRunning=Producto de pedidos a proveedores
 ProductQtyInCustomersOrdersRunning=Cantidad en pedidos de clientes abiertos
 ProductQtyInSuppliersOrdersRunning=Cantidad en pedidos a proveedores abiertos
-ProductQtyInShipmentAlreadySent=Cantidad en pedidos de clientes ya enviados
+ProductQtyInShipmentAlreadySent=Ya ha sido enviada la cantidad del producto del pedido de cliente abierto
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad en pedidos a proveedores ya recibidos
 
 # Sending methods

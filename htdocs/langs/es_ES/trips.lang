@@ -44,7 +44,6 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Ha declarado otro gasto en un rango similar de fechas.
-ListTripsAndExpenses=Listado de gastos
 AucuneNDF=No se han encontrado gastos con este criterio
 AucuneLigne=No hay gastos declarados
 AddLine=Añadir una línea
@@ -56,12 +55,12 @@ ModePaiement=Modo de pago
 Note=Nota
 Project=Proyecto
 
-VALIDATOR=Usuario a informar para la aprobación
+VALIDATOR=Usuario responsable para aprobación
 VALIDOR=Aprobado por
 AUTHOR=Registrado por
 AUTHORPAIEMENT=Pagado por
 REFUSEUR=Denegado por
-CANCEL_USER=Cancelado por
+CANCEL_USER=Eliminado por
 
 MOTIF_REFUS=Razón
 MOTIF_CANCEL=Razón
@@ -74,7 +73,7 @@ DATE_PAIEMENT=Fecha de pago
 
 TO_PAID=Pagar
 BROUILLONNER=Reabrir
-SendToValid=Enviar para aprobar
+SendToValid=Enviado para aprobar
 ModifyInfoGen=Modificar
 ValidateAndSubmit=Validar y enviar para aprobar
 
@@ -93,7 +92,7 @@ ConfirmPaidTrip=¿Está seguro de querer cambiar el estado de este gasto a "Paga
 CancelTrip=Cancelar gasto
 ConfirmCancelTrip=¿Está seguro de querer cancelar este gasto?
 
-BrouillonnerTrip=Devolver gasto al estado "Borrador"
+BrouillonnerTrip=Devolver el gasto al estado "Borrador"
 ConfirmBrouillonnerTrip=¿Está seguro de querer devolver este gasto al estado "Borrador"?
 
 SaveTrip=Validar gasto

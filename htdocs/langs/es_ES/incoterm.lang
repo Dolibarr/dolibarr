@@ -1,7 +1,7 @@
-Module210009Name=Incoterm
-Module210009Desc=Add features to manage Incoterm
+Module62000Name=Incoterm
+Module62000Desc=Añade funciones para gestionar Incoterm
 IncotermLabel=Incoterms
-IncotermSetupTitle1=Feature
-IncotermSetupTitle2=Status
-IncotermSetup=Setup of module Incoterm
-IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)
+IncotermSetupTitle1=Función
+IncotermSetupTitle2=Estado
+IncotermSetup=Configuración del módulo Incoterm
+IncotermFunctionDesc=Activa funcionalidades Incoterm (Tercero, Presupuesto, Pedido, Factura a cliente, Envío, Pedido a proveedor)

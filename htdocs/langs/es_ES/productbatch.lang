@@ -19,4 +19,4 @@ printQty=Cant.: %d
 AddDispatchBatchLine=Añada una línea para despacho por caducidad
 BatchDefaultNumber=Indefinido
 WhenProductBatchModuleOnOptionAreForced=Si el módulo de Lotes/Series está activado, el incremento/decremento de stock es forzado a lo último escogido y no puede editarse. Otras opciones pueden definirse si se necesita
-ProductDoesNotUseBatchSerial=Este producto no usa numeración por lotes/series
+ProductDoesNotUseBatchSerial=Este producto no usa lotes/series

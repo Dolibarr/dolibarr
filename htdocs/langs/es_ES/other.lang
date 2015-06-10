@@ -29,6 +29,7 @@ Notify_PROPAL_SENTBYMAIL=Envío presupuesto por e-mail
 Notify_BILL_PAYED=Cobro factura a cliente
 Notify_BILL_CANCEL=Cancelación factura a cliente
 Notify_BILL_SENTBYMAIL=Envío factura a cliente por e-mail
+Notify_ORDER_SUPPLIER_VALIDATE=Pedido a proveedor registrado
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Envío pedido a proveedor por e-mail
 Notify_BILL_SUPPLIER_VALIDATE=Validación factura de proveedor
 Notify_BILL_SUPPLIER_PAYED=Pago factura de proveedor
@@ -203,6 +204,7 @@ ClickHereToGoTo=Haga click aquí para ir a %s
 YouMustClickToChange=Sin embargo, debe hacer click primero en el siguiente enlace para validar este cambio de contraseña
 ForgetIfNothing=Si usted no ha solicitado este cambio, simplemente ignore este email. Sus credenciales son guardadas de forma segura.
 IfAmountHigherThan=si el importe es mayor que <strong>%s</strong>
+SourcesRepository=Repositorio de los fuentes
 
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
