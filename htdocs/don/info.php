@@ -48,7 +48,7 @@ if ($id)
 	
 	$head = donation_prepare_head($object);
 	
-	dol_fiche_head($head, 'info', $langs->trans("Donation"), 0, 'bill');
+	dol_fiche_head($head, 'info', $langs->trans("Donation"), 0, 'generic');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
