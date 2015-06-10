@@ -42,6 +42,7 @@ jQuery TableDnD       0.6		GPL and MIT Licence			Yes				JS library plugin TableD
 jQuery Timepicker     1.1.0		GPL and MIT Licence			Yes				JS library Timepicker addon for Datepicker
 jQuery Tiptip         1.3		GPL and MIT Licence			Yes				JS library for tooltips
 JSGantt               1.2		BSD Licence					Yes				JS library (to build Gantt reports)
+JsTimezoneDetect      1.0.4     MIT Licence                 Yes             JS library to detect user timezone
 
 For licenses compatibility informations:
 http://www.fsf.org/licensing/licenses/index_html
