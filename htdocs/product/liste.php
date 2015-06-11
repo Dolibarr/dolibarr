@@ -49,8 +49,8 @@ $sall=GETPOST("sall");
 $type=GETPOST("type","int");
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
-$tosell = GETPOST("tosell");
-$tobuy = GETPOST("tobuy");
+$tosell = GETPOST("tosell", 'int');
+$tobuy = GETPOST("tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
 
