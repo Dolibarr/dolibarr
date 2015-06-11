@@ -52,6 +52,7 @@ if (! $sortfield) $sortfield="s.nom";
 $search_company=GETPOST("search_company");
 $search_zipcode=GETPOST("search_zipcode");
 $search_town=GETPOST("search_town");
+$search_country=GETPOST("search_country");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
 $search_status		= GETPOST("search_status",'int');
@@ -84,6 +85,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_company="";
     $search_zipcode="";
     $search_town="";
+    $search_country="";
     $search_code='';
     $search_compta='';
     $search_status='';
@@ -103,13 +105,16 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
-$sql.= " s.datec, s.canvas";
+$sql.= " s.datec, s.canvas, s.fk_pays, p.libelle as pays";
+
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql.= ", ".MAIN_DB_PREFIX."c_pays as p";
 $sql.= " WHERE s.fk_stcomm = st.id";
+$sql.= " AND s.fk_pays = p.rowid";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";
@@ -126,6 +131,7 @@ if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
+if ($search_country) $sql.= " AND p.libelle LIKE '%".$db->escape($search_country)."%'";
 if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 
@@ -157,6 +163,7 @@ if ($result)
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
  	if ($search_sale > 0)	$param.='&amp;search_sale='.$search_sale;
  	if ($search_status != '') $param.='&amp;search_status='.$search_status;
+	if ($search_country != '') $param.='&amp;search_country='.$search_country;
 
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies.png');
 
@@ -191,6 +198,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"p.libelle","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
@@ -214,7 +222,10 @@ if ($result)
 	print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="10">';
     print '</td>';
-
+    
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_country" value="'.$search_country.'" size="10">';
+    print '</td>';
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
     print '</td>';
@@ -260,6 +271,7 @@ if ($result)
 		print '</td>';
 		print '<td>'.$obj->zip.'</td>';
         print '<td>'.$obj->town.'</td>';
+        print '<td>'.$obj->pays.'</td>';
         print '<td>'.$obj->code_client.'</td>';
         print '<td>'.$obj->code_compta.'</td>';
         print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
