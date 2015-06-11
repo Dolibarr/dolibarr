@@ -53,9 +53,10 @@ class FormProjets
 	 *	@param	int		$show_empty		Add an empty line
 	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
      *  @param	int		$forcefocus		Force focus on field (works with javascript only)
+     *  @param	int		$disabled		Disabled
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0)
+	function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0)
 	{
 		global $user,$conf,$langs;
 
@@ -82,7 +83,7 @@ class FormProjets
 		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql.= " ORDER BY p.ref ASC";
 
-		dol_syslog(get_class($this)."::select_projects", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -100,7 +101,7 @@ class FormProjets
 			}
 
 			if (empty($option_only)) {
-				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
 			}
 			if (!empty($show_empty)) {
 				$out.= '<option value="0">&nbsp;</option>';
@@ -191,6 +192,160 @@ class FormProjets
 		}
 	}
 
+	/**
+	 *	Output a combo list with projects qualified for a third party
+	 *
+	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *	@param  int		$selected   	Id task preselected
+	 *	@param  string	$htmlname   	Nom de la zone html
+	 *	@param	int		$maxlength		Maximum length of label
+	 *	@param	int		$option_only	Return only html options lines without the select tag
+	 *	@param	int		$show_empty		Add an empty line
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *  @param	int		$forcefocus		Force focus on field (works with javascript only)
+     *  @param	int		$disabled		Disabled
+	 *	@return int         			Nber of project if OK, <0 if KO
+	 */
+	function select_task($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0)
+	{
+		global $user,$conf,$langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		$out='';
+
+		$hideunselectables = false;
+		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+
+		$projectsListId = false;
+		if (empty($user->rights->projet->all->lire))
+		{
+			$projectstatic=new Project($this->db);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+		}
+
+		// Search all projects
+		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
+		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p, '.MAIN_DB_PREFIX.'projet_task as t';
+		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " AND t.fk_projet = p.rowid";
+		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
+		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+		$sql.= " ORDER BY p.ref, t.ref ASC";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$minmax='';
+
+			// Use select2 selector
+			$nodatarole='';
+			if (! empty($conf->use_javascript_ajax))
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
+            	$out.=$comboenhancement;
+            	$nodatarole=($comboenhancement?' data-role="none"':'');
+            	$minmax='minwidth100';
+			}
+
+			if (empty($option_only)) {
+				$out.= '<select class="flat'.($minmax?' '.$minmax:'').'"'.($disabled?' disabled="disabled"':'').' id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+			}
+			if (!empty($show_empty)) {
+				$out.= '<option value="0">&nbsp;</option>';
+			}
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && ! $user->rights->societe->lire)
+					{
+						// Do nothing
+					}
+					else
+					{
+						if ($discard_closed == 1 && $obj->fk_statut == 2)
+						{
+							$i++;
+							continue;
+						}
+
+						$labeltoshow=dol_trunc($obj->ref,18);
+						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
+						//else $labeltoshow.=' ('.$langs->trans("Private").')';
+						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+
+						$disabled=0;
+						if ($obj->fk_statut == 0)
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Draft");
+						}
+						else if ($obj->fk_statut == 2)
+						{
+							if ($discard_close == 2) $disabled=1;
+							$labeltoshow.=' - '.$langs->trans("Closed");
+						}
+						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						{
+							$disabled=1;
+							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+						}
+						// Label for task
+						$labeltoshow.=' - '.$obj->tref.' '.dol_trunc($obj->tlabel,$maxlenght);
+						
+						if (!empty($selected) && $selected == $obj->rowid)
+						{
+							$out.= '<option value="'.$obj->rowid.'" selected';
+							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+							$out.= '>'.$labeltoshow.'</option>';
+						}
+						else
+						{
+							if ($hideunselectables && $disabled && ($selected != $obj->rowid))
+							{
+								$resultat='';
+							}
+							else
+							{
+								$resultat='<option value="'.$obj->rowid.'"';
+								if ($disabled) $resultat.=' disabled';
+								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+								//else $labeltoshow.=' ('.$langs->trans("Private").')';
+								$resultat.='>';
+								$resultat.=$labeltoshow;
+								$resultat.='</option>';
+							}
+							$out.= $resultat;
+						}
+					}
+					$i++;
+				}
+			}
+			if (empty($option_only)) {
+				$out.= '</select>';
+			}
+
+			print $out;
+
+			$this->db->free($resql);
+			return $num;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
+	
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
