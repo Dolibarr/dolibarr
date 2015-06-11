@@ -160,7 +160,7 @@ else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'add' && $user->rights->ficheinter->creer)
 {
     $object->socid			= $socid;
-    $object->duree			= GETPOST('duree','int');
+    $object->duration			= GETPOST('duration','int');
     $object->fk_project		= GETPOST('projectid','int');
     $object->fk_contrat		= GETPOST('contratid','int');
     $object->author			= $user->id;
@@ -1256,7 +1256,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 		// Duration
 		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-		print '<td colspan="3">'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
 
