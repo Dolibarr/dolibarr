@@ -77,6 +77,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->domiciliation   = $_POST["domiciliation"];
 	$account->proprio         = $_POST["proprio"];
 	$account->owner_address   = $_POST["owner_address"];
+	$account->frstrecur       = GETPOST('frstrecur');
 
 	$result = $account->update($user);
 	if (! $result)
@@ -135,11 +136,12 @@ if ($action == 'add' && ! $_POST["cancel"])
 	    $account->domiciliation   = $_POST["domiciliation"];
 	    $account->proprio         = $_POST["proprio"];
 	    $account->owner_address   = $_POST["owner_address"];
-
+		$account->frstrecur       = GETPOST('frstrecur');
+		
 	    $result = $account->update($user);	// TODO Use create and include update into create method
 	    if (! $result)
 	    {
-		    setEventMessage($account->error, 'errors');
+		    setEventMessages($account->error, $account->errors, 'errors');
 	        $_GET["action"]='create';     // Force chargement page création
 	    }
 	    else
@@ -155,7 +157,8 @@ if ($action == 'setasdefault')
 {
     $account = new CompanyBankAccount($db);
     $res = $account->setAsDefault(GETPOST('ribid','int'));
-    if ($res) {
+    if ($res) 
+    {
         $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
         header('Location: '.$url);
         exit;
@@ -199,7 +202,6 @@ llxHeader();
 
 $head=societe_prepare_head2($soc);
 
-dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
 $account = new CompanyBankAccount($db);
 if (! $id)
@@ -209,16 +211,27 @@ else
 if (empty($account->socid)) $account->socid=$soc->id;
 
 
+if ($socid && $action == 'edit' && $user->rights->societe->creer)
+{
+    print '<form action="rib.php?socid='.$soc->id.'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+}
+if ($socid && $action == 'create' && $user->rights->societe->creer)
+{
+    print '<form action="rib.php?socid='.$soc->id.'" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="add">';
+}
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
 
+// View
 if ($socid && $action != 'edit' && $action != "create")
 {
-    // Confirm delete third party
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+	
+	// Confirm delete third party
     if ($action == 'delete')
     {
         print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$soc->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
@@ -228,10 +241,10 @@ if ($socid && $action != 'edit' && $action != "create")
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td>'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td width="35%">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4">'.$account->label.'</td></tr>';
 
-	print '<tr><td valign="top" width="35%">'.$langs->trans("BankName").'</td>';
+	print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
 	// Show fields of bank account
@@ -361,6 +374,7 @@ if ($socid && $action != 'edit' && $action != "create")
         if (! empty($conf->prelevement->enabled))
         {
 			print '<td>RUM</td>';
+			print '<td>'.$langs->trans("WithdrawMode").'</td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print '<td width="40"></td>';
@@ -383,6 +397,8 @@ if ($socid && $action != 'edit' && $action != "create")
             if (! empty($conf->prelevement->enabled))
             {
 				print '<td>'.$prelevement->buildRumNumber($soc->code_client, $rib->datec, $rib->id).'</td>';
+				
+				print '<td>'.$rib->frstrecur.'</td>';
             }
 
             // Default
@@ -410,16 +426,14 @@ if ($socid && $action != 'edit' && $action != "create")
            		print img_picto($langs->trans("Delete"),'delete');
            		print '</a>';
             }
-
-            print '</td>';
-            print '</tr>';
-            $var = !$var;
+        	print '</td>';
+	        print '</tr>';
         }
-
+        
         if (count($rib_list) == 0) 
         {
         	$colspan=7;
-        	if (! empty($conf->prelevement->enabled)) $colspan++;
+        	if (! empty($conf->prelevement->enabled)) $colspan+=2;
             print '<tr '.$bc[0].'><td colspan="'.$colspan.'" align="center">'.$langs->trans("NoBANRecord").'</td></tr>';
         }
 
@@ -427,22 +441,16 @@ if ($socid && $action != 'edit' && $action != "create")
     } else {
         dol_print_error($db);
     }
+    
+    dol_fiche_end();
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition                                                                    */
-/*                                                                            */
-/* ************************************************************************** */
-
+// Edit
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-    print '<form action="rib.php?socid='.$soc->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
-
-    print '<table class="border" width="100%">';
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+	
+	print '<table class="border" width="100%">';
 
     print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
@@ -533,30 +541,39 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print $account->owner_address;
     print "</textarea></td></tr>";
 
-    print '</table><br>';
+    print '</table>';
 
-    print '<div align="center">';
+    if ($conf->prelevement->enabled)
+    {
+		print '<br>';
+		
+    	print '<table class="border" width="100%">';
+
+    	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
+	    print '<td colspan="4">'.$account->rum.'</td></tr>';
+	    
+	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
+	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
+	    
+	    print '</table>';
+    }
+    
+	dol_fiche_end();
+    
+	print '<div align="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
     print '</div>';
-
-    print '</form>';
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Création                                                                   */
-/*                                                                            */
-/* ************************************************************************** */
-
+// Create
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-    print '<form action="rib.php?socid='.$soc->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="add">';
-    print '<table class="border" width="100%">';
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+	
+	print '<table class="border" width="100%">';
 
 
     print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
@@ -615,19 +632,41 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print GETPOST('owner_address');
     print "</textarea></td></tr>";
 
-    print '</table><br>';
+    print '</table>';
+    
+    if ($conf->prelevement->enabled)
+    {
+		print '<br>';
+		
+    	print '<table class="border" width="100%">';
 
-    print '<div align="center">';
+    	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
+	    print '<td colspan="4">'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+	    
+	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
+	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
+	    
+	    print '</table>';
+    }
+    
+	dol_fiche_end();
+    
+	print '<div align="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
 	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
     print '</div>';
-
-    print '</form>';
 }
 
+if ($socid && $action == 'edit' && $user->rights->societe->creer)
+{
+	print '</form>';
+}
+if ($socid && $action == 'create' && $user->rights->societe->creer)
+{
+	print '</form>';
+}
 
-dol_fiche_end();
 
 
 if ($socid && $action != 'edit' && $action != 'create')
