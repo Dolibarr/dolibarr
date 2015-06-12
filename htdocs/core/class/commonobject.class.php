@@ -135,8 +135,8 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		$sql.= " WHERE entity IN (".getEntity($element).")" ; 
-		
+		$sql.= " WHERE entity IN (".getEntity($element).")" ;
+
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
 		else if ($ref_ext) $sql.= " AND ref_ext = '".$db->escape($ref_ext)."'";
@@ -2580,86 +2580,17 @@ abstract class CommonObject
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
     // --------------------
 
-    /* This is to show linked object block */
-
     /**
-     *  Show linked object block
-     *  TODO Move this into html.class.php
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+     *  Show linked object block.
      *
-     *  @return	int
+     *  @return		int		<0 if KO, >0 if OK
+     *  @deprecated 3.8 Use instead $form->shoLinkedObjectBlock($object)
      */
     function showLinkedObjectBlock()
     {
-        global $conf,$langs,$hookmanager;
-        global $bc;
-
-        $this->fetchObjectLinked();
-
-        // Bypass the default method
-        $hookmanager->initHooks(array('commonobject'));
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
-
-        if (empty($reshook))
-        {
-        	$num = count($this->linkedObjects);
-
-        	foreach($this->linkedObjects as $objecttype => $objects)
-        	{
-        		$tplpath = $element = $subelement = $objecttype;
-
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-        		{
-        			$element = $regs[1];
-        			$subelement = $regs[2];
-        			$tplpath = $element.'/'.$subelement;
-        		}
-
-        		// To work with non standard path
-        		if ($objecttype == 'facture')          {
-        			$tplpath = 'compta/'.$element;
-        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'propal')           {
-        			$tplpath = 'comm/'.$element;
-        			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'askpricesupplier')           {
-        			$tplpath = 'comm/'.$element;
-        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
-        			$tplpath = 'expedition';
-        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'delivery')         {
-        			$tplpath = 'livraison';
-        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'invoice_supplier') {
-        			$tplpath = 'fourn/facture';
-        		}
-        		else if ($objecttype == 'order_supplier')   {
-        			$tplpath = 'fourn/commande';
-        		}
-
-        		global $linkedObjectBlock;
-        		$linkedObjectBlock = $objects;
-
-        		// Output template part (modules that overwrite templates must declare this into descriptor)
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
-        			if ($res) break;
-        		}
-        	}
-
-        	return $num;
-        }
+    	global $form;
+    	return $form->showLinkedObjectBlock($this);
     }
-
 
 
     /* This is to show add lines */
@@ -3109,221 +3040,17 @@ abstract class CommonObject
 
 
 	/**
-	 *	get Margin info
-	 *
-	 * 	@param 	boolean	$force_price	True of not
-	 * 	@return mixed					Array with info
-	 */
-	function getMarginInfos($force_price=false)
-	{
-		global $conf;
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-
-		$marginInfos = array(
-				'pa_products' => 0,
-				'pv_products' => 0,
-				'margin_on_products' => 0,
-				'margin_rate_products' => '',
-				'mark_rate_products' => '',
-				'pa_services' => 0,
-				'pv_services' => 0,
-				'margin_on_services' => 0,
-				'margin_rate_services' => '',
-				'mark_rate_services' => '',
-				'pa_total' => 0,
-				'pv_total' => 0,
-				'total_margin' => 0,
-				'total_margin_rate' => '',
-				'total_mark_rate' => ''
-		);
-
-		foreach($this->lines as $line) {
-			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price) {
-				$product = new ProductFournisseur($this->db);
-				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
-					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
-					$line->pa_ht += $product->fourn_unitcharges;
-			}
-			// si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
-			if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
-				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
-			}
-
-			// calcul des marges
-			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-			    $pa = $line->qty * $line->pa_ht;
-			    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
-				if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
-					$marginInfos['pa_products'] += $pa;
-					$marginInfos['pv_products'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_products'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
-					$marginInfos['pa_services'] += $pa;
-					$marginInfos['pv_services'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_services'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
-					$marginInfos['pa_total'] += $pa;
-					$marginInfos['pv_total'] += $pv;
-				}
-			}
-			else {
-				$type=$line->product_type?$line->product_type:$line->fk_product_type;
-				if ($type == 0) {  // product
-				    $pa = $line->qty * $line->pa_ht;
-				    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
-					$marginInfos['pa_products'] += $pa;
-					$marginInfos['pv_products'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_products'] += $pv - $pa;
-				}
-				elseif ($type == 1) {  // service
-				    $pa = $line->qty * $line->pa_ht;
-				    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
-					$marginInfos['pa_services'] += $pa;
-					$marginInfos['pv_services'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_services'] += $pv - $pa;
-				}
-			}
-		}
-		if ($marginInfos['pa_products'] > 0)
-			$marginInfos['margin_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pa_products'];
-		if ($marginInfos['pv_products'] > 0)
-			$marginInfos['mark_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pv_products'];
-
-		if ($marginInfos['pa_services'] > 0)
-			$marginInfos['margin_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pa_services'];
-		if ($marginInfos['pv_services'] > 0)
-			$marginInfos['mark_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pv_services'];
-
-		// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-		if ($marginInfos['pv_total'] < 0)
-			$marginInfos['total_margin'] = -1 * (abs($marginInfos['pv_total']) - $marginInfos['pa_total']);
-		else
-			$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
-		if ($marginInfos['pa_total'] > 0)
-			$marginInfos['total_margin_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pa_total'];
-		if ($marginInfos['pv_total'] > 0)
-			$marginInfos['total_mark_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pv_total'];
-
-		return $marginInfos;
-	}
-
-	/**
 	 * Show the array with all margin infos
 	 *
-	 * @param 	boolean	$force_price	Force price
-	 * @return	void
+	 * @param 		boolean	$force_price	Force price
+	 * @return		void
+	 * @deprecated	3.8 Load FormMargin class and make a direct call to displayMarginInfos
 	 */
 	function displayMarginInfos($force_price=false)
 	{
-		global $langs, $conf, $user;
-
-    	if (! empty($user->societe_id)) return;
-
-    	if (! $user->rights->margins->liretous) return;
-
-        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-
-		$marginInfo = $this->getMarginInfos($force_price);
-
-		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
-		{
-			print $langs->trans('ShowMarginInfos').' : ';
-	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
-	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
-	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
-
-    	    print '<script>$(document).ready(function() {
-        	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
-        	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
-      	        });</script>';
-    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
-		}
-
-		print '<table class="nobordernopadding margintable" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
-		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td class="liste_titre" align="right">'.$langs->trans('BuyingPrice').'</td>';
-		else
-			print '<td class="liste_titre" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans('Margin').'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td class="liste_titre" align="right">'.$langs->trans('MarginRate').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td class="liste_titre" align="right">'.$langs->trans('MarkRate').'</td>';
-		print '</tr>';
-
-		if (! empty($conf->product->enabled))
-		{
-			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-			print '<tr class="impair">';
-			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
-			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-			print '</tr>';
-		}
-
-		if (! empty($conf->service->enabled))
-		{
-			print '<tr class="pair">';
-			print '<td>'.$langs->trans('MarginOnServices').'</td>';
-			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-			print '</tr>';
-		}
-
-		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-		{
-			print '<tr class="impair">';
-			print '<td>'.$langs->trans('TotalMargin').'</td>';
-			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
-			print '</tr>';
-		}
-		print '</table>';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+		$formmargin=new FormMargin($this->db);
+		$formmargin->displayMarginInfos($this, $force_price);
 	}
 
 

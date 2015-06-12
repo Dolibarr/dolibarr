@@ -1849,7 +1849,7 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_thirdparty('', 'soc_origin', 's.rowid != '.$object->id)
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id)
 			    )
 		    );
 

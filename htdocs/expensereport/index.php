@@ -107,7 +107,7 @@ print_fiche_titre($langs->trans("ExpensesArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";

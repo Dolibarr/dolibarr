@@ -394,9 +394,9 @@ function dol_print_object_info($object)
 
 /**
  *	Return an email formatted to include a tracking id
- *  For example  myemail@mydomain.com becom myemail+trackingid@mydomain.com
+ *  For example  myemail@example.com becom myemail+trackingid@example.com
  *
- *	@param	string	$email       	Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
  *	@return boolean     			True if domain email is OK, False if KO
  */
@@ -409,7 +409,7 @@ function dolAddEmailTrackId($email, $trackingid)
 /**
  *	Return true if email has a domain name that can't be resolved
  *
- *	@param	string	$mail       Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$mail       Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@return boolean     		True if domain email is OK, False if KO
  */
 function isValidMailDomain($mail)

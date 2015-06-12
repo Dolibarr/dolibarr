@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2015 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -2134,7 +2134,7 @@ if ($action == 'create')
 			print '</div></div>';
 
 			// Next situation invoice
-			$opt = $form->load_situation_invoices(GETPOST('originid'), $socid);
+			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
 			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture')) $tmp.=' disabled';
@@ -3776,77 +3776,10 @@ if ($action == 'create')
 		$somethingshown = $formfile->numoffiles;
 
 		// Linked object block
-		$somethingshown = $object->showLinkedObjectBlock();
+		$somethingshown = $form->showLinkedObjectBlock($object);
 
-		$linktoelem='';
-
-		if (! empty($conf->commande->enabled))
-		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
-
-			print '
-				<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function() {
-					jQuery("#linktoorder").click(function() {
-						jQuery("#orderlist").toggle();
-						jQuery("#linktoorder").toggle();
-					});
-				});
-				</script>
-				';
-
-			print '<div id="orderlist" style="display:none">';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "commande as c";
-			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $soc->id . '';
-
-			$resqlorderlist = $db->query($sql);
-			if ($resqlorderlist)
-			{
-				$num = $db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedOrder">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
-				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($resqlorderlist);
-					if ($objp->socid == $soc->id) {
-						$var = ! $var;
-						print '<tr ' . $bc [$var] . '>';
-						print '<td aling="left">';
-						print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-						print '<td align="center">' . $objp->ref . '</td>';
-						print '<td>' . $objp->ref_client . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
-						print '<td>' . $objp->name . '</td>';
-						print '</td>';
-						print '</tr>';
-					}
-
-					$i ++;
-				}
-				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				print '</form>';
-				$db->free($resqlorderlist);
-			} else {
-				dol_print_error($db);
-			}
-
-			print '</div>';
-		}
-
-		// Show link to elements
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 		if ($linktoelem) print '<br>'.$linktoelem;
 
 		// Link for paypal payment
@@ -3888,7 +3821,7 @@ if ($action == 'create')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/'));
+		$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/').'([^\-])+');
 		$file = $fileparams['fullname'];
 
 		// Define output language
@@ -3913,7 +3846,7 @@ if ($action == 'create')
 				dol_print_error($db, $result);
 				exit();
 			}
-			$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/'));
+			$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/').'([^\-])+');
 			$file = $fileparams['fullname'];
 		}
 

@@ -317,6 +317,7 @@ class Societe extends CommonObject
      * @var string
      */
     var $note_public;
+
     //! code statut prospect
     var $stcomm_id;
     var $statut_commercial;
@@ -1044,7 +1045,7 @@ class Societe extends CommonObject
             $num=$this->db->num_rows($resql);
             if ($num > 1)
             {
-                $this->error='Fetch several records found for ref='.$ref;
+                $this->error='Fetch several records found request';
                 dol_syslog($this->error, LOG_ERR);
                 $result = -2;
             }
@@ -1301,13 +1302,15 @@ class Societe extends CommonObject
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
      *    @param	int		$id             Id of third party to delete
-     *    @param    User    $user           User who ask to delete thirparty
+     *    @param    User    $fuser          User who ask to delete thirparty
      *    @param    int		$call_trigger   0=No, 1=yes
-     *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
+     *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
      */
-    function delete($id, $user='', $call_trigger=1)
+    function delete($id, User $fuser=null, $call_trigger=1)
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
+
+        if (empty($fuser)) $fuser=$user;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1323,10 +1326,10 @@ class Societe extends CommonObject
             $this->db->begin();
 
             // User is mandatory for trigger call
-            if ($user && $call_trigger)
+            if ($call_trigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('COMPANY_DELETE',$user);
+                $result=$this->call_trigger('COMPANY_DELETE',$fuser);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -1451,7 +1454,8 @@ class Societe extends CommonObject
                 return 1;
             }
             else
-            {
+			{
+				dol_syslog($this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }

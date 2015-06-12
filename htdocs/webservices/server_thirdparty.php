@@ -258,8 +258,31 @@ $server->register(
     'WS to get list of thirdparties id and ref'
 );
 
+// Register WSDL
+$server->register(
+		'deleteThirdParty',
+		// Entry values
+		array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
+		// Exit values
+		array('result'=>'tns:result','id'=>'xsd:string'),
+		$ns,
+		$ns.'#deleteThirdParty',
+		$styledoc,
+		$styleuse,
+		'WS to delete a thirdparty from its id, ref or ref_ext'
+);
+
 
 // Full methods code
+/**
+ * Get a thirdparty
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	string		$id		    		internal id
+ * @param	string		$ref		    	internal reference
+ * @param	string		$ref_ext	   		external reference
+ * @return	array							Array result
+ */
 function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 {
 	global $db,$conf,$langs;
@@ -726,6 +749,89 @@ function getListOfThirdParties($authentication,$filterthirdparty)
     }
 
     return $objectresp;
+}
+
+/**
+ * Delete a thirdparty
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	string		$id		    		internal id
+ * @param	string		$ref		    	internal reference
+ * @param	string		$ref_ext	   		external reference
+ * @return	array							Array result
+ */
+function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
+{
+	global $db,$conf,$langs;
+
+	dol_syslog("Function: deleteThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	// Check parameters
+	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+	{
+		dol_syslog("Function: deleteThirdParty checkparam");
+		$error++;
+		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+	}
+	dol_syslog("Function: deleteThirdParty 1");
+	
+	if (! $error)
+	{
+		$fuser->getrights();
+
+		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer)
+		{
+			$thirdparty=new Societe($db);
+			$result=$thirdparty->fetch($id,$ref,$ref_ext);
+				
+			if ($result > 0)
+			{
+				$db->begin();
+				
+				$result=$thirdparty->delete($thirdparty->id, $fuser);
+				
+				if ($result > 0)
+				{
+					$db->commit();
+						
+					$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+				}
+				else
+				{						
+					$db->rollback();
+					$error++;
+					$errorcode='KO';
+					$errorlabel=$thirdparty->error;
+					dol_syslog("Function: deleteThirdParty cant delete");
+				}
+			}
+			else
+			{
+				$error++;
+				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				
+			}
+		}
+		else
+		{
+			$error++;
+			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
 }
 
 // Return the results.

@@ -46,6 +46,7 @@ $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debu
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth'), GETPOST('date_finday'), GETPOST('date_finyear'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth'), GETPOST('dateday'), GETPOST('dateyear'));
 $fk_projet=GETPOST('fk_projet');
+$ref=GETPOST("ref",'alpha');
 
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['socid_id']))
@@ -92,7 +93,7 @@ if ($cancel) $action='';
 if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
 {
 	$object = new ExpenseReport($db);
-	$result=$object->delete($id);
+	$result=$object->delete($id, $user);
 	if ($result >= 0)
 	{
 		header("Location: index.php");
@@ -214,59 +215,67 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 		$expediteur->fetch($object->fk_user_author);
 		$emailFrom = $expediteur->email;
 
-		// SUBJECT
-		$subject = $langs->trans("ExpenseReportWaitingForApproval");
-
-		// CONTENT
-		$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-		$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
-
-		// Rebuild pdf
-		/*
-		$object->setDocModel($user,"");
-		$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
-
-		if($resultPDF):
-		// ATTACHMENT
-		$filename=array(); $filedir=array(); $mimetype=array();
-		array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-		array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
-		array_push($mimetype,"application/pdf");
-		*/
-
-		// PREPARE SEND
-		$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
-
-		if ($mailfile)
+		if ($emailTo && $emailFrom)
 		{
-			// SEND
-			$result=$mailfile->sendfile();
-			if ($result)
+			// SUBJECT
+			$subject = $langs->trans("ExpenseReportWaitingForApproval");
+
+			// CONTENT
+			$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+			$message = $langs->trans("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut,$object->date_fin,'',$langs), $link);
+
+			// Rebuild pdf
+			/*
+			$object->setDocModel($user,"");
+			$resultPDF = expensereport_pdf_create($db,$id,'',"",$langs);
+
+			if($resultPDF):
+			// ATTACHMENT
+			$filename=array(); $filedir=array(); $mimetype=array();
+			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+			array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
+			array_push($mimetype,"application/pdf");
+			*/
+
+			// PREPARE SEND
+			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+
+			if ($mailfile)
 			{
-				$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
-				setEventMessage($mesg);
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				exit;
-			}
-			else
-			{
-				$langs->load("other");
-				if ($mailfile->error)
+				// SEND
+				$result=$mailfile->sendfile();
+				if ($result)
 				{
-					$mesg='';
-					$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-					$mesg.='<br>'.$mailfile->error;
-					setEventMessage($mesg,'errors');
+					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
+					setEventMessage($mesg);
+					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+					exit;
 				}
 				else
 				{
-					setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
+					$langs->load("other");
+					if ($mailfile->error)
+					{
+						$mesg='';
+						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+						$mesg.='<br>'.$mailfile->error;
+						setEventMessage($mesg,'errors');
+					}
+					else
+					{
+						setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'warnings');
+					}
 				}
+			}
+			else
+			{
+				setEventMessages($mailfile->error,$mailfile->errors,'errors');
+				$action='';
 			}
 		}
 		else
 		{
-			setEventMessages($mailfile->error,$mailfile->errors,'errors');
+			setEventMessage($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), 'warnings');
 			$action='';
 		}
 	}
@@ -304,66 +313,73 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 
 	if ($result > 0)
 	{
-		// Send mail
 		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
 		{
+			// Send mail
+
 			// TO
 			$destinataire = new User($db);
 			$destinataire->fetch($object->fk_user_validator);
 			$emailTo = $destinataire->email;
 
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
+			if ($emailTo)
+			{
+				// FROM
+				$expediteur = new User($db);
+				$expediteur->fetch($object->fk_user_author);
+				$emailFrom = $expediteur->email;
 
-			// SUBJECT
-			$subject = "' ERP - Note de frais à re-approuver";
+				// SUBJECT
+				$subject = "' ERP - Note de frais à re-approuver";
 
-			// CONTENT
-			$dateRefusEx = explode(" ",$object->date_refuse);
+				// CONTENT
+				$dateRefusEx = explode(" ",$object->date_refuse);
 
-			$message = "Bonjour {$destinataire->firstname},\n\n";
-			$message.= "Le {$dateRefusEx[0]} à {$dateRefusEx[1]} vous avez refusé d'approuver la note de frais \"{$object->ref}\". Vous aviez émis le motif suivant : {$object->detail_refuse}\n\n";
-			$message.= "L'auteur vient de modifier la note de frais, veuillez trouver la nouvelle version en pièce jointe.\n";
-			$message.= "- Déclarant : {$expediteur->firstname} {$expediteur->lastname}\n";
-			$message.= "- Période : du {$object->date_debut} au {$object->date_fin}\n";
-			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-			$message.= "Bien cordialement,\n' SI";
+				$message = "Bonjour {$destinataire->firstname},\n\n";
+				$message.= "Le {$dateRefusEx[0]} à {$dateRefusEx[1]} vous avez refusé d'approuver la note de frais \"{$object->ref}\". Vous aviez émis le motif suivant : {$object->detail_refuse}\n\n";
+				$message.= "L'auteur vient de modifier la note de frais, veuillez trouver la nouvelle version en pièce jointe.\n";
+				$message.= "- Déclarant : {$expediteur->firstname} {$expediteur->lastname}\n";
+				$message.= "- Période : du {$object->date_debut} au {$object->date_fin}\n";
+				$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
+				$message.= "Bien cordialement,\n' SI";
 
-			// Génération du pdf avant attachement
-			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+				// Génération du pdf avant attachement
+				$object->setDocModel($user,"");
+				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
-			if($resultPDF):
-			// ATTACHMENT
-			$filename=array(); $filedir=array(); $mimetype=array();
-			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-			array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
-			array_push($mimetype,"application/pdf");
+				if($resultPDF)
+				{
+					// ATTACHMENT
+					$filename=array(); $filedir=array(); $mimetype=array();
+					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+					array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
+					array_push($mimetype,"application/pdf");
 
-			// PREPARE SEND
-			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
+					// PREPARE SEND
+					$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message,$filedir,$mimetype,$filename);
 
-			if(!$mailfile->error):
-
-			// SEND
-			$result=$mailfile->sendfile();
-			if ($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit;
-			endif;
-
-			else:
-
-			$mesg="Impossible d'envoyer l'email.";
-
-			endif;
-			// END - Send mail
-			else:
-			dol_print_error($db,$resultPDF);
-			exit;
-			endif;
+					if (! $mailfile->error)
+					{
+						// SEND
+						$result=$mailfile->sendfile();
+						if ($result)
+						{
+							Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+							exit;
+						}
+						else
+						{
+							$mesg=$mailfile->error;
+						}
+						// END - Send mail
+					}
+					else
+					{
+						dol_print_error($db,$resultPDF);
+						exit;
+					}
+				}
+			}
 		}
 	}
 	else
@@ -1168,10 +1184,10 @@ if ($action == 'create')
 }
 else
 {
-	if($id > 0)
+	if($id > 0 || $ref)
 	{
 		$object = new ExpenseReport($db);
-		$result = $object->fetch($id);
+		$result = $object->fetch($id, $ref);
 
 		if ($result > 0)
 		{
@@ -1218,7 +1234,7 @@ else
 
             	// Ref
             	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-            	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+            	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';
 
 				print '<tr>';
@@ -1376,7 +1392,7 @@ else
 
             	// Ref
             	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-            	print $form->showrefnav($object, 'id', $linkback, 1, 'ref', 'ref', '');
+            	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';
 
 				print '<tr>';
@@ -1450,6 +1466,7 @@ else
 					print '</tr>';
 				}
 
+				// User to inform
 				if($object->fk_statut<3)	// informed
 				{
 					print '<tr>';
@@ -1460,6 +1477,7 @@ else
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_validator);
 						print $userfee->getNomUrl(1);
+						if (empty($userfee->email) || ! isValidEmail($userfee->email)) print img_warning($langs->trans("EmailNotValid"));
 					}
 					print '</td></tr>';
 				}
@@ -1530,7 +1548,7 @@ else
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
 				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
-				$sql.= ' WHERE fde.fk_expensereport = '.$id;
+				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 
 				$resql = $db->query($sql);
 				if ($resql)
@@ -1692,8 +1710,8 @@ else
 						print_fiche_titre($langs->trans("AddLine"),'','');
 
 						print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="addline">';
-						print '<input type="hidden" name="id" value="'.$id.'">';
-						print '<input type="hidden" name="fk_expensereport" value="'.$id.'" />';
+						print '<input type="hidden" name="id" value="'.$object->id.'">';
+						print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
 						print '<input type="hidden" name="action" value="addline" />';
 
 						print '<table class="noborder" width="100%">';
@@ -1789,7 +1807,7 @@ print '<div class="tabsAction">';
 if ($action != 'create' && $action != 'edit')
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id);
+	$object->fetch($id, $ref);
 
 
 	/* Si l'état est "Brouillon"
@@ -1802,18 +1820,18 @@ if ($action != 'create' && $action != 'edit')
 		if ($object->fk_user_author == $user->id)
 		{
 			// Modify
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
 
 			// Validate
 			if (count($object->lines) > 0 || count($object->lignes) > 0)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 			}
 
 			if ($user->rights->expensereport->supprimer)
 			{
 				// Delete
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
 	}
@@ -1828,17 +1846,17 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Modify
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
 
 			// Brouillonner (le statut refusée est identique à brouillon)
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 
 			if ($user->rights->expensereport->supprimer)
 			{
 				// Delete
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
 	}
@@ -1848,7 +1866,7 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('SetToDraft').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a>';
 		}
 	}
 
@@ -1862,7 +1880,7 @@ if ($action != 'create' && $action != 'edit')
 		if ($object->fk_user_author == $user->id)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('SetToDraft').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a>';
 		}
 	}
 
@@ -1871,21 +1889,21 @@ if ($action != 'create' && $action != 'edit')
 		//if($object->fk_user_validator==$user->id)
 		//{
 			// Validate
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Approve').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a>';
 			// Deny
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$id.'">'.$langs->trans('Deny').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a>';
 		//}
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Cancel
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 		}
 
 		if($user->rights->expensereport->supprimer)
 		{
 			// Delete
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 
@@ -1896,18 +1914,18 @@ if ($action != 'create' && $action != 'edit')
 	if ($user->rights->expensereport->to_paid && $object->fk_statut == 5)
 	{
 		// Pay
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$id.'">'.$langs->trans('TO_PAID').'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$object->id.'">'.$langs->trans('TO_PAID').'</a>';
 
 		// Cancel
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 		}
 
 		if($user->rights->expensereport->supprimer)
 		{
 			// Delete
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 
@@ -1919,11 +1937,11 @@ if ($action != 'create' && $action != 'edit')
 	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_statut==6)
 	{
 		// Cancel
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$id.'">'.$langs->trans('Cancel').'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 		if($user->rights->expensereport->supprimer)
 		{
 			// Delete
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 
@@ -1937,11 +1955,11 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('ReOpen').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('ReOpen').'</a>';
 		}
 
 		// Delete
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 
 	}
 }

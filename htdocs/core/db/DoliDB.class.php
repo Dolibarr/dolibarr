@@ -55,7 +55,7 @@ abstract class DoliDB implements Database
 	public $transaction_opened;
 	/** @var string Last successful query */
 	public $lastquery;
-	/** @ar string Last failed query */
+	/** @var string Last failed query */
 	public $lastqueryerror;
 	/** @var string Last error message */
 	public $lasterror;
