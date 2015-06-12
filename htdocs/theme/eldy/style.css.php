@@ -114,11 +114,11 @@ $usegradient=1;
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$conf->global->THEME_ELDY_TOPMENU_BACK1='140,145,180';    // topmenu (140,160,185)
+	$conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';    // topmenu (140,160,185)
     $conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK2='255,255,255';
-    $conf->global->THEME_ELDY_BACKTITLE1='140,145,180';       // title of arrays TO MATCH ELDY (140,160,185)
+    $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       // title of arrays TO MATCH ELDY (140,160,185)
     //$conf->global->THEME_ELDY_BACKTITLE1='230,230,230';     // title of arrays TO MATCH BOOTSTRAP
     $conf->global->THEME_ELDY_BACKTITLE2='230,230,230';
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
@@ -184,7 +184,6 @@ $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFF'; }
 else { $colortextbacktab='111'; }
-
 
 print '/*'."\n";
 print 'colred='.$colred.' colgreen='.$colgreen.' colblue='.$colblue."\n";
@@ -965,7 +964,7 @@ div.login_block {
 	<?php } ?>
 }
 div.login_block a {
-	color: #fff;
+	color: #<?php echo $colortextbackvmenu; ?>;
 }
 div.login_block table {
 	display: inline;
@@ -2346,7 +2345,7 @@ tr.box_titre {
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
 	<?php } ?>
-	
+
 	color: #<?php echo $colortexttitle; ?>;
     font-family: <?php print $fontlist ?>, sans-serif;
     font-weight: bold;
