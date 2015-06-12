@@ -53,7 +53,9 @@ if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$mesg=''; $error=0; $errors=array(); $_error=0;
+$mesg=''; $error=0; $errors=array();
+
+$refalreadyexists=0;
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
@@ -468,7 +470,7 @@ if (empty($reshook))
                         {
                             $db->rollback();
 
-                            $_error++;
+                            $refalreadyexists++;
                             $action = "";
 
                             $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
@@ -477,7 +479,7 @@ if (empty($reshook))
                             $object->fetch($id);
                         }
                         else
-                        {
+                     {
                             $db->rollback();
                             if (count($object->errors))
                             {
@@ -816,7 +818,7 @@ else
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
-        if ($_error)
+        if ($refalreadyexists)
         {
             print $langs->trans("RefAlreadyExists");
         }

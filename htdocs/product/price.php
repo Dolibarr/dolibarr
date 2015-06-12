@@ -43,7 +43,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 $langs->load("products");
 $langs->load("bills");
 
-$mesg=''; $error=0; $errors=array(); $_error=0;
+$mesg=''; $error=0; $errors=array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
