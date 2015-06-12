@@ -105,7 +105,7 @@ $colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+roun
 $colorbacklinepair1=(244+round($isred/3)).','.(244+round($isgreen/3)).','.(244+round($isblue/3));    // line pair
 $colorbacklinepair2=(250+round($isred/3)).','.(250+round($isgreen/3)).','.(250+round($isblue/3));    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));    // line pair
-$colorbackbody='#f3f3f3';
+$colorbackbody='243,243,243';
 $colortext='40,40,40';
 $fontsize='12';
 $fontsizesmaller='11';
@@ -124,7 +124,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
     $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_BACKBODY='#f3f3f3;';
+    $conf->global->THEME_ELDY_BACKBODY='243,243,243;';
     $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
@@ -164,6 +164,11 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($user->conf-
 }
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
+$colorbackbody=join(',',colorStringToArray($colorbackbody));
+$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));
+$colorbackhmenu2=join(',',colorStringToArray($colorbackhmenu2));
+$colorbackvmenu1=join(',',colorStringToArray($colorbackvmenu1));
+$colorbackvmenu2=join(',',colorStringToArray($colorbackvmenu2));
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));
 $colorbacktabcard2=join(',',colorStringToArray($colorbacktabcard2));
 
@@ -188,6 +193,10 @@ else { $colortextbacktab='111'; }
 print '/*'."\n";
 print 'colred='.$colred.' colgreen='.$colgreen.' colblue='.$colblue."\n";
 print 'isred='.$isred.' isgreen='.$isgreen.' isblue='.$isblue."\n";
+print 'colorbackbody='.$colorbackbody."\n";
+print 'colorbackvmenu1='.$colorbackvmenu1."\n";
+print 'colorbackhmenu1='.$colorbackhmenu1."\n";
+print 'colorbacktitle1='.$colorbacktitle1."\n";
 print 'colorbacklineimpair1='.$colorbacklineimpair1."\n";
 print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
 print 'colorbacklineimpairhover='.$colorbacklineimpairhover."\n";
@@ -215,7 +224,7 @@ body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	background: <?php print $colorbackbody; ?>;
+	background: rgb(<?php print $colorbackbody; ?>);
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -2132,14 +2141,15 @@ div.pagination li.paginationafterarrows {
 /* Set the color for hover lines */
 .odd:hover, .impair:hover, .even:hover, .pair:hover, .even:hover, .pair:hover, table.dataTable tr.even:hover, table.dataTable tr.odd:hover
 {
-<?php if ($colorbacklinepairhover) { if ($colorbacklinepairhover > 0) { ?>
+<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 <?php } else { ?>
 	background: rgba(0, 0, 0, 0.05) !important;
-<?php } } ?>
+<?php } ?>
 }
 
-.odd, .impair, .nohover .odd:hover, .nohover .impair:hover, tr.odd td.nohover, tr.impair td.nohover {
+.odd, .impair, .nohover .odd:hover, .nohover .impair:hover, tr.odd td.nohover, tr.impair td.nohover
+{
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: #202020;
