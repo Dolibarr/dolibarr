@@ -2358,7 +2358,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 					dol_print_error($db, $result);
 					exit();
 				}
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'([^\-])+');
+				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 				$file = $fileparams['fullname'];
 			}
 
