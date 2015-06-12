@@ -8,6 +8,8 @@ You may also experience troubles with Mysql 5.5.41 with error "Lost connection" 
 Upgrading to any other version or database system is abolutely required BEFORE trying to
 make a Dolibarr upgrade.
 
+***** ChangeLog for 3.7.2 compared to 3.7.* *****
+Fix [ bug #2900 ] Courtesy title is not stored in create thirdparty form
 
 ***** ChangeLog for 3.7.1 compared to 3.7.* *****
 FIX Bug in the new photo system
