@@ -1820,7 +1820,7 @@ table.liste td {
 }
 */
 
-.impair:hover, td.nohover {
+.impair:hover {
 <?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
 	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
 <?php } else { ?>
@@ -1829,7 +1829,7 @@ table.liste td {
 	border: 0px;
 }
 
-.impair, .nohover .impair:hover, tr.impair td.nohover {
+.impair, .nohover .impair:hover, tr.impair td.nohover, td.nohover {
 <?php if ($usecss3) { ?>
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
