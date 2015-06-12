@@ -37,6 +37,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #2545 ] Missing object_margin.png in Amarok theme
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
+- Fix: [ bug #2891 ] Category hooks do not work
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
