@@ -129,7 +129,7 @@ $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans($local==1?"LT1ReportByQuartersInDueDebtMode":"LT2ReportByQuartersInDueDebtMode");
-    $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT'.$local.'Rec");
+    $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
@@ -161,7 +161,7 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans($local==1?"LT1ReportByQuartersInInputOutputMode":"LT2ReportByQuartersInInputOutputMode");
-    $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT'.$local.'Rec");
+    $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
