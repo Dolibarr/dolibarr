@@ -108,7 +108,7 @@ foreach($fulltree as $key => $val)
 }
 
 
-print '<table class="liste" width="100%">';
+print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("HierarchicView").'</td><td></td><td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
 print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td></tr>';
 
