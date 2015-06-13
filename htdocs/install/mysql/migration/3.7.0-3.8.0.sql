@@ -29,6 +29,11 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 -- Taiwan VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2131, 213, '5', '0', 'VAT 5%', 1);
 
+ALTER TABLE llx_societe_rib ADD COLUMN rum varchar(32) after default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN frstrecur varchar(16) default 'FRST' after rum;
+
+ALTER TABLE llx_cronjob ADD COLUMN entity integer DEFAULT 0;
+ALTER TABLE llx_cronjob MODIFY COLUMN params text NULL;
 
 -- Loan
 create table llx_loan
@@ -123,7 +128,10 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_supplier_price_expressio
 ALTER TABLE llx_product ADD COLUMN fk_price_expression integer DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN fk_price_expression integer DEFAULT NULL;
 
+ALTER TABLE llx_product ADD COLUMN fifo double(24,8) after pmp;
+ALTER TABLE llx_product ADD COLUMN lifo double(24,8) after fifo;
 
+  
 --create table for user conf of printing driver
 CREATE TABLE llx_printing
 (
@@ -149,12 +157,12 @@ ALTER TABLE llx_facturedet ADD COLUMN situation_percent real;
 ALTER TABLE llx_facturedet ADD COLUMN fk_prev_id integer;
 
 -- Convert SMTP config to main entity, so new entities don't get the old values
-UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SENDMODE";
-UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTP_PORT";
-UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTP_SERVER";
-UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTPS_ID";
-UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_SMTPS_PW";
-UPDATE llx_const SET entity = 1 WHERE entity = 0 AND name = "MAIN_MAIL_EMAIL_TLS";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SENDMODE";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTP_PORT";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTP_SERVER";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_ID";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_PW";
+UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_EMAIL_TLS";
 
 
 create table llx_bank_account_extrafields
@@ -167,7 +175,9 @@ create table llx_bank_account_extrafields
 
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN label varchar(255);
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN price double(24,8) DEFAULT 0;
 ALTER TABLE llx_stock_mouvement ADD COLUMN inventorycode varchar(128);
+
 
 ALTER TABLE llx_product_association ADD COLUMN incdec integer DEFAULT 1;
 
@@ -638,11 +648,12 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
 ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
 
--- Recuring events
+-- Recurring events
 ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);
 ALTER TABLE llx_actioncomm ADD COLUMN recurrule varchar(128);
 ALTER TABLE llx_actioncomm ADD COLUMN recurdateend datetime;
 
-ALTER TABLE llx_stcomm ADD COLUMN picto varchar(128);
+ALTER TABLE llx_c_stcomm ADD COLUMN picto varchar(128);
 
-
+-- New trigger for Supplier invoice unvalidation
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);

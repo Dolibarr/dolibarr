@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 201		Charlie Benke           <charlies@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +160,7 @@ else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'add' && $user->rights->ficheinter->creer)
 {
     $object->socid			= $socid;
-    $object->duree			= GETPOST('duree','int');
+    $object->duration			= GETPOST('duration','int');
     $object->fk_project		= GETPOST('projectid','int');
     $object->fk_contrat		= GETPOST('contratid','int');
     $object->author			= $user->id;
@@ -248,7 +249,14 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 									$prod = new Product($db);
 									$prod->id=$lines[$i]->fk_product;
 									$prod->getMultiLangs();
-
+									// We show if duration is present on service (so we get it)
+									$prod->fetch($lines[$i]->fk_product);
+									if ($prod->duration_value && $prod->duration_unit == 'h' && $conf->global->FICHINTER_USE_SERVICE_DURATION)
+									{
+										$durationproduct=$prod->duration_value * 3600 * $lines[$i]->qty;
+									}
+									else
+										$durationproduct=3600;
 									$outputlangs = $langs;
 									$newlang='';
 									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
@@ -277,11 +285,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$date_intervention=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 							if ($product_type == 1)
 							{ //service
-								$duration = 3600;
+								$duration = $durationproduct;
 							}
 							else
 							{ //product
-							    $duration = 0;
+								$duration = 0;
 							}
 
 							$predef = '';
@@ -1019,7 +1027,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		dol_fiche_head('');
-		
+
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
@@ -1125,7 +1133,7 @@ if ($action == 'create')
 		}
 
 		dol_fiche_end();
-		
+
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '</div>';
@@ -1135,7 +1143,7 @@ if ($action == 'create')
 	else
 	{
 		dol_fiche_head('');
-		
+
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
@@ -1144,7 +1152,7 @@ if ($action == 'create')
 		print '</table>';
 
 		dol_fiche_end();
-		
+
 		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
@@ -1248,7 +1256,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 		// Duration
 		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-		print '<td colspan="3">'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
 
@@ -1701,7 +1709,6 @@ else if ($id > 0 || ! empty($ref))
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		//print '<table width="100%"><tr><td width="50%" valign="top">';
 
 		/*
 		 * Built documents
@@ -1719,12 +1726,14 @@ else if ($id > 0 || ! empty($ref))
 		//print "<br>\n";
 		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		/*
-		 * Linked object block
-		*/
-		$somethingshown=$object->showLinkedObjectBlock();
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
 
-		//print '</td><td valign="top" width="50%">';
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object);
+		//if ($linktoelem) print '<br>'.$linktoelem;
+
+
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
@@ -1733,7 +1742,6 @@ else if ($id > 0 || ! empty($ref))
 		$somethingshown=$formactions->showactions($object,'fichinter',$socid);
 
 		print '</div></div></div>';
-		//print "</td></tr></table>\n";
 	}
 
 
@@ -1747,7 +1755,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
+		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 		$file=$fileparams['fullname'];
 
 		// Define output language
@@ -1774,7 +1782,7 @@ else if ($id > 0 || ! empty($ref))
 				dol_print_error($db,$result);
 				exit;
 			}
-			$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
+			$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 			$file=$fileparams['fullname'];
 		}
 

@@ -40,7 +40,16 @@ class Paiement extends CommonObject
 	var $ref;
 	var $facid;
 	var $datepaye;
-    var $total;             // deprecated
+	/**
+	 * @deprecated
+	 * @see amount, amounts
+	 */
+    var $total;
+	/**
+	 * @deprecated
+	 * @see amount, amounts
+	 */
+	var $montant;
 	var $amount;            // Total amount of payment
 	var $amounts=array();   // Array of amounts
 	var $author;

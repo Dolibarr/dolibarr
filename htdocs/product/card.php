@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
@@ -53,7 +53,9 @@ if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$mesg=''; $error=0; $errors=array(); $_error=0;
+$mesg=''; $error=0; $errors=array();
+
+$refalreadyexists=0;
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
@@ -468,7 +470,7 @@ if (empty($reshook))
                         {
                             $db->rollback();
 
-                            $_error++;
+                            $refalreadyexists++;
                             $action = "";
 
                             $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
@@ -477,7 +479,7 @@ if (empty($reshook))
                             $object->fetch($id);
                         }
                         else
-                        {
+                     {
                             $db->rollback();
                             if (count($object->errors))
                             {
@@ -816,7 +818,7 @@ else
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
-        if ($_error)
+        if ($refalreadyexists)
         {
             print $langs->trans("RefAlreadyExists");
         }
@@ -1004,7 +1006,7 @@ else
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
-            print $form->select_PriceBaseType($object->price_base_type, "price_base_type");
+            print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
             print '</td></tr>';
 
             // MIN PRICE
@@ -1385,7 +1387,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '<td>';
-                if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcodetype') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype')
@@ -1406,7 +1408,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
-                if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcode') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
@@ -1461,7 +1463,7 @@ else
             print '</td></tr>';
 
             // Batch number management (to batch)
-            if ($conf->productbatch->enabled) {
+            if (! empty($conf->productbatch->enabled)) {
                 print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
                 if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
@@ -1552,7 +1554,7 @@ else
             }
 
 			// Unit
-			if($conf->global->PRODUCT_USE_UNITS)
+			if (! empty($conf->global->PRODUCT_USE_UNITS))
 			{
 				$unit = $object->getLabelOfUnit();
 

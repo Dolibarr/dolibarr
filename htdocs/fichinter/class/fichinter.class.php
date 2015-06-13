@@ -53,7 +53,7 @@ class Fichinter extends CommonObject
 	var $datec;
 	var $datev;
 	var $datem;
-	var $duree;
+	var $duration;
 	var $statut;		// 0=draft, 1=validated, 2=invoiced
 	var $description;
 	var $note_private;
@@ -116,7 +116,7 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
-		if (! is_numeric($this->duree)) $this->duree = 0;
+		if (! is_numeric($this->duration)) $this->duration = 0;
 
 		if ($this->socid <= 0)
 		{
@@ -234,8 +234,8 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
-	 	if (! is_numeric($this->duree)) {
-	 		$this->duree = 0;
+	 	if (! is_numeric($this->duration)) {
+	 		$this->duration = 0;
 	 	}
 	 	if (! dol_strlen($this->fk_project)) {
 	 		$this->fk_project = 0;
@@ -245,7 +245,7 @@ class Fichinter extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql.= "description  = '".$this->db->escape($this->description)."'";
-		$sql.= ", duree = ".$this->duree;
+		$sql.= ", duree = ".$this->duration;
 		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
@@ -306,7 +306,7 @@ class Fichinter extends CommonObject
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
 				$this->statut       = $obj->fk_statut;
-				$this->duree        = $obj->duree;
+				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
@@ -951,7 +951,7 @@ class Fichinter extends CommonObject
 		$this->datec = $now;
 		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
-		$this->duree = 0;
+		$this->duration = 0;
 		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
@@ -964,7 +964,7 @@ class Fichinter extends CommonObject
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 
-			$this->duree+=$line->duration;
+			$this->duration+=$line->duration;
 		}
 	}
 

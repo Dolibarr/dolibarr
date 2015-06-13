@@ -407,8 +407,7 @@ foreach($listofdata as $key => $val)
 
 	print '<tr '.$bc[$var].'>';
 	print '<td>';
-	print $productstatic->getNomUrl(1);
-	print ' - '.$productstatic->label;
+	print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 	print '</td>';
 	if ($conf->productbatch->enabled)
 	{

@@ -43,7 +43,7 @@ $search_facture = GETPOST('search_facture','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
 $search_amount  = GETPOST('search_amount','alpha');
-$search_acount  = GETPOST('search_account','alpha');
+$search_account = GETPOST('search_account','alpha');
 
 // Security check
 if ($user->societe_id > 0)

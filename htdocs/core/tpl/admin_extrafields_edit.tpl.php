@@ -56,6 +56,8 @@ $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
 $alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
+$perms=$extrafields->attribute_perms[$attrname];
+$list=$extrafields->attribute_list[$attrname];
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -113,7 +115,12 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 <tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked':''); ?>></td></tr>
-
+<!-- By default visible into list -->
+<?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
+<tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
+<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
+</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo ($list?' checked':''); ?>></td></tr>
+<?php } ?>
 </table>
 
 <div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;

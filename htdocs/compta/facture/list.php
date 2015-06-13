@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +89,9 @@ $search_sale = GETPOST('search_sale','int');
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
+$day_lim	= GETPOST('day_lim','int');
+$month_lim	= GETPOST('month_lim','int');
+$year_lim	= GETPOST('year_lim','int');
 $filtre	= GETPOST('filtre');
 
 // Security check
@@ -213,6 +217,19 @@ else if ($year > 0)
 {
     $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
+if ($month_lim > 0)
+{
+	if ($year_lim > 0 && empty($day_lim))
+		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($year_lim,$month_lim,false))."' AND '".$db->idate(dol_get_last_day($year_lim,$month_lim,false))."'";
+	else if ($year_lim > 0 && ! empty($day_lim))
+		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_lim, $day_lim, $year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_lim, $day_lim, $year_lim))."'";
+	else
+		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$month_lim."'";
+}
+else if ($year_lim > 0)
+{
+	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($year_lim,12,false))."'";
+}
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
@@ -322,7 +339,11 @@ if ($resql)
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
-    print '<td class="liste_titre" align="left">&nbsp;</td>';
+ 	print '<td class="liste_titre" align="center">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_lim" value="'.$day_lim.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="month_lim" value="'.$month_lim.'">';
+    $formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5);
+    print '</td>';
     print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.$search_societe.'"></td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';

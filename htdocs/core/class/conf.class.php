@@ -404,7 +404,7 @@ class Conf
 		$this->css  = "/theme/".$this->theme."/style.css.php";
 
 		// conf->email_from = email pour envoi par dolibarr des mails automatiques
-		$this->email_from = "robot@domain.com";
+		$this->email_from = "robot@example.com";
 		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM)) $this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 
 		// conf->notification->email_from = email pour envoi par Dolibarr des notifications

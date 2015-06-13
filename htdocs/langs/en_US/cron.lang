@@ -4,10 +4,10 @@ About = About
 CronAbout = About Cron
 CronAboutPage = Cron about page
 # Right
-Permission23101 = Read Scheduled task
-Permission23102 = Create/update Scheduled task
-Permission23103 = Delete Scheduled task
-Permission23104 = Execute Scheduled task
+Permission23101 = Read Scheduled job
+Permission23102 = Create/update Scheduled job
+Permission23103 = Delete Scheduled job
+Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch cron jobs if required
@@ -55,9 +55,9 @@ CronEach=Every
 JobFinished=Job launched and finished
 #Page card
 CronAdd= Add jobs
-CronHourStart= Start hour and date of task
-CronEvery= And execute task each
-CronObject= Instance/Object to create
+CronHourStart= Start hour and date of job
+CronEvery=Execute job each
+CronObject=Instance/Object to create
 CronArgs=Parameters
 CronSaveSucess=Save succesfully
 CronNote=Comment

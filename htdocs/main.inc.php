@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
@@ -34,10 +34,10 @@
 
 //@ini_set('memory_limit', '64M');	// This may be useless if memory is hard limited by your PHP
 
-// For optional tuning. Enabled if environment variable DOL_TUNING is defined.
+// For optional tuning. Enabled if environment variable MAIN_SHOW_TUNING_INFO is defined.
 // A call first. Is the equivalent function dol_microtime_float not yet loaded.
 $micro_start_time=0;
-if (! empty($_SERVER['DOL_TUNING']))
+if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 {
     list($usec, $sec) = explode(" ", microtime());
     $micro_start_time=((float) $usec + (float) $sec);
@@ -110,7 +110,7 @@ function test_sql_and_script_inject($val, $type)
 }
 
 /**
- * Security: Return true if OK, false otherwise.
+ * Return true if security check on parameters are OK, false otherwise.
  *
  * @param		string			$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
@@ -1436,8 +1436,16 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    // Add login user link
 	    $toprightmenu.='<div class="login_block_user">';
-	    //$toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'login_block_elem2',2);	// This include div class="login"
-        $toprightmenu.= $user->getNomurl(0, '', true, 0, 11);
+
+	    // User photo
+	    $toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
+	    $toprightmenu.=$user->getPhotoUrl(16,16,'loginphoto');
+	    $toprightmenu.='</div></div>';
+
+		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
+        $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
+        $toprightmenu.='</div></div>';
+
 		$toprightmenu.='</div>';
 
 	    $toprightmenu.='<div class="login_block_other">';
@@ -1451,9 +1459,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		}
 		else $toprightmenu.=$result;	// For backward compatibility
 
-	    // Logout link
-	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
-
 	    // Link to print main content area
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	    {
@@ -1464,7 +1469,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $text.='</a>';
 	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
-		$toprightmenu.='</div>';
+
+		// Logout link
+	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
+
+	    $toprightmenu.='</div>';
 
 	    print $toprightmenu;
 
@@ -1794,7 +1803,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 {
     global $conf,$langs;
 
-    if (!$htmlinputid) {
+    if (empty($htmlinputid)) {
         $htmlinputid = $htmlinputname;
     }
 
@@ -1868,9 +1877,9 @@ if (! function_exists("llxFooter"))
         if ($comment) print '<!-- '.$comment.' -->'."\n";
 
         printCommonFooter($zone);
+        //var_dump($langs);		// Uncommment to see the property _tab_loaded to see which language file were loaded
 
         if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile) && empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End div id-container -->'."\n";	// End div container
-
         print "</body>\n";
         print "</html>\n";
     }

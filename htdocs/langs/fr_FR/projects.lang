@@ -128,7 +128,7 @@ TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributeur
 TypeContact_project_task_external_TASKCONTRIBUTOR=Contributeur
 SelectElement=Séléctionnez l'élément
-AddElement=Link to element
+AddElement=Associer l'élément
 UnlinkElement=Délier l'élément
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)

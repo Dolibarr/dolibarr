@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 $langs->load("companies");
 $langs->load("users");
 $langs->load("other");
@@ -201,7 +202,11 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
+		if ($ret < 0)
+		{
+			$error++;
+			$action = 'create';
+		}
 
         if (! GETPOST("lastname"))
         {
@@ -216,7 +221,17 @@ if (empty($reshook))
             {
                 $error++; $errors=array_merge($errors,($object->error?array($object->error):$object->errors));
                 $action = 'create';
-            }
+			} else {
+				// Categories association
+				$contcats = GETPOST( 'contcats', 'array' );
+				if (!empty( $contcats )) {
+					$cat = new Categorie( $db );
+					foreach ($contcats as $id_category) {
+						$cat->fetch( $id_category );
+						$cat->add_type( $object, 'contact' );
+					}
+				}
+			}
         }
 
         if (! $error && $id > 0)
@@ -309,8 +324,22 @@ if (empty($reshook))
 
             $result = $object->update($contactid, $user);
 
-            if ($result > 0)
-            {
+			if ($result > 0) {
+				// Categories association
+				// First we delete all categories association
+				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_contact';
+				$sql .= ' WHERE fk_socpeople = ' . $object->id;
+				$db->query( $sql );
+
+				// Then we add the associated categories
+				$categories = GETPOST( 'contcats', 'array' );
+				if (!empty( $categories )) {
+					$cat = new Categorie( $db );
+					foreach ($categories as $id_category) {
+						$cat->fetch( $id_category );
+						$cat->add_type( $object, 'contact' );
+					}
+				}
                 $object->old_lastname='';
                 $object->old_firstname='';
                 $action = 'view';
@@ -576,6 +605,15 @@ else
             print $form->selectarray('priv',$selectarray,(GETPOST("priv",'alpha')?GETPOST("priv",'alpha'):$object->priv),0);
             print '</td></tr>';
 
+			// Categories
+			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
+				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, 'parent', null, null, 1 );
+				print $form->multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
+					null, '90%' );
+				print "</td></tr>";
+			}
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -815,6 +853,20 @@ else
             print $object->getLibStatut(4);
             print '</td></tr>';
 
+			// Categories
+			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
+				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td>';
+				print '<td colspan="3">';
+				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+				$c = new Categorie( $db );
+				$cats = $c->containing( $object->id, Categorie::TYPE_CONTACT );
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray( 'contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				print "</td></tr>";
+			}
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1039,6 +1091,15 @@ else
 		print $object->getLibStatut(4);
 		print '</td>';
 		print '</tr>'."\n";
+
+		// Categories
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
+			print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+			print '<td colspan="3">';
+			print $form->showCategories( $object->id, 'contact', 1 );
+			print '</td></tr>';
+		}
+
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1101,18 +1162,14 @@ else
 		{
         	if ($user->rights->societe->contact->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
             }
 
             if (! $object->user_id && $user->rights->user->user->creer)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
             }
 
-            if ($user->rights->societe->contact->supprimer)
-            {
-                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
-            }
             // Activer
             if ($object->statut == 0 && $user->rights->societe->contact->creer)
             {
@@ -1122,6 +1179,12 @@ else
             if ($object->statut == 1 && $user->rights->societe->contact->creer)
             {
                 print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
+            }
+
+		    // Delete
+		    if ($user->rights->societe->contact->supprimer)
+            {
+                print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete'.($backtopage?'&backtopage='.urlencode($backtopage):'').'">'.$langs->trans('Delete').'</a>';
             }
         }
 

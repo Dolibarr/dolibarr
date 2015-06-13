@@ -823,10 +823,8 @@ else if ($action == 'remove_file' && $user->rights->contrat->creer) {
 		$upload_dir = $conf->contrat->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
-		if ($ret)
-			setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
-		else
-			setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
 	}
 }
 
@@ -1873,10 +1871,13 @@ else
 
         $somethingshown = $formfile->show_documents('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-        /*
-         * Linked object block
-         */
-        $somethingshown=$object->showLinkedObjectBlock();
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object);
+		if ($linktoelem) print '<br>'.$linktoelem;
+
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

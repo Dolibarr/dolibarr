@@ -1709,10 +1709,12 @@ if ($action == 'create')
 
 		$somethingshown = $formfile->show_documents('askpricesupplier', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-		/*
-		 * Linked object block
-		*/
-		$somethingshown = $object->showLinkedObjectBlock();
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object);
+		//if ($linktoelem) print '<br>'.$linktoelem;
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1736,8 +1738,8 @@ if ($action == 'create')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/'));
-		$file = $fileparams ['fullname'];
+		$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+		$file = $fileparams['fullname'];
 
 		// Define output language
 		$outputlangs = $langs;
@@ -1762,8 +1764,8 @@ if ($action == 'create')
 				dol_print_error($db, $result);
 				exit();
 			}
-			$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/'));
-			$file = $fileparams ['fullname'];
+			$fileparams = dol_most_recent_file($conf->askpricesupplier->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
 		}
 
 		print '<br>';

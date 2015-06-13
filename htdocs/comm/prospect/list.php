@@ -205,6 +205,9 @@ if (empty($reshook))
 
 $formother=new FormOther($db);
 $form=new Form($db);
+$prospectstatic=new Client($db);
+$prospectstatic->client=2;
+$prospectstatic->loadCacheOfProspStatus();
 
 $sql = "SELECT s.rowid as socid, s.nom as name, s.commercial_name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
 $sql.= " s.prefix_comm, s.fk_prospectlevel, s.fk_stcomm as stcomm_id,";
@@ -362,7 +365,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';
     print '</td>';
 
- 	// Prospect levelt
+ 	// Prospect level
  	print '<td class="liste_titre" align="center">';
  	$options_from = '<option value="">&nbsp;</option>';	 	// Generate in $options_from the list of each option sorted
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
@@ -389,9 +392,12 @@ if ($resql)
 
     // Prospect status
     print '<td class="liste_titre" align="center">';
-	// TODO Add here a list of prospect status
-    //print $form->selectarray($htmlname, $array, $search_stcomm);
-    //print '&nbsp;';
+    $arraystcomm=array();
+	foreach($prospectstatic->cacheprospectstatus as $key => $val)
+	{
+		$arraystcomm[$val['id']]=$val['label'];
+	}
+    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, 1);
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
@@ -399,7 +405,7 @@ if ($resql)
     print '</td>';
 
     print '<td class="liste_titre" align="center">';
-     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
 
     // Print the search button
@@ -415,10 +421,6 @@ if ($resql)
 
 	$i = 0;
 	$var=true;
-
-	$prospectstatic=new Client($db);
-	$prospectstatic->client=2;
-	$prospectstatic->loadCacheOfProspStatus();
 
 	while ($i < min($num,$conf->liste_limit))
 	{

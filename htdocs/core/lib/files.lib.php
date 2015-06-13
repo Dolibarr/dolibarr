@@ -152,7 +152,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive)
 						{
-							$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode));
+							$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook));
 						}
 					}
 					else if (! $isdir && (($types == "files") || ($types == "all")))
@@ -793,12 +793,12 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 /**
  *  Remove a file or several files with a mask
  *
- *  @param	string	$file           File to delete or mask of file to delete
- *  @param  int		$disableglob    Disable usage of glob like *
+ *  @param	string	$file           File to delete or mask of files to delete
+ *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
- *  @return boolean         		True if file is deleted (or if glob is used and there's nothing to delete), False if error
+ *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
@@ -823,19 +823,20 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		$reshook=$hookmanager->executeHooks('deleteFile', $parameters, $object);
 	}
 
-	if (empty($nohook) && isset($reshook) && $reshook != '') // 0:not deleted, 1:deleted, null or '' for bypass
+	if (empty($nohook) && $reshook != 0) // reshook = 0 to do standard actions, 1 = ok, -1 = ko
 	{
-		return $reshook;
+		if ($reshook < 0) return false;
+		return true;
 	}
 	else
 	{
 		$error=0;
 
 		//print "x".$file." ".$disableglob;exit;
-		$ok=true;
 		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && ! empty($file_osencoded))
 		{
+			$ok=true;
 			$globencoded=str_replace('[','\[',$file_osencoded);
 			$globencoded=str_replace(']','\]',$globencoded);
 			$listofdir=glob($globencoded);
@@ -853,6 +854,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		}
 		else
 		{
+			$ok=false;
 			if ($nophperrors) $ok=@unlink($file_osencoded);
 			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
@@ -958,9 +960,9 @@ function dol_delete_preview($object)
 
 	if (file_exists($file) && is_writable($file))
 	{
-		if ( ! dol_delete_file($file,1) )
+		if (! dol_delete_file($file,1))
 		{
-			$object->error=$langs->trans("ErrorFailedToOpenFile",$file);
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$file);
 			return 0;
 		}
 	}

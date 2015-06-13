@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load('compta');
 $langs->load('other');
+$langs->load('companies');
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');

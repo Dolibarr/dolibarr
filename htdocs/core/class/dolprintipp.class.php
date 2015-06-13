@@ -91,7 +91,14 @@ class dolprintIPP
             }
         }
         // Getting Jobs
-        $ipp->getJobs(false,0,'completed',false);
+        try {
+        	$ipp->getJobs(false,0,'completed',false);			// May return errors if setup not correct
+        }
+        catch(Exception $e)
+        {
+			print $e->getMessage();
+        }
+
         print '<table width="100%" class="noborder">';
         print '<tr class="liste_titre">';
         print "<td>Id</td>";
@@ -102,19 +109,22 @@ class dolprintIPP
         print "<td>Cancel</td>";
         print "</tr>\n";
         $jobs = $ipp->jobs_attributes;
-        $var = True;
+        $var = true;
         //print '<pre>'.print_r($jobs,true).'</pre>';
-        foreach ($jobs as $value )
+        if (is_array($jobs))
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
-            print '<td>'.$value->job_id->_value0.'</td>';
-            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
-            print '<td>'.$value->printer_uri->_value0.'</td>';
-            print '<td>'.$value->job_name->_value0.'</td>';
-            print '<td>'.$value->job_state->_value0.'</td>';
-            print '<td>'.$value->job_uri->_value0.'</td>';
-            print '</tr>';
+	        foreach ($jobs as $value)
+	        {
+	            $var=!$var;
+	            print "<tr ".$bc[$var].">";
+	            print '<td>'.$value->job_id->_value0.'</td>';
+	            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
+	            print '<td>'.$value->printer_uri->_value0.'</td>';
+	            print '<td>'.$value->job_name->_value0.'</td>';
+	            print '<td>'.$value->job_state->_value0.'</td>';
+	            print '<td>'.$value->job_uri->_value0.'</td>';
+	            print '</tr>';
+	        }
         }
         print "</table>";
     }

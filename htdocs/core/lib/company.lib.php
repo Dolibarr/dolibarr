@@ -82,7 +82,7 @@ function societe_prepare_head(Societe $object)
     	$h++;
     }
     //show categorie tab
-    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+    /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $type = Categorie::TYPE_CUSTOMER;
@@ -91,7 +91,16 @@ function societe_prepare_head(Societe $object)
         $head[$h][1] = $langs->trans('Categories');
         $head[$h][2] = 'category';
         $h++;
-    }
+    }*/
+
+    // Tab to link resources
+	if ($conf->resource->enabled && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
+		$head[$h][1] = $langs->trans("Resources");
+		$head[$h][2] = 'resources';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -355,7 +364,7 @@ function getState($id,$withcode='',$dbtouse=0)
         }
         else
         {
-            return $langs->trans("NotDefined");
+            return $langs->transnoentitiesnoconv("NotDefined");
         }
     }
     else dol_print_error($dbtouse,'');

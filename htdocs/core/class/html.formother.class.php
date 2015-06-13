@@ -592,6 +592,7 @@ class FormOther
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
      * 		@deprecated
+     *      @see selectColor()
      */
     function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
     {
@@ -599,7 +600,7 @@ class FormOther
     }
 
     /**
-     *		Output a HTML code to select a color
+     *		Output a HTML code to select a color. Field will return an hexa color like '334455'.
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
@@ -611,6 +612,11 @@ class FormOther
      */
     function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
+	    // Deprecation warning
+	    if ($form_name) {
+		    dol_syslog(__METHOD__ . ": form_name parameter is deprecated", LOG_WARNING);
+	    }
+
         global $langs,$conf;
 
         $out='';

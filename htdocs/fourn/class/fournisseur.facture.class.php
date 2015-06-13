@@ -8,6 +8,7 @@
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ *	Copyright (C) 2015      Bahfir Abbes			<bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,12 +58,9 @@ class FactureFournisseur extends CommonInvoice
     var $type = self::TYPE_STANDARD;
 
 	/**
-	 * Check constants for more info:
-	 * - STATUS_DRAFT
-	 * - STATUS_VALIDATED
-	 * - STATUS_PAID
-	 * - STATUS_ABANDONED
+	 * Supplier invoice status
 	 * @var int
+	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
     var $statut;
     //! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
@@ -84,7 +82,11 @@ class FactureFournisseur extends CommonInvoice
     var $total_localtax1;
     var $total_localtax2;
     var $total_ttc;
-    var $note;			// deprecated
+	/**
+	 * @deprecated
+	 * @see note_private, note_public
+	 */
+    var $note;
     var $note_private;
     var $note_public;
     var $propalid;
@@ -99,7 +101,10 @@ class FactureFournisseur extends CommonInvoice
 	 * @var SupplierInvoiceLine[]
 	 */
     public $lines = array();
-    var $fournisseur;	// deprecated
+	/**
+	 * @deprecated
+	 */
+    var $fournisseur;
 
 	//Incorterms
 	var $fk_incoterms;
@@ -1073,7 +1078,14 @@ class FactureFournisseur extends CommonInvoice
                     }
                 }
             }
-
+            // Triggers call
+            if (! $error && empty($notrigger))
+            {
+                // Call trigger
+                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
             if ($error == 0)
             {
                 $this->db->commit();
@@ -1888,9 +1900,17 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	var $oldline;
 
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
 	public $ref;
 	public $product_ref;
 	public $ref_supplier;
+	/**
+	 * @deprecated
+	 * @see label
+	 */
 	public $libelle;
 	public $product_desc;
 
@@ -1898,8 +1918,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Unit price before taxes
 	 * @var float
 	 * @deprecated Use $subprice
+	 * @see subprice
 	 */
 	public $pu_ht;
+	public $subprice;
 
 	/**
 	 * Unit price included taxes
@@ -1911,8 +1933,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Total VAT amount
 	 * @var float
 	 * @deprecated Use $total_tva instead
+	 * @see total_tva
 	 */
 	public $tva;
+	public $total_tva;
 
 	/**
 	 * Id of the corresponding supplier invoice
@@ -1924,7 +1948,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Product label
 	 * @var string
 	 */
-	var $label;				// deprecated
+	var $label;
 
 	/**
 	 * Description of the line

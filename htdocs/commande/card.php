@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -1214,6 +1214,7 @@ llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 /**
  * *******************************************************************
@@ -1320,7 +1321,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<table class="border" width="100%">';
 
 	// Reference
-	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
 
 	// Reference client
 	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
@@ -1422,14 +1423,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0)
 	{
-		$formproject = new FormProjets($db);
+		$projectid = GETPOST('projectid')?GETPOST('projectid'):0;
+		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
-		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
+		$langs->load("projects");
+		print '<tr>';
+		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-		if ($numprojet == 0) {
-			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $soc->id . '&action=create">' . $langs->trans("AddProject") . '</a>';
-		}
-		print '</td></tr>';
+		print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Incoterms
@@ -1458,29 +1461,30 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
 	print "</td></tr>";
 
-	// Note publique
+	// Note public
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
 	print '<td valign="top" colspan="2">';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	// print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 	print '</td></tr>';
 
-	// Note privee
+	// Note private
 	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 		print '</td></tr>';
 	}
 
-	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+	if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
+	{
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
@@ -1514,8 +1518,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
-	} else {
-		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) {
+	}
+	else
+	{
+		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
+		{
 			/*
 			 * Services/produits predefinis
 			*/
@@ -2298,10 +2305,13 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$delallowed = $user->rights->commande->supprimer;
 			$somethingshown = $formfile->show_documents('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
-			/*
-			 * Linked object block
-			 */
-			$somethingshown = $object->showLinkedObjectBlock();
+			// Linked object block
+			$somethingshown = $form->showLinkedObjectBlock($object);
+
+			// Show links to link elements
+			//$linktoelem = $form->showLinkToObjectBlock($object);
+			//if ($linktoelem) print '<br>'.$linktoelem;
+
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 			// print '</td><td valign="top" width="50%">';
@@ -2324,8 +2334,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$ref = dol_sanitizeFileName($object->ref);
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/'));
-			$file = $fileparams ['fullname'];
+			$file = $fileparams['fullname'];
 
 			// Define output language
 			$outputlangs = $langs;
@@ -2349,8 +2358,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 					dol_print_error($db, $result);
 					exit();
 				}
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/'));
-				$file = $fileparams ['fullname'];
+				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+				$file = $fileparams['fullname'];
 			}
 
 			print '<br>';

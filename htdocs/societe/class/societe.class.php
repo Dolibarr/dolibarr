@@ -59,6 +59,7 @@ class Societe extends CommonObject
      * Thirdparty name
      * @var string
      * @deprecated Use $name instead
+     * @see name
      */
     public $nom;
 
@@ -90,23 +91,26 @@ class Societe extends CommonObject
     var $state_id;
     var $state_code;
     var $state;
-    
+
     /**
-     * State code 
+     * State code
      * @var string
      * @deprecated Use state_code instead
+     * @see state_code
      */
     var $departement_code;
-    
+
     /**
      * @var string
      * @deprecated Use state instead
+     * @see state
      */
     var $departement;
 
     /**
      * @var string
      * @deprecated Use country instead
+     * @see country
      */
     var $pays;
     var $country_id;
@@ -305,6 +309,7 @@ class Societe extends CommonObject
     /**
      * @var string
      * @deprecated Note is split in public and private notes
+     * @see note_public, note_private
      */
     var $note;
 
@@ -319,6 +324,7 @@ class Societe extends CommonObject
      * @var string
      */
     var $note_public;
+
     //! code statut prospect
     var $stcomm_id;
     var $statut_commercial;
@@ -1048,7 +1054,7 @@ class Societe extends CommonObject
             $num=$this->db->num_rows($resql);
             if ($num > 1)
             {
-                $this->error='Fetch several records found for ref='.$ref;
+                $this->error='Fetch several records found request';
                 dol_syslog($this->error, LOG_ERR);
                 $result = -2;
             }
@@ -1306,13 +1312,15 @@ class Societe extends CommonObject
      *    Delete a third party from database and all its dependencies (contacts, rib...)
      *
      *    @param	int		$id             Id of third party to delete
-     *    @param    User    $user           User who ask to delete thirparty
+     *    @param    User    $fuser          User who ask to delete thirparty
      *    @param    int		$call_trigger   0=No, 1=yes
-     *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
+     *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
      */
-    function delete($id, $user='', $call_trigger=1)
+    function delete($id, User $fuser=null, $call_trigger=1)
     {
-        global $langs, $conf;
+        global $langs, $conf, $user;
+
+        if (empty($fuser)) $fuser=$user;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1328,10 +1336,10 @@ class Societe extends CommonObject
             $this->db->begin();
 
             // User is mandatory for trigger call
-            if ($user && $call_trigger)
+            if ($call_trigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('COMPANY_DELETE',$user);
+                $result=$this->call_trigger('COMPANY_DELETE',$fuser);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -1456,7 +1464,8 @@ class Societe extends CommonObject
                 return 1;
             }
             else
-            {
+			{
+				dol_syslog($this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -1772,7 +1781,8 @@ class Societe extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;
 
-		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto))) {
+		if ($conf->global->SOCIETE_ADD_REF_IN_LIST && (!empty($withpicto)))
+		{
 			if (($this->client) && (! empty ( $this->code_client ))) {
 				$code = $this->code_client . ' - ';
 			}
@@ -1848,7 +1858,7 @@ class Societe extends CommonObject
 
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
+        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
 
         return $result;
     }
@@ -2816,7 +2826,7 @@ class Societe extends CommonObject
         if (empty($name)) $name=$member->getFullName($langs);
 
         // Positionne parametres
-        $this->nom=$name;				// TODO obsolete
+        $this->nom=$name;				// TODO deprecated
         $this->name=$name;
         $this->address=$member->address;
         $this->zip=$member->zip;

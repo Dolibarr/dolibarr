@@ -203,4 +203,4 @@ MembersByNature=Adhérents par nature
 VATToUseForSubscriptions=Taux de TVA pour les adhésions
 NoVatOnSubscription=Pas de TVA sur les adhésions
 MEMBER_PAYONLINE_SENDEMAIL=Email à avertir en cas de retour de paiement validé pour une cotisation
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produit utilisé pour la ligne d'abonnement dans la facture: %s
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produit/Service utilisé pour la ligne de cotisation dans la facture: %s

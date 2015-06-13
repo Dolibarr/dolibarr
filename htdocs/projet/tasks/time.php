@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -369,7 +369,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
 			print '<td width="100">'.$langs->trans("Date").'</td>';
@@ -392,12 +392,12 @@ if ($id > 0 || ! empty($ref))
 			print '<td class="nowrap">';
 			print img_object('','user','class="hideonsmartphone"');
 			$contactsoftask=$object->getListContactId('internal');
-			if (count($contactsoftask)>0) 
+			if (count($contactsoftask)>0)
 			{
 				$userid=$contactsoftask[0];
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid),'userid',0,'',0,'',$contactsoftask);
+				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTask"));
 			}
-			else 
+			else
 			{
 				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 			}

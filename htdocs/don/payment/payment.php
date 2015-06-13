@@ -163,7 +163,6 @@ if (GETPOST("action") == 'create')
 	$total = $don->amount;
 
 	print_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
 	if ($mesg)
 	{
@@ -175,6 +174,8 @@ if (GETPOST("action") == 'create')
 	print '<input type="hidden" name="rowid" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
+	
+    dol_fiche_head();
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
@@ -232,7 +233,7 @@ if (GETPOST("action") == 'create')
 
 	print '</table>';
 
-	print '<br>';
+    dol_fiche_end();
 
 	/*
  	 * Autres charges impayees

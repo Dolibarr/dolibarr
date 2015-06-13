@@ -49,7 +49,7 @@ then
     	    if [ -d $reflang ]
     	    then
 		    	echo "***** Process language "$aa"_"$bb" - Search original into "$reflang
-    			echo $dirshort est une langue alternative de $reflang
+    			echo $dirshort is an alternative language of $reflang
     			echo ./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
     			./dev/translation/strip_language_file.php $aa"_"$aaupper $aa"_"$bb $2
     			for fic in `ls htdocs/langs/${aa}_${bb}/*.delta`; do f=`echo $fic | sed -e 's/\.delta//'`; echo $f; mv $f.delta $f; done 

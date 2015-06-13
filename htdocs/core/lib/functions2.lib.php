@@ -394,9 +394,9 @@ function dol_print_object_info($object)
 
 /**
  *	Return an email formatted to include a tracking id
- *  For example  myemail@mydomain.com becom myemail+trackingid@mydomain.com
+ *  For example  myemail@example.com becom myemail+trackingid@example.com
  *
- *	@param	string	$email       	Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
  *	@return boolean     			True if domain email is OK, False if KO
  */
@@ -409,7 +409,7 @@ function dolAddEmailTrackId($email, $trackingid)
 /**
  *	Return true if email has a domain name that can't be resolved
  *
- *	@param	string	$mail       Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$mail       Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@return boolean     		True if domain email is OK, False if KO
  */
 function isValidMailDomain($mail)
@@ -637,10 +637,21 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
     //$date=dol_stringtotime('20130101');
 
+    $hasglobalcounter=false;
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
-    $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
-    $maskcounter=$reg[1];
+    if (preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg))
+    {
+        $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
+        $maskcounter=$reg[1];
+        $hasglobalcounter=true;
+    }
+    else
+    {
+        // setting some defaults so the rest of the code won't fail if there is a third party counter
+        $masktri='00000';
+        $maskcounter='00000';
+    }
+    
     $maskraz=-1;
     $maskoffset=0;
     $resetEveryMonth=false;
@@ -659,6 +670,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
     else $maskrefclient='';
+    
+    // fail if there is neither a global nor a third party counter
+    if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
+    {
+        return 'ErrorBadMask';
+    }
 
     // Extract value for third party type
     if (preg_match('/\{(t+)\}/i',$mask,$regType))
@@ -993,10 +1010,21 @@ function check_value($mask,$value)
 {
     $result=0;
 
+    $hasglobalcounter=false;
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
-    $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
-    $maskcounter=$reg[1];
+    if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg))
+    {
+        $masktri=$reg[1].(isset($reg[2])?$reg[2]:'').(isset($reg[3])?$reg[3]:'');
+        $maskcounter=$reg[1];
+        $hasglobalcounter=true;
+    }
+    else
+    {
+        // setting some defaults so the rest of the code won't fail if there is a third party counter
+        $masktri='00000';
+        $maskcounter='00000';
+    }
+
     $maskraz=-1;
     $maskoffset=0;
     if (dol_strlen($maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
@@ -1014,6 +1042,12 @@ function check_value($mask,$value)
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
     else $maskrefclient='';
+
+    // fail if there is neither a global nor a third party counter
+    if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
+    {
+        return 'ErrorBadMask';
+    }
 
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
@@ -1884,22 +1918,24 @@ function fetchObjectByElement($element_id,$element_type) {
  *	Convert an array with RGB value into hex RGB value
  *
  *  @param	array	$arraycolor			Array
- *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: FF00FF
  *  @see	Make the opposite of colorStringToArray
  */
 function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
+	if (empty($arraycolor)) return $colorifnotfound;
 	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
 }
 
 
 /**
- *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255)
+ *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255).
+ *  If entry is already an array, return it.
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @param	array	$colorifnotfound	Color code array to return if entry not defined
  *  @return	string						RGB hex value (without # before). For example: FF00FF
  *  @see	Make the opposite of colorArrayToHex
  */

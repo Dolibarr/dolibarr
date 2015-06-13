@@ -39,7 +39,8 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   2,'97209',3,'Martinique');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   3,'97302',3,'Guyane');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   4,'97411',3,'Réunion');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   6,'',3,'Mayotte');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   6,'97601',3,'Mayotte');
+
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  11,'75056',1,'Île-de-France');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  21,'51108',0,'Champagne-Ardenne');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  22,'80021',0,'Picardie');

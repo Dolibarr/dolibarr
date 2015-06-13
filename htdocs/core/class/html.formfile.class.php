@@ -249,7 +249,7 @@ class FormFile
      *      @param      string				$modelselected      Model to preselect by default
      *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
      *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-     *      @param      int					$iconPDF            Obsolete, see getDocumentsLink
+     *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
      * 		@param		int					$maxfilenamelength	Max length for filename shown
      * 		@param		string				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
@@ -261,6 +261,11 @@ class FormFile
      */
     function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
     {
+		// Deprecation warning
+		if (0 !== $iconPDF) {
+			dol_syslog(__METHOD__ . ": passing iconPDF parameter is deprecated", LOG_WARNING);
+		}
+
         global $langs, $conf, $user, $hookmanager;
         global $form, $bc;
 
@@ -684,7 +689,7 @@ class FormFile
     	$out='';
     	$this->numoffiles=0;
 
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir).'.pdf','/'), '\.meta$|\.png$');
+		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -713,7 +718,7 @@ class FormFile
     			$mime=dol_mimetype($relativepath,'',0);
     			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
     			$out.= '>';
-    			$out.= img_pdf($file["name"],2);
+    			$out.= img_mime($relativepath, $file["name"]);
     			$out.= '</a>'."\n";
 
     			$this->numoffiles++;
