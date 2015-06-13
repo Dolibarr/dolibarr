@@ -87,16 +87,6 @@ function contact_prepare_head(Contact $object)
     $head[$tab][2] = 'documents';
     $tab++;
 
-    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-    {
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-    	$type = Categorie::TYPE_CONTACT;
-    	$head[$tab][0] = DOL_URL_ROOT.'/categories/categorie.php?id='.$object->id."&type=".$type;
-    	$head[$tab][1] = $langs->trans('Categories');
-    	$head[$tab][2] = 'category';
-    	$tab++;
-    }
-
     // Info
     $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Info");

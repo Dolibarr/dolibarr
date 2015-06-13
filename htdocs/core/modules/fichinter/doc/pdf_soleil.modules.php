@@ -241,7 +241,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY($this->marge_gauche, $tab_top + 5);
 				$text=$object->description;
-				if ($object->duree > 0)
+				if ($object->duration > 0)
 				{
 				    $totaltime=convertSecondToTime($object->duration,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 				    $text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
@@ -436,9 +436,9 @@ class pdf_soleil extends ModelePDFFicheinter
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3
 		$pdf->SetXY($this->marge_gauche, $tab_top + 8);
 		$text=$object->description;
-		if ($object->duree > 0)
+		if ($object->duration > 0)
 		{
-			$totaltime=convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
+			$totaltime=convertSecondToTime($object->duration,'all',$conf->global->MAIN_DURATION_OF_WORKDAY);
 			$text.=($text?' - ':'').$langs->trans("Total").": ".$totaltime;
 		}
 		$desc=dol_htmlentitiesbr($text,1);
