@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copytight (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copytight (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copytight (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -176,7 +176,7 @@ $form->select_comptes($account_to,'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";
-$form->select_date($dateo,'','','','','add');
+$form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
 print "</td>\n";
 print '<td><input name="label" class="flat" type="text" size="40" value="'.$label.'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="8" value="'.$amount.'"></td>';
