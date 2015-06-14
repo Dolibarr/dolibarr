@@ -531,7 +531,7 @@ if (! defined('NOLOGIN'))
     {
         // We are already into an authenticated session
         $login=$_SESSION["dol_login"];
-        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
+        dol_syslog("This is an already logged session. _SESSION['dol_login']=".$login, LOG_DEBUG);
 
         $resultFetchUser=$user->fetch('',$login);
         if ($resultFetchUser <= 0)
