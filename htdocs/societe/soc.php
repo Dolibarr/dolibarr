@@ -1131,7 +1131,7 @@ else
         print '<td>';
         print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
-        print '<td class="nowrap">'.fieldLabel('VATIntra','inra_vat').'</td>';
+        print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat" name="tva_intra" id="intra_vat" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
