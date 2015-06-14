@@ -11,6 +11,7 @@ make a Dolibarr upgrade.
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page
 FIX [ bug #1852 ] JS error when editing a customer order line
+FIX [ bug #2900 ] Courtesy title is not stored in create thirdparty form
 
 ***** ChangeLog for 3.7.1 compared to 3.7.* *****
 FIX Bug in the new photo system
