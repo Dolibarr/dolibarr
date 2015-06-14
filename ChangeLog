@@ -20,6 +20,7 @@ Fix: [ bug #2757 ] Deleting product category photo gives "Forbidden access" erro
 Fix: [ bug #2976 ] "Report" tab is the current tab but it is not marked as selected by the UI
 Fix: [ bug #2861 ] Undefined variable $res when migrating
 Fix: [ bug #2837 ] Product list table column header does not match column body
+Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973
