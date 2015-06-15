@@ -1596,6 +1596,7 @@ ProjectsSetup=Project module setup
 ProjectsModelModule=Project reports document model
 TasksNumberingModules=Tasks numbering module
 TaskModelModule=Tasks reports document model
+UseSearchToSelectProject=Use autocompletion fields to choose project (instead of using a list box)
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
