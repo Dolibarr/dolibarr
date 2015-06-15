@@ -299,7 +299,7 @@ class FormProjets
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 						}
 						// Label for task
-						$labeltoshow.=' - '.$obj->tref.' '.dol_trunc($obj->tlabel,$maxlenght);
+						$labeltoshow.=' - '.$obj->tref.' '.dol_trunc($obj->tlabel,$maxlength);
 						
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
