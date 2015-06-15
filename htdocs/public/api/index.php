@@ -48,7 +48,6 @@ if (empty($conf->global->MAIN_MODULE_API))
 }
 
 use \Luracast\Restler\Defaults;
-Defaults::setProperty('authenticationMethod','_isAllowed');
 
 $api = new DolibarrApi($db);
 
@@ -113,12 +112,12 @@ foreach ($modulesdir as $dir)
                                 $classname=$reg[1];
                                 $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
                                 require_once $dir_part.$file_searched;
-                                if(class_exists($classname))
+                                if(class_exists($classname)) {
                                     $api->r->addAPIClass($classname,'');
+                                }
                             }
                         }
                     }
-
                 }
             }
         }
