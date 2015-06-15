@@ -28,8 +28,7 @@
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 $res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';
-if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // For custom directory
+if (! $res && file_exists("../../main.inc.php")) $res=include '../../main.inc.php';
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/vendor/autoload.php';
