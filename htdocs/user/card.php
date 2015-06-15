@@ -83,6 +83,7 @@ if ($user->id <> $id && ! $canreaduser) accessforbidden();
 $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
+$langs->load("admin");
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -824,59 +825,61 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
     
-    // API key
-    $generated_api_key = '';
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        $generated_password=getRandomPassword(false);
-    print '<tr><td>'.$langs->trans("ApiKey").'</td>';
-    print '<td>';
-    print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$api_key.'" autocomplete="off">';
-    if (! empty($conf->use_javascript_ajax))
-        print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
-    print '</td></tr>';
-    
-    // Administrator
-    if (! empty($user->admin))
-    {
-        print '<tr><td>'.$langs->trans("Administrator").'</td>';
+    if(! empty($conf->api->enabled)) {
+        // API key
+        $generated_api_key = '';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+            $generated_password=getRandomPassword(false);
+        print '<tr><td>'.$langs->trans("ApiKey").'</td>';
         print '<td>';
-        print $form->selectyesno('admin',GETPOST('admin'),1);
+        print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$api_key.'" autocomplete="off">';
+        if (! empty($conf->use_javascript_ajax))
+            print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
+        print '</td></tr>';
 
-        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
+        // Administrator
+        if (! empty($user->admin))
         {
-            if (! empty($conf->use_javascript_ajax))
+            print '<tr><td>'.$langs->trans("Administrator").'</td>';
+            print '<td>';
+            print $form->selectyesno('admin',GETPOST('admin'),1);
+
+            if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
             {
-                print '<script type="text/javascript">
-							$(function() {
-								$("select[name=admin]").change(function() {
-									 if ( $(this).val() == 0 ) {
-									 	$("input[name=superadmin]")
-											.prop("disabled", true)
-											.prop("checked", false);
-									 	$("select[name=entity]")
-											.prop("disabled", false);
-									 } else {
-									 	$("input[name=superadmin]")
-											.prop("disabled", false);
-									 }
-								});
-								$("input[name=superadmin]").change(function() {
-									if ( $(this).is(":checked") ) {
-										$("select[name=entity]")
-											.prop("disabled", true);
-									} else {
-										$("select[name=entity]")
-											.prop("disabled", false);
-									}
-								});
-							});
-					</script>';
+                if (! empty($conf->use_javascript_ajax))
+                {
+                    print '<script type="text/javascript">
+                                $(function() {
+                                    $("select[name=admin]").change(function() {
+                                         if ( $(this).val() == 0 ) {
+                                            $("input[name=superadmin]")
+                                                .prop("disabled", true)
+                                                .prop("checked", false);
+                                            $("select[name=entity]")
+                                                .prop("disabled", false);
+                                         } else {
+                                            $("input[name=superadmin]")
+                                                .prop("disabled", false);
+                                         }
+                                    });
+                                    $("input[name=superadmin]").change(function() {
+                                        if ( $(this).is(":checked") ) {
+                                            $("select[name=entity]")
+                                                .prop("disabled", true);
+                                        } else {
+                                            $("select[name=entity]")
+                                                .prop("disabled", false);
+                                        }
+                                    });
+                                });
+                        </script>';
+                }
+                $checked=($_POST["superadmin"]?' checked':'');
+                $disabled=($_POST["superadmin"]?'':' disabled');
+                print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
             }
-            $checked=($_POST["superadmin"]?' checked':'');
-            $disabled=($_POST["superadmin"]?'':' disabled');
-            print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+            print "</td></tr>\n";
         }
-        print "</td></tr>\n";
     }
 
     // Type
@@ -1270,7 +1273,7 @@ else
             print '</tr>'."\n";
             
             // API key
-            if($user->admin) {
+            if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td colspan="2">';
                 if (! empty($object->api_key))
@@ -1849,7 +1852,7 @@ else
             print "</td></tr>\n";
             
             // API key
-            if($user->admin) {
+            if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
                 print '<td>';
                 print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
@@ -2230,7 +2233,7 @@ else
     }
 }
 
-if (! empty($conf->use_javascript_ajax))
+if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))
 {
     print "\n".'<script type="text/javascript">';
     print '$(document).ready(function () {
