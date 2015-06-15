@@ -218,7 +218,7 @@ function dol_shutdown()
 	global $conf,$user,$langs,$db;
 	$disconnectdone=false; $depth=0;
 	if (is_object($db) && ! empty($db->connected)) { $depth=$db->transaction_opened; $disconnectdone=$db->close(); }
-	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_DEBUG));
+	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_INFO));
 }
 
 
@@ -877,6 +877,7 @@ function dol_bc($var,$moreclass='')
  *      @param	string		$sep			Separator to use to build string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @return string          			Formated string
+ *      @see dol_print_address
  */
 function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 {
@@ -1604,6 +1605,7 @@ function dol_user_country()
  *  @param  int		$mode        thirdparty|contact|member|other
  *  @param  int		$id          Id of object
  *  @return void
+ *  @see dol_format_address
  */
 function dol_print_address($address, $htmlid, $mode, $id)
 {

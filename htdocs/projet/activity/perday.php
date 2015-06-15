@@ -116,7 +116,7 @@ if ($action == 'assign')
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	
+
 	$action='';
 }
 
@@ -148,24 +148,24 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     {
     	foreach($timespent_duration as $key => $val)
     	{
-	        $task->fetch($key);
-		    $task->progress = GETPOST($key . 'progress', 'int');
-	        $task->timespent_duration = $val;
-	        $task->timespent_fk_user = $user->id;
+	        $object->fetch($key);
+		    $object->progress = GETPOST($key . 'progress', 'int');
+	        $object->timespent_duration = $val;
+	        $object->timespent_fk_user = $user->id;
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {
-	        	$task->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
-	        	$task->timespent_withhour = 1;
+	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
+	        	$object->timespent_withhour = 1;
 	        }
 	        else
 			{
-	        	$task->timespent_date = dol_mktime(12,0,0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
+	        	$object->timespent_date = dol_mktime(12,0,0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
 			}
 
-			$result=$task->addTimeSpent($user);
+			$result=$object->addTimeSpent($user);
 			if ($result < 0)
 			{
-				setEventMessages($task->error, $task->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 				break;
 			}
