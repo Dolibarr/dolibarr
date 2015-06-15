@@ -243,7 +243,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-            $object->civility_id       = GETPOST('civility_id');	// Note: cibility id is a code, not an int
+            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
             // Add non official properties
             $object->name_bis          = GETPOST('name','alpha');
             $object->firstname         = GETPOST('firstname','alpha');
@@ -995,7 +995,7 @@ else
             print '<tr class="individualline"><td>'.fieldLabel('FirstName','firstname').'</td>';
 	        print '<td><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
-            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','cibility_id').'</td><td>';
+            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td>';
             print $formcompany->select_civility($object->civility_id).'</td>';
             print '<td colspan=2>&nbsp;</td></tr>';
         }
@@ -1131,7 +1131,7 @@ else
         print '<td>';
         print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
-        print '<td class="nowrap">'.fieldLabel('VATIntra','inra_vat').'</td>';
+        print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat" name="tva_intra" id="intra_vat" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
