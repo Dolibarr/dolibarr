@@ -82,7 +82,7 @@ function societe_prepare_head(Societe $object)
     	$h++;
     }
     //show categorie tab
-    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+    /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $type = Categorie::TYPE_CUSTOMER;
@@ -91,7 +91,16 @@ function societe_prepare_head(Societe $object)
         $head[$h][1] = $langs->trans('Categories');
         $head[$h][2] = 'category';
         $h++;
-    }
+    }*/
+
+    // Tab to link resources
+	if ($conf->resource->enabled && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
+		$head[$h][1] = $langs->trans("Resources");
+		$head[$h][2] = 'resources';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -355,7 +364,7 @@ function getState($id,$withcode='',$dbtouse=0)
         }
         else
         {
-            return $langs->trans("NotDefined");
+            return $langs->transnoentitiesnoconv("NotDefined");
         }
     }
     else dol_print_error($dbtouse,'');
@@ -657,7 +666,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "</tr>";
 
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
     $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
@@ -667,6 +676,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
     $result = $db->query($sql);
+    if (! $result) dol_print_error($db);
+
     $num = $db->num_rows($result);
 
 	$var=true;
@@ -686,6 +697,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
+            $contactstatic->poste = $obj->poste;
+            $contactstatic->address = $obj->address;
+            $contactstatic->zip = $obj->zip;
+            $contactstatic->town = $obj->town;
+            $contactstatic->phone_pro = $obj->phone_pro;
+            $contactstatic->phone_mobile = $obj->phone_mobile;
+            $contactstatic->phone_perso = $obj->phone_perso;
+            $contactstatic->email = $obj->email;
             print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
 			print '</td><td>';
             if ($obj->poste) print $obj->poste;
@@ -710,11 +729,13 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             	print '</a> ';
             }
             if ($coords) { print dol_print_address($coords,'address_contact_'.$obj->rowid, 'contact', $obj->rowid); $outdone++; }
-            if ($obj->phone || $obj->phone_mobile || $obj->phone_perso) print ($outdone?'<br>':'');
-            if ($obj->phone) { print dol_print_phone($obj->phone,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
+
+            if ($obj->phone_pro || $obj->phone_mobile || $obj->phone_perso || $obj->fax) print ($outdone?'<br>':'');
+            if ($obj->phone_pro) { print dol_print_phone($obj->phone_pro,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
             if ($obj->phone_mobile) { print dol_print_phone($obj->phone_mobile,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
             if ($obj->phone_perso) { print dol_print_phone($obj->phone_perso,$country_code['code'],$obj->rowid,$object->id,'AC_TEL','&nbsp;','phone'); $outdone++; }
             if ($obj->fax) { print dol_print_phone($obj->fax,$country_code['code'],$obj->rowid,$object->id,'AC_FAX','&nbsp;','fax'); $outdone++; }
+
             print '<div style="clear: both;"></div>';
             $outdone=0;
             if ($obj->email) print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL',0,0,1);

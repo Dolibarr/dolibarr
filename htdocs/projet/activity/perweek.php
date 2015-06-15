@@ -30,12 +30,16 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load('projects');
 
 $action=GETPOST('action');
 $mode=GETPOST("mode");
 $id=GETPOST('id','int');
+$taskid=GETPOST('taskid');
+
 
 $mine=0;
 if ($mode == 'mine') $mine=1;
@@ -81,6 +85,8 @@ $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 $usertoprocess=$user;
 
+$object=new Task($db);
+
 
 /*
  * Actions
@@ -93,10 +99,47 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
+if ($action == 'assign')
+{
+    if ($taskid > 0)
+    {
+		$result = $object->fetch($taskid, $ref);
+		if ($result < 0) $error++;
+    }
+    else
+    {
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
+    	$error++;
+    }
+    if (! GETPOST('type'))
+    {
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), '', 'errors');
+    	$error++;
+    }
+    if (! $error)
+    {
+    	$idfortaskuser=$user->id;
+		$result = $object->add_contact($idfortaskuser, GETPOST("type"), 'internal');
+    }
+
+	if ($result < 0)
+	{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'warnings');
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	$action='';
+}
+
 if ($action == 'addtime' && $user->rights->projet->creer)
 {
-    $task = new Task($db);
-
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))
 	{
@@ -119,16 +162,16 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 
 		        	if ($newduration > 0)
 		        	{
-		       	        $task->fetch($taskid);
-					    $task->progress = GETPOST($taskid . 'progress', 'int');
-				        $task->timespent_duration = $newduration;
-				        $task->timespent_fk_user = $usertoprocess->id;
-			        	$task->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
+		       	        $object->fetch($taskid);
+					    $object->progress = GETPOST($taskid . 'progress', 'int');
+				        $object->timespent_duration = $newduration;
+				        $object->timespent_fk_user = $usertoprocess->id;
+			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
 
-						$result=$task->addTimeSpent($user);
+						$result=$object->addTimeSpent($user);
 						if ($result < 0)
 						{
-							setEventMessages($task->error, $task->errors, 'errors');
+							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
 							break;
 						}
@@ -156,6 +199,8 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 
 $form=new Form($db);
 $formother=new FormOther($db);
+$formcompany=new FormCompany($db);
+$formproject=new FormProjets($db);
 $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
@@ -214,7 +259,14 @@ else
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").($onlyopened?' '.$langs->trans("OnlyOpenedProject"):'').'<br>';
 	else print $langs->trans("ProjectsPublicTaskDesc").($onlyopened?' '.$langs->trans("AlsoOnlyOpenedProject"):'').'<br>';
 }
-print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+if ($mine)
+{
+	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
+}
+else
+{
+	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+}
 print '<br>';
 print "\n";
 
@@ -264,12 +316,12 @@ print '<td class="liste_total"></td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
-$restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS)?1:0);
+$restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
 
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
+	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask);
 
 	print '<tr class="liste_total">
                 <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>
@@ -300,7 +352,6 @@ print '</div>';
 
 print '</form>'."\n\n";
 
-
 $modeinput='hours';
 
 print '<script type="text/javascript">';
@@ -314,6 +365,22 @@ while ($i < 7)
 }
 print "});";
 print '</script>';
+
+
+// Add a new project/task
+print '<br>';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="action" value="assign">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+print '<input type="hidden" name="year" value="'.$year.'">';
+print '<input type="hidden" name="month" value="'.$month.'">';
+print '<input type="hidden" name="day" value="'.$day.'">';
+print $langs->trans("AssignTaskToMe").'<br>';
+$formproject->select_task($socid?$socid:-1, $taskid, 'taskid');
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
+print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
+print '</form>';
+
 
 
 llxFooter();

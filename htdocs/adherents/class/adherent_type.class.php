@@ -39,7 +39,6 @@ class AdherentType extends CommonObject
 
     /**
      * @var int
-     * @deprecated Use rowid
      */
     public $ref;
 

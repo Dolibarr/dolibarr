@@ -50,9 +50,21 @@ class Contact extends CommonObject
 	var $zip;
 	var $town;
 
-	var $fk_departement;		// deprecated
-	var $departement_code;		// deprecated
-	var $departement;			// deprecated
+	/**
+	 * @deprecated
+	 * @see state_id
+	 */
+	var $fk_departement;
+	/**
+	 * @deprecated
+	 * @see state_code
+	 */
+	var $departement_code;
+	/**
+	 * @deprecated
+	 * @see state
+	 */
+	var $departement;
 	var $state_id;	        	// Id of department
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
@@ -80,7 +92,11 @@ class Contact extends CommonObject
 	var $birthday;
 	var $default_lang;
     var $note_public;           // Public note
-	var $note;                  // deprecated
+	/**
+	 * @deprecated
+	 * @see note_public, note_private
+	 */
+	var $note;
 	var $note_private;			// Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
@@ -629,6 +645,13 @@ class Contact extends CommonObject
 					}
 				}
 
+				// Retreive all extrafield for contact
+                // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+               	$this->fetch_optionals($this->id,$extralabels);
+
 				return 1;
 			}
 			else
@@ -895,6 +918,11 @@ class Contact extends CommonObject
 		$result='';
         $label = '<u>' . $langs->trans("ShowContact") . '</u>';
         $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
+        //if ($this->cibility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+        $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
+        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',array($this->phone_pro,$this->phone_mobile,$this->phone_perso));
+        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
         $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';

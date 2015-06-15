@@ -394,9 +394,9 @@ function dol_print_object_info($object)
 
 /**
  *	Return an email formatted to include a tracking id
- *  For example  myemail@mydomain.com becom myemail+trackingid@mydomain.com
+ *  For example  myemail@example.com becom myemail+trackingid@example.com
  *
- *	@param	string	$email       	Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
  *	@return boolean     			True if domain email is OK, False if KO
  */
@@ -409,7 +409,7 @@ function dolAddEmailTrackId($email, $trackingid)
 /**
  *	Return true if email has a domain name that can't be resolved
  *
- *	@param	string	$mail       Email address (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	string	$mail       Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@return boolean     		True if domain email is OK, False if KO
  */
 function isValidMailDomain($mail)
@@ -1918,22 +1918,24 @@ function fetchObjectByElement($element_id,$element_type) {
  *	Convert an array with RGB value into hex RGB value
  *
  *  @param	array	$arraycolor			Array
- *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: FF00FF
  *  @see	Make the opposite of colorStringToArray
  */
 function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
+	if (empty($arraycolor)) return $colorifnotfound;
 	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
 }
 
 
 /**
- *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255)
+ *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255).
+ *  If entry is already an array, return it.
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @param	array	$colorifnotfound	Color code array to return if entry not defined
  *  @return	string						RGB hex value (without # before). For example: FF00FF
  *  @see	Make the opposite of colorArrayToHex
  */

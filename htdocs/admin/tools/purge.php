@@ -89,7 +89,7 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 				// If (file that is not logfile) or (if logfile with option logfile)
 				if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 				{
-					$count+=dol_delete_file($filesarray[$key]['fullname']);
+					$count+=(dol_delete_file($filesarray[$key]['fullname'])?1:0);
 				}
 			}
 		}

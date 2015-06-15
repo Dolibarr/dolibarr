@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2014 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -328,16 +328,19 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
-	$msg = '<script type="text/javascript">
-		$(document).ready(function() {
-			$(\'#'.$htmlname.'\').select2({
-				width: \'resolve\',
-				minimumInputLength: '.$minLengthToAutocomplete.',
-			})';
+    $tmpplugin='select2';
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+          <script type="text/javascript">
+        	$(document).ready(function () {
+        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        		    dir: \'ltr\',
+        			width: \'resolve\',		/* off or resolve */
+					minimumInputLength: '.$minLengthToAutocomplete.'
+				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
-	$msg.= ';';
+	$msg.= ';'."\n";
 
-	if (count($event))
+	if (count($events))
 	{
 		$msg.= '
 			jQuery("#'.$htmlname.'").change(function () {

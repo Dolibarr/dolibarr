@@ -92,18 +92,16 @@ class Facture extends CommonInvoice
 	var $revenuestamp;
 	/**
 	 * @deprecated
+	 * @see note_private, note_public
 	 */
 	var $note;
 	var $note_private;
 	var $note_public;
 
 	/**
-	 * Check constants for more info:
-	 * - STATUS_DRAFT
-	 * - STATUS_VALIDATED
-	 * - STATUS_PAID
-	 * - STATUS_ABANDONED
+	 * Invoice status
 	 * @var int
+	 * @see Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_PAID, Facture::STATUS_ABANDONED
 	 */
 	var $statut;
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
@@ -131,6 +129,9 @@ class Facture extends CommonInvoice
 	 * @deprecated
 	 */
 	var $products=array();
+	/**
+	 * @var FactureLigne[]
+	 */
 	var $lines=array();
 	var $line;
 	var $extraparams=array();
@@ -1119,7 +1120,8 @@ class Facture extends CommonInvoice
 				$objp = $this->db->fetch_object($result);
 				$line = new FactureLigne($this->db);
 
-				$line->rowid	        = $objp->rowid;
+				$line->id               = $objp->rowid;
+				$line->rowid	        = $objp->rowid;             // deprecated
 				$line->label            = $objp->custom_label;		// deprecated
 				$line->desc             = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
@@ -2105,6 +2107,11 @@ class Facture extends CommonInvoice
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_options=0, $situation_percent=100, $fk_prev_id='', $fk_unit = null)
 	{
+		// Deprecation warning
+		if ($label) {
+			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
+		}
+
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline facid=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
@@ -2289,6 +2296,11 @@ class Facture extends CommonInvoice
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=0, $fk_unit = null)
 	{
+		// Deprecation warning
+		if ($label) {
+			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
+		}
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		global $mysoc;
@@ -3203,7 +3215,7 @@ class Facture extends CommonInvoice
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("CustomerBillsUnpaid");
-			$response->url=DOL_URL_ROOT.'/compta/facture/impayees.php';
+			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1';
 			$response->img=img_object($langs->trans("Bills"),"bill");
 
 			while ($obj=$this->db->fetch_object($resql))
@@ -3685,7 +3697,10 @@ class FactureLigne extends CommonInvoiceLine
 	var $fk_facture;
 	//! Id parent line
 	var $fk_parent_line;
-	var $label;				// deprecated
+	/**
+	 * @deprecated
+	 */
+	var $label;
 	//! Description ligne
 	var $desc;
 
@@ -3717,8 +3732,16 @@ class FactureLigne extends CommonInvoiceLine
 	//var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
 
 	// From llx_product
+	/**
+	 * @deprecated
+	 * @see product_ref
+	 */
 	var $ref;				// Product ref (deprecated)
 	var $product_ref;       // Product ref
+	/**
+	 * @deprecated
+	 * @see product_label
+	 */
 	var $libelle;      		// Product label (deprecated)
 	var $product_label;     // Product label
 	var $product_desc;  	// Description produit

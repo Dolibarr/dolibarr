@@ -48,7 +48,6 @@ DolibarrBoard=dolibarr Übersciht
 January=Jänner
 ReportName=Berichtname
 FillTownFromZip=Stadt aus PLZ ergänzen
-AmountInCurrency=Betrag in %s
 NbOfCustomers=Anzahl der Kundena
 RebuildDoc=Dokument neu erzeugen
 RefCustomer=Kunden Nr.

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  *
@@ -131,19 +131,19 @@ dol_fiche_head($head, 'guisetup', $title, 0, 'user');
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
 print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>';
 
 // LastName
-print '<tr><td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
+print '<tr><td width="25%">'.$langs->trans("LastName").'</td>';
 print '<td colspan="2">'.$fuser->lastname.'</td>';
 print "</tr>\n";
 
 // FirstName
-print '<tr><td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
+print '<tr><td width="25%">'.$langs->trans("FirstName").'</td>';
 print '<td colspan="2">'.$fuser->firstname.'</td>';
 print "</tr>\n";
 

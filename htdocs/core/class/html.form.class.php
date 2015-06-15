@@ -41,6 +41,8 @@
 /**
  *	Class to manage generation of HTML components
  *	Only common components must be here.
+ *
+ *  TODO Merge all function load_cache_* and loadCache* (except load_cache_vatrates) into one generic function loadCacheTable
  */
 class Form
 {
@@ -101,7 +103,7 @@ class Form
             }
         }
         else
-        {
+		{
             $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
             $ret.=$langs->trans($text);
             $ret.='</td>';
@@ -376,7 +378,7 @@ class Form
      *	@return	string							Code html du tooltip (texte+picto)
      *	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 0, $incbefore = '', $noencodehtmltext = 0)
+    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0)
     {
         global $conf;
 
@@ -391,14 +393,19 @@ class Form
         $htmltext=str_replace("\r","",$htmltext);
         $htmltext=str_replace("\n","",$htmltext);
 
+        $extrastyle='';
+        if ($direction < 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-left: 3px !important;'; }
+        if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
+
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
-        else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
-        else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
+        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+        else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
+        if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
+        else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
         $s="";
         if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
         elseif ($notabs == 2) $s.='<div class="inline-block nowrap">';
+        // Define value if value is before
         if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
             if ($tag == 'td') {
@@ -407,16 +414,12 @@ class Form
             $s.= '>'.$img.'</'.$tag.'>';
         }
         // Use another method to help avoid having a space in value in order to use this value with jquery
-        // TODO add this in css
-        //if ($text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
-        $paramfortooltiptd.= (($direction < 0)?' class="inline-block" style="padding: 0px; padding-left: 3px !important;"':'');
-        $paramfortooltiptd.= (($direction > 0)?' class="inline-block" style="padding: 0px; padding-right: 3px !important;"':'');
+        // Define label
         if ((string) $text != '') $s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
+        // Define value if value is after
         if ($direction > 0) {
             $s.='<'.$tag.$paramfortooltipimg;
-            if ($tag == 'td') {
-                $s .= ' valign="top" width="14"';
-            }
+            if ($tag == 'td') $s .= ' valign="middle" width="14"';
             $s.= '>'.$img.'</'.$tag.'>';
         }
         if (empty($notabs)) $s.='</tr></table>';
@@ -437,7 +440,7 @@ class Form
      *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 0)
+    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2)
     {
         global $conf;
 
@@ -496,14 +499,14 @@ class Form
 
         $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
-        $sql.= " WHERE active = 1";
+        $sql.= " WHERE active > 0";
         //$sql.= " ORDER BY code ASC";
 
         dol_syslog(get_class($this)."::select_country", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry" name="'.$htmlname.'" '.$htmloption.'>';
+            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry minwidth300" name="'.$htmlname.'" '.$htmloption.'>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -531,7 +534,7 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option value="" disabled>----------------------</option>';
+						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
 					}
                     if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
@@ -553,6 +556,10 @@ class Form
 		{
             dol_print_error($this->db);
         }
+
+        // Make select dynamic
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        $out .= ajax_combobox('select'.$htmlname);
 
         return $out;
     }
@@ -580,7 +587,7 @@ class Form
 
         $sql = "SELECT rowid, code";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_incoterms";
-        $sql.= " WHERE active = 1";
+        $sql.= " WHERE active > 0";
         $sql.= " ORDER BY code ASC";
 
         dol_syslog(get_class($this)."::select_incoterm", LOG_DEBUG);
@@ -707,22 +714,23 @@ class Form
     /**
      *	Load into cache cache_types_fees, array of types of fees
      *
-     *	@return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
-     *	TODO move in DAO class
+     *	@return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_types_fees()
     {
         global $langs;
 
-        $langs->load("trips");
+        $num = count($this->cache_types_fees);
+        if ($num > 0) return 0;    // Cache already loaded
 
-        if (count($this->cache_types_fees)) return 0;    // Cache already load
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $langs->load("trips");
 
         $sql = "SELECT c.code, c.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-        //$sql.= " ORDER BY c.label ASC";				  // No sort here, sort must be done after translation
+        $sql.= " WHERE active > 0";
 
-        dol_syslog(get_class($this).'::load_cache_types_fees', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -744,7 +752,7 @@ class Form
             return $num;
         }
         else
-        {
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -762,7 +770,7 @@ class Form
     {
         global $user, $langs;
 
-        dol_syslog(get_class($this)."::select_type_fees ".$selected.", ".$htmlname, LOG_DEBUG);
+        dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         $this->load_cache_types_fees();
 
@@ -798,11 +806,28 @@ class Form
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      * 	@param		int			$forcecombo				Force to use combo box
      *  @return		string								Return select box for thirdparty.
+	 *  @deprecated	3.8 Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
      */
     function select_thirdparty($selected='', $htmlname='socid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
-    	global $langs,$conf;
+   		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    }
 
+    /**
+     *  Output html form to select a third party
+     *
+     *	@param	string	$selected       Preselected type
+     *	@param  string	$htmlname       Name of field in form
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
+     *	@param	int		$showempty		Add an empty field
+     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 	@param	int		$forcecombo		Force to use combo box
+     *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *	@param	int		$limit			Maximum number of elements
+     * 	@return	string					HTML string with select box for thirdparty.
+     */
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
+    {
     	$out='';
 
     	/* TODO Use ajax_autocompleter like for products (not finished)
@@ -835,29 +860,10 @@ class Form
     	}
     	else
     	{*/
-    		$out.=$this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
     	//}
 
     	return $out;
-    }
-
-    /**
-     *  Output html form to select a third party
-     *
-     *	@param	string	$selected       Preselected type
-     *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
-     *	@param	int		$showempty		Add an empty field
-     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
-     * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$events			Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-     *	@param	int		$limit			Maximum number of elements
-     * 	@return	string					HTML string with
-	 *  @deprecated						Use select_thirdparty instead
-     */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
-    {
-		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
     }
 
     /**
@@ -890,7 +896,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
         if ($filter) $sql.= " AND (".$filter.")";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status<>0 ";
+        if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status <> 0";
         // Add criteria
         if ($filterkey && $filterkey != '')
         {
@@ -1117,7 +1123,7 @@ class Form
         if ($showsoc > 0) $sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc";
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
-        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0";
+        if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut <> 0";
         $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
@@ -1223,6 +1229,7 @@ class Form
      *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	void
      *  @deprecated
+     *  @see select_dolusers()
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
@@ -1244,10 +1251,11 @@ class Form
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      *  @param	string	$morefilter		Add more filters into sql request
      *  @param	string	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
+     *  @param	string	$enableonlytext	If option $enableonly is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='')
     {
         global $conf,$user,$langs;
 
@@ -1343,8 +1351,8 @@ class Form
                     $userstatic->lastname=$obj->lastname;
                     $userstatic->firstname=$obj->firstname;
 
-                    $disableline=0;
-                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=1;
+                    $disableline='';
+                    if (is_array($enableonly) && count($enableonly) && ! in_array($obj->rowid,$enableonly)) $disableline=($enableonlytext?$enableonlytext:'1');
 
                     if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
                     {
@@ -1394,6 +1402,10 @@ class Form
                      	}
                     }
 					$out.=($moreinfo?')':'');
+					if ($disableline && $disableline != '1')
+					{
+						$out.=' - '.$disableline;	// This is text from $enableonlytext parameter
+					}
                     $out.= '</option>';
 
                     $i++;
@@ -1451,12 +1463,12 @@ class Form
 			$out.='<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
 			$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
 			$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out.='<input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out.=' <input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		}
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
 		{
-			$assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
 		}
 		$nbassignetouser=count($assignedtouser);
 
@@ -2312,19 +2324,22 @@ class Form
     /**
      *      Charge dans cache la liste des conditions de paiements possibles
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_conditions_paiements()
     {
         global $langs;
 
-        if (count($this->cache_conditions_paiements)) return 0;    // Cache deja charge
+        $num = count($this->cache_conditions_paiements);
+        if ($num > 0) return 0;    // Cache already loaded
 
-        $sql = "SELECT rowid, code, libelle";
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $sql = "SELECT rowid, code, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-        $sql.= " WHERE active=1";
+        $sql.= " WHERE active > 0";
         $sql.= " ORDER BY sortorder";
-        dol_syslog(get_class($this).'::load_cache_conditions_paiements', LOG_DEBUG);
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2335,14 +2350,18 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $label=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->label!='-'?$obj->label:''));
                 $this->cache_conditions_paiements[$obj->rowid]['code'] =$obj->code;
-                $this->cache_conditions_paiements[$obj->rowid]['label']=$libelle;
+                $this->cache_conditions_paiements[$obj->rowid]['label']=$label;
                 $i++;
             }
-            return 1;
+
+			//$this->cache_conditions_paiements=dol_sort_array($this->cache_conditions_paiements, 'label');		// We use the sortorder
+
+            return $num;
         }
-        else {
+        else
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2351,19 +2370,21 @@ class Form
     /**
      *      Charge dans cache la liste des délais de livraison possibles
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_availability()
     {
         global $langs;
 
-        if (count($this->cache_availability)) return 0;    // Cache deja charge
+        $num = count($this->cache_availability);
+        if ($num > 0) return 0;    // Cache already loaded
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
-        $sql.= " WHERE active=1";
-        $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this).'::load_cache_availability', LOG_DEBUG);
+        $sql.= " WHERE active > 0";
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2379,9 +2400,13 @@ class Form
                 $this->cache_availability[$obj->rowid]['label']=$label;
                 $i++;
             }
-            return 1;
+
+            $this->cache_availability = dol_sort_array($this->cache_availability, 'label');
+
+            return $num;
         }
-        else {
+        else
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2401,6 +2426,8 @@ class Form
         global $langs,$user;
 
         $this->load_cache_availability();
+
+        dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
@@ -2424,19 +2451,19 @@ class Form
     /**
      *      Load into cache cache_demand_reason, array of input reasons
      *
-     *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function loadCacheInputReason()
     {
         global $langs;
 
-        if (count($this->cache_demand_reason)) return 0;    // Cache already loaded
+        $num = count($this->cache_demand_reason);
+        if ($num > 0) return 0;    // Cache already loaded
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
-        $sql.= " WHERE active=1";
-        $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this)."::loadCacheInputReason", LOG_DEBUG);
+        $sql.= " WHERE active > 0";
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2454,12 +2481,14 @@ class Form
                 $tmparray[$obj->rowid]['label']=$label;
                 $i++;
             }
+
             $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc');
 
             unset($tmparray);
-            return 1;
+            return $num;
         }
-        else {
+        else
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2505,19 +2534,21 @@ class Form
     /**
      *      Charge dans cache la liste des types de paiements possibles
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Nb of lines loaded, <0 if KO
      */
     function load_cache_types_paiements()
     {
         global $langs;
 
-        if (count($this->cache_types_paiements)) return 0;    // Cache deja charge
+        $num=count($this->cache_types_paiements);
+        if ($num > 0) return $num;    // Cache already loaded
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
-        $sql.= " ORDER BY id";
-        dol_syslog(get_class($this)."::load_cache_types_paiements", LOG_DEBUG);
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2528,16 +2559,19 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $label=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
-                $this->cache_types_paiements[$obj->id]['label']=$libelle;
+                $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
                 $i++;
             }
+
+            $this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label');
+
             return $num;
         }
         else
-        {
+		{
             dol_print_error($this->db);
             return -1;
         }
@@ -2556,6 +2590,8 @@ class Form
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
         global $langs,$user;
+
+        dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         $this->load_cache_conditions_paiements();
 
@@ -2595,7 +2631,7 @@ class Form
     {
         global $langs,$user;
 
-        dol_syslog(get_class($this)."::select_type_paiements ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
+        dol_syslog(__METHOD__." ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
         $filterarray=array();
         if ($filtertype == 'CRDT')  	$filterarray=array(0,2,3);
@@ -2635,26 +2671,13 @@ class Form
 
 
     /**
-     *      Selection HT or TTC
+     *  Selection HT or TTC
      *
-     *      @param	string	$selected        Id pre-selectionne
-     *      @param  string	$htmlname        Nom de la zone select
-     * 		@return	void
+     *  @param	string	$selected       Id pre-selectionne
+     *  @param  string	$htmlname       Nom de la zone select
+     * 	@return	string					Code of HTML select to chose tax or not
      */
-    function select_PriceBaseType($selected='',$htmlname='price_base_type')
-    {
-        print $this->load_PriceBaseType($selected,$htmlname);
-    }
-
-
-    /**
-     *      Selection HT or TTC
-     *
-     *      @param	string	$selected        Id pre-selectionne
-     *      @param  string	$htmlname        Nom de la zone select
-     * 		@return	void
-     */
-    function load_PriceBaseType($selected='',$htmlname='price_base_type')
+    function selectPriceBaseType($selected='',$htmlname='price_base_type')
     {
         global $langs;
 
@@ -2699,9 +2722,9 @@ class Form
         $langs->load("admin");
         $langs->load("deliveries");
 
-        $sql = "SELECT rowid, code, libelle";
+        $sql = "SELECT rowid, code, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
-        $sql.= " WHERE active = 1";
+        $sql.= " WHERE active > 0";
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY libelle ASC";
 
@@ -2722,7 +2745,7 @@ class Form
                     } else {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $langs->trans("SendingMethod".strtoupper($obj->code));
+                    print ($langs->trans("SendingMethod".strtoupper($obj->code)) != "SendingMethod".strtoupper($obj->code)) ? $langs->trans("SendingMethod".strtoupper($obj->code)) : $obj->label;
                     print '</option>';
                     $i++;
                 }
@@ -2774,12 +2797,12 @@ class Form
 	/**
 	 * Creates HTML last in cycle situation invoices selector
 	 *
-	 * @param       string  $selected   Preselected ID
-	 * @param       int     $socid      Company ID
+	 * @param     string  $selected   		Preselected ID
+	 * @param     int     $socid      		Company ID
 	 *
 	 * @return    string                     HTML select
 	 */
-	function load_situation_invoices($selected = '', $socid = '')
+	function selectSituationInvoices($selected = '', $socid = 0)
 	{
 		global $langs;
 
@@ -2787,7 +2810,7 @@ class Form
 
 		$opt = '<option value ="" selected></option>';
 		$sql = 'SELECT rowid, facnumber, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
-		$sql .= ' order by situation_cycle_ref, situation_counter desc';
+		$sql.= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
@@ -2813,10 +2836,13 @@ class Form
 					}
 				}
 			}
-		} else {
+		}
+		else
+		{
 				dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
-		if ($opt == '<option value ="" selected></option>') {
+		if ($opt == '<option value ="" selected></option>')
+		{
 			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
 		}
 		return $opt;
@@ -2825,7 +2851,7 @@ class Form
     /**
      *      Creates HTML units selector (code => label)
      *
-     *      @param	string	$selected       Preselected code ('km', 'm', 'l', 'p', ...)
+     *      @param	string	$selected       Preselected Unit ID
      *      @param  string	$htmlname       Select name
      *      @param	int		$showempty		Add a nempty line
      * 		@return	string                  HTML select
@@ -2838,7 +2864,9 @@ class Form
 
         $return= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 
-        $sql = 'select rowid, label from '.MAIN_DB_PREFIX.'c_units where active=1';
+        $sql = 'SELECT rowid, label from '.MAIN_DB_PREFIX.'c_units';
+        $sql.= ' WHERE active > 0';
+
         $resql = $this->db->query($sql);
         if($resql && $this->db->num_rows($resql) > 0)
         {
@@ -2846,13 +2874,13 @@ class Form
 
             while($res = $this->db->fetch_object($resql))
             {
-                if ($selected == $res[0])
+                if ($selected == $res->rowid)
                 {
-                    $return.='<option value="'.$res->code.'" selected>'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'" selected>'.$langs->trans($res->label).'</option>';
                 }
                 else
                 {
-                    $return.='<option value="'.$res->code.'">'.$langs->trans($res->label).'</option>';
+                    $return.='<option value="'.$res->rowid.'">'.$langs->trans($res->label).'</option>';
                 }
             }
             $return.='</select>';
@@ -3025,6 +3053,7 @@ class Form
      *     @param	int			$width				Force width of box
      *     @return 	void
      *     @deprecated
+     *     @see formconfirm()
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
@@ -3082,7 +3111,7 @@ class Form
 
         	// Now add questions
             $more.='<table class="paddingrightonly" width="100%">'."\n";
-            $more.='<tr><td colspan="3" valign="top">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
+            $more.='<tr><td colspan="3">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
             foreach ($formquestion as $key => $input)
             {
                 if (is_array($input) && ! empty($input))
@@ -3091,15 +3120,15 @@ class Form
 
                     if ($input['type'] == 'text')
                     {
-                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+                        $more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
                     }
                     else if ($input['type'] == 'password')
                     {
-                        $more.='<tr><td valign="top">'.$input['label'].'</td><td valign="top" colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
+                        $more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'" /></td></tr>'."\n";
                     }
                     else if ($input['type'] == 'select')
                     {
-                        $more.='<tr><td valign="top">';
+                        $more.='<tr><td>';
                         if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
                         $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
                         $more.='</td></tr>'."\n";
@@ -3107,13 +3136,13 @@ class Form
                     else if ($input['type'] == 'checkbox')
                     {
                         $more.='<tr>';
-                        $more.='<td valign="top">'.$input['label'].' </td><td valign="top" align="left">';
+                        $more.='<td>'.$input['label'].' </td><td align="left">';
                         $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
                         if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked';
                         if (is_bool($input['value']) && $input['value']) $more.=' checked';
                         if (isset($input['disabled'])) $more.=' disabled';
                         $more.=' /></td>';
-                        $more.='<td valign="top" align="left">&nbsp;</td>';
+                        $more.='<td align="left">&nbsp;</td>';
                         $more.='</tr>'."\n";
                     }
                     else if ($input['type'] == 'radio')
@@ -3124,10 +3153,10 @@ class Form
                             $more.='<tr>';
                             if ($i==0) $more.='<td valign="top">'.$input['label'].'</td>';
                             else $more.='<td>&nbsp;</td>';
-                            $more.='<td valign="top" width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
+                            $more.='<td width="20"><input type="radio" class="flat" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"';
                             if ($input['disabled']) $more.=' disabled';
                             $more.=' /></td>';
-                            $more.='<td valign="top" align="left">';
+                            $more.='<td align="left">';
                             $more.=$selval;
                             $more.='</td></tr>'."\n";
                             $i++;
@@ -3135,8 +3164,8 @@ class Form
                     }
                     else if ($input['type'] == 'other')
                     {
-                        $more.='<tr><td valign="top">';
-                        if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+                        $more.='<tr><td>';
+                        if (! empty($input['label'])) $more.=$input['label'].'</td><td colspan="2" align="left">';
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
                     }
@@ -3508,9 +3537,9 @@ class Form
      *
      *  @param	string	$page        	Page
      *  @param  string	$selected    	Id of user preselected
-     *  @param  string	$htmlname    	Name of input html field
-     *  @param  array	$exclude         List of users id to exclude
-     *  @param  array	$include         List of users id to include
+     *  @param  string	$htmlname    	Name of input html field. If 'none', we just output the user link.
+     *  @param  array	$exclude		List of users id to exclude
+     *  @param  array	$include        List of users id to include
      *  @return	void
      */
     function form_users($page, $selected='', $htmlname='userid', $exclude='', $include='')
@@ -3530,12 +3559,10 @@ class Form
             print '</tr></table></form>';
         }
         else
-        {
+		{
             if ($selected)
             {
                 require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
-                //$this->load_cache_contacts();
-                //print $this->cache_contacts[$selected];
                 $theuser=new User($this->db);
                 $theuser->fetch($selected);
                 print $theuser->getNomUrl(1);
@@ -3646,12 +3673,12 @@ class Form
 
 
     /**
-     *    Affiche formulaire de selection des contacts
+     *    Show forms to select a contact
      *
-     *    @param	string	$page        	Page
-     *    @param	Societe	$societe		Third party
-     *    @param    int		$selected    	Id contact pre-selectionne
-     *    @param    string	$htmlname    	Nom du formulaire select
+     *    @param	string		$page        	Page
+     *    @param	Societe		$societe		Filter on third party
+     *    @param    int			$selected    	Id contact pre-selectionne
+     *    @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
      *    @return	void
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactid')
@@ -3681,8 +3708,6 @@ class Form
             if ($selected)
             {
                 require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
-                //$this->load_cache_contacts();
-                //print $this->cache_contacts[$selected];
                 $contact=new Contact($this->db);
                 $contact->fetch($selected);
                 print $contact->getFullName($langs);
@@ -3798,12 +3823,14 @@ class Form
     	global $langs;
 
     	$num = count($this->cache_vatrates);
-    	if ($num > 0) return $num;    // Cache deja charge
+    	if ($num > 0) return $num;    // Cache already loaded
 
-    	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+        dol_syslog(__METHOD__, LOG_DEBUG);
+
+        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
-    	$sql.= " AND t.active = 1";
+    	$sql.= " AND t.active > 0";
     	$sql.= " AND c.code IN (".$country_code.")";
     	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
@@ -3837,7 +3864,8 @@ class Form
     }
 
     /**
-     *  Output an HTML select vat rate
+     *  Output an HTML select vat rate.
+     *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
      *  @param	string	$htmlname           Name of html select field
      *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
@@ -4244,6 +4272,7 @@ class Form
 
     	$hourSelected=0; $minSelected=0;
 
+    	// Hours
         if ($iSecond != '')
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -4274,6 +4303,7 @@ class Form
 
         $retstring.=' '.$langs->trans('HourShort');
 
+        // Minutes
         if ($minunderhours) $retstring.='<br>';
         else $retstring.="&nbsp;";
 
@@ -4327,24 +4357,26 @@ class Form
         global $conf, $langs;
 
         // Do we want a multiselect ?
-        $multiselect = 0;
-        if (preg_match('/^multi/',$htmlname)) $multiselect = 1;
+        //$jsbeautify = 0;
+        //if (preg_match('/^multi/',$htmlname)) $jsbeautify = 1;
+		$jsbeautify = 1;
 
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='';
 
         // Add code for jquery to use multiselect
-        if ($addjscombo && empty($conf->dol_use_jmobile) && $multiselect)
+        if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
         {
+        	$minLengthToAutocomplete=0;
         	$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2':$conf->global->MAIN_USE_JQUERY_MULTISELECT;
         	$out.='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
         				$(document).ready(function () {
         					$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         				    dir: \'ltr\',
-        					width: \'off\',
-        					minimumInputLength: 0
+        					width: \'resolve\',		/* off or resolve */
+        					minimumInputLength: '.$minLengthToAutocomplete.'
         				});
         			});
         		   </script>';
@@ -4419,7 +4451,7 @@ class Form
     {
     	$out = '';
 
-        // Add code for jquery to use multiselect
+        // Add code for jquery to use select2
         if ($addjscombo && empty($conf->dol_use_jmobile))
         {
         	$tmpplugin='select2';
@@ -4606,6 +4638,236 @@ class Form
 
 
     /**
+     *  Show linked object block.
+     *
+     *  @param	CommonObject	$object		Object we want to show links to
+     *  @return	int							<0 if KO, >0 if OK
+     */
+    function showLinkedObjectBlock($object)
+    {
+        global $conf,$langs,$hookmanager;
+        global $bc;
+
+        $object->fetchObjectLinked();
+
+        // Bypass the default method
+        $hookmanager->initHooks(array('commonobject'));
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
+        if (empty($reshook))
+        {
+        	$num = count($object->linkedObjects);
+
+        	foreach($object->linkedObjects as $objecttype => $objects)
+        	{
+        		$tplpath = $element = $subelement = $objecttype;
+
+        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        		{
+        			$element = $regs[1];
+        			$subelement = $regs[2];
+        			$tplpath = $element.'/'.$subelement;
+        		}
+
+        		// To work with non standard path
+        		if ($objecttype == 'facture')          {
+        			$tplpath = 'compta/'.$element;
+        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'propal')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'askpricesupplier')           {
+        			$tplpath = 'comm/'.$element;
+        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
+        			$tplpath = 'expedition';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'delivery')         {
+        			$tplpath = 'livraison';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
+        		}
+        		else if ($objecttype == 'invoice_supplier') {
+        			$tplpath = 'fourn/facture';
+        		}
+        		else if ($objecttype == 'order_supplier')   {
+        			$tplpath = 'fourn/commande';
+        		}
+
+        		global $linkedObjectBlock;
+        		$linkedObjectBlock = $objects;
+
+        		// Output template part (modules that overwrite templates must declare this into descriptor)
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
+        			if ($res) break;
+        		}
+        	}
+
+        	return $num;
+        }
+    }
+
+    /**
+     *  Show block with links to link to other objects.
+     *
+     *  @param	CommonObject	$object				Object we want to show links to
+     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
+     *  @return	int									<0 if KO, >0 if OK
+     */
+    function showLinkToObjectBlock($object, $restrictlinksto=array())
+    {
+        global $conf, $langs, $hookmanager;
+        global $bc;
+
+		$linktoelem='';
+
+		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
+
+
+		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
+			&& ! empty($conf->commande->enabled))
+		{
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+
+			print '
+				<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery("#linktoorder").click(function() {
+						jQuery("#orderlist").toggle();
+						jQuery("#linktoorder").toggle();
+					});
+				});
+				</script>
+				';
+
+			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+			$sql .= ", " . MAIN_DB_PREFIX . "commande as c";
+			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $object->thirdparty->id . '';
+
+			$resqlorderlist = $this->db->query($sql);
+			if ($resqlorderlist)
+			{
+				$num = $this->db->num_rows($resqlorderlist);
+				$i = 0;
+
+				print '<br><form action="" method="POST" name="LinkedOrder">';
+				print '<table class="noborder">';
+				print '<tr class="liste_titre">';
+				print '<td class="nowrap"></td>';
+				print '<td align="center">' . $langs->trans("Ref") . '</td>';
+				print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
+				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+				print '<td align="left">' . $langs->trans("Company") . '</td>';
+				print '</tr>';
+				while ($i < $num)
+				{
+					$objp = $this->db->fetch_object($resqlorderlist);
+
+					$var = ! $var;
+					print '<tr ' . $bc [$var] . '>';
+					print '<td aling="left">';
+					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '<td align="center">' . $objp->ref . '</td>';
+					print '<td>' . $objp->ref_client . '</td>';
+					print '<td>' . price($objp->total_ht) . '</td>';
+					print '<td>' . $objp->name . '</td>';
+					print '</td>';
+					print '</tr>';
+
+					$i ++;
+				}
+				print '</table>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '</form>';
+				$this->db->free($resqlorderlist);
+			} else {
+				dol_print_error($this->db);
+			}
+
+			print '</div>';
+		}
+
+		if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
+			&& ! empty($conf->fournisseur->enabled))
+		{
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+
+			print '
+			<script type="text/javascript" language="javascript">
+			jQuery(document).ready(function() {
+				jQuery("#linktoorder").click(function() {
+					jQuery("#orderlist").toggle();
+					jQuery("#linktoorder").toggle();
+				});
+			});
+			</script>
+			';
+
+			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+			$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as c";
+			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $object->thirdparty->id;
+
+			$resqlorderlist = $this->db->query($sql);
+			if ($resqlorderlist)
+			{
+				$num = $this->db->num_rows($resqlorderlist);
+				$i = 0;
+
+				print '<br><form action="" method="POST" name="LinkedOrder">';
+				print '<table class="noborder">';
+				print '<tr class="liste_titre">';
+				print '<td class="nowrap"></td>';
+				print '<td align="center">' . $langs->trans("Ref") . '</td>';
+				print '<td align="left">' . $langs->trans("RefSupplier") . '</td>';
+				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+				print '<td align="left">' . $langs->trans("Company") . '</td>';
+				print '</tr>';
+				while ($i < $num) {
+					$objp = $this->db->fetch_object($resqlorderlist);
+					if ($objp->socid == $societe->id) {
+						$var = ! $var;
+						print '<tr ' . $bc [$var] . '>';
+						print '<td aling="left">';
+						print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+						print '<td align="center">' . $objp->ref . '</td>';
+						print '<td>' . $objp->ref_supplier . '</td>';
+						print '<td>' . price($objp->total_ht) . '</td>';
+						print '<td>' . $objp->name . '</td>';
+						print '</td>';
+						print '</tr>';
+					}
+
+					$i ++;
+				}
+				print '</table>';
+				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '</form>';
+				$this->db->free($resqlorderlist);
+			} else {
+				dol_print_error($this->db);
+			}
+
+			print '</div>';
+		}
+
+
+		return $linktoelem;
+    }
+
+    /**
      *	Return an html string with a select combo box to choose yes or no
      *
      *	@param	string		$htmlname		Name of html select field
@@ -4701,15 +4963,15 @@ class Form
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
      *    @param	object	$object			Object to show
-     *    @param   string	$paramid   		Name of parameter to use to name the id into the URL link
-     *    @param   string	$morehtml  		More html content to output just before the nav bar
+     *    @param	string	$paramid   		Name of parameter to use to name the id into the URL link
+     *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param   string	$fieldid   		Nom du champ en base a utiliser pour select next et previous
-     *    @param   string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-     *    @param   string	$morehtmlref  	Code html supplementaire a afficher apres ref
-     *    @param   string	$moreparam  	More param to add in nav link url.
+     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+     *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param	string	$morehtmlref  	Code html supplementaire a afficher apres ref
+     *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     * 	  @return  string    				Portion HTML avec ref + boutons nav
+     * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
     {
@@ -4722,33 +4984,47 @@ class Form
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
 
-        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
-        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
+        //$previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
+        //$next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
+        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'<':'&nbsp;').'</a>':'';
+        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?'>':'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
-        if ($previous_ref || $next_ref || $morehtml) {
-            $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-        }
+        //if ($previous_ref || $next_ref || $morehtml) {
+            //$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+            $ret.='<div style="vertical-align: middle"><div class="inline-block floatleft refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
+        //}
 
         $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
         }
+			$ret.='</div>';
 
+        if ($previous_ref || $next_ref || $morehtml)
+        {
+        	$ret.='<div class="pagination"><ul>';
+        }
         if ($morehtml)
         {
-            $ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
+            //$ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
+            $ret.='<li class="noborder litext">'.$morehtml.'</li>';
         }
         if ($shownav && ($previous_ref || $next_ref))
         {
-            $ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
-            $ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
+            //$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
+            //$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
+            $ret.='<li class="pagination">'.$previous_ref.'</li>';
+            $ret.='<li class="pagination">'.$next_ref.'</li>';
         }
         if ($previous_ref || $next_ref || $morehtml)
         {
-            $ret.='</td></tr></table>';
+            //$ret.='</td></tr></table>';
+            $ret.='</ul></div>';
         }
+		$ret.='</div>';
+
         return $ret;
     }
 
@@ -4788,11 +5064,14 @@ class Form
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
      *     	@param  object		$object			Object containing data to retrieve file name
      * 		@param	int			$width			Width of photo
+     * 		@param	int			$height			Height of photo (auto if 0)
+     * 		@param	int			$caneditfield	Add edit fields
+     * 		@param	string		$cssclass		CSS name to use on img for photo
      * 	  	@return string    					HTML code to output photo
      */
-    static function showphoto($modulepart,$object,$width=100)
+    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin')
     {
-        global $conf;
+        global $conf,$langs;
 
         $entity = (! empty($object->entity) ? $object->entity : $conf->entity);
         $id = (! empty($object->id) ? $object->id : $object->rowid);
@@ -4819,7 +5098,7 @@ class Form
             if ($object->photo) $file=get_exdir($id, 2, 0, 0, $object, 'invoice_supplier').'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        }else {
+        } else {
         	$dir=$conf->$modulepart->dir_output;
         	if ($object->photo) $file=get_exdir($id, 2, 0, 0, $adherent, 'member').'photos/'.$object->photo;
         	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
@@ -4831,30 +5110,51 @@ class Form
             $cache='0';
             if ($file && file_exists($dir."/".$file))
             {
-                // TODO Link to large image
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
                 $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
-                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="photologo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
+                $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
                 $ret.='</a>';
             }
             else
-            {
-                if (! empty($conf->gravatar->enabled) && $email)
+			{
+				$nophoto='/public/theme/common/nophoto.jpg';
+				if (in_array($modulepart,array('userphoto','contact')))	// For module thar are "physical" users
+				{
+					$nophoto='/public/theme/common/user_anonymous.png';
+					if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+					if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+				}
+
+				if (! empty($conf->gravatar->enabled) && $email)
                 {
+	                /**
+	                 * @see https://gravatar.com/site/implement/images/php/
+	                 */
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
                 }
                 else
-                {
-                    $ret.='<img alt="No photo" border="0" width="'.$width.'" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+				{
+                    $ret.='<img class="photo'.$modulepart.'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
                 }
             }
+
+            if ($caneditfield)
+            {
+                if ($object->photo) $ret.="<br>\n";
+                $ret.='<table class="nobordernopadding hideonsmartphone">';
+                if ($object->photo) $ret.='<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+                $ret.='<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+                $ret.='<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+                $ret.='</table>';
+            }
+
         }
         else dol_print_error('','Call of showphoto with wrong parameters');
 

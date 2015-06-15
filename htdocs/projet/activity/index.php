@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,8 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		$projectstatic->title=$row->title;
+		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -158,7 +159,8 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		$projectstatic->title=$row->title;
+		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -219,7 +221,8 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		$projectstatic->title=$row->title;
+		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -270,7 +273,8 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		$projectstatic->title=$row->title;
+		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";
@@ -317,7 +321,8 @@ if ( $resql )
 		print '<td>';
 		$projectstatic->id=$row->rowid;
 		$projectstatic->ref=$row->ref;
-		print $projectstatic->getNomUrl(1);
+		$projectstatic->title=$row->title;
+		print $projectstatic->getNomUrl(1, '', 1);
 		print '</td>';
 		print '<td align="right">'.convertSecondToTime($row->nb).'</td>';
 		print "</tr>\n";

@@ -28,7 +28,7 @@
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 $res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';					
+if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';
 if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // For custom directory
 if (! $res) die("Include of main fails");
 
@@ -47,7 +47,7 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
-use Luracast\Restler\Defaults;
+use \Luracast\Restler\Defaults;
 Defaults::setProperty('authenticationMethod','_isAllowed');
 
 $api = new DolibarrApi($db);
@@ -64,7 +64,7 @@ foreach ($modulesdir as $dir)
      * Search available module
      */
     dol_syslog("Scan directory ".$dir." for API modules");
-    
+
     $handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
     {
@@ -81,7 +81,7 @@ foreach ($modulesdir as $dir)
                 if ($module == 'societe') {
 					$obj = 'thirdparty';
 				}
-                if ($module == 'categorie') { 
+                if ($module == 'categorie') {
                     $part = 'categories';
 					$obj = 'category';
 				}
@@ -90,7 +90,7 @@ foreach ($modulesdir as $dir)
 					$obj = 'facture';
 				}
                 if (empty($conf->$module->enabled)) $enabled=false;
-                
+
                 if ($enabled)
                 {
                     /*
@@ -102,7 +102,7 @@ foreach ($modulesdir as $dir)
                      * @todo : use getElementProperties() function ?
                      */
                     $dir_part = DOL_DOCUMENT_ROOT.'/'.$part.'/class/';
-                        
+
                     $handle_part=@opendir(dol_osencode($dir_part));
                     if (is_resource($handle_part))
                     {

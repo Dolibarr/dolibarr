@@ -103,7 +103,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
-		print $form->select_thirdparty($socid, 'socid');
+		print $form->select_company($socid, 'socid');
 		print '</td></tr>';
 	}
 
@@ -420,6 +420,15 @@ function actions_prepare_head($object)
 	$head[$h][1] = $langs->trans("CardAction");
 	$head[$h][2] = 'card';
 	$h++;
+
+    // Tab to link resources
+	if ($conf->resource->enabled)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
+		$head[$h][1] = $langs->trans("Resources");
+		$head[$h][2] = 'resources';
+		$h++;
+	}
 
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

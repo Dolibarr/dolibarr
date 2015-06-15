@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 $langs->load("resource");
 $langs->load("companies");
 $langs->load("other");
-$langs->load("resource@resource");
+$langs->load("resource");
 
 // Get parameters
 $id			= GETPOST('id','int');
@@ -65,25 +65,25 @@ if ($action == 'confirm_add_resource')
 	if (! $cancel)
 	{
 		$error='';
-			
+
 		$ref=GETPOST('ref','alpha');
 		$description=GETPOST('description','alpha');
 		$fk_code_type_resource=GETPOST('fk_code_type_resource','alpha');
-			
+
 		if (empty($ref))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
 			setEventMessage($mesg, 'errors');
 			$error++;
 		}
-			
+
 		if (! $error)
 		{
 			$object=new Resource($db);
 			$object->ref=$ref;
 			$object->description=$description;
 			$object->fk_code_type_resource=$fk_code_type_resource;
-				
+
 			$result=$object->create($user);
 			if ($result > 0)
 			{
@@ -119,11 +119,11 @@ if ($action == 'confirm_add_resource')
 $form=new Form($db);
 $formresource = new FormResource($db);
 
-if (! $action) 
+if (! $action)
 {
 	$pagetitle=$langs->trans('AddResource');
 	llxHeader('',$pagetitle,'');
-	print_fiche_titre($pagetitle,'','resource.png@resource');
+	print_fiche_titre($pagetitle,'','title_generic');
 
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="add_resource">';
 	print '<input type="hidden" name="action" value="confirm_add_resource" />';
@@ -135,15 +135,14 @@ if (! $action)
 	// Ref / label
 	$field = 'ref';
 	print '<tr>';
-	print '<td>';
-	print '<label for="'.$field.'" class="fieldrequired">';
+	print '<td class="fieldrequired">';
 	print $langs->trans('ResourceFormLabel_'.$field);
 	print '</td>';
 	print '<td>';
 	print '<input type="text" name="'.$field.'" value="'.$$field.'" />';
 	print '</td>';
 	print '</tr>';
-	
+
 	// Type
 	print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
 	print '<td>';
@@ -153,10 +152,8 @@ if (! $action)
 	// Description
 	$field = 'description';
 	print '<tr>';
-	print '<td>';
-	print '<label for="'.$field.'">';
+	print '<td class="tdtop">';
 	print $langs->trans('ResourceFormLabel_'.$field);
-	print '</label>';
 	print '</td>';
 	print '<td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

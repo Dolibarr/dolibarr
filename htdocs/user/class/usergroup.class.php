@@ -40,8 +40,12 @@ class UserGroup extends CommonObject
 
 	var $id;			// Group id
 	var $entity;		// Entity of group
+	/**
+	 * @deprecated
+	 * @see name
+	 */
 	var $nom;			// Name of group
-	var $name;			// Name of group	// deprecated
+	var $name;			// Name of group
 	var $globalgroup;	// Global group
 	var $note;			// Note on group
 	var $datec;			// Creation date of group

@@ -37,22 +37,17 @@ if (! defined('EURO')) define('EURO',chr(128));
 // Define syslog constants
 if (! defined('LOG_DEBUG'))
 {
-    if (function_exists("define_syslog_variables"))
-    {
-    	define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-    }
-    else
-    {
-    	// Pour PHP sans syslog (comme sous Windows)
-    	define('LOG_EMERG',0);
-    	define('LOG_ALERT',1);
-    	define('LOG_CRIT',2);
-    	define('LOG_ERR',3);
-    	define('LOG_WARNING',4);
-    	define('LOG_NOTICE',5);
-    	define('LOG_INFO',6);
-    	define('LOG_DEBUG',7);
-    }
+	if (! function_exists("syslog")) {
+		// For PHP versions without syslog (like running on Windows OS)
+		define('LOG_EMERG',0);
+		define('LOG_ALERT',1);
+		define('LOG_CRIT',2);
+		define('LOG_ERR',3);
+		define('LOG_WARNING',4);
+		define('LOG_NOTICE',5);
+		define('LOG_INFO',6);
+		define('LOG_DEBUG',7);
+	}
 }
 
 // End of common declaration part

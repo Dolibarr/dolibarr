@@ -788,10 +788,14 @@ else
 				$shipment = new Expedition($db);
 				$shipment->fetch($object->origin_id);
 
-				$somethingshown=$shipment->showLinkedObjectBlock();
+				// Linked object block
+				$somethingshown = $form->showLinkedObjectBlock($shipment);
+
+				// Show links to link elements
+				//$linktoelem = $form->showLinkToObjectBlock($shipment);
+				//if ($linktoelem) print '<br>'.$linktoelem;
 			}
 
-			if ($genallowed && ! $somethingshown) $somethingshown=1;
 
 			print '</td><td valign="top" width="50%">';
 

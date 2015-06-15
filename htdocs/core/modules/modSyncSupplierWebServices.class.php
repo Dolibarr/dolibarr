@@ -25,7 +25,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a WebServices module
+ *	Class to describe a sync supplier web services module
  */
 class modSyncSupplierWebServices extends DolibarrModules
 {

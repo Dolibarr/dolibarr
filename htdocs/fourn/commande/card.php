@@ -2265,7 +2265,7 @@ elseif (! empty($object->id))
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
+		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 		$file=$fileparams['fullname'];
 
 		// Define output language
@@ -2292,7 +2292,7 @@ elseif (! empty($object->id))
 				dol_print_error($db,$result);
 				exit;
 			}
-			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
+			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 			$file=$fileparams['fullname'];
 		}
 
@@ -2763,10 +2763,13 @@ elseif (! empty($object->id))
 		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
 		$somethingshown=$formfile->numoffiles;
 
-		/*
-		 * Linked object block
-		 */
-		$somethingshown=$object->showLinkedObjectBlock();
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object);
+		//if ($linktoelem) print '<br>'.$linktoelem;
+
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

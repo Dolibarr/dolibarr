@@ -188,7 +188,7 @@ if ($resql)
 	$texte.=' ('.$langs->trans("Stocks").')';
 
 
-	llxHeader("",$title,$helpurl,$texte);
+	llxHeader("",$texte,$helpurl);
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{

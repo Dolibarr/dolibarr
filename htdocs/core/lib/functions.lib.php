@@ -45,10 +45,13 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	mixed				Return value of static property
- * @deprecated Dolibarr now requires 5.3.0+
+ * @deprecated Dolibarr now requires 5.3.0+, use $class::$property syntax
+ * @see https://php.net/manual/language.oop5.static.php
  */
 function getStaticMember($class, $member)
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	// This part is deprecated. Uncomment if for php 5.2.*, and comment next isset class::member
 	/*if (version_compare(phpversion(), '5.3.0', '<'))
 	{
@@ -215,7 +218,7 @@ function dol_shutdown()
 	global $conf,$user,$langs,$db;
 	$disconnectdone=false; $depth=0;
 	if (is_object($db) && ! empty($db->connected)) { $depth=$db->transaction_opened; $disconnectdone=$db->close(); }
-	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_DEBUG));
+	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_INFO));
 }
 
 
@@ -227,7 +230,7 @@ function dol_shutdown()
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
- *  @return string||string[]     Value found (string or array), or '' if check fails
+ *  @return string|string[]      Value found (string or array), or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 {
@@ -387,11 +390,12 @@ function dol_buildpath($path, $type=0)
  *
  * 	@param	object	$object		Object to clone
  *	@return object				Object clone
- *  @deprecated Dolibarr no longer supports PHP4, you can now use native function
+ *  @deprecated Dolibarr no longer supports PHP4, use PHP5 native clone construct
+ *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object)
 {
-	dol_syslog("Functions.lib::dol_clone Clone object");
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
 	$myclone=clone($object);
 	return $myclone;
@@ -541,7 +545,7 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
 
 
 /**
- *  Returns text escaped for inclusion in HTML alt or title tags
+ *  Returns text escaped for inclusion in HTML alt or title tags, or into values of HTMPL input fields
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				Do not clean b tags
@@ -740,7 +744,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		else
 			$isactive=false;
 
-		if ($i <=$limittoshow || $isactive )
+		if ($i <= $limittoshow || $isactive )
 		{
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
@@ -774,13 +778,13 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
 				if (!empty($links[$i][0]))
-					$outmore.='<a  class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$outmore.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				else
-					$outmore.='<span  class="tabspan">'.$links[$i][1].'</span>'."\n";
+					$outmore.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 
 			}
 			else if (! empty($links[$i][1]))
-				$outmore.='<a "'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').'  class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 
 			$outmore.='</div>';
 		}
@@ -789,7 +793,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 	if ($displaytab > $limittoshow)
 	{
-		$tabsname=str_replace ("@", "", $picto);		
+		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
 		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").'...</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
@@ -832,6 +836,25 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
+ * Show a string with the label tag dedicated to the HTML edit field.
+ *
+ * @param	string	$langkey		Translation key
+ * @param 	string	$fieldkey		Key of the html select field the text refers to
+ * @param	int		$fieldrequired	1=Field is mandatory
+ */
+function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
+{
+	global $conf, $langs;
+	$ret='';
+	if ($fieldrequired) $ret.='<span class="fieldrequired">';
+	if (empty($conf->dol_use_jmobile)) $ret.='<label for="'.$fieldkey.'">';
+	$ret.=$langs->trans($langkey);
+	if (empty($conf->dol_use_jmobile)) $ret.='</label>';
+	if ($fieldrequired) $ret.='</span>';
+	return $ret;
+}
+
+/**
  * Return string to add class property on html element with pair/impair.
  *
  * @param	string	$var			0 or 1
@@ -854,6 +877,7 @@ function dol_bc($var,$moreclass='')
  *      @param	string		$sep			Separator to use to build string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @return string          			Formated string
+ *      @see dol_print_address
  */
 function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 {
@@ -1581,6 +1605,7 @@ function dol_user_country()
  *  @param  int		$mode        thirdparty|contact|member|other
  *  @param  int		$id          Id of object
  *  @return void
+ *  @see dol_format_address
  */
 function dol_print_address($address, $htmlid, $mode, $id)
 {
@@ -1622,7 +1647,7 @@ function dol_print_address($address, $htmlid, $mode, $id)
 /**
  *	Return true if email syntax is ok
  *
- *	@param	    string		$address    			email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	@param	    string		$address    			email (Ex: "toto@examle.com", "John Do <johndo@example.com>")
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  */
@@ -1702,11 +1727,15 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *  @param		string	$url			Param to add an url to click values
  *  @return		void
  *  @deprecated
+ *  @see DolGraph
  */
 function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	global $conf,$langs;
 	global $theme_datacolor;    // To have var kept when function is called several times
+
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
@@ -2186,7 +2215,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 		else $usealttitle = $langs->trans('Info');
 	}
 
-	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
+	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="vertical-align: middle; cursor: help"' : 'style="vertical-align: middle;"'));
 }
 
 /**
@@ -2201,7 +2230,7 @@ function img_info($titlealt = 'default')
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Informations');
 
-	return img_picto($titlealt, 'info.png');
+	return img_picto($titlealt, 'info.png', 'style="vertical-align: middle;"');
 }
 
 /**
@@ -2217,7 +2246,7 @@ function img_warning($titlealt = 'default', $float = 0)
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', ($float ? 'style="float: right"' : ''));
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($float ? ' style="float: right"' : ''));
 }
 
 /**
@@ -2380,9 +2409,12 @@ function img_mime($file, $titlealt = '')
  *	@param  int		$option		Option
  *	@return string      		Return img tag
  *  @deprecated
+ *  @see img_picto
  */
 function img_phone($titlealt = 'default', $option = 0)
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	global $conf,$langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Call');
@@ -2452,7 +2484,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), 'info', 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -2607,11 +2639,12 @@ function dol_print_error_email($prefixcode)
  *	@param  string	$td          Options of attribute td ("" by defaut, example: 'align="center"')
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
+ *  @param	string	$prefix		 Prefix for css
  *	@return	void
  */
-function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="")
+function print_liste_field_titre($name, $file="", $field="", $begin="", $moreparam="", $td="", $sortfield="", $sortorder="", $prefix="")
 {
-	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder);
+	print getTitleFieldOfList($name, 0, $file, $field, $begin, $moreparam, $td, $sortfield, $sortorder, $prefix);
 }
 
 /**
@@ -2626,9 +2659,10 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
+ *  @param	string	$prefix		 Prefix for css
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
+function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="", $prefix="")
 {
 	global $conf;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
@@ -2642,7 +2676,7 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
 	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<'.$tag.' class="liste_titre_sel" '. $moreattrib.'>';
-	else $out.= '<'.$tag.' class="liste_titre" '. $moreattrib.'>';
+	else $out.= '<'.$tag.' class="'.$prefix.'liste_titre" '. $moreattrib.'>';
 
 	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
@@ -2702,9 +2736,12 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
  *	@param	string	$title			Title to show
  *	@return	string					Title to show
  *  @deprecated						Use print_fiche_titre instead
+ *  @see print_fiche_titre
  */
 function print_titre($title)
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	print '<div class="titre">'.$title.'</div>';
 }
 
@@ -2717,6 +2754,7 @@ function print_titre($title)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	void
+ *  @deprecated Use print load_fiche_titre instead
  */
 function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id='')
 {
@@ -2822,34 +2860,34 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 			if ($cpt>=1)
 			{
-				$pagelist.= '<li class="pagination"><a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>';
+				$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a></li>';
 				if ($cpt >= 2) $pagelist.='<li><span class="inactive">...</span></li>';
 			}
 			do
 			{
 				if ($cpt==$page)
 				{
-					$pagelist.= '<li class="pagination"><span class="active">'.($page+1).'</span></li>';
+					$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1).'</span></li>';
 				}
 				else
 				{
-					$pagelist.= '<li class="pagination"><a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>';
+					$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a></li>';
 				}
 				$cpt++;
 			}
 			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
 			if ($cpt<$nbpages)
 			{
-				if ($cpt<$nbpages-1) $pagelist.= '<li class="pagination"><span class="inactive">...</span></li>';
-				$pagelist.= '<li class="pagination"><a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>';
+				if ($cpt<$nbpages-1) $pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="inactive"':'data-role="button"').'>...</span></li>';
+				$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><a '.(empty($conf->dol_use_jmobile)?'':'data-role="button" ').'href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a></li>';
 			}
 		}
 		else
 		{
-			$pagelist.= '<li class="pagination"><span class="active">'.($page+1)."</li>";
+			$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist,$morehtml);
+	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist,$morehtml);		// output the div and ul for previous/last completed with page numbers into $pagelist
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -4059,9 +4097,12 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
  *
  * @return		float		Time (millisecondes) with microsecondes in decimal part
  * @deprecated Dolibarr does not support PHP4, you should use native function
+ * @see microtime()
  */
 function dol_microtime_float()
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	return microtime(true);
 }
 
@@ -4090,8 +4131,8 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/<(br|div|font|li|span|strong|table)>/i',$msg)) 	  return true;
 		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
 		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
-		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i',$msg)) return true;	// must accept <img src="http://mydomain.com/aaa.png" />
-		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i',$msg)) return true;	// must accept <a href="http://mydomain.com/aaa.png" />
+		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i',$msg)) return true;	// must accept <img src="http://example.com/aaa.png" />
+		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i',$msg)) return true;	// must accept <a href="http://example.com/aaa.png" />
 		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
 		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
@@ -4281,6 +4322,8 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
  */
 function setEventMessage($mesgs, $style='mesgs')
 {
+	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
+
 	if (! is_array($mesgs))		// If mesgs is a string
 	{
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
@@ -4828,7 +4871,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  * Print common footer :
  * 		conf->global->MAIN_HTML_FOOTER
  * 		conf->global->MAIN_GOOGLE_AN_ID
- * 		DOL_TUNING
+ * 		conf->global->MAIN_SHOW_TUNING_INFO or $_SERVER["MAIN_SHOW_TUNING_INFO"]
  * 		conf->logbuffer
  *
  * @param	string	$zone	'private' (for private pages) or 'public' (for public pages)
@@ -4865,7 +4908,7 @@ function printCommonFooter($zone='private')
 	}
 
 	// End of tuning
-	if (! empty($_SERVER['DOL_TUNING']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
+	if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 	{
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'window.console && console.log("';

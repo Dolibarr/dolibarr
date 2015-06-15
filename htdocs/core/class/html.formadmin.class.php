@@ -105,6 +105,10 @@ class FormAdmin
 		}
 		$out.= '</select>';
 
+		// Make select dynamic
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+        $out.= ajax_combobox($htmlname);
+
 		return $out;
 	}
 

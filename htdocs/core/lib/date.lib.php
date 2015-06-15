@@ -278,8 +278,8 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
  *	                 			YYYYMMDDHHMMSS
  *								YYYYMMDDTHHMMSSZ
  *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
- *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
+ *		                		DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
  *  @param	int		$gm         1 =Input date is GM date,
  *                              0 =Input date is local date using PHP server timezone
  *  @return	int					Date as a timestamp
@@ -292,7 +292,7 @@ function dol_stringtotime($string, $gm=1)
     // Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
     if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
     {
-        dol_syslog("dol_stringtotime call to function with deprecated parameter", LOG_WARNING);
+        dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
         // Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
         // Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
         $sday = $reg[1];

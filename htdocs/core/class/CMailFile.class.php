@@ -37,7 +37,7 @@
 class CMailFile
 {
 	var $subject;      	// Topic:       Subject of email
-	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@mydomain.com>' or 'John Doe <myemail@mydomain.com>' or '<myemail+trackingid@mydomain.com>')
+	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>')
 	                   	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
 	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, use for Sender an email of the protected domain.
 	                   	// Return-Path: Email where to send bounds.
@@ -387,7 +387,7 @@ class CMailFile
 				// If Windows, sendmail_from must be defined
 				if (isset($_SERVER["WINDIR"]))
 				{
-					if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
+					if (empty($this->addr_from)) $this->addr_from = 'robot@example.com';
 					@ini_set('sendmail_from',$this->getValidAddress($this->addr_from,2));
 				}
 

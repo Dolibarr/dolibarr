@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - opensurvey
-Survey=Poll
-Surveys=Polls
-OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select type of poll...
-NewSurvey=New poll
-NoSurveysInDatabase=%s poll(s) into database.
-OpenSurveyArea=Polls area
-AddACommentForPoll=You can add a comment into poll...
-AddComment=Add comment
-CreatePoll=Create poll
-PollTitle=Poll title
+Survey=Undersøkelse
+Surveys=Undersøkelser
+OrganizeYourMeetingEasily=Organiser møtene og undersøkelsene dine. Velg type undersøkelse
+NewSurvey=Ny undersøkelse
+NoSurveysInDatabase=%s undersøkelse(r) i databasen.
+OpenSurveyArea=Område for undersøkelser
+AddACommentForPoll=Legg til kommentar i undersøkelsen
+AddComment=Legg til kommentar
+CreatePoll=Opprett undersøkelse
+PollTitle=Undersøkelse tittel
 ToReceiveEMailForEachVote=Receive an email for each vote
 TypeDate=Type date
 TypeClassic=Type standard

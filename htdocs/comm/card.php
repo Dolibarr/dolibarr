@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -140,7 +141,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessage($object->error,$object->errors,'errors');
 	}
 
-	// update prospect level
+	// set communication status
 	if ($action == 'setstcomm')
 	{
 		$object->fetch($id);
@@ -466,6 +467,14 @@ if ($id > 0)
 			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt,$val['code']).'</a>';
 		}
 		print '</div></td></tr>';
+	}
+
+	// Categories
+	if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
+		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+		print '<td colspan="3">';
+		print $form->showCategories( $object->id, 'customer', 1 );
+		print "</td></tr>";
 	}
 
 	// Other attributes

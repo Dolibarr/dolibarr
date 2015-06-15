@@ -272,7 +272,7 @@ function getContact($authentication,$id,$ref_ext)
 	        ){
             	$contact_result_fields =array(
 	            	'id' => $contact->id,
-			'ref_ext' => $contact->ref_ext,
+	            	'ref_ext' => $contact->ref_ext,
 	            	'lastname' => $contact->lastname,
 	            	'firstname' => $contact->firstname,
 	            	'address' => $contact->address,
@@ -334,7 +334,7 @@ function getContact($authentication,$id,$ref_ext)
          else
          {
              $error++;
-             $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+             $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref_ext='.$ref_ext;
          }
     }
 
@@ -615,9 +615,15 @@ function updateContact($authentication,$contact)
 	$error=0;
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 	// Check parameters
-	if (empty($contact['id']))	{
-		$error++; $errorcode='KO'; $errorlabel="Contact id is mandatory.";
+	if (empty($contact['id']) && empty($contact['ref_ext']))	{
+		$error++; $errorcode='KO'; $errorlabel="Contact id or ref_ext is mandatory.";
 	}
+	// Check parameters
+    if (! $error && ($id && $ref_ext))
+    {
+        $error++;
+        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id and ref_ext can't be all provided. You must choose one of them.";
+    }
 
 	if (! $error)
 	{
@@ -626,7 +632,7 @@ function updateContact($authentication,$contact)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object=new Contact($db);
-		$result=$object->fetch($contact['id']);
+		$result=$object->fetch($contact['id'],0,$contact['ref_ext']);
 
 		if (!empty($object->id)) {
 

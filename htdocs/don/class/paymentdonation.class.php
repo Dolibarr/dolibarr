@@ -50,6 +50,12 @@ class PaymentDonation extends CommonObject
 	var $fk_user_modif;
 
 	/**
+	 * @deprecated
+	 * @see amount, amounts
+	 */
+	var $total;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler

@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ abstract class CommonObject
     /**
      * @var string 		Error string
      * @deprecated		Use instead the array of error strings
+     * @see             errors
      */
     public $error;
 
@@ -82,7 +83,7 @@ abstract class CommonObject
     public $errors=array();
 
     /**
-     * @var string		Can be used to pass information when only object is provided to method
+     * @var string[]	Can be used to pass information when only object is provided to method
      */
     public $context=array();
 
@@ -96,7 +97,24 @@ abstract class CommonObject
     public $lastname;
     public $firstname;
     public $civility_id;
+	/**
+	 * @deprecated
+	 * @see thirdparty
+	 */
+	public $client;
+	/**
+	 * @var Societe
+	 */
     public $thirdparty;
+	/**
+	 * @deprecated
+	 * @see project
+	 */
+	public $projet;
+	/**
+	 * @var Project
+	 */
+	public $project;
 
     // No constructor as it is an abstract class
 
@@ -113,13 +131,15 @@ abstract class CommonObject
      */
     static function isExistingObject($element, $id, $ref='', $ref_ext='')
     {
-    	global $db;
+    	global $db,$conf;
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		if ($id > 0) $sql.= " WHERE rowid = ".$db->escape($id);
-		else if ($ref) $sql.= " WHERE ref = '".$db->escape($ref)."'";
-		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$db->escape($ref_ext)."'";
+		$sql.= " WHERE entity IN (".getEntity($element).")" ;
+
+		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
+		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
+		else if ($ref_ext) $sql.= " AND ref_ext = '".$db->escape($ref_ext)."'";
 		else {
 			$error='ErrorWrongParameters';
 			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
@@ -525,9 +545,9 @@ abstract class CommonObject
      *      Return array with list of possible values for type of contacts
      *
      *      @param	string	$source     'internal', 'external' or 'all'
-     *      @param	string	$order		Sort order by : 'code' or 'rowid'
-     *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly 0=all status of contact, 1=only the active
+     *      @param	string	$order		Sort order by 'code' or 'rowid'
+     *      @param  int		$option     0=Return array id->label, 1=Return array code->label
+     *      @param  int		$activeonly 0=all status of contact, 1=only the active
      *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
@@ -541,7 +561,7 @@ abstract class CommonObject
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
-        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active type
+        if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active types
         if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
         if (! empty($code)) $sql.= " AND tc.code='".$code."'";
         $sql.= " ORDER by tc.".$order;
@@ -626,12 +646,12 @@ abstract class CommonObject
     }
 
     /**
-     *		Charge le contact d'id $id dans this->contact
+     *		Load object contact with id=$this->contactid into $this->contact
      *
      *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
      *		@return	int						<0 if KO, >0 if OK
      */
-    function fetch_contact($contactid='')
+    function fetch_contact($contactid=null)
     {
     	if (empty($contactid)) $contactid=$this->contactid;
 
@@ -759,10 +779,14 @@ abstract class CommonObject
      */
     function fetch_projet()
     {
+    	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+    	if (empty($this->fk_project) && ! empty($this->fk_projet)) $this->fk_project = $this->fk_projet;	// For backward compatibility
         if (empty($this->fk_project)) return 0;
 
         $project = new Project($this->db);
         $result = $project->fetch($this->fk_project);
+
         $this->projet = $project;	// deprecated
         $this->project = $project;
         return $result;
@@ -858,14 +882,14 @@ abstract class CommonObject
     /**
      *	Update a specific field into database
      *
-     *	@param	string	$field		Field to update
-     *	@param	mixed	$value		New value
-     *	@param	string	$table		To force other table element or element line (should not be used)
-     *	@param	int		$id			To force other object id (should not be used)
-     *	@param	string	$format		Data format ('text', 'date'). 'text' is used if not defined
-     *	@param	string	$id_field	To force rowid field name. 'rowid' is used it not defined
-     *	@param	string	$user		Update last update fields also if user object provided
-     *	@return	int					<0 if KO, >0 if OK
+     *	@param	string		$field		Field to update
+     *	@param	mixed		$value		New value
+     *	@param	string		$table		To force other table element or element line (should not be used)
+     *	@param	int			$id			To force other object id (should not be used)
+     *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
+     *	@param	string		$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	User|string	$user		Update last update fields also if user object provided
+     *	@return	int						<0 if KO, >0 if OK
      */
     function setValueFrom($field, $value, $table='', $id='', $format='', $id_field='', $user='')
     {
@@ -1639,9 +1663,10 @@ abstract class CommonObject
     /**
      * 	Update public note (kept for backward compatibility)
      *
-     *  @param      string		$note		New value for note
-     *  @return     int      		   		<0 if KO, >0 if OK
-     *  @deprecated
+     * @param      string		$note		New value for note
+     * @return     int      		   		<0 if KO, >0 if OK
+     * @deprecated
+     * @see update_note()
      */
     function update_note_public($note)
     {
@@ -1655,10 +1680,10 @@ abstract class CommonObject
      *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
      *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force use total of rounding, '1'=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object. For this, we need seller object.
+     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
-    function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller='')
+    function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
     {
     	global $conf;
 
@@ -2555,86 +2580,17 @@ abstract class CommonObject
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
     // --------------------
 
-    /* This is to show linked object block */
-
     /**
-     *  Show linked object block
-     *  TODO Move this into html.class.php
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+     *  Show linked object block.
      *
-     *  @return	int
+     *  @return		int		<0 if KO, >0 if OK
+     *  @deprecated 3.8 Use instead $form->shoLinkedObjectBlock($object)
      */
     function showLinkedObjectBlock()
     {
-        global $conf,$langs,$hookmanager;
-        global $bc;
-
-        $this->fetchObjectLinked();
-
-        // Bypass the default method
-        $hookmanager->initHooks(array('commonobject'));
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
-
-        if (empty($reshook))
-        {
-        	$num = count($this->linkedObjects);
-
-        	foreach($this->linkedObjects as $objecttype => $objects)
-        	{
-        		$tplpath = $element = $subelement = $objecttype;
-
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-        		{
-        			$element = $regs[1];
-        			$subelement = $regs[2];
-        			$tplpath = $element.'/'.$subelement;
-        		}
-
-        		// To work with non standard path
-        		if ($objecttype == 'facture')          {
-        			$tplpath = 'compta/'.$element;
-        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'propal')           {
-        			$tplpath = 'comm/'.$element;
-        			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'askpricesupplier')           {
-        			$tplpath = 'comm/'.$element;
-        			if (empty($conf->askpricesupplier->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'shipping' || $objecttype == 'shipment') {
-        			$tplpath = 'expedition';
-        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'delivery')         {
-        			$tplpath = 'livraison';
-        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
-        		}
-        		else if ($objecttype == 'invoice_supplier') {
-        			$tplpath = 'fourn/facture';
-        		}
-        		else if ($objecttype == 'order_supplier')   {
-        			$tplpath = 'fourn/commande';
-        		}
-
-        		global $linkedObjectBlock;
-        		$linkedObjectBlock = $objects;
-
-        		// Output template part (modules that overwrite templates must declare this into descriptor)
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
-        			if ($res) break;
-        		}
-        	}
-
-        	return $num;
-        }
+    	global $form;
+    	return $form->showLinkedObjectBlock($this);
     }
-
 
 
     /* This is to show add lines */
@@ -2684,9 +2640,9 @@ abstract class CommonObject
 	 *	But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
-	 *	@param  string		$seller            	Object of seller third party
-	 *	@param  string  	$buyer             	Object of buyer third party
-	 *	@param	string		$selected		   	Object line selected
+	 *	@param  Societe		$seller            	Object of seller third party
+	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *	@return	void
 	 */
@@ -2799,16 +2755,16 @@ abstract class CommonObject
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
-	 *	@param	string		$action				GET/POST action
-	 *	@param CommonObjectLine $line		       	Selected object line to output
-	 *	@param  string	    $var               	Is it a an odd line (true)
-	 *	@param  int		    $num               	Number of line (0)
-	 *	@param  int		    $i					I
-	 *	@param  int		    $dateSelector      	1=Show also date range input fields
-	 *	@param  string	    $seller            	Object of seller third party
-	 *	@param  string	    $buyer             	Object of buyer third party
-	 *	@param	string		$selected		   	Object line selected
-	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
+	 *	@param	string				$action				GET/POST action
+	 *	@param 	CommonObjectLine 	$line		       	Selected object line to output
+	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  int		    		$num               	Number of line (0)
+	 *	@param  int		    		$i					I
+	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
+	 *	@param  Societe	    		$seller            	Object of seller third party
+	 *	@param  Societe	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	Object line selected
+	 *  @param  object				$extrafieldsline	Object of extrafield line attribute
 	 *	@return	void
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
@@ -3084,227 +3040,23 @@ abstract class CommonObject
 
 
 	/**
-	 *	get Margin info
-	 *
-	 * 	@param 	string 	$force_price	True of not
-	 * 	@return mixed					Array with info
-	 */
-	function getMarginInfos($force_price=false)
-	{
-		global $conf;
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-
-		$marginInfos = array(
-				'pa_products' => 0,
-				'pv_products' => 0,
-				'margin_on_products' => 0,
-				'margin_rate_products' => '',
-				'mark_rate_products' => '',
-				'pa_services' => 0,
-				'pv_services' => 0,
-				'margin_on_services' => 0,
-				'margin_rate_services' => '',
-				'mark_rate_services' => '',
-				'pa_total' => 0,
-				'pv_total' => 0,
-				'total_margin' => 0,
-				'total_margin_rate' => '',
-				'total_mark_rate' => ''
-		);
-
-		foreach($this->lines as $line) {
-			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price) {
-				$product = new ProductFournisseur($this->db);
-				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
-					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
-				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
-					$line->pa_ht += $product->fourn_unitcharges;
-			}
-			// si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
-			if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
-				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
-			}
-
-			// calcul des marges
-			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-			    $pa = $line->qty * $line->pa_ht;
-			    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
-				if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
-					$marginInfos['pa_products'] += $pa;
-					$marginInfos['pv_products'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_products'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
-					$marginInfos['pa_services'] += $pa;
-					$marginInfos['pv_services'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_services'] += $pv - $pa;
-				}
-				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
-					$marginInfos['pa_total'] += $pa;
-					$marginInfos['pv_total'] += $pv;
-				}
-			}
-			else {
-				$type=$line->product_type?$line->product_type:$line->fk_product_type;
-				if ($type == 0) {  // product
-				    $pa = $line->qty * $line->pa_ht;
-				    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
-					$marginInfos['pa_products'] += $pa;
-					$marginInfos['pv_products'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_products'] += $pv - $pa;
-				}
-				elseif ($type == 1) {  // service
-				    $pa = $line->qty * $line->pa_ht;
-				    $pv = $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
-					$marginInfos['pa_services'] += $pa;
-					$marginInfos['pv_services'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
-					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-					if ($pv < 0)
-						$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
-					else
-						$marginInfos['margin_on_services'] += $pv - $pa;
-				}
-			}
-		}
-		if ($marginInfos['pa_products'] > 0)
-			$marginInfos['margin_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pa_products'];
-		if ($marginInfos['pv_products'] > 0)
-			$marginInfos['mark_rate_products'] = 100 * $marginInfos['margin_on_products'] / $marginInfos['pv_products'];
-
-		if ($marginInfos['pa_services'] > 0)
-			$marginInfos['margin_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pa_services'];
-		if ($marginInfos['pv_services'] > 0)
-			$marginInfos['mark_rate_services'] = 100 * $marginInfos['margin_on_services'] / $marginInfos['pv_services'];
-
-		// if credit note, margin = -1 * (abs(selling_price) - buying_price)
-		if ($marginInfos['pv_total'] < 0)
-			$marginInfos['total_margin'] = -1 * (abs($marginInfos['pv_total']) - $marginInfos['pa_total']);
-		else
-			$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
-		if ($marginInfos['pa_total'] > 0)
-			$marginInfos['total_margin_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pa_total'];
-		if ($marginInfos['pv_total'] > 0)
-			$marginInfos['total_mark_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pv_total'];
-
-		return $marginInfos;
-	}
-
-	/**
 	 * Show the array with all margin infos
 	 *
-	 * @param 	string 	$force_price	Force price
-	 * @return	void
+	 * @param 		boolean	$force_price	Force price
+	 * @return		void
+	 * @deprecated	3.8 Load FormMargin class and make a direct call to displayMarginInfos
 	 */
 	function displayMarginInfos($force_price=false)
 	{
-		global $langs, $conf, $user;
-
-    	if (! empty($user->societe_id)) return;
-
-    	if (! $user->rights->margins->liretous) return;
-
-        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
-
-		$marginInfo = $this->getMarginInfos($force_price);
-
-		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
-		{
-			print $langs->trans('ShowMarginInfos').' : ';
-	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
-	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
-	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
-
-    	    print '<script>$(document).ready(function() {
-        	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
-        	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
-      	        });</script>';
-    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
-		}
-
-		print '<table class="nobordernopadding margintable" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';
-		if ($conf->global->MARGIN_TYPE == "1")
-			print '<td class="liste_titre" align="right">'.$langs->trans('BuyingPrice').'</td>';
-		else
-			print '<td class="liste_titre" align="right">'.$langs->trans('CostPrice').'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans('Margin').'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td class="liste_titre" align="right">'.$langs->trans('MarginRate').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td class="liste_titre" align="right">'.$langs->trans('MarkRate').'</td>';
-		print '</tr>';
-
-		if (! empty($conf->product->enabled))
-		{
-			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-			print '<tr class="impair">';
-			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
-			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-			print '</tr>';
-		}
-
-		if (! empty($conf->service->enabled))
-		{
-			print '<tr class="pair">';
-			print '<td>'.$langs->trans('MarginOnServices').'</td>';
-			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-			print '</tr>';
-		}
-
-		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-		{
-			print '<tr class="impair">';
-			print '<td>'.$langs->trans('TotalMargin').'</td>';
-			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
-			print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
-			print '</tr>';
-		}
-		print '</table>';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+		$formmargin=new FormMargin($this->db);
+		$formmargin->displayMarginInfos($this, $force_price);
 	}
 
 
 	/**
 	 *	Add resources to the current object : add entry into llx_element_resources
-	 *Need $this->element & $this->id
+	 *	Need $this->element & $this->id
 	 *
 	 *	@param		int		$resource_id		Resource id
 	 *	@param		string	$resource_element	Resource element
@@ -3726,7 +3478,7 @@ abstract class CommonObject
             {
                	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
-               	$attributeSize  = $extrafields->attribute_size[$attributeKey];
+               	//$attributeSize  = $extrafields->attribute_size[$attributeKey];	Not required to insert an extrafield value. Only used for definition.
                	$attributeLabel = $extrafields->attribute_label[$attributeKey];
                	$attributeParam = $extrafields->attribute_param[$attributeKey];
                	switch ($attributeType)
@@ -3751,19 +3503,19 @@ abstract class CommonObject
             		case 'datetime':
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
-           		case 'link':
-				$param_list=array_keys($attributeParam ['options']);
-				// 0 : ObjectName
-				// 1 : classPath
-				$InfoFieldList = explode(":", $param_list[0]);
-				dol_include_once($InfoFieldList[1]);
-				$object = new $InfoFieldList[0]($this->db);
-				if ($value)
-				{
-					$object->fetch(0,$value);
-					$this->array_options[$key]=$object->id;
-				}
-				break;
+           			case 'link':
+						$param_list=array_keys($attributeParam ['options']);
+						// 0 : ObjectName
+						// 1 : classPath
+						$InfoFieldList = explode(":", $param_list[0]);
+						dol_include_once($InfoFieldList[1]);
+						$object = new $InfoFieldList[0]($this->db);
+						if ($value)
+						{
+							$object->fetch(0,$value);
+							$this->array_options[$key]=$object->id;
+						}
+						break;
                	}
             }
             $this->db->begin();
@@ -3771,6 +3523,7 @@ abstract class CommonObject
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
             dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
             $this->db->query($sql_del);
+
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
             {
@@ -3825,7 +3578,7 @@ abstract class CommonObject
      *
      * @return string
      */
-    function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
+    function showOptionals($extrafields, $mode='view', $params=null, $keyprefix='')
     {
 		global $_POST, $conf;
 
@@ -3955,15 +3708,16 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropiate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @param array $tables Tables that need to be changed
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
+	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
+	 * @param array 	$tables 		Tables that need to be changed
 	 * @return bool
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
 	{
-		foreach ($tables as $table) {
+		foreach ($tables as $table)
+		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
 			if (!$db->query($sql)) {

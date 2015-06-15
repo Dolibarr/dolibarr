@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - deliveries
-Delivery=Dodání
+Delivery=Dodávka
 Deliveries=Dodávky
-DeliveryCard=Dodávka karet
-DeliveryOrder=Dodávka, aby
+DeliveryCard=Karta dodávky
+DeliveryOrder=Dodací objednávka
 DeliveryOrders=Dodací objednávky
 DeliveryDate=Termín dodání
-DeliveryDateShort=Deliv. datum
-CreateDeliveryOrder=Generovat příkaz k dodání
+DeliveryDateShort=Term. dodání
+CreateDeliveryOrder=Generovat objednávku k dodání
 QtyDelivered=Množství dodáno
 SetDeliveryDate=Nastavit datem odeslání
 ValidateDeliveryReceipt=Potvrzení o doručení
@@ -19,8 +19,10 @@ DeliveryNotValidated=Dodávka není ověřena
 # merou PDF model
 NameAndSignature=Jméno a podpis:
 ToAndDate=To___________________________________ na ____ / _____ / __________
-GoodStatusDeclaration=Už zboží obdržel výše v dobrém stavu,
+GoodStatusDeclaration=Výšeuvedené zboží obdrženo v dobrém stavu,
 Deliverer=Doručovatel:
 Sender=Odesílatel
 Recipient=Příjemce
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=Dostatečné množství není skladem
+Shippable=Doručitelné
+NonShippable=Nedoručitelné

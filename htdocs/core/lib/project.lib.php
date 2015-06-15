@@ -507,7 +507,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int			$preselectedday			Preselected day
  * @return  $inc
  */
-function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0, $preselectedday='')
+function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $preselectedday='')
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
@@ -541,8 +541,8 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 			{
 				$projectstatic->id=$lines[$i]->fk_project;
 				$projectstatic->ref=$lines[$i]->projectref;
+				$projectstatic->title=$lines[$i]->projectlabel;
 				$projectstatic->public=$lines[$i]->public;
-				$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
 
 				$taskstatic->id=$lines[$i]->id;
 
@@ -550,7 +550,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 
 				// Project
 				print "<td>";
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 
 				// Ref
@@ -676,7 +676,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @return  $inc
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=0)
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1)
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
@@ -711,9 +711,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print '<td class="nowrap">';
 				$projectstatic->id=$lines[$i]->fk_project;
 				$projectstatic->ref=$lines[$i]->projectref;
+				$projectstatic->title=$lines[$i]->projectlabel;
 				$projectstatic->public=$lines[$i]->public;
-				$projectstatic->label=$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project];
-				print $projectstatic->getNomUrl(1);
+				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 
 				// Ref

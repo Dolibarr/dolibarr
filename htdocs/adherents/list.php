@@ -107,7 +107,7 @@ if ($sall)
         foreach ($scrit as $crit)
         {
             $sql.=" AND (";
-            if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
+            if (is_numeric($sall)) $sql.= "d.rowid = ".$db->escape($sall)." OR ";
             $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note_public LIKE '%".$db->escape($sall)."%' OR d.note_private LIKE '%".$db->escape($sall)."%')";
@@ -115,7 +115,7 @@ if ($sall)
 }
 if ($type > 0)
 {
-	$sql.=" AND t.rowid=".$type;
+	$sql.=" AND t.rowid=".$db->escape($type);
 }
 if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {

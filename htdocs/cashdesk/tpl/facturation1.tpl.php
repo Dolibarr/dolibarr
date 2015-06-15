@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +44,8 @@ $langs->load("cashdesk");
 			<!-- Affichage de la reference et de la designation -->
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" value="<?php echo $obj_facturation->ref() ?>"
 				onchange="javascript: setSource('REF');"
-				onkeyup="javascript: verifResultat('resultats_dhtml', this.value);"
-				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value);"
+				onkeyup="javascript: verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
+				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
 				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
 			</td>
 			<td class="select_design">

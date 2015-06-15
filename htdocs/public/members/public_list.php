@@ -62,7 +62,7 @@ function llxHeaderVierge($title, $head = "")
     print "<title>".$title."</title>\n";
     if ($head) print $head."\n";
     print "</head>\n";
-	print "<body>\n";
+	print '<body class="public_body">'."\n";
 }
 
 /**
@@ -98,7 +98,13 @@ if (! $sortfield) {  $sortfield="lastname"; }
  * View
  */
 
-llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"));
+$form = new Form($db);
+
+$morehead='';
+if (! empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead='<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+else $morehead='<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
+
+llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent";
@@ -120,17 +126,16 @@ if ($result)
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
 	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
-	print '<table class="noborder" width="100%">';
+	print '<table class="public_border" width="100%">';
 
-	print '<tr class="liste_titre">';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.$langs->trans("Firstname").'</a>';
-	print ' <a href="'.$_SERVER['PHP_SELF'].'?page='.$page.'&sortorder=ASC&sortfield=lastname">'.$langs->trans("Lastname").'</a>';
-	print ' / <a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
+	print '<tr class="public_liste_titre">';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"),$langs->trans("Lastname")).'</a></td>';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
 	//print_liste_field_titre($langs->trans("DateToBirth"), $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
-	print_liste_field_titre($langs->trans("EMail"), $_SERVER["PHP_SELF"],"email",'',$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"), $_SERVER["PHP_SELF"],"zip","",$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"), $_SERVER["PHP_SELF"],"town","",$param,$sortfield,$sortorder);
-	print "<td>".$langs->trans("Photo")."</td>\n";
+	print_liste_field_titre($langs->trans("EMail"), $_SERVER["PHP_SELF"],"email",'',$param,'',$sortfield,$sortorder,'public_');
+	print_liste_field_titre($langs->trans("Zip"), $_SERVER["PHP_SELF"],"zip","",$param,'',$sortfield,$sortorder,'public_');
+	print_liste_field_titre($langs->trans("Town"), $_SERVER["PHP_SELF"],"town","",$param,'',$sortfield,$sortorder,'public_');
+	print_liste_field_titre($langs->trans("Photo"), $_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder,'public_');
 	print "</tr>\n";
 
 	$var=True;
@@ -139,13 +144,13 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($obj->firstname, $obj->lastname).($objp->societe?' / '.$objp->societe:'').'</a></td>'."\n";
+		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>'."\n";
+		print '<td>'.$objp->societe.'</td>'."\n";
 		print '<td>'.$objp->email.'</td>'."\n";
 		print '<td>'.$objp->zip.'</td>'."\n";
 		print '<td>'.$objp->town.'</td>'."\n";
 		if (isset($objp->photo) && $objp->photo != '')
 		{
-			$form = new Form($db);
 			print '<td>';
 			print $form->showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
@@ -165,6 +170,6 @@ else
 }
 
 
-$db->close();
-
 llxFooterVierge();
+
+$db->close();

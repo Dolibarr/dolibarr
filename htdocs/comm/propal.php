@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
@@ -305,7 +306,8 @@ if (empty($reshook))
 					$object->fk_project = GETPOST('projectid');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
-					$object->note = GETPOST('note');
+					$object->note_private = GETPOST('note_private');
+					$object->note_public = GETPOST('note_public');
 					$object->statut = Propal::STATUS_DRAFT;
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
@@ -331,7 +333,8 @@ if (empty($reshook))
 				$object->fk_project = GETPOST('projectid');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
-				$object->note = GETPOST('note');
+				$object->note_private = GETPOST('note_private');
+				$object->note_public = GETPOST('note_public');
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
@@ -638,7 +641,6 @@ if (empty($reshook))
 	$paramname='id';
 	$mode='emailfromproposal';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 
 
 	// Go back to draft
@@ -1257,6 +1259,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $companystatic = new Societe($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $now = dol_now();
 
@@ -1341,7 +1344,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Reference
-	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
 
 	// Ref customer
 	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
@@ -1445,13 +1448,20 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
-	// Model
-	print '<tr>';
-	print '<td>' . $langs->trans("DefaultModel") . '</td>';
-	print '<td colspan="2">';
-	$liste = ModelePDFPropales::liste_modeles($db);
-	print $form->selectarray('model', $liste, ($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : $conf->global->PROPALE_ADDON_PDF));
-	print "</td></tr>";
+	// Project
+	if (! empty($conf->projet->enabled) && $socid > 0)
+	{
+		$projectid = GETPOST('projectid')?GETPOST('projectid'):0;
+		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
+
+		$langs->load("projects");
+		print '<tr>';
+		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
+		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+		print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
@@ -1463,25 +1473,41 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-	// Project
-	if (! empty($conf->projet->enabled) && $socid > 0)
+	// Template to use by default
+	print '<tr>';
+	print '<td>' . $langs->trans("DefaultModel") . '</td>';
+	print '<td colspan="2">';
+	$liste = ModelePDFPropales::liste_modeles($db);
+	print $form->selectarray('model', $liste, ($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : $conf->global->PROPALE_ADDON_PDF));
+	print "</td></tr>";
+
+	// Public note
+	print '<tr>';
+	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td valign="top" colspan="2">';
+	$note_public = '';
+	if (is_object($objectsrc)) 	// Take value from source object
 	{
-		$formproject = new FormProjets($db);
+		$note_public = $objectsrc->note_public;
+	}
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	print $doleditor->Create(1);
 
-		$projectid = 0;
-		if ($origin == 'project')
-			$projectid = ($originid ? $originid : 0);
-
+	// Private note
+	if (empty($user->societe_id))
+	{
 		print '<tr>';
-		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
-
-		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-		if ($numprojet == 0) {
-			$langs->load("projects");
-			print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create">' . $langs->trans("AddProject") . '</a>';
+		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td valign="top" colspan="2">';
+		$note_private = '';
+		if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) 		// Take value from source object
+		{
+			$note_private = $objectsrc->note_private;
 		}
-		print '</td>';
-		print '</tr>';
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		print $doleditor->Create(1);
+		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
+		print '</td></tr>';
 	}
 
 	// Other attributes
@@ -2281,10 +2307,13 @@ if ($action == 'create')
 
 		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-		/*
-		 * Linked object block
-		*/
-		$somethingshown = $object->showLinkedObjectBlock();
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object);
+		if ($linktoelem) print '<br>'.$linktoelem;
+
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 		// print '</td><td valign="top" width="50%">';
@@ -2311,8 +2340,8 @@ if ($action == 'create')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
-		$file = $fileparams ['fullname'];
+		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+		$file = $fileparams['fullname'];
 
 		// Define output language
 		$outputlangs = $langs;
@@ -2336,8 +2365,8 @@ if ($action == 'create')
 				dol_print_error($db, $result);
 				exit();
 			}
-			$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
-			$file = $fileparams ['fullname'];
+			$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
 		}
 
 		print '<br>';

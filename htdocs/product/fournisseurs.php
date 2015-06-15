@@ -450,7 +450,7 @@ if ($id || $ref)
 				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
-				print $form->select_PriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");
+				print $form->selectPriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");
 				print '</td></tr>';
 
 				// Discount qty min
@@ -502,10 +502,15 @@ if ($id || $ref)
 
 			if ($action != 'add_price' && $action != 'updateprice')
 			{
-				if ($user->rights->produit->creer || $user->rights->service->creer)
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+				if (empty($reshook))
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
-					print $langs->trans("AddSupplierPrice").'</a>';
+					if ($user->rights->produit->creer || $user->rights->service->creer)
+					{
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$product->id.'&amp;action=add_price">';
+						print $langs->trans("AddSupplierPrice").'</a>';
+					}
 				}
 			}
 

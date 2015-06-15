@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - productbatch
+ManageLotSerial=Use lot/serial number
+ProductStatusOnBatch=Yes (lot/serial required)
+ProductStatusNotOnBatch=No (lot/serial not used)
+Batch=Lot/Serial
+batch_number=Lot/Serial number
+DetailBatchNumber=Lot/Serial details
+printBatch=Lot/Serial: %s

@@ -121,7 +121,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		$pathtodelete=$listofpaths[$keytodelete];
 		$filetodelete=$listofnames[$keytodelete];
 		$result = dol_delete_file($pathtodelete,1);
-		if ($result >= 0)
+		if ($result)
 		{
 			setEventMessage($langs->trans("FileWasRemoved"), $filetodelete);
 

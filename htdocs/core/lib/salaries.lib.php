@@ -42,6 +42,15 @@ function salaries_prepare_head($object) {
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'salaries');
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$upload_dir = $conf->salaries->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	$head[$h][2] = 'documents';
+	$h++;
+
     /*
 	$head[$h][0] = DOL_URL_ROOT.'/compta/salaries/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");

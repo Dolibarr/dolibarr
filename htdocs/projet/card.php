@@ -39,6 +39,7 @@ $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
+$status=GETPOST('status','int');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -139,6 +140,7 @@ if (empty($reshook))
 	        $object->datec=dol_now();
 	        $object->date_start=$date_start;
 	        $object->date_end=$date_end;
+	        $object->statuts         = $status;
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -167,8 +169,16 @@ if (empty($reshook))
 	        {
 	            $db->commit();
 
-	            header("Location:card.php?id=".$object->id);
-	            exit;
+        		if ($backtopage)
+				{
+			    	header("Location: ".$backtopage.'&projectid='.$object->id);
+			    	exit;
+				}
+				else
+				{
+	            	header("Location:card.php?id=".$object->id);
+	            	exit;
+				}
 	        }
 	        else
 	        {
@@ -301,7 +311,7 @@ if (empty($reshook))
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -310,7 +320,7 @@ if (empty($reshook))
 	    $result = $object->setClose($user);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -319,7 +329,7 @@ if (empty($reshook))
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -329,14 +339,14 @@ if (empty($reshook))
 	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
-	        header("Location: index.php");
+	        setEventMessage($langs->trans("RecordDeleted"), 'info');
+	    	header("Location: index.php");
 	        exit;
 	    }
 	    else
 	    {
 	        dol_syslog($object->error,LOG_DEBUG);
-	        setEventMessage($object->error,'errors');
-	        setEventMessage($object->errors,'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -443,6 +453,15 @@ if ($action == 'create' && $user->rights->projet->creer)
     }
     else print $text;
     print '</td></tr>';
+
+    // Status
+    if ($status != '')
+    {
+    	print '<tr><td>'.$langs->trans("Status").'</td><td>';
+    	print '<input type="hidden" name="status" value="'.$status.'">';
+    	print $object->LibStatut($status, 4);
+	    print '</td></tr>';
+    }
 
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
@@ -582,7 +601,7 @@ else
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
         $text=$form->select_thirdparty_list($object->thirdparty->id,'socid',$filteronlist,1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-        print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+        print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
         print '</td></tr>';
 
         // Visibility
@@ -698,7 +717,7 @@ else
 	if ($action == 'edit' && $userWrite > 0)
 	{
 	    print '<div align="center">';
-    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; &nbsp; ';
+    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     	print '</div>';
 	}
@@ -718,11 +737,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
             }
         }
 
@@ -731,11 +750,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
             }
         }
 
@@ -744,11 +763,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a></div>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
             }
         }
 
@@ -757,11 +776,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
             }
         }
 
@@ -770,11 +789,11 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a></div>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
             }
         }
 
@@ -783,11 +802,11 @@ else
         {
             if ($userDelete > 0)
             {
-                print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
             }
             else
             {
-                print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
             }
         }
     }

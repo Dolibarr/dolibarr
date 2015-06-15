@@ -1,24 +1,24 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
-* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
-* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       \file       htdocs/user/perms.php
@@ -256,19 +256,19 @@ else
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td>';
 print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>'."\n";
 
 // Lastname
-print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Lastname").'</td>';
 print '<td>'.$fuser->lastname.'</td>';
 print '</tr>'."\n";
 
 // Firstname
-print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Firstname").'</td>';
 print '<td>'.$fuser->firstname.'</td>';
 print '</tr>'."\n";
 

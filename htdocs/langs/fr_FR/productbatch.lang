@@ -1,7 +1,7 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
 ProductStatusOnBatch=Oui (Lot/Série requis)
-ProductStatusNotOnBatch=No (Lot/Série non utilisé)
+ProductStatusNotOnBatch=Non (Lot/Série non utilisé)
 ProductStatusOnBatchShort=Oui
 ProductStatusNotOnBatchShort=Non
 Batch=Lot/Série

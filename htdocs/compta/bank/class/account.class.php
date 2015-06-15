@@ -41,6 +41,7 @@ class Account extends CommonObject
     /**
      * @var	int		Use id instead of rowid
      * @deprecated
+     * @see id
      */
     var $rowid;
     var $id;
@@ -240,6 +241,11 @@ class Account extends CommonObject
      */
     function addline($date, $oper, $label, $amount, $num_chq, $categorie, $user, $emetteur='',$banque='')
     {
+	    // Deprecatîon warning
+	    if (is_numeric($oper)) {
+		    dol_syslog(__METHOD__ . ": using numeric operations is deprecated", LOG_WARNING);
+	    }
+
         // Clean parameters
         $emetteur=trim($emetteur);
         $banque=trim($banque);

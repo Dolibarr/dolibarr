@@ -48,7 +48,16 @@ class FormMail extends Form
 
     var $withsubstit;			// Show substitution array
     var $withfrom;
-    var $withto;				// Show recipient emails
+	/**
+	 * @var int
+	 * @deprecated Fill withto with array before calling method.
+	 * @see withto
+	 */
+	public $withtosocid;
+	/**
+	 * @var int|int[]
+	 */
+    public $withto;				// Show recipient emails
     var $withtofree;			// Show free text for recipient emails
     var $withtocc;
     var $withtoccc;
@@ -275,7 +284,7 @@ class FormMail extends Form
         	$out.= "\n<!-- Debut form mail -->\n";
         	if ($this->withform == 1)
         	{
-        		$out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
+        		$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
         		$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
@@ -703,6 +712,23 @@ class FormMail extends Form
         	$out.= '</table>'."\n";
 
         	if ($this->withform == 1) $out.= '</form>'."\n";
+
+        	// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTER is set
+        	if (! empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY))
+        	{
+	        	$out.= '<script type="text/javascript" language="javascript">';
+		        $out.= 'jQuery(document).ready(function () {';
+				$out.= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is calle at every key pressed ! */
+	    						var code = e.keyCode || e.which;
+	    						if (code == 13) {
+	        						e.preventDefault();
+	        						return false;
+	    						}
+							});';
+				$out.='		})';
+				$out.= '</script>';
+        	}
+
         	$out.= "<!-- Fin form mail -->\n";
 
         	return $out;
