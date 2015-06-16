@@ -226,11 +226,11 @@ class FormProjets
 							$out.= $resultat;
 
 							$outarray[] = array(
-								'key' => (int)$obj->rowid,
+								'key' => (int) $obj->rowid,
 								'value' => $obj->ref,
 								'ref' => $obj->ref,
 								'label' => $labeltoshow,
-								'disabled' => (bool)$disabled
+								'disabled' => (bool) $disabled
 							);
 						}
 					}
