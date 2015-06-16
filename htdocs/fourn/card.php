@@ -138,6 +138,11 @@ if ($object->id > 0)
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
+	// Commercial name
+	print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
+	print $object->commercial_name;
+	print "</td></tr>";
+
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';

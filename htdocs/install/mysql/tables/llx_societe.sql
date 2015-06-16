@@ -4,6 +4,7 @@
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
+-- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@ create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
   nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
+  commercial_name          varchar(128) NULL,
   entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
 
   ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)

@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is freei software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
+$sql = "SELECT s.rowid, s.nom as name, s.commercial_name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.canvas";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -120,7 +121,13 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search(
+		array(
+			's.nom',
+			's.commercial_name'
+		),
+		$search_company
+	);
 }
 if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
@@ -256,6 +263,7 @@ if ($result)
         $thirdpartystatic->code_client=$obj->code_client;
         $thirdpartystatic->canvas=$obj->canvas;
         $thirdpartystatic->status=$obj->status;
+        $thirdpartystatic->commercial_name=$obj->commercial_name;
         print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
 		print '<td>'.$obj->zip.'</td>';

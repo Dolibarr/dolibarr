@@ -98,7 +98,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.datec, st.libelle as stcomm, s.prefix_comm, s.status as status, ";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.commercial_name, s.zip, s.town, s.datec, st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 // Add fields for extrafields
@@ -122,7 +122,13 @@ if ($socname) {
 	$sortorder = "ASC";
 }
 if ($search_name) {
-	$sql .= natural_search('s.nom', $search_name);
+	$sql .= natural_search(
+		array(
+			's.nom',
+			's.commercial_name'
+		),
+		$search_name
+	);
 }
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
@@ -237,6 +243,7 @@ if ($resql)
         $thirdpartystatic->id=$obj->socid;
         $thirdpartystatic->name=$obj->name;
         $thirdpartystatic->status=$obj->status;
+        $thirdpartystatic->commercial_name=$obj->commercial_name;
 
 		print "<tr ".$bc[$var].">";
 		print '<td>';

@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,7 +209,7 @@ $prospectstatic=new Client($db);
 $prospectstatic->client=2;
 $prospectstatic->loadCacheOfProspStatus();
 
-$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.commercial_name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
 $sql.= " s.prefix_comm, s.fk_prospectlevel, s.fk_stcomm as stcomm_id,";
 $sql.= " st.libelle as stcomm_label,";
 $sql.= " d.nom as departement";
@@ -228,7 +229,15 @@ if ($catid > 0)           $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)         $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom)     $sql .= natural_search('s.nom', $search_nom);
+if ($search_nom) {
+	$sql .= natural_search(
+		array(
+			's.nom',
+			's.commercial_name'
+		),
+		$search_nom
+	);
+}
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape(strtolower($search_zipcode))."%'";
 if ($search_town)    $sql .= natural_search('s.town', $search_town);
 if ($search_state)   $sql .= natural_search('d.nom', $search_state);
@@ -427,6 +436,7 @@ if ($resql)
         $prospectstatic->code_client=$obj->code_client;
         $prospectstatic->client=$obj->client;
         $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
+        $prospectstatic->commercial_name=$obj->commercial_name;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
         print "<td>".$obj->zip."</td>";
