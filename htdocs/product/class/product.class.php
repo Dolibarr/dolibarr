@@ -3447,6 +3447,12 @@ class Product extends CommonObject
 			{
 				dol_delete_file($dirthumb.$photo_vignette);
 			}
+
+			$photo_vignette=preg_replace('/'.$regs[0].'/i','',$filename).'_mini'.$regs[0];
+			if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
+			{
+				dol_delete_file($dirthumb.$photo_vignette);
+			}
 		}
 	}
 
