@@ -1096,7 +1096,7 @@ div.blockvmenusearch
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
-    padding-left: 0px;
+    padding-left: 5px;
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
