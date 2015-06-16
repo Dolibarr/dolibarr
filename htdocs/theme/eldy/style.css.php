@@ -1096,7 +1096,7 @@ div.blockvmenusearch
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
-    padding-left: 5px;
+    padding-left: 0px;
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
@@ -1115,8 +1115,11 @@ div.blockvmenusearch
 }
 
 div.blockvmenusearch > form > div {
-	/* min-height: 40px; */
+/* min-height: 40px; */
 	padding-top: 3px;
+}
+div.blockvmenusearch > form > div > label {
+	padding-right: 2px;
 }
 
 div.blockvmenuhelp
