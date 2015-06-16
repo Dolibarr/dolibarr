@@ -918,7 +918,7 @@ class Contact extends CommonObject
 		$result='';
         $label = '<u>' . $langs->trans("ShowContact") . '</u>';
         $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
-        //if ($this->cibility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
         $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
         $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',array($this->phone_pro,$this->phone_mobile,$this->phone_perso));
