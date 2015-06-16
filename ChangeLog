@@ -17,6 +17,7 @@ For users:
 - New: Add hidden option MAXTABS_IN_CARD.
 - New: A default label is suggested for stock correction and transfer instead of empty string.
 - Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
+- Fix: [Bug #3039] select date problem with mobile device
 - Add Weighted average price as default price for buying price for margin calculation. Add option 
   MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
 - Introduce option MAIN_HTML_TITLE to start to control format of html title content.
