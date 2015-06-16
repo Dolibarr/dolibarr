@@ -78,6 +78,9 @@ foreach($fulltree as $key => $val)
 	$userstatic->firstname=$val['firstname'];
 	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
+    $userstatic->email=$val['email'];
+    $userstatic->gender=$val['gender'];
+	$userstatic->societe_id=$val['fk_soc'];
 
 	$entity=$val['entity'];
 	$entitystring='';
