@@ -149,7 +149,7 @@ abstract class CommonDocGenerator
 
         $array_thirdparty = array(
             'company_name'=>$object->name,
-	        'company_commercial_name' => $object->commercial_name,
+	        'company_name_alias' => $object->name_alias,
             'company_email'=>$object->email,
             'company_phone'=>$object->phone,
             'company_fax'=>$object->fax,

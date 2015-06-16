@@ -304,8 +304,8 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
 
 	// On peut utiliser le nom de la societe du contact
 	if ($thirdparty instanceof Societe) {
-		if (!empty($thirdparty->commercial_name)) {
-			$socname = $thirdparty->commercial_name."\n";
+		if (!empty($thirdparty->name_alias)) {
+			$socname = $thirdparty->name_alias."\n";
 		}
 
 		$socname .= $thirdparty->name;

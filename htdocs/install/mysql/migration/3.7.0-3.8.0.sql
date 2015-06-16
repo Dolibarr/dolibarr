@@ -287,8 +287,8 @@ ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_c_tva integer NULL;
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
--- Commercial name
-ALTER TABLE llx_societe ADD COLUMN commercial_name varchar(128) NULL;
+-- Alias names (commercial, trademark or alias names)
+ALTER TABLE llx_societe ADD COLUMN name_alias varchar(128) NULL;
 
 create table llx_commande_fournisseurdet_extrafields
 (

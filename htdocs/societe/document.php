@@ -118,9 +118,9 @@ if ($object->id)
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
-	// Commercial name
-	print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
-	print $object->commercial_name;
+	// Alias names (commercial, trademark or alias names)
+	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print $object->name_alias;
 	print "</td></tr>";
 
 	// Prefix

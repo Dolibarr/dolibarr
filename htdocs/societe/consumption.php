@@ -120,9 +120,9 @@ print '<td colspan="3">';
 print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 print '</td></tr>';
 
-// Commercial name
-print '<tr id="commercial_name"><td valign="top"><label for="commercial_name_input">'.$langs->trans('CommercialName').'</label></td>';
-print '<td colspan="3"><input type="text" name="commercial_name" id="commercial_name_input" value="'.dol_escape_htmltag($object->commercial_name).'" size="32"></td></tr>';
+// Alias names (commercial, trademark or alias names)
+print '<tr id="name_alias"><td valign="top"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {

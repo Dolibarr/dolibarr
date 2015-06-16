@@ -209,7 +209,7 @@ $prospectstatic=new Client($db);
 $prospectstatic->client=2;
 $prospectstatic->loadCacheOfProspStatus();
 
-$sql = "SELECT s.rowid as socid, s.nom as name, s.commercial_name, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.datec, s.status as status, s.code_client, s.client,";
 $sql.= " s.prefix_comm, s.fk_prospectlevel, s.fk_stcomm as stcomm_id,";
 $sql.= " st.libelle as stcomm_label,";
 $sql.= " d.nom as departement";
@@ -233,7 +233,7 @@ if ($search_nom) {
 	$sql .= natural_search(
 		array(
 			's.nom',
-			's.commercial_name'
+			's.name_alias'
 		),
 		$search_nom
 	);
@@ -436,7 +436,7 @@ if ($resql)
         $prospectstatic->code_client=$obj->code_client;
         $prospectstatic->client=$obj->client;
         $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
-        $prospectstatic->commercial_name=$obj->commercial_name;
+        $prospectstatic->name_alias=$obj->name_alias;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
         print "<td>".$obj->zip."</td>";

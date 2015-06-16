@@ -92,7 +92,7 @@ if ($mode == 'search')
 			's.email',
 			's.url',
 			's.siren',
-			's.commercial_name'
+			's.name_alias'
 		);
 
 		if (!empty($conf->barcode->enabled)) {

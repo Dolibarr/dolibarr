@@ -137,9 +137,9 @@ print '<tr><td width="25%">' . $langs->trans("ThirdPartyName") . '</td><td colsp
 print $form->showrefnav($soc, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
 print '</td></tr>';
 
-// Commercial name
-print '<tr><td valign="top">'.$langs->trans('CommercialName').'</td><td colspan="3">';
-print $soc->commercial_name;
+// Alias names (commercial, trademark or alias names)
+print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+print $soc->name_alias;
 print "</td></tr>";
 
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
