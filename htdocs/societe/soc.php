@@ -159,10 +159,6 @@ if (empty($reshook))
 				}
 
 				//External modules should update their ones too
-				$hookmanager->initHooks(array(
-					'mergethirds'
-				));
-
 				if (!$errors)
 				{
 					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(

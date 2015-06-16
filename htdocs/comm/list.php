@@ -92,6 +92,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 if ($search_status=='') $search_status=1; // always display activ customer first
 
+
 /*
  * view
  */
@@ -202,10 +203,9 @@ if ($result)
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
-    print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre('');
     $parameters=array();
     $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-
     print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -245,7 +245,8 @@ if ($result)
     $parameters=array();
     $formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 
-    print "</tr>\n";
+    print '</tr>'."\n";
+
 
 	$var=True;
 
@@ -281,13 +282,13 @@ if ($result)
         print "</tr>\n";
 		$i++;
 	}
-	//print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
-	print "</table>\n";
-	print "</form>\n";
 	$db->free($result);
 
 	$parameters=array('sql' => $sql);
 	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+
+	print "</table>\n";
+	print "</form>\n";
 }
 else
 {
