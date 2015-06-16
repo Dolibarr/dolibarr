@@ -28,8 +28,7 @@
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');
 
 $res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';
-if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // For custom directory
+if (! $res && file_exists("../../main.inc.php")) $res=include '../../main.inc.php';
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/vendor/autoload.php';
@@ -48,7 +47,6 @@ if (empty($conf->global->MAIN_MODULE_API))
 }
 
 use \Luracast\Restler\Defaults;
-Defaults::setProperty('authenticationMethod','_isAllowed');
 
 $api = new DolibarrApi($db);
 
@@ -113,12 +111,12 @@ foreach ($modulesdir as $dir)
                                 $classname=$reg[1];
                                 $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
                                 require_once $dir_part.$file_searched;
-                                if(class_exists($classname))
+                                if(class_exists($classname)) {
                                     $api->r->addAPIClass($classname,'');
+                                }
                             }
                         }
                     }
-
                 }
             }
         }
