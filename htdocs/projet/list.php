@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -99,6 +99,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$smonth="";
 	$syear="";
 }
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('projectlist'));
+
+
+
 
 /*
  * View
@@ -212,10 +218,7 @@ if ($resql)
 	if ($mine) $text=$langs->trans('MyProjects');
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num,'','title_project');
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-
-	print '<table class="noborder" width="100%">';
-
+	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
 	// Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
@@ -242,12 +245,15 @@ if ($resql)
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="10">';
+		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</td></tr>';
+    	$parameters=array();
+    	$formconfirm=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print '</div>';
 	}
 
+
+	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
@@ -259,6 +265,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
+    $parameters=array();
+    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -300,6 +308,11 @@ if ($resql)
     print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
+
+    $parameters=array();
+    $formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print '</tr>'."\n";
+
 
     while ($i < $num)
     {
@@ -396,21 +409,29 @@ if ($resql)
     		$projectstatic->statut = $objp->fk_statut;
     		print '<td align="right" colspan="2">'.$projectstatic->getLibStatut(5).'</td>';
 
+        	$parameters=array('obj' => $objp);
+        	$formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+
     		print "</tr>\n";
 
     	}
 
     	$i++;
-    }
 
-	$db->free($resql);
+    }
+    $db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+
+	print "</table>\n";
+	print "</form>\n";
 }
 else
 {
 	dol_print_error($db);
 }
 
-print "</table>";
 
 
 llxFooter();

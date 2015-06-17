@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
+ * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,6 +226,11 @@ if ($id > 0)
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
+
+	// Alias names (commercial, trademark or alias names)
+	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print $object->name_alias;
+	print "</td></tr>";
 
 	// Prospect/Customer
 	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';

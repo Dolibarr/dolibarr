@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015		Regis Houssin			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,27 +33,22 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$actionsave=GETPOST("save");
+$action=GETPOST("action");
 
-// Sauvegardes parametres
-if ($actionsave)
+//Activate ProfId
+if ($action == 'setproductionmode')
 {
-    $i=0;
+	$status = GETPOST('status','alpha');
 
-    $db->begin();
-
-    $i+=dolibarr_set_const($db,'API_KEY',trim(GETPOST("API_KEY")),'chaine',0,'',$conf->entity);
-
-    if ($i >= 1)
-    {
-        $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
-    }
-    else
-    {
-        $db->rollback();
-        setEventMessage($langs->trans("Error"), 'errors');
-    }
+	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 
@@ -69,7 +64,7 @@ print_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
 print $langs->trans("ApiDesc")."<br>\n";
 print "<br>\n";
 
-print '<form name="apisetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+//print '<form name="apisetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
 
@@ -80,22 +75,24 @@ print "<td>&nbsp;</td>";
 print "</tr>";
 
 print '<tr class="impair">';
-print '<td class="fieldrequired">'.$langs->trans("KeyForApiAccess").'</td>';
-print '<td><input type="text" class="flat" id="API_KEY" name="API_KEY" value="'. (GETPOST('API_KEY')?GETPOST('API_KEY'):(! empty($conf->global->API_KEY)?$conf->global->API_KEY:'')) . '" size="40">';
-if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-print '</td>';
+print '<td>'.$langs->trans("ApiProductionMode").'</td>';
+$production_mode=(empty($conf->global->API_PRODUCTION_MODE)?false:true);
+if ($production_mode)
+{
+    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
+    print img_picto($langs->trans("Activated"),'switch_on');
+    print '</a></td>';
+}
+else
+{
+    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
+    print img_picto($langs->trans("Disabled"),'switch_off');
+    print '</a></td>';
+}
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '</table>';
-
-print '<br><div class="center">';
-print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
-print '</div>';
-
-print '</form>';
-
 print '<br><br>';
 
 // API endpoint
@@ -111,27 +108,9 @@ $url=DOL_MAIN_URL_ROOT.'/public/api/explorer/index.html';
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 
 print '<br>';
-
-
 print '<br>';
 print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules.php');
 
-if (! empty($conf->use_javascript_ajax))
-{
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#API_KEY").val(token);
-				});
-            });
-    });';
-	print '</script>';
-}
 
 
 llxFooter();

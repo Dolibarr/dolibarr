@@ -159,10 +159,6 @@ if (empty($reshook))
 				}
 
 				//External modules should update their ones too
-				$hookmanager->initHooks(array(
-					'mergethirds'
-				));
-
 				if (!$errors)
 				{
 					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
@@ -251,7 +247,9 @@ if (empty($reshook))
         else
         {
             $object->name              = GETPOST('name', 'alpha');
+	        $object->name_alias   = GETPOST('name_alias');
         }
+
         $object->address               = GETPOST('address', 'alpha');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
@@ -915,6 +913,7 @@ else
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
                         	$("#typent_id").val(0);
+							$("#name_alias").show();
                         	$("#effectif_id").val(0);
                         	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
                         	document.formsoc.private.value=0;
@@ -922,6 +921,7 @@ else
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
                         	$("#typent_id").val(id_te_private);
+							$("#name_alias").hide();
                         	$("#effectif_id").val(id_ef15);
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
@@ -1052,6 +1052,10 @@ else
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
+
+        // Alias names (commercial, trademark or alias names)
+        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	    print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
@@ -1467,6 +1471,10 @@ else
             print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
+	        // Alias names (commercial, trademark or alias names)
+	        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	        print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
+
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
@@ -1879,6 +1887,11 @@ else
         print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         print '</td>';
         print '</tr>';
+
+	    // Alias names (commercial, trademark or alias names)
+	    print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	    print $object->name_alias;
+	    print "</td></tr>";
 
         // Logo+barcode
         $rowspan=6;

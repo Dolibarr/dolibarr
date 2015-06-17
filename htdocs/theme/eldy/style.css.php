@@ -124,7 +124,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
     $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_BACKBODY='243,243,243;';
+    $conf->global->THEME_ELDY_BACKBODY='243,243,243';
     $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
@@ -1112,6 +1112,14 @@ div.blockvmenusearch
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
+}
+
+div.blockvmenusearch > form > div {
+/* min-height: 40px; */
+	padding-top: 3px;
+}
+div.blockvmenusearch > form > div > label {
+	padding-right: 2px;
 }
 
 div.blockvmenuhelp

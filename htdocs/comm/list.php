@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is freei software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +92,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 if ($search_status=='') $search_status=1; // always display activ customer first
 
+
 /*
  * view
  */
@@ -102,7 +104,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
+$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.zip, s.town, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.canvas";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -120,7 +122,13 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search(
+		array(
+			's.nom',
+			's.name_alias'
+		),
+		$search_company
+	);
 }
 if ($search_zipcode) $sql.= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) {
@@ -195,10 +203,9 @@ if ($result)
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
-    print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre('');
     $parameters=array();
     $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-
     print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -238,7 +245,8 @@ if ($result)
     $parameters=array();
     $formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 
-    print "</tr>\n";
+    print '</tr>'."\n";
+
 
 	$var=True;
 
@@ -256,6 +264,7 @@ if ($result)
         $thirdpartystatic->code_client=$obj->code_client;
         $thirdpartystatic->canvas=$obj->canvas;
         $thirdpartystatic->status=$obj->status;
+        $thirdpartystatic->name_alias=$obj->name_alias;
         print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
 		print '<td>'.$obj->zip.'</td>';
@@ -273,13 +282,13 @@ if ($result)
         print "</tr>\n";
 		$i++;
 	}
-	//print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
-	print "</table>\n";
-	print "</form>\n";
 	$db->free($result);
 
 	$parameters=array('sql' => $sql);
 	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+
+	print "</table>\n";
+	print "</form>\n";
 }
 else
 {

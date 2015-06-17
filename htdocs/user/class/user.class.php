@@ -1816,14 +1816,15 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option			On what the link point to
-     *  @param  integer $infologin      Add connection info to the tooltip
-     *  @param	integer	$notooltip		1=Disable tooltip
-     *  @param	int		$maxlen			Max length of visible user name
-	 *	@return	string					String with URL
+	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option				On what the link point to
+     *  @param  integer $infologin      	Add connection info to the tooltip
+     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	int		$maxlen				Max length of visible user name
+     *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
+	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
+	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1841,11 +1842,11 @@ class User extends CommonObject
         $label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
         if (! empty($this->admin))
         $label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-        if (! empty($this->societe_id))	// Add thirdparty for external users
+        if (! empty($this->societe_id) )	// Add thirdparty for external users
         {
             $thirdpartystatic = new Societe($db);
             $thirdpartystatic->fetch($this->societe_id);
-            $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+            if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
             $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
@@ -2340,7 +2341,7 @@ class User extends CommonObject
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 		{
@@ -2360,11 +2361,14 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->users[$obj->rowid]['id'] = $obj->rowid;
 				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
+				$this->users[$obj->rowid]['fk_soc'] = $obj->fk_soc;
 				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
 				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
 				$this->users[$obj->rowid]['login'] = $obj->login;
 				$this->users[$obj->rowid]['statut'] = $obj->statut;
 				$this->users[$obj->rowid]['entity'] = $obj->entity;
+				$this->users[$obj->rowid]['email'] = $obj->email;
+				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$i++;
 			}
 		}

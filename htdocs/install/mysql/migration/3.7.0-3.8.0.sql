@@ -304,7 +304,8 @@ create table llx_payment_expensereport
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
-
+-- Alias names (commercial, trademark or alias names)
+ALTER TABLE llx_societe ADD COLUMN name_alias varchar(128) NULL;
 
 create table llx_commande_fournisseurdet_extrafields
 (

@@ -83,7 +83,7 @@ $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method=
 
 print_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.gender,";
 $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
@@ -168,8 +168,21 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
+		$userstatic->id=$obj->id;
+		$userstatic->ref=$obj->label;
+		$userstatic->login=$obj->login;
+		$userstatic->statut=$obj->statut;
+	    $userstatic->email=$obj->email;
+	    $userstatic->gender=$obj->gender;
+	    $userstatic->societe_id=$obj->fk_soc;
+	    $userstatic->firstname='';
+		$userstatic->lastname=$obj->login;
+
+		$li=$userstatic->getNomUrl(1,'',0,0,24,1);
+
         print "<tr ".$bc[$var].">";
-        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
+        print '<td>';
+        print $li;
         if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
         {
           	print img_picto($langs->trans("SuperAdministrator"),'redstar');

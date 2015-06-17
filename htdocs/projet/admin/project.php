@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013	Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,6 +280,14 @@ else if ($action == 'setmodtask')
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROJECT_TASK_ADDON",$value,'chaine',0,'',$conf->entity);
+}
+elseif ($action == 'updateoptions') {
+	if (GETPOST('PROJECT_USE_SEARCH_TO_SELECT')) {
+		$companysearch = GETPOST('activate_PROJECT_USE_SEARCH_TO_SELECT', 'alpha');
+		if (dolibarr_set_const($db, "PROJECT_USE_SEARCH_TO_SELECT", $companysearch, 'chaine', 0, '', $conf->entity)) {
+			$conf->global->PROJECT_USE_SEARCH_TO_SELECT = $companysearch;
+		}
+	}
 }
 
 
@@ -812,6 +821,47 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table><br/>';
+
+print_titre($langs->trans("Other"));
+
+// Other options
+$form=new Form($db);
+$var=true;
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="updateoptions">';
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print "<td>".$langs->trans("Parameters")."</td>\n";
+print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td width="80">&nbsp;</td></tr>'."\n";
+
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("UseSearchToSelectProject").'</td>';
+if (! $conf->use_javascript_ajax)
+{
+	print '<td class="nowrap" align="right" colspan="2">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+}
+else
+{
+	print '<td width="60" align="right">';
+	$arrval=array('0'=>$langs->trans("No"),
+		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",1).')',
+		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
+		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
+	);
+	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+}
+print '</tr></table></form>';
 
 $db->close();
 

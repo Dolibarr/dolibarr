@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load("trips");
 $langs->load("bills");
+$langs->load("mails");
 
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
