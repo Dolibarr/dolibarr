@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid=GETPOST("rowid");
+$chid=GETPOST("id");
 $action=GETPOST('action');
 $amounts = array();
 
@@ -50,7 +50,7 @@ if ($action == 'add_payment')
 
 	if ($_POST["cancel"])
 	{
-		$loc = DOL_URL_ROOT.'/expensereport/card.php?rowid='.$chid;
+		$loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -129,7 +129,7 @@ if ($action == 'add_payment')
     	    if (! $error)
             {
                 $db->commit();
-                $loc = DOL_URL_ROOT.'/expensereport/card.php?rowid='.$chid;
+                $loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
             }
@@ -160,7 +160,7 @@ if (GETPOST("action") == 'create')
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($chid);
 
-	$total = $expensereport->amount;
+	$total = $expensereport->total_ttc;
 
 	print_fiche_titre($langs->trans("DoPayment"));
 
@@ -171,7 +171,7 @@ if (GETPOST("action") == 'create')
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="rowid" value="'.$chid.'">';
+	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 	
@@ -181,9 +181,9 @@ if (GETPOST("action") == 'create')
 
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ExpenseReport").'</td>';
 
-	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/card.php?rowid='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"2\">".dol_print_date($expensereport->date,'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Amount")."</td><td colspan=\"2\">".price($expensereport->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$chid.'">'.$expensereport->ref.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans("Period").'</td><td colspan="2">'.get_date_range($expensereport->date_debut,$expensereport->date_fin,"",$langs,0).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
@@ -215,7 +215,7 @@ if (GETPOST("action") == 'create')
 	print '</tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
+	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
 	print '</td></tr>';
@@ -261,14 +261,14 @@ if (GETPOST("action") == 'create')
 
 		print "<tr ".$bc[$var].">";
 
-		print '<td align="right">'.price($objp->amount)."</td>";
+		print '<td align="right">'.price($objp->total_ttc)."</td>";
 
 		print '<td align="right">'.price($sumpaid)."</td>";
 
-		print '<td align="right">'.price($objp->amount - $sumpaid)."</td>";
+		print '<td align="right">'.price($objp->total_ttc - $sumpaid)."</td>";
 
 		print '<td align="center">';
-		if ($sumpaid < $objp->amount)
+		if ($sumpaid < $objp->total_ttc)
 		{
 			$namef = "amount_".$objp->id;
 			print '<input type="text" size="8" name="'.$namef.'">';

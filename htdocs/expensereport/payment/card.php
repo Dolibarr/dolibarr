@@ -196,7 +196,7 @@ print '</table>';
  */
 
 $disable_delete = 0;
-$sql = 'SELECT er.rowid as did, er.paid, er.amount as er_amount, per.amount';
+$sql = 'SELECT er.rowid as did, er.paid, er.total_ttc, per.amount';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql.= ' WHERE per.fk_expensereport = er.rowid';
 $sql.= ' AND er.entity = '.$conf->entity;
@@ -234,7 +234,7 @@ if ($resql)
 			print $expensereport->getNomUrl(1);
 			print "</td>\n";
 			// Expected to pay
-			print '<td align="right">'.price($objp->d_amount).'</td>';
+			print '<td align="right">'.price($objp->total_ttc).'</td>';
 			// Status
 			print '<td align="center">'.$expensereport->getLibStatut(4,$objp->amount).'</td>';
 			// Amount paid

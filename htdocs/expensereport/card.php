@@ -1388,7 +1388,7 @@ else
 					if ($ret == 'html') print '<br>';
 				}
 
-				print '<table class="border centpercent">';
+				print '<table class="border" width="100%">';
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
@@ -1431,7 +1431,7 @@ else
 				 * Payments
 				 */
 				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-				$sql.= "c.code as type_code,c.libelle as paiement_type";
+				$sql.= "c.code as type_code,c.libelle as payment_type";
 				$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
 				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 				$sql.= ", ".MAIN_DB_PREFIX."expensereport as e";
@@ -1464,18 +1464,18 @@ else
 						print "<tr ".$bc[$var]."><td>";
 						print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 						print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-							$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;
-										   print "<td>".$labeltype.' '.$object->num_payment."</td>\n";
-						print '<td align="right">'.price($objp->total_ttc)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+							$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->payment_type;
+						print "<td>".$labeltype.' '.$object->num_payment."</td>\n";
+						print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 						print "</tr>";
-						$totalpaid += $objp->total_ttc;
+						$totalpaid += $objp->amount;
 						$i++;
 					}
 
 					if ($object->paid == 0)
 					{
 						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaid)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->total_ttc)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 
 						$remaintopay = $object->total_ttc - $totalpaid;
 
@@ -1863,8 +1863,6 @@ else
 
 }
 
-
-
 /*
  * Barre d'actions
  */
@@ -1978,7 +1976,7 @@ if ($action != 'create' && $action != 'edit')
 	 *	ET user à droit de "to_paid"
 	 *	Afficher : "Annuler" / "Payer" / "Supprimer"
 	 */
-	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && round($remaintopay) == 0 && $object->paid == 0 && $object->fk_statut == 5)
+	if ($user->rights->expensereport->to_paid && $object->fk_statut == 5)
 	{
 		// Pay
 		if ($remaintopay == 0)
@@ -1987,7 +1985,7 @@ if ($action != 'create' && $action != 'edit')
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?rowid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$object->id.'">'.$langs->trans('TO_PAID').'</a>';
 
@@ -1996,10 +1994,10 @@ if ($action != 'create' && $action != 'edit')
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 		}
-
+		
+		// Delete
 		if($user->rights->expensereport->supprimer)
 		{
-			// Delete
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}

@@ -42,7 +42,7 @@ class PaymentExpenseReport extends CommonObject
 	var $datep='';
     var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
-	var $fk_typepayment;
+	var $paymenttype;
 	var $num_payment;
 	var $note;
 	var $fk_bank;
@@ -84,7 +84,7 @@ class PaymentExpenseReport extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_expensereport)) $this->fk_expensereport=trim($this->fk_expensereport);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
+		if (isset($this->fk_typepayment))	$this->paymenttype=trim($this->paymenttype);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
@@ -109,7 +109,7 @@ class PaymentExpenseReport extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
-			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
+			$sql.= " fk_c_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";

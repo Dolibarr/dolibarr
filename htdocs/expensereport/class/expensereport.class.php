@@ -50,12 +50,13 @@ class ExpenseReport extends CommonObject
 	var $status;
 	var $fk_statut;		// -- 1=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
 	var $fk_c_paiement;
+	var $paid;
 
 	var $user_author_infos;
 	var $user_validator_infos;
 
-	var $libelle_paiement;
-	var $libelle_statut;
+    var $modepayment;
+    var $modepaymentid;
 	var $code_paiement;
 	var $code_statut;
 
@@ -107,6 +108,7 @@ class ExpenseReport extends CommonObject
 		$this->total_ht = 0;
 		$this->total_ttc = 0;
 		$this->total_tva = 0;
+		$this->modepaymentid = 0;
 
 		// List of language codes for status
         $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
@@ -142,6 +144,7 @@ class ExpenseReport extends CommonObject
 		$sql.= ",fk_user_validator";
 		$sql.= ",fk_statut";
 		$sql.= ",fk_c_paiement";
+		$sql.= ",paid";
 		$sql.= ",note_public";
 		$sql.= ",note_private";
 		$sql.= ") VALUES(";
@@ -155,7 +158,8 @@ class ExpenseReport extends CommonObject
 		$sql.= ", ".($user->id > 0 ? $user->id:"null");
 		$sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
 		$sql.= ", ".($this->fk_statut > 1 ? $this->fk_statut:0);
-		$sql.= ", ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
+		$sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
+		$sql.= ", 0";
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ")";
@@ -325,9 +329,10 @@ class ExpenseReport extends CommonObject
 				if ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator);
 				$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-				$this->fk_statut 		= $obj->status;
-				$this->status                     = $obj->status;
-				$this->fk_c_paiement			  = $obj->fk_c_paiement;
+				$this->fk_statut 				= $obj->status;
+				$this->status                   = $obj->status;
+				$this->fk_c_paiement			= $obj->fk_c_paiement;
+				$this->paid						= $obj->paid;
 
 				if ($this->fk_statut==5 || $this->fk_statut==6)
 				{
