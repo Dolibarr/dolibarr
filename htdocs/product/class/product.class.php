@@ -2169,7 +2169,7 @@ class Product extends CommonObject
 		$sql = "SELECT sum(d.qty), date_format(c.date_commande, '%Y%m')";
 		if ($mode == 'bynumber') $sql.= ", count(DISTINCT c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as d, ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->fournisseur->lire && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		$sql.= " AND d.fk_product =".$this->id;
 		$sql.= " AND c.fk_soc = s.rowid";
