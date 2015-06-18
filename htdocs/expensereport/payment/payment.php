@@ -57,7 +57,7 @@ if ($action == 'add_payment')
 
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
-	if (! $_POST["paymenttype"] > 0)
+	if (! $_POST["fk_typepayment"] > 0)
 	{
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
 		$error++;
@@ -99,12 +99,12 @@ if ($action == 'add_payment')
 
     		// Create a line of payments
     		$payment = new PaymentExpenseReport($db);
-    		$payment->chid         = $chid;
-    		$payment->datepaid     = $datepaid;
-    		$payment->amounts      = $amounts;   // Tableau de montant
-    		$payment->paymenttype  = $_POST["paymenttype"];
-    		$payment->num_payment  = $_POST["num_payment"];
-    		$payment->note         = $_POST["note"];
+    		$payment->chid           = $chid;
+    		$payment->datepaid       = $datepaid;
+    		$payment->amounts        = $amounts;   // Tableau de montant
+    		$payment->fk_typepayment = $_POST["fk_typepayment"];
+    		$payment->num_payment    = $_POST["num_payment"];
+    		$payment->note           = $_POST["note"];
 
     		if (! $error)
     		{
@@ -210,7 +210,7 @@ if (GETPOST("action") == 'create')
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST["paymenttype"])?$_POST["paymenttype"]:$expensereport->paymenttype, "paymenttype");
+	$form->select_types_paiements(isset($_POST["fk_typepayment"])?$_POST["fk_typepayment"]:$expensereport->fk_typepayment, "fk_typepayment");
 	print "</td>\n";
 	print '</tr>';
 

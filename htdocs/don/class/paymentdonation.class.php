@@ -42,7 +42,7 @@ class PaymentDonation extends CommonObject
 	var $datep='';
     var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
-	var $fk_typepayment;
+	var $typepayment;
 	var $num_payment;
 	var $note;
 	var $fk_bank;
@@ -90,7 +90,7 @@ class PaymentDonation extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_donation)) 		$this->fk_donation=trim($this->fk_donation);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
+		if (isset($this->typepayment))	    $this->typepayment=trim($this->typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);

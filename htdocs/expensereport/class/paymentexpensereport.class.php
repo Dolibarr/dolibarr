@@ -42,7 +42,7 @@ class PaymentExpenseReport extends CommonObject
 	var $datep='';
     var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
-	var $paymenttype;
+	var $fk_typepayment;
 	var $num_payment;
 	var $note;
 	var $fk_bank;
@@ -84,7 +84,7 @@ class PaymentExpenseReport extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_expensereport)) $this->fk_expensereport=trim($this->fk_expensereport);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->paymenttype=trim($this->paymenttype);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
@@ -109,11 +109,11 @@ class PaymentExpenseReport extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
-			$sql.= " fk_c_typepayment, num_payment, note, fk_user_creat, fk_bank)";
+			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql.= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -187,7 +187,7 @@ class PaymentExpenseReport extends CommonObject
 				$this->tms				= $this->db->jdate($obj->tms);
 				$this->datep			= $this->db->jdate($obj->datep);
 				$this->amount			= $obj->amount;
-				$this->fk_typepayment	= $obj->fk_typepayment;
+				$this->fk_typepayment  	= $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
 				$this->note				= $obj->note;
 				$this->fk_bank			= $obj->fk_bank;
@@ -486,7 +486,7 @@ class PaymentExpenseReport extends CommonObject
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
-                $this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
+                $this->fk_typepayment,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $amount,
                 $this->num_payment,
