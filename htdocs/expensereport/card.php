@@ -827,6 +827,18 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	}
 }
 
+if ($action == 'set_paid')
+{
+	if ($object->set_paid($id) >= 0)
+	{
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		exit;
+	}
+    else {
+	    setEventMessage($object->error, 'errors');
+    }
+}
+
 if ($action == "addline")
 {
 	$error = 0;
@@ -1988,7 +2000,11 @@ if ($action != 'create' && $action != 'edit')
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$object->id.'">'.$langs->trans('TO_PAID').'</a>';
+		
+		if ($object->statut == 1 && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+		}
 
 		// Cancel
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)

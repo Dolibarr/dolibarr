@@ -372,6 +372,36 @@ class ExpenseReport extends CommonObject
 		}
 	}
 
+    /**
+     *    Classify the expense report as paid
+     *
+     *    @param	int		$id           	    id of expense report
+     *    @param    int		$modepayment   	    mode of payment
+     *    @return   int      					<0 if KO, >0 if OK
+     */
+    function set_paid($id)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport SET fk_statut = 6";
+        $sql.= " WHERE rowid = $id AND fk_statut = 5";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->affected_rows($resql))
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
 
 	/**
 	 *	Returns the label status
