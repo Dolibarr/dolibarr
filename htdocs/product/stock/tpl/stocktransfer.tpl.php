@@ -38,7 +38,8 @@
 	        }
 	    }
 
-		print_titre($langs->trans("StockTransfer"));
+		print load_fiche_titre($langs->trans("StockTransfer"),'','title_generic.png');
+
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
