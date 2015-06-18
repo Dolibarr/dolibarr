@@ -840,7 +840,12 @@ class FormFile
 						$fileinfo = pathinfo($file['name']);
 						print '<td align="center">';
 						$minifile=$fileinfo['filename'].'_mini.'.strtolower($fileinfo['extension']);	// Thumbs are created with filename in lower case
-						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						if (image_format_supported($file['name']) > 0)
+						{
+							print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
+							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+							print '</a>';
+						}
 						else print '&nbsp;';
 						print '</td>';
 					}
@@ -848,6 +853,15 @@ class FormFile
 					// ($param must start with &)
 					print '<td align="right">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+					else
+					{
+						if (image_format_supported($file['name']) > 0)
+						{
+							// TODO Add link from photo page here
+
+
+						}
+					}
 					if ($permtodelete)
 					{
 						/*

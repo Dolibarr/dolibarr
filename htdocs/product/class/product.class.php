@@ -3552,7 +3552,8 @@ class Product extends CommonObject
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
     						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-    						if ($photo_vignette && $imgarray['height'] > $maxHeight) {
+    						if ($photo_vignette && $imgarray['height'] > $maxHeight)
+    						{
     							$return.= '<!-- Show thumb -->';
     							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
     						}
