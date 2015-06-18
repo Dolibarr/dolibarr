@@ -1294,9 +1294,6 @@ else
 
 	        $head = societe_prepare_head($object);
 
-	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
-
-
             // Load object modCodeTiers
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -1464,6 +1461,10 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
+
+
+            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+
 
             print '<table class="border" width="100%">';
 
@@ -1818,7 +1819,8 @@ else
             print '</tr>';
 
             print '</table>';
-            print '<br>';
+
+	        dol_fiche_end();
 
             print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1827,8 +1829,6 @@ else
             print '</div>';
 
             print '</form>';
-
-	        dol_fiche_end();
         }
     }
     else
