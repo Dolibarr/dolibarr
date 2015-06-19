@@ -810,10 +810,8 @@ if ($resql)
 			{
 				// Checkbox to merge
 				print '<td align="center">';
-				if (! empty($formfile->numoffiles))
+				if (! empty($formfile->infofiles['extensions']['pdf']))
 					print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
-				else
-					print '&nbsp;';
 				print '</td>' ;
 			}
 			else
