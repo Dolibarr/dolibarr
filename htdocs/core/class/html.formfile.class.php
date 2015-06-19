@@ -857,9 +857,16 @@ class FormFile
 					{
 						if (image_format_supported($file['name']) > 0)
 						{
-							// TODO Add link from photo page here
+							$permtoedit=0;
+							if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) $permtoedit=1;
+							if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) $permtoedit=1;
+							if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
 
-
+							if ($permtoedit)
+							{
+   								// Link to resize
+   			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+							}
 						}
 					}
 					if ($permtodelete)

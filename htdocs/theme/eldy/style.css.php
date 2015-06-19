@@ -2043,6 +2043,16 @@ div.pagination li.pagination span {
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
+
+  border-color: #ccc;
+
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-repeat: repeat-x;
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -2086,7 +2096,15 @@ div.pagination li a:focus,
 div.pagination li span:focus {
   color: #000;
   background-color: #eee;
-  border-color: #ddd;
+  border-color: #ccc;
+
+	background-image: -moz-linear-gradient(top, #eee, #ddd);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eee), to(#ddd));
+	background-image: -webkit-linear-gradient(top, #eee, #ddd);
+	background-image: -o-linear-gradient(top, #eee, #ddd);
+	background-image: linear-gradient(to bottom, #eee, #ddd);
+	background-repeat: repeat-x;
+
 }
 div.pagination li .active a,
 div.pagination li .active span,
