@@ -394,13 +394,12 @@ class ActionComm extends CommonObject
     /**
      *		Load an object from its id and create a new one in database
      *
-     *		@param		int				$socid			Id of thirdparty
      * 	 	@return		int								New id of clone
      */
     function createFromClone()
     {
         global $db, $user,$langs,$conf,$hookmanager;
-				
+
         $this->context['createfromclone']='createfromclone';
 
         $error=0;
@@ -410,10 +409,10 @@ class ActionComm extends CommonObject
 
         // Load source object
         $objFrom = dol_clone($this);
-		
+
 		$this->fetch_optionals();
 		$this->fetch_userassigned();
-		
+
         $this->id=0;
 
         // Create clone
