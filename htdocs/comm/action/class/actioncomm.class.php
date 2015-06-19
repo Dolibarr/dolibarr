@@ -394,10 +394,11 @@ class ActionComm extends CommonObject
     /**
      *		Load an object from its id and create a new one in database
      *
-     *		@param		int				$socid			Id of thirdparty
+     *      @param	    user	        $user      	    Object user making action
+	 *		@param		int				$socid			Id of thirdparty
      * 	 	@return		int								New id of clone
      */
-    function createFromClone()
+    function createFromClone($user, $socid)
     {
         global $db, $user,$langs,$conf,$hookmanager;
 				
