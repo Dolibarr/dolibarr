@@ -141,7 +141,7 @@ if ($result) {
 
 		// Situation invoices handling
 		$line = new FactureLigne($db);
-		$line->fetch($obj->id);
+		$line->fetch($obj->rowid);
 		$prev_progress = $line->get_prev_progress();
 		if ($obj->situation_percent == 0) { // Avoid divide by 0
 			$situation_ratio = 0;
