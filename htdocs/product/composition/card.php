@@ -290,7 +290,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print '<tr clas="impair">';
+				print '<tr class="impair">';
 				print '<td colspan="3">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
