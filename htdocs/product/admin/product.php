@@ -440,6 +440,7 @@ print '</tr>';
 print '</form>';
 
 // Activate propal merge produt card
+/* disabled. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
 $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -452,7 +453,7 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
-print '</form>';
+print '</form>';*/
 
 // Use units
 $var=!$var;

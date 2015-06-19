@@ -310,13 +310,21 @@ else
     		if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "p.barcode",$param,'','',$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-    		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
+    		if (empty($conf->global->PRODUIT_MULTIPRICES))
+    		{
+    			$titlefield=$langs->trans("SellingPrice");
+    		   	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+   				{
+					$titlefields=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
+    			}
+    			print_liste_field_titre($titlefields, $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
+    		}
     		if ($user->rights->fournisseur->lire) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
-            print '<td width="1%">&nbsp;</td>';
+            print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', $param, '');
     		print "</tr>\n";
 
     		// Lignes des champs de filtre
@@ -350,8 +358,7 @@ else
     		// Sell price
             if (empty($conf->global->PRODUIT_MULTIPRICES))
             {
-        		print '<td class="liste_titre">';
-        		print '&nbsp;';
+        		print '<td class="liste_titre" align="right">';
         		print '</td>';
             }
 
