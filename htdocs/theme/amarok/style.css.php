@@ -1135,7 +1135,7 @@ td.formdocbutton {padding-top:6px;}
 }
 .buttonRefused {
 	pointer-events: none;
-   	cursor: default;	
+   	cursor: default;
 	opacity: 0.4;
     filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
@@ -1296,6 +1296,16 @@ table.liste td {padding:1px 2px 1px 0px;}
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
 /* Pagination */
+div.refidpadding  {
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'8':'12'; ?>px;
+}
+div.refid  {
+	padding-top: <?php print empty($conf->dol_use_jmobile)?'5':'12'; ?>px;
+	font-weight: bold;
+  	color: #666;
+  	font-size: 120%;
+}
+
 div.pagination {
 	float: right;
 }
