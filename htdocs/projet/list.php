@@ -274,10 +274,10 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
+	print '<input type="text" class="flat" name="search_label" size="8" value="'.$search_label.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
+	print '<input type="text" class="flat" name="search_societe" size="8" value="'.$search_societe.'">';
 	print '</td>';
 	// Sale representative
 	print '<td class="liste_titre">&nbsp;</td>';

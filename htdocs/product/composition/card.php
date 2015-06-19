@@ -290,7 +290,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				print '<tr>';
+				print '<tr clas="impair">';
 				print '<td colspan="3">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
@@ -436,7 +436,7 @@ if ($id > 0 || ! empty($ref))
 				$colspan=6;
 				if (! empty($conf->stock->enabled)) $colspan++;
 
-				print '<tr>';
+				print '<tr class="impair">';
 				print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
