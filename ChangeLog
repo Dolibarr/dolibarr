@@ -25,6 +25,7 @@ For users:
 - [ task #1793 ] Create new permission to restrict commercial agent margin to logged user.
 - Add experimental module ask supplier price to request supplier quotation.
 - Add experimental module batch management.
+- Fix: Corrected user timezone detection
 
 For translators:
 - Update language files.

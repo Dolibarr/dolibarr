@@ -153,7 +153,7 @@ function ordersupplier_prepare_head($object)
 	$head[$h][1] = $langs->trans("OrderFollow");
 	$head[$h][2] = 'info';
 	$h++;
-
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');
 	return $head;
 }
 

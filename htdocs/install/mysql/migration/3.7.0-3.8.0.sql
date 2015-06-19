@@ -243,6 +243,7 @@ CREATE TABLE llx_expensereport (
   fk_user_paid 		integer DEFAULT NULL,
   fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
+  paid 				smallint default 0 NOT NULL,
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
@@ -284,6 +285,22 @@ CREATE TABLE llx_expensereport_det
 
 ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_projet integer NULL;
 ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_c_tva integer NULL;
+
+create table llx_payment_expensereport
+(
+  rowid                   integer AUTO_INCREMENT PRIMARY KEY,
+  fk_expensereport        integer,
+  datec                   datetime,           -- date de creation
+  tms                     timestamp,
+  datep                   datetime,           -- payment date
+  amount                  real DEFAULT 0,
+  fk_typepayment          integer NOT NULL,
+  num_payment             varchar(50),
+  note                    text,
+  fk_bank                 integer NOT NULL,
+  fk_user_creat           integer,            -- creation user
+  fk_user_modif           integer             -- last modification user
+)ENGINE=innodb;
 
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
