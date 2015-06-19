@@ -376,7 +376,6 @@ class ExpenseReport extends CommonObject
      *    Classify the expense report as paid
      *
      *    @param	int		$id           	    id of expense report
-     *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
     function set_paid($id)
