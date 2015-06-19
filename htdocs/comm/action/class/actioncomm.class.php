@@ -394,11 +394,13 @@ class ActionComm extends CommonObject
     /**
      *		Load an object from its id and create a new one in database
      *
+     *      @param	    user	        $fuser      	Object user making action
+	 *		@param		int				$socid			Id of thirdparty
      * 	 	@return		int								New id of clone
      */
-    function createFromClone()
+    function createFromClone($fuser, $socid)
     {
-        global $db, $user,$langs,$conf,$hookmanager;
+        global $db, $user, $langs, $conf, $hookmanager;
 
         $this->context['createfromclone']='createfromclone';
 
@@ -416,7 +418,7 @@ class ActionComm extends CommonObject
         $this->id=0;
 
         // Create clone
-        $result=$this->add($user);
+        $result=$this->add($fuser);
         if ($result < 0) $error++;
 
         if (! $error)
@@ -431,7 +433,7 @@ class ActionComm extends CommonObject
             }
 
             // Call trigger
-            $result=$this->call_trigger('ACTION_CLONE',$user);
+            $result=$this->call_trigger('ACTION_CLONE', $fuser);
             if ($result < 0) { $error++; }
             // End call triggers
         }
