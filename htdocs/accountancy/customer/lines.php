@@ -45,6 +45,18 @@ $search_desc    = GETPOST('search_desc','alpha');
 $search_amount  = GETPOST('search_amount','alpha');
 $search_account = GETPOST('search_account','alpha');
 
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+$limit = $conf->liste_limit;
+if (! $sortfield) $sortfield="f.facnumber";
+if (! $sortorder) $sortorder="DESC";
+
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -117,7 +129,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product
 $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 $sql .= " AND aa.rowid = l.fk_code_ventilation";
 if (strlen(trim(GETPOST("search_facture")))) {
-	$sql .= " AND f.facnumber like '%" . GETPOST("search_facture") . "%'";
+	$sql .= " AND f.facnumber like '%" . $search_facture . "%'";
 }
 if (strlen(trim($search_ref))) {
 	$sql .= " AND p.ref like '%" . $search_ref . "%'";
@@ -134,16 +146,11 @@ if (strlen(trim($search_amount))) {
 if (strlen(trim($search_account))) {
 	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
 }
-
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
-
-$sql .= " ORDER BY l.rowid";
-if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
-	$sql .= " DESC ";
-}
-$sql .= $db->plimit($limit + 1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit + 1,$offset);
 
 dol_syslog("/accountancy/customer/lines.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
@@ -151,7 +158,6 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	// TODO : print_barre_liste always use $conf->liste_limit and do not care about custom limit in list...
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
@@ -159,29 +165,30 @@ if ($result) {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<table class="noborder" width="100%">';
 	
-	print '<br><br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount");
+	print '<br><br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account($account_parent, 'account_parent', 1);
 	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
 	
-	print '<tr class="liste_titre"><td>' . $langs->trans("Invoice") . '</td>';
-	print '<td>' . $langs->trans("Ref") . '</td>';
-	print '<td>' . $langs->trans("Label") . '</td>';
-	print '<td>' . $langs->trans("Description") . '</td>';
-	print '<td align="left">' . $langs->trans("Amount") . '</td>';
-	print '<td colspan="2" align="left">' . $langs->trans("Account") . '</td>';
-	print '<td align="center">&nbsp;</td>';
-	print '<td align="center">&nbsp;</td>';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Invoices"), $_SERVER["PHP_SELF"],"f.facnumber","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"],"aa.account_number","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print_liste_field_titre('');
+	print_liste_field_titre('');
 	print "</tr>\n";
 	
 	print '<tr class="liste_titre"><td><input name="search_facture" size="8" value="' . $search_facture . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount. '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
-	print '<td align="center">&nbsp;</td>';
-	print '<td align="center">&nbsp;</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount. '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
+	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
 	
@@ -214,7 +221,7 @@ if ($result) {
 		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
-		print '<td align="left">' . $codecompta . '</td>';
+		print '<td align="center">' . $codecompta . '</td>';
 		print '<td>' . $objp->rowid . '</td>';
 		print '<td><a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
