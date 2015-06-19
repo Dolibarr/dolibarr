@@ -108,8 +108,7 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 
-			$linkback='<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php">'.$langs->trans("Back").'</a>';
-			print_fiche_titre($langs->trans('CustomersVentilation'),$linkback,'title_setup');
+			print_fiche_titre($langs->trans('CustomersVentilation'),'','title_setup');
 
             dol_fiche_head();
 
