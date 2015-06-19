@@ -3066,6 +3066,8 @@ class Facture extends CommonInvoice
 	 */
 	function demande_prelevement($user)
 	{
+		global $langs;
+		
 		$error=0;
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
@@ -3080,7 +3082,7 @@ class Facture extends CommonInvoice
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
-
+			
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -3099,27 +3101,36 @@ class Facture extends CommonInvoice
                     // For example print 239.2 - 229.3 - 9.9; does not return 0.
                     //$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
                     //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-                    $resteapayer = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+                    
+                    //$resteapayer = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
 
-                    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-                    $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
-                    $sql .= ' VALUES ('.$this->id;
-                    $sql .= ",'".price2num($resteapayer)."'";
-                    $sql .= ",'".$this->db->idate($now)."'";
-                    $sql .= ",".$user->id;
-                    $sql .= ",'".$bac->code_banque."'";
-                    $sql .= ",'".$bac->code_guichet."'";
-                    $sql .= ",'".$bac->number."'";
-                    $sql .= ",'".$bac->cle_rib."')";
-
-                    dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-                    $resql=$this->db->query($sql);
-                    if (! $resql)
-                    {
-                        $this->error=$this->db->lasterror();
-                        dol_syslog(get_class($this).'::demandeprelevement Erreur');
-                        $error++;
-                    }
+                    $amount = GETPOST('withdraw_request_amount');
+					
+					if (is_numeric($amount) && $amount != 0) {
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
+						$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
+						$sql .= ' VALUES ('.$this->id;
+						$sql .= ",'".price2num($amount)."'";
+						$sql .= ",'".$this->db->idate($now)."'";
+						$sql .= ",".$user->id;
+						$sql .= ",'".$bac->code_banque."'";
+						$sql .= ",'".$bac->code_guichet."'";
+						$sql .= ",'".$bac->number."'";
+						$sql .= ",'".$bac->cle_rib."')";
+						
+						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
+						$resql=$this->db->query($sql);
+						if (! $resql)
+						{
+						    $this->error=$this->db->lasterror();
+						    dol_syslog(get_class($this).'::demandeprelevement Erreur');
+						    $error++;
+						}
+					} else {
+						$this->error=$langs->trans('WithdrawRequestErrorNilAmount');
+	                    dol_syslog(get_class($this).'::demandeprelevement ' . $langs->trans('WithdrawRequestErrorNilAmount'));
+	                    $error++;
+					}
 
         			if (! $error)
         			{

@@ -161,7 +161,7 @@ print '<br>';
  */
 
 $sql = "SELECT f.facnumber, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
-$sql.= " pfd.date_demande";
+$sql.= " pfd.date_demande, pfd.amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -212,7 +212,7 @@ if ($resql)
             print '</td>';
             // Amount
             print '<td align="right">';
-            print price($obj->total_ttc,0,$langs,0,0,-1,$conf->currency);
+            print price($obj->amount,0,$langs,0,0,-1,$conf->currency);
             print '</td>';
             // Date
             print '<td align="right">';
