@@ -16,44 +16,38 @@
  */
 
 /**
- *  \file       htdocs/don/class/paymentdonation.class.php
- *  \ingroup    Donation
- *  \brief      File of class to manage payment of donations
+ *  \file       htdocs/expensereport/class/paymentexpensereport.class.php
+ *  \ingroup    Expense Report
+ *  \brief      File of class to manage payment of expense report
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentDonation
- *		\brief      Class to manage payments of donations
+/**     \class      PaymentExpenseReport
+ *		\brief      Class to manage payments of expense report
  */
-class PaymentDonation extends CommonObject
+class PaymentExpenseReport extends CommonObject
 {
-	public $element='payment_donation';			//!< Id that identify managed objects
-	public $table_element='payment_donation';	//!< Name of table without prefix where object is stored
+	public $element='payment_expensereport';			//!< Id that identify managed objects
+	public $table_element='payment_expensereport';	//!< Name of table without prefix where object is stored
 
 	var $id;
 	var $rowid;
 	var $ref;
 
-	var $fk_donation;
+	var $fk_expensereport;
 	var $datec='';
 	var $tms='';
 	var $datep='';
     var $amount;            // Total amount of payment
     var $amounts=array();   // Array of amounts
-	var $typepayment;
+	var $fk_typepayment;
 	var $num_payment;
 	var $note;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
-
-	/**
-	 * @deprecated
-	 * @see amount, amounts
-	 */
-	var $total;
 
 	/**
 	 *	Constructor
@@ -66,7 +60,7 @@ class PaymentDonation extends CommonObject
 	}
 
 	/**
-	 *  Create payment of donation into database.
+	 *  Create payment of expense report into database.
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User		$user   User making payment
@@ -83,14 +77,14 @@ class PaymentDonation extends CommonObject
         // Validate parameters
 		if (! $this->datepaid)
 		{
-			$this->error='ErrorBadValueForParameterCreatePaymentDonation';
+			$this->error='ErrorBadValueForParameterCreatePaymentExpenseReport';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_donation)) 		$this->fk_donation=trim($this->fk_donation);
+		if (isset($this->fk_expensereport)) $this->fk_expensereport=trim($this->fk_expensereport);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->typepayment))	    $this->typepayment=trim($this->typepayment);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
@@ -114,19 +108,19 @@ class PaymentDonation extends CommonObject
 
 		if ($totalamount != 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_donation (fk_donation, datec, datep, amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
 			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql.= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_expensereport");
 			}
 			else
 			{
@@ -138,7 +132,6 @@ class PaymentDonation extends CommonObject
 		if ($totalamount != 0 && ! $error)
 		{
 		    $this->amount=$totalamount;
-            $this->total=$totalamount;    // deprecated
 		    $this->db->commit();
 			return $this->id;
 		}
@@ -161,7 +154,7 @@ class PaymentDonation extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
-		$sql.= " t.fk_donation,";
+		$sql.= " t.fk_expensereport,";
 		$sql.= " t.datec,";
 		$sql.= " t.tms,";
 		$sql.= " t.datep,";
@@ -174,7 +167,7 @@ class PaymentDonation extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_donation as t)";
+		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_expensereport as t)";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
 
@@ -189,12 +182,12 @@ class PaymentDonation extends CommonObject
 				$this->id    = $obj->rowid;
 				$this->ref   = $obj->rowid;
 
-				$this->fk_donation		= $obj->fk_donation;
+				$this->fk_expensereport	= $obj->fk_expensereport;
 				$this->datec			= $this->db->jdate($obj->datec);
 				$this->tms				= $this->db->jdate($obj->tms);
 				$this->datep			= $this->db->jdate($obj->datep);
 				$this->amount			= $obj->amount;
-				$this->fk_typepayment	= $obj->fk_typepayment;
+				$this->fk_typepayment  	= $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
 				$this->note				= $obj->note;
 				$this->fk_bank			= $obj->fk_bank;
@@ -233,7 +226,7 @@ class PaymentDonation extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_donation))		$this->fk_donation=trim($this->fk_donation);
+		if (isset($this->fk_expensereport))	$this->fk_expensereport=trim($this->fk_expensereport);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
@@ -248,9 +241,9 @@ class PaymentDonation extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
 
-		$sql.= " fk_donation=".(isset($this->fk_donation)?$this->fk_donation:"null").",";
+		$sql.= " fk_expensereport=".(isset($this->fk_expensereport)?$this->fk_expensereport:"null").",";
 		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
@@ -323,7 +316,7 @@ class PaymentDonation extends CommonObject
 	    if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_donation' AND url_id=".$this->id;
+            $sql.= " WHERE type='payment_expensereport' AND url_id=".$this->id;
 
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -332,7 +325,7 @@ class PaymentDonation extends CommonObject
 
 		if (! $error)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_donation";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_expensereport";
 			$sql.= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -388,7 +381,7 @@ class PaymentDonation extends CommonObject
 
 		$error=0;
 
-		$object=new PaymentDonation($this->db);
+		$object=new PaymentExpenseReport($this->db);
 
 		$object->context['createfromclone'] = 'createfromclone';
 
@@ -446,7 +439,7 @@ class PaymentDonation extends CommonObject
 	{
 		$this->id=0;
 
-		$this->fk_donation='';
+		$this->fk_expensereport='';
 		$this->datec='';
 		$this->tms='';
 		$this->datep='';
@@ -467,7 +460,7 @@ class PaymentDonation extends CommonObject
      *      All payment properties must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
-     *      @param  string	$mode               'payment_donation'
+     *      @param  string	$mode               'payment_expensereport'
      *      @param  string	$label              Label to use in bank record
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
@@ -488,12 +481,12 @@ class PaymentDonation extends CommonObject
             $acc->fetch($accountid);
 
             $total=$this->total;
-            if ($mode == 'payment_donation') $amount=$total;
+            if ($mode == 'payment_expensereport') $amount=$total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
-                $this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
+                $this->fk_typepayment,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $amount,
                 $this->num_payment,
@@ -514,9 +507,9 @@ class PaymentDonation extends CommonObject
                     dol_print_error($this->db);
                 }
 
-                // Add link 'payment', 'payment_supplier', 'payment_donation' in bank_url between payment and bank transaction
+                // Add link 'payment', 'payment_supplier', 'payment_expensereport' in bank_url between payment and bank transaction
                 $url='';
-                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/don/payment/card.php?rowid=';
+                if ($mode == 'payment_expensereport') $url=DOL_URL_ROOT.'/expensereport/payment/card.php?rowid=';
                 if ($url)
                 {
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
@@ -546,14 +539,14 @@ class PaymentDonation extends CommonObject
 
 
 	/**
-	 *  Update link between the donation payment and the generated line in llx_bank
+	 *  Update link between the expense report payment and the generated line in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
 	function update_fk_bank($id_bank)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -586,7 +579,7 @@ class PaymentDonation extends CommonObject
 
 		if (!empty($this->id))
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
