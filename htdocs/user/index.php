@@ -48,6 +48,8 @@ $search_firstname=GETPOST('search_firstname','alpha');
 $search_statut=GETPOST('search_statut','alpha');
 $search_thirdparty=GETPOST('search_thirdparty','alpha');
 
+if ($search_statut == '') $search_statut='1';
+
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
@@ -73,13 +75,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_thirdparty="";
 }
 
+
 /*
  * View
  */
 
 llxHeader('',$langs->trans("ListOfUsers"));
 
-$buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
+$buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : '').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
 print_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 

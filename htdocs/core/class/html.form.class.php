@@ -3218,7 +3218,8 @@ class Form
             $formconfirm.= '<script type="text/javascript">'."\n";
             $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
-            	$( "#'.$dialogconfirm.'" ).dialog({
+            	$( "#'.$dialogconfirm.'" ).dialog(
+            	{
                     autoOpen: '.($autoOpen ? "true" : "false").',';
             		if ($newselectedchoice == 'no')
             		{
@@ -3272,7 +3273,8 @@ class Form
                             $(this).dialog("close");
                         }
                     }
-                });
+                }
+                );
 
             	var button = "'.$button.'";
             	if (button.length > 0) {

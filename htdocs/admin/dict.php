@@ -832,7 +832,7 @@ if ($id)
         $fieldlist=explode(',',$tabfield[$id]);
 
         // Line for title
-        print '<tr class="liste_titre nohover">';
+        print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
@@ -906,7 +906,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bcnd[$var].">";
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
