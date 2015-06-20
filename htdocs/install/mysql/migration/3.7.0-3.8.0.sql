@@ -674,3 +674,17 @@ ALTER TABLE llx_c_stcomm ADD COLUMN picto varchar(128);
 
 -- New trigger for Supplier invoice unvalidation
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);
+
+
+DROP TABLE llx_holiday_types;
+
+CREATE TABLE llx_c_holiday_types (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code varchar(16) NOT NULL,
+  label varchar(255) NOT NULL,
+  affect integer NOT NULL,	
+  delay integer NOT NULL,
+  newByMonth double(8,5) DEFAULT 0 NOT NULL,
+  fk_country integer DEFAULT NULL
+) ENGINE=innodb;
+

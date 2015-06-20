@@ -1741,7 +1741,7 @@ class Holiday extends CommonObject
 
 
     /**
-     *  Tous les types
+     *  Return array with list of types
      *
      *  @return     boolean    Return array with list of types
      */
