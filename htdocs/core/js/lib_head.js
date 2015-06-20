@@ -854,7 +854,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                                 // remove invalid value, as it didnt match anything
                             	$( this ).val( "" );
                                 select.val( "" );
-                                input.data( "autocomplete" ).term = "";
+                                input.data("ui-autocomplete").term = "";
                                 return false;
                             }
                         }
@@ -862,8 +862,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                 })
                 .addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
-            input.data( "autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li></li>" )
+            input.data("ui-autocomplete")._renderItem = function( ul, item ) {
+                return $("<li></li>")
                     .data( "item.autocomplete", item )
                     .append( "<a>" + item.label + "</a>" )
                     .appendTo( ul );

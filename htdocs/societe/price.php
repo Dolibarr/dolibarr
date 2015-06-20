@@ -506,11 +506,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '</td>';
 			print '</tr>';
 
-			$var = True;
+			$var = False;
 
-			foreach ( $prodcustprice->lines as $line ) {
-
-				print "<tr $bc[$var]>";
+			foreach($prodcustprice->lines as $line)
+			{
+				print "<tr ".$bc[$var].">";
 
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);

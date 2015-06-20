@@ -174,8 +174,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#search_'.$htmlname.'").trigger("change");	// To tell that input text field was modified
     					}
     					,delay: 500
-					}).data( "autocomplete" )._renderItem = function( ul, item ) {
-						return $( "<li></li>" )
+					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+						return $("<li></li>")
 						.data( "item.autocomplete", item )
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
