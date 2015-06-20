@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -121,8 +121,8 @@ print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom'
 print '</td></tr>';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td valign="top"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
+print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {

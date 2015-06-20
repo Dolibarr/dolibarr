@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -138,7 +138,7 @@ print $form->showrefnav($soc, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid',
 print '</td></tr>';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
 print $soc->name_alias;
 print "</td></tr>";
 
@@ -169,7 +169,7 @@ if (! empty($conf->barcode->enabled)) {
 	print '<tr><td>' . $langs->trans('Gencod') . '</td><td colspan="3">' . $soc->barcode . '</td></tr>';
 }
 
-print "<tr><td valign=\"top\">" . $langs->trans('Address') . "</td><td colspan=\"3\">";
+print "<tr><td>" . $langs->trans('Address') . "</td><td colspan=\"3\">";
 dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id);
 print "</td></tr>";
 
@@ -536,14 +536,16 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
-					print img_delete();
-					print '</a>';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
-					print img_edit();
-					print '</a>';
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $soc->id . '&amp;prodid=' . $line->fk_product . '">';
 					print img_info();
+					print '</a>';
+					print ' ';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print img_edit('default', 0, 'style="vertical-align: middle;"');
+					print '</a>';
+					print ' ';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
 				}

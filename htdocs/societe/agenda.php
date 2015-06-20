@@ -87,7 +87,7 @@ if ($socid)
 	print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -119,7 +119,7 @@ if ($socid)
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$object->barcode.'</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">";
+	print "<tr><td>".$langs->trans('Address')."</td><td colspan=\"3\">";
 	dol_print_address($object->address, 'gmap', 'thirdparty', $object->id);
 	print "</td></tr>";
 

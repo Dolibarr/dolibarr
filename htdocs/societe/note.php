@@ -83,7 +83,7 @@ if ($id > 0)
     print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
