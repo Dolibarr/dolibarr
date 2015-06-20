@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
@@ -168,7 +168,7 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-		$userstatic->id=$obj->id;
+		$userstatic->id=$obj->rowid;
 		$userstatic->ref=$obj->label;
 		$userstatic->login=$obj->login;
 		$userstatic->statut=$obj->statut;
