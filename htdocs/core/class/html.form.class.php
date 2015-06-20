@@ -3216,7 +3216,7 @@ class Form
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
-            $formconfirm.='
+            $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog({
                     autoOpen: '.($autoOpen ? "true" : "false").',';
@@ -3280,6 +3280,7 @@ class Form
                 		$("#'.$dialogconfirm.'").dialog("open");
         			});
                 }
+            });
             });
             </script>';
             $formconfirm.= "<!-- end ajax form_confirm -->\n";
