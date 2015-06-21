@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
@@ -24,6 +24,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
@@ -66,38 +67,55 @@ print '<br>';
 
 // Modified or missing files
 $file_list = array('missing' => array(), 'updated' => array());
-$xmlfile = DOL_DOCUMENT_ROOT.'/core/filelist-'.DOL_VERSION.'.xml';
-if (file_exists($xmlfile)) {
+
+// File to analyze
+//$xmlfile = DOL_DOCUMENT_ROOT.'/install/filelist-'.DOL_VERSION.'.xml';
+$xmlfile = DOL_DOCUMENT_ROOT.'/install/filelist.xml';
+
+if (file_exists($xmlfile))
+{
     $xml = simplexml_load_file($xmlfile);
-    if ($xml) {
-        $ret = getFilesUpdated($xml->dolibarr_root_dir[0]);
+    if ($xml)
+    {
+        $ret = getFilesUpdated($xml->dolibarr_root_dir[0]);		// Fill array $file_list
         print '<table class="noborder">';
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("FilesMissing") . '</td>';
         print '</tr>'."\n";
         $var = true;
-        foreach ($file_list['missing'] as $file) {
+        foreach ($file_list['missing'] as $file)
+        {
             $var = !$var;
             print '<tr ' . $bc[$var] . '>';
             print '<td>'.$file.'</td>' . "\n";
             print "</tr>\n";
         }
         print '</table>';
+
+        print '<br>';
+
         print '<table class="noborder">';
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("FilesUpdated") . '</td>';
+        print '<td align="right">' . $langs->trans("Size") . '</td>';
+        print '<td align="center">' . $langs->trans("DateModification") . '</td>';
         print '</tr>'."\n";
         $var = true;
-        foreach ($file_list['updated'] as $file) {
+        foreach ($file_list['updated'] as $file)
+        {
             $var = !$var;
             print '<tr ' . $bc[$var] . '>';
             print '<td>'.$file.'</td>' . "\n";
+            print '<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file)).'</td>' . "\n";
+            print '<td align="center">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file),'dayhour').'</td>' . "\n";
             print "</tr>\n";
         }
         print '</table>';
     }
-} else {
-    print $langs->trans('XmlNotFound') . ': ' . DOL_DOCUMENT_ROOT . '/core/filelist-' . DOL_VERSION . '.xml';
+}
+else
+{
+    print $langs->trans('XmlNotFound') . ': ' . $xmlfile;
 }
 
 llxFooter();
@@ -117,7 +135,8 @@ function getFilesUpdated(SimpleXMLElement $dir, $path = '')
     global $file_list;
     $exclude = 'install';
 
-    foreach ($dir->md5file as $file) {
+    foreach ($dir->md5file as $file)
+    {
         $filename = $path.$file['name'];
 
         if (preg_match('#'.$exclude.'#', $filename))
@@ -134,5 +153,5 @@ function getFilesUpdated(SimpleXMLElement $dir, $path = '')
 
     foreach ($dir->dir as $subdir)
         getFilesUpdated($subdir, $path.$subdir['name'].'/');
-return $file_list;
+	return $file_list;
 }

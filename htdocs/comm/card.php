@@ -228,7 +228,7 @@ if ($id > 0)
 	print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -265,7 +265,7 @@ if ($id > 0)
 	}
 
 	// Address
-	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
 	dol_print_address($object->address,'gmap','thirdparty',$object->id);
 	print "</td></tr>";
 
@@ -500,7 +500,7 @@ if ($id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td colspan="3">';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);

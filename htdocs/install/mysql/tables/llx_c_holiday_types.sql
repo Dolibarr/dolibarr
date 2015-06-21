@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,15 +16,13 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_holiday_types (
+CREATE TABLE llx_c_holiday_types (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  label varchar(45) NOT NULL,
-  description varchar(255) NOT NULL,
-  affect integer NOT NULL,
-  delay integer NOT NULL,
-  insertAt DATETIME NOT NULL,
-  updateAt DATETIME,
-  deleteAt DATETIME,
-  nbCongesDeducted varchar(255) NOT NULL,
-  nbCongesEveryMonth varchar(255) NOT NULL
+  code varchar(16) NOT NULL,
+  label varchar(255) NOT NULL,
+  affect integer NOT NULL,						-- a request will change sold or not
+  delay integer NOT NULL,						-- Minimum delay to be allowed to make request
+  newByMonth double(8,5) DEFAULT 0 NOT NULL, -- Amount of new days for each user each month
+  fk_country integer DEFAULT NULL,			-- This type is dedicated to a country
+  active integer DEFAULT 1
 ) ENGINE=innodb;

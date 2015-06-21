@@ -3216,15 +3216,16 @@ class Form
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
-            $formconfirm.='
+            $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
-            	$( "#'.$dialogconfirm.'" ).dialog({
+            	$( "#'.$dialogconfirm.'" ).dialog(
+            	{
                     autoOpen: '.($autoOpen ? "true" : "false").',';
             		if ($newselectedchoice == 'no')
             		{
 						$formconfirm.='
 						open: function() {
-            				$(this).parent().find("button.ui-button:eq(1)").focus();
+            				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
             		}
         			$formconfirm.='
@@ -3272,7 +3273,8 @@ class Form
                             $(this).dialog("close");
                         }
                     }
-                });
+                }
+                );
 
             	var button = "'.$button.'";
             	if (button.length > 0) {
@@ -3280,6 +3282,7 @@ class Form
                 		$("#'.$dialogconfirm.'").dialog("open");
         			});
                 }
+            });
             });
             </script>';
             $formconfirm.= "<!-- end ajax form_confirm -->\n";

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
@@ -134,29 +134,27 @@ function checkSwiftForAccount($account)
 }
 
 /**
- *      Check IBAN number informations for a bank account
+ *      Check IBAN number informations for a bank account.
  *
  *      @param  Account     $account    A bank account
- *      @return boolean                     True if informations are valid, false otherwise
+ *      @return boolean                 True if informations are valid, false otherwise
  */
 function checkIbanForAccount($account)
 {
     require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-    $iban = new Iban($account->iban);
-    $check = $iban->Verify();
-    if ($check) {
-        return true;
-    } else {
-        return false;
-    }
 
+    $iban = new IBAN($account->iban);
+    $check = $iban->Verify();
+
+    if ($check) return true;
+    else return false;
 }
 
 /**
  * 		Check account number informations for a bank account
  *
  * 		@param	Account		$account    A bank account
- * 		@return boolean           			True if informations are valid, false otherwise
+ * 		@return boolean           		True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -225,6 +223,8 @@ function checkBanForAccount($account)
     return true;
 }
 
+
+
 /**
  * 	Returns the key for Spanish Banks Accounts
  *
@@ -232,7 +232,8 @@ function checkBanForAccount($account)
  *  @param	string	$InumCta	InumCta
  *  @return	string				Key
  */
-function checkES($IentOfi, $InumCta) {
+function checkES($IentOfi, $InumCta)
+{
     if (empty($IentOfi) || empty($InumCta) || strlen($IentOfi) != 8 || strlen($InumCta) != 10) {
         $keycontrol = "";
         return $keycontrol;

@@ -70,7 +70,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,10,23,12,13,0,14,0,7,17,24,0,22,20,18,21,0,15,0,25,0,26);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,0,25,0,26);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -101,6 +101,7 @@ $tabname[24]= MAIN_DB_PREFIX."c_type_resource";
 $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
 $tabname[26]= MAIN_DB_PREFIX."c_units";
 $tabname[27]= MAIN_DB_PREFIX."c_stcomm";
+$tabname[28]= MAIN_DB_PREFIX."c_holiday_types";
 
 // Dictionary labels
 $tablib=array();
@@ -131,22 +132,23 @@ $tablib[24]= "DictionaryResourceType";
 $tablib[25]= "DictionaryEMailTemplates";
 $tablib[26]= "DictionaryUnits";
 $tablib[27]= "DictionaryProspectStatus";
+$tablib[28]= "DictionaryHolidayTypes";
 
 // Requests to extract data
 $tabsql=array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[4] = "SELECT rowid   as rowid, code, label, active, favorite FROM ".MAIN_DB_PREFIX."c_country";
+$tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
 $tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
-$tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
-$tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active, accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
+$tabsql[12]= "SELECT c.rowid as rowid, c.code, c.sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
+$tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
@@ -161,6 +163,7 @@ $tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content, active FROM ".MAIN_DB_PREFIX."c_email_templates";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
+$tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -191,6 +194,7 @@ $tabsqlsort[24]="code ASC,label ASC";
 $tabsqlsort[25]="label ASC";
 $tabsqlsort[26]="code ASC";
 $tabsqlsort[27]="code ASC";
+$tabsqlsort[28]="country ASC, code ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -221,6 +225,7 @@ $tabfield[24]= "code,label";
 $tabfield[25]= "label,type_template,private,position,topic,content";
 $tabfield[26]= "code,label,short_label";
 $tabfield[27]= "code,libelle";
+$tabfield[28]= "code,label,delay,newByMonth,country_id,country";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -251,6 +256,7 @@ $tabfieldvalue[24]= "code,label";
 $tabfieldvalue[25]= "label,type_template,private,position,topic,content";
 $tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27]= "code,libelle";
+$tabfieldvalue[28]= "code,label,delay,newByMonth,country";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -281,6 +287,7 @@ $tabfieldinsert[24]= "code,label";
 $tabfieldinsert[25]= "label,type_template,private,position,topic,content";
 $tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27]= "code,libelle";
+$tabfieldinsert[28]= "code,label,delay,newByMonth,fk_country";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -313,6 +320,7 @@ $tabrowid[24]= "";
 $tabrowid[25]= "";
 $tabrowid[26]= "";
 $tabrowid[27]= "id";
+$tabrowid[28]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -343,6 +351,7 @@ $tabcond[24]= ! empty($conf->resource->enabled);
 $tabcond[25]= true; // && ! empty($conf->global->MAIN_EMAIL_EDIT_TEMPLATE_FROM_DIC);
 $tabcond[26]= ! empty($conf->product->enabled);
 $tabcond[27]= ! empty($conf->societe->enabled);
+$tabcond[28]= ! empty($conf->holiday->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -373,6 +382,7 @@ $tabhelp[24] = array();
 $tabhelp[25] = array();
 $tabhelp[26] = array();
 $tabhelp[27] = array();
+$tabhelp[28] = array();
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -403,6 +413,7 @@ $tabfieldcheck[24] = array();
 $tabfieldcheck[25] = array();
 $tabfieldcheck[26] = array();
 $tabfieldcheck[27] = array();
+$tabfieldcheck[28] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
@@ -475,7 +486,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes'))) continue;		// For some pages, country is not mandatory
     	if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
@@ -524,7 +535,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
     if (isset($_POST["country"]) && ($_POST["country"]=='0') && ($id != 2))
     {
-    	if (in_array($tablib[$id],array('DictionaryCompanyType')))
+    	if (in_array($tablib[$id],array('DictionaryCompanyType','DictionaryHolidayTypes')))	// Field country is no mandatory for such dictionaries
     	{
     		$_POST["country"]='';
     	}
@@ -832,7 +843,7 @@ if ($id)
         $fieldlist=explode(',',$tabfield[$id]);
 
         // Line for title
-        print '<tr class="liste_titre nohover">';
+        print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
@@ -906,7 +917,7 @@ if ($id)
         print '</tr>';
 
         // Line to enter new values
-        print "<tr ".$bc[$var].">";
+        print "<tr ".$bcnd[$var].">";
 
         $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.

@@ -2329,9 +2329,10 @@ class User extends CommonObject
 	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
+	 *  @param		string	$filter				SQL filter on users
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
-	function get_full_tree($deleteafterid=0)
+	function get_full_tree($deleteafterid=0, $filter='')
 	{
 		global $conf,$user;
 
@@ -2351,6 +2352,8 @@ class User extends CommonObject
 		{
 			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 		}
+		if ($filter) $sql.=" AND ".$filter;
+
 		dol_syslog(get_class($this)."::get_full_tree get user list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)

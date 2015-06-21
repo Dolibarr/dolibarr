@@ -824,7 +824,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         }
     }
     print '</td></tr>';
-    
+
     if(! empty($conf->api->enabled)) {
         // API key
         $generated_api_key = '';
@@ -1271,7 +1271,7 @@ else
                 print "</td>";
             }
             print '</tr>'."\n";
-            
+
             // API key
             if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';
@@ -1280,7 +1280,7 @@ else
                     print $langs->trans("Hidden");
                 print '<td>';
             }
-            
+
             // Administrator
             print '<tr><td>'.$langs->trans("Administrator").'</td><td colspan="2">';
             if (! empty($conf->multicompany->enabled) && $object->admin && ! $object->entity)
@@ -1303,7 +1303,8 @@ else
             print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
             print '</td><td colspan="2">';
             $type=$langs->trans("Internal");
-            if ($object->societe_id) $type=$langs->trans("External");
+            if ($object->societe_id > 0) $type=$langs->trans("External");
+			print $type;
             if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
 
@@ -1850,7 +1851,7 @@ else
             }
             print $text;
             print "</td></tr>\n";
-            
+
             // API key
             if(! empty($conf->api->enabled) && $user->admin) {
                 print '<tr><td>'.$langs->trans("ApiKey").'</td>';

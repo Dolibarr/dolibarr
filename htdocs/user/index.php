@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
@@ -48,6 +48,8 @@ $search_firstname=GETPOST('search_firstname','alpha');
 $search_statut=GETPOST('search_statut','alpha');
 $search_thirdparty=GETPOST('search_thirdparty','alpha');
 
+if ($search_statut == '') $search_statut='1';
+
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
@@ -73,13 +75,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_thirdparty="";
 }
 
+
 /*
  * View
  */
 
 llxHeader('',$langs->trans("ListOfUsers"));
 
-$buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
+$buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : '').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
 print_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
 
@@ -168,7 +171,7 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-		$userstatic->id=$obj->id;
+		$userstatic->id=$obj->rowid;
 		$userstatic->ref=$obj->label;
 		$userstatic->login=$obj->login;
 		$userstatic->statut=$obj->statut;
