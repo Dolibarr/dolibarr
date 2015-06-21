@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015 Alexandre Spangaro  <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,13 +377,16 @@ class ExpenseReport extends CommonObject
      *    Classify the expense report as paid
      *
      *    @param	int		$id           	    id of expense report
-     *    @return   int      					<0 if KO, >0 if OK
+     *    @param	user	$fuser				User
+	 *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id)
+    function set_paid($id, $fuser)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport SET fk_statut = 6";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
+		$sql.= " SET fk_statut = 6, fk_user_paid = ".$fuser->id.",";
         $sql.= " WHERE rowid = $id AND fk_statut = 5";
 
+		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1015,41 +1019,6 @@ class ExpenseReport extends CommonObject
 		else
 		{
 			dol_syslog(get_class($this)."::setDeny expensereport already with refuse status", LOG_WARNING);
-		}
-	}
-
-	/**
-	 * setPaid
-	 *
-	 * @param 	User	$fuser		User
-	 * @return	int					<0 if KO, >0 if OK
-	 */
-	function setPaid($fuser)
-	{
-		$now= dol_now();
-
-		$this->date_paiement = $this->db->idate($now);
-		if ($this->fk_statut != 6)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= " SET fk_statut = 6, fk_user_paid = ".$fuser->id.",";
-			$sql.= " date_paiement='".$this->db->idate($this->date_paiement)."'";
-			$sql.= ' WHERE rowid = '.$this->id;
-
-			dol_syslog(get_class($this)."::setPaid sql=".$sql, LOG_DEBUG);
-			if ($this->db->query($sql))
-			{
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog(get_class($this)."::set_paid expensereport already with paid status", LOG_WARNING);
 		}
 	}
 

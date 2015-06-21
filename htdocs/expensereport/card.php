@@ -666,123 +666,6 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_
 	}
 }
 
-if ($action == "confirm_paid" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->to_paid)
-{
-	$object = new ExpenseReport($db);
-	$object->fetch($id);
-
-	$result = $object->setPaid($user);
-
-	if ($result > 0)
-	{
-		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model=$object->modelpdf;
-			$ret = $object->fetch($id); // Reload to get new records
-
-			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		}
-	}
-
-	if ($result > 0)
-	{
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
-		{
-			// Send mail
-
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_author);
-			$emailTo = $destinataire->email;
-
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_paid);
-			$emailFrom = $expediteur->email;
-
-			// SUBJECT
-			$subject = "' ERP - Note de frais payée";
-
-			// CONTENT
-			$message = "Bonjour {$destinataire->firstname},\n\n";
-			$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
-			$message.= "- Payeur : {$expediteur->firstname} {$expediteur->lastname}\n";
-			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
-			$message.= "Bien cordialement,\n' SI";
-
-			// Génération du pdf avant attachement
-			$object->setDocModel($user,"");
-			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
-
-			// PREPARE SEND
-			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
-
-			if(!$mailfile->error):
-
-			// SEND
-			$result=$mailfile->sendfile();
-			if ($result):
-			// Insert écriture dans le compte courant
-			$idTrip 	= $id;
-			$idAccount 	= 1;
-
-			$object = new ExpenseReport($db);
-			$object->fetch($idTrip);
-
-			$datePaiement = explode("-",$object->date_paiement);
-
-			$dateop 	= dol_mktime(12,0,0,$datePaiement[1],$datePaiement[2],$datePaiement[0]);
-			$operation	= $object->code_paiement;
-			$label		= "Règlement ".$object->ref;
-			$amount 	= - price2num($object->total_ttc);
-			$num_chq	= '';
-			$cat1		= '';
-
-			$user = new User($db);
-			$user->fetch($object->fk_user_paid);
-
-			$acct=new Account($db,$idAccount);
-			$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
-
-			if ($insertid > 0):
-			$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport as d";
-			$sql.= " SET integration_compta = 1, fk_bank_account = $idAccount";
-			$sql.= " WHERE rowid = $idTrip";
-			$resql=$db->query($sql);
-			if($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit;
-			else:
-			dol_print_error($db);
-			endif;
-			else:
-			dol_print_error($db,$acct->error);
-			endif;
-			endif;
-
-			else:
-
-			$mesg="Impossible d'envoyer l'email.";
-
-			endif;
-			// END - Send mail
-		}
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
 if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
@@ -827,16 +710,96 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	}
 }
 
-if ($action == 'set_paid')
+if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 {
-	if ($object->set_paid($id) >= 0)
+	$object = new ExpenseReport($db);
+	$object->fetch($id);
+	
+	$result = $object->set_paid($id, $user)
+	
+	if ($result > 0)
 	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
-    else {
-	    setEventMessage($object->error, 'errors');
-    }
+
+	if ($result > 0)
+	{
+		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		{
+			// Send mail
+
+			// TO
+			$destinataire = new User($db);
+			$destinataire->fetch($object->fk_user_author);
+			$emailTo = $destinataire->email;
+
+			// FROM
+			$expediteur = new User($db);
+			$expediteur->fetch($object->fk_user_paid);
+			$emailFrom = $expediteur->email;
+
+			// SUBJECT
+			$subject = "'ERP - Note de frais payée";
+
+			// CONTENT
+			$message = "Bonjour {$destinataire->firstname},\n\n";
+			$message.= "Votre note de frais \"{$object->ref}\" vient d'être payée.\n";
+			$message.= "- Payeur : {$expediteur->firstname} {$expediteur->lastname}\n";
+			$message.= "- Lien : {$dolibarr_main_url_root}/expensereport/card.php?id={$object->id}\n\n";
+			$message.= "Bien cordialement,\n' SI";
+
+			// Generate pdf before attachment
+			$object->setDocModel($user,"");
+			$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+
+			// PREPARE SEND
+			$mailfile = new CMailFile($subject,$emailTo,$emailFrom,$message);
+
+			if(!$mailfile->error):
+
+			// SEND
+			$result=$mailfile->sendfile();
+			if ($result):
+			
+			// Retour
+			if($result):
+			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
+			else:
+			dol_print_error($db);
+			endif;
+			else:
+			dol_print_error($db,$acct->error);
+			endif;
+			endif;
+
+			else:
+
+			$mesg="Impossible d'envoyer l'email.";
+
+			endif;
+			// END - Send mail
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 if ($action == "addline")
@@ -2001,9 +1964,9 @@ if ($action != 'create' && $action != 'edit')
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
 		}
 		
-		if ($object->statut == 1 && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
+		if (round($remaintopay) == 0 && $object->paid == 0)
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Cancel
