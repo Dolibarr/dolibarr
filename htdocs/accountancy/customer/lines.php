@@ -106,20 +106,6 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 llxHeader('', $langs->trans("CustomersVentilation") . ' - ' . $langs->trans("Dispatched"));
 
-$page = GETPOST("page");
-if ($page < 0)
-	$page = 0;
-
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
-	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} elseif ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
-} else {
-	$limit = $conf->liste_limit;
-}
-
-$offset = $limit * $page;
-
 $sql = "SELECT l.rowid , f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.qty, l.tva_tx, l.fk_code_ventilation, aa.label, aa.account_number,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
@@ -170,7 +156,7 @@ if ($result) {
 	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
 	
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Invoices"), $_SERVER["PHP_SELF"],"f.facnumber","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"],"f.facnumber","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
@@ -181,7 +167,7 @@ if ($result) {
 	print_liste_field_titre('');
 	print "</tr>\n";
 	
-	print '<tr class="liste_titre"><td><input name="search_facture" size="8" value="' . $search_facture . '"></td>';
+	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_facture" size="8" value="' . $search_facture . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
