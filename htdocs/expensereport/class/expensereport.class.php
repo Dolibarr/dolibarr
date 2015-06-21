@@ -744,7 +744,7 @@ class ExpenseReport extends CommonObject
 		$this->lines=array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
-		$sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.fk_c_tva, de.tva_tx as vatrate,';
+		$sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.tva_tx as vatrate,';
 		$sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
 		$sql.= ' p.ref as ref_projet, p.title as title_projet';
@@ -774,7 +774,6 @@ class ExpenseReport extends CommonObject
 				$deplig->fk_expensereport = $objp->fk_expensereport;
 				$deplig->fk_c_type_fees = $objp->fk_c_type_fees;
 				$deplig->fk_projet		= $objp->fk_projet;
-				$deplig->fk_c_tva		= $objp->fk_c_tva;
 
 				$deplig->total_ht		= $objp->total_ht;
 				$deplig->total_tva		= $objp->total_tva;
@@ -1506,7 +1505,6 @@ class ExpenseReportLine
 	var $value_unit;
 	var $date;
 
-	var $fk_c_tva;
 	var $fk_c_type_fees;
 	var $fk_projet;
 	var $fk_expensereport;
@@ -1541,7 +1539,7 @@ class ExpenseReportLine
 	function fetch($rowid)
 	{
 		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-		$sql.= ' fde.fk_c_tva as fk_c_tva, fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+		$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 		$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 		$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -1561,7 +1559,6 @@ class ExpenseReportLine
 			$this->qty = $objp->qty;
 			$this->date = $objp->date;
 			$this->value_unit = $objp->value_unit;
-			$this->fk_c_tva = $objp->fk_c_tva;
 			$this->fk_c_type_fees = $objp->fk_c_type_fees;
 			$this->fk_projet = $objp->fk_projet;
 			$this->type_fees_code = $objp->type_fees_code;
@@ -1603,11 +1600,10 @@ class ExpenseReportLine
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
 		$sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-		$sql.= ' fk_c_tva, tva_tx, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
+		$sql.= ' tva_tx, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
 		$sql.= " VALUES (".$this->fk_expensereport.",";
 		$sql.= " ".$this->fk_c_type_fees.",";
 		$sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
-		$sql.= " ".($this->fk_c_tva?$this->fk_c_tva:"null").",";
 		$sql.= " ".$this->vatrate.",";
 		$sql.= " '".$this->db->escape($this->comments)."',";
 		$sql.= " ".$this->qty.",";
@@ -1682,8 +1678,6 @@ class ExpenseReportLine
 		else $sql.= ",fk_c_type_fees=null";
 		if ($this->fk_projet) $sql.= ",fk_projet=".$this->fk_projet;
 		else $sql.= ",fk_projet=null";
-		if ($this->fk_c_tva) $sql.= ",fk_c_tva=".$this->fk_c_tva;
-		else $sql.= ",fk_c_tva=null";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog("ExpenseReportLine::update sql=".$sql);
