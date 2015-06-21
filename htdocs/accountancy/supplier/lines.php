@@ -55,7 +55,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $limit = $conf->liste_limit;
-if (! $sortfield) $sortfield="f.facnumber";
+if (! $sortfield) $sortfield="f.ref";
 if (! $sortorder) $sortorder="DESC";
 
 // Security check
@@ -173,8 +173,8 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_amount" value="' . $search_amount . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
     print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
