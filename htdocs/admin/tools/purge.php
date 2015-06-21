@@ -148,11 +148,11 @@ print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data
 
 print '</td></tr></table>';
 
-if ($choice != 'confirm_allfiles')
-{
+//if ($choice != 'confirm_allfiles')
+//{
 	print '<br>';
 	print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("PurgeRunNow").'"></div>';
-}
+//}
 
 print '</form>';
 

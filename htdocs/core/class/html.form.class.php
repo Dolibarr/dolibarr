@@ -3225,7 +3225,7 @@ class Form
             		{
 						$formconfirm.='
 						open: function() {
-            				$(this).parent().find("button.ui-button:eq(1)").focus();
+            				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
             		}
         			$formconfirm.='
