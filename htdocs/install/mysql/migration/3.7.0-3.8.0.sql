@@ -676,6 +676,8 @@ ALTER TABLE llx_c_stcomm ADD COLUMN picto varchar(128);
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);
 
 
+ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
+
 DROP TABLE llx_holiday_types;
 
 CREATE TABLE llx_c_holiday_types (
@@ -685,6 +687,23 @@ CREATE TABLE llx_c_holiday_types (
   affect integer NOT NULL,	
   delay integer NOT NULL,
   newByMonth double(8,5) DEFAULT 0 NOT NULL,
-  fk_country integer DEFAULT NULL
+  fk_country integer DEFAULT NULL,
+  active integer DEFAULT 1
 ) ENGINE=innodb;
+
+ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types(code);
+
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_PAID', 'Paid vacation', 1, 7, 0,    NULL);
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_SICK', 'Sick leave',    0, 0, 0,    NULL);
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_OTHER','Other leave',   0, 0, 0,    NULL);
+-- Leaves specific to France
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_RTT',  'RTT'          , 1, 7, 0.83, 1);
+
+ALTER TABLE llx_holiday ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_holiday_users ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_holiday_logs ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
+
+UPDATE llx_holiday_users SET fk_type = 1 WHERE fk_type IS NULL;
+UPDATE llx_holiday_logs SET fk_type = 1 WHERE fk_type IS NULL;
+
 

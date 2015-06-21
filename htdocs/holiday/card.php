@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
@@ -381,7 +381,7 @@ if ($action == 'confirm_send')
 
 
 // Si Validation de la demande
-if($action == 'confirm_valid')
+if ($action == 'confirm_valid')
 {
     $cp = new Holiday($db);
     $cp->fetch($id);
@@ -673,7 +673,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
     else
     {
         // Formulaire de demande de congés payés
-        print_fiche_titre($langs->trans('MenuAddCP'));
+        print_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
         // Si il y a une erreur
         if (GETPOST('error')) {
@@ -747,8 +747,26 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
         print '<input type="hidden" name="userID" value="'.$userid.'" />'."\n";
-        print '<div class="tabBar">';
-        print '<span>'.$langs->trans('DelayToRequestCP',$cp->getConfCP('delayForRequest')).'</span><br /><br />';
+
+        dol_fiche_head();
+
+        $out='';
+        $typeleaves=$cp->getTypes(1,1);
+    	foreach($typeleaves as $key => $val)
+		{
+			$nb_type = $cp->getCPforUser($user->id, $val['rowid']);
+			$nb_holiday += $nb_type;
+			$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+		}
+        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+		print $out;
+
+        dol_fiche_end();
+
+
+        dol_fiche_head();
+
+        //print '<span>'.$langs->trans('DelayToRequestCP',$cp->getConfCP('delayForRequest')).'</span><br /><br />';
 
         print '<table class="border" width="100%">';
         print '<tbody>';
@@ -761,8 +779,6 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
         else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
-        $nb_holiday = $cp->getCPforUser($user->id) / $cp->getConfCP('nbHolidayDeducted');
-        print ' &nbsp; <span>'.$langs->trans('SoldeCPUser', round($nb_holiday,2)).'</span>';
         print '</td>';
         print '</tr>';
         print '<tr>';
@@ -818,17 +834,17 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         print '</tbody>';
         print '</table>';
-        print '<div style="clear: both;"></div>';
-        print '</div>';
-        print '</from>'."\n";
+
+        dol_fiche_end();
 
         print '<div class="center">';
         print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
         print '&nbsp; &nbsp; ';
         print '<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)">';
         print '</div>';
-    }
 
+        print '</from>'."\n";
+    }
 }
 else
 {

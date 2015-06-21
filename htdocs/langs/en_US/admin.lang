@@ -820,6 +820,7 @@ DictionaryAccountancysystem=Models for chart of accounts
 DictionaryEMailTemplates=Emails templates
 DictionaryUnits=Units
 DictionaryProspectStatus=Prospection status
+DictionaryHolidayTypes=Type of leaves
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
 BackToDictionaryList=Back to dictionaries list
