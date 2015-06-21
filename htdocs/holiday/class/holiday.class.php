@@ -53,7 +53,7 @@ class Holiday extends CommonObject
     var $date_debut_gmt='';		// Date start in GMT
     var $date_fin_gmt='';		// Date end in GMT
     var $halfday='';
-    var $statut='';			// 1=draft, 2=validated, 3=approved
+    var $statut='';				// 1=draft, 2=validated, 3=approved
     var $fk_validator;
     var $date_valid='';
     var $fk_user_valid;
@@ -62,6 +62,7 @@ class Holiday extends CommonObject
     var $date_cancel='';
     var $fk_user_cancel;
     var $detail_refuse='';
+    var $fk_type;
 
     var $holiday = array();
     var $events = array();
@@ -70,6 +71,7 @@ class Holiday extends CommonObject
     var $optName = '';
     var $optValue = '';
     var $optRowid = '';
+
 
     /**
      *   Constructor
@@ -124,10 +126,10 @@ class Holiday extends CommonObject
         $sql.= "date_fin,";
         $sql.= "halfday,";
         $sql.= "statut,";
-        $sql.= "fk_validator";
+        $sql.= "fk_validator,";
+        $sql.= "fk_type,";
+        $sql.= "fk_user_create";
         $sql.= ") VALUES (";
-
-        // User
         $sql.= "'".$this->fk_user."',";
         $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->db->escape($this->description)."',";
@@ -135,8 +137,9 @@ class Holiday extends CommonObject
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " ".$this->halfday.",";
         $sql.= " '1',";
-        $sql.= " '".$this->fk_validator."'";
-
+        $sql.= " '".$this->fk_validator."',";
+        $sql.= " '".$this->fk_type."',";
+        $sql.= " ".$user->id;
         $sql.= ")";
 
         $this->db->begin();
@@ -150,7 +153,6 @@ class Holiday extends CommonObject
         if (! $error)
         {
             $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
-
         }
 
         // Commit or rollback
@@ -200,7 +202,9 @@ class Holiday extends CommonObject
         $sql.= " cp.fk_user_cancel,";
         $sql.= " cp.detail_refuse,";
         $sql.= " cp.note_private,";
-        $sql.= " cp.note_public";
+        $sql.= " cp.note_public,";
+        $sql.= " cp.fk_user_create,";
+        $sql.= " cp.fk_type";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
 
@@ -213,8 +217,8 @@ class Holiday extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id    = $obj->rowid;
-                $this->rowid    = $obj->rowid;	// deprecated
-                $this->ref    = $obj->rowid;
+                $this->rowid = $obj->rowid;	// deprecated
+                $this->ref   = $obj->rowid;
                 $this->fk_user = $obj->fk_user;
                 $this->date_create = $this->db->jdate($obj->date_create);
                 $this->description = $obj->description;
@@ -234,6 +238,8 @@ class Holiday extends CommonObject
                 $this->detail_refuse = $obj->detail_refuse;
                 $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
+                $this->fk_user_create = $obj->fk_user_create;
+                $this->fk_type = $obj->fk_type;
             }
             $this->db->free($resql);
 
@@ -1841,7 +1847,7 @@ class Holiday extends CommonObject
 	    	{
 	    		while ($obj = $this->db->fetch_object($result))
 	    		{
-	    			$types[] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
+	    			$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
 	    		}
 
 	    		return $types;

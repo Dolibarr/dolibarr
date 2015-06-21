@@ -51,7 +51,6 @@ $now=dol_now();
  * Actions
  */
 
-// Si création de la demande
 if ($action == 'create')
 {
 	$cp = new Holiday($db);
@@ -66,12 +65,15 @@ if ($action == 'create')
 
     if (! $error)
     {
+    	$db->begin();
+
 	    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
 	    $date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
 	    $date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
 	    $date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
 	    $starthalfday=GETPOST('starthalfday');
 	    $endhalfday=GETPOST('endhalfday');
+	    $type=GETPOST('type');
 	    $halfday=0;
 	    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
 	    else if ($starthalfday == 'afternoon') $halfday=-1;
@@ -131,17 +133,22 @@ if ($action == 'create')
 	    $cp->date_fin = $date_fin;
 	    $cp->fk_validator = $valideur;
 		$cp->halfday = $halfday;
+		$cp->fk_type = $type;
 
-	    $verif = $cp->create($userid);
+		$verif = $cp->create($user);
 
 	    // Si pas d'erreur SQL on redirige vers la fiche de la demande
 	    if ($verif > 0)
 	    {
-	        header('Location: card.php?id='.$verif);
+			$db->commit();
+
+	    	header('Location: card.php?id='.$verif);
 	        exit;
 	    }
 	    else
-	    {
+		{
+	    	$db->rollback();
+
 	        // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
 	        header('Location: card.php?action=request&error=SQL_Create&msg='.$cp->error);
 	        exit;
@@ -242,44 +249,41 @@ if ($action == 'update')
 }
 
 // Si suppression de la demande
-if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights->holiday->delete)
 {
-    if($user->rights->holiday->delete)
-    {
-    	$error=0;
+	$error=0;
 
-    	$db->begin();
+	$db->begin();
 
-        $cp = new Holiday($db);
-        $cp->fetch($id);
+	$cp = new Holiday($db);
+	$cp->fetch($id);
 
-        $canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
+	$canedit=(($user->id == $cp->fk_user && $user->rights->holiday->write) || ($user->id != $cp->fk_user && $user->rights->holiday->write_all));
 
-        // Si c'est bien un brouillon
-        if ($cp->statut == 1 || $cp->statut == 3)
-        {
-            // Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
-            if ($canedit)
-            {
-                $result=$cp->delete($id);
-            }
-            else
-            {
-                $error = $langs->trans('ErrorCantDeleteCP');
-            }
-        }
+	// Si c'est bien un brouillon
+	if ($cp->statut == 1 || $cp->statut == 3)
+	{
+		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
+		if ($canedit)
+		{
+			$result=$cp->delete($id);
+		}
+		else
+		{
+			$error = $langs->trans('ErrorCantDeleteCP');
+		}
+	}
 
-       	if (! $error)
-        {
-          	$db->commit();
-           	header('Location: index.php');
-           	exit;
-        }
-        else
-        {
-        	$db->rollback();
-        }
-    }
+	if (! $error)
+	{
+		$db->commit();
+		header('Location: index.php');
+		exit;
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 // Si envoi de la demande
@@ -466,7 +470,7 @@ if ($action == 'confirm_valid')
 
 if ($action == 'confirm_refuse')
 {
-    if (!empty($_POST['detail_refuse']))
+    if (! empty($_POST['detail_refuse']))
     {
         $cp = new Holiday($db);
         $cp->fetch($_GET['id']);
@@ -770,6 +774,8 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         print '<table class="border" width="100%">';
         print '<tbody>';
+
+        // User
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
@@ -781,6 +787,24 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
         print '</td>';
         print '</tr>';
+
+        // Type
+        print '<tr>';
+        print '<td class="fieldrequired">'.$langs->trans("Type").'</td>';
+        print '<td>';
+        $typeleaves=$cp->getTypes(1,1);
+        $arraytypeleaves=array();
+        foreach($typeleaves as $key => $val)
+        {
+        	$labeltoshow = $val['label'];
+        	$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
+			$arraytypeleaves[$val['rowid']]=$labeltoshow;
+        }
+        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+        print '</td>';
+        print '</tr>';
+
+        // Date start
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("DateDebCP").' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
@@ -795,6 +819,8 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
         print '</td>';
         print '</tr>';
+
+        // Date end
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("DateFinCP").' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
@@ -952,9 +978,9 @@ else
                 if ($action == 'edit' && $cp->statut == 1)
                 {
                     $edit = true;
-                    print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'">'."\n";
+                    print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
-                    print '<input type="hidden" name="holiday_id" value="'.$_GET['id'].'" />'."\n";
+                    print '<input type="hidden" name="holiday_id" value="'.$id.'" />'."\n";
                 }
 
                 print '<table class="border" width="100%">';
@@ -973,6 +999,15 @@ else
         		print '<td>';
         		print $userRequest->getNomUrl(1);
         		print '</td></tr>';
+
+		        // Type
+		        print '<tr>';
+		        print '<td>'.$langs->trans("Type").'</td>';
+		        print '<td>';
+		        $typeleaves=$cp->getTypes(1,1);
+		        print $typeleaves[$cp->fk_type]['label'];
+		        print '</td>';
+		        print '</tr>';
 
 			    $starthalfday=($cp->halfday == -1 || $cp->halfday == 2)?'afternoon':'morning';
 			    $endhalfday=($cp->halfday == 1 || $cp->halfday == 2)?'morning':'afternoon';
