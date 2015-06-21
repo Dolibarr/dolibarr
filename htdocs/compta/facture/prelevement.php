@@ -478,7 +478,13 @@ if ($object->id > 0)
 	{
 		if ($user->rights->prelevement->bons->creer)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=new">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			print '<form method="POST" action="">';
+			print '<input type="hidden" name="id" value="' . $object->id . '" />';
+			print '<input type="hidden" name="action" value="new" />';
+			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
+			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
+			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
+			print '</form>';
 		}
 		else
 		{

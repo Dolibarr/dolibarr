@@ -260,17 +260,16 @@ CREATE TABLE llx_expensereport_det
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
    fk_projet integer,
-   fk_c_tva integer,
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
    value_unit real NOT NULL,
    remise_percent real,
-   tva_tx						double(6,3),						    -- Vat rat
-   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
-   localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
-   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
-   localtax2_type			 	varchar(10)	  	 NULL, 				 	-- localtax2 type
+   tva_tx						double(6,3),					-- Vat rat
+   localtax1_tx               	double(6,3)  DEFAULT 0,    		-- localtax1 rate
+   localtax1_type			 	varchar(10)	  	 NULL, 			-- localtax1 type
+   localtax2_tx               	double(6,3)  DEFAULT 0,    		-- localtax2 rate
+   localtax2_type			 	varchar(10)	  	 NULL, 			-- localtax2 type
    total_ht double(24,8) DEFAULT 0 NOT NULL,
    total_tva double(24,8) DEFAULT 0 NOT NULL,
    total_localtax1				double(24,8)  	DEFAULT 0,		-- Total LocalTax1 for total quantity of line

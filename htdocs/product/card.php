@@ -979,12 +979,14 @@ else
 	    $doleditor->Create();
 
         print "</td></tr>";
-
-		// Categories
-		print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
-		print "</td></tr>";
+		
+		if($conf->categorie->enabled) {
+			// Categories
+			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+			print "</td></tr>";
+		}
 
 	    // Units
 	    if($conf->global->PRODUCT_USE_UNITS)
@@ -1270,18 +1272,20 @@ else
             $doleditor->Create();
 
             print "</td></tr>";
-
-			// Categories
-			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
-			foreach($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			
+			if($conf->categorie->enabled) {
+				// Categories
+				print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print "</td></tr>";
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
-			print "</td></tr>";
-
+			
 	        // Units
 	        if($conf->global->PRODUCT_USE_UNITS)
 	        {
@@ -1593,10 +1597,12 @@ else
             print '<!-- End show Note --> '."\n";
 
 			// Categories
-			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->showCategories($object->id,'product',1);
-			print "</td></tr>";
-
+			if($conf->categorie->enabled) {
+				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print $form->showCategories($object->id,'product',1);
+				print "</td></tr>";
+			}
+			
             print "</table>\n";
 
             dol_fiche_end();
