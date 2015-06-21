@@ -4557,12 +4557,13 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *
  *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
  *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      int			$order				Sort order
+ *  @param      int			$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
+ *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
  */
-function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensitive=0)
+function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensitive=0, $keepindex=0)
 {
 	// Clean parameters
 	$order=strtolower($order);
@@ -4571,13 +4572,21 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	if (is_array($array) && $sizearray>0)
 	{
 		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+
 		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
 		else
 		{
 			($case_sensitive) ? natsort($temp) : natcasesort($temp);
 			if($order!='asc') $temp=array_reverse($temp,TRUE);
 		}
-		foreach(array_keys($temp) as $key) (is_numeric($key))? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+
+		$sorted = array();
+
+		foreach(array_keys($temp) as $key)
+		{
+			(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+		}
+
 		return $sorted;
 	}
 	return $array;

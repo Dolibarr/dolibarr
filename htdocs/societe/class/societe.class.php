@@ -2132,16 +2132,33 @@ class Societe extends CommonObject
 
 
     /**
-     *    Return bank number property of thirdparty
+     *  Return bank number property of thirdparty (label or rum)
      *
-     *    @return	string		Bank number
+     *	@param	string	$mode	'label' or 'rum'
+     *  @return	string			Bank number
      */
-    function display_rib()
+    function display_rib($mode='label')
     {
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
-        return $bac->getRibLabel(true);
+
+        if ($mode == 'label')
+        {
+        	return $bac->getRibLabel(true);
+        }
+        elseif ($mode == 'rum')
+        {
+        	if (empty($bac->rum))
+        	{
+        		$prelevement = new BonPrelevement($this->db);
+        		$bac->fetch_thirdparty();
+        		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+        	}
+        	return $bac->rum;
+        }
+
+        return 'BadParameterToFunctionDisplayRib';
     }
 
     /**

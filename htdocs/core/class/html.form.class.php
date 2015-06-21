@@ -2324,7 +2324,7 @@ class Form
 
 
     /**
-     *      Charge dans cache la liste des conditions de paiements possibles
+     *      Load into cache list of payment terms
      *
      *      @return     int             Nb of lines loaded, <0 if KO
      */
@@ -2358,7 +2358,7 @@ class Form
                 $i++;
             }
 
-			//$this->cache_conditions_paiements=dol_sort_array($this->cache_conditions_paiements, 'label');		// We use the sortorder
+			//$this->cache_conditions_paiements=dol_sort_array($this->cache_conditions_paiements, 'label', 'asc', 0, 0, 1);		// We use the field sortorder of table
 
             return $num;
         }
@@ -2403,7 +2403,7 @@ class Form
                 $i++;
             }
 
-            $this->cache_availability = dol_sort_array($this->cache_availability, 'label');
+            $this->cache_availability = dol_sort_array($this->cache_availability, 'label', 'asc', 0, 0, 1);
 
             return $num;
         }
@@ -2484,7 +2484,7 @@ class Form
                 $i++;
             }
 
-            $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc');
+            $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc', 0, 0, 1);
 
             unset($tmparray);
             return $num;
@@ -2547,7 +2547,9 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql = "SELECT id, code, libelle, type";
+        $this->cache_types_paiements = array();
+
+        $sql = "SELECT id, code, libelle as label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
 
@@ -2561,14 +2563,15 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $label=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $label=($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
+                $this->cache_types_paiements[$obj->id]['id'] =$obj->id;
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
                 $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
                 $i++;
             }
 
-            $this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label');
+            $this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label', 'asc', 0, 0, 1);
 
             return $num;
         }
@@ -3579,7 +3582,7 @@ class Form
 
 
     /**
-     *    Affiche formulaire de selection des modes de reglement
+     *    Show form with payment mode
      *
      *    @param	string	$page        	Page
      *    @param    int		$selected    	Id mode pre-selectionne
@@ -3607,6 +3610,7 @@ class Form
             if ($selected)
             {
                 $this->load_cache_types_paiements();
+
                 print $this->cache_types_paiements[$selected]['label'];
             } else {
                 print "&nbsp;";

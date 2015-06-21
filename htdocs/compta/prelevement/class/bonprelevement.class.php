@@ -446,17 +446,17 @@ class BonPrelevement extends CommonObject
                             $fac = new Facture($this->db);
                             $fac->fetch($facs[$i][0]);
                             $amounts[$fac->id] = $facs[$i][1];
-							
+
 							$totalpaye  = $fac->getSommePaiement();
 							$totalcreditnotes = $fac->getSumCreditNotesUsed();
 							$totaldeposits = $fac->getSumDepositsUsed();
 							$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
-							
+
 							if ($alreadypayed + $facs[$i][1] >= $fac->total_ttc) {
 								$result = $fac->set_paid($user);
 							}
                         }
-						
+
                         $paiement = new Paiement($this->db);
                         $paiement->datepaye     = $date ;
                         $paiement->amounts      = $amounts;
@@ -768,7 +768,7 @@ class BonPrelevement extends CommonObject
         $factures_result = array();
         $factures_prev_id=array();
         $factures_errors=array();
-		
+
         if (! $error)
         {
             $sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
@@ -822,7 +822,7 @@ class BonPrelevement extends CommonObject
         	// Check RIB
             $i = 0;
             dol_syslog(__METHOD__."::Check RIB", LOG_DEBUG);
-			
+
             if (count($factures) > 0)
             {
                 foreach ($factures as $key => $fac)
@@ -834,7 +834,7 @@ class BonPrelevement extends CommonObject
                         {
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0,$soc->id);
-							
+
                             if ($bac->verif() >= 1)
                             //if (true)
                             {
@@ -846,7 +846,7 @@ class BonPrelevement extends CommonObject
                             else
 							{
 								dol_syslog(__METHOD__."::Check RIB Error on default bank number RIB/IBAN for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
-                                $this->invoice_in_error[$fac[0]]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty (reported by function verif) ".$soc->name;
+                                $this->invoice_in_error[$fac[0]]="Error on default bank number RIB/IBAN for invoice ".$fact->getNomUrl(0)." for thirdparty (reported by function verif) ".$soc->getNomUrl(0);
                             }
                         }
                         else
@@ -934,7 +934,7 @@ class BonPrelevement extends CommonObject
 	                {
 	                    $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 						$this->id = $prev_id;
-						
+
 	                    $dir=$conf->prelevement->dir_output.'/receipts';
 	                    $file=$filebonprev;
 	                    if (! is_dir($dir)) dol_mkdir($dir);
@@ -1221,7 +1221,7 @@ class BonPrelevement extends CommonObject
     /**
      * Generate a withdrawal file.
      * Generation Formats:
-     * - Europe: SEPA (France: CFONB no more supported, Spain:  AEB19 if external module EsAEB is enabled)
+     * - Europe: SEPA (France: CFONB no more supported, Spain: AEB19 if external module EsAEB is enabled)
      * - Others countries: Warning message
      * File is generated with name this->filename
      *
@@ -1237,6 +1237,11 @@ class BonPrelevement extends CommonObject
         dol_syslog(get_class($this)."::generate build file ".$this->filename);
 
         $this->file = fopen($this->filename,"w");
+		if (empty($this->file))
+		{
+			$this->error=$langs->trans('ErrorFailedToOpenFile', $this->filename);
+			return -1;
+		}
 
         $found=0;
 
@@ -1298,7 +1303,8 @@ class BonPrelevement extends CommonObject
 			//echo $sql;
 			$resql=$this->db->query($sql);
 			if ($resql)
-			{	$num = $this->db->num_rows($resql);
+			{
+				$num = $this->db->num_rows($resql);
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -1308,7 +1314,8 @@ class BonPrelevement extends CommonObject
 				}
 			}
 			else
-			{	fputs($this->file, 'ERREUR DEBITEUR '.$sql.$CrLf);
+			{
+				fputs($this->file, 'ERREUR DEBITEUR '.$sql.$CrLf);
 				$result = -2;
 			}
 
@@ -1316,10 +1323,12 @@ class BonPrelevement extends CommonObject
 			 * section Emetteur(sepa Emetteur bloc lines)
 			 */
 			if ($result != -2)
-			{	$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $i, $this->total, $CrLf);
+			{
+				$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $i, $this->total, $CrLf);
 			}
 			else
-			{	fputs($this->file, 'ERREUR EMETTEUR'.$CrLf);
+			{
+				fputs($this->file, 'ERREUR EMETTEUR'.$CrLf);
 			}
 
 			/**
@@ -1514,7 +1523,7 @@ class BonPrelevement extends CommonObject
      */
     static function buildRumNumber($row_code_client, $row_datec, $row_drum)
     {
-		$pre = ($row_datec > 1359673200) ? 'Rum' : '++R';
+		$pre = ($row_datec > 1359673200) ? 'RUM-' : '++R';
 		return $pre.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
     }
 

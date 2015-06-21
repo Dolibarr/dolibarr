@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 
 
 /*
- * Mode Liste
+ * Mode List
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut";
@@ -81,7 +81,7 @@ if ($result)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref",'','','class="liste_titre"');
   print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'class="liste_titre" align="center"');
-  print '<td class="liste_titre" align="right">'.$langs->trans("Amount").'</td>';
+  print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"","","",'align="center"');
   print '</tr>';
 
   print '<tr class="liste_titre">';
@@ -121,7 +121,7 @@ else
   dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
 
+$db->close();

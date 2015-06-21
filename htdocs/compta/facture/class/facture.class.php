@@ -3061,13 +3061,14 @@ class Facture extends CommonInvoice
 	/**
 	 *	Create a withdrawal request for a standing order
 	 *
-	 *	@param      User	$user       User asking standing order
+	 *	@param      User	$fuser       User asking standing order
+	 *  @param		float	$amount		Amount we request withdraw for
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function demande_prelevement($user)
+	function demande_prelevement($fuser, $amount=0)
 	{
 		global $langs;
-		
+
 		$error=0;
 
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
@@ -3082,7 +3083,7 @@ class Facture extends CommonInvoice
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
-			
+
 			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -3101,23 +3102,21 @@ class Facture extends CommonInvoice
                     // For example print 239.2 - 229.3 - 9.9; does not return 0.
                     //$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
                     //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-                    
-                    //$resteapayer = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+					if (empty($amount)) $amount = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
 
-                    $amount = GETPOST('withdraw_request_amount');
-					
-					if (is_numeric($amount) && $amount != 0) {
+					if (is_numeric($amount) && $amount != 0)
+					{
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 						$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
 						$sql .= ' VALUES ('.$this->id;
 						$sql .= ",'".price2num($amount)."'";
 						$sql .= ",'".$this->db->idate($now)."'";
-						$sql .= ",".$user->id;
+						$sql .= ",".$fuser->id;
 						$sql .= ",'".$bac->code_banque."'";
 						$sql .= ",'".$bac->code_guichet."'";
 						$sql .= ",'".$bac->number."'";
 						$sql .= ",'".$bac->cle_rib."')";
-						
+
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 						$resql=$this->db->query($sql);
 						if (! $resql)
@@ -3126,9 +3125,11 @@ class Facture extends CommonInvoice
 						    dol_syslog(get_class($this).'::demandeprelevement Erreur');
 						    $error++;
 						}
-					} else {
-						$this->error=$langs->trans('WithdrawRequestErrorNilAmount');
-	                    dol_syslog(get_class($this).'::demandeprelevement ' . $langs->trans('WithdrawRequestErrorNilAmount'));
+					}
+					else
+					{
+						$this->error='WithdrawRequestErrorNilAmount';
+	                    dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
 	                    $error++;
 					}
 
@@ -3170,11 +3171,11 @@ class Facture extends CommonInvoice
 	/**
 	 *  Supprime une demande de prelevement
 	 *
-	 *  @param  User		$user       utilisateur creant la demande
+	 *  @param  User	$fuser      User making delete
 	 *  @param  int		$did        id de la demande a supprimer
 	 *  @return	int					<0 if OK, >0 if KO
 	 */
-	function demande_prelevement_delete($user, $did)
+	function demande_prelevement_delete($fuser, $did)
 	{
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 		$sql .= ' WHERE rowid = '.$did;
@@ -3195,8 +3196,8 @@ class Facture extends CommonInvoice
 	/**
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *	@param      User	$user    	Object user
-	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *	@param  User		$user    	Object user
+	 *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
