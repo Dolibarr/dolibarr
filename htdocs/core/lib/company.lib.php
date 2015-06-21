@@ -352,7 +352,7 @@ function getState($id,$withcode='',$dbtouse=0)
         }
         else
         {
-            return $langs->trans("NotDefined");
+            return $langs->transnoentitiesnoconv("NotDefined");
         }
     }
     else dol_print_error($dbtouse,'');

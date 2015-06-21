@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ if ($sall)
         foreach ($scrit as $crit)
         {
             $sql.=" AND (";
-            if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
+            if (is_numeric($sall)) $sql.= "d.rowid = ".$db->escape($sall)." OR ";
             $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
             $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
@@ -115,7 +115,7 @@ if ($sall)
 }
 if ($type > 0)
 {
-	$sql.=" AND t.rowid=".$type;
+	$sql.=" AND t.rowid=".$db->escape($type);
 }
 if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {

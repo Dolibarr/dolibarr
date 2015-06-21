@@ -449,10 +449,11 @@ class Don extends CommonObject
      */
     function delete($rowid)
     {
-
+		global $user;
+		
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0 OR fk_statut = -1";
 
         $resql=$this->db->query($sql);
         if ($resql)

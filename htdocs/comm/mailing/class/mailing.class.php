@@ -421,12 +421,35 @@ class Mailing extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			return 1;
+			return $this->delete_targets();
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
 			return -1;
+		}
+	}
+	
+	/**
+	 *  Delete targets emailing
+	 *
+	 *  @return int       1 if OK, 0 if error
+	 */
+	function delete_targets()
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql.= " WHERE fk_mailing = ".$this->id;
+
+		dol_syslog("Mailing::delete_targets", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return 0;
 		}
 	}
 

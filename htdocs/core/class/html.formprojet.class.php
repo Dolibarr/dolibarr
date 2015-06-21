@@ -124,7 +124,7 @@ class FormProjets
 						}
 						else if ($obj->fk_statut == 2)
 						{
-							if ($discard_close == 2) $disabled=1;
+							if ($discard_closed == 2) $disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Closed");
 						}
 						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))

@@ -4157,7 +4157,7 @@ class Form
         	$out='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
         			<script type="text/javascript">
         				$(document).ready(function () {
-        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({
+        					$(\'#'.$htmlname.'\').'.$tmpplugin.'({width:"resolve"
         				});
         			});
         		   </script>';
@@ -4514,7 +4514,7 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
+                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="https://www.gravatar.com/avatar/'.dol_hash($email,3).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';	// gravatar need md5 hash
                 }
                 else
                 {

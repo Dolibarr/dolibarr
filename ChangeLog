@@ -8,16 +8,37 @@ You may also experience troubles with Mysql 5.5.41 with error "Lost connection" 
 Upgrading to any other version or database system is abolutely required BEFORE trying to
 make a Dolibarr upgrade.
 
+***** ChangeLog for 3.7.2 compared to 3.7.1 *****
+FIX [ bug #2855 ] Wrong translation key in localtax report page
+FIX [ bug #1852 ] JS error when editing a customer order line
+FIX [ bug #2900 ] Courtesy title is not stored in create thirdparty form
 
 ***** ChangeLog for 3.7.1 compared to 3.7.* *****
-- Fix: Bug in the new photo system
-- Fix: Error management
-- Fix: [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
-- Fix: [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
+FIX Bug in the new photo system
+FIX Error management
+FIX [ Bug #2714 ] Members -> Memberxy-> Agenda -> technical Error
+FIX [ Bug #2713 ] 3.7.0 mailing-unsubscribe.php not unsubscribe
+FIX #2901
+FIX when we create an agenda event with "Not applicable" status, it is automatically saved with "To do" status
+FIX check the user status during authentication
+FIX top links menu have target attribute with wrong value
+FIX extrafields required on thirdparty
+FIX create contact with extrafield is null when it is require
+FIX width multiselect
+FIX "script" tag with wrong syntax
+Fix bug debian 786479
+FIX update usergroup name
+Fix facturestats was not filtering on invoice type
+FIX #2856 : Wrong table design
+FIX button create payment hide if tax amount is less than 1
+FIX event for restricted user was restricted if company null
+FIX send mail, copy sendto don't read the list of contact
+FIX Properly escape untrusted data to prevent HTML injection.
+FIX send mail, copy sendto don't read the list of contact
 
-- Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose 
-  your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
-  restore old path.
+Path to save photos of products was moved in 3.7.0 to match path of other attached files. If you had loose 
+your photo on the photo tab of products, you can set the constant "PRODUCT_USE_OLD_PATH_FOR_PHOTO" to
+restore old path.
 
 WARNING: 
 
@@ -202,8 +223,8 @@ Dolibarr better:
 - Table llx_c_pays were renamed into llx_c_country.  
 - Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
-- A lot of pages called fiche.php were renamed into card.php
-- A lot of pages called liste.php were renamed into list.php
+- A lot of pages named fiche.php were renamed into card.php
+- A lot of pages named liste.php were renamed into list.php
 - If you used warehouse/stock module, recheck setup of stock increase/decrease rules of the
   warehouse module and your Point Of Sale module setup if you use one.
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
@@ -245,6 +266,7 @@ Dolibarr better:
 - Fix: [ bug #2545 ] Missing object_margin.png in Amarok theme
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
+- Fix: [ bug #2891 ] Category hooks do not work
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -419,6 +441,11 @@ Fix: [ bug #2577 ] Incorrect invoice status in "Linked objects" page of a projec
 Fix: [ bug #2576 ] Unable to edit a dictionary entry that has # in its ref
 Fix: [ bug #2758 ] Product::update sets product note to "null" when $prod->note is null
 Fix: [ bug #2757 ] Deleting product category photo gives "Forbidden access" error
+Fix: [ bug #2976 ] "Report" tab is the current tab but it is not marked as selected by the UI
+Fix: [ bug #2861 ] Undefined variable $res when migrating
+Fix: [ bug #2837 ] Product list table column header does not match column body
+Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
+Fix: [ bug #2814 ] JPEG photos are not displayed in Product photos page
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

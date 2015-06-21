@@ -554,7 +554,15 @@ if (! empty($id) && $action != 'edit')
 
 	if ($user->rights->don->supprimer)
 	{
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$don->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+		if ($don->statut == -1 || $don->statut == 0)
+		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$don->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
+		}
+		else
+		{
+			print '<div class="inline-block divButAction"><a class="butActionDelete butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
+		}
+		
 	}
 	else
 	{

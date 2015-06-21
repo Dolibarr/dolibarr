@@ -1,19 +1,19 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
-Menuaccount=Accounting accounts
+Accounting=Comptabilitat experta
+Globalparameters=Paràmetres globals
+Chartofaccounts=Pla comptable
+Fiscalyear=Anys fiscals
+Menuaccount=Comptes de comptabilitat
 Menuthirdpartyaccount=Thirdparty accounts
-MenuTools=Tools
+MenuTools=Utilitats
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
 JournalFinancial=Financial journals
 Exports=Exports
-Export=Export
+Export=Exporta
 Modelcsv=Model of export
 OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
 Selectmodelcsv=Select a model of export
@@ -124,8 +124,8 @@ CustomerInvoicePayment=Payment of invoice customer
 
 ThirdPartyAccount=Thirdparty account
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
+NewAccountingMvt=Nou moviment
+NumMvts=Nombre de moviment
 ListeMvts=List of the movement
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
 
@@ -134,7 +134,7 @@ DescThirdPartyReport=Consult here the list of the thirdparty customers and the s
 
 ListAccounts=List of the accounting accounts
 
-Pcgversion=Version of the plan
+Pcgversion=Versió del pla
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account

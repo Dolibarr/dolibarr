@@ -1,18 +1,18 @@
 # ProductBATCH language file - en_US - ProductBATCH
-ManageLotSerial=Use lot/serial number
-ProductStatusOnBatch=Yes (lot/serial required)
-ProductStatusNotOnBatch=No (lot/serial not used)
+ManageLotSerial=Utilizar lote/número de série
+ProductStatusOnBatch=Sim (necessário lote/número de série)
+ProductStatusNotOnBatch=Não (não é necessário lote/número de série)
 ProductStatusOnBatchShort=Sim
 ProductStatusNotOnBatchShort=Não
-Batch=Lot/Serial
+Batch=Lote/Nr. de Série
 atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
-batch_number=Lot/Serial number
+batch_number=Lote/Número de série
 BatchNumberShort=Lot/Serial
 l_eatby=Eat-by date
 l_sellby=Sell-by date
-DetailBatchNumber=Lot/Serial details
+DetailBatchNumber=Detalhes de Lote/Nr. de Série
 DetailBatchFormat=Lot/Serial: %s - Eat by: %s - Sell by: %s (Qty : %d)
-printBatch=Lot/Serial: %s
+printBatch=Lote/Nr. de Série: %s
 printEatby=Eat-by: %s
 printSellby=Sell-by: %s
 printQty=Qt.: %d
