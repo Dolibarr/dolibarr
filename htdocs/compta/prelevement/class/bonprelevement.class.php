@@ -446,8 +446,17 @@ class BonPrelevement extends CommonObject
                             $fac = new Facture($this->db);
                             $fac->fetch($facs[$i][0]);
                             $amounts[$fac->id] = $facs[$i][1];
-                            $result = $fac->set_paid($user);
+							
+							$totalpaye  = $fac->getSommePaiement();
+							$totalcreditnotes = $fac->getSumCreditNotesUsed();
+							$totaldeposits = $fac->getSumDepositsUsed();
+							$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
+							
+							if ($alreadypayed + $facs[$i][1] >= $fac->total_ttc) {
+								$result = $fac->set_paid($user);
+							}
                         }
+						
                         $paiement = new Paiement($this->db);
                         $paiement->datepaye     = $date ;
                         $paiement->amounts      = $amounts;
@@ -651,7 +660,7 @@ class BonPrelevement extends CommonObject
     {
         global $conf;
 
-        $sql = "SELECT sum(f.total_ttc) as nb";
+        $sql = "SELECT sum(pfd.amount) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
         $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         //$sql.= " ,".MAIN_DB_PREFIX."c_paiement as cp";
@@ -759,7 +768,7 @@ class BonPrelevement extends CommonObject
         $factures_result = array();
         $factures_prev_id=array();
         $factures_errors=array();
-
+		
         if (! $error)
         {
             $sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
@@ -813,7 +822,7 @@ class BonPrelevement extends CommonObject
         	// Check RIB
             $i = 0;
             dol_syslog(__METHOD__."::Check RIB", LOG_DEBUG);
-
+			
             if (count($factures) > 0)
             {
                 foreach ($factures as $key => $fac)
@@ -825,7 +834,7 @@ class BonPrelevement extends CommonObject
                         {
                         	$bac = new CompanyBankAccount($this->db);
                         	$bac->fetch(0,$soc->id);
-
+							
                             if ($bac->verif() >= 1)
                             //if (true)
                             {
@@ -924,7 +933,8 @@ class BonPrelevement extends CommonObject
 	                if ($resql)
 	                {
 	                    $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
-
+						$this->id = $prev_id;
+						
 	                    $dir=$conf->prelevement->dir_output.'/receipts';
 	                    $file=$filebonprev;
 	                    if (! is_dir($dir)) dol_mkdir($dir);
@@ -981,6 +991,7 @@ class BonPrelevement extends CommonObject
 
                         dol_syslog(__METHOD__."::Update Orders::Sql=".$sql, LOG_DEBUG);
                         $resql=$this->db->query($sql);
+
                         if (! $resql)
                         {
                             $error++;
