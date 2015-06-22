@@ -2,9 +2,10 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2013      Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2013 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2013      Philippe Grand	<philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Charlie Benke	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,8 @@ $accounting_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES
 
 if ($action == 'update')
 {
+	if ($_POST["button"] == $langs->trans('Modify'))
+	{
     $error = 0;
 
     $accounting_modes = array(
@@ -93,6 +96,54 @@ if ($action == 'update')
     {
         setEventMessage($langs->trans("Error"),'errors');
     }
+	}
+	else
+	{
+		foreach ($list as $key) 
+		{
+	    	if ($_POST['Fill-'.$key] == $langs->trans('FillEmptyValue'))
+	    	{
+	    		switch($key)
+	    		{
+					case 'ACCOUNTING_PRODUCT_BUY_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_buy = '" . GETPOST('ACCOUNTING_PRODUCT_BUY_ACCOUNT', 'alpha')."'";
+						$sql1 .= " WHERE p.fk_product_type = 0";
+						$sql1 .= " AND (p.accountancy_code_buy is NULL OR p.accountancy_code_buy ='')";
+						break;
+					case 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_sell = '" . GETPOST('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', 'alpha')."'";
+						$sql1 .= " WHERE p.fk_product_type = 0";
+						$sql1 .= " AND (p.accountancy_code_sell is NULL OR p.accountancy_code_sell ='')";
+						break;
+					case 'ACCOUNTING_SERVICE_BUY_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_buy = '" . GETPOST('ACCOUNTING_SERVICE_BUY_ACCOUNT', 'alpha')."'" ;
+						$sql1 .= " WHERE p.fk_product_type = 1";
+						$sql1 .= " AND (p.accountancy_code_buy is NULL OR p.accountancy_code_buy ='')";
+						break;
+					case 'ACCOUNTING_SERVICE_SOLD_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_sell = '" . GETPOST('ACCOUNTING_SERVICE_SOLD_ACCOUNT', 'alpha')."'" ;
+						$sql1 .= " WHERE p.fk_product_type = 1";
+						$sql1 .= " AND (p.accountancy_code_sell is NULL OR p.accountancy_code_sell ='')";
+						break;
+					case 'ACCOUNTING_ACCOUNT_CUSTOMER':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "societe as s" ;
+						$sql1 .= " SET p.code_compta = '" . substr(GETPOST('ACCOUNTING_ACCOUNT_CUSTOMER', 'alpha'),0,-4)."' & lpad(rowid, 4, '0') ";
+						$sql1 .= " WHERE (p.code_compta is NULL OR p.code_compta = '')";
+						break;
+					case 'ACCOUNTING_ACCOUNT_SUPPLIER':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "societe as s" ;
+						$sql1 .= " SET p.code_compta_fournisseur  = '" . substr(GETPOST('ACCOUNTING_ACCOUNT_SUPPLIER', 'alpha'),0,-4)."' & lpad(rowid, 4, '0') ";
+						$sql1 .= " WHERE (p.code_compta_fournisseur is NULL OR p.code_compta_fournisseur  = '')";
+						break;
+	    		}
+	        	setEventMessage($langs->trans("DefaultUpdateMade")." ".$key);
+	        }
+	    }
+	}
 }
 
 /*
@@ -159,6 +210,9 @@ foreach ($list as $key)
 	// Value
 	print '<td>';
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '</td><td>';
+	if ($key != 'ACCOUNTING_VAT_ACCOUNT' && $key != 'ACCOUNTING_VAT_BUY_ACCOUNT')
+		print '<input type="submit" class=button id="Fill'.$key.'" name="Fill-'.$key.'" value="'.$langs->trans('FillEmptyValue').'">';
 	print '</td></tr>';
 }
 
