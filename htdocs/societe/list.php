@@ -214,22 +214,22 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)	$sql.= " AND s.rowid = ".$socid;
-if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
-if ($search_categ) $sql.= " AND s.rowid = cs.fk_soc";   // Join for the needed table to filter by categ
+if ($socid)           $sql.= " AND s.rowid = ".$socid;
+if ($search_sale)     $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
+if ($search_categ)    $sql.= " AND s.rowid = cs.fk_soc";   // Join for the needed table to filter by categ
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
-if ($search_sale) $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
-if ($search_categ) $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_sale)     $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+if ($search_categ)    $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
 if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
-if ($search_all) $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_all);
-if ($search_nom) $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_nom);
-if ($search_town)   $sql .= " AND s.town LIKE '%".$db->escape($search_town)."%'";
-if ($search_idprof1) $sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
-if ($search_idprof2) $sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
-if ($search_idprof3) $sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
-if ($search_idprof4) $sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
-if ($search_idprof5) $sql .= " AND s.idprof5 LIKE '%".$db->escape($search_idprof5)."%'";
-if ($search_idprof6) $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idprof6)."%'";
+if ($search_all)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_all);
+if ($search_nom)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_nom);
+if ($search_town)     $sql .= " AND s.town LIKE '%".$db->escape($search_town)."%'";
+if ($search_idprof1)  $sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
+if ($search_idprof2)  $sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
+if ($search_idprof3)  $sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
+if ($search_idprof4)  $sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
+if ($search_idprof5)  $sql .= " AND s.idprof5 LIKE '%".$db->escape($search_idprof5)."%'";
+if ($search_idprof6)  $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idprof6)."%'";
 // Filter on type of thirdparty
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
