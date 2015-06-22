@@ -61,6 +61,7 @@ $pagenext = $page + 1;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
+$search_all=GETPOST("search_all");
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
@@ -83,11 +84,11 @@ if ($search_status == '') $search_status=-1;	// -1 or 1
 // Purge criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
+	$search_all='';
 	$search_ref="";
 	$search_label="";
 	$search_societe="";
 	$search_year="";
-	$search_all=0;
 	$search_status=-1;
 	$search_public="";
 	$search_sale="";
@@ -189,7 +190,6 @@ if ($search_user > 0)
 	$sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
 }
 
-
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
@@ -205,6 +205,7 @@ if ($resql)
 	$param='';
 	if ($month)              		$param.='&month='.$month;
 	if ($year)               		$param.='&year=' .$year;
+	if ($search_all != '') 			$param.='&search_all='.$search_all;
 	if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 	if ($search_label != '') 		$param.='&search_label='.$search_label;
 	if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
@@ -226,6 +227,12 @@ if ($resql)
 	{
 		if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 		else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+	}
+
+	if ($search_all)
+	{
+		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Label")." ".$langs->trans("or")." ".$langs->trans("ThirdParty")."): ";
+		print '<strong>'.$search_all.'</strong>';
 	}
 
 	// If the user can view prospects other than his'

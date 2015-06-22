@@ -842,8 +842,8 @@ class Cronjob extends CommonObject
 	/**
 	 * Run a job
 	 *
-	 * @param  string		$userlogin    User login
-	 * @return	int					 <0 if KO, >0 if OK
+	 * @param  string		$userlogin    	User login
+	 * @return	int					 		<0 if KO, >0 if OK
 	 */
 	function run_jobs($userlogin)
 	{
