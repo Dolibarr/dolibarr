@@ -273,7 +273,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                             $tdparam='';
                             if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
-                            if (empty($contents[$i][$j]['text'])) $contents[$i][$j]['text']="";
                             $text=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
                             $textwithnotags=preg_replace('/<([^>]+)>/i','',$text);
                             $text2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
