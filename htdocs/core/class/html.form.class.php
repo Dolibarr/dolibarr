@@ -404,7 +404,7 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
         $s="";
         if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
-        elseif ($notabs == 2) $s.='<div class="inline-block nowrap">';
+        elseif ($notabs == 2) $s.='<div class="inline-block">';
         // Define value if value is before
         if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
@@ -3212,9 +3212,9 @@ class Form
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) {
-            	$formconfirm.= '<div>'.$more.'</div>';
+            	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? img_help('','').' '.$question : '');
+            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";

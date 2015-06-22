@@ -465,7 +465,9 @@ div.divsearchfield {
 	float: <?php print $left; ?>;
 	margin-<?php print $right; ?>: 12px;
 }
-
+div.confirmmessage {
+	padding-top: 6px;
+}
 /* Style to move picto into left of button */
 /*
 .buttonactionview {
