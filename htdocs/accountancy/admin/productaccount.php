@@ -3,6 +3,8 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)	<github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,23 +66,25 @@ print '
 		}
 </script>';
 
-$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell as codesell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
+$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
-$sql .= " WHERE p.accountancy_code_sell IS NULL  AND p.tosell = 1  OR p.accountancy_code_buy IS NULL AND p.tobuy = 1";
+//$sql .= " WHERE p.accountancy_code_sell IS NULL  AND p.tosell = 1  OR p.accountancy_code_buy IS NULL AND p.tobuy = 1";
+$sql .= " WHERE p.accountancy_code_sell ='' AND p.tosell = 1  OR p.accountancy_code_buy ='' AND p.tobuy = 1";
 
 dol_syslog('accountancy/admin/productaccount.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-
-	/*
-* view
-*/
-
+	
+/*
+ * View
+ */
+	
 	print '<br><br>';
-
+	
 	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
 	print '<td align="left">' . $langs->trans("Ref") . '</td>';
 	print '<td align="left">' . $langs->trans("Label") . '</td>';
 	print '<td align="left">' . $langs->trans("Description") . '</td>';
@@ -88,13 +92,14 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Accountancy_code_buy_suggest") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell_suggest") . '</td>';
-
+	print '</tr>';
+	
 	$var = true;
-
+	
 	while ( $i < min($num, 250) ) {
 		$obj = $db->fetch_object($resql);
 		$var = ! $var;
-
+		
 		$compta_prodsell = $obj->accountancy_code_sell;
 		if (empty($compta_prodsell)) {
 			if ($obj->product_type == 0)
@@ -102,7 +107,7 @@ if ($resql) {
 			else
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 		}
-
+		
 		$compta_prodbuy = $obj->accountancy_code_buy;
 		if (empty($compta_prodbuy)) {
 			if ($obj->product_type == 0)
@@ -110,30 +115,30 @@ if ($resql) {
 			else
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 		}
-
+		
 		$product_static = new Product($db);
-
+		
 		print "<tr $bc[$var]>";
 		// Ref produit
-		$product_static->ref = $objp->ref;
-		$product_static->id = $objp->rowid;
-		$product_static->type = $objp->type;
+		$product_static->ref = $obj->ref;
+		$product_static->id = $obj->rowid;
+		$product_static->type = $obj->type;
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		else
-			print '&nbsp;';
+			print '-&nbsp;';
 		print '</td>';
-		print '<td align="left">' . $obj->ref . '</td>';
+		//print '<td align="left">' . $obj->ref . '</td>';
 		print '<td align="left">' . $obj->label . '</td>';
 		print '<td align="left">' . $obj->description . '</td>';
-
+		
 		print '<td align="left">' . $obj->accountancy_code_buy . '</td>';
 		print '<td align="left">' . $compta_prodbuy . '</td>';
-
+		
 		print '<td align="left">' . $obj->accountancy_code_sell . '</td>';
 		print '<td align="left">' . $compta_prodsell . '</td>';
-
+		
 		print "</tr>\n";
 		$i ++;
 	}
