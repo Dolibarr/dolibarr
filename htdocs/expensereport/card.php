@@ -715,7 +715,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
 	
-	$result = $object->set_paid($id, $user)
+	$result = $object->set_paid($id, $user);
 	
 	if ($result > 0)
 	{
@@ -778,14 +778,14 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 			
 			// Retour
 			if($result):
-			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-			exit;
+				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
 			else:
-			dol_print_error($db);
+				dol_print_error($db);
 			endif;
+			
 			else:
 			dol_print_error($db,$acct->error);
-			endif;
 			endif;
 
 			else:
@@ -1492,20 +1492,6 @@ else
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
 				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
 				print '</tr>';
-				if($object->fk_statut==6)
-				{
-					print '<tr>';
-					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
-					print '<td>';
-					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_paid);
-					print $userfee->getNomUrl(1);
-					print '</td></tr>';
-					print '<tr>';
-					print '<td>'.$langs->trans("DATE_PAIEMENT").'</td>';
-					print '<td>'.$object->date_paiement.'</td></tr>';
-					print '</tr>';
-				}
 
 				// User to inform
 				if($object->fk_statut<3)	// informed
