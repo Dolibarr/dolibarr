@@ -4608,7 +4608,7 @@ class Form
 	 *
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
- 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Use text with link
+ 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect
 	 * 	@return		mixed					Array of category objects or < 0 if KO
 	 */
 	function showCategories($id, $type, $rendermode=0)
@@ -4626,10 +4626,10 @@ class Form
 				$ways = $c->print_all_ways();
 				foreach($ways as $way)
 				{
-					$toprint[] = img_object('','category').' '.$way;
+					$toprint[] = '<li class="select2-search-choice-dolibarr">'.img_object('','category').' '.$way.'</li>';
 				}
 			}
-			return implode('<br>', $toprint);
+			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 
 		if ($rendermode == 0)

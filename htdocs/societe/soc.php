@@ -2204,7 +2204,7 @@ else
             print '</td></tr>';
         }
 
-		// Categories
+		// Tags / categories
 	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	    {
 	        print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
