@@ -947,13 +947,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// Controling
-				if (! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled))
+				if (! empty($conf->accounting->enabled))
 				{
-					$newmenu->add("/compta/controling/index.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("Controling"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire );
-					$newmenu->add("/compta/controling/listfactdet.php?leftmenu=report", $langs->trans("ControllingBill"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+					$newmenu->add("/accounting/controlling/index.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("Controlling"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire );
+					$newmenu->add("/accounting/controlling/listfactdet.php?leftmenu=report", $langs->trans("ControllingBill"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 					if (! empty($conf->fournisseur->enabled))
 					{
-						$newmenu->add("/compta/controling/listfactfourndet.php?leftmenu=report", $langs->trans("ControllingFournishBill"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+						$newmenu->add("/accounting/controlling/listfactfourndet.php?leftmenu=report", $langs->trans("ControllingFournishBill"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 					}
 				}
 				
