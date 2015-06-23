@@ -2538,6 +2538,7 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 .logo_setup
 {
 	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg',1) ?>);
+	display: inline-block;
 }
 
 div.titre {
