@@ -750,7 +750,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 
 			// FROM
 			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_paid);
+			$expediteur->fetch($user->id);
 			$emailFrom = $expediteur->email;
 
 			// SUBJECT
@@ -1271,7 +1271,7 @@ else
 					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
 					print '<td>';
 					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_paid);
+					$userfee->fetch($user->id);
 					print $userfee->getNomUrl(1);
 					print '</td></tr>';
 
