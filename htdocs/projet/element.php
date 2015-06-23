@@ -463,7 +463,11 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-					if ($element instanceof Task) print $element->getNomUrl(1,'withproject','time');
+					if ($element instanceof Task) 
+					{
+						print $element->getNomUrl(1,'withproject','time');
+						print ' - '.dol_trunc($element->label, 48);
+					}
 					else print $element->getNomUrl(1);
 
 					$element_doc = $element->element;
@@ -522,13 +526,19 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
                 // Amount without tax
+				$warning='';
 				if (empty($value['disableamount']))
 				{
 					if ($tablename == 'don') $total_ht_by_line=$element->amount;
 					elseif ($tablename == 'projet_task')
 					{
-						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
+						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 						$total_ht_by_line = price2num($tmp['amount'],'MT');
+						if ($tmp['nblinesnull'] > 0) 
+						{	
+							$langs->load("errors");
+							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate");
+						}
 					}
 					else
 					{
@@ -538,6 +548,7 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '<strike>';
 					print (isset($total_ht_by_line)?price($total_ht_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
+					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
 				else print '<td></td>';
@@ -559,13 +570,18 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '<strike>';
 					print (isset($total_ttc_by_line)?price($total_ttc_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
+					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
 				else print '<td></td>';
 
 				// Status
 				print '<td align="right">';
-				if ($element instanceof CommonInvoice)
+				if ($tablename == 'expensereport_det')
+				{
+					print $expensereport->getLibStatut(5);
+				}
+				else if ($element instanceof CommonInvoice)
 				{
 					//This applies for Facture and FactureFournisseur
 					print $element->getLibStatut(5, $element->getSommePaiement());
@@ -694,6 +710,7 @@ print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
 
+$var=true;
 foreach ($listofreferent as $key => $value)
 {
 	$name=$langs->trans($value['name']);
@@ -710,7 +727,6 @@ foreach ($listofreferent as $key => $value)
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
-			$var=true;
 			$total_ht = 0;
 			$total_ttc = 0;
 
@@ -793,11 +809,15 @@ foreach ($listofreferent as $key => $value)
 				case 'Contrat':
 					$newclassname = 'Contract';
 					break;
+				case 'Task':
+					$newclassname = 'TaskTimeUserProject';
+					break;
 				default:
 					$newclassname = $classname;
 			}
 
-			print '<tr>';
+			$var = ! $var;
+			print '<tr '.$bc[$var].'>';
 			// Module
 			print '<td align="left">'.$langs->trans($newclassname).'</td>';
 			// Nb
