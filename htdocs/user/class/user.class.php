@@ -61,6 +61,7 @@ class User extends CommonObject
 	var $user_mobile;
 	var $admin;
 	var $login;
+    var $api_key;
 	var $entity;
 
 	//! Clear password in memory
@@ -162,7 +163,7 @@ class User extends CommonObject
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.note,";
-		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
+		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
@@ -226,6 +227,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass			= $obj->pass;
 				$this->pass_temp	= $obj->pass_temp;
+                $this->api_key		= $obj->api_key;
 				$this->office_phone	= $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
@@ -1143,6 +1145,7 @@ class User extends CommonObject
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
 		$this->pass         = trim($this->pass);
+        $this->api_key      = trim($this->api_key);
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
@@ -1174,6 +1177,7 @@ class User extends CommonObject
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
+        $sql.= ", api_key = '".$this->db->escape($this->api_key)."'";
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", admin = ".$this->admin;
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
@@ -1812,14 +1816,15 @@ class User extends CommonObject
 	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option			On what the link point to
-     *  @param  integer $infologin      Add connection info to the tooltip
-     *  @param	integer	$notooltip		1=Disable tooltip
-     *  @param	int		$maxlen			Max length of visible user name
-	 *	@return	string					String with URL
+	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option				On what the link point to
+     *  @param  integer $infologin      	Add connection info to the tooltip
+     *  @param	integer	$notooltip			1=Disable tooltip
+     *  @param	int		$maxlen				Max length of visible user name
+     *  @param	int		$hidethirdpartylogo	Hide logo of thirdparty if user is external user
+	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24)
+	function getNomUrl($withpicto=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1837,11 +1842,11 @@ class User extends CommonObject
         $label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
         if (! empty($this->admin))
         $label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-        if (! empty($this->societe_id))	// Add thirdparty for external users
+        if (! empty($this->societe_id) )	// Add thirdparty for external users
         {
             $thirdpartystatic = new Societe($db);
             $thirdpartystatic->fetch($this->societe_id);
-            $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+            if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
             $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
         }
         $type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
@@ -2324,9 +2329,10 @@ class User extends CommonObject
 	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
+	 *  @param		string	$filter				SQL filter on users
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
-	function get_full_tree($deleteafterid=0)
+	function get_full_tree($deleteafterid=0, $filter='')
 	{
 		global $conf,$user;
 
@@ -2336,7 +2342,7 @@ class User extends CommonObject
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 		{
@@ -2346,6 +2352,8 @@ class User extends CommonObject
 		{
 			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 		}
+		if ($filter) $sql.=" AND ".$filter;
+
 		dol_syslog(get_class($this)."::get_full_tree get user list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2356,11 +2364,14 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->users[$obj->rowid]['id'] = $obj->rowid;
 				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
+				$this->users[$obj->rowid]['fk_soc'] = $obj->fk_soc;
 				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
 				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
 				$this->users[$obj->rowid]['login'] = $obj->login;
 				$this->users[$obj->rowid]['statut'] = $obj->statut;
 				$this->users[$obj->rowid]['entity'] = $obj->entity;
+				$this->users[$obj->rowid]['email'] = $obj->email;
+				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$i++;
 			}
 		}

@@ -404,7 +404,7 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
         $s="";
         if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
-        elseif ($notabs == 2) $s.='<div class="inline-block nowrap">';
+        elseif ($notabs == 2) $s.='<div class="inline-block">';
         // Define value if value is before
         if ($direction < 0) {
             $s.='<'.$tag.$paramfortooltipimg;
@@ -818,15 +818,16 @@ class Form
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client IN (1,3)')
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@param	int		$limit			Maximum number of elements
+     *  @param	string	$morecss		Add more css styles to the SELECT component
      * 	@return	string					HTML string with select box for thirdparty.
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100')
     {
     	$out='';
 
@@ -860,7 +861,7 @@ class Form
     	}
     	else
     	{*/
-    		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
+    		$out.=$this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss);
     	//}
 
     	return $out;
@@ -879,9 +880,10 @@ class Form
      *  @param	string	$filterkey		Filter on key value
      *  @param	int		$outputmode		0=HTML select string, 1=Array
      *  @param	int		$limit			Limit number of answers
+     *  @param	string	$morecss		Add more css styles to the SELECT component
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0)
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100')
     {
         global $conf,$user,$langs;
 
@@ -935,7 +937,7 @@ class Form
             }
 
             // Construct $out and $outarray
-            $out.= '<select id="'.$htmlname.'" class="flat minwidth100" name="'.$htmlname.'"'.$nodatarole.'>'."\n";
+            $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'"'.$nodatarole.'>'."\n";
 
             $textifempty='';
             // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
@@ -2322,7 +2324,7 @@ class Form
 
 
     /**
-     *      Charge dans cache la liste des conditions de paiements possibles
+     *      Load into cache list of payment terms
      *
      *      @return     int             Nb of lines loaded, <0 if KO
      */
@@ -2356,7 +2358,7 @@ class Form
                 $i++;
             }
 
-			//$this->cache_conditions_paiements=dol_sort_array($this->cache_conditions_paiements, 'label');		// We use the sortorder
+			//$this->cache_conditions_paiements=dol_sort_array($this->cache_conditions_paiements, 'label', 'asc', 0, 0, 1);		// We use the field sortorder of table
 
             return $num;
         }
@@ -2401,7 +2403,7 @@ class Form
                 $i++;
             }
 
-            $this->cache_availability = dol_sort_array($this->cache_availability, 'label');
+            $this->cache_availability = dol_sort_array($this->cache_availability, 'label', 'asc', 0, 0, 1);
 
             return $num;
         }
@@ -2482,7 +2484,7 @@ class Form
                 $i++;
             }
 
-            $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc');
+            $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc', 0, 0, 1);
 
             unset($tmparray);
             return $num;
@@ -2545,7 +2547,9 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $sql = "SELECT id, code, libelle, type";
+        $this->cache_types_paiements = array();
+
+        $sql = "SELECT id, code, libelle as label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
 
@@ -2559,14 +2563,15 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $label=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $label=($langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->transnoentitiesnoconv("PaymentTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
+                $this->cache_types_paiements[$obj->id]['id'] =$obj->id;
                 $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
                 $this->cache_types_paiements[$obj->id]['label']=$label;
                 $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
                 $i++;
             }
 
-            $this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label');
+            $this->cache_types_paiements = dol_sort_array($this->cache_types_paiements, 'label', 'asc', 0, 0, 1);
 
             return $num;
         }
@@ -3207,22 +3212,23 @@ class Form
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) {
-            	$formconfirm.= '<div>'.$more.'</div>';
+            	$formconfirm.= '<div class="confirmquestions">'.$more.'</div>';
             }
-            $formconfirm.= ($question ? img_help('','').' '.$question : '');
+            $formconfirm.= ($question ? '<div class="confirmmessage"'.img_help('','').' '.$question . '</div>': '');
             $formconfirm.= '</div>'."\n";
 
             $formconfirm.= "\n<!-- begin ajax form_confirm page=".$page." -->\n";
             $formconfirm.= '<script type="text/javascript">'."\n";
-            $formconfirm.='
+            $formconfirm.= 'jQuery(document).ready(function() {
             $(function() {
-            	$( "#'.$dialogconfirm.'" ).dialog({
+            	$( "#'.$dialogconfirm.'" ).dialog(
+            	{
                     autoOpen: '.($autoOpen ? "true" : "false").',';
             		if ($newselectedchoice == 'no')
             		{
 						$formconfirm.='
 						open: function() {
-            				$(this).parent().find("button.ui-button:eq(1)").focus();
+            				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
             		}
         			$formconfirm.='
@@ -3270,7 +3276,8 @@ class Form
                             $(this).dialog("close");
                         }
                     }
-                });
+                }
+                );
 
             	var button = "'.$button.'";
             	if (button.length > 0) {
@@ -3278,6 +3285,7 @@ class Form
                 		$("#'.$dialogconfirm.'").dialog("open");
         			});
                 }
+            });
             });
             </script>';
             $formconfirm.= "<!-- end ajax form_confirm -->\n";
@@ -3574,7 +3582,7 @@ class Form
 
 
     /**
-     *    Affiche formulaire de selection des modes de reglement
+     *    Show form with payment mode
      *
      *    @param	string	$page        	Page
      *    @param    int		$selected    	Id mode pre-selectionne
@@ -3602,6 +3610,7 @@ class Form
             if ($selected)
             {
                 $this->load_cache_types_paiements();
+
                 print $this->cache_types_paiements[$selected]['label'];
             } else {
                 print "&nbsp;";
@@ -4599,7 +4608,7 @@ class Form
 	 *
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
- 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Use text with link
+ 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect
 	 * 	@return		mixed					Array of category objects or < 0 if KO
 	 */
 	function showCategories($id, $type, $rendermode=0)
@@ -4617,10 +4626,10 @@ class Form
 				$ways = $c->print_all_ways();
 				foreach($ways as $way)
 				{
-					$toprint[] = img_object('','category').' '.$way;
+					$toprint[] = '<li class="select2-search-choice-dolibarr">'.img_object('','category').' '.$way.'</li>';
 				}
 			}
-			return implode('<br>', $toprint);
+			return '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
 
 		if ($rendermode == 0)

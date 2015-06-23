@@ -43,7 +43,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 $langs->load("products");
 $langs->load("bills");
 
-$mesg=''; $error=0; $errors=array(); $_error=0;
+$mesg=''; $error=0; $errors=array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -110,7 +110,9 @@ if (empty($reshook))
 					break; // We found submited price
 				}
 			}
-		} else {
+		}
+		else
+		{
 			$level = 0;
 			$newprice = price2num($_POST ["price"], 'MU');
 			$newprice_min = price2num($_POST ["price_min"], 'MU');
@@ -128,7 +130,8 @@ if (empty($reshook))
 			$action='edit_price';
 		}
 
-		if ($newprice < $newprice_min && ! empty($object->fk_price_expression)) {
+		if ($newprice < $newprice_min && ! empty($object->fk_price_expression))
+		{
 			$newprice = $newprice_min; //Set price same as min, the user will not see the
 		}
 
@@ -185,11 +188,13 @@ if (empty($reshook))
 		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
 	}
 
-	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+	if ($action == 'edit_price_by_qty')
+	{ // Edition d'un prix par quantité
 		$rowid = GETPOST('rowid');
 	}
 
-	if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par quantité
+	if ($action == 'update_price_by_qty')
+	{ // Ajout / Mise à jour d'un prix par quantité
 
 		// Récupération des variables
 		$rowid = GETPOST('rowid');
@@ -237,7 +242,8 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'delete_price_by_qty') {
+	if ($action == 'delete_price_by_qty')
+	{
 		$rowid = GETPOST('rowid');
 
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
@@ -246,7 +252,8 @@ if (empty($reshook))
 		$result = $db->query($sql);
 	}
 
-	if ($action == 'delete_all_price_by_qty') {
+	if ($action == 'delete_all_price_by_qty')
+	{
 		$priceid = GETPOST('priceid');
 
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
@@ -289,14 +296,15 @@ if (empty($reshook))
 			if ($result < 0) {
 				setEventMessage($prodcustprice->error, 'errors');
 			} else {
-				setEventMessage($langs->trans('Save'), 'mesgs');
+				setEventMessage($langs->trans('RecordSaved'), 'mesgs');
 			}
 
 			$action = '';
 		}
 	}
 
-	if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer)) {
+	if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer))
+	{
 		// Delete price by customer
 		$prodcustprice->id = GETPOST('lineid');
 		$result = $prodcustprice->delete($user);
@@ -304,13 +312,13 @@ if (empty($reshook))
 		if ($result < 0) {
 			setEventMessage($prodcustprice->error, 'mesgs');
 		} else {
-			setEventMessage($langs->trans('Delete'), 'errors');
+			setEventMessage($langs->trans('RecordDeleted'), 'errors');
 		}
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
+	{
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -644,7 +652,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print "</div>\n";
+dol_fiche_end();
 
 
 /* ************************************************************************** */
@@ -653,7 +661,7 @@ print "</div>\n";
 /*                                                                            */
 /* ************************************************************************** */
 
-if (! $action || $action == 'delete')
+if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'add_customer_price')
 {
 	print "\n" . '<div class="tabsAction">' . "\n";
 
@@ -669,7 +677,7 @@ if (! $action || $action == 'delete')
  */
 if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
-	print_fiche_titre($langs->trans("NewPrice"), '', '');
+	print_fiche_titre($langs->trans("NewPrice"), '');
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -830,9 +838,8 @@ $sql .= " " . MAIN_DB_PREFIX . "user as u";
 $sql .= " WHERE fk_product = " . $object->id;
 $sql .= " AND p.entity IN (" . getEntity('productprice', 1) . ")";
 $sql .= " AND p.fk_user_author = u.rowid";
-if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES))
-	$sql .= " AND p.price_level = " . $soc->price_level;
-$sql .= " ORDER BY p.date_price DESC, p.price_level ASC";
+if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql .= " AND p.price_level = " . $soc->price_level;
+$sql .= " ORDER BY p.date_price DESC, p.price_level ASC, p.rowid DESC";
 // $sql .= $db->plimit();
 
 $result = $db->query($sql);
@@ -854,8 +861,6 @@ if ($result)
 
 	if ($num > 0)
 	{
-		print '<br>';
-
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) print_fiche_titre($langs->trans("DefaultPrice"),'','');
 
 		print '<table class="noborder" width="100%">';
@@ -933,7 +938,8 @@ if ($result)
 			print '<td align="right"><a href="' . DOL_URL_ROOT . '/user/card.php?id=' . $objp->user_id . '">' . img_object($langs->trans("ShowUser"), 'user') . ' ' . $objp->login . '</a></td>';
 
 			// Action
-			if ($user->rights->produit->supprimer) {
+			if ($user->rights->produit->supprimer)
+			{
 				print '<td align="right">';
 				if ($i > 0) {
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete&amp;id=' . $object->id . '&amp;lineid=' . $objp->rowid . '">';
@@ -956,9 +962,9 @@ if ($result)
 }
 
 
+// Add area to show/add/edit a price for a dedicated customer
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 {
-
 	$prodcustprice = new Productcustomerprice($db);
 
 	$sortfield = GETPOST("sortfield", 'alpha');
@@ -980,7 +986,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 	$search_soc = GETPOST('search_soc');
 	if (! empty($search_soc)) {
-		$filter ['soc.nom'] = $search_soc;
+		$filter['soc.nom'] = $search_soc;
 	}
 
 	if ($action == 'add_customer_price')
@@ -998,7 +1004,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<tr>';
 		print '<td>' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
-		print $form->select_company('', 'socid', 's.rowid NOT IN (SELECT fk_soc FROM ' . MAIN_DB_PREFIX . 'product_customer_price WHERE fk_product='.$object->id.')', 1);
+		print $form->select_company('', 'socid', 's.client in (1,2,3) AND s.rowid NOT IN (SELECT fk_soc FROM ' . MAIN_DB_PREFIX . 'product_customer_price WHERE fk_product='.$object->id.')', 1, 0, 0, array(), 0, 'minwidth300');
 		print '</td>';
 		print '</tr>';
 
@@ -1166,9 +1172,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&id=' . $object->id;
 
-		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
-		if (count($prodcustprice->lines) > 0) {
+		if (count($prodcustprice->lines) > 0)
+		{
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -1190,9 +1197,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 			$var = True;
 
-			foreach ($prodcustprice->lines as $line) {
-
-				print "<tr $bc[$var]>";
+			foreach ($prodcustprice->lines as $line)
+			{
+				print "<tr ".$bc[$var].">";
 				// Date
 				$staticsoc = new Societe($db);
 				$staticsoc->fetch($line->fk_soc);
@@ -1220,7 +1227,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 
 		print "\n" . '<div class="tabsAction">' . "\n";
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Ok") . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Back") . '</a></div>';
 		print "\n</div><br>\n";
 	}
 	else
@@ -1269,12 +1276,12 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td>';
 		print '</tr>';
 
-		if (count($prodcustprice->lines) > 0) {
+		if (count($prodcustprice->lines) > 0)
+		{
+			$var = False;
 
-			$var = True;
-
-			foreach ($prodcustprice->lines as $line) {
-
+			foreach ($prodcustprice->lines as $line)
+			{
 				print "<tr ".$bc[$var].">";
 				// Date
 				$staticsoc = new Societe($db);
@@ -1299,26 +1306,33 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 				// Todo Edit or delete button
 				// Action
-				if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
+				if ($user->rights->produit->supprimer || $user->rights->service->supprimer)
+				{
 					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
-					print img_delete();
-					print '</a>';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
-					print img_edit();
-					print '</a>';
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;id=' . $object->id . '&amp;socid=' . $line->fk_soc . '">';
 					print img_info();
+					print '</a>';
+					print ' ';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
+					print img_edit('default', 0, 'style="vertical-align: middle;"');
+					print '</a>';
+					print ' ';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
+					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
 				}
 
 				print "</tr>\n";
 			}
-		} else {
+		}
+		else
+		{
 			$colspan=9;
 			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
+			print "<tr ".$bc[false].">";
 			print '<td colspan="'.$colspan.'">'.$langs->trans('None').'</td>';
+			print "</tr>";
 		}
 
 		print "</table>";

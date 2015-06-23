@@ -9,6 +9,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,6 +290,33 @@ function pdf_getHeightForLogo($logo, $url = false)
 	return $height;
 }
 
+/**
+ * Returns the name of the thirdparty
+ *
+ * @param Societe|Contact $thirdparty Contact or thirdparty
+ * @param Translate $outputlangs Output language
+ * @return string
+ */
+function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
+{
+	//Recipient name
+	$socname = '';
+
+	// On peut utiliser le nom de la societe du contact
+	if ($thirdparty instanceof Societe) {
+		if (!empty($thirdparty->name_alias)) {
+			$socname = $thirdparty->name_alias."\n";
+		}
+
+		$socname .= $thirdparty->name;
+	} elseif ($thirdparty instanceof Contact) {
+		$socname = $thirdparty->socname;
+	} else {
+		throw new InvalidArgumentException();
+	}
+
+	return $outputlangs->convToOutputCharset($socname);
+}
 
 /**
  *   	Return a string with full address formated

@@ -36,9 +36,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load("trips");
+$langs->load("bills");
+$langs->load("mails");
 
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -826,6 +829,18 @@ if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 &&
 	}
 }
 
+if ($action == 'set_paid')
+{
+	if ($object->set_paid($id) >= 0)
+	{
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		exit;
+	}
+    else {
+	    setEventMessage($object->error, 'errors');
+    }
+}
+
 if ($action == "addline")
 {
 	$error = 0;
@@ -967,7 +982,6 @@ if ($action == "updateligne" )
 
 	$rowid = $_POST['rowid'];
 	$type_fees_id = GETPOST('fk_c_type_fees');
-	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
 	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 	$projet_id = $fk_projet;
 	$comments = GETPOST('comments');
@@ -1393,13 +1407,13 @@ else
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
             	// Ref
-            	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
+            	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
             	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';
 
 				print '<tr>';
 				print '<td>'.$langs->trans("Period").'</td>';
-				print '<td>';
+				print '<td colspan="2">';
 				print get_date_range($object->date_debut,$object->date_fin,'',$langs,0);
 				print '</td>';
 				print '</tr>';
@@ -1407,26 +1421,91 @@ else
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
-					print '<td>'.$object->libelle_paiement.'</td>';
+					print '<td colspan="2">'.$object->libelle_paiement.'</td>';
 					print '</tr>';
 				}
 				// Status
 				print '<tr>';
 				print '<td>'.$langs->trans("Statut").'</td>';
-				print '<td>'.$object->getLibStatut(4).'</td>';
+				print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
 				
 				print '<tr>';
 				print '<td>'.$langs->trans("NotePublic").'</td>';
-				print '<td>'.$object->note_public.'</td>';
+				print '<td colspan="2">'.$object->note_public.'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("NotePrivate").'</td>';
-				print '<td>'.$object->note_private.'</td>';
+				print '<td colspan="2">'.$object->note_private.'</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
 				print '<td>'.price($object->total_ht).'</td>';
+				print '<td rowspan="7" valign="top">';
+				/*
+				 * Payments
+				 */
+				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
+				$sql.= "c.code as type_code,c.libelle as payment_type";
+				$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
+				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+				$sql.= ", ".MAIN_DB_PREFIX."expensereport as e";
+				$sql.= " WHERE e.rowid = '".$id."'";
+				$sql.= " AND p.fk_expensereport = e.rowid";
+				$sql.= " AND e.entity = ".$conf->entity;
+				$sql.= " AND p.fk_typepayment = c.id";
+				$sql.= " ORDER BY dp";
+
+				//print $sql;
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+					$num = $db->num_rows($resql);
+					$i = 0; $total = 0;
+					print '<table class="nobordernopadding" width="100%">';
+					print '<tr class="liste_titre">';
+					print '<td>'.$langs->trans("RefPayment").'</td>';
+					print '<td>'.$langs->trans("Date").'</td>';
+					print '<td>'.$langs->trans("Type").'</td>';
+					print '<td align="right">'.$langs->trans("Amount").'</td>';
+					print '<td>&nbsp;</td>';
+					print '</tr>';
+
+					$var=True;
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object($resql);
+						$var=!$var;
+						print "<tr ".$bc[$var]."><td>";
+						print '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+						print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+							$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->fk_typepayment;
+						print "<td>".$labeltype.' '.$object->num_payment."</td>\n";
+						print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+						print "</tr>";
+						$totalpaid += $objp->amount;
+						$i++;
+					}
+
+					if ($object->paid == 0)
+					{
+						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaid)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->total_ttc)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+
+						$remaintopay = $object->total_ttc - $totalpaid;
+
+						print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+						print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($remaintopay)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+					}
+					print "</table>";
+					$db->free($resql);
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+				print "</td>";
+	
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountVAT").'</td>';
@@ -1547,7 +1626,7 @@ else
 
 				// Fetch Lines of current expense report
 				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-				$sql.= ' fde.fk_c_tva as fk_c_tva, fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+				$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -1648,7 +1727,7 @@ else
 							{
 									//modif ligne!!!!!
 									print '<tr '.$bc[$var].'>';
-									// Sélection date
+									// Select date
 									print '<td style="text-align:center;">';
 									$form->select_date($objp->date,'date');
 									print '</td>';
@@ -1801,8 +1880,6 @@ else
 
 }
 
-
-
 /*
  * Barre d'actions
  */
@@ -1877,9 +1954,9 @@ if ($action != 'create' && $action != 'edit')
 
 	/* Si l'état est "En attente d'approbation"
 	 *	ET user à droit de "approve"
-	*	ET fk_user_validator == user courant
-	*	Afficher : "Valider" / "Refuser" / "Supprimer"
-	*/
+	 *	ET fk_user_validator == user courant
+	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
+	 */
 	if ($object->fk_statut == 2)
 	{
 		if ($object->fk_user_author == $user->id)
@@ -1911,34 +1988,46 @@ if ($action != 'create' && $action != 'edit')
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
-
+	
 	/* Si l'état est "A payer"
 	 *	ET user à droit de "to_paid"
-	*	Afficher : "Annuler" / "Payer" / "Supprimer"
-	*/
+	 *	Afficher : "Annuler" / "Payer" / "Supprimer"
+	 */
 	if ($user->rights->expensereport->to_paid && $object->fk_statut == 5)
 	{
 		// Pay
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=paid&id='.$object->id.'">'.$langs->trans('TO_PAID').'</a>';
+		if ($remaintopay == 0)
+		{
+			print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
+		}
+		else
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/payment/payment.php?id=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+		}
+		
+		if ($object->statut == 1 && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer)
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+		}
 
 		// Cancel
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 		}
-
+		
+		// Delete
 		if($user->rights->expensereport->supprimer)
 		{
-			// Delete
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 
 	/* Si l'état est "Payée"
 	 *	ET user à droit "approve"
-	*	ET user à droit "to_paid"
-	*	Afficher : "Annuler"
-	*/
+	 *	ET user à droit "to_paid"
+	 *	Afficher : "Annuler"
+	 */
 	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_statut==6)
 	{
 		// Cancel

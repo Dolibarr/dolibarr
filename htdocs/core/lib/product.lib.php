@@ -114,10 +114,12 @@ function product_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
+    /* Merged into the Join files tab
 	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';
 	$h++;
+	*/
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

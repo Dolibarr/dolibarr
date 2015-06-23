@@ -120,7 +120,7 @@ class CompanyBankAccount extends Account
     {
     	global $conf;
 
-        if (! $this->id) 
+        if (! $this->id)
         {
             $this->create();
         }
@@ -163,15 +163,15 @@ class CompanyBankAccount extends Account
      * 	Load record from database
      *
      *	@param	int		$id			Id of record
-     * 	@param	int		$socid		Id of company
+     * 	@param	int		$socid		Id of company. If this is filled, function will return the default RIB of company
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id,$socid=0)
+    function fetch($id, $socid=0)
     {
         if (empty($id) && empty($socid)) return -1;
 
         $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-        $sql.= " owner_address, default_rib, label, datec, tms as datem, frstrecur";
+        $sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
@@ -199,6 +199,7 @@ class CompanyBankAccount extends Account
                 $this->default_rib     = $obj->default_rib;
                 $this->datec           = $this->db->jdate($obj->datec);
                 $this->datem           = $this->db->jdate($obj->datem);
+                $this->rum             = $obj->rum;
                 $this->frstrecur       = $obj->frstrecur;
             }
             $this->db->free($resql);

@@ -10,7 +10,7 @@
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
- * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -53,7 +53,9 @@ if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
-$mesg=''; $error=0; $errors=array(); $_error=0;
+$mesg=''; $error=0; $errors=array();
+
+$refalreadyexists=0;
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
@@ -468,7 +470,7 @@ if (empty($reshook))
                         {
                             $db->rollback();
 
-                            $_error++;
+                            $refalreadyexists++;
                             $action = "";
 
                             $mesg=$langs->trans("ErrorProductAlreadyExists",$object->ref);
@@ -477,7 +479,7 @@ if (empty($reshook))
                             $object->fetch($id);
                         }
                         else
-                        {
+                     {
                             $db->rollback();
                             if (count($object->errors))
                             {
@@ -788,8 +790,13 @@ else
 		if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 		{
 			$module=strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
-        	$result=dol_include_once('/core/modules/barcode/'.$module.'.php');
-        	if ($result > 0)
+			$dirbarcode=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
+            foreach ($dirbarcode as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$module.'.php');
+                if ($res) break;
+            }
+        	if ($res > 0)
         	{
 				$modBarCodeProduct =new $module();
         	}
@@ -816,7 +823,7 @@ else
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="32" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
-        if ($_error)
+        if ($refalreadyexists)
         {
             print $langs->trans("RefAlreadyExists");
         }
@@ -972,12 +979,14 @@ else
 	    $doleditor->Create();
 
         print "</td></tr>";
-
-		// Categories
-		print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
-		print "</td></tr>";
+		
+		if($conf->categorie->enabled) {
+			// Categories
+			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+			print "</td></tr>";
+		}
 
 	    // Units
 	    if($conf->global->PRODUCT_USE_UNITS)
@@ -1263,18 +1272,20 @@ else
             $doleditor->Create();
 
             print "</td></tr>";
-
-			// Categories
-			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
-			foreach($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			
+			if($conf->categorie->enabled) {
+				// Categories
+				print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print "</td></tr>";
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
-			print "</td></tr>";
-
+			
 	        // Units
 	        if($conf->global->PRODUCT_USE_UNITS)
 	        {
@@ -1586,10 +1597,12 @@ else
             print '<!-- End show Note --> '."\n";
 
 			// Categories
-			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-			print $form->showCategories($object->id,'product',1);
-			print "</td></tr>";
-
+			if($conf->categorie->enabled) {
+				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print $form->showCategories($object->id,'product',1);
+				print "</td></tr>";
+			}
+			
             print "</table>\n";
 
             dol_fiche_end();

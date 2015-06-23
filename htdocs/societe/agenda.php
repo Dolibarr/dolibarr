@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +86,11 @@ if ($socid)
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
 
+	// Alias names (commercial, trademark or alias names)
+	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print $object->name_alias;
+	print "</td></tr>";
+
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
@@ -113,7 +119,7 @@ if ($socid)
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$object->barcode.'</td></tr>';
 	}
 
-	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">";
+	print "<tr><td>".$langs->trans('Address')."</td><td colspan=\"3\">";
 	dol_print_address($object->address, 'gmap', 'thirdparty', $object->id);
 	print "</td></tr>";
 

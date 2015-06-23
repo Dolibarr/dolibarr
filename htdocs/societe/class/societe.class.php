@@ -63,8 +63,15 @@ class Societe extends CommonObject
      */
     public $nom;
 
-    public $firstname;
-    public $lastname;
+    var $firstname;
+    var $lastname;
+
+	/**
+	 * Alias names (commercial, trademark or alias names)
+	 * @var string
+	 */
+	public $name_alias;
+
     public $particulier;
     public $civility_id;
     public $address;
@@ -451,8 +458,8 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
-            $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
+            $sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
@@ -666,6 +673,7 @@ class Societe extends CommonObject
         $this->id			= $id;
         $this->name			= $this->name?trim($this->name):trim($this->nom);
         $this->nom			= $this->name;	// For backward compatibility
+	    $this->name_alias = trim($this->name_alias);
         $this->ref_ext		= trim($this->ref_ext);
         $this->address		= $this->address?trim($this->address):trim($this->address);
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
@@ -777,6 +785,7 @@ class Societe extends CommonObject
 
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
             $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
+            $sql .= ",name_alias = '" . $this->db->escape($this->name_alias) ."'";
             $sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
             $sql .= ",address = '" . $this->db->escape($this->address) ."'";
 
@@ -999,7 +1008,7 @@ class Societe extends CommonObject
 
         if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_modification';
@@ -1060,6 +1069,7 @@ class Societe extends CommonObject
                 $this->ref          = $obj->rowid;
                 $this->name 		= $obj->name;
                 $this->nom          = $obj->name;		// deprecated
+	            $this->name_alias = $obj->name_alias;
                 $this->ref_ext      = $obj->ref_ext;
                 $this->ref_int      = $obj->ref_int;
 
@@ -1782,6 +1792,10 @@ class Societe extends CommonObject
 			$name =$code.' '.$name;
 		}
 
+	    if (!empty($this->name_alias)) {
+		    $name .= ' ('.$this->name_alias.')';
+	    }
+
         $result=''; $label='';
         $link=''; $linkend='';
 
@@ -2118,18 +2132,34 @@ class Societe extends CommonObject
 
 
     /**
-     *    Return bank number property of thirdparty
+     *  Return bank number property of thirdparty (label or rum)
      *
-     *    @return	string		Bank number
+     *	@param	string	$mode	'label' or 'rum'
+     *  @return	string			Bank number
      */
-    function display_rib()
+    function display_rib($mode='label')
     {
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
-        return $bac->getRibLabel(true);
-    }
 
+        if ($mode == 'label')
+        {
+        	return $bac->getRibLabel(true);
+        }
+        elseif ($mode == 'rum')
+        {
+        	if (empty($bac->rum))
+        	{
+        		$prelevement = new BonPrelevement($this->db);
+        		$bac->fetch_thirdparty();
+        		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+        	}
+        	return $bac->rum;
+        }
+
+        return 'BadParameterToFunctionDisplayRib';
+    }
 
     /**
      * Return Array of RIB

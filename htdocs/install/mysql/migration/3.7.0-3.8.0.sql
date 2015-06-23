@@ -243,6 +243,7 @@ CREATE TABLE llx_expensereport (
   fk_user_paid 		integer DEFAULT NULL,
   fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
+  paid 				smallint default 0 NOT NULL,
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,
@@ -259,17 +260,16 @@ CREATE TABLE llx_expensereport_det
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
    fk_projet integer,
-   fk_c_tva integer,
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
    value_unit real NOT NULL,
    remise_percent real,
-   tva_tx						double(6,3),						    -- Vat rat
-   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
-   localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
-   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
-   localtax2_type			 	varchar(10)	  	 NULL, 				 	-- localtax2 type
+   tva_tx						double(6,3),					-- Vat rat
+   localtax1_tx               	double(6,3)  DEFAULT 0,    		-- localtax1 rate
+   localtax1_type			 	varchar(10)	  	 NULL, 			-- localtax1 type
+   localtax2_tx               	double(6,3)  DEFAULT 0,    		-- localtax2 rate
+   localtax2_type			 	varchar(10)	  	 NULL, 			-- localtax2 type
    total_ht double(24,8) DEFAULT 0 NOT NULL,
    total_tva double(24,8) DEFAULT 0 NOT NULL,
    total_localtax1				double(24,8)  	DEFAULT 0,		-- Total LocalTax1 for total quantity of line
@@ -285,9 +285,26 @@ CREATE TABLE llx_expensereport_det
 ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_projet integer NULL;
 ALTER TABLE llx_expensereport_det MODIFY COLUMN fk_c_tva integer NULL;
 
+create table llx_payment_expensereport
+(
+  rowid                   integer AUTO_INCREMENT PRIMARY KEY,
+  fk_expensereport        integer,
+  datec                   datetime,           -- date de creation
+  tms                     timestamp,
+  datep                   datetime,           -- payment date
+  amount                  real DEFAULT 0,
+  fk_typepayment          integer NOT NULL,
+  num_payment             varchar(50),
+  note                    text,
+  fk_bank                 integer NOT NULL,
+  fk_user_creat           integer,            -- creation user
+  fk_user_modif           integer             -- last modification user
+)ENGINE=innodb;
+
 
 ALTER TABLE llx_projet ADD COLUMN budget_amount double(24,8);
-
+-- Alias names (commercial, trademark or alias names)
+ALTER TABLE llx_societe ADD COLUMN name_alias varchar(128) NULL;
 
 create table llx_commande_fournisseurdet_extrafields
 (
@@ -656,3 +673,36 @@ ALTER TABLE llx_c_stcomm ADD COLUMN picto varchar(128);
 
 -- New trigger for Supplier invoice unvalidation
 INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_SUPPLIER_UNVALIDATE','Supplier invoice unvalidated','Executed when a supplier invoice status is set back to draft','invoice_supplier',15);
+
+
+ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
+
+DROP TABLE llx_holiday_types;
+
+CREATE TABLE llx_c_holiday_types (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code varchar(16) NOT NULL,
+  label varchar(255) NOT NULL,
+  affect integer NOT NULL,	
+  delay integer NOT NULL,
+  newByMonth double(8,5) DEFAULT 0 NOT NULL,
+  fk_country integer DEFAULT NULL,
+  active integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types(code);
+
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_PAID', 'Paid vacation', 1, 7, 0,    NULL);
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_SICK', 'Sick leave',    0, 0, 0,    NULL);
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_OTHER','Other leave',   0, 0, 0,    NULL);
+-- Leaves specific to France
+insert into llx_c_holiday_types(code, label, affect, delay, newByMonth, fk_country) values ('LEAVE_RTT',  'RTT'          , 1, 7, 0.83, 1);
+
+ALTER TABLE llx_holiday ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_holiday_users ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_holiday_logs ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
+
+UPDATE llx_holiday_users SET fk_type = 1 WHERE fk_type IS NULL;
+UPDATE llx_holiday_logs SET fk_type = 1 WHERE fk_type IS NULL;
+
+

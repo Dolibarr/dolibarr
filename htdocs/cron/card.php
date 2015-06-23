@@ -594,7 +594,9 @@ else
 	print "</td></tr>";
 
 	print '<tr><td>';
-	print $langs->trans('CronDtNextLaunch')."</td><td>";
+	print $langs->trans('CronDtNextLaunch');
+	print ' ('.$langs->trans('CronFrom').')';
+	print "</td><td>";
 	if(!empty($object->datenextrun)) {print dol_print_date($object->datenextrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
 

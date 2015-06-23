@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
+ * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -225,6 +227,11 @@ if ($id > 0)
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
+	// Alias names (commercial, trademark or alias names)
+	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print $object->name_alias;
+	print "</td></tr>";
+
 	// Prospect/Customer
 	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';
 	print $object->getLibCustProspStatut();
@@ -258,7 +265,7 @@ if ($id > 0)
 	}
 
 	// Address
-	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
 	dol_print_address($object->address,'gmap','thirdparty',$object->id);
 	print "</td></tr>";
 
@@ -469,10 +476,12 @@ if ($id > 0)
 	}
 
 	// Categories
-	print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
-	print '<td colspan="3">';
-	print $form->showCategories( $object->id, 'customer', 1 );
-	print "</td></tr>";
+	if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
+		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+		print '<td colspan="3">';
+		print $form->showCategories( $object->id, 'customer', 1 );
+		print "</td></tr>";
+	}
 
 	// Other attributes
 	$parameters=array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
@@ -491,7 +500,7 @@ if ($id > 0)
     {
         $langs->load("members");
         $langs->load("users");
-        print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
+        print '<tr><td width="25%">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td colspan="3">';
         $adh=new Adherent($db);
         $result=$adh->fetch('','',$object->id);

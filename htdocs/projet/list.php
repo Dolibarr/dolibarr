@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -61,6 +61,7 @@ $pagenext = $page + 1;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
+$search_all=GETPOST("search_all");
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
@@ -83,11 +84,11 @@ if ($search_status == '') $search_status=-1;	// -1 or 1
 // Purge criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
+	$search_all='';
 	$search_ref="";
 	$search_label="";
 	$search_societe="";
 	$search_year="";
-	$search_all=0;
 	$search_status=-1;
 	$search_public="";
 	$search_sale="";
@@ -99,6 +100,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$smonth="";
 	$syear="";
 }
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('projectlist'));
+$extrafields = new ExtraFields($db);
+
+
 
 /*
  * View
@@ -117,6 +124,12 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$min
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
 $sql.= ", s.nom as name, s.rowid as socid";
+// Add fields for extrafields
+foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 
@@ -133,18 +146,9 @@ if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$pro
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-if ($search_ref)
-{
-	$sql .= natural_search('p.ref', $search_ref);
-}
-if ($search_label)
-{
-	$sql .= natural_search('p.title', $search_label);
-}
-if ($search_societe)
-{
-	$sql .= natural_search('s.nom', $search_societe);
-}
+if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
+if ($search_label) $sql .= natural_search('p.title', $search_label);
+if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($smonth > 0)
 {
     if ($syear > 0 && empty($sday))
@@ -171,18 +175,15 @@ else if ($year > 0)
 {
     $sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($search_all)
-{
-	$sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
-}
+if ($search_all) $sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
 if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
-if ($search_user > 0)
-{
-	$sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
-}
-
+if ($search_user > 0) $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
@@ -199,6 +200,7 @@ if ($resql)
 	$param='';
 	if ($month)              		$param.='&month='.$month;
 	if ($year)               		$param.='&year=' .$year;
+	if ($search_all != '') 			$param.='&search_all='.$search_all;
 	if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 	if ($search_label != '') 		$param.='&search_label='.$search_label;
 	if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
@@ -212,10 +214,7 @@ if ($resql)
 	if ($mine) $text=$langs->trans('MyProjects');
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num,'','title_project');
 
-	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-
-	print '<table class="noborder" width="100%">';
-
+	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
 	// Show description of content
 	if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
@@ -223,6 +222,12 @@ if ($resql)
 	{
 		if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 		else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+	}
+
+	if ($search_all)
+	{
+		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Label")." ".$langs->trans("or")." ".$langs->trans("ThirdParty")."): ";
+		print '<strong>'.$search_all.'</strong>';
 	}
 
 	// If the user can view prospects other than his'
@@ -242,12 +247,16 @@ if ($resql)
 	}
 	if (! empty($moreforfilter))
 	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="10">';
+		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</td></tr>';
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    	print $hookmanager->resPrint;
+    	print '</div>';
 	}
 
+
+	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);
@@ -257,7 +266,12 @@ if ($resql)
 	if (! empty($conf->global->PROJECT_LIST_SHOW_STARTDATE)) print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
+
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -266,10 +280,10 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
+	print '<input type="text" class="flat" name="search_label" size="8" value="'.$search_label.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
+	print '<input type="text" class="flat" name="search_societe" size="8" value="'.$search_societe.'">';
 	print '</td>';
 	// Sale representative
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -294,12 +308,20 @@ if ($resql)
     print $form->selectarray('search_public',$array,$search_public);
     print '</td>';
 
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
 	print '<td class="liste_titre nowrap" align="right">';
 	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
-    print '</td><td width="56">';
+    print '</td>';
+    print '<td width="56">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
+
+    print '</tr>'."\n";
+
 
     while ($i < $num)
     {
@@ -392,6 +414,10 @@ if ($resql)
     		else print $langs->trans('PrivateProject');
     		print '</td>';
 
+        	$parameters=array('obj' => $objp);
+        	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		    print $hookmanager->resPrint;
+
     		// Status
     		$projectstatic->statut = $objp->fk_statut;
     		print '<td align="right" colspan="2">'.$projectstatic->getLibStatut(5).'</td>';
@@ -401,16 +427,22 @@ if ($resql)
     	}
 
     	$i++;
-    }
 
-	$db->free($resql);
+    }
+    $db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
+	print "</table>\n";
+	print "</form>\n";
 }
 else
 {
 	dol_print_error($db);
 }
 
-print "</table>";
 
 
 llxFooter();

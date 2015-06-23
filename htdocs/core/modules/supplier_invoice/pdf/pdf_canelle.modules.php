@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1100,18 +1101,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$result=$object->fetch_contact($arrayidcontact[0]);
 			}
 
-			// Recipient name
-			if (! empty($usecontact))
-			{
-				// On peut utiliser le nom de la societe du contact
-				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
-				else $socname = $mysoc->name;
-				$carac_client_name=$outputlangs->convToOutputCharset($socname);
+			//Recipient name
+			// On peut utiliser le nom de la societe du contact
+			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+				$thirdparty = $object->contact;
+			} else {
+				$thirdparty = $mysoc;
 			}
-			else
-			{
-				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->name);
-			}
+
+			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target');
 

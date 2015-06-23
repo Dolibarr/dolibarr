@@ -43,8 +43,10 @@ class DolibarrApi
      * @param	DoliDb	$db		Database handler
      */
     function __construct($db) {
+        global $conf;
         $this->db = $db;
-        $this->r = new Restler();
+        $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
+        $this->r = new Restler($production_mode);
     }
 
     /**

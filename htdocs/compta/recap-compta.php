@@ -115,7 +115,7 @@ if ($socid > 0)
 
 			if (! $num > 0)
 			{
-				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+				print '<tr '.$bc[false].'><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 			}
 
 			$solde = 0;

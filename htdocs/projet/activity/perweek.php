@@ -134,7 +134,7 @@ if ($action == 'assign')
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	
+
 	$action='';
 }
 
@@ -162,16 +162,16 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 
 		        	if ($newduration > 0)
 		        	{
-		       	        $task->fetch($taskid);
-					    $task->progress = GETPOST($taskid . 'progress', 'int');
-				        $task->timespent_duration = $newduration;
-				        $task->timespent_fk_user = $usertoprocess->id;
-			        	$task->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
+		       	        $object->fetch($taskid);
+					    $object->progress = GETPOST($taskid . 'progress', 'int');
+				        $object->timespent_duration = $newduration;
+				        $object->timespent_fk_user = $usertoprocess->id;
+			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
 
-						$result=$task->addTimeSpent($user);
+						$result=$object->addTimeSpent($user);
 						if ($result < 0)
 						{
-							setEventMessages($task->error, $task->errors, 'errors');
+							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
 							break;
 						}

@@ -154,7 +154,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 				if (! $error)
 				{
-					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -170,16 +170,17 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			//eat-by date dispatch
 			//$numline=$reg[2] + 1;	// line of product
 			$numline=$pos;
-			$prod = "product_".$reg[1]."_".$reg[2];
-			$qty = "qty_".$reg[1]."_".$reg[2];
-			$ent = "entrepot_".$reg[1]."_".$reg[2];
-			$pu = "pu_".$reg[1]."_".$reg[2];
-			$fk_commandefourndet = "fk_commandefourndet_".$reg[1]."_".$reg[2];
-			$lot = "lot_number_".$reg[1]."_".$reg[2];
-			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1]."_".$reg[2].'month'], $_POST['dluo_'.$reg[1]."_".$reg[2].'day'], $_POST['dluo_'.$reg[1]."_".$reg[2].'year']);
-			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1]."_".$reg[2].'month'], $_POST['dlc_'.$reg[1]."_".$reg[2].'day'], $_POST['dlc_'.$reg[1]."_".$reg[2].'year']);
+			$prod = 'product_'.$reg[1].'_'.$reg[2];
+			$qty = 'qty_'.$reg[1].'_'.$reg[2];
+			$ent = 'entrepot_'.$reg[1].'_'.$reg[2];
+			$pu = 'pu_'.$reg[1].'_'.$reg[2];
+			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
+			$lot = 'lot_number_'.$reg[1].'_'.$reg[2];
+			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1].'_'.$reg[2].'month'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'day'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'year']);
+			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
 
-            $fk_commandefourndet = "fk_commandefourndet_".$reg[1]."_".$reg[2];
+            $fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
+			
 			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
 				if (! (GETPOST($ent,'int') > 0))
@@ -200,7 +201,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 				if (! $error)
 				{
-					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST("comment"), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -225,7 +226,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 		}
 	}
 
-	if ($result > 0 && ! $error)
+	if ($result >= 0 && ! $error)
 	{
 		$db->commit();
 

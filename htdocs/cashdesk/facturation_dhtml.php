@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
- * Copyright (C) 2008-2009 Laurent Destailleur   <eldy@uers.sourceforge.net>
+/* Copyright (C) 2007-2008 	Jeremie Ollivier 	<jeremie.o@laposte.net>
+ * Copyright (C) 2008-2009 	Laurent Destailleur <eldy@uers.sourceforge.net>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 //header("Content-type: text/html; charset=UTF-8");
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
+$search = GETPOST("code", "alpha");
+
 // Search from criteria
-if (dol_strlen($_GET["code"]) >= 0)	// If search criteria is on char length at least
+if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 {
 	$sql = "SELECT p.rowid, p.ref, p.label, p.tva_tx";
 	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
@@ -54,11 +57,15 @@ if (dol_strlen($_GET["code"]) >= 0)	// If search criteria is on char length at l
 	// Add criteria on ref/label
 	if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 	{
-		$sql.= " AND (p.ref LIKE '".$_GET['code']."%' OR p.label LIKE '".$_GET['code']."%')";
+		$sql.= " AND (p.ref LIKE '".$db->escape($search)."%' OR p.label LIKE '".$db->escape($search)."%'";
+		if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$db->escape($search)."%'";
+		$sql.= ")";
 	}
 	else
 	{
-		$sql.= " AND (p.ref LIKE '%".$_GET['code']."%' OR p.label LIKE '%".$_GET['code']."%')";
+		$sql.= " AND (p.ref LIKE '%".$db->escape($search)."%' OR p.label LIKE '%".$db->escape($search)."%'";
+		if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '%".$db->escape($search)."%'";
+		$sql.= ")";
 	}
 	$sql.= " ORDER BY label";
 

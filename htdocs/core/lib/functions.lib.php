@@ -218,7 +218,7 @@ function dol_shutdown()
 	global $conf,$user,$langs,$db;
 	$disconnectdone=false; $depth=0;
 	if (is_object($db) && ! empty($db->connected)) { $depth=$db->transaction_opened; $disconnectdone=$db->close(); }
-	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_DEBUG));
+	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth)?' (Warn: db disconnection forced, transaction depth was '.$depth.')':''), (($disconnectdone && $depth)?LOG_WARNING:LOG_INFO));
 }
 
 
@@ -877,6 +877,7 @@ function dol_bc($var,$moreclass='')
  *      @param	string		$sep			Separator to use to build string
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @return string          			Formated string
+ *      @see dol_print_address
  */
 function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 {
@@ -1604,6 +1605,7 @@ function dol_user_country()
  *  @param  int		$mode        thirdparty|contact|member|other
  *  @param  int		$id          Id of object
  *  @return void
+ *  @see dol_format_address
  */
 function dol_print_address($address, $htmlid, $mode, $id)
 {
@@ -4555,12 +4557,13 @@ function dol_htmloutput_errors($mesgstring='', $mesgarray='', $keepembedded=0)
  *
  *  @param      array		$array      		Array to sort (array of array('key','otherkey1','otherkey2'...))
  *  @param      string		$index				Key in array to use for sorting criteria
- *  @param      int			$order				Sort order
+ *  @param      int			$order				Sort order ('asc' or 'desc')
  *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
+ *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
  */
-function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensitive=0)
+function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensitive=0, $keepindex=0)
 {
 	// Clean parameters
 	$order=strtolower($order);
@@ -4569,13 +4572,21 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	if (is_array($array) && $sizearray>0)
 	{
 		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+
 		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
 		else
 		{
 			($case_sensitive) ? natsort($temp) : natcasesort($temp);
 			if($order!='asc') $temp=array_reverse($temp,TRUE);
 		}
-		foreach(array_keys($temp) as $key) (is_numeric($key))? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+
+		$sorted = array();
+
+		foreach(array_keys($temp) as $key)
+		{
+			(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+		}
+
 		return $sorted;
 	}
 	return $array;
@@ -5020,14 +5031,16 @@ function dol_getmypid()
  *
  * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR)
  * @param 	string 			$value 		The value to look for.
- *                          		    If param $mode is 0, can contains several keywords separated with a space, like "keyword1 keyword2" = We want record field like keyword1 and field like keyword2
+ *                          		    If param $mode is 0, can contains several keywords separated with a space or |
+ *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
+ *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
  * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
- * @param	integer			$nofinaland	1=Do now output the final 'AND'
+ * @param	integer			$nofirstand	1=Do now output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $mode=0, $nofinaland=0)
+function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
 
@@ -5079,15 +5092,22 @@ function natural_search($fields, $value, $mode=0, $nofinaland=0)
             }
             else
 			{
-            	$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($crit)) . "%'";
-            	$i2++;	// a criteria was added to string
+				$textcrit = '';
+				$tmpcrits = explode('|',$crit);
+				$i3 = 0;
+				foreach($tmpcrits as $tmpcrit)
+				{
+	            	$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($tmpcrit)) . "%'";
+	            	$i3++;
+				}
+				$i2++;	// a criteria was added to string
             }
             $i++;
         }
         if ($newres) $res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') .$newres . ($i2 > 1 ? ')' : '');
         $j++;
     }
-    $res = ($nofinaland?"":" AND ")."(" . $res . ")";
+    $res = ($nofirstand?"":" AND ")."(" . $res . ")";
     //print 'xx'.$res.'yy';
     return $res;
 }

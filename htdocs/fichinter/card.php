@@ -160,7 +160,7 @@ else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'add' && $user->rights->ficheinter->creer)
 {
     $object->socid			= $socid;
-    $object->duree			= GETPOST('duree','int');
+    $object->duration			= GETPOST('duration','int');
     $object->fk_project		= GETPOST('projectid','int');
     $object->fk_contrat		= GETPOST('contratid','int');
     $object->author			= $user->id;
@@ -1256,7 +1256,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 		// Duration
 		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-		print '<td colspan="3">'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
 
@@ -1755,7 +1755,7 @@ else if ($id > 0 || ! empty($ref))
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'([^\-])+');
+		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 		$file=$fileparams['fullname'];
 
 		// Define output language
@@ -1782,7 +1782,7 @@ else if ($id > 0 || ! empty($ref))
 				dol_print_error($db,$result);
 				exit;
 			}
-			$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'([^\-])+');
+			$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 			$file=$fileparams['fullname'];
 		}
 

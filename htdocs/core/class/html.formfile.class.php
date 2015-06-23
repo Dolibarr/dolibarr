@@ -37,6 +37,7 @@ class FormFile
     var $error;
 
     var $numoffiles;
+	var $infofiles;			// Used to return informations by function getDocumentsLink
 
 
     /**
@@ -680,16 +681,17 @@ class FormFile
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
      *	@param	string	$filedir		Directory to scan
-     *	@return	string              	Output string with HTML link of documents (might be empty string)
+     *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
+     *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
      */
-    function getDocumentsLink($modulepart, $modulesubdir, $filedir)
+    function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter='')
     {
-    	if (! function_exists('dol_dir_list')) include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
-    	$this->numoffiles=0;
+    	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir).'.pdf','/'), '\.meta$|\.png$');
+		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -699,6 +701,8 @@ class FormFile
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
+    			if ($filter && ! preg_match('/'.$filter.'/i', $file["name"])) continue;	// Discard this. It does not match provided filter.
+
     			// Define relative path for download link (depends on module)
     			$relativepath=$file["name"];								// Cas general
     			if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
@@ -718,10 +722,14 @@ class FormFile
     			$mime=dol_mimetype($relativepath,'',0);
     			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
     			$out.= '>';
-    			$out.= img_pdf($file["name"],2);
+    			$out.= img_mime($relativepath, $file["name"]);
     			$out.= '</a>'."\n";
 
-    			$this->numoffiles++;
+    			$this->infofiles['nboffiles']++;
+    			$this->infofiles['files'][]=$file['fullname'];
+    			$ext=pathinfo($file["name"], PATHINFO_EXTENSION);
+    			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
+    			else $this->infofiles['extensions'][$ext]++;
     		}
     	}
 
@@ -840,7 +848,12 @@ class FormFile
 						$fileinfo = pathinfo($file['name']);
 						print '<td align="center">';
 						$minifile=$fileinfo['filename'].'_mini.'.strtolower($fileinfo['extension']);	// Thumbs are created with filename in lower case
-						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						if (image_format_supported($file['name']) > 0)
+						{
+							print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
+							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+							print '</a>';
+						}
 						else print '&nbsp;';
 						print '</td>';
 					}
@@ -848,6 +861,22 @@ class FormFile
 					// ($param must start with &)
 					print '<td align="right">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+					else
+					{
+						if (image_format_supported($file['name']) > 0)
+						{
+							$permtoedit=0;
+							if ($user->rights->produit->creer && $object->type == Product::TYPE_PRODUCT) $permtoedit=1;
+							if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) $permtoedit=1;
+							if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
+
+							if ($permtoedit)
+							{
+   								// Link to resize
+   			               		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+							}
+						}
+					}
 					if ($permtodelete)
 					{
 						/*

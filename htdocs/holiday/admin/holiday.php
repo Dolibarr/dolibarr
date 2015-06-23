@@ -52,7 +52,7 @@ if (empty($conf->holiday->enabled)) print $langs->trans('NotActiveModCP');
 llxheader('',$langs->trans('TitleAdminCP'));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfCP'), $linkback);
+print_fiche_titre($langs->trans('ConfCP'), $linkback, 'title_hrm.png');
 
 $cp = new Holiday($db);
 
@@ -132,7 +132,7 @@ if ($action == "add")
     }
 
     // Option du nombre de jours à déduire pour 1 jour de congés
-    $nbHolidayDeducted = price2num($_POST['nbHolidayDeducted'],2);
+    $nbHolidayDeducted = price2num($_POST['nbHolidayDeducted'],5);
 
     if(!$cp->updateConfCP('nbHolidayDeducted',$nbHolidayDeducted))
     {
@@ -165,7 +165,7 @@ elseif ($action == 'create_event')
     $error = 0;
 
     $optName = trim($optName);
-    $optValue = price2num($optValue,2);
+    $optValue = price2num($optValue,5);
 
     if (! $optName)
     {
@@ -218,7 +218,7 @@ elseif($action == 'event' && isset($_POST['update_event']))
 
     if (!empty($eventValue))
     {
-        $eventValue = price2num($eventValue,2);
+        $eventValue = price2num($eventValue,5);
     } else {
         $error++;
     }
@@ -254,9 +254,10 @@ elseif($action && isset($_POST['delete_event']))
     }
 }
 
-print '<br>';
+/*print '<br>';
 
 print_fiche_titre($langs->trans('TitleOptionMainCP'),'','');
+
 
 dol_fiche_head(array(),'','');
 
@@ -271,13 +272,6 @@ print '<th class="liste_titre">'.$langs->trans('ValueOptionCP').'</td>';
 print '</tr>';
 
 $var=true;
-
-/*$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td style="padding:5px;">'.$langs->trans('GroupToValidateCP').'</td>'."\n";
-print '<td style="padding:5px;">'.$cp->selectUserGroup('userGroup').'</td>'."\n";
-print '</tr>'."\n";
-*/
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
@@ -316,19 +310,22 @@ print '<div align="center"><input type="submit" value="'.$langs->trans("ConfirmC
 print '</form>'."\n\n";
 
 dol_fiche_end();
-
+*/
 
 /*$var=!$var;
 print $langs->trans('nbUserCP').': '."\n";
 print $cp->getConfCP('nbUser')."<br>\n";
 */
 
-$var=!$var;
-print $langs->trans('LastUpdateCP').': '."\n";
-if ($cp->getConfCP('lastUpdate')) print dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser');
-else print $langs->trans('None');
-print "<br>\n";
+print '<br>'.$langs->trans("GoIntoDictionaryHolidayTypes").'<br><br>';
 
+$var=!$var;
+print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
+if ($cp->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+else print $langs->trans('None');
+print "</div><br>\n";
+
+/*
 print '<br>';
 
 print_fiche_titre($langs->trans('TitleOptionEventCP'),'','');
@@ -406,7 +403,7 @@ print '</table>';
 print '</form>';
 
 dol_fiche_end();
-
+*/
 
 // Fin de page
 llxFooter();

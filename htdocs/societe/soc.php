@@ -159,10 +159,6 @@ if (empty($reshook))
 				}
 
 				//External modules should update their ones too
-				$hookmanager->initHooks(array(
-					'mergethirds'
-				));
-
 				if (!$errors)
 				{
 					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
@@ -243,7 +239,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-            $object->civility_id       = GETPOST('civility_id', 'int');
+            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
             // Add non official properties
             $object->name_bis          = GETPOST('name','alpha');
             $object->firstname         = GETPOST('firstname','alpha');
@@ -251,7 +247,9 @@ if (empty($reshook))
         else
         {
             $object->name              = GETPOST('name', 'alpha');
+	        $object->name_alias   = GETPOST('name_alias');
         }
+
         $object->address               = GETPOST('address', 'alpha');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
@@ -645,7 +643,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".urlencode($object->name));
+            header("Location: ".DOL_URL_ROOT."/societe/list.php?delsoc=".urlencode($object->name));
             exit;
         }
         else
@@ -915,6 +913,7 @@ else
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
                         	$("#typent_id").val(0);
+							$("#name_alias").show();
                         	$("#effectif_id").val(0);
                         	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
                         	document.formsoc.private.value=0;
@@ -922,6 +921,7 @@ else
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
                         	$("#typent_id").val(id_te_private);
+							$("#name_alias").hide();
                         	$("#effectif_id").val(id_ef15);
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
@@ -995,7 +995,7 @@ else
             print '<tr class="individualline"><td>'.fieldLabel('FirstName','firstname').'</td>';
 	        print '<td><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
-            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','cibility_id').'</td><td>';
+            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td>';
             print $formcompany->select_civility($object->civility_id).'</td>';
             print '<td colspan=2>&nbsp;</td></tr>';
         }
@@ -1052,6 +1052,10 @@ else
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
+
+        // Alias names (commercial, trademark or alias names)
+        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	    print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
@@ -1131,7 +1135,7 @@ else
         print '<td>';
         print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
-        print '<td class="nowrap">'.fieldLabel('VATIntra','inra_vat').'</td>';
+        print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat" name="tva_intra" id="intra_vat" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
@@ -1289,9 +1293,6 @@ else
             //if ($res < 0) { dol_print_error($db); exit; }
 
 	        $head = societe_prepare_head($object);
-
-	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
-
 
             // Load object modCodeTiers
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
@@ -1461,11 +1462,19 @@ else
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
+
+            dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+
+
             print '<table class="border" width="100%">';
 
             // Name
             print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
+
+	        // Alias names (commercial, trademark or alias names)
+	        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	        print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1573,9 +1582,9 @@ else
 
             // Zip / Town
             print '<tr><td>'.fieldLabel('Zip','zipcode').'</td><td>';
-            print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+            print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
             print '</td><td>'.fieldLabel('Town','town').'</td><td>';
-            print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+            print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
 
             // Country
@@ -1810,7 +1819,8 @@ else
             print '</tr>';
 
             print '</table>';
-            print '<br>';
+
+	        dol_fiche_end();
 
             print '<div align="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1819,8 +1829,6 @@ else
             print '</div>';
 
             print '</form>';
-
-	        dol_fiche_end();
         }
     }
     else
@@ -1879,6 +1887,11 @@ else
         print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         print '</td>';
         print '</tr>';
+
+	    // Alias names (commercial, trademark or alias names)
+	    print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	    print $object->name_alias;
+	    print "</td></tr>";
 
         // Logo+barcode
         $rowspan=6;
@@ -2191,7 +2204,7 @@ else
             print '</td></tr>';
         }
 
-		// Categories
+		// Tags / categories
 	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	    {
 	        print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';

@@ -275,7 +275,7 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 	{
 	    $arrayofinclusion=array();
 	    foreach($_POST['toGenerate'] as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
-		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC);
+		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
 		// liste les fichiers
 		$files = array();
@@ -284,7 +284,7 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 		{
 			foreach($factures as $facture)
 			{
-				if(strstr($facture["name"],$basename))
+				if (strstr($facture["name"],$basename))
 				{
 					$files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"];
 				}
@@ -810,10 +810,8 @@ if ($resql)
 			{
 				// Checkbox to merge
 				print '<td align="center">';
-				if (! empty($formfile->numoffiles))
+				if (! empty($formfile->infofiles['extensions']['pdf']))
 					print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
-				else
-					print '&nbsp;';
 				print '</td>' ;
 			}
 			else

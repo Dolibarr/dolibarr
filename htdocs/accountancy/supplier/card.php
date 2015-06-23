@@ -107,12 +107,11 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			$linkback='<a href="'.DOL_URL_ROOT.'/accountancy/supplier/lines.php">'.$langs->trans("Back").'</a>';
-			print_fiche_titre($langs->trans('SuppliersVentilation'),$linkback,'title_setup');
+			print_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
 
             dol_fiche_head();
 			
-			print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+			print '<table class="border" width="100%">';
 			
 			// ref invoice
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';
@@ -121,7 +120,7 @@ if (! empty($id)) {
 			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 			print '</tr>';
 			
-			print '<tr><td width="20%">Ligne</td>';
+			print '<tr><td width="20%">' . $langs->trans("Line") . '</td>';
 			print '<td>' . stripslashes(nl2br($objp->description)) . '</td></tr>';
 			print '<tr><td width="20%">' . $langs->trans("ProductLabel") . '</td>';
 			print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';

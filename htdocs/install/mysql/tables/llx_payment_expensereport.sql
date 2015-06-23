@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,15 +16,18 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_holiday_types (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  label varchar(45) NOT NULL,
-  description varchar(255) NOT NULL,
-  affect integer NOT NULL,
-  delay integer NOT NULL,
-  insertAt DATETIME NOT NULL,
-  updateAt DATETIME,
-  deleteAt DATETIME,
-  nbCongesDeducted varchar(255) NOT NULL,
-  nbCongesEveryMonth varchar(255) NOT NULL
-) ENGINE=innodb;
+create table llx_payment_expensereport
+(
+  rowid                   integer AUTO_INCREMENT PRIMARY KEY,
+  fk_expensereport        integer,
+  datec                   datetime,           -- date de creation
+  tms                     timestamp,
+  datep                   datetime,           -- payment date
+  amount                  real DEFAULT 0,
+  fk_typepayment          integer NOT NULL,
+  num_payment             varchar(50),
+  note                    text,
+  fk_bank                 integer NOT NULL,
+  fk_user_creat           integer,            -- creation user
+  fk_user_modif           integer             -- last modification user
+)ENGINE=innodb;
