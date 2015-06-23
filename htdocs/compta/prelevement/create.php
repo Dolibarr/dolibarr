@@ -106,7 +106,7 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 */
 
-print_barre_liste($langs->trans("NewStandingOrder"), 0, $_SERVER["PHP_SELF"]);
+print_fiche_titre($langs->trans("NewStandingOrder"));
 
 dol_fiche_head();
 

@@ -1526,7 +1526,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', $langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleftt', img_object('','company'));
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleftt', img_object('','company'));
 	    }
 
 	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
@@ -1553,6 +1553,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    {
 	        $langs->load("members");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+	    }
+
+    	if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
+	    {
+	        $langs->load("members");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'M', 'searchleftproj', img_object('','projectpub'));
 	    }
 
 	    // Execute hook printSearchForm

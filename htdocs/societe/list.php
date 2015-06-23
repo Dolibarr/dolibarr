@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/societe/societe.php
+ *	\file       htdocs/societe/list.php
  *	\ingroup    societe
  *	\brief      Page to show list of third parties
  */
@@ -65,6 +65,10 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('thirdpartylist'));
+$extrafields = new ExtraFields($db);
 
 
 /*
@@ -181,7 +185,6 @@ if ($socname)
  */
 /*
  REM: Regle sur droits "Voir tous les clients"
- REM: Exemple, voir la page societe.php dans le mode liste.
  Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute societe
  Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les societes liees comme commercial
  Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
@@ -196,6 +199,12 @@ $sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idpr
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_soc";
+// Add fields for extrafields
+foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
@@ -205,57 +214,31 @@ if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)	$sql.= " AND s.rowid = ".$socid;
-if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
-if ($search_categ) $sql.= " AND s.rowid = cs.fk_soc";   // Join for the needed table to filter by categ
+if ($socid)           $sql.= " AND s.rowid = ".$socid;
+if ($search_sale)     $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
+if ($search_categ)    $sql.= " AND s.rowid = cs.fk_soc";   // Join for the needed table to filter by categ
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
-// Insert sale filter
-if ($search_sale)
-{
-    $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
-}
-// Insert categ filter
-if ($search_categ)
-{
-    $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
-}
-if ($search_nom_only)
-{
-	$sql.= " AND s.nom LIKE '%".$db->escape($search_nom_only)."%'";
-}
-if ($search_all)
-{
-	$sql.= " AND (";
-	$sql.= "s.nom LIKE '%".$db->escape($search_all)."%'";
-	$sql.= " OR s.code_client LIKE '%".$db->escape($search_all)."%'";
-	$sql.= " OR s.email LIKE '%".$db->escape($search_all)."%'";
-	$sql.= " OR s.url LIKE '%".$db->escape($search_all)."%'";
-	$sql.= " OR s.siren LIKE '%".$db->escape($search_all)."%'";
-	$sql.= ")";
-}
-if ($search_nom)
-{
-	$sql.= " AND (";
-	$sql.= "s.nom LIKE '%".$db->escape($search_nom)."%'";
-	$sql.= " OR s.code_client LIKE '%".$db->escape($search_nom)."%'";
-	$sql.= " OR s.email LIKE '%".$db->escape($search_nom)."%'";
-	$sql.= " OR s.url LIKE '%".$db->escape($search_nom)."%'";
-	$sql.= " OR s.siren LIKE '%".$db->escape($search_nom)."%'";
-	$sql.= ")";
-}
-if ($search_town)   $sql .= " AND s.town LIKE '%".$db->escape($search_town)."%'";
-if ($search_idprof1) $sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
-if ($search_idprof2) $sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
-if ($search_idprof3) $sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
-if ($search_idprof4) $sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
-if ($search_idprof5) $sql .= " AND s.idprof5 LIKE '%".$db->escape($search_idprof5)."%'";
-if ($search_idprof6) $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idprof6)."%'";
+if ($search_sale)     $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+if ($search_categ)    $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
+if ($search_all)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_all);
+if ($search_nom)      $sql.= natural_search(array("s.nom", "s.name_alias", "s.code_client", "s.code_fournisseur", "s.email", "s.url","s.siren","s.siret","s.ape","s.idprof4","s.idprof5","s.idprof6"), $search_nom);
+if ($search_town)     $sql .= " AND s.town LIKE '%".$db->escape($search_town)."%'";
+if ($search_idprof1)  $sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
+if ($search_idprof2)  $sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
+if ($search_idprof3)  $sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
+if ($search_idprof4)  $sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
+if ($search_idprof5)  $sql .= " AND s.idprof5 LIKE '%".$db->escape($search_idprof5)."%'";
+if ($search_idprof6)  $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idprof6)."%'";
 // Filter on type of thirdparty
 if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
 if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if (!empty($conf->barcode->enabled) && $sbarcode) $sql.= " AND s.barcode LIKE '%".$db->escape($sbarcode)."%'";
-//print $sql;
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = 0;
@@ -281,7 +264,7 @@ if ($resql)
 	$params.= '&amp;search_idprof3='.htmlspecialchars($search_idprof3);
 	$params.= '&amp;search_idprof4='.htmlspecialchars($search_idprof4);
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_companies');
 
     // Show delete result message
     if (GETPOST('delsoc'))
@@ -304,8 +287,6 @@ if ($resql)
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-	print '<table class="liste" width="100%">';
 
     // Filter on categories
     /* Not possible in this page because list is for ALL third parties type
@@ -330,6 +311,17 @@ if ($resql)
         print '</td></tr>';
     }
 	*/
+	if (! empty($moreforfilter))
+	{
+		print '<div class="liste_titre">';
+		print $moreforfilter;
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+	    print '</div>';
+	}
+
+	print '<table class="liste" width="100%">';
 
     // Lines of titles
     print '<tr class="liste_titre">';
@@ -341,10 +333,13 @@ if ($resql)
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId3Short"),$textprofid[3],1,0),$_SERVER["PHP_SELF"],"s.ape","",$params,'class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$params,'class="nowrap"',$sortfield,$sortorder);
 	print_liste_field_titre('');
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -389,7 +384,12 @@ if ($resql)
 	print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
 	print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
 	print '</select></td>';
-	// Status
+
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
+    // Status
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp; ';
@@ -446,6 +446,12 @@ if ($resql)
 		}
 		print $s;
 		print '</td>';
+
+		$parameters=array('obj' => $obj);
+        $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+
+        // Status
         print '<td align="right">'.$companystatic->getLibStatut(3).'</td>';
 
 		print '</tr>'."\n";
@@ -453,6 +459,10 @@ if ($resql)
 	}
 
 	$db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>";
 

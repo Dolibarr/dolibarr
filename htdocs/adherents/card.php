@@ -976,7 +976,6 @@ else
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -1019,6 +1018,8 @@ else
 		print '<input type="hidden" name="rowid" value="'.$rowid.'" />';
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+
+		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 		print '<table class="border" width="100%">';
 
@@ -1179,7 +1180,9 @@ else
 
 		print '</table>';
 
-		print '<br><div class="center">';
+		dol_fiche_end();
+
+		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
@@ -1187,7 +1190,6 @@ else
 
 		print '</form>';
 
-		print '</div>';
 	}
 
 	if ($rowid && $action != 'edit')
@@ -1277,7 +1279,7 @@ else
 			$texttosend=$object->makeSubstitution($adht->getMailOnValid());
 
 			$tmp=$langs->trans("SendAnEMailToMember");
-			$tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent='';
 			$helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
@@ -1298,7 +1300,7 @@ else
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
 		}
 
 		// Confirm send card by mail
@@ -1319,7 +1321,7 @@ else
 			$texttosend=$object->makeSubstitution($adht->getMailOnResiliate());
 
 			$tmp=$langs->trans("SendAnEMailToMember");
-			$tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent='';
 			$helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
@@ -1335,7 +1337,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
 		}
 
 		// Confirm remove member
