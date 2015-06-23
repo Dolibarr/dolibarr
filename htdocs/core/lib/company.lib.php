@@ -504,7 +504,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
                 $projecttmp = new Project($db);
 
                 $i=0;
-                $var=false;
+                $var=true;
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
