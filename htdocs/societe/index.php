@@ -61,7 +61,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $rowspan=2;
 if (! empty($conf->barcode->enabled)) $rowspan++;
-print '<form method="post" action="'.DOL_URL_ROOT.'/societe/societe.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/societe/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre">';

@@ -5037,10 +5037,10 @@ function dol_getmypid()
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of id separated by comma like "1,3,4"
  * @param	integer			$mode		0=value is list of keywords, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
- * @param	integer			$nofinaland	1=Do now output the final 'AND'
+ * @param	integer			$nofirstand	1=Do now output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  */
-function natural_search($fields, $value, $mode=0, $nofinaland=0)
+function natural_search($fields, $value, $mode=0, $nofirstand=0)
 {
     global $db,$langs;
 
@@ -5107,7 +5107,7 @@ function natural_search($fields, $value, $mode=0, $nofinaland=0)
         if ($newres) $res = $res . ($res ? ' AND ' : '') . ($i2 > 1 ? '(' : '') .$newres . ($i2 > 1 ? ')' : '');
         $j++;
     }
-    $res = ($nofinaland?"":" AND ")."(" . $res . ")";
+    $res = ($nofirstand?"":" AND ")."(" . $res . ")";
     //print 'xx'.$res.'yy';
     return $res;
 }

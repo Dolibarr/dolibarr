@@ -293,7 +293,187 @@ if ($action=="addelement")
 
 $elementuser = new User($db);
 
+
+
 $showdatefilter=0;
+// Show the filter on date on top of element list
+if (! $showdatefilter)
+{
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+	print '<input type="hidden" name="action" value="view">';
+	print '<table><tr>';
+	print '<td>'.$langs->trans("From").' ';
+	print $form->select_date($dates,'dates',0,0,1);
+	print '</td>';
+	print '<td>'.$langs->trans("to").' ';
+	print $form->select_date($datee,'datee',0,0,1);
+	print '</td>';
+	print '<td>';
+	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
+	print '</td>';
+	print '</tr></table>';
+	print '</form>';
+
+	$showdatefilter++;
+}
+
+
+
+// Show balance for whole project
+
+$langs->load("suppliers");
+$langs->load("bills");
+$langs->load("orders");
+$langs->load("proposals");
+$langs->load("margins");
+
+//print load_fiche_titre($langs->trans("Profit"),'','title_accountancy');
+print '<div class="center">'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
+
+print '<table class="noborder">';
+print '<tr class="liste_titre">';
+print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
+print '<td align="right" width="100">'.$langs->trans("Number").'</td>';
+print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
+print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
+print '</tr>';
+
+$var = false;
+
+foreach ($listofreferent as $key => $value)
+{
+	$name=$langs->trans($value['name']);
+	$title=$value['title'];
+	$classname=$value['class'];
+	$tablename=$value['table'];
+	$datefieldname=$value['datefieldname'];
+	$qualified=$value['test'];
+	$margin = $value['margin'];
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
+	{
+		$element = new $classname($db);
+
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		if (count($elementarray)>0 && is_array($elementarray))
+		{
+			$total_ht = 0;
+			$total_ttc = 0;
+
+			$num=count($elementarray);
+			for ($i = 0; $i < $num; $i++)
+			{
+				$tmp=explode('_',$elementarray[$i]);
+				$idofelement=$tmp[0];
+				$idofelementuser=$tmp[1];
+
+				$element->fetch($idofelement);
+				if ($idofelementuser) $elementuser->fetch($idofelementuser);
+
+				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
+
+				if ($tablename == 'don') $total_ht_by_line=$element->amount;
+				elseif ($tablename == 'projet_task')
+				{
+					if ($idofelementuser)
+					{
+						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
+						$total_ht_by_line = price2num($tmp['amount'],'MT');
+					}
+					else
+					{
+						$tmp = $element->getSumOfAmount('', $dates, $datee);
+						$total_ht_by_line = price2num($tmp['amount'],'MT');
+					}
+				}
+				else $total_ht_by_line=$element->total_ht;
+
+				$total_ht = $total_ht + $total_ht_by_line;
+
+				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
+				elseif ($tablename == 'projet_task')
+				{
+					$defaultvat = get_default_tva($mysoc, $mysoc);
+					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)),'MT');
+				}
+				else $total_ttc_by_line=$element->total_ttc;
+
+				$total_ttc = $total_ttc + $total_ttc_by_line;
+			}
+
+			// Calculate margin
+			if ($margin=="add")
+			{
+				$balance_ht+= $total_ht;
+				$balance_ttc+= $total_ttc;
+			}
+			else
+			{
+				$balance_ht-= $total_ht;
+				$balance_ttc-= $total_ttc;
+			}
+
+			// Show $total_ht & $total_ttc -- add a minus when necessary
+			if ($margin!="add")
+			{
+				$total_ht = -$total_ht;
+				$total_ttc = -$total_ttc;
+			}
+
+			switch ($classname) {
+				case 'FactureFournisseur':
+					$newclassname = 'SupplierInvoice';
+					break;
+				case 'Facture':
+					$newclassname = 'Bill';
+					break;
+				case 'Propal':
+					$newclassname = 'CommercialProposal';
+					break;
+				case 'Commande':
+					$newclassname = 'Order';
+					break;
+				case 'Expedition':
+					$newclassname = 'Sending';
+					break;
+				case 'Contrat':
+					$newclassname = 'Contract';
+					break;
+				default:
+					$newclassname = $classname;
+			}
+
+			$var = ! $var;
+			print '<tr '.$bc[$var].'>';
+			// Module
+			print '<td align="left">'.$langs->trans($newclassname).'</td>';
+			// Nb
+			print '<td align="right">'.$i.'</td>';
+			// Amount HT
+			print '<td align="right">'.price($total_ht).'</td>';
+			// Amount TTC
+			print '<td align="right">'.price($total_ttc).'</td>';
+			print '</tr>';
+		}
+	}
+}
+// and the final balance
+print '<tr class="liste_total">';
+print '<td align="right" colspan=2 >'.$langs->trans("Total").'</td>';
+print '<td align="right" >'.price($balance_ht).'</td>';
+print '<td align="right" >'.price($balance_ttc).'</td>';
+print '</tr>';
+
+print "</table>";
+
+
+
+print '<br><br>';
+print '<br>';
+
+
+
+// Detail
 foreach ($listofreferent as $key => $value)
 {
 	$title=$value['title'];
@@ -310,32 +490,7 @@ foreach ($listofreferent as $key => $value)
 
 		$element = new $classname($db);
 
-		// Show the filter on date on top of element list
-		if (! $showdatefilter)
-		{
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
-			print '<input type="hidden" name="action" value="view">';
-			print '<table><tr>';
-			print '<td>'.$langs->trans("From").' ';
-			print $form->select_date($dates,'dates',0,0,1);
-			print '</td>';
-			print '<td>'.$langs->trans("to").' ';
-			print $form->select_date($datee,'datee',0,0,1);
-			print '</td>';
-			print '<td>';
-			print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
-			print '</td>';
-			print '</tr></table>';
-			print '</form><br>';
-
-			$showdatefilter++;
-		}
-
-		print '<br>';
-
-		print_titre($langs->trans($title));
-
+		$addform='';
 		$selectList=$formproject->select_element($tablename,$object->thirdparty->id);
 		if (! $selectList || ($selectList<0))
 		{
@@ -343,17 +498,20 @@ foreach ($listofreferent as $key => $value)
 		}
 		elseif($selectList)
 		{
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
-			print '<input type="hidden" name="action" value="addelement">';
-			print '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
-			print '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
-			print '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
-			print '<td>'.$selectList.'</td>';
-			print '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-			print '</tr></table>';
-			print '</form>';
+			$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+			$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
+			$addform.='<input type="hidden" name="action" value="addelement">';
+			$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
+			$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
+			$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+			$addform.='<td>'.$selectList.'</td>';
+			$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+			$addform.='</tr></table>';
+			$addform.='</form>';
 		}
+
+		print_fiche_titre($langs->trans($title), $addform, '');
+
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
@@ -463,7 +621,11 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-					if ($element instanceof Task) print $element->getNomUrl(1,'withproject','time');
+					if ($element instanceof Task) 
+					{
+						print $element->getNomUrl(1,'withproject','time');
+						print ' - '.dol_trunc($element->label, 48);
+					}
 					else print $element->getNomUrl(1);
 
 					$element_doc = $element->element;
@@ -522,13 +684,19 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
                 // Amount without tax
+				$warning='';
 				if (empty($value['disableamount']))
 				{
 					if ($tablename == 'don') $total_ht_by_line=$element->amount;
 					elseif ($tablename == 'projet_task')
 					{
-						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
+						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 						$total_ht_by_line = price2num($tmp['amount'],'MT');
+						if ($tmp['nblinesnull'] > 0) 
+						{	
+							$langs->load("errors");
+							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate");
+						}
 					}
 					else
 					{
@@ -538,6 +706,7 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '<strike>';
 					print (isset($total_ht_by_line)?price($total_ht_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
+					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
 				else print '<td></td>';
@@ -559,13 +728,18 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '<strike>';
 					print (isset($total_ttc_by_line)?price($total_ttc_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
+					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
 				else print '<td></td>';
 
 				// Status
 				print '<td align="right">';
-				if ($element instanceof CommonInvoice)
+				if ($tablename == 'expensereport_det')
+				{
+					print $expensereport->getLibStatut(5);
+				}
+				else if ($element instanceof CommonInvoice)
 				{
 					//This applies for Facture and FactureFournisseur
 					print $element->getLibStatut(5, $element->getSommePaiement());
@@ -633,191 +807,9 @@ foreach ($listofreferent as $key => $value)
 			print $elementarray;
 		}
 		print "</table>";
-
-
-		/*
-		 * Barre d'action
-		 */
-		print '<div class="tabsAction">';
-
-		if ($object->statut > 0)
-		{
-			if ($object->thirdparty->prospect || $object->thirdparty->client)
-			{
-				if ($key == 'propal' && ! empty($conf->propal->enabled) && $user->rights->propale->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddProp").'</a>';
-				}
-				if ($key == 'order' && ! empty($conf->commande->enabled) && $user->rights->commande->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
-				}
-				if ($key == 'invoice' && ! empty($conf->facture->enabled) && $user->rights->facture->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
-				}
-			}
-			if ($object->thirdparty->fournisseur)
-			{
-				if ($key == 'order_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
-				}
-				if ($key == 'invoice_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
-				}
-			}
-		}
-
-		print '</div>';
 	}
 }
 
-
-// Show profit summary for whole project
-
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("proposals");
-$langs->load("margins");
-
-//print load_fiche_titre($langs->trans("Profit"),'','title_accountancy');
-print '<br><div class="center">'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
-
-print '<table class="noborder">';
-print '<tr class="liste_titre">';
-print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
-print '<td align="right" width="100">'.$langs->trans("Number").'</td>';
-print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
-print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
-print '</tr>';
-
-foreach ($listofreferent as $key => $value)
-{
-	$name=$langs->trans($value['name']);
-	$title=$value['title'];
-	$classname=$value['class'];
-	$tablename=$value['table'];
-	$datefieldname=$value['datefieldname'];
-	$qualified=$value['test'];
-	$margin = $value['margin'];
-	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
-	{
-		$element = new $classname($db);
-
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-		if (count($elementarray)>0 && is_array($elementarray))
-		{
-			$var=true;
-			$total_ht = 0;
-			$total_ttc = 0;
-
-			$num=count($elementarray);
-			for ($i = 0; $i < $num; $i++)
-			{
-				$tmp=explode('_',$elementarray[$i]);
-				$idofelement=$tmp[0];
-				$idofelementuser=$tmp[1];
-
-				$element->fetch($idofelement);
-				if ($idofelementuser) $elementuser->fetch($idofelementuser);
-
-				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
-
-				if ($tablename == 'don') $total_ht_by_line=$element->amount;
-				elseif ($tablename == 'projet_task')
-				{
-					if ($idofelementuser)
-					{
-						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
-						$total_ht_by_line = price2num($tmp['amount'],'MT');
-					}
-					else
-					{
-						$tmp = $element->getSumOfAmount('', $dates, $datee);
-						$total_ht_by_line = price2num($tmp['amount'],'MT');
-					}
-				}
-				else $total_ht_by_line=$element->total_ht;
-
-				$total_ht = $total_ht + $total_ht_by_line;
-
-				if ($tablename == 'don') $total_ttc_by_line=$element->amount;
-				elseif ($tablename == 'projet_task')
-				{
-					$defaultvat = get_default_tva($mysoc, $mysoc);
-					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)),'MT');
-				}
-				else $total_ttc_by_line=$element->total_ttc;
-
-				$total_ttc = $total_ttc + $total_ttc_by_line;
-			}
-
-			// Calculate margin
-			if ($margin=="add")
-			{
-				$margin_ht+= $total_ht;
-				$margin_ttc+= $total_ttc;
-			}
-			else
-			{
-				$margin_ht-= $total_ht;
-				$margin_ttc-= $total_ttc;
-			}
-
-			// Show $total_ht & $total_ttc -- add a minus when necessary
-			if ($margin!="add")
-			{
-				$total_ht = -$total_ht;
-				$total_ttc = -$total_ttc;
-			}
-
-			switch ($classname) {
-				case 'FactureFournisseur':
-					$newclassname = 'SupplierInvoice';
-					break;
-				case 'Facture':
-					$newclassname = 'Bill';
-					break;
-				case 'Propal':
-					$newclassname = 'CommercialProposal';
-					break;
-				case 'Commande':
-					$newclassname = 'Order';
-					break;
-				case 'Expedition':
-					$newclassname = 'Sending';
-					break;
-				case 'Contrat':
-					$newclassname = 'Contract';
-					break;
-				default:
-					$newclassname = $classname;
-			}
-
-			print '<tr>';
-			// Module
-			print '<td align="left">'.$langs->trans($newclassname).'</td>';
-			// Nb
-			print '<td align="right">'.$i.'</td>';
-			// Amount HT
-			print '<td align="right">'.price($total_ht).'</td>';
-			// Amount TTC
-			print '<td align="right">'.price($total_ttc).'</td>';
-			print '</tr>';
-		}
-	}
-}
-// and the margin amount total
-print '<tr class="liste_total">';
-print '<td align="right" colspan=2 >'.$langs->trans("Total").'</td>';
-print '<td align="right" >'.price($margin_ht).'</td>';
-print '<td align="right" >'.price($margin_ttc).'</td>';
-print '</tr>';
-
-print "</table>";
 
 
 llxFooter();

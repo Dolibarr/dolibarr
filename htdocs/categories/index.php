@@ -160,7 +160,7 @@ foreach($fulltree as $key => $val)
 }
 
 
-print '<table class="liste" width="100%">';
+print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
 if (! empty($conf->use_javascript_ajax))
 {

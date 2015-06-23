@@ -57,11 +57,6 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	$head[$tab][0] = DOL_URL_ROOT.'/contact/exportimport.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("ExportImport");
-	$head[$tab][2] = 'exportimport';
-	$tab++;
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

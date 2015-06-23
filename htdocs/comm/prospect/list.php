@@ -156,6 +156,7 @@ $sts = array(-1,0,1,2,3);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('prospectlist'));
+$extrafields = new ExtraFields($db);
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -214,6 +215,12 @@ $sql.= " s.prefix_comm, s.fk_prospectlevel, s.fk_stcomm as stcomm_id,";
 $sql.= " st.libelle as stcomm_label,";
 $sql.= " d.nom as departement";
 if ((!$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+// Add fields for extrafields
+foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
@@ -229,15 +236,7 @@ if ($catid > 0)           $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)         $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom) {
-	$sql .= natural_search(
-		array(
-			's.nom',
-			's.name_alias'
-		),
-		$search_nom
-	);
-}
+if ($search_nom) $sql .= natural_search(array('s.nom','s.name_alias'), $search_nom);
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape(strtolower($search_zipcode))."%'";
 if ($search_town)    $sql .= natural_search('s.town', $search_town);
 if ($search_state)   $sql .= natural_search('d.nom', $search_state);
@@ -253,6 +252,10 @@ if ($socname)
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -326,6 +329,9 @@ if ($resql)
 	{
 		print '<div class="liste_titre">';
 	    print $moreforfilter;
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    	print $hookmanager->resPrint;
 	    print '</div>';
 	}
 
@@ -340,11 +346,13 @@ if ($resql)
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre('');
 
-    $parameters=array();
-    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre('');
 
 	print "</tr>\n";
 
@@ -404,6 +412,10 @@ if ($resql)
     print '&nbsp;';
     print '</td>';
 
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
     print '<td class="liste_titre" align="center">';
     print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
     print '</td>';
@@ -412,10 +424,6 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
-
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 
 	print "</tr>\n";
 
@@ -462,13 +470,15 @@ if ($resql)
 		}
 		print '</td>';
 
-        print '<td align="center">';
+        $parameters=array('obj' => $obj);
+        $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+
+		print '<td align="center">';
 		print $prospectstatic->LibStatut($prospectstatic->status,3);
         print '</td>';
-        print '<td></td>';
 
-        $parameters=array('obj' => $obj);
-        $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+        print '<td></td>';
 
         print "</tr>\n";
 		$i++;
@@ -483,7 +493,8 @@ if ($resql)
 	$db->free($resql);
 
 	$parameters=array('sql' => $sql);
-	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 }
 else
 {

@@ -361,7 +361,7 @@ class pdf_standard extends ModeleExpenseReport
 
 					// Total with all taxes
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->postotalttc-2, $curY);
+					$pdf->SetXY($this->postotalttc-1, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 3, price($object->lines[$i]->total_ttc), 0, 'R');
 
 					$nexY+=5;
