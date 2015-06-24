@@ -49,6 +49,7 @@ $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debu
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth'), GETPOST('date_finday'), GETPOST('date_finyear'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth'), GETPOST('dateday'), GETPOST('dateyear'));
 $fk_projet=GETPOST('fk_projet');
+$vatrate=GETPOST('vatrate');
 $ref=GETPOST("ref",'alpha');
 
 // If socid provided by ajax company selector
@@ -178,7 +179,7 @@ if ($action == 'update' && $user->rights->expensereport->creer)
 	}
 }
 
-if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
+if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -220,6 +221,8 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 
 		if ($emailTo && $emailFrom)
 		{
+			$filename=array(); $filedir=array(); $mimetype=array();
+			
 			// SUBJECT
 			$subject = $langs->trans("ExpenseReportWaitingForApproval");
 
@@ -234,7 +237,6 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 
 			if($resultPDF):
 			// ATTACHMENT
-			$filename=array(); $filedir=array(); $mimetype=array();
 			array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
 			array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref).".pdf");
 			array_push($mimetype,"application/pdf");
@@ -260,7 +262,7 @@ if ($action == "confirm_save" && GETPOST("confirm") == "yes" && $id > 0 && $user
 					if ($mailfile->error)
 					{
 						$mesg='';
-						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+						$mesg.=$langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
 						$mesg.='<br>'.$mailfile->error;
 						setEventMessage($mesg,'errors');
 					}
@@ -859,7 +861,8 @@ if ($action == "addline")
 
 	$object_ligne->fk_c_type_fees = GETPOST('fk_c_type_fees');
 
-	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
+	$object_ligne->fk_c_tva = GETPOST('fk_c_tva');
+	$object_ligne->vatrate = price2num($vatrate);
 
 	$object_ligne->fk_projet = $fk_projet;
 
@@ -904,10 +907,10 @@ if ($action == "addline")
 	{
 		$object_ligne->fk_expensereport = $_POST['fk_expensereport'];
 
-		$type = 0;	// TODO What if service
+		$type = 0;	// TODO What if service ?
 		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type);
 
-		$object_ligne->vatrate = price2num(GETPOST('vatrate'));
+		$object_ligne->vatrate = price2num($vatrate);
 		$object_ligne->total_ttc = $tmp[2];
 		$object_ligne->total_ht = $tmp[0];
 		$object_ligne->total_tva = $tmp[1];
@@ -1350,7 +1353,7 @@ else
 				dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
 				if ($action == 'save'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save","","",1);
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
@@ -1399,7 +1402,7 @@ else
 					if ($ret == 'html') print '<br>';
 				}
 
-				print '<table class="border" width="100%">';
+				print '<table class="border centpercent">';
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
@@ -1426,6 +1429,7 @@ else
 				print '<td>'.$langs->trans("Statut").'</td>';
 				print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
 				print '</tr>';
+				
 				print '<tr>';
 				print '<td>'.$langs->trans("NotePublic").'</td>';
 				print '<td colspan="2">'.$object->note_public.'</td>';
@@ -1529,20 +1533,6 @@ else
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
 				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
 				print '</tr>';
-				if($object->fk_statut==6)
-				{
-					print '<tr>';
-					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
-					print '<td>';
-					$userfee=new User($db);
-					$userfee->fetch($object->fk_user_paid);
-					print $userfee->getNomUrl(1);
-					print '</td></tr>';
-					print '<tr>';
-					print '<td>'.$langs->trans("DATE_PAIEMENT").'</td>';
-					print '<td>'.$object->date_paiement.'</td></tr>';
-					print '</tr>';
-				}
 
 				// User to inform
 				if($object->fk_statut<3)	// informed
@@ -1614,6 +1604,22 @@ else
 					print '</td>';
 					print '</tr>';
 				}
+
+				if($object->fk_statut==6)
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
+					print '<td>';
+					$userfee=new User($db);
+					$userfee->fetch($object->fk_user_paid);
+					print $userfee->getNomUrl(1);
+					print '</td></tr>';
+					print '<tr>';
+					print '<td>'.$langs->trans("DATE_PAIEMENT").'</td>';
+					print '<td>'.$object->date_paiement.'</td></tr>';
+					print '</tr>';
+				}
+				
 				print '</table>';
 
 				print '<br>';
