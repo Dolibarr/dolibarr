@@ -126,9 +126,8 @@ if (isset($_POST['action']))
 		$outputlangs = $langs;
 		$outputlangs->charset_output = 'UTF-8';
 
-		$sql = "SELECT d.rowid, d.ref, d.date_paiement, d.total_ht, d.total_tva, d.total_ttc";
+		$sql = "SELECT d.rowid, d.ref, d.total_ht, d.total_tva, d.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
-		$sql.= " WHERE date_paiement LIKE '".$select_date."%'";
 		$sql.= " ORDER BY d.rowid";
 
 		$result = $db->query($sql);
@@ -146,7 +145,7 @@ if (isset($_POST['action']))
 				$objet->total_tva = number_format($objet->total_tva,2);
 				$objet->total_ttc = number_format($objet->total_ttc,2);
 				$objet->ref = trim($objet->ref);
-				$ligne.= "{$objet->rowid}, {$objet->ref}, ----, {$objet->date_paiement}, {$objet->total_ht}, {$objet->total_tva}, {$objet->total_ttc}\n";
+				$ligne.= "{$objet->rowid}, {$objet->ref}, ----, {$objet->total_ht}, {$objet->total_tva}, {$objet->total_ttc}\n";
 
 				$ligne.= "--->, Ligne, Type, Description, ----, ----, ----\n";
 
