@@ -586,7 +586,7 @@ class FormOther
     }
 
     /**
-     *		Output a HTML code to select a color
+     *		Output a HTML code to select a color. Field will return an hexa color like '334455'.
      *
      *		@param	string		$set_color		Pre-selected color
      *		@param	string		$prefix			Name of HTML field
