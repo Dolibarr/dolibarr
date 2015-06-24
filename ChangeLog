@@ -37,6 +37,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #2545 ] Missing object_margin.png in Amarok theme
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
+- Fix: [ bug #2891 ] Category hooks do not work
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -205,6 +206,11 @@ Fix: [ bug #2577 ] Incorrect invoice status in "Linked objects" page of a projec
 Fix: [ bug #2576 ] Unable to edit a dictionary entry that has # in its ref
 Fix: [ bug #2758 ] Product::update sets product note to "null" when $prod->note is null
 Fix: [ bug #2757 ] Deleting product category photo gives "Forbidden access" error
+Fix: [ bug #2976 ] "Report" tab is the current tab but it is not marked as selected by the UI
+Fix: [ bug #2861 ] Undefined variable $res when migrating
+Fix: [ bug #2837 ] Product list table column header does not match column body
+Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
+Fix: [ bug #2814 ] JPEG photos are not displayed in Product photos page
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

@@ -49,8 +49,8 @@ $sall=GETPOST("sall");
 $type=GETPOST("type","int");
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
-$tosell = GETPOST("tosell");
-$tobuy = GETPOST("tobuy");
+$tosell = GETPOST("tosell", 'int');
+$tobuy = GETPOST("tobuy", 'int');
 $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
 
@@ -324,7 +324,7 @@ else
     		print '<td class="liste_titre" align="left">';
     		print '<input class="flat" type="text" name="snom" size="12" value="'.htmlspecialchars($snom).'">';
     		print '</td>';
-			
+
 			// Barcode
     		if (! empty($conf->barcode->enabled))
     		{
@@ -332,7 +332,7 @@ else
     			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.htmlspecialchars($sbarcode).'">';
     			print '</td>';
     		}
-			
+
 			// Date modification
     		print '<td class="liste_titre">';
     		print '&nbsp;';

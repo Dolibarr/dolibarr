@@ -64,6 +64,9 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
+
 /*
  *	Actions
  */
