@@ -33,8 +33,6 @@ if ($_GET["action"] == 'confirm_ndf_to_account' && $_GET["confirm"] == "yes"):
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($idTrip,$user);
 
-	$datePaiement = explode("-",$expensereport->date_paiement);
-
 	$dateop 	= dol_mktime(12,0,0,$datePaiement[1],$datePaiement[2],$datePaiement[0]);
 	$operation	= $expensereport->code_paiement;
 	$label		= "Règlement ".$expensereport->ref;
@@ -43,7 +41,7 @@ if ($_GET["action"] == 'confirm_ndf_to_account' && $_GET["confirm"] == "yes"):
 	$cat1		= '';
 
 	$user = new User($db);
-	$user->fetch($expensereport->fk_user_paid);
+	$user->fetch($user->id);
 
 	$acct=new Account($db,$idAccount);
 	$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
