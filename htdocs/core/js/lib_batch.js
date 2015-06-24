@@ -19,7 +19,7 @@
 // \brief      File that include javascript functions used when dispatching batch-enabled product
 //
 
-function AddLineBatch(index) {
+function addLineBatch(index) {
 	var nme = 'dluo_0_'+index;
 	$row=$("tr[name='"+nme+"']").clone(true);
 	$row.find("input[name^='qty']").val('');
