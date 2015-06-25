@@ -703,4 +703,4 @@ ALTER TABLE llx_holiday_logs ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
 UPDATE llx_holiday_users SET fk_type = 1 WHERE fk_type IS NULL;
 UPDATE llx_holiday_logs SET fk_type = 1 WHERE fk_type IS NULL;
 
-
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_VAT_SOLD_ACCOUNT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTING_VAT_ACCOUNT';
