@@ -127,8 +127,6 @@ class AccountingAccount extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
-		$now=dol_now();
-
 		// Clean parameters
 		if (isset($this->fk_pcg_version))
 			$this->fk_pcg_version = trim($this->fk_pcg_version);
