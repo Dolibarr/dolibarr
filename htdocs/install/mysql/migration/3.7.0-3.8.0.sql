@@ -231,7 +231,6 @@ CREATE TABLE llx_expensereport (
   date_approve		datetime,
   date_refuse 		datetime,
   date_cancel 		datetime,
-  date_paiement 	datetime,
   tms 		 		timestamp,
   fk_user_author 	integer NOT NULL,
   fk_user_modif 	integer DEFAULT NULL,
@@ -240,7 +239,6 @@ CREATE TABLE llx_expensereport (
   fk_user_approve   integer DEFAULT NULL,
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
-  fk_user_paid 		integer DEFAULT NULL,
   fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
   paid 				smallint default 0 NOT NULL,
@@ -705,4 +703,4 @@ ALTER TABLE llx_holiday_logs ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
 UPDATE llx_holiday_users SET fk_type = 1 WHERE fk_type IS NULL;
 UPDATE llx_holiday_logs SET fk_type = 1 WHERE fk_type IS NULL;
 
-
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_VAT_SOLD_ACCOUNT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTING_VAT_ACCOUNT';

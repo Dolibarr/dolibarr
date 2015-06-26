@@ -77,6 +77,7 @@ ListExpenseReportsAssociatedProject=List of expense reports associated with the 
 ListDonationsAssociatedProject=List of donations associated with the project
 ListActionsAssociatedProject=List of events associated with the project
 ListTaskTimeUserProject=List of time consumed on tasks of project
+TaskTimeUserProject=Time consumed on tasks of project
 ActivityOnProjectThisWeek=Activity on project this week
 ActivityOnProjectThisMonth=Activity on project this month
 ActivityOnProjectThisYear=Activity on project this year

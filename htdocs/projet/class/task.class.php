@@ -930,7 +930,7 @@ class Task extends CommonObject
         $result=array();
 
         $sql = "SELECT";
-        $sql.= " SUM(t.task_duration / 3600 * thm) as amount";
+        $sql.= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
         if (is_object($fuser) && $fuser->id > 0)
@@ -947,7 +947,8 @@ class Task extends CommonObject
 			$datefieldname="task_datehour";
 			$sql.=" AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
 		}
-
+		//print $sql;
+		
         dol_syslog(get_class($this)."::getSumOfAmount", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -955,7 +956,8 @@ class Task extends CommonObject
             $obj = $this->db->fetch_object($resql);
 
             $result['amount'] = $obj->amount;
-
+            $result['nblinesnull'] = $obj->nblinesnull;
+            
             $this->db->free($resql);
             return $result;
         }

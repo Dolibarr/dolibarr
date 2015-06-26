@@ -357,7 +357,6 @@ foreach ($listofreferent as $key => $value)
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
-			$var=true;
 			$total_ht = 0;
 			$total_ttc = 0;
 
@@ -622,7 +621,11 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-					if ($element instanceof Task) print $element->getNomUrl(1,'withproject','time');
+					if ($element instanceof Task) 
+					{
+						print $element->getNomUrl(1,'withproject','time');
+						print ' - '.dol_trunc($element->label, 48);
+					}
 					else print $element->getNomUrl(1);
 
 					$element_doc = $element->element;
@@ -681,13 +684,19 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
                 // Amount without tax
+				$warning='';
 				if (empty($value['disableamount']))
 				{
 					if ($tablename == 'don') $total_ht_by_line=$element->amount;
 					elseif ($tablename == 'projet_task')
 					{
-						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
+						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 						$total_ht_by_line = price2num($tmp['amount'],'MT');
+						if ($tmp['nblinesnull'] > 0) 
+						{	
+							$langs->load("errors");
+							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate");
+						}
 					}
 					else
 					{
@@ -697,6 +706,7 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '<strike>';
 					print (isset($total_ht_by_line)?price($total_ht_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
+					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
 				else print '<td></td>';
@@ -718,13 +728,18 @@ foreach ($listofreferent as $key => $value)
 					if (! $qualifiedfortotal) print '<strike>';
 					print (isset($total_ttc_by_line)?price($total_ttc_by_line):'&nbsp;');
 					if (! $qualifiedfortotal) print '</strike>';
+					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
 				}
 				else print '<td></td>';
 
 				// Status
 				print '<td align="right">';
-				if ($element instanceof CommonInvoice)
+				if ($tablename == 'expensereport_det')
+				{
+					print $expensereport->getLibStatut(5);
+				}
+				else if ($element instanceof CommonInvoice)
 				{
 					//This applies for Facture and FactureFournisseur
 					print $element->getLibStatut(5, $element->getSommePaiement());
@@ -792,46 +807,9 @@ foreach ($listofreferent as $key => $value)
 			print $elementarray;
 		}
 		print "</table>";
-
-
-		/*
-		 * Barre d'action
-		 */
-		print '<div class="tabsAction">';
-
-		if ($object->statut > 0)
-		{
-			if ($object->thirdparty->prospect || $object->thirdparty->client)
-			{
-				if ($key == 'propal' && ! empty($conf->propal->enabled) && $user->rights->propale->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddProp").'</a>';
-				}
-				if ($key == 'order' && ! empty($conf->commande->enabled) && $user->rights->commande->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddCustomerOrder").'</a>';
-				}
-				if ($key == 'invoice' && ! empty($conf->facture->enabled) && $user->rights->facture->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->thirdparty->id.'&amp;action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
-				}
-			}
-			if ($object->thirdparty->fournisseur)
-			{
-				if ($key == 'order_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierOrder").'</a>';
-				}
-				if ($key == 'invoice_supplier' && ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer)
-				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?socid='.$project->thirdparty->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddSupplierInvoice").'</a>';
-				}
-			}
-		}
-
-		print '</div>';
 	}
 }
+
 
 
 llxFooter();

@@ -194,7 +194,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-#$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
+//$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
 $urlwiki='http://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
@@ -229,7 +229,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-#$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
+//$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
 $urlwiki='http://partners.dolibarr.org';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';

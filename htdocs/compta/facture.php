@@ -2502,7 +2502,9 @@ if ($action == 'create')
 	}
 
 	print '<br>';
-} else if ($id > 0 || ! empty($ref)) {
+} 
+else if ($id > 0 || ! empty($ref)) 
+{
 	/*
 	 * Show object in view mode
 	 */
@@ -2522,7 +2524,8 @@ if ($action == 'create')
 	$result = $object->fetch_thirdparty();
 
 	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+	$result=$soc->fetch($object->socid);
+	if ($result < 0) dol_print_error($db);
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
 
 	$totalpaye = $object->getSommePaiement();
@@ -2857,7 +2860,8 @@ if ($action == 'create')
 		$outstandingBills = $soc->get_OutstandingBill();
 		print ' - ' . $langs->trans('CurrentOutstandingBill') . ': ';
 		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
-		if ($soc->outstanding_limit != '') {
+		if ($soc->outstanding_limit != '') 
+		{
 			if ($outstandingBills > $soc->outstanding_limit)
 				print img_warning($langs->trans("OutstandingBillReached"));
 			print ' / ' . price($soc->outstanding_limit);
@@ -2946,7 +2950,8 @@ if ($action == 'create')
 		} else
 			print '. ';
 	}
-	if ($absolute_creditnote > 0) {
+	if ($absolute_creditnote > 0) 
+	{
 		// If validated, we show link "add credit note to payment"
 		if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 			if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT) {

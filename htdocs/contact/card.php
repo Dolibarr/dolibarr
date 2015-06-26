@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -1149,6 +1149,14 @@ else
         else print $langs->trans("NoDolibarrAccess");
         print '</td></tr>';
 
+        print '<tr><td>';
+        print $langs->trans("ExportCardToFormat").'</td><td colspan="3">';
+		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
+		print img_picto($langs->trans("VCard"),'vcard.png').' ';
+		print $langs->trans("VCard");
+		print '</a>';
+        print '</td></tr>';
+        
         print "</table>";
 
         print dol_fiche_end();

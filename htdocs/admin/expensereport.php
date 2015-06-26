@@ -146,6 +146,10 @@ if ($action == 'setModuleOptions')
 else if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
+	if ($ret > 0 && empty($conf->global->EXPENSEREPORT_ADDON_PDF))
+	{
+		dolibarr_set_const($db, 'EXPENSEREPORT_ADDON_PDF', $value,'chaine',0,'',$conf->entity);
+	}
 }
 
 else if ($action == 'del')
