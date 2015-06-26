@@ -57,7 +57,8 @@ function showDP(base,dateFieldID,format,codelang)
 
 	showDP.box=document.createElement("div");
 	showDP.box.className="bodyline";
-	showDP.box.style.siplay="block";
+	showDP.box.style.display="block";
+	showDP.box.style.zIndex="1000";
 	showDP.box.style.position="absolute";
 	showDP.box.style.top=thetop + "px";
 	showDP.box.style.left=theleft + "px";
