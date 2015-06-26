@@ -592,11 +592,11 @@ else
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Ref").'</td>';
+			print_liste_field_titre($langs->trans("Ref"));
 			print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"s.nom","","&socid=$socid","",$sortfiled,$sortorder);
-			print '</td><td align="right">'.$langs->trans("Amount").'</td>';
+			print_liste_field_titre($langs->trans("Amount"),'','','','','align="right"');
 			print_liste_field_titre('');
-			print "</td>\n";
+			print "</tr>\n";
 
 			if ($num > 0)
 			{
