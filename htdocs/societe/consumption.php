@@ -314,6 +314,7 @@ print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','
 print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
+print "</tr>\n";
 // Filters
 print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left">';

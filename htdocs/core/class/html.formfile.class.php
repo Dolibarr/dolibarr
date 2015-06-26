@@ -795,8 +795,8 @@ class FormFile
 			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
 			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
-			print_liste_field_titre('','','');
-			print '</tr>';
+			print_liste_field_titre('');
+			print "</tr>\n";
 
 			$nboffiles=count($filearray);
 

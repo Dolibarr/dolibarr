@@ -389,7 +389,7 @@ else
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
 			if ($user->rights->stock->creer)            print_liste_field_titre('');
-			print "</tr>";
+			print "</tr>\n";
 
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;

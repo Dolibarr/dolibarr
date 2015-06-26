@@ -595,7 +595,7 @@ else
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"s.nom","","&socid=$socid","",$sortfiled,$sortorder);
 			print '</td><td align="right">'.$langs->trans("Amount").'</td>';
-			print '<td>&nbsp;</td>';
+			print_liste_field_titre('');
 			print "</td>\n";
 
 			if ($num > 0)

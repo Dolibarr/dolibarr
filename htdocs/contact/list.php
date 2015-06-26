@@ -311,8 +311,8 @@ if ($result)
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut", $begin, $param, 'align="center"', $sortfield,$sortorder);
-    print '<td class="liste_titre">&nbsp;</td>';
-    print "</tr>\n";
+    print_liste_field_titre('');
+	print "</tr>\n";
 
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
