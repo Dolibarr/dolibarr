@@ -430,5 +430,5 @@ NotLastInCycle=Deze factuur niet de laatste in de cyclus en mag niet worden gewi
 DisabledBecauseNotLastInCycle=De volgende situatie bestaat al.
 DisabledBecauseFinal=Deze situatie is definitief.
 CantBeLessThanMinPercent=De voortgang kan niet kleiner zijn dan de waarde in de voorgaande situatie.
-NoSituations=Geen geopend situaties
+NoSituations=No open situations
 InvoiceSituationLast=Finale en algemene factuur

@@ -1,7 +1,7 @@
-Module210009Name=Incoterm
-Module210009Desc=Add features to manage Incoterm
-IncotermLabel=Incoterms
-IncotermSetupTitle1=Feature
+Module62000Name=Incoterm
+Module62000Desc=Legg til egenskaper for å administrere Incoterm
+IncotermLabel=Incotermer
+IncotermSetupTitle1=Egenskap
 IncotermSetupTitle2=Status
-IncotermSetup=Setup of module Incoterm
-IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)
+IncotermSetup=Oppsett av Incoterm-modulen
+IncotermFunctionDesc=Aktiver Incoterm (Tredjepart, Tilbud, Kundeordre, Kundefaktura, Forsendelse, Leverandørordre)

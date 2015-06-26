@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
-Module112000Name=Impressions Directe
-Module112000Desc=Activer le système d'impression Directe
+Module64000Name=Direct Printing
+Module64000Desc=Enable Direct Printing System
 PrintingSetup=Réglages du module Impression Directe
 PrintingDesc=Ce module ajoute un bouton Imprimer afin d'envoyer directement les documents à une imprimante (sans ouvrir le document dans une application).
 ModuleDriverSetup=Configuration des drivers impression
@@ -49,7 +49,6 @@ PRINTIPP_PORT=Port
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Mot de passe
 NoPrinterFound=Aucune imprimante trouvée (vérifiez votre configuration CUPS)
-FileWasSentToPrinter=Le fichier %s a été envoyé à l'imprimante
 NoDefaultPrinterDefined=Il n'y a pas d'imprimante définie par défaut
 DefaultPrinter=Imprimante par défaut
 Printer=Imprimante

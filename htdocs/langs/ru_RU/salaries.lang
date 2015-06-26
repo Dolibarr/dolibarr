@@ -11,3 +11,5 @@ ShowSalaryPayment=Показать выплату зарплаты
 THM=Средняя расценка почасовой оплаты
 TJM=Средняя расценка дневной оплаты
 CurrentSalary=Текущая зарплата
+THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently as information only and is not used for any calculation

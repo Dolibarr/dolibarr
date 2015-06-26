@@ -19,4 +19,4 @@ printQty=Кол-во:%d
 AddDispatchBatchLine=Добавить строку Срока годности
 BatchDefaultNumber=Не задана
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
-ProductDoesNotUseBatchSerial=Этот товар не использует номер партии/серийный номер
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

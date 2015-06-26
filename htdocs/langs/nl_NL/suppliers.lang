@@ -42,5 +42,5 @@ SentToSuppliers=Stuur naar leveranciers
 ListOfSupplierOrders=Lijst van leverancier bestellingen
 MenuOrdersSupplierToBill=Leverancier bestellingen te factureren
 NbDaysToDelivery=Levering vertraging in de dagen
-DescNbDaysToDelivery=De langste levertermijn van de producten besteld in deze opdracht.
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
 UseDoubleApproval=Gebruik dubbele goedkeuring (de tweede goedkeuring kan worden gedaan door elke gebruiker met de speciale toestemming)

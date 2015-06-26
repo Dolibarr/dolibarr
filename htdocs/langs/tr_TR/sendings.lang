@@ -53,7 +53,7 @@ DocumentModelSimple=Basit belge modeli
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Uyarı, sevkiyat için bekleyen herhangi bir ürün yok.
 StatsOnShipmentsOnlyValidated=İstatistikler yalnızca doğrulanmış sevkiyatlarda yapılmıştır. Kullanılan tarih sevkiyat doğrulama tarihidir (planlanan teslim tarihi her zaman bilinemez)
-DateDeliveryPlanned=Planlanan teslim tarihi
+DateDeliveryPlanned=Teslimat için planlanan tarih
 DateReceived=Teslim alınan tarih
 SendShippingByEMail=Sevkiyatı EPostayla gönder
 SendShippingRef=% Nakliyatının yapılması
@@ -67,7 +67,7 @@ SendingRunning=Sipariş edilmiş müşteri sparişindeki ürün
 SuppliersReceiptRunning=Sipariş edilmiş tedarikçi sparişindeki ürün
 ProductQtyInCustomersOrdersRunning=Açık müşteri siparişlerindeki ürün miktarı
 ProductQtyInSuppliersOrdersRunning=Açık tedarikçi siparişlerindeki ürün miktarı
-ProductQtyInShipmentAlreadySent=Açık müşteri siparişlerindeki halihazırda gönderilmiş ürün miktarı
+ProductQtyInShipmentAlreadySent=Gönderilmiş olan ve açık durumdaki müşteri siparişindeki miktar
 ProductQtyInSuppliersShipmentAlreadyRecevied=Açık tedarikçi siparişlerindeki halihazırda teslim alınmış ürün miktarı
 
 # Sending methods

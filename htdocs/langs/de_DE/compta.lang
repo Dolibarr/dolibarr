@@ -7,7 +7,7 @@ TaxModuleSetupToModifyRules=Im <a href="%s">Steuer-Modul</a> können Sie die Ein
 TaxModuleSetupToModifyRulesLT=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
 OptionMode=Buchhaltungsoptionen
 OptionModeTrue=Option Eingang-Ausgang
-OptionModeVirtual=Option Soll-Haben
+OptionModeVirtual=Option Forderungen-Verbindlichkeiten
 OptionModeTrueDesc=Der Umsatz wird über die Zahlungen (Datum der Zahlungen) berechnet. \nDie Aussagekraft der Zahlen ist nur gewährleistet, wenn die Pflege der Konten (Ein-/Ausgang) nachhaltig korrekt ist.
 OptionModeVirtualDesc=In dieser Option berechnet sich der Umsatz über Zahlungen (Zahlungsdatum).<br> Die Gültigkeit der Zahlen ist nur bei Überprüfung der Zu- und Abgänge auf den Konten über Rechnungen gewährleistet.
 FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
@@ -24,7 +24,7 @@ Accountsparent=Kontohalter
 BillsForSuppliers=Lieferantenrechnungen
 Income=Einnahmen
 Outcome=Ausgaben
-ReportInOut=Einnahmen/Ausgaben
+ReportInOut=Ergebnis / Geschäftsjahr
 ReportTurnover=Umsatz
 PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Partner verbunden
 PaymentsNotLinkedToUser=Zahlungen mit keinem Benutzer verbunden
@@ -198,7 +198,7 @@ CalculationRuleDescSupplier=Wählen Sie die geeignete Methode, um zum gleichen E
 TurnoverPerProductInCommitmentAccountingNotRelevant=Umsatz Bericht pro Produkt, bei der Verwendung einer <b>Kassabuch Buchhaltung</b>  ist der Modus nicht relevant. Dieser Bericht ist nur bei Verwendung <b>Buchführungsmodus Periodenrechnung</b> (siehe Setup das Modul  Buchhaltung).
 CalculationMode=Berechnungsmodus
 AccountancyJournal=Buchhaltungscode-Journal
-ACCOUNTING_VAT_ACCOUNT=Standard-Erlöskonto, um MwSt einzuziehen
+ACCOUNTING_VAT_ACCOUNT=Standard-Erlöskonto,  für die Erhebung der Mehrwertsteuer
 ACCOUNTING_VAT_BUY_ACCOUNT=Standard-Aufwandskonto, um MwSt zu bezahlen
 ACCOUNTING_ACCOUNT_CUSTOMER=Standard Buchhaltungs-Code für Kunden/Debitoren
 ACCOUNTING_ACCOUNT_SUPPLIER=Standard Buchhaltungs-Code für Lieferanten/Kreditoren

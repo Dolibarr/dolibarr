@@ -42,5 +42,5 @@ SentToSuppliers=Nosūtīti uz piegādātājiem
 ListOfSupplierOrders=Saraksts ar piegādātāju pasūtījumiem
 MenuOrdersSupplierToBill=Supplier orders to invoice
 NbDaysToDelivery=Piegādes kavēšanās dienās
-DescNbDaysToDelivery=The biggest delay is display among order product list
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
 UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

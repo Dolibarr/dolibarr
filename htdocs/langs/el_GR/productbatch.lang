@@ -19,4 +19,4 @@ printQty=Ποσότητα: %d
 AddDispatchBatchLine=Προσθέστε μια γραμμή για Χρόνο Διάρκειας αποστολής
 BatchDefaultNumber=Απροσδιόριστο
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
-ProductDoesNotUseBatchSerial=Αυτό το προϊόν δεν χρησιμοποιεί παρτίδα/σειριακό αριθμό
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

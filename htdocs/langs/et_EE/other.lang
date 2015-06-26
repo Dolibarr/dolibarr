@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Sekkumine kinnitatud
 Notify_FICHINTER_SENTBYMAIL=Sekkumine saadetud postiga
 Notify_BILL_VALIDATE=Müügiarve kinnitatud
 Notify_BILL_UNVALIDATE=Müügiarve avatud
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Ostutellimus heaks kiidetud
 Notify_ORDER_SUPPLIER_REFUSE=Ostutellimus tagasi lükatud
 Notify_ORDER_VALIDATE=Müügitellimus kinnitatud
@@ -203,6 +204,7 @@ ClickHereToGoTo=Klõpsa siia, et minna %s
 YouMustClickToChange=Esmalt pead klõpsa järgneval lingil, et kinnitada salasõna muutmine
 ForgetIfNothing=Kui Sina ei palunud seda muudatust, siis ignoreeri antud kirja ja mingeid muudatusi ei toimu.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Lisa kirje kalendrisse %s
