@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,11 +114,11 @@ llxHeader('',$langs->trans("Permissions"));
 
 $form=new Form($db);
 
-$fuser = new User($db);
-$fuser->fetch($id);
-$fuser->getrights();
+$object = new User($db);
+$object->fetch($id);
+$object->getrights();
 
-$head = user_prepare_head($fuser);
+$head = user_prepare_head($object);
 
 $title = $langs->trans("User");
 dol_fiche_head($head, 'rights', $title, 0, 'user');
@@ -157,7 +157,7 @@ foreach($modulesdir as $dir)
     	            // Load all permissions
     	            if ($objMod->rights_class)
     	            {
-    	            	$forceEntity=((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : null);
+    	            	$forceEntity=((! empty($conf->multicompany->enabled) && ! empty($object->entity)) ? $object->entity : null);
     	                $ret=$objMod->insert_permissions(0, $forceEntity);
     	                $modules[$objMod->rights_class]=$objMod;
     	                //print "modules[".$objMod->rights_class."]=$objMod;";
@@ -182,14 +182,14 @@ if (! empty($conf->multicompany->enabled))
 	if (1==2 && ! empty($conf->multicompany->transverse_mode)) {
 		$sql.= " AND r.entity = ".(GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity); // TODO unused for the moment
 	} else {
-		$sql.= " AND r.entity = ".(! empty($fuser->entity) ? $fuser->entity : $conf->entity);
+		$sql.= " AND r.entity = ".(! empty($object->entity) ? $object->entity : $conf->entity);
 	}
 }
 else
 {
 	$sql.= " AND r.entity = ".$conf->entity;
 }
-$sql.= " AND ur.fk_user = ".$fuser->id;
+$sql.= " AND ur.fk_user = ".$object->id;
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result=$db->query($sql);
@@ -222,10 +222,10 @@ $sql.= " WHERE gr.fk_id = r.id";
 if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
 	$sql.= " AND gu.entity IS NOT NULL";
 } else {
-	$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity);
+	$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($object->entity)) ? $object->entity : $conf->entity);
 }
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
-$sql.= " AND gu.fk_user = ".$fuser->id;
+$sql.= " AND gu.fk_user = ".$object->id;
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result=$db->query($sql);
@@ -258,18 +258,18 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 print '<td>';
-print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>'."\n";
 
 // Lastname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$fuser->lastname.'</td>';
+print '<td>'.$object->lastname.'</td>';
 print '</tr>'."\n";
 
 // Firstname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$fuser->firstname.'</td>';
+print '<td>'.$object->firstname.'</td>';
 print '</tr>'."\n";
 
 print '</table><br>';
@@ -285,7 +285,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transv
 	$aEntities=array_keys($permsgroupbyentity);
 	sort($aEntities);
 	$entity = (GETPOST('entity', 'int')?GETPOST('entity', 'int'):$aEntities[0]);
-	$head = entity_prepare_head($fuser, $aEntities);
+	$head = entity_prepare_head($object, $aEntities);
 	$title = $langs->trans("Entities");
 	dol_fiche_head($head, $entity, $title, 1, 'multicompany@multicompany');
 }
@@ -303,7 +303,7 @@ print '</tr>'."\n";
 $sql = "SELECT r.id, r.libelle, r.module";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : $conf->entity);
+$sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($object->entity)) ? $object->entity : $conf->entity);
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
@@ -335,16 +335,16 @@ if ($result)
         	$objMod=$modules[$obj->module];
         	$picto=($objMod->picto?$objMod->picto:'generic');
 
-        	if ($caneditperms && (empty($objMod->rights_admin_allowed) || empty($fuser->admin)))
+        	if ($caneditperms && (empty($objMod->rights_admin_allowed) || empty($object->admin)))
         	{
         		// On affiche ligne pour modifier droits
         		print '<tr '. $bc[$var].'>';
         		print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
         		print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
         		print '<td align="center" class="nowrap">';
-        		print '<a title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+        		print '<a title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
         		print '/';
-        		print '<a title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
+        		print '<a title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
         		print '</td>';
         		print '<td colspan="2">&nbsp;</td>';
         		print '</tr>'."\n";
@@ -357,7 +357,7 @@ if ($result)
         print '<td>'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
         // Permission and tick
-        if (! empty($fuser->admin) && ! empty($objMod->rights_admin_allowed))    // Permission own because admin
+        if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission own because admin
         {
         	if ($caneditperms)
         	{
@@ -371,7 +371,7 @@ if ($result)
         {
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
         	}
         	print '<td align="center" class="nowrap">';
         	print img_picto($langs->trans("Active"),'tick');
@@ -397,7 +397,7 @@ if ($result)
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
-	        		print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+	        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
 	        	}
 	        	print '<td>&nbsp</td>';
 	        }
@@ -407,7 +407,7 @@ if ($result)
         	// Do not own permission
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+        		print '<td align="center"><a href="perms.php?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
         	}
         	print '<td>&nbsp</td>';
         }
