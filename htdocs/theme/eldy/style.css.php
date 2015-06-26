@@ -114,12 +114,15 @@ $usegradient=1;
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-	$conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';    // topmenu (140,160,185)
-    $conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
+	// Case of option always editable
+	if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='140,150,180';   // topmenu (140,160,185)
+    if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       	// title of arrays TO MATCH ELDY (140,160,185)
+    //if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1='230,230,230';     // title of arrays TO MATCH BOOTSTRAP
+
+	// Cas of option editable if option THEME_ELDY_ENABLE_PERSONALIZED is on
+	$conf->global->THEME_ELDY_TOPMENU_BACK2='236,236,236';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK2='255,255,255';
-    $conf->global->THEME_ELDY_BACKTITLE1='140,150,180';       // title of arrays TO MATCH ELDY (140,160,185)
-    //$conf->global->THEME_ELDY_BACKTITLE1='230,230,230';     // title of arrays TO MATCH BOOTSTRAP
     $conf->global->THEME_ELDY_BACKTITLE2='230,230,230';
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';
     $conf->global->THEME_ELDY_BACKTABCARD2='210,210,210';     // card
@@ -136,7 +139,8 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
-$colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+// Cas of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
+$colorbackhmenu1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackhmenu2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorbackhmenu2:$conf->global->THEME_ELDY_TOPMENU_BACK2)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorbackhmenu2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
 $colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);
 $colorbackvmenu2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK2)?$colorbackvmenu2:$conf->global->THEME_ELDY_VERMENU_BACK2)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK2)?$colorbackvmenu2:$user->conf->THEME_ELDY_VERMENU_BACK2);
@@ -155,6 +159,7 @@ $colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
+
 // Hover can be disabled with THEME_ELDY_USE_HOVER=0
 if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($user->conf->THEME_ELDY_USE_HOVER) && $user->conf->THEME_ELDY_USE_HOVER == '0'))
 	|| (empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && (isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0')))
@@ -605,8 +610,9 @@ div.ficheaddleft {
 $minwidthtmenu=66;		/* minimul widht for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
+$disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE) || $dol_optimize_smallscreen) { $disableimages = 1; $maxwidthloginblock = 180; }
 ?>
 
 div#id-top {
@@ -622,8 +628,8 @@ div#id-top {
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
 	<?php } ?>
-	<?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
-	height: 26px;
+	<?php if ($disableimages) { ?>
+	height: 28px;
 	<?php } else { ?>
 	height: <?php print $heightmenu2; ?>px;
 	<?php } ?>
@@ -734,19 +740,19 @@ div.tmenuleft
 	width: 5px;
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
 	<?php } ?>
-	<?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
-	height: 24px;
+	<?php if ($disableimages) { ?>
+	height: 26px;
 	<?php } else { ?>
 	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
 }
 div.tmenucenter
 {
-	padding-top: <?php print empty($conf->global->THEME_ELDY_DISABLE_IMAGE)?'2':'4'; ?>px;
+	padding-top: <?php print $disableimages?'4':'2'; ?>px;
 	padding-left: 0px;
 	padding-right: 0px;
-	<?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
-	height: 22px;
+	<?php if ($disableimages) { ?>
+	height: 24px;
 	<?php } else { ?>
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
@@ -892,7 +898,7 @@ foreach($mainmenuusedarray as $val)
 .tmenuimage {
     padding:0 0 0 0 !important;
     margin:0 0px 0 0 !important;
-    <?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
+    <?php if ($disableimages) { ?>
     	display: none;
     <?php } ?>
 }
@@ -1017,7 +1023,7 @@ div.login_block_user {
 }
 div.login_block_other {
 	display: inline-block;
-	clear: both; 
+	clear: both;
 }
 div.login_block_other { padding-top: 3px; text-align: right; }
 .login_block_elem {
