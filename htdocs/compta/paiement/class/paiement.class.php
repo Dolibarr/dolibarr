@@ -116,7 +116,8 @@ class Paiement extends CommonObject
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
 
-				$this->bank_account   = $obj->fk_account;
+				$this->bank_account   = $obj->fk_account; // deprecated
+				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 
 				$this->db->free($result);
@@ -666,6 +667,29 @@ class Paiement extends CommonObject
 		{
 			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this).'::valide '.$this->error);
+			return -1;
+		}
+	}
+	
+	/**
+	 *    Reject payment
+	 *
+	 *    @return     int     <0 if KO, >0 if OK
+	 */
+	function reject()
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.$this->id;
+
+		dol_syslog(get_class($this).'::reject', LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this).'::reject '.$this->error);
 			return -1;
 		}
 	}
