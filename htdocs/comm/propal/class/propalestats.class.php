@@ -66,7 +66,7 @@ class PropaleStats extends Stats
 
 		$this->field='total_ht';
 		$this->field_line='total_ht';
-		
+
 		$this->where.= " p.fk_statut > 0";
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		$this->where.= " AND p.entity = ".$conf->entity;
@@ -183,7 +183,7 @@ class PropaleStats extends Stats
 		return $this->_getAllByYear($sql);
 	}
 
-	
+
 
 	/**
 	 *	Return nb, amount of predefined product for year
@@ -193,9 +193,11 @@ class PropaleStats extends Stats
 	 */
 	function getAllByProduct($year)
 	{
+		global $user;
+
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql.= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND p.rowid = tl.fk_propal AND tl.fk_product = product.rowid";
     	$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
@@ -204,5 +206,5 @@ class PropaleStats extends Stats
         //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);
-	}	
+	}
 }
