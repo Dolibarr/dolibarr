@@ -2551,7 +2551,7 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 }
 .photowithmargin {
 	margin-bottom: 2px;
-	margin-top: 2px;
+	margin-top: 10px;
 }
 .photowithmargin {
 	-webkit-box-shadow: 0px 0px 3px #777;

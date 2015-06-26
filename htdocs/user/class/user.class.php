@@ -1855,7 +1855,7 @@ class User extends CommonObject
         if (! empty($this->photo))
         {
         	$label.= '<div class="photointooltip">';
-            $label.= Form::showphoto('userphoto', $this, 80);
+            $label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip');
         	$label.= '</div><div style="clear: both;"></div>';
         }
 

@@ -1442,6 +1442,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $toprightmenu.=$user->getPhotoUrl(16,16,'loginphoto');
 	    $toprightmenu.='</div></div>';
 
+	    // Login name with tooltip
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
         $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
         $toprightmenu.='</div></div>';
