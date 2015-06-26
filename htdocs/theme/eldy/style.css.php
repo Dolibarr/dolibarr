@@ -602,13 +602,17 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 <?php
-$minwidthtmenu=66;
+$minwidthtmenu=66;		/* minimul widht for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
+$maxwidthloginblock = 110;
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $maxwidthloginblock = 180; }
 ?>
 
 div#id-top {
-	height: <?php print ($heightmenu2); ?>px;
+<?php if (GETPOST("optioncss") == 'print') {  ?>
+	display:none;
+<?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	<?php if ($usegradient) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -618,14 +622,19 @@ div#id-top {
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
 	<?php } ?>
+	<?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
+	height: 26px;
+	<?php } else { ?>
+	height: <?php print $heightmenu2; ?>px;
+	<?php } ?>
+<?php } ?>
 }
 
 div#tmenu_tooltip {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	height: <?php print ($heightmenu2+1); ?>px;
-	padding-<?php echo $right; ?>: 100px;
+	padding-<?php echo $right; ?>: <? echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
 }
 
@@ -643,7 +652,6 @@ div.tmenudiv {
     margin: 0px 0px 0px 0px;	/* t r b l */
 	font-size: 13px;
     font-weight: normal;
-    height: <?php print ($heightmenu+1); ?>px;
 	color: #000000;
     text-decoration: none;
 <?php } ?>
@@ -683,7 +691,7 @@ ul.tmenu {	/* t r b l */
     margin: 0px 0px 0px 0px;
 	list-style: none;
 }
-ul.tmenu li {
+ul.tmenu li {	/* We need this to have background color when menu entry wraps on new lines */
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	<?php if ($usegradient) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -700,12 +708,12 @@ li.tmenu, li.tmenusel {
 	vertical-align: bottom;
 	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
-    height: <?php print $heightmenu; ?>px;
+    /* height: <?php print $heightmenu; ?>px; */
     <?php } ?>
 	position:relative;
 	display: block;
-	padding: 0px 0px 2px 0px;
-	margin: 0px 0px 0px 0px;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
 	font-weight: normal;
 }
 li.tmenusel, li.tmenu:hover {
@@ -715,25 +723,33 @@ li.tmenusel, li.tmenu:hover {
     background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
     background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
-	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x !important; Nicer but problem when menu wrap on 2 lines */
 }
 .tmenuend .tmenuleft { width: 0px; }
+.tmenuend { display: none; }
 div.tmenuleft
 {
 	float: <?php print $left; ?>;
 	margin-top: 0px;
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
-	height: <?php print $heightmenu+4; ?>px;
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
+	<?php } ?>
+	<?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
+	height: 24px;
+	<?php } else { ?>
+	height: <?php print $heightmenu; ?>px;
 	<?php } ?>
 }
 div.tmenucenter
 {
-	padding-top: 2px;
+	padding-top: <?php print empty($conf->global->THEME_ELDY_DISABLE_IMAGE)?'2':'4'; ?>px;
 	padding-left: 0px;
 	padding-right: 0px;
+	<?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
+	height: 22px;
+	<?php } else { ?>
     height: <?php print $heightmenu; ?>px;
+	<?php } ?>
     width: 100%;
 }
 .mainmenuaspan
@@ -876,6 +892,9 @@ foreach($mainmenuusedarray as $val)
 .tmenuimage {
     padding:0 0 0 0 !important;
     margin:0 0px 0 0 !important;
+    <?php if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { ?>
+    	display: none;
+    <?php } ?>
 }
 
 
@@ -966,10 +985,11 @@ table.login_table_securitycode tr td {
 
 div.login_block {
 	position: absolute;
+	text-align: right;
 	<?php print $right; ?>: 5px;
 	top: 3px;
 	font-weight: bold;
-	max-width: 110px;
+	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -992,7 +1012,13 @@ div.login a:hover {
 	color: #<?php echo $colortextbackvmenu; ?>;
 	text-decoration:underline;
 }
-div.login_block_user, div.login_block_other { clear: both; }
+div.login_block_user {
+	display: inline-block;
+}
+div.login_block_other {
+	display: inline-block;
+	clear: both; 
+}
 div.login_block_other { padding-top: 3px; text-align: right; }
 .login_block_elem {
 	float: right;
