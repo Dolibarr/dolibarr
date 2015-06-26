@@ -3173,6 +3173,11 @@ class Form
 						$more.='<td colspan="2" align="left">';
 						$more.=$this->select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
 						$more.='</td></tr>'."\n";
+						$formquestion[] = array('name'=>$input['name'].'day');
+						$formquestion[] = array('name'=>$input['name'].'month');
+						$formquestion[] = array('name'=>$input['name'].'year');
+						$formquestion[] = array('name'=>$input['name'].'hour');
+						$formquestion[] = array('name'=>$input['name'].'min');
 					}
                     else if ($input['type'] == 'other')
                     {
