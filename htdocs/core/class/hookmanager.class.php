@@ -130,24 +130,25 @@ class HookManager
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated).
         $hooktype='output';
-        if (in_array(
-        	$method,
-        	array(
-        		'addMoreActionsButtons',
-		        'addStatisticLine',
-        	    'deleteFile',
-        		'doActions',
-        		'formCreateThirdpartyOptions',
-		        'formObjectOptions',
-		        'formattachOptions',
-		        'formBuilddocLineOptions',
-		        'moveUploadedFile',
-		        'pdf_writelinedesc',
-		        'paymentsupplierinvoices',
-		        'printSearchForm',
-        		'formatEvent'
-        		)
-        	)) $hooktype='addreplace';
+		if (in_array(
+			$method,
+			array(
+				'addMoreActionsButtons',
+				'addStatisticLine',
+				'deleteFile',
+				'doActions',
+				'formCreateThirdpartyOptions',
+				'formObjectOptions',
+				'formattachOptions',
+				'formBuilddocLineOptions',
+				'moveUploadedFile',
+				'pdf_writelinedesc',
+				'paymentsupplierinvoices',
+				'printAddress',
+				'printSearchForm',
+				'formatEvent'
+				)
+			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')
         if (preg_match('/^pdf_/',$method) && $method != 'pdf_writelinedesc') $hooktype='returnvalue';		// pdf_xxx except pdf_writelinedesc are 'returnvalue' hooks. When there is 2 hooks of this type, only last one win. TODO Move them into 'output' or 'addreplace' hooks.
         if ($method == 'insertExtraFields')

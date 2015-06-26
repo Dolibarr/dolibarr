@@ -151,7 +151,7 @@ if ($result)
 			if($obj->product_type == 0) $compta_prod = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 			else $compta_prod = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 		}
-		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_ACCOUNT)?$conf->global->ACCOUNTING_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)?$conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
 		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
 
 		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $obj->thirdparty, $mysoc);
