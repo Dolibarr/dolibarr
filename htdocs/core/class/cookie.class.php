@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009  Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015  Regis Houssin  <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,9 @@
  */
 class DolCookie
 {
-	var $myKey;
+	private $myKey;
+	private $iv;
+
 	var $myCookie;
 	var $myValue;
 	var $myExpire;
@@ -45,7 +47,8 @@ class DolCookie
 	 */
 	function __construct($key = '')
 	{
-		$this->myKey = $key;
+		$this->myKey = hash('sha256', $key, TRUE);
+		$this->iv = md5(md5($this->myKey));
 		$this->cookiearray = array();
 		$this->cookie = "";
 		$this->myCookie = "";
@@ -60,14 +63,10 @@ class DolCookie
 	 */
 	function cryptCookie()
 	{
-		if (!empty($this->myKey))
+		if (!empty($this->myKey) && !empty($this->iv))
 		{
 			$valuecrypt = base64_encode($this->myValue);
-			$max=dol_strlen($valuecrypt)-1;
-			for ($f=0 ; $f <= $max; $f++)
-			{
-				$this->cookie .= intval(ord($valuecrypt[$f]))*$this->myKey."|";
-			}
+			$this->cookie = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->myKey, $valuecrypt, MCRYPT_MODE_CBC, $this->iv));
 		}
 		else
 		{
@@ -84,17 +83,10 @@ class DolCookie
 	 */
 	function decryptCookie()
 	{
-		if (!empty($this->myKey))
+		if (!empty($this->myKey) && !empty($this->iv))
 		{
-			$this->cookiearray = explode("|",$_COOKIE[$this->myCookie]);
-			$this->myValue = "" ;
-			$num = (count($this->cookiearray) - 2);
-			for ($f = 0; $f <= $num; $f++)
-			{
-				if (!empty($this->myKey)) {
-					$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
-				}
-			}
+			$this->cookie = $_COOKIE[$this->myCookie];
+			$this->myValue = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->myKey, base64_decode($this->cookie), MCRYPT_MODE_CBC, $this->iv));
 
 			return(base64_decode($this->myValue));
 		}
