@@ -422,6 +422,15 @@ if (! defined('NOLOGIN'))
                     $error++;
                 }
                 // End Call of triggers
+
+                // Hooks on failed login
+		        $action='';
+		        $hookmanager->initHooks(array('login'));
+		        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+		        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+		        if ($reshook < 0) $error++;
+
+		        // Note: exit is done later
             }
         }
 
@@ -479,6 +488,7 @@ if (! defined('NOLOGIN'))
                 // We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
                 if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
+                // TODO We should use a hook afterLoginFailed here, not a trigger.
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -487,6 +497,15 @@ if (! defined('NOLOGIN'))
                     $error++;
                 }
                 // End Call of triggers
+
+                // Hooks on failed login
+		        $action='';
+		        $hookmanager->initHooks(array('login'));
+		        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+		        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+		        if ($reshook < 0) $error++;
+
+		        // Note: exit is done in next chapter
             }
         }
 
@@ -521,7 +540,7 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$user->error;
             }
 
-            // TODO We should use a hook here, not a trigger.
+            // TODO We should use a hook afterLoginFailed here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
@@ -530,6 +549,13 @@ if (! defined('NOLOGIN'))
                 $error++;
             }
             // End call triggers
+
+	        // Hooks on failed login
+	        $action='';
+	        $hookmanager->initHooks(array('login'));
+	        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+	        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+	        if ($reshook < 0) $error++;
 
             header('Location: '.DOL_URL_ROOT.'/index.php');
             exit;
@@ -573,6 +599,13 @@ if (! defined('NOLOGIN'))
                 $error++;
             }
             // End call triggers
+
+	        // Hooks on failed login
+	        $action='';
+	        $hookmanager->initHooks(array('login'));
+	        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+	        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+	        if ($reshook < 0) $error++;
 
             header('Location: '.DOL_URL_ROOT.'/index.php');
             exit;
@@ -623,34 +656,12 @@ if (! defined('NOLOGIN'))
 
         $user->update_last_login_date();
 
-        $user->trigger_mesg = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
-
-        // TODO We should use a hook here, not a trigger
-        // Call triggers
-        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        $interface=new Interfaces($db);
-        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
-        if ($result < 0) {
-            $error++;
-        }
-        // End call triggers
-
-        if ($error)
-        {
-            $db->rollback();
-            session_destroy();
-            dol_print_error($db,'Error in some triggers on action USER_LOGIN');
-            exit;
-        }
-        else
-        {
-            $db->commit();
-        }
 
         // Create entity cookie, just used for login page
         // TODO Multicompany Move this into hook
         if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
         {
+        	dol_syslog("You are using a bugged version of a module using deprecated code instead that should be located into the hook 'afterLogin' instead", LOG_WARNING);
             include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
 
             $entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
@@ -666,12 +677,39 @@ if (! defined('NOLOGIN'))
             $entityCookie->_setCookie($entityCookieName, $entity, $ttl);
         }
 
+
+        $loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
+
+        $user->trigger_mesg = $loginfo;
+
+        // TODO We should use hook afterLogin here, not a trigger
+        // Call triggers
+        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+        $interface=new Interfaces($db);
+        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
+        if ($result < 0) {
+            $error++;
+        }
+        // End call triggers
+
         // Hooks on successfull login
         $action='';
         $hookmanager->initHooks(array('login'));
-        $parameters=array('dol_authmode'=>$dol_authmode);
+        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginfo'=>$loginfo);
         $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
         if ($reshook < 0) $error++;
+
+        if ($error)
+        {
+            $db->rollback();
+            session_destroy();
+            dol_print_error($db,'Error in some hooks afterLogin (or old trigger USER_LOGIN)');
+            exit;
+        }
+        else
+		{
+            $db->commit();
+        }
     }
 
 
