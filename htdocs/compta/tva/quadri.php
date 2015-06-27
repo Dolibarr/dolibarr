@@ -72,8 +72,8 @@ function tva_coll($db,$y,$q)
         $sql.= " AND f.fk_statut in (1,2)";
         $sql.= " AND f.rowid = d.fk_facture ";
         $sql.= " AND date_format(f.datef,'%Y') = '".$y."'";
-        $sql.= " AND (round(date_format(f.datef,'%m') > ".(($q-1)*3);
-        $sql.= " AND round(date_format(f.datef,'%m')) <= ".($q*3).")";
+        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3);
+        $sql.= " AND date_format(f.datef,'%m') <= ".($q*3).")";
         $sql.= " ORDER BY rate, facid";
 
     }
@@ -131,7 +131,7 @@ function tva_paye($db, $y,$q)
     if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
     {
         // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_tx as rate, d.total_ht as totalht, d.tva as amount";
+        $sql = "SELECT d.fk_facture_fourn as facid, f.ref_supplier as facnum, d.tva_tx as rate, d.total_ht as totalht, d.tva as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
         $sql.= ", ".MAIN_DB_PREFIX."facture_fourn_det as d" ;
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -222,8 +222,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 	$subtot_coll_vat = 0;
 	$subtot_paye_total = 0;
 	$subtot_paye_vat = 0;
-	for ($q = 1 ; $q <= 4 ; $q++)
-	{
+	for ($q = 1 ; $q <= 4 ; $q++) {
 		print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".dol_print_date(dol_mktime(0,0,0,(($q-1)*3)+1,1,$y),"%b %Y").' - '.dol_print_date(dol_mktime(0,0,0,($q*3),1,$y),"%b %Y").")</td></tr>";
 		$var=true;
 
