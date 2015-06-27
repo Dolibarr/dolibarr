@@ -178,7 +178,7 @@ print_liste_field_titre($langs->trans("CronLastResult"),$_SERVER["PHP_SELF"],"t.
 print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVER["PHP_SELF"],"t.lastoutput","",$arg_url,'',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Enabled"),$_SERVER["PHP_SELF"],"t.status","",$arg_url,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre('');
-print '</tr>';
+print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td>&nbsp;</td>';

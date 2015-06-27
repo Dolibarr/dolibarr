@@ -314,7 +314,7 @@ if ($result)
     print_liste_field_titre('');
     print "</tr>\n";
 
-    // Ligne des champs de filtres
+    // Lines for filter fields
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_lastname" size="9" value="'.dol_escape_htmltag($search_lastname).'">';

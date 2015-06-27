@@ -295,8 +295,8 @@ else
 				print_liste_field_titre($langs->trans("Credit"));
 				print_liste_field_titre($langs->trans("Amount"));
 				print_liste_field_titre($langs->trans("Sens"));
-				
-				print '<td></td>';
+				print_liste_field_titre('');
+
 				print "</tr>\n";
 				
 				foreach ( $book->linesmvt as $line ) {
