@@ -364,15 +364,15 @@ class ExpenseReport extends CommonObject
     /**
      *    Classify the expense report as paid
      *
-     *    @param	int		$id           	    id of expense report
-     *    @param	user	$fuser				User
+     *    @param	int		$id           	    Id of expense report
+     *    @param	user	$fuser				User making change
 	 *    @return   int      					<0 if KO, >0 if OK
      */
     function set_paid($id, $fuser)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-		$sql.= " SET fk_statut = 6;
-        $sql.= " WHERE rowid = $id AND fk_statut = 5";
+		$sql.= " SET fk_statut = 6";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
 
 		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
