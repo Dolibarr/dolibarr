@@ -578,7 +578,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
         else
-       {
+        {
 	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 	       $hookmanager->initHooks(array('main'));
 
@@ -645,25 +645,6 @@ if (! defined('NOLOGIN'))
         else
         {
             $db->commit();
-        }
-
-        // Create entity cookie, just used for login page
-        // TODO Multicompany Move this into hook
-        if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
-
-            $entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
-
-            $prefix=dol_getprefix();
-            $entityCookieName = 'DOLENTITYID_'.$prefix;
-            // TTL : is defined in the config page multicompany
-            $ttl = (! empty($conf->global->MULTICOMPANY_COOKIE_TTL) ? dol_now()+$conf->global->MULTICOMPANY_COOKIE_TTL : dol_now()+60*60*8 );
-            // Cryptkey : will be created randomly in the config page multicompany
-            $cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-            $entityCookie = new DolCookie($cryptkey);
-            $entityCookie->_setCookie($entityCookieName, $entity, $ttl);
         }
 
         // Hooks on successfull login
@@ -830,18 +811,6 @@ else
 }
 
 $heightforframes=52;
-
-// Switch to another entity
-// TODO Multicompany Remove this
-if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
-{
-    if ($mc->switchEntity(GETPOST('entity','int')) > 0)
-    {
-        header("Location: ".DOL_URL_ROOT.'/');
-        exit;
-    }
-}
-
 
 // Init menu manager
 if (! defined('NOREQUIREMENU'))
