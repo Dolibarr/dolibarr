@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Intervencie overená
 Notify_FICHINTER_SENTBYMAIL=Intervencie poštou
 Notify_BILL_VALIDATE=Zákazník faktúra overená
 Notify_BILL_UNVALIDATE=Zákazník faktúra unvalidated
+Notify_ORDER_SUPPLIER_VALIDATE=Dodávateľská objednávka zaznamenaná
 Notify_ORDER_SUPPLIER_APPROVE=Dodávateľ aby schválila
 Notify_ORDER_SUPPLIER_REFUSE=Dodávateľ aby odmietol
 Notify_ORDER_VALIDATE=Zákazníka overená
@@ -203,6 +204,7 @@ ClickHereToGoTo=Kliknite tu pre prechod na %s
 YouMustClickToChange=Musíte však najprv kliknúť na nasledujúci odkaz pre potvrdenie tejto zmeny hesla
 ForgetIfNothing=Ak ste o túto zmenu, stačí zabudnúť na tento e-mail. Vaše prihlasovacie údaje sú v bezpečí.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Pridať záznam do kalendára %s

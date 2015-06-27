@@ -430,5 +430,5 @@ NotLastInCycle=Το τιμολόγιο αυτό δεν είναι το τελε�
 DisabledBecauseNotLastInCycle=Η επόμενη κατάσταση υπάρχει ήδη.
 DisabledBecauseFinal=Η κατάσταση αυτή είναι οριστική.
 CantBeLessThanMinPercent=The progress can't be smaller than its value in the previous situation.
-NoSituations=Δεν υπάρχουν ανοιχτές καταστάσεις
+NoSituations=No open situations
 InvoiceSituationLast=Τελικό και γενικό τιμολόγιο

@@ -57,6 +57,7 @@ RemoveFromGroup=Dzēst no grupas
 PasswordChangedAndSentTo=Parole nomainīta un nosūtīta <b>%s.</b>
 PasswordChangeRequestSent=Pieprasīt, lai nomaina paroli, <b>%s</b> nosūtīt <b>%s.</b>
 MenuUsersAndGroups=Lietotāji un grupas
+MenuMyUserCard=My user card
 LastGroupsCreated=Pēdējās %s izveidotās grupas
 LastUsersCreated=Pēdējie %s izveidotie lietotāji
 ShowGroup=Rādīt grupa

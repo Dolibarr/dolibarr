@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=เงินกู้
+Loans=เงินให้กู้ยืม
+NewLoan=สินเชื่อใหม่
+ShowLoan=แสดงสินเชื่อ
+PaymentLoan=การชำระเงินสินเชื่อ
+ShowLoanPayment=แสดงการชำระเงินสินเชื่อ
+Capital=เมืองหลวง
+Insurance=ประกันภัย
+Interest=ความสนใจ
+Nbterms=จำนวนของข้อตกลง
+LoanAccountancyCapitalCode=บัญชีทุนรหัส
+LoanAccountancyInsuranceCode=รหัสบัญชีประกัน
+LoanAccountancyInterestCode=บัญชีที่น่าสนใจรหัส
+LoanPayment=การชำระเงินสินเชื่อ
+ConfirmDeleteLoan=ยืนยันการลบเงินให้กู้ยืมนี้
+LoanDeleted=สินเชื่อที่ถูกลบประสบความสำเร็จ
+ConfirmPayLoan=ยืนยันการจำแนกจ่ายเงินให้กู้ยืมนี้
+LoanPaid=สินเชื่อการชำระเงิน
+ErrorLoanCapital=การกู้ยืมเงินจะต้องมีตัวเลขและมากกว่าศูนย์
+ErrorLoanLength=ระยะเวลาในการกู้เงินจะต้องมีตัวเลขและมากกว่าศูนย์
+ErrorLoanInterest=ที่น่าสนใจประจำปีจะต้องมีตัวเลขและมากกว่าศูนย์
+# Calc
+LoanCalc=เครื่องคิดเลขสินเชื่อธนาคาร
+PurchaseFinanceInfo=ข้อมูลการสั่งซื้อและการเงิน
+SalePriceOfAsset=ราคาขายของสินทรัพย์
+PercentageDown=ลงร้อยละ
+LengthOfMortgage=ความยาวของสินเชื่อที่อยู่อาศัย
+AnnualInterestRate=อัตราดอกเบี้ยประจำปี
+ExplainCalculations=อธิบายการคำนวณ
+ShowMeCalculationsAndAmortization=แสดงการคำนวณและค่าตัดจำหน่าย
+MortgagePaymentInformation=สินเชื่อที่อยู่อาศัยข้อมูลการชำระเงิน
+DownPayment=การชำระเงินลง
+DownPaymentDesc=<b>การชำระเงินลง</b> = ราคาของบ้านคูณด้วยอัตราร้อยละแบ่งลดลง 100 (ต่อ 5% ลดลงกลายเป็น 5/100 หรือ 0.05)
+InterestRateDesc=<b>อัตราดอกเบี้ย</b> = ร้อยละที่น่าสนใจประจำปีหารด้วย 100
+MonthlyFactorDesc=<b>ปัจจัยรายเดือน</b> = ผลมาจากสูตรต่อไปนี้
+MonthlyInterestRateDesc=<b>อัตราดอกเบี้ยรายเดือน</b> = อัตราดอกเบี้ยประจำปีหารด้วย 12 (12 เดือนต่อปี)
+MonthTermDesc=<b>ระยะเดือนของเงินกู้ในเดือน</b> = จำนวนปีที่คุณได้ถ่ายออกเงินกู้ครั้งที่ 12
+MonthlyPaymentDesc=การชำระเงินรายเดือนจะคิดออกโดยใช้สูตรต่อไปนี้
+AmortizationPaymentDesc=<a href="#amortization">ค่าตัดจำหน่าย</a> แบ่งลงเท่าใดของการชำระเงินรายเดือนของคุณไปสู่ความสนใจของธนาคารและวิธีการมากที่จะเข้าสู่การจ่ายเงินออกหลักของเงินกู้ของคุณ
+AmountFinanced=จํานวนเงินทุน
+AmortizationMonthlyPaymentOverYears=<b>ค่าตัดจำหน่ายสำหรับการชำระเงินรายเดือน:% s%</b> s มากกว่าปีที่ผ่านมา
+Totalsforyear=ผลรวมสำหรับปี
+MonthlyPayment=การชำระเงินรายเดือน
+LoanCalcDesc=<b>เครื่องคิดเลขจำนองนี้สามารถใช้ในการคิดออกชำระเงินรายเดือนของสินเชื่อจำนองบ้านขึ้นอยู่กับราคาขายบ้านของระยะเวลาของเงินกู้ที่ต้องการชำระเงินลงร้อยละของผู้ซื้อและอัตราดอกเบี้ยเงินกู้ของ</b> <br> ปัจจัยเครื่องคิดเลขนี้ใน PMI (Private ประกันสินเชื่อที่อยู่อาศัย) สำหรับเงินให้สินเชื่อที่น้อยกว่า 20% จะใส่เป็นชำระเงินลง ยังนำเข้าสู่การพิจารณาเป็นภาษีทรัพย์สินเมืองและผลกระทบต่อการชำระเงินจำนองรายเดือนทั้งหมด <br>
+GoToInterest=% s จะไปสู่​​ความสนใจ
+GoToPrincipal=% s จะไปต่อที่สำคัญ
+YouWillSpend=คุณจะใช้% s ในบ้านของคุณในปีที่% s
+# Admin
+ConfigLoan=การกำหนดค่าของเงินให้กู้ยืมโมดูล
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ทุนการบัญชีรหัสโดยค่าเริ่มต้น
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=ที่น่าสนใจการบัญชีรหัสโดยค่าเริ่มต้น
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=ประกันการบัญชีรหัสโดยค่าเริ่มต้น

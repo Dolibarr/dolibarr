@@ -57,6 +57,7 @@ RemoveFromGroup=Eemalda grupist
 PasswordChangedAndSentTo=Salasõna muudetud ja saadetud aadressile <b>%s</b>.
 PasswordChangeRequestSent=Kasutaja <b>%s</b> salasõna muutmise plave saadetud aadressile <b>%s</b>.
 MenuUsersAndGroups=Kasutajad ja grupid
+MenuMyUserCard=My user card
 LastGroupsCreated=Viimased %s loodud gruppi
 LastUsersCreated=Viimased %s loodud kasutajat
 ShowGroup=Näita gruppi

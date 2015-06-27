@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Validate interwencji
 Notify_FICHINTER_SENTBYMAIL=Interwencja wysyłane pocztą
 Notify_BILL_VALIDATE=Sprawdź rachunki
 Notify_BILL_UNVALIDATE=Faktura klienta nie- zwalidowane
+Notify_ORDER_SUPPLIER_VALIDATE=Kolejność Dostawca rejestrowane
 Notify_ORDER_SUPPLIER_APPROVE=Dostawca celu zatwierdzone
 Notify_ORDER_SUPPLIER_REFUSE=Dostawca odmówił celu
 Notify_ORDER_VALIDATE=Zamówienie Klienta potwierdzone
@@ -203,6 +204,7 @@ ClickHereToGoTo=Kliknij tutaj, aby przejść do% s
 YouMustClickToChange=Trzeba jednak najpierw kliknąć na poniższy link, aby potwierdzić tę zmianę hasła
 ForgetIfNothing=Jeśli nie zwrócić tę zmianę, po prostu zapomnieć ten e-mail. Twoje dane są przechowywane w sposób bezpieczny.
 IfAmountHigherThan=Jeśli kwota wyższa niż <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Dodaj wpis w kalendarzu %s
