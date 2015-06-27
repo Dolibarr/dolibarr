@@ -37,7 +37,6 @@ class DolCookie
 	var $myPath;
 	var $myDomain;
 	var	$mySecure;
-	var $cookiearray;
 	var $cookie;
 
 	/**
@@ -49,7 +48,6 @@ class DolCookie
 	{
 		$this->myKey = hash('sha256', $key, TRUE);
 		$this->iv = md5(md5($this->myKey));
-		$this->cookiearray = array();
 		$this->cookie = "";
 		$this->myCookie = "";
 		$this->myValue = "";
