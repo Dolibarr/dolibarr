@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro  <alexandre.spangaro@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -66,17 +66,6 @@ function member_prepare_head(Adherent $object)
 	    $head[$h][1] = $langs->trans('Agenda');
 	    $head[$h][2] = 'agenda';
 	    $h++;
-	}
-
-	// Show category tab
-	if (! empty($conf->categorie->enabled) && ! empty($user->rights->categorie->lire))
-	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$type = Categorie::TYPE_MEMBER;
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
 	}
 
     // Show more tabs from modules
