@@ -28,8 +28,8 @@
  */
 class DolCookie
 {
-	private $myKey;
-	private $iv;
+	private $_myKey;
+	private $_iv;
 
 	var $myCookie;
 	var $myValue;
@@ -46,8 +46,8 @@ class DolCookie
 	 */
 	function __construct($key = '')
 	{
-		$this->myKey = hash('sha256', $key, TRUE);
-		$this->iv = md5(md5($this->myKey));
+		$this->_myKey = hash('sha256', $key, TRUE);
+		$this->_iv = md5(md5($this->_myKey));
 		$this->cookie = "";
 		$this->myCookie = "";
 		$this->myValue = "";
@@ -61,10 +61,10 @@ class DolCookie
 	 */
 	private function cryptCookie()
 	{
-		if (!empty($this->myKey) && !empty($this->iv))
+		if (!empty($this->_myKey) && !empty($this->_iv))
 		{
 			$valuecrypt = base64_encode($this->myValue);
-			$this->cookie = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->myKey, $valuecrypt, MCRYPT_MODE_CBC, $this->iv));
+			$this->cookie = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_myKey, $valuecrypt, MCRYPT_MODE_CBC, $this->_iv));
 		}
 		else
 		{
@@ -81,10 +81,10 @@ class DolCookie
 	 */
 	private function decryptCookie()
 	{
-		if (!empty($this->myKey) && !empty($this->iv))
+		if (!empty($this->_myKey) && !empty($this->_iv))
 		{
 			$this->cookie = $_COOKIE[$this->myCookie];
-			$this->myValue = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->myKey, base64_decode($this->cookie), MCRYPT_MODE_CBC, $this->iv));
+			$this->myValue = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->_myKey, base64_decode($this->cookie), MCRYPT_MODE_CBC, $this->_iv));
 
 			return(base64_decode($this->myValue));
 		}
