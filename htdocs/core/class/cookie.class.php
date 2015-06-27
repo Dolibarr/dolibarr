@@ -23,8 +23,11 @@
 
 
 /**
- *	\class      DolCookie
- *	\brief      Class to manage cookies
+ *	Class to manage cookies.
+ *  This class is used by external module multicompany but will be removed soon only and must not be used by
+ *
+ *  @deprecated PHP already provide function to read/store a cookie. No need to use a dedicated class. Also storing sensitive information into cookie is forbidden, so encryption is useless.
+ *  If a data is sensitive, it must be stored into database (if we need a long term retention) or into session.
  */
 class DolCookie
 {
