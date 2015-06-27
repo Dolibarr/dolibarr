@@ -305,7 +305,14 @@ class ExportExcel extends ModeleExports
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
-
+			
+			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
+			{
+				$array = unserialize($typefield);
+				$array = $array['options'];
+				$newvalue = $array[$newvalue];
+			}
+			
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
