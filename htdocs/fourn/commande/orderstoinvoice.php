@@ -462,7 +462,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print_liste_field_titre($langs->trans('DeliveryDate'), 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre($langs->trans('Status'), '', '', '', '', 'align="right"');
 		print_liste_field_titre($langs->trans('GenerateBill'), '', '', '', '', 'align="center"');
-		print '</tr>';
+		print "</tr>\n";
 
 		// Lignes des champs de filtre
 		print '<form method="get" action="orderstoinvoice.php">';

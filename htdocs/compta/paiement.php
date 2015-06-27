@@ -705,7 +705,7 @@ if (! GETPOST('action'))
         print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
-        print '<td>&nbsp;</td>';
+        print_liste_field_titre('');
         print "</tr>\n";
 
         while ($i < min($num,$limit))

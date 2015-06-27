@@ -324,8 +324,8 @@ else
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', $param, '');
-    		print "</tr>\n";
+            print_liste_field_titre('');
+			print "</tr>\n";
 
     		// Lignes des champs de filtre
     		print '<tr class="liste_titre">';

@@ -145,7 +145,7 @@ if ($result)
 		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
 	}
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"], '');
+	print_liste_field_titre('');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';

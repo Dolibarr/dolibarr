@@ -629,7 +629,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     // Edit
     print_liste_field_titre('');
-    print "</tr>";
+	print "</tr>\n";
 
 
     print '<tr class="liste_titre">';
