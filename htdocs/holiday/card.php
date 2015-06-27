@@ -277,7 +277,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	if (! $error)
 	{
 		$db->commit();
-		header('Location: index.php');
+		header('Location: list.php');
 		exit;
 	}
 	else
@@ -839,7 +839,6 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Approved by
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
-        // Liste des utiliseurs du groupe choisi dans la config
         $validator = new UserGroup($db);
         $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
         $valideurobjects = $validator->listUsersForGroup($excludefilter);
@@ -1119,14 +1118,15 @@ else
                 } else {
                     print '<tr>';
                     print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
-                    // Liste des utiliseurs du groupes choisi dans la config
-                    $idGroupValid = $cp->getConfCP('userGroup');
 
-                    $validator = new UserGroup($db);
-                    $valideur = $validator->listUsersForGroup('',1);
+			        $validator = new UserGroup($db);
+			        $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
+			        $valideurobjects = $validator->listUsersForGroup($excludefilter);
+			        $valideurarray = array();
+			        foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
 
                     print '<td>';
-                    $form->select_users($cp->fk_validator,"valideur",1,"",0,$valideur,'');
+        			print $form->select_dolusers($user->fk_user, "valideur", 1, "", 0, $valideurarray);	// By default, hierarchical parent
                     print '</td>';
                     print '</tr>';
                 }

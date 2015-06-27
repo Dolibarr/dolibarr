@@ -152,7 +152,7 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 print_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
-if ($cp->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+if ($holiday->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
 else print $langs->trans('None');
 print "</div><br>\n";
 
