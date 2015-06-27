@@ -59,7 +59,7 @@ class DolCookie
 	 *
 	 * @return	void
 	 */
-	function cryptCookie()
+	private function cryptCookie()
 	{
 		if (!empty($this->myKey) && !empty($this->iv))
 		{
@@ -79,7 +79,7 @@ class DolCookie
 	 *
 	 * @return	string
 	 */
-	function decryptCookie()
+	private function decryptCookie()
 	{
 		if (!empty($this->myKey) && !empty($this->iv))
 		{
@@ -105,7 +105,7 @@ class DolCookie
 	 * @param	int			$secure		0 or 1
 	 * @return	void
 	 */
-	function _setCookie($cookie, $value, $expire=0, $path="/", $domain="", $secure=0)
+	public function _setCookie($cookie, $value, $expire=0, $path="/", $domain="", $secure=0)
 	{
 		$this->myCookie = $cookie;
 		$this->myValue = $value;
@@ -125,7 +125,7 @@ class DolCookie
 	 *  @param   	string		$cookie         Cookie name
 	 *  @return  	string						Decrypted value
 	 */
-	function _getCookie($cookie)
+	public function _getCookie($cookie)
 	{
 		$this->myCookie = $cookie;
 
