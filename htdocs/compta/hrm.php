@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
@@ -109,15 +109,22 @@ if (! empty($conf->holiday->enabled))
 {
 	$user_id = $user->id;
 
-	$nbaquis=$holiday->getCPforUser($user_id);
-	$nbdeduced=$holiday->getConfCP('nbHolidayDeducted');
-	$nb_holiday = $nbaquis / $nbdeduced;
-
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Holidays").'</td></tr>';
     print "<tr ".$bc[0].">";
     print '<td colspan="3">';
-    print $langs->trans('SoldeCPUser',round($nb_holiday,2)).($nbdeduced != 1 ? ' ('.$nbaquis.' / '.$nbdeduced.')' : '');
+
+    $out='';
+    $typeleaves=$holiday->getTypes(1,1);
+    foreach($typeleaves as $key => $val)
+    {
+    	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
+    	$nb_holiday += $nb_type;
+    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+    }
+    print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+    print $out;
+
     print '</td>';
     print '</tr>';
     print '</table><br>';

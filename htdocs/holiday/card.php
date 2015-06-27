@@ -1088,6 +1088,7 @@ else
                     print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$cp->description.'</textarea></td>';
                     print '</tr>';
                 }
+
                 print '</tbody>';
                 print '</table>'."\n";
 

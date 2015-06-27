@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2103 Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2012-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  *

@@ -85,18 +85,30 @@ class Holiday extends CommonObject
 
 
     /**
-     * updateSold. Update sold and check table of users for holidays is complete. If not complete.
+     * Update balance of vacations and check table of users for holidays is complete. If not complete.
      *
-     * @return	int			Return 1
+     * @return	int			<0 if KO, >0 if OK
      */
-    function updateSold()
+    function updateBalance()
     {
-	    // Mets à jour les congés payés en début de mois
-	    $this->updateSoldeCP();
+    	$this->db->begin();
+
+	    // Update sold of vocations
+	    $result = $this->updateSoldeCP();
 
 	    // Vérifie le nombre d'utilisateur et mets à jour si besoin
-	    $this->verifNbUsers($this->countActiveUsersWithoutCP(),$this->getConfCP('nbUser'));
-	    return 1;
+	    if ($result > 0) $result = $this->verifNbUsers($this->countActiveUsersWithoutCP(), $this->getConfCP('nbUser'));
+
+	    if ($result >= 0)
+	    {
+	    	$this->db->commit();
+	    	return 1;
+	    }
+	    else
+		{
+	    	$this->db->rollback();
+	    	return -1;
+		}
     }
 
     /**
@@ -901,8 +913,9 @@ class Holiday extends CommonObject
             // Si mise à jour pour tout le monde en début de mois
 			$now=dol_now();
 
-            // Mois actuel
             $month = date('m',$now);
+
+            // Get month of last update
             $lastUpdate = $this->getConfCP('lastUpdate');
             $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
 			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;exit;
@@ -1127,12 +1140,11 @@ class Holiday extends CommonObject
     }
 
     /**
-     *    Liste la liste des utilisateurs du module congés
-     *    uniquement pour vérifier si il existe de nouveau utilisateur
+     *    Get list of Users or list of vacation balance.
      *
-     *    @param      boolean	$liste	    si vrai retourne une liste, si faux retourne un array
-     *    @param      boolean   $type		si vrai retourne pour Dolibarr, si faux retourne pour CP
-     *    @return     string      			retourne un tableau de tout les utilisateurs actifs
+     *    @param      boolean		$liste	    If true return a string list. If false, return an array
+     *    @param      boolean   	$type		If true, read Dolibarr user list, if false, return vacation balance list.
+     *    @return     array|string      		Return an array
      */
     function fetchUsers($liste=true,$type=true)
     {
@@ -1182,9 +1194,10 @@ class Holiday extends CommonObject
 
             }
             else
-           { // Si utilisateur du module Congés Payés
-                $sql = "SELECT u.fk_user";
-                $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as u";
+           {
+           		// Si utilisateur du module Congés Payés
+                $sql = "SELECT cpu.fk_user, cpu.fk_type, cpu.nb_holidays, u.lastname, u.firstname";
+                $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu";
 
                 dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1224,7 +1237,7 @@ class Holiday extends CommonObject
         else
        { // Si faux donc user Congés Payés
 
-            // Si c'est pour les utilisateurs de Dolibarr
+            // List for Dolibarr users
             if ($type)
             {
                 $sql = "SELECT u.rowid, u.lastname, u.firstname";
@@ -1248,7 +1261,10 @@ class Holiday extends CommonObject
 
                         $tab_result[$i]['rowid'] = $obj->rowid;
                         $tab_result[$i]['name'] = $obj->lastname;
+                        $tab_result[$i]['lastname'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
+                        $tab_result[$i]['type'] = $obj->type;
+                        $tab_result[$i]['nb_holidays'] = $obj->nb_holidays;
 
                         $i++;
                     }
@@ -1261,13 +1277,11 @@ class Holiday extends CommonObject
                     $this->error="Error ".$this->db->lasterror();
                     return -1;
                 }
-
-                // Si c'est pour les utilisateurs du module Congés Payés
             }
             else
            {
-
-                $sql = "SELECT DISTINCT cpu.fk_user, u.lastname, u.firstname";
+				// List of vacation balance users
+                $sql = "SELECT cpu.fk_user, cpu.fk_type, cpu.nb_holidays, u.lastname, u.firstname";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu,";
                 $sql.= " ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE cpu.fk_user = u.rowid";
@@ -1283,13 +1297,16 @@ class Holiday extends CommonObject
                     $num = $this->db->num_rows($resql);
 
                     // Boucles du listage des utilisateurs
-                    while($i < $num) {
-
+                    while($i < $num)
+                    {
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->fk_user;
                         $tab_result[$i]['name'] = $obj->lastname;
+                        $tab_result[$i]['lastname'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
+                        $tab_result[$i]['type'] = $obj->type;
+                        $tab_result[$i]['nb_holidays'] = $obj->nb_holidays;
 
                         $i++;
                     }
@@ -1344,9 +1361,9 @@ class Holiday extends CommonObject
      *
      *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
      *  @param    int	$userCP    				Number of active users into table of holidays
-     *  @return   void
+     *  @return   int							<0 if KO, >0 if OK
      */
-    function verifNbUsers($userDolibarrWithoutCP,$userCP)
+    function verifNbUsers($userDolibarrWithoutCP, $userCP)
     {
     	if (empty($userCP)) $userCP=0;
     	dol_syslog(get_class($this).'::verifNbUsers userDolibarr='.$userDolibarrWithoutCP.' userCP='.$userCP);
@@ -1437,6 +1454,7 @@ class Holiday extends CommonObject
             }
         }
 
+        return 1;
     }
 
 
