@@ -1,5 +1,5 @@
-Module210009Name=Διεθνείς Εμπορικός Όρος
-Module210009Desc=Προσθέστε δυνατότητες για τη διαχείριση του Διεθνή Εμπορικού Όρου
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
 IncotermLabel=Διεθνείς Εμπορικοί Όροι
 IncotermSetupTitle1=Χαρακτηριστικό
 IncotermSetupTitle2=Κατάσταση

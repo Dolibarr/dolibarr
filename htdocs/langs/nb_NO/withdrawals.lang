@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - withdrawals
-StandingOrdersArea=Område for utestående ordre
-CustomersStandingOrdersArea=Område for utestående kundeordre
-StandingOrders=Utestående ordre
-StandingOrder=Utestående ordre
-NewStandingOrder=Ny utestående ordre
-StandingOrderToProcess=Å behandle
+StandingOrdersArea=Område for faste ordre
+CustomersStandingOrdersArea=Område for faste ordre
+StandingOrders=Fast ordre
+StandingOrder=Fast ordre
+NewStandingOrder=Ny fast ordre
+StandingOrderToProcess=Til behandling
 StandingOrderProcessed=Behandlet
 Withdrawals=Innbetalinger
 Withdrawal=Innbetaling
@@ -17,8 +17,8 @@ WithdrawalsLines=Betalte linjer
 RequestStandingOrderToTreat=Request for standing orders to process
 RequestStandingOrderTreated=Request for standing orders processed
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Withdraw status must be set to 'credited' before declaring reject on specific lines.
-CustomersStandingOrders=Utestående kundeordre
-CustomerStandingOrder=Utestående kundeordre
+CustomersStandingOrders=Fast kundeordre
+CustomerStandingOrder=Fast kundeordre
 NbOfInvoiceToWithdraw=Nb. of invoice with withdraw request
 NbOfInvoiceToWithdrawWithInfo=Nb. of invoice with withdraw request for customers having defined bank account information
 InvoiceWaitingWithdraw=Vaktura venter på betaling

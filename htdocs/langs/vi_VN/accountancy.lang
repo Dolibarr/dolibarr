@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Kế toán
 Globalparameters=Các thông số toàn cầu
@@ -81,9 +88,8 @@ ACCOUNTING_LENGTH_AACCOUNT=Chiều dài của các tài khoản của bên thứ
 
 ACCOUNTING_SELL_JOURNAL=Bán tạp chí
 ACCOUNTING_PURCHASE_JOURNAL=Mua tạp chí
-ACCOUNTING_BANK_JOURNAL=Tạp chí Ngân hàng
-ACCOUNTING_CASH_JOURNAL=Tạp chí tiền mặt
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Linh tinh tạp chí
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Tạp chí Xã hội
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Tài khoản chuyển nhượng

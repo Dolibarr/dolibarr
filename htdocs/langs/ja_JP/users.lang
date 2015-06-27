@@ -57,6 +57,7 @@ RemoveFromGroup=グループから削除
 PasswordChangedAndSentTo=パスワードが変更され<b>、%s</b>に送信されます。
 PasswordChangeRequestSent=<b>%s %s</b>に送信するためのパスワードを変更するには、要求します。
 MenuUsersAndGroups=ユーザーとグループ
+MenuMyUserCard=My user card
 LastGroupsCreated=最後%sグループを作成
 LastUsersCreated=最後に作成した%sユーザー
 ShowGroup=グループを表示

@@ -11,3 +11,5 @@ ShowSalaryPayment=Ukázať výplatu mzdy
 THM=Priemerná hodinová cena
 TJM=Priemerná denná cena
 CurrentSalary=Súčasná mzda
+THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently as information only and is not used for any calculation

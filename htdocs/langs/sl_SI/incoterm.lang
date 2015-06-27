@@ -1,7 +1,7 @@
-Module210009Name=Incoterm
-Module210009Desc=Add features to manage Incoterm
-IncotermLabel=Incoterms
-IncotermSetupTitle1=Feature
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Incotermi
+IncotermSetupTitle1=Funkcija
 IncotermSetupTitle2=Status
-IncotermSetup=Setup of module Incoterm
-IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)
+IncotermSetup=Nastavitev Incoterm modula
+IncotermFunctionDesc=Aktivacija Incoterm funkcij (partner, ponudba, naročilo kupca, račun za kupca, odprema, naročilo pri dobavitelju)

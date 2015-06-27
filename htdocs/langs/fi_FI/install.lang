@@ -64,6 +64,7 @@ DatabaseSuperUserAccess=Tietokanta - SuperUser pääsy
 CheckToCreateDatabase=Valintaruutu, jos tietokanta ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
 CheckToCreateUser=Valintaruutu, jos kirjautuminen ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
 Experimental=(kokeellinen, ei käytössä)
+Deprecated=(deprecated)
 DatabaseRootLoginDescription=Kirjaudu että käyttäjä voi luoda uusia tietokantoja tai uusia käyttäjiä, hyödytön, jos tietokanta ja tietokanta on jo olemassa (kuten silloin, kun olet isännöi Web hosting-palvelujen tarjoaja).
 KeepEmptyIfNoPassword=Jätä tyhjä, jos käyttäjä ei ole salasanaa (välttää)
 SaveConfigurationFile=Tallenna arvot

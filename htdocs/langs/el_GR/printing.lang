@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
-Module112000Name=Άμεση εκτύπωση
-Module112000Desc=Ενεργοποίηση άμεσης εκτύπωσης
+Module64000Name=Direct Printing
+Module64000Desc=Enable Direct Printing System
 PrintingSetup=Ρύθμιση του συστήματος για την άμεση εκτύπωση
 PrintingDesc=Το module αυτό προσθέτει ένα κουμπί Εκτύπωσης για να στείλετε έγγραφα απευθείας σε έναν εκτυπωτή (χωρίς να ανοίξετε το έγγραφο με μια εφαρμογή).
 ModuleDriverSetup=Ρύθμιση Module οδήγησης
@@ -49,7 +49,6 @@ PRINTIPP_PORT=Port
 PRINTIPP_USER=Είσοδος
 PRINTIPP_PASSWORD=Κωδικός
 NoPrinterFound=Δεν βρέθηκαν εκτυπωτές (Ελέγξτε τις ρυθμίσεις του CUPS)
-FileWasSentToPrinter=Το αρχείο %s στάλθηκε στον εκτυπωτή
 NoDefaultPrinterDefined=Δεν έχει οριστεί προ επιλεγμένος εκτυπωτής
 DefaultPrinter=Προεπιλογή εκτυπωτή
 Printer=Eκτυπωτής
