@@ -231,7 +231,6 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	$datecust=$langs->trans("ValidatePayment");
 	$namecust=$langs->trans("Name");
 	if ($mysoc->tva_assuj) {
 		$vatcust.=' ('.$langs->trans("ToPay").')';
@@ -240,7 +239,6 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 	$productsup=$productcust;
 	$amountsup=$amountcust;
 	$vatsup=$langs->trans("VATPaid");
-	$datesup=$datecust;
 	$namesup=$namecust;
 	if ($mysoc->tva_assuj) {
 		$vatsup.=' ('.$langs->trans("ToGetBack").')';
@@ -365,7 +363,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	// Customers invoices
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementcust.'</td>';
-	print '<td align="left">'.$datecust.'</td>';
+	print '<td align="left">'.$langs->trans("Date").'</td>';
 	print '<td align="left">'.$namecust.'</td>';
 	print '<td align="left">'.$productcust.'</td>';
 	if ($modetax == 0) {
@@ -544,7 +542,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
-	print '<td align="left">'.$datesup.'</td>';
+	print '<td align="left">'.$langs->trans("Date").'</td>';
 	print '<td align="left">'.$namesup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';
 	if ($modetax == 0) {
