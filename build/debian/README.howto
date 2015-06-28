@@ -40,11 +40,11 @@ END
 
 # Complete .bashrc with DEBEMAIL and DEBFULLNAME
 Example:
-DEBFULLNAME="Laurent Destailleur (eldy)" 
-DEBEMAIL=eldy@users.sourceforge.net
+export DEBFULLNAME="Laurent Destailleur (eldy)" 
+export DEBEMAIL=eldy@users.sourceforge.net
 Other example:
-DEBFULLNAME="Laurent Destailleur" 
-DEBEMAIL="eldy@destailleur.fr"
+export DEBFULLNAME="Laurent Destailleur" 
+export DEBEMAIL="eldy@destailleur.fr"
 
 
 # To use Alioth.debian.org
