@@ -430,5 +430,5 @@ NotLastInCycle=Ta faktura nie ostatni w cyklu i nie mogą być modyfikowane.
 DisabledBecauseNotLastInCycle=Następna sytuacja już istnieje.
 DisabledBecauseFinal=Sytuacja ta jest ostateczna.
 CantBeLessThanMinPercent=Postęp nie może być mniejsza niż wartość w poprzedniej sytuacji.
-NoSituations=Brak otwarte sytuacje
+NoSituations=No open situations
 InvoiceSituationLast=Ostateczna i ogólnie faktury

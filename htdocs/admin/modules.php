@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,7 +211,7 @@ asort($orders);
 $nbofactivatedmodules=count($conf->modules);
 $moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
 if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'setup');
+print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 
 // Start to show page
 if (empty($mode)) $mode='common';

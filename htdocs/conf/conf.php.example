@@ -204,15 +204,17 @@ $dolibarr_main_authentication='dolibarr';
 //##################
 
 // dolibarr_main_force_https
-// This parameter allows to force the HTTPS mode. 
+// This parameter allows to force the HTTPS mode.
 // 0 = No forced redirect
 // 1 = Force redirect to https, until SCRIPT_URI start with https into response
 // 2 = Force redirect to https, until SERVER["HTTPS"] is 'on' into response
-// Warning: If you enable this parameter, your web server must be configured
-// to respond URL with https protocol. Try different values (1,2) if you 
-// experience problems.
+// 'https://my.domain.com' = Force reditect to https using this domain name. 
+// Warning: If you enable this parameter, your web server must be configured to
+// respond URL with https protocol. 
+// According to your web server setup, some values may works and other not. Try 
+// different values (1,2 or 'https://my.domain.com') if you experience problems.
 // Default value: 0
-// Possible values: 0, 1 or 2
+// Possible values: 0, 1, 2 or 'https://my.domain.com'
 // Examples:
 // $dolibarr_main_force_https='0';
 //
@@ -313,8 +315,10 @@ $dolibarr_main_db_prefix='';
 
 // multicompany_transverse_mode
 // Prerequisite: Need external module "multicompany"
-// Pyramidal (0): The rights and groups are managed in each entity. Each user belongs to the entity he was created into.
-// Transversal (1): The user is created and managed only into master entity but can login to all entities.
+// Pyramidal   (0): The rights and groups are managed in each entity. Each user belongs to the entity he was created into.
+// Transversal (1): The user is created and managed only into master entity but can login to all entities if he is admmin
+//                  of entity or belongs to at least one user group created into entity.
+
 // Default value: 0 (pyramidal)
 // Examples:
 // $multicompany_transverse_mode='1';

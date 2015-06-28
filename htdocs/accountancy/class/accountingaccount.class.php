@@ -27,7 +27,7 @@
 /**
  * Class to manage accounting accounts
  */
-class AccountingAccount
+class AccountingAccount extends CommonObject
 {
 	var $db;
 	var $error;
@@ -125,6 +125,7 @@ class AccountingAccount
 	{
 		global $conf;
 		$error = 0;
+		$now = dol_now();
 
 		$now=dol_now();
 

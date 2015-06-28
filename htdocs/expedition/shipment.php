@@ -42,7 +42,7 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('stocks');
 
-$id=GETPOST('id','int');
+$id=GETPOST('id','int');			// id of order
 $ref= GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 
@@ -216,7 +216,7 @@ if ($id > 0 || ! empty($ref))
 		$absolute_creditnote=price2num($absolute_creditnote,'MT');
 		if ($absolute_discount)
 		{
-			if ($commande->statut > 0)
+			if ($commande->statut > Commande::STATUS_DRAFT)
 			{
 				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 			}
@@ -337,11 +337,11 @@ if ($id > 0 || ! empty($ref))
 			print '</td><td colspan="2">';
 			if ($action == 'classify')
 			{
-				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid', 0, 0, 1);
 			}
 			else
 			{
-				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none');
+				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'none', 0, 0);
 			}
 			print '</td></tr>';
 		}
@@ -380,7 +380,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " cd.qty,";
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
-		$sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
+		$sql.= ' p.label as product_label, p.entity, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc, p.fk_product_type as product_type';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -402,7 +402,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="center">'.$langs->trans("KeepToShip").'</td>';
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td align="center">'.$langs->trans("Stock").'</td>';
+				print '<td align="center">'.$langs->trans("RealStock").'</td>';
 			}
 			else
 			{
@@ -436,7 +436,8 @@ if ($id > 0 || ! empty($ref))
 						$commande->fetch_thirdparty();
 
 						$prod = new Product($db);
-						$prod->id=$objp->fk_product;
+                        $prod->id = $objp->fk_product;
+                        $prod->entity = $objp->entity;
 						$prod->getMultiLangs();
 
 						$outputlangs = $langs;
@@ -461,9 +462,11 @@ if ($id > 0 || ! empty($ref))
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
+                    $product_static->entity = $objp->entity;
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
+                    $description.= $product_static->show_photos($conf->product->multidir_output[$product_static->entity],1,1,0,0,0,80);
 					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
@@ -543,7 +546,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				print "</tr>\n";
 
-				// Show subproducts details
+				// Show subproducts lines
 				if ($objp->fk_product > 0 && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
 				{
 					// Set tree of subproducts in product->sousprods
@@ -557,20 +560,16 @@ if ($id > 0 || ! empty($ref))
 					{
 						foreach($prods_arbo as $key => $value)
 						{
-							print '<tr><td colspan="4">';
-
 							$img='';
 							if ($value['stock'] < $value['stock_alert'])
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<tr '.$bc[$var].'><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 							print '<td align="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';
 							print '<td align="center">'.$value['stock'].' '.$img.'</td></tr>'."\n";
-
-							print '</td></tr>'."\n";
 						}
 					}
 				}
@@ -603,7 +602,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="tabsAction">';
 
             // Bouton expedier sans gestion des stocks
-            if (empty($conf->stock->enabled) && ($commande->statut > 0 && $commande->statut < 3))
+            if (empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 			{
 				if ($user->rights->expedition->creer)
 				{
@@ -623,7 +622,7 @@ if ($id > 0 || ! empty($ref))
 
 
         // Bouton expedier avec gestion des stocks
-        if (! empty($conf->stock->enabled) && ($commande->statut > 0 && $commande->statut < 3))
+        if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 		{
 			if ($user->rights->expedition->creer)
 			{
@@ -631,7 +630,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/card.php">';
 				print '<input type="hidden" name="action" value="create">';
-				print '<input type="hidden" name="id" value="'.$commande->id.'">';
+				//print '<input type="hidden" name="id" value="'.$commande->id.'">';
                 print '<input type="hidden" name="shipping_method_id" value="'.$commande->shipping_method_id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';

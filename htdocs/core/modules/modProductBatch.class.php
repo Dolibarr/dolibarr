@@ -51,7 +51,7 @@ class modProductBatch extends DolibarrModules
 
 		$this->rights_class = 'productbatch';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where dluo is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
@@ -113,15 +113,15 @@ class modProductBatch extends DolibarrModules
 	function init($options='')
 	{
 	    global $db,$conf;
-	    
+
 		$sql = array();
-		
+
 		if(! empty($conf->cashdesk->enabled)) {
     		if (!$conf->global->CASHDESK_NO_DECREASE_STOCK) {
     		    $res = dolibarr_set_const($db,"CASHDESK_NO_DECREASE_STOCK",1,'chaine',0,'',$conf->entity);
     		}
 		}
-				
+
 		return $this->_init($sql, $options);
 	}
 

@@ -23,7 +23,7 @@
 
 
 // $action must be defined
-// $permission must be defined to permission to edit object
+// $permissionnote must be defined to permission to edit object
 // $object must be defined (object is loaded in this file with fetch)
 // $id must be defined (object is loaded in this file with fetch)
 

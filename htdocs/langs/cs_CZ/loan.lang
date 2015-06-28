@@ -1,0 +1,53 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Úvěr
+Loans=Úvěry
+NewLoan=Nový úvěr
+ShowLoan=Zobrazit úvěr
+PaymentLoan=Platba úvěru
+ShowLoanPayment=Zobrazit paltbu úvěru
+Capital=Kapitál
+Insurance=Pojištění
+Interest=Zájem
+Nbterms=Počet termínů
+LoanAccountancyCapitalCode=Kód kapitál v ůčetnictví
+LoanAccountancyInsuranceCode=Kód pojištění v účetnictví
+LoanAccountancyInterestCode=Kód zájmu v účetnictví
+LoanPayment=Platba úvěru
+ConfirmDeleteLoan=Potvrdit smazání tohoto úvěru
+LoanDeleted=Úvěr úspěšně smazán
+ConfirmPayLoan=Potvrďte klasifikaci zaplatit tento úvěr
+LoanPaid=Placený úvěr
+ErrorLoanCapital=Výše úvěru musí být číselné a větší než nula.
+ErrorLoanLength=Délka úvěru musí být číselná a větší než nula.
+ErrorLoanInterest=Roční úrok musí být číselný a větší než nula.
+# Calc
+LoanCalc=Kalkulátor bankovního úvěru
+PurchaseFinanceInfo=Platební & finanční informace
+SalePriceOfAsset=Prodejní cena aktiv
+PercentageDown=Procento dlů
+LengthOfMortgage=Délka hypotéky
+AnnualInterestRate=Roční úroková sazba
+ExplainCalculations=Vysvětlení výpočtů
+ShowMeCalculationsAndAmortization=Ukažte mi výpočty a amortizaci
+MortgagePaymentInformation=Informace o platbě hypotéky
+DownPayment=Záloha
+DownPaymentDesc=<b>Záloha</b> = základní vynásobená procentem dolů dělená 100 (pro dolů 5% se stává 5/100 nebo 0,05)
+InterestRateDesc=<b>Úroková sazba</b> = roční úroková procena děleno 100,
+MonthlyFactorDesc=<b>Měsíční faktor</b> = výsledkem následujícího vzorce
+MonthlyInterestRateDesc=<b>Měsíční úroková sazba</b> = roční úroková sazba děleno 12 (za 12 měsíců v roce)
+MonthTermDesc=<b>Měsíc Termín</b> úvěru v měsících = počet let, na které jste vzali úvěr  - pozor na časy 12
+MonthlyPaymentDesc=Měsíční platba se počítá podle následujícího vzorce
+AmortizationPaymentDesc=<a href="#amortization">amortizace</a>se mění, jak moc vaše měsíční splátka jde vstříc zájmu banky, a kolik jde do splácení jistiny vašeho úvěru.
+AmountFinanced=Financovaná částka
+AmortizationMonthlyPaymentOverYears=Odpisy měsíční splátky: <b>%s</b> přes %s let
+Totalsforyear=Součty pro rok
+MonthlyPayment=Měsíční platby
+LoanCalcDesc=Tato <b>hypoteční kalkulačka</b> může být použita ke zjistit měsíční platby hypotečního úvěru, na základě místní prodejní ceny, termínu úvěru požadovaného, ​​kupujícího akontace procentech, a takového úvěru úrokové sazby. <br> Tato kalkulačka faktory PMI (soukromé pojištění hypotéky) u přijatých úvěrů, kde je méně než 20% dal jako zálohu. Také vzít v úvahu, jsou městské daně z nemovitostí, a jejich vliv na celkové měsíční splátky hypotéky. <br>
+GoToInterest=%s půjde na ZÁJEM
+GoToPrincipal=%s půjde na HLAVNÍCH
+YouWillSpend=Strávíte %s na vašem domě v roce %s
+# Admin
+ConfigLoan=Konfigurace modulu úvěru
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Výchozí nastavení kód kapitálu v účetnictví
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=kód úroků ve výchozím nastavení účetnictví
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Kód pojištění ve výchozím nastavení účetnictví

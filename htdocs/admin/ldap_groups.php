@@ -86,7 +86,7 @@ if ($action == 'setvalue' && $user->admin)
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-print_fiche_titre($langs->trans("LDAPSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
 
 $head = ldap_prepare_head();
 
@@ -149,7 +149,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_GROUP_FIELD_FULLNAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME)?' checked="checked"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_FULLNAME)?' checked':'')."></td>";
 print '</tr>';
 
 // Name
@@ -157,7 +157,7 @@ print '</tr>';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_NAME?' checked="checked"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_GROUP_FIELD_NAME.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_NAME?' checked':'')."></td>";
 print '</tr>';
 */
 
@@ -166,7 +166,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_GROUP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_DESCRIPTION)?' checked="checked"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_DESCRIPTION)?' checked':'')."></td>";
 print '</tr>';
 
 // User group
@@ -174,7 +174,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
 print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
-print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked="checked"':'')."></td>";
+print '<td align="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
 print '</tr>';
 
 

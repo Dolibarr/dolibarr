@@ -135,7 +135,7 @@ $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
 $sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='')";
 
 if (! empty($conf->multicompany->enabled)) {
-	$sql .= " AND f.entity = '" . $conf->entity . "'";
+	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
 
 $sql .= " ORDER BY l.rowid";

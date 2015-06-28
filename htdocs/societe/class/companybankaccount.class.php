@@ -48,6 +48,7 @@ class CompanyBankAccount extends Account
     var $proprio;
     var $owner_address;
     var $default_rib;
+    var $frstrecur;
 
     var $datec;
     var $datem;
@@ -74,9 +75,10 @@ class CompanyBankAccount extends Account
     /**
      * Create bank information record
      *
-     * @return	int		<0 if KO, >= 0 if OK
+     * @param   Object   $user		User
+     * @return	int					<0 if KO, >= 0 if OK
      */
-    function create()
+    function create($user='')
     {
         $now=dol_now();
 
@@ -116,44 +118,34 @@ class CompanyBankAccount extends Account
      */
     function update($user='')
     {
-//        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib";
-//        $sql .= " WHERE rowid = ".$this->id;
-//
-//        $result = $this->db->query($sql);
-//        if ($result)
-//        {
-//            if ($this->db->num_rows($result) == 0)
-//            {
-//                $this->create();
-//            }
-//        }
-//        else
-//        {
-//            dol_print_error($this->db);
-//            return 0;
-//        }
+    	global $conf;
 
-        if (! $this->id) {
+        if (! $this->id)
+        {
             $this->create();
         }
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET ";
-        $sql .= " bank = '" .$this->db->escape($this->bank)."'";
-        $sql .= ",code_banque='".$this->code_banque."'";
-        $sql .= ",code_guichet='".$this->code_guichet."'";
-        $sql .= ",number='".$this->number."'";
-        $sql .= ",cle_rib='".$this->cle_rib."'";
-        $sql .= ",bic='".$this->bic."'";
-        $sql .= ",iban_prefix = '".$this->iban."'";
-        $sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-        $sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
-        $sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-        $sql .= ",default_rib = ".$this->default_rib;
-        if (trim($this->label) != '')
-            $sql .= ",label = '".$this->db->escape($this->label)."'";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
+        $sql.= " bank = '" .$this->db->escape($this->bank)."'";
+        $sql.= ",code_banque='".$this->code_banque."'";
+        $sql.= ",code_guichet='".$this->code_guichet."'";
+        $sql.= ",number='".$this->number."'";
+        $sql.= ",cle_rib='".$this->cle_rib."'";
+        $sql.= ",bic='".$this->bic."'";
+        $sql.= ",iban_prefix = '".$this->iban."'";
+        $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+        $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
+        $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+        $sql.= ",default_rib = ".$this->default_rib;
+	    if ($conf->prelevement->enabled)
+	    {
+    	    $sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+	    }
+	    if (trim($this->label) != '')
+            $sql.= ",label = '".$this->db->escape($this->label)."'";
         else
-            $sql .= ",label = NULL";
-        $sql .= " WHERE rowid = ".$this->id;
+            $sql.= ",label = NULL";
+        $sql.= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
         if ($result)
@@ -171,14 +163,15 @@ class CompanyBankAccount extends Account
      * 	Load record from database
      *
      *	@param	int		$id			Id of record
-     * 	@param	int		$socid		Id of company
+     * 	@param	int		$socid		Id of company. If this is filled, function will return the default RIB of company
      * 	@return	int					<0 if KO, >0 if OK
      */
-    function fetch($id,$socid=0)
+    function fetch($id, $socid=0)
     {
         if (empty($id) && empty($socid)) return -1;
 
-        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address, default_rib, label, datec, tms as datem";
+        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+        $sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
@@ -206,6 +199,8 @@ class CompanyBankAccount extends Account
                 $this->default_rib     = $obj->default_rib;
                 $this->datec           = $this->db->jdate($obj->datec);
                 $this->datem           = $this->db->jdate($obj->datem);
+                $this->rum             = $obj->rum;
+                $this->frstrecur       = $obj->frstrecur;
             }
             $this->db->free($resql);
 

@@ -119,7 +119,7 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user FOR EACH ROW EX
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_usergroup FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_cronjob FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_printer_ipp FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_printing FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 
 CREATE OR REPLACE FUNCTION update_modified_column_date_m()	RETURNS TRIGGER AS $$ BEGIN NEW.date_m = now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_date_m();

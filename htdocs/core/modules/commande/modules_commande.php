@@ -45,7 +45,7 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -153,16 +153,19 @@ abstract class ModeleNumRefCommandes
  *  Create a document onto disk accordign to template module.
  *
  *  @param	    DoliDB		$db  			Database handler
- *  @param	    Object		$object			Object order
+ *  @param	    Commande		$object			Object order
  *  @param	    string		$modele			Force le modele a utiliser ('' to not force)
  *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
  *  @return     int         				0 if KO, 1 if OK
- * @deprecated Use the new function generateDocument of Commande class
+ *  @deprecated Use the new function generateDocument of Commande class
+ *  @see Commande::generateDocument()
  */
 function commande_pdf_create(DoliDB $db, Commande $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,6 +152,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "MAIN_INFO_PROFID6",$_POST["MAIN_INFO_PROFID6"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT",$_POST["object"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"],'chaine',0,'',$conf->entity);
 
@@ -275,7 +277,7 @@ $formcompany=new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print_fiche_titre($langs->trans("CompanyFoundation"),'','setup');
+print_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
 
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";
@@ -369,9 +371,9 @@ if ($action == 'edit' || $action == 'updateedit')
     // Logo
     $var=!$var;
     print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
-    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+    print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" id="logo" size="50">';
-    print '</td><td valign="middle" align="right">';
+    print '</td><td class="nocellnopadd" valign="middle" align="right">';
     if (! empty($mysoc->logo_mini))
     {
         print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
@@ -383,7 +385,7 @@ if ($action == 'edit' || $action == 'updateedit')
     }
     else
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+        print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
     }
     print '</td></tr></table>';
     print '</td></tr>';
@@ -420,7 +422,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<tr '.$bc[$var].'><td><label for="legal_form">'.$langs->trans("JuridicalStatus").'</label></td><td>';
     if ($mysoc->country_code)
     {
-        print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,$mysoc->country_code);
+        print $formcompany->select_juridicalstatus($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE, $mysoc->country_code, '', 'legal_form');
     }
     else
     {
@@ -529,6 +531,12 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<tr '.$bc[$var].'><td width="35%"><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
     print '<input name="tva" id="intra_vat" size="20" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
     print '</td></tr>';
+	
+	// Object of the company
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%"><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
+    print '<textarea class="flat" name="object" id="object" cols="80" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
+    print '</td></tr>';
 
     print '</table>';
 
@@ -543,7 +551,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%"><label for="fiscalmonthstart">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-    print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',1) . '</td></tr>';
+    print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',0,1) . '</td></tr>';
 
     print "</table>";
 
@@ -668,11 +676,11 @@ if ($action == 'edit' || $action == 'updateedit')
     }
 
 
-    print '<br><center>';
+    print '<br><div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-    print ' &nbsp; &nbsp; ';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</center>';
+    print '</div>';
     print '<br>';
 
     print '</form>';
@@ -754,9 +762,9 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
 
-    print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+    print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print $mysoc->logo;
-    print '</td><td valign="center" align="right">';
+    print '</td><td class="nocellnopadd" valign="center" align="right">';
 
     // On propose la generation de la vignette si elle n'existe pas
     if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
@@ -769,7 +777,7 @@ else
     }
     else
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+        print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.jpg">';
     }
     print '</td></tr></table>';
 
@@ -929,6 +937,9 @@ else
     }
     print '</td>';
     print '</tr>';
+	
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%" valign="top">'.$langs->trans("CompanyObject").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? nl2br($conf->global->MAIN_INFO_SOCIETE_OBJECT) : '') . '</td></tr>';
 
     print '</table>';
     print '</form>';

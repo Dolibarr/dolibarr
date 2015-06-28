@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +95,7 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	$tmp=0;
     	dol_print_error('','PHP version must be 5.3+');
     	/*
         // Method 2 (does not include daylight, not supported by adodb)
@@ -166,7 +167,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 /**	  	Return, in clear text, value of a number of seconds in days, hours and minutes
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
+ *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30"", 'allhourmin': total delay hours:min like "60:30", 'allhour': total delay hours without min/sec like "60:30", 'fullhour': total delay hour decimal like "60.5" for 60:30, 'hour': only hours part "12", 'min': only minutes part "30", 'sec': only seconds part, 'month': only month part, 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
@@ -277,8 +278,8 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
  *	                 			YYYYMMDDHHMMSS
  *								YYYYMMDDTHHMMSSZ
  *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                		DD/MM/YY or DD/MM/YYYY (this format should not be used anymore)
- *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (this format should not be used anymore)
+ *		                		DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
  *  @param	int		$gm         1 =Input date is GM date,
  *                              0 =Input date is local date using PHP server timezone
  *  @return	int					Date as a timestamp
@@ -291,7 +292,7 @@ function dol_stringtotime($string, $gm=1)
     // Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
     if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$string,$reg))
     {
-        dol_syslog("dol_stringtotime call to function with deprecated parameter", LOG_WARNING);
+        dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
         // Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
         // Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
         $sday = $reg[1];
@@ -812,11 +813,12 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
  *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
+ *  @param	int			$short			1=Return short label
  *	@return array						Month string or array if selected < 0
  */
-function monthArray($outputlangs)
+function monthArray($outputlangs,$short=0)
 {
-    $montharray = array (
+	$montharray = array (
 	    1  => $outputlangs->trans("January"),
 	    2  => $outputlangs->trans("February"),
 	    3  => $outputlangs->trans("March"),
@@ -831,6 +833,24 @@ function monthArray($outputlangs)
 	    12 => $outputlangs->trans("December")
     );
 
-    return $montharray;
+	if (! empty($short))
+	{
+		$montharray = array (
+		    1  => $outputlangs->trans("JanuaryMin"),
+		    2  => $outputlangs->trans("FebruaryMin"),
+		    3  => $outputlangs->trans("MarchMin"),
+		    4  => $outputlangs->trans("AprilMin"),
+		    5  => $outputlangs->trans("MayMin"),
+		    6  => $outputlangs->trans("JuneMin"),
+		    7  => $outputlangs->trans("JulyMin"),
+		    8  => $outputlangs->trans("AugustMin"),
+		    9  => $outputlangs->trans("SeptemberMin"),
+		    10 => $outputlangs->trans("OctoberMin"),
+		    11 => $outputlangs->trans("NovemberMin"),
+		    12 => $outputlangs->trans("DecemberMin")
+			);
+	}
+
+	return $montharray;
 }
 

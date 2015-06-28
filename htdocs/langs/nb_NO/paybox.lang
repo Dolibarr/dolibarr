@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=PayBox modul oppsett
-PayBoxDesc=Denne modulen tilbudet sider å tillate betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> av kunder. Dette kan brukes for en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
+PayBoxSetup=Oppsett av PayBox-modul 
+PayBoxDesc=Denne modulen setter oppmulighet for betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> av kunder. Dette kan brukes for gratis betaling eller for betaling på et bestemt Dolibarr objekt (faktura, ordre, ...)
 FollowingUrlAreAvailableToMakePayments=Følgende nettadresser er klare med en side til en kunde til å foreta en betaling på Dolibarr objekter
 PaymentForm=Betaling form
 WelcomeOnPaymentPage=Velkommen på våre elektroniske betalingstjenester
@@ -32,9 +32,9 @@ VendorName=Navn på leverandøren
 CSSUrlForPaymentForm=CSS-stilark url for betalingsformen
 MessageOK=Melding på godkjent betaling retur siden
 MessageKO=Melding om avbrutt betaling retur siden
-NewPayboxPaymentReceived=New Paybox payment received
-NewPayboxPaymentFailed=New Paybox payment tried but failed
-PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)
-PAYBOX_PBX_SITE=Value for PBX SITE
-PAYBOX_PBX_RANG=Value for PBX Rang
-PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+NewPayboxPaymentReceived=Ny Paybox-betaling mottatt
+NewPayboxPaymentFailed=Ny Paybox-betaling forsøkt, men feilet
+PAYBOX_PAYONLINE_SENDEMAIL=Epost for varling etter betaling (vellykket eller feilet)
+PAYBOX_PBX_SITE=Verdi for PBX SITE
+PAYBOX_PBX_RANG=Verdi for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Verdi for PBX ID

@@ -1,6 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceofrge.net>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceofrge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,14 +21,18 @@ create table llx_stock_mouvement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datem           datetime,
-  fk_product      integer NOT NULL,
-  fk_entrepot     integer NOT NULL,
-  value           real,
-  price           float(13,4) DEFAULT 0,
-  type_mouvement  smallint,
-  fk_user_author  integer,
-  label           varchar(128),
+  datem           datetime,							-- Date and hour of movement
+  fk_product      integer NOT NULL,				-- Id of product
+  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  eatby           date DEFAULT NULL,				-- Eatby date
+  sellby          date DEFAULT NULL,				-- Sellby date
+  fk_entrepot     integer NOT NULL,				-- Id warehouse
+  value			  real,								-- Qty of movement
+  price           double(24,8) DEFAULT 0,			-- Entry price (used to calculate PMP, FIFO or LIFO value)
+  type_mouvement  smallint,						-- Type/Direction of movement
+  fk_user_author  integer,							-- Id user making movement
+  label           varchar(255),						-- Comment on movement
+  inventorycode   varchar(128),						-- Code used to group different movement line into one operation (may be an inventory, a mass picking)
   fk_origin       integer,
   origintype      varchar(32)
 )ENGINE=innodb;

@@ -5,8 +5,47 @@ English Dolibarr ChangeLog
 WARNING: Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
 You may also experience troubles with Mysql 5.5.41 with error "Lost connection" during migration.
-Upgrading to any other version or database system is abolutely required BEFORE trying to
+Upgrading to any other version or any other database system is abolutely required BEFORE trying
 make a Dolibarr upgrade.
+
+
+***** ChangeLog for 3.8 compared to 3.7.* *****
+For users:
+- New: Add Option to not change date on cloning project
+- New: Add check list from table for extrafield type
+- New: Use new combobox.
+- New: Add hidden option MAXTABS_IN_CARD.
+- New: A default label is suggested for stock correction and transfer instead of empty string.
+- Fix / Improve : [ bug #1747 ] Remove creation of batch 'Undefined'
+- Add Weighted average price as default price for buying price for margin calculation. Add option 
+  MARGIN_PMP_AS_DEFAULT_BUY_PRICE to replace with first supplier price.
+- Introduce option MAIN_HTML_TITLE to start to control format of html title content.
+- Add extrafields on bank account cards.
+- Added delay between mails in Newsletter module.
+- [ task #1793 ] Create new permission to restrict commercial agent margin to logged user.
+- Add experimental module ask supplier price to request supplier quotation.
+- Add experimental module batch management.
+- Fix: Corrected user timezone detection
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Function yn can show a visual checkbox.
+- New: Introduced select2 jquery plugin.
+- New: Possibility to add javascript in main login page with "getLoginPageOptions" hook
+
+WARNING: Following changes may create regression for some external modules, but was necessary to make
+Dolibarr better:
+- Removed hoo supplierorderdao into supplier order creation. This is a business event, so we must use the 
+  trigger ORDER_SUPPLIER_CREATE instead.
+- Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
+  "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
+- All fields "fk_societe" were renamed into "fk_soc".
+- Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType.
+- The trigger USER_LOGIN* are deprecated. They are still working but you should prefer use the 
+  hook afterLogin or afterLoginFailed instead.
 
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page
@@ -153,6 +192,7 @@ For users:
 - Fix: [ bug #1535 ] Supplier invoice Extrafields are not shown
 - Fix: datepicker first day of week can be monday by setting into display setup
 - Fix: [ bug #575 ] GED doesn't works if there is "/" in a mask
+- Fix: [ task #1728 ] Deactivate RIB suggest in proposals / invoices / orders
 
 For users, new experimental module (need to set feature level of instance to experimental to see them):
 - New: Module Accounting Expert to manage accountancy

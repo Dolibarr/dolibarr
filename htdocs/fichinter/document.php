@@ -88,7 +88,7 @@ if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-	$head=fichinter_prepare_head($object, $user);
+	$head=fichinter_prepare_head($object);
 
 	dol_fiche_head($head, 'documents',  $langs->trans("InterventionCard"), 0, 'intervention');
 

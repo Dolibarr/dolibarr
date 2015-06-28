@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ class Fichinter extends CommonObject
 	var $datec;
 	var $datev;
 	var $datem;
-	var $duree;
+	var $duration;
 	var $statut;		// 0=draft, 1=validated, 2=invoiced
 	var $description;
 	var $note_private;
@@ -84,6 +85,9 @@ class Fichinter extends CommonObject
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='StatusInterInvoiced';
+		$this->statuts_logo[0]='statut0';
+		$this->statuts_logo[1]='statut4';
+		$this->statuts_logo[2]='statut6';
 	}
 
 
@@ -112,7 +116,7 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
-		if (! is_numeric($this->duree)) $this->duree = 0;
+		if (! is_numeric($this->duration)) $this->duration = 0;
 
 		if ($this->socid <= 0)
 		{
@@ -230,8 +234,8 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
-	 	if (! is_numeric($this->duree)) {
-	 		$this->duree = 0;
+	 	if (! is_numeric($this->duration)) {
+	 		$this->duration = 0;
 	 	}
 	 	if (! dol_strlen($this->fk_project)) {
 	 		$this->fk_project = 0;
@@ -241,7 +245,7 @@ class Fichinter extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql.= "description  = '".$this->db->escape($this->description)."'";
-		$sql.= ", duree = ".$this->duree;
+		$sql.= ", duree = ".$this->duration;
 		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
@@ -302,7 +306,7 @@ class Fichinter extends CommonObject
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
 				$this->statut       = $obj->fk_statut;
-				$this->duree        = $obj->duree;
+				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
@@ -513,37 +517,23 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		if ($mode == 0)
-		{
 			return $langs->trans($this->statuts[$statut]);
-		}
+
 		if ($mode == 1)
-		{
 			return $langs->trans($this->statuts_short[$statut]);
-		}
+
 		if ($mode == 2)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
+
 		if ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
+
 		if ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-		}
+			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
+
 		if ($mode == 5)
-		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-		}
+			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]);
+
 	}
 
 	/**
@@ -558,17 +548,19 @@ class Fichinter extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = '<u>' . $langs->trans("ShowIntervention") . '</u>';
+        if (! empty($this->ref))
+            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		$picto='intervention';
 
-		$label=$langs->trans("Show").': '.$this->ref;
 
-		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -898,10 +890,10 @@ class Fichinter extends CommonObject
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
-	 *  @param		array	$array_option			Array option
+	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option='')
+	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_options='')
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -917,8 +909,8 @@ class Fichinter extends CommonObject
 			$line->datei        = $date_intervention;
 			$line->duration     = $duration;
 
-			if (is_array($array_option) && count($array_option)>0) {
-				$line->array_options=$array_option;
+			if (is_array($array_options) && count($array_options)>0) {
+				$line->array_options=$array_options;
 			}
 
 			$result=$line->insert($user);
@@ -959,7 +951,7 @@ class Fichinter extends CommonObject
 		$this->datec = $now;
 		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
-		$this->duree = 0;
+		$this->duration = 0;
 		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
@@ -972,7 +964,7 @@ class Fichinter extends CommonObject
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 
-			$this->duree+=$line->duration;
+			$this->duration+=$line->duration;
 		}
 	}
 
@@ -1020,6 +1012,23 @@ class Fichinter extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'fichinter'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 /**
@@ -1031,7 +1040,6 @@ class FichinterLigne extends CommonObjectLine
 	var $error;
 
 	// From llx_fichinterdet
-	var $rowid;
 	var $fk_fichinter;
 	var $desc;          	// Description ligne
 	var $datei;           // Date intervention

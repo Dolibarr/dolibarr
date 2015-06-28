@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -51,6 +51,8 @@ background: #f78d1d;
 background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
 background: -moz-linear-gradient(top, #faa51a, #f47a20);
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
+margin-left: 4px;
+margin-right: 4px;
 }
 .orange:active {
 color: #fcd3a5;
@@ -73,6 +75,8 @@ background: #0095cd;
 background: -webkit-gradient(linear, left top, left bottom, from(#00adee), to(#0078a5));
 background: -moz-linear-gradient(top, #00adee, #0078a5);
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
+margin-left: 4px;
+margin-right: 4px;
 }
 .blue:active {
 color: #80bed6;

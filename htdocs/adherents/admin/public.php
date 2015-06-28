@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -80,9 +80,14 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 $head = member_admin_prepare_head();
+
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'public', $langs->trans("Members"), 0, 'user');
 
@@ -129,8 +134,6 @@ if ($conf->use_javascript_ajax)
 
 print $langs->trans("BlankSubscriptionFormDesc").'<br><br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
 
@@ -164,7 +167,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].' id="tramount"><td>';
 print $langs->trans("DefaultAmount");
 print '</td><td align="right">';
-print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';;
+print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
 print "</td></tr>\n";
 
 // Can edit
@@ -203,13 +206,14 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 
 print '</table>';
 
+dol_fiche_end();
+
 print '<center>';
-print '<br><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</center>';
 
 print '</form>';
 
-dol_fiche_end();
 
 
 print '<br>';

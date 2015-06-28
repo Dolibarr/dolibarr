@@ -57,6 +57,7 @@ RemoveFromGroup=Odstranit ze skupiny
 PasswordChangedAndSentTo=Heslo změněno a poslán na <b>%s.</b>
 PasswordChangeRequestSent=Žádost o změnu hesla <b>%s</b> zaslána na <b>%s.</b>
 MenuUsersAndGroups=Uživatelé a skupiny
+MenuMyUserCard=My user card
 LastGroupsCreated=Posledních %s vytvořených skupin
 LastUsersCreated=Posledních %s vytvořených uživatelů
 ShowGroup=Zobrazit skupinu

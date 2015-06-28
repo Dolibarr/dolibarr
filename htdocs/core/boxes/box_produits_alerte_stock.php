@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +66,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte,";
+			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte,";
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
@@ -72,7 +74,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql.= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
-			$sql.= " GROUP BY p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte";
+			$sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte";
 			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") < p.seuil_stock_alerte";
 			$sql.= $db->order('p.seuil_stock_alerte', 'DESC');
 			$sql.= $db->plimit($max, 0);
@@ -82,9 +84,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 			{
 				$langs->load("stocks");
 				$num = $db->num_rows($result);
-				$i = 0;
-				while ($i < $num)
-				{
+				$line = 0;
+                while ($line < $num) {
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
 
@@ -105,57 +106,90 @@ class box_produits_alerte_stock extends ModeleBoxes
 								$objp->label = $objtp->label;
 						}
 					}
+                    $productstatic->id = $objp->rowid;
+                    $productstatic->ref = $objp->ref;
+                    $productstatic->type = $objp->fk_product_type;
+                    $productstatic->label = $objp->label;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $productstatic->getNomUrl(1),
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->label,
-                    'url' => DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $objp->label,
+                    );
 
-					if ($objp->price_base_type == 'HT')
-					{
-						$price=price($objp->price);
-						$price_base_type=$langs->trans("HT");
-					}
-					else
-					{
-						$price=price($objp->price_ttc);
-						$price_base_type=$langs->trans("TTC");
-					}
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-                    'text' => $price);
+                    if (empty($objp->fk_price_expression))
+                    {
+                        $price_base_type=$langs->trans($objp->price_base_type);
+                        $price=($objp->price_base_type == 'HT')?price($objp->price):$price=price($objp->price_ttc);
+	                }
+	                else //Parse the dinamic price
+	               	{
+						$productstatic->fetch($objp->rowid, '', '', 1);
+	                    $priceparser = new PriceParser($this->db);
+	                    $price_result = $priceparser->parseProduct($productstatic);
+	                    if ($price_result >= 0) {
+							if ($objp->price_base_type == 'HT')
+							{
+								$price_base_type=$langs->trans("HT");
+							}
+							else
+							{
+								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+								$price_base_type=$langs->trans("TTC");
+							}
+							$price=price($price_result);
+	                    }
+	               	}
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" class="nowrap"',
-                    'text' => $price_base_type);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => $price,
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="center"',
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left" class="nowrap"',
+                        'text' => $price_base_type,
+                    );
+
+					$this->info_box_contents[$line][] = array('td' => 'align="center"',
                     'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
 					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")));
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+					$this->info_box_contents[$line][] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->tosell,3,0));
 
-                    $this->info_box_contents[$i][6] = array('td' => 'align="right" width="18"',
+                    $this->info_box_contents[$line][] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->tobuy,3,1));
 
-                    $i++;
-				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoTooLowStockProducts"));
+                    $line++;
+                }
+                if ($num==0)
+                    $this->info_box_contents[$line][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoTooLowStockProducts"),
+                    );
 
 				$db->free($result);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
 		}
 	}
 

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2012  Destailleur Laurent     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,12 +144,12 @@ llxHeader("","",$langs->trans("Translation"));
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
-elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
-elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
-elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
-elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
-else $title=$langs->trans("Category");
+if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
+elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
+elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
+elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
+elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
+else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
 dol_fiche_head($head, 'translation', $title, 0, 'category');
@@ -190,9 +191,11 @@ if ($action == 'edit')
 		}
 	}
 
-	print '<br /><center>';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br /><div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 
@@ -266,9 +269,11 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</tr>';
 	print '</table>';
 
-	print '<br><center>';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+	print '<br><div class="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 

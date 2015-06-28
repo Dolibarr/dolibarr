@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Посредничество подтверждено
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Проверка векселя
 Notify_BILL_UNVALIDATE=Счёт клиента не подтверждён
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Поставщик утвердил порядок
 Notify_ORDER_SUPPLIER_REFUSE=Поставщик порядке отказалась
 Notify_ORDER_VALIDATE=Kundeordre validert
@@ -203,6 +204,7 @@ ClickHereToGoTo=Нажмите сюда, чтобы перейти к %s
 YouMustClickToChange=Однако, вы должны сначала нажать на ссылку для подтверждения изменения пароля
 ForgetIfNothing=Если вы не запрашивали эти изменения, забудьте про это электронное письмо.  Ваши данные в безопасности.
 IfAmountHigherThan=Если количество более чем <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Добавить запись в календаре %s

@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C)           Walter Torres        <walter@torres.ws> [with a *lot* of help!]
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  *
  * This program is free software; you can redistribute it and/or modify
@@ -224,7 +224,7 @@ class SMTPs
 	var $log = '';
 	var $_errorsTo = '';
 	var $_deliveryReceipt = 0;
-
+    var $_trackId = '';
 
 
     /**
@@ -246,6 +246,27 @@ class SMTPs
 	function getDeliveryReceipt()
 	{
 		return $this->_deliveryReceipt;
+	}
+
+    /**
+     * Set trackid
+     *
+     * @param	string		$_val		Value
+     * @return	void
+     */
+	function setTrackId($_val = '')
+	{
+		$this->_trackId = $_val;
+	}
+
+    /**
+     * get trackid
+     *
+     * @return	string		Delivery receipt
+     */
+	function getTrackId()
+	{
+		return $this->_trackId;
 	}
 
     /**
@@ -1106,11 +1127,23 @@ class SMTPs
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
 		//NOTE: Message-ID should probably contain the username of the user who sent the msg
-		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n"
-		.  'Date: '       . date("r")               . "\r\n"
-		.  'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
-		//                 . 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
-		//                 . 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
+		$_header .= 'Subject: '    . $this->getSubject()     . "\r\n";
+		$_header .= 'Date: '       . date("r")               . "\r\n";
+
+		$trackid = $this->getTrackId();
+		if ($trackid)
+		{
+			$_header .= 'Message-ID: <' . time() . '.SMTPs-'.$trackid.'@' . $host . ">\r\n";
+			$_header .= 'references: <' . time() . '.SMTPs-'.$trackid.'@' . $host . ">\r\n";
+		}
+		else
+		{
+			$_header .= 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
+		}
+
+		//$_header .=
+		//                 'Read-Receipt-To: '   . $this->getFrom( 'org' ) . "\r\n"
+		//                 'Return-Receipt-To: ' . $this->getFrom( 'org' ) . "\r\n";
 
 		if ( $this->getSensitivity() )
 		$_header .= 'Sensitivity: ' . $this->getSensitivity()  . "\r\n";

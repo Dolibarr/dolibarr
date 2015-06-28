@@ -2,6 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +40,16 @@ class Paiement extends CommonObject
 	var $ref;
 	var $facid;
 	var $datepaye;
-    var $total;             // deprecated
+	/**
+	 * @deprecated
+	 * @see amount, amounts
+	 */
+    var $total;
+	/**
+	 * @deprecated
+	 * @see amount, amounts
+	 */
+	var $montant;
 	var $amount;            // Total amount of payment
 	var $amounts=array();   // Array of amounts
 	var $author;
@@ -68,9 +79,10 @@ class Paiement extends CommonObject
 	 *    Load payment from database
 	 *
 	 *    @param	int		$id     Id of payment to get
+	 *    @param	int		$ref    Ref of payment to get (same as $id)
 	 *    @return   int     		<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id, $ref='')
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
@@ -79,7 +91,10 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
-		$sql.= ' AND p.rowid = '.$id;
+		if ($ref)
+			$sql.= ' AND p.rowid = '.$ref;
+		else
+			$sql.= ' AND p.rowid = '.$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -212,13 +227,14 @@ class Paiement extends CommonObject
 
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
-								0,
-								1,
-								2,
-								3
+								Facture::TYPE_STANDARD,
+								Facture::TYPE_REPLACEMENT,
+								Facture::TYPE_CREDIT_NOTE,
+								Facture::TYPE_DEPOSIT,
+								Facture::TYPE_SITUATION
 							);
 
-                            if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice. We do nothing more.");
+                            if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
@@ -485,7 +501,7 @@ class Paiement extends CommonObject
                                     $fac->thirdparty->name,
                                     'company'
                                 );
-                                if ($result <= 0) dol_print_error($this->db);
+                                if ($result <= 0) dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
@@ -503,7 +519,7 @@ class Paiement extends CommonObject
                                     $fac->thirdparty->name,
                                     'company'
                                 );
-                                if ($result <= 0) dol_print_error($this->db);
+                                if ($result <= 0) dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
                                 $linkaddedforthirdparty[$fac->thirdparty->id]=$fac->thirdparty->id;  // Mark as done for this thirdparty
                             }
                         }
@@ -734,9 +750,9 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Renvoie nom clicable (avec eventuellement le picto)
+	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *	@return	string					Chaine avec URL
 	 */
@@ -745,13 +761,14 @@ class Paiement extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = $langs->trans("ShowPayment").': '.$this->ref;
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
+        if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 

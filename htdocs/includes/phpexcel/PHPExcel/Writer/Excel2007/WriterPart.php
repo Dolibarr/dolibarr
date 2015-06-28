@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2012 PHPExcel
+ * Copyright (c) 2006 - 2014 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version    1.7.8, 2012-10-12
+ * @version    1.8.0, 2014-03-02
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package    PHPExcel_Writer_Excel2007
- * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 abstract class PHPExcel_Writer_Excel2007_WriterPart
 {
@@ -46,7 +46,7 @@ abstract class PHPExcel_Writer_Excel2007_WriterPart
 	 * Set parent IWriter object
 	 *
 	 * @param PHPExcel_Writer_IWriter	$pWriter
-	 * @throws Exception
+	 * @throws PHPExcel_Writer_Exception
 	 */
 	public function setParentWriter(PHPExcel_Writer_IWriter $pWriter = null) {
 		$this->_parentWriter = $pWriter;
@@ -56,13 +56,13 @@ abstract class PHPExcel_Writer_Excel2007_WriterPart
 	 * Get parent IWriter object
 	 *
 	 * @return PHPExcel_Writer_IWriter
-	 * @throws Exception
+	 * @throws PHPExcel_Writer_Exception
 	 */
 	public function getParentWriter() {
 		if (!is_null($this->_parentWriter)) {
 			return $this->_parentWriter;
 		} else {
-			throw new Exception("No parent PHPExcel_Writer_IWriter assigned.");
+			throw new PHPExcel_Writer_Exception("No parent PHPExcel_Writer_IWriter assigned.");
 		}
 	}
 
@@ -70,7 +70,7 @@ abstract class PHPExcel_Writer_Excel2007_WriterPart
 	 * Set parent IWriter object
 	 *
 	 * @param PHPExcel_Writer_IWriter	$pWriter
-	 * @throws Exception
+	 * @throws PHPExcel_Writer_Exception
 	 */
 	public function __construct(PHPExcel_Writer_IWriter $pWriter = null) {
 		if (!is_null($pWriter)) {

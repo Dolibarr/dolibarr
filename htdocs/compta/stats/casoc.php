@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Antoine Iauch         <aiauch@gpcsolutions.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 $langs->load("companies");
 $langs->load("categories");
@@ -183,7 +185,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category 
 	{
-	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe";
+	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
 	else if ($selected_cat) 	// Into a specific category
 	{
@@ -191,9 +193,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	    $sql.= " AND f.type IN (0,1,2)";
+	    $sql.= " AND f.type IN (0,1,2,5)";
 	} else {
-	    $sql.= " AND f.type IN (0,1,2,3)";
+	    $sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	$sql.= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
@@ -201,13 +203,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_cat === -2)	// Without any category  
 	{
-	    $sql.=" AND cs.fk_societe is null";
+	    $sql.=" AND cs.fk_soc is null";
 	}
 	else if ($selected_cat) {	// Into a specific category
 	    $sql.= " AND (c.rowid = ".$selected_cat;
 	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
 	    $sql.= ")";
-		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_societe = s.rowid";
+		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 } else {
 	/*
@@ -221,7 +223,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category 
 	{
-	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe";
+	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
 	else if ($selected_cat) 	// Into a specific category
 	{
@@ -235,13 +237,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_cat === -2)	// Without any category  
 	{
-	    $sql.=" AND cs.fk_societe is null";
+	    $sql.=" AND cs.fk_soc is null";
 	}
 	else if ($selected_cat) {	// Into a specific category
 	    $sql.= " AND (c.rowid = ".$selected_cat;
 	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
 	    $sql.= ")";
-		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_societe = s.rowid";
+		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 }
 $sql.= " AND f.entity = ".$conf->entity;
@@ -279,7 +281,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 	$sql.= " WHERE pf.rowid IS NULL";
 	$sql.= " AND p.fk_bank = b.rowid";
 	$sql.= " AND b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	$sql.= " GROUP BY socid, name";
 	$sql.= " ORDER BY name";
@@ -313,12 +315,12 @@ print "<table class=\"noborder\" width=\"100%\">";
     // Category filter
 print '<tr class="liste_titre">';
 print '<td>';
-print $langs->trans("Category") . ': ' . $formother->select_categories(2, $selected_cat, 'search_categ', true);
+print $langs->trans("Category") . ': ' . $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', true);
 print ' ';
 print $langs->trans("SubCats") . '? ';
 print '<input type="checkbox" name="subcat" value="yes"';
 if ($subcat) {
-    print ' checked="checked"';
+    print ' checked';
 }
 print'></td>';
 print '<td colspan="4" align="right">';

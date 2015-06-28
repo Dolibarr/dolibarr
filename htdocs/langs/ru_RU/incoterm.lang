@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Обязанности по доставке товаров
+IncotermSetupTitle1=Функция
+IncotermSetupTitle2=Статус
+IncotermSetup=Настройка модуля "Обязанности по доставке товаров"
+IncotermFunctionDesc=Активировать функцию "Обязанности по доставке товаров" (для контрагентов,  коммерческих предложений, заказов и счетов клиентов, поставок, заказов поставщиков)

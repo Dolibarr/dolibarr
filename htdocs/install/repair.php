@@ -101,7 +101,7 @@ $conf->db->dolibarr_main_db_cryptkey	= isset($dolibarr_main_db_cryptkey)?$doliba
 
 $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
-if ($db->connected == 1)
+if ($db->connected)
 {
     print '<tr><td class="nowrap">';
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
@@ -117,7 +117,7 @@ else
 
 if ($ok)
 {
-    if($db->database_selected == 1)
+    if($db->database_selected)
     {
         print '<tr><td class="nowrap">';
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
@@ -510,9 +510,9 @@ if (empty($actiondone))
 }
 
 
-print '<center><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 print $langs->trans("GoToDolibarr");
-print '</a></center>';
+print '</a></div>';
 
 pFooter(1,$setuplang);
 

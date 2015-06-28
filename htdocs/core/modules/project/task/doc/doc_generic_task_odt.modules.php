@@ -106,7 +106,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   Object			$object             Main object to use as data source
+	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @return	array								Array of substitution
 	 */
@@ -416,7 +416,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			$project= new Project($this->db);
 			$project->fetch($object->fk_project);
 
-			$dir = $conf->projet->dir_output. "/" . $project->ref. "/";;
+			$dir = $conf->projet->dir_output. "/" . $project->ref. "/";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";

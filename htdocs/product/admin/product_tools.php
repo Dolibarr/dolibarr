@@ -246,7 +246,7 @@ $title = $langs->trans('ModulesSystemTools');
 
 llxHeader('',$title);
 
-print_fiche_titre($title,'','setup');
+print_fiche_titre($title,'','title_setup');
 
 print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 
@@ -292,7 +292,7 @@ else
 	print '<tr '.$bc[$var].'>'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
-	print $form->load_PriceBaseType($price_base_type);
+	print $form->selectPriceBaseType($price_base_type);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 	*/

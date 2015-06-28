@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Přidat funkce pro správu Incotermu
+IncotermLabel=Incoterms
+IncotermSetupTitle1=Vlastnosti
+IncotermSetupTitle2=Status
+IncotermSetup=Nastavení modulu Incoterm
+IncotermFunctionDesc=Aktivace Incoterm funkcí (Třetí strany, Návrh, Objednávky zákazníka, Zákaznické faktury, Přeprava, Dodavatelské objednávky)

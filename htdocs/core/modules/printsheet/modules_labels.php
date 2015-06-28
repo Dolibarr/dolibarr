@@ -41,7 +41,7 @@ class ModelePDFLabels
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)
@@ -67,9 +67,10 @@ class ModelePDFLabels
  *	@param	string		$modele				Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs		Objet lang a utiliser pour traduction
  *	@param	string		$outputdir			Output directory
+ *  @param  string      $template           pdf generenate document class to use default 'standardlabel'
  *	@return int        						<0 if KO, >0 if OK
  */
-function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='')
+function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel')
 {
 	global $conf,$langs;
 	$langs->load("members");
@@ -98,13 +99,12 @@ function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $
 		}
 	}
 	else $code=$modele;
-	$modele='standardlabel';
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
+	$tmp=explode(':',$template,2);
 	if (! empty($tmp[1]))
 	{
-		$modele=$tmp[0];
+		$template=$tmp[0];
 		$srctemplatepath=$tmp[1];
 	}
 	else $srctemplatepath=$code;
@@ -117,14 +117,14 @@ function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $
 	{
 		foreach(array('doc','pdf') as $prefix)
 		{
-			$file = $prefix."_".$modele.".class.php";
+			$file = $prefix."_".$template.".class.php";
 
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/printsheet/doc/".$file,0);
 			if (file_exists($file))
 			{
 				$filefound=1;
-				$classname=$prefix.'_'.$modele;
+				$classname=$prefix.'_'.$template;
 				break;
 			}
 		}

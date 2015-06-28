@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2015      Bahfir Abbes        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +120,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CLONE':
 		    case 'ORDER_VALIDATE':
 		    case 'ORDER_DELETE':
+		    case 'ORDER_CANCEL':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
 		    case 'LINEORDER_INSERT':
@@ -152,6 +154,19 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'LINEPROPAL_UPDATE':
 		    case 'LINEPROPAL_DELETE':
 
+			// Askpricesupplier
+		    case 'ASKPRICESUPPLIER_CREATE':
+		    case 'ASKPRICESUPPLIER_CLONE':
+		    case 'ASKPRICESUPPLIER_MODIFY':
+		    case 'ASKPRICESUPPLIER_VALIDATE':
+		    case 'ASKPRICESUPPLIER_SENTBYMAIL':
+		    case 'ASKPRICESUPPLIER_CLOSE_SIGNED':
+		    case 'ASKPRICESUPPLIER_CLOSE_REFUSED':
+		    case 'ASKPRICESUPPLIER_DELETE':
+		    case 'LINEASKPRICESUPPLIER_INSERT':
+		    case 'LINEASKPRICESUPPLIER_UPDATE':
+		    case 'LINEASKPRICESUPPLIER_DELETE':
+		    
 			// Contracts
 		    case 'CONTRACT_CREATE':
 		    case 'CONTRACT_ACTIVATE':
@@ -183,6 +198,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'BILL_SUPPLIER_PAYED':
 		    case 'BILL_SUPPLIER_UNPAYED':
 		    case 'BILL_SUPPLIER_VALIDATE':
+		    case 'BILL_SUPPLIER_UNVALIDATE':
 		    case 'LINEBILL_SUPPLIER_CREATE':
 		    case 'LINEBILL_SUPPLIER_UPDATE':
 		    case 'LINEBILL_SUPPLIER_DELETE':

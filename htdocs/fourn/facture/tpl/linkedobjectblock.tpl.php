@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Charlie Benke <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +30,13 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 echo '<br>';
-if ($num > 1) print_titre($langs->trans("RelatedBills"));
-else print_titre($langs->trans("RelatedBill"));
+print_titre($langs->trans("RelatedSupplierInvoices"));
 ?>
 
 <table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
+	<td align="left"><?php echo $langs->trans("RefSupplier"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
@@ -47,8 +48,9 @@ foreach($linkedObjectBlock as $object)
 {
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$object->ref; ?></a></td>
+<tr <?php echo $bc[$var]; ?> >
+	<td></td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$object->ref; ?></a></td>
+	<td align="left"><?php echo $object->ref_supplier; ?></td>
 	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->fournisseur->facture->lire) {

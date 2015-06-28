@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
@@ -44,6 +44,7 @@ $search_user=GETPOST('search_user','alpha');
 
 $userstatic=new User($db);
 $companystatic = new Societe($db);
+$search_statut=GETPOST('search_statut','int');
 
 
 
@@ -58,12 +59,12 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 
 llxHeader('',$langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')','','',0,0,$arrayofjs,$arrayofcss);
 
-print_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/index.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
+print_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/index.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
 
 
 
 // Load hierarchy of users
-$user_arbo = $userstatic->get_full_tree();
+$user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
 
 // Define fulltree array
 $fulltree=$user_arbo;
@@ -78,7 +79,30 @@ foreach($fulltree as $key => $val)
 	$userstatic->firstname=$val['firstname'];
 	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
-	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].(empty($conf->multicompany->enabled)?'':' - '.$langs->trans("Instance").' '.$val['entity']).')';
+    $userstatic->email=$val['email'];
+    $userstatic->gender=$val['gender'];
+	$userstatic->societe_id=$val['fk_soc'];
+
+	$entity=$val['entity'];
+	$entitystring='';
+	// TODO Set of entitystring should be done with a hook
+	if (is_object($mc))
+	{
+		if (! empty($conf->multicompany->enabled))
+		{
+			if (empty($entity))
+			{
+				$entitystring=$langs->trans("AllEntities");
+			}
+			else
+			{
+				$mc->getInfo($entity);
+				$entitystring=$mc->label;
+			}
+		}
+	}
+
+	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
 
 	$data[] = array(
 		'rowid'=>$val['rowid'],
@@ -88,7 +112,11 @@ foreach($fulltree as $key => $val)
 }
 
 
-print '<table class="liste" width="100%">';
+/*print $langs->trans("Status").': ';
+print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+*/
+
+print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("HierarchicView").'</td><td></td><td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
 print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td></tr>';
 
@@ -96,7 +124,7 @@ $nbofentries=(count($data) - 1);
 
 if ($nbofentries > 0)
 {
-	print '<tr '.$bc[true].'><td colspan="3">';
+	print '<tr '.$bc[false].'><td colspan="3">';
 	tree_recur($data,$data[0],0);
 	print '</td></tr>';
 }

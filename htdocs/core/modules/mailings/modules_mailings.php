@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *	    \class      MailingTargets
- *		\brief      Parent class of emailing target selectors modules
+ *		Parent class of emailing target selectors modules
  */
 class MailingTargets    // This can't be abstract as it is used for some method
 {
@@ -63,7 +62,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
     /**
 	 *	Return number of records for email selector
      *
-     *  @return     string      Example
+     *  @return     integer      Example
      */
     function getNbOfRecords()
     {
@@ -73,8 +72,8 @@ class MailingTargets    // This can't be abstract as it is used for some method
     /**
      * Retourne nombre de destinataires
      *
-     * @param      string	$sql        Requete sql de comptage
-     * @return     int       			Nb de destinataires si ok, < 0 si erreur
+     * @param      string	$sql        Sql request to count
+     * @return     int       			Nb of recipient, or <0 if error
      */
     function getNbOfRecipients($sql)
     {
@@ -86,7 +85,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         }
         else
         {
-        	$this->error=$this->db->error();
+        	$this->error=$this->db->lasterror();
             return -1;
         }
     }

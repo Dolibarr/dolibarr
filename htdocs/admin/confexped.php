@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2015 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ $form=new Form($db);
 llxHeader("","");
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SendingsSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
 print '<br>';
 
 $h = 0;
@@ -121,11 +121,11 @@ print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
 
-if($conf->global->MAIN_SUBMODULE_EXPEDITION == 0)
+if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
-else if($conf->global->MAIN_SUBMODULE_EXPEDITION == 1)
+else
 {
 	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
@@ -141,11 +141,11 @@ print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
 
-if($conf->global->MAIN_SUBMODULE_LIVRAISON == 0)
+if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
 	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
-else if($conf->global->MAIN_SUBMODULE_LIVRAISON == 1)
+else
 {
 	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }

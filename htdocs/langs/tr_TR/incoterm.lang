@@ -1,0 +1,7 @@
+Module62000Name=Uluslararası ticari terimleri
+Module62000Desc=Uluslararası ticari terimleri yönetmek için özellik ekle
+IncotermLabel=Uluslararası Ticaret Terimleri
+IncotermSetupTitle1=Özellik
+IncotermSetupTitle2=Durum
+IncotermSetup=Uluslararası Ticaret Terimi modülü Ayarları
+IncotermFunctionDesc=Uluslararası Ticaret Terimi özelliğini etkinleştir (Üçüncü parti, Teklif, Müşteri Siparişi, Müşteri Faturası, Sevkiyat, Tedarikçi siparişi)

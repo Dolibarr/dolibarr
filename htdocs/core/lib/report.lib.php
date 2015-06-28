@@ -41,6 +41,8 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 {
 	global $langs;
 
+	if (empty($hselected)) $hselected='report';
+	
 	print "\n\n<!-- debut cartouche rapport -->\n";
 
 	$h=0;

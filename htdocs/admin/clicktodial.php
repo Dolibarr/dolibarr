@@ -60,7 +60,7 @@ $wikihelp='EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial
 llxHeader('',$langs->trans("ClickToDialSetup"),$wikihelp);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("ClickToDialSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("ClickToDialSetup"),$linkback,'title_setup');
 
 print $langs->trans("ClickToDialDesc")."<br>\n";
 
@@ -94,7 +94,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<center><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form><br><br>';
 

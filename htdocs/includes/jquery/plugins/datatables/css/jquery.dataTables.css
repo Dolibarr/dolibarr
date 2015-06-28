@@ -154,7 +154,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 	margin: 0 3px;
 	cursor: pointer;
 	*cursor: hand;
-	color: #333 !important;
+	/* DOL_LDR CHANGE color: #333 !important; */
 }
 
 .paging_full_numbers a.paginate_button {

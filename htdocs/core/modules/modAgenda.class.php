@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015       Bahfir Abbes        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,6 +91,7 @@ class modAgenda extends DolibarrModules
         $this->const[12] = array("MAIN_AGENDA_ACTIONAUTO_SHIPPING_VALIDATE","chaine","1");
         $this->const[13] = array("MAIN_AGENDA_ACTIONAUTO_SHIPPING_SENTBYMAIL","chaine","1");
         $this->const[14] = array("MAIN_AGENDA_ACTIONAUTO_BILL_UNVALIDATE","chaine","1");
+        $this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_UNVALIDATE","chaine","1");
 
 		// New pages on tabs
 		// -----------------
@@ -393,7 +395,7 @@ class modAgenda extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp on ac.fk_contact = sp.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
-		$this->export_sql_end[$r] .=' Where ac.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' WHERE ac.entity IN ('.getEntity('agenda',1).')';
 		$this->export_sql_end[$r] .=' ORDER BY ac.datep';
 
 	}

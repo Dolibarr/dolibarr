@@ -66,11 +66,11 @@ $myproduct=new Product($db);
 
 // Definition of product instance properties
 $myproduct->ref                = '1234';
-$myproduct->libelle            = 'libelle';
+$myproduct->label              = 'label';
 $myproduct->price              = '10';
 $myproduct->price_base_type    = 'HT';
 $myproduct->tva_tx             = '19.6';
-$myproduct->type               = 0;
+$myproduct->type               = Product::TYPE_PRODUCT;
 $myproduct->status             = 1;
 $myproduct->description        = 'Description';
 $myproduct->note               = 'Note';

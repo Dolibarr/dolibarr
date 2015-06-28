@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +137,11 @@ print '<tr><td width="25%">' . $langs->trans("ThirdPartyName") . '</td><td colsp
 print $form->showrefnav($soc, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
 print '</td></tr>';
 
+// Alias names (commercial, trademark or alias names)
+print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+print $soc->name_alias;
+print "</td></tr>";
+
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
 	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $soc->prefix_comm . '</td></tr>';
@@ -163,7 +169,7 @@ if (! empty($conf->barcode->enabled)) {
 	print '<tr><td>' . $langs->trans('Gencod') . '</td><td colspan="3">' . $soc->barcode . '</td></tr>';
 }
 
-print "<tr><td valign=\"top\">" . $langs->trans('Address') . "</td><td colspan=\"3\">";
+print "<tr><td>" . $langs->trans('Address') . "</td><td colspan=\"3\">";
 dol_print_address($soc->address, 'gmap', 'thirdparty', $soc->id);
 print "</td></tr>";
 
@@ -254,7 +260,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->select_PriceBaseType($object->price_base_type, "price_base_type");
+		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -292,8 +298,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div align="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
 	} elseif ($action == 'edit_customer_price') {
@@ -329,7 +338,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->select_PriceBaseType($prodcustprice->price_base_type, "price_base_type");
+		print $form->selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -368,8 +377,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" value="' . $langs->trans("Save") . '">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '"></center>';
+		print '<br><div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {
@@ -494,11 +506,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '</td>';
 			print '</tr>';
 
-			$var = True;
+			$var = False;
 
-			foreach ( $prodcustprice->lines as $line ) {
-
-				print "<tr $bc[$var]>";
+			foreach($prodcustprice->lines as $line)
+			{
+				print "<tr ".$bc[$var].">";
 
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
@@ -524,14 +536,16 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
-					print img_delete();
-					print '</a>';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
-					print img_edit();
-					print '</a>';
 					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $soc->id . '&amp;prodid=' . $line->fk_product . '">';
 					print img_info();
+					print '</a>';
+					print ' ';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print img_edit('default', 0, 'style="vertical-align: middle;"');
+					print '</a>';
+					print ' ';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
 				}

@@ -42,7 +42,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre($langs->trans("InfoDolibarr"),'','setup');
+print_fiche_titre($langs->trans("InfoDolibarr"),'','title_setup');
 
 // Version
 $var=true;
@@ -179,7 +179,7 @@ $c=getServerTimeZoneInt('summer');
 $daylight=(is_numeric($c) && is_numeric($b))?round($c-$b):'unknown';
 //print $a." ".$b." ".$c." ".$daylight;
 $val=($a>=0?'+':'').$a;
-$val.=' ('.($a==='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
+$val.=' ('.($a=='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
 $val.=' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
 $val.=' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight==='unknown'?'unknown':($a==$c?yn($daylight):yn(0).($daylight?'  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')':'')));
 print $form->textwithtooltip($val,$txt,2,1,img_info(''));
@@ -266,9 +266,10 @@ $configfileparameters=array(
 		'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
 		'separator3' => '',
 		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
-		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 		'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
+		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 		'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
+		'?dolibarr_lib_TCPDI_PATH' => 'dolibarr_lib_TCPDI_PATH',
 		'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
 		'?dolibarr_lib_PHPEXCEL_PATH' => 'dolibarr_lib_PHPEXCEL_PATH',
 		'?dolibarr_lib_GEOIP_PATH' => 'dolibarr_lib_GEOIP_PATH',
@@ -332,7 +333,7 @@ foreach($configfileparameters as $key => $value)
 				{
 					if ($i > 0) print ', ';
 					print $value2;
-					if (! is_readable($value2)) 
+					if (! is_readable($value2))
 					{
 						$langs->load("errors");
 						print ' '.img_warning($langs->trans("ErrorCantReadDir",$value2));

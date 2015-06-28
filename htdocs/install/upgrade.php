@@ -141,7 +141,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
 
-    if ($db->connected == 1)
+    if ($db->connected)
     {
         print '<tr><td class="nowrap">';
         print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
@@ -157,7 +157,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
     if ($ok)
     {
-        if($db->database_selected == 1)
+        if($db->database_selected)
         {
             print '<tr><td class="nowrap">';
             print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";

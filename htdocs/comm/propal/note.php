@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 $langs->load('propal');
 $langs->load('compta');
 $langs->load('bills');
+$langs->load("companies");
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -103,7 +104,7 @@ if ($id > 0 || ! empty($ref))
 			print "<tr><td>".$langs->trans("Company")."</td>";
 			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 
-			// Ligne info remises tiers
+			// Discounts
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($societe->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_percent);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -126,7 +127,7 @@ if ($id > 0 || ! empty($ref))
 			if ($object->fin_validite)
 			{
 				print dol_print_date($object->fin_validite,'daytext');
-				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($object->statut == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			}
 			else
 			{

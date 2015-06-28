@@ -69,7 +69,7 @@ function facturefourn_prepare_head($object)
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$object->ref;
+	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -153,7 +153,7 @@ function ordersupplier_prepare_head($object)
 	$head[$h][1] = $langs->trans("OrderFollow");
 	$head[$h][2] = 'info';
 	$h++;
-
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');
 	return $head;
 }
 
@@ -186,9 +186,21 @@ function supplierorder_admin_prepare_head()
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
+	$head[$h][2] = 'supplierorderdet';
+	$h++;
+
+
+
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$head[$h][2] = 'supplierinvoice';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
+	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin','remove');

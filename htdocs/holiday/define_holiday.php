@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard <dmouillard@teclib.com>
  * Copyright (C) 2013      Marcos García <marcosgdf@gmail.com>
  *
@@ -37,61 +37,78 @@ if(!$user->rights->holiday->define_holiday) accessforbidden();
 
 $action=GETPOST('action');
 
-
-/*
- * View
- */
-
-$form = new Form($db);
-$userstatic=new User($db);
 $holiday = new Holiday($db);
 
+$langs->load('users');
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
 
-print_fiche_titre($langs->trans('MenuConfCP'));
-
-$holiday->updateSold();	// Create users into table holiday if they don't exists. TODO Remove if we use field into table user.
-
-$listUsers = $holiday->fetchUsers(false,false);
+/*
+ * Actions
+ */
 
 // Si il y a une action de mise à jour
 if ($action == 'update' && isset($_POST['update_cp']))
 {
+	$error = 0;
+
+	$typeleaves=$holiday->getTypes(1,1);
+
     $userID = array_keys($_POST['update_cp']);
     $userID = $userID[0];
 
-    $userValue = $_POST['nb_holiday'];
-    $userValue = $userValue[$userID];
+    foreach($typeleaves as $key => $val)
+    {
+	    $userValue = $_POST['nb_holiday_'.$val['rowid']];
+	    $userValue = $userValue[$userID];
 
-    if(!empty($userValue)) {
-        $userValue = price2num($userValue,2);
-    } else {
-        $userValue = 0;
+	    if (!empty($userValue))
+	    {
+	        $userValue = price2num($userValue,5);
+	    } else {
+	        $userValue = '';
+	    }
+
+	    //If the user set a comment, we add it to the log comment
+	    $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+
+	    //print 'eee'.$val['rowid'].'-'.$userValue;
+		if ($userValue != '')
+		{
+			// We add the modification to the log (must be before update of sold because we read current value of sold)
+		    $result=$holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
+			if ($result < 0)
+			{
+				setEventMessages($holiday->error, $holiday->errors, 'errors');
+				$error++;
+			}
+
+			// Update of the days of the employee
+		    $result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+			if ($result < 0)
+			{
+				setEventMessages($holiday->error, $holiday->errors, 'errors');
+				$error++;
+			}
+
+		    // If it first update of balance, we set date to avoid to have sold incremented by new month
+		    /*
+			$now=dol_now();
+		    $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+		    $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
+		    $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
+		    dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
+		    $result = $db->query($sql);
+		    */
+		}
     }
 
-    //If the user set a comment, we add it to the log comment
-    $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
-
-    // We add the modification to the log
-    $holiday->addLogCP($user->id,$userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment,$userValue);
-
-    // Update of the days of the employee
-    $holiday->updateSoldeCP($userID,$userValue);
-
-    // If it first update of sold, we set date to avoid to have sold incremented by new month
-	$now=dol_now();
-    $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-    $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
-    $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
-    dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
-    $result = $db->query($sql);
-
-	setEventMessage($langs->trans('UpdateConfCPOK'));
+    if (! $error) setEventMessages($langs->trans('UpdateConfCPOK'), '', 'mesgs');
 }
 elseif($action == 'add_event')
 {
     $error = 0;
+
+	$typeleaves=$holiday->getTypes(1,1);
 
     if(!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
         $event = $_POST['list_event'];
@@ -105,7 +122,7 @@ elseif($action == 'add_event')
 
     if ($error)
     {
-	    setEventMessage($langs->trans('ErrorAddEventToUserCP'), 'errors');
+	    setEventMessages($langs->trans('ErrorAddEventToUserCP'), '', 'errors');
     }
     else
 	{
@@ -118,17 +135,40 @@ elseif($action == 'add_event')
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 
-		setEventMessage($langs->trans('AddEventToUserOkCP'));
+		setEventMessages($langs->trans('AddEventToUserOkCP'), '', 'mesgs');
     }
 }
 
-$langs->load('users');
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+$userstatic=new User($db);
+
+llxHeader(array(),$langs->trans('CPTitreMenu'));
+
+print_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
+
+print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
+if ($holiday->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+else print $langs->trans('None');
+print "</div><br>\n";
+
+$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
+if ($result < 0)
+{
+	setEventMessages($holiday->error, $holiday->errors, 'errors');
+}
+
+$listUsers = $holiday->fetchUsers(false,true);
+
 $var=true;
 $i = 0;
 
 $cp_events = $holiday->fetchEventsCP();
-
-if($cp_events == 1)
+if ($cp_events == 1)
 {
 	print '<br><form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="action" value="add_event" />';
@@ -144,19 +184,26 @@ if($cp_events == 1)
 	print '</form><br>';
 }
 
+
+$typeleaves=$holiday->getTypes(1,1);
+
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="action" value="update" />';
+
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print '<td width="55%">'.$langs->trans('Employee').'</td>';
-print '<td width="20%" style="text-align:center">'.$langs->trans('Available').'</td>';
+foreach($typeleaves as $key => $val)
+{
+	print '<td width="20%" style="text-align:center">'.$val['label'].'</td>';
+}
 print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
 print '<td></td>';
 print '</tr>';
 
+
 foreach($listUsers as $users)
 {
-
     $var=!$var;
 
     print '<tr '.$bc[$var].' style="height: 20px;">';
@@ -166,9 +213,15 @@ foreach($listUsers as $users)
     $userstatic->firstname=$users['firstname'];
     print $userstatic->getNomUrl(1);
     print '</td>';
-    print '<td style="text-align:center">';
-    print '<input type="text" value="'.$holiday->getCPforUser($users['rowid']).'" name="nb_holiday['.$users['rowid'].']" size="5" style="text-align: center;"/>';
-    print ' '.$langs->trans('days').'</td>'."\n";
+	foreach($typeleaves as $key => $val)
+	{
+		$nbtoshow='';
+		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+    	print '<td style="text-align:center">';
+    	print '<input type="text" value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+	    //print ' '.$langs->trans('days');
+    	print '</td>'."\n";
+	}
     print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
     print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
     print '</tr>';
@@ -177,6 +230,7 @@ foreach($listUsers as $users)
 }
 
 print '</table>';
+
 print '</form>';
 
 llxFooter();

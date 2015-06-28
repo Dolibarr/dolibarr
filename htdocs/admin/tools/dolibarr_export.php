@@ -96,7 +96,7 @@ jQuery(document).ready(function() {
 	jQuery("#select_sql_compat").click(function() {
 		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
 		{
-			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
+			jQuery("#checkbox_dump_disable-add-locks").prop('checked',true);
 		}
 	});
 
@@ -108,14 +108,9 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Backup"),'','setup');
+print_fiche_titre($langs->trans("Backup"),'','title_setup');
 
 print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
-print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
-print $langs->trans("BackupDescX").'<br><br>';
-print $langs->trans("BackupDesc3",DOL_DATA_ROOT).'<br>';
-print $langs->trans("BackupDescY").'<br><br>';
-
 
 ?>
 
@@ -124,9 +119,29 @@ print $langs->trans("BackupDescY").'<br><br>';
 	name="token" value="<?php echo $_SESSION['newtoken']; ?>" /> <input
 	type="hidden" name="export_type" value="server" />
 
-<fieldset id="fieldsetexport">
-<?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
-<table>
+<fieldset id="fieldsetexport"><legend style="font-size: 3em">1</legend>
+
+<?php
+print $langs->trans("BackupDesc3",$dolibarr_main_db_name).'<br>';
+//print $langs->trans("BackupDescY").'<br>';
+print '<br>';
+?>
+
+<div id="backupdatabaseleft" class="fichehalfleft" >
+
+<?php
+
+print_titre($title?$title:$langs->trans("BackupDumpWizard"));
+
+print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+print '<tr class="liste_titre">';
+print '<td class="liste_titre">';
+print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+print '</td>';
+print '</tr>';
+print '<tr '.$bc[false].'><td style="padding-left: 8px">';
+?>
+<table class="centpercent">
 	<tr>
 		<td valign="top">
 
@@ -182,7 +197,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 				$fullpathofmysqldump=$conf->global->SYSTEMTOOLS_MYSQLDUMP;
 			}
 			?><br>
-			<input type="text" name="mysqldump" size="80"
+			<input type="text" name="mysqldump" style="width: 80%"
 				value="<?php echo $fullpathofmysqldump; ?>" /></div>
 
 			<br>
@@ -194,13 +209,13 @@ print $langs->trans("BackupDescY").'<br><br>';
 			</div>
 
 			<div class="formelementrow"><input type="checkbox" name="disable_fk"
-				value="yes" id="checkbox_disable_fk" checked="checked" /> <label
+				value="yes" id="checkbox_disable_fk" checked /> <label
 				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
 			</div>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
 			<select name="sql_compat" id="select_sql_compat" class="flat">
-				<option value="NONE" selected="selected">NONE</option>
+				<option value="NONE" selected>NONE</option>
 				<option value="ANSI">ANSI</option>
 				<option value="DB2">DB2</option>
 				<option value="MAXDB">MAXDB</option>
@@ -217,22 +232,22 @@ print $langs->trans("BackupDescY").'<br><br>';
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_structure"
-				value="structure" id="checkbox_sql_structure" checked="checked" /> <label
+				value="structure" id="checkbox_sql_structure" checked /> <label
 				for="checkbox_sql_structure"> <?php echo $langs->trans('ExportStructure') ?></label> </legend> <input
-				type="checkbox" name="drop"<?php echo ((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked="checked"':''; ?> id="checkbox_dump_drop" /> <label
+				type="checkbox" name="drop"<?php echo ((! isset($_GET["drop"]) && ! isset($_POST["drop"])) || GETPOST('drop'))?' checked':''; ?> id="checkbox_dump_drop" /> <label
 				for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
 			</fieldset>
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_data" value="data"
-				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
+				id="checkbox_sql_data" checked /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" checked="checked" /> <label
+				id="checkbox_dump_showcolumns" checked /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			<input type="checkbox" name="extended_ins" value="yes"
-				id="checkbox_dump_extended_ins" checked="checked" /> <label
+				id="checkbox_dump_extended_ins" checked /> <label
 				for="checkbox_dump_extended_ins"> <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
 
 			<input type="checkbox" name="disable-add-locks" value="no"
@@ -246,11 +261,11 @@ print $langs->trans("BackupDescY").'<br><br>';
 				id="checkbox_dump_ignore" /> <label for="checkbox_dump_ignore"> <?php echo $langs->trans("IgnoreDuplicateRecords"); ?></label><br>
 
 			<input type="checkbox" name="hexforbinary" value="yes"
-				id="checkbox_hexforbinary" checked="checked" /> <label
+				id="checkbox_hexforbinary" checked /> <label
 				for="checkbox_hexforbinary"> <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
 
 			<input type="checkbox" name="charset_utf8" value="yes"
-				id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+				id="checkbox_charset_utf8" checked disabled /> <label
 				for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
 			</fieldset>
@@ -267,14 +282,14 @@ print $langs->trans("BackupDescY").'<br><br>';
                                 </div>
 
                                 <div class="formelementrow"><input type="checkbox" name="nobin_disable_fk"
-                                        value="yes" id="checkbox_disable_fk" checked="checked" /> <label
+                                        value="yes" id="checkbox_disable_fk" checked /> <label
                                         for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
                                 </div>
                             </fieldset>
 
                             <br>
                             <fieldset><legend><?php echo $langs->trans('ExportStructure') ?></legend> <input
-                                    type="checkbox" name="nobin_drop"<?php echo ((! isset($_GET["nobin_drop"]) && ! isset($_POST["nobin_drop"])) || GETPOST('nobin_drop'))?' checked="checked"':''; ?> id="checkbox_dump_drop" /> <label
+                                    type="checkbox" name="nobin_drop"<?php echo ((! isset($_GET["nobin_drop"]) && ! isset($_POST["nobin_drop"])) || GETPOST('nobin_drop'))?' checked':''; ?> id="checkbox_dump_drop" /> <label
                                     for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br>
                             </fieldset>
 
@@ -293,7 +308,7 @@ print $langs->trans("BackupDescY").'<br><br>';
                                         id="checkbox_dump_ignore" /> <label for="checkbox_dump_ignore"> <?php echo $langs->trans("IgnoreDuplicateRecords"); ?></label><br>
 
                                 <input type="checkbox" name="nobin_charset_utf8" value="yes"
-                                        id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+                                        id="checkbox_charset_utf8" checked disabled /> <label
                                         for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
 
                             </fieldset>
@@ -317,7 +332,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 				$fullpathofpgdump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
 			}
 			?><br>
-			<input type="text" name="postgresqldump" size="80"
+			<input type="text" name="postgresqldump" style="width: 80%"
 				value="<?php echo $fullpathofpgdump; ?>" /></div>
 
 
@@ -325,7 +340,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 			<fieldset><legend><?php echo $langs->trans("ExportOptions"); ?></legend>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 			<select name="sql_compat" id="select_sql_compat" class="flat">
-				<option value="POSTGRESQL" selected="selected">POSTGRESQL</option>
+				<option value="POSTGRESQL" selected>POSTGRESQL</option>
 				<option value="ANSI">ANSI</option>
 			</select><br>
 			<!-- <input type="checkbox" name="drop_database" value="yes"
@@ -335,15 +350,15 @@ print $langs->trans("BackupDescY").'<br><br>';
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_structure"
-				value="structure" id="checkbox_sql_structure" checked="checked" /> <label
+				value="structure" id="checkbox_sql_structure" checked /> <label
 				for="checkbox_sql_structure"> <?php echo $langs->trans('ExportStructure') ?></label> </legend></fieldset>
 
 			<br>
 			<fieldset><legend> <input type="checkbox" name="sql_data" value="data"
-				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
+				id="checkbox_sql_data" checked /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" checked="checked" /> <label
+				id="checkbox_dump_showcolumns" checked /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			</fieldset>
@@ -357,12 +372,12 @@ print $langs->trans("BackupDescY").'<br><br>';
 	</tr>
 </table>
 
-</fieldset>
 
-<fieldset>
-<legend><?php echo $langs->trans("Destination"); ?></legend>
-<label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label>:
- <input type="text" name="filename_template" size="60"
+<!--<fieldset>
+<legend><?php echo $langs->trans("Destination"); ?></legend> -->
+<br>
+<label for="filename_template"> <?php echo $langs->trans("FileNameToGenerate"); ?></label><br>
+<input type="text" name="filename_template" style="width: 90%"
 	id="filename_template"
 	value="<?php
 $prefix='dump';
@@ -402,12 +417,12 @@ foreach($compression as $key => $val)
 {
 	if (! $val['function'] || function_exists($val['function']))	// Enabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="checked">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
 	else	// Disabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="disabled">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
 	}
@@ -417,23 +432,67 @@ foreach($compression as $key => $val)
 print '</div>';
 print "\n";
 
-?></fieldset>
+?><!--</fieldset>--> <!-- End destination -->
+
 
 <br>
 <div align="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
-</div>
-
-
-</form>
 
 <?php
+if (! empty($_SESSION["commandbackuplastdone"]))
+{
+	print '<br><b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
+    print '<textarea rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuplastdone"].'</textarea><br>'."\n";
+    print '<br>';
 
+    //print $paramclear;
+
+    // Now run command and show result
+    print '<b>'.$langs->trans("BackupResult").':</b> ';
+	print $_SESSION["commandbackupresult"];
+
+	$_SESSION["commandbackuplastdone"]='';
+	$_SESSION["commandbackuptorun"]='';
+	$_SESSION["commandbackupresult"]='';
+}
+?>
+
+</div>
+
+<?php
+print '</td></tr></table>';
+?>
+
+</div>
+<div id="backupdatabaseright" class="fichehalfright" style="height:400px; overflow: auto;">
+<div class="ficheaddleft">
+
+<?php
 $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
 $result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
 print '<br>';
+?>
 
+</div>
+</div>
+
+</fieldset>
+
+<br>
+
+<fieldset><legend style="font-size: 3em">2</legend>
+<?php
+print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
+print $langs->trans("BackupDescX").'<br><br>';
+?>
+</fieldset>
+
+
+
+</form>
+<?php
 
 llxFooter();
 

@@ -81,6 +81,8 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__."\n";
     }
+
+    // tear down after class
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -337,10 +339,15 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result,'delete file');
 
-        // Again to test no error when deleteing a non existing file
-        $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv');
+        // Again to test there is error when deleting a non existing file with option disableglob
+        $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv',1,1);
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result,'delete file that does not exists');
+        $this->assertFalse($result,'delete file that does not exists with disableglo must return ko');
+
+        // Again to test there is no error when deleting a non existing file without option disableglob
+        $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv',0,1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result,'delete file that does not exists without disabling glob must return ok');
 
         // Test copy with special char / delete with blob
         $result=dol_copy($file, $conf->admin->dir_temp.'/file with [x] and é.csv',0,1);

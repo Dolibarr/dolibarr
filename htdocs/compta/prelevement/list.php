@@ -124,10 +124,10 @@ if ($result)
     print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'align="center"');
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","","",'align="right"');
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '</tr>';
+    print_liste_field_titre('');
+	print "</tr>\n";
 
-    print '<form action="list.php" method="GET">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_line" value="'. dol_escape_htmltag($search_line).'" size="6"></td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'. dol_escape_htmltag($search_bon).'" size="8"></td>';

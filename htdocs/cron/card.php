@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry <florian.henry@open-concpt.pro>
- * Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,11 +227,10 @@ llxHeader('',$langs->trans("CronAdd"));
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
 	$head=cron_prepare_head($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 }
 elseif ($action=='create')
 {
-	print_fiche_titre($langs->trans("CronTask"),'','setup');
+	print_fiche_titre($langs->trans("CronTask"),'','title_setup');
 }
 
 if ($conf->use_javascript_ajax)
@@ -291,6 +290,8 @@ if (($action=="create") || ($action=="edit"))
 	} else {
 		print '<input type="hidden" name="action" value="add">'."\n";
 	}
+
+	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
 
@@ -357,7 +358,7 @@ if (($action=="create") || ($action=="edit"))
 	{
 		if (! empty($object->unitfrequency) && ($object->frequency/$object->unitfrequency) == $i)
 		{
-			print "<option value='".$i."' selected='selected'>".$i."</option>";
+			print "<option value='".$i."' selected>".$i."</option>";
 		}
 		else
 		{
@@ -367,7 +368,7 @@ if (($action=="create") || ($action=="edit"))
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
 	if($object->unitfrequency=="60")
 	{
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -377,7 +378,7 @@ if (($action=="create") || ($action=="edit"))
 
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
 	if($object->unitfrequency=="3600"){
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -387,7 +388,7 @@ if (($action=="create") || ($action=="edit"))
 
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
 	if($object->unitfrequency=="86400"){
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -397,7 +398,7 @@ if (($action=="create") || ($action=="edit"))
 
 	$input = "<input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
 	if($object->unitfrequency=="604800"){
-		$input .= ' checked="checked" />';
+		$input .= ' checked />';
 	}
 	else{
 		$input .= ' />';
@@ -474,18 +475,24 @@ if (($action=="create") || ($action=="edit"))
 
 	print '</table>';
 
-	print '<div align="center"><br>';
+	dol_fiche_end();
+
+	print '<div align="center">';
 	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-	print "</center>";
+	print "</div>";
 
 	print "</form>\n";
 
-}else {
-
+}
+else
+{
 	/*
-	 * view Template
+	 * view card
 	 */
+
+	dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 
 	// box add_jobs_box
 	print '<table class="border" width="100%">';
@@ -571,12 +578,25 @@ if (($action=="create") || ($action=="edit"))
 	print "</td></tr>";
 
 	print '<tr><td>';
+	print $langs->trans('Active')."</td><td>";
+	print yn($object->status);
+	print "</td></tr>";
+
+	print '</table>';
+
+	print '<br>';
+
+	print '<table class="border" width="100%">';
+
+	print '<tr><td width="30%">';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";
 	if(!empty($object->datelastrun)) {print dol_print_date($object->datelastrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
 
 	print '<tr><td>';
-	print $langs->trans('CronDtNextLaunch')."</td><td>";
+	print $langs->trans('CronDtNextLaunch');
+	print ' ('.$langs->trans('CronFrom').')';
+	print "</td><td>";
 	if(!empty($object->datenextrun)) {print dol_print_date($object->datenextrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
 
@@ -596,7 +616,6 @@ if (($action=="create") || ($action=="edit"))
 	print "</td></tr>";
 
 	print '</table>';
-
 
 	dol_fiche_end();
 
@@ -632,7 +651,9 @@ if (($action=="create") || ($action=="edit"))
 	else {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.'">'.$langs->trans("CronExecute").'</a>';
 	}
-	print '<br><br></div>';
+	print '</div>';
+
+	print '<br>';
 }
 
 

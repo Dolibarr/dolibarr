@@ -132,7 +132,7 @@ class FileUpload
 
 		$object_ref = dol_sanitizeFileName($object->ref);
 		if ($element == 'invoice_supplier') {
-			$object_ref = get_exdir($object->id, 2) . $object_ref;
+			$object_ref = get_exdir($object->id,2,0,0,$object,'invoice_supplier') . $object_ref;
 		} else if ($element == 'project_task') {
 			$object_ref = $object->project->ref . '/' . $object_ref;
 		}

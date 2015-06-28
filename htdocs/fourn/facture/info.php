@@ -31,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 
 $langs->load('bills');
 
-$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$id = GETPOST("facid",'int');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 
 
@@ -45,22 +45,22 @@ $result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture
 
 llxHeader();
 
-$fac = new FactureFournisseur($db);
-$fac->fetch($_GET["facid"]);
-$fac->info($_GET["facid"]);
+$object = new FactureFournisseur($db);
+$object->fetch($id);
+$object->info($id);
 $soc = new Societe($db);
-$soc->fetch($fac->socid);
+$soc->fetch($object->socid);
 
-$head = facturefourn_prepare_head($fac);
+$head = facturefourn_prepare_head($object);
 $titre=$langs->trans('SupplierInvoice');
 dol_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), 0, 'bill');
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($fac);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();

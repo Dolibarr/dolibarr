@@ -25,6 +25,7 @@
 
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -44,6 +45,11 @@ if ($user->societe_id > 0) accessforbidden();
 // Get supervariables
 $action = GETPOST('action','alpha');
 $id = GETPOST('id','int');
+
+$socid = GETPOST('socid','int');
+$page = GETPOST('page','int');
+$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
+$sortfield = ((GETPOST('sortfield','alpha')=="")) ? "pl.fk_soc" : GETPOST('sortfield','alpha');
 
 
 /*
@@ -207,10 +213,10 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
+		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransData").'</td><td>';
 		print $form->select_date('','','','','',"userfile",1,1);
 		print '</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
+		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode",$bon->methodes_trans);
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
@@ -218,7 +224,7 @@ if ($id > 0)
 		print '<input class="flat" type="file" name="userfile"><br>';
 		print '</td></tr>';*/
 		print '</table><br>';
-		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'">';
+		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
 	}
 
@@ -230,12 +236,12 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
+		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
 		print $form->select_date('','','','','',"infocredit",1,1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
-		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'">';
+		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
 		print '</form>';
 	}
 
@@ -259,6 +265,122 @@ if ($id > 0)
 
 		print "</div>";
 	}
+
+
+	$ligne=new LignePrelevement($db,$user);
+
+	if ($page == -1) { $page = 0 ; }
+
+	$offset = $conf->liste_limit * $page ;
+	$pageprev = $page - 1;
+	$pagenext = $page + 1;
+
+	/*
+	 * Lines into withdraw request
+	 */
+	$sql = "SELECT pl.rowid, pl.statut, pl.amount";
+	$sql.= ", s.rowid as socid, s.nom as name";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " WHERE pl.fk_prelevement_bons = ".$id;
+	$sql.= " AND pl.fk_prelevement_bons = pb.rowid";
+	$sql.= " AND pb.entity = ".$conf->entity;
+	$sql.= " AND pl.fk_soc = s.rowid";
+	if ($socid)	$sql.= " AND s.rowid = ".$socid;
+	$sql.= $db->order($sortfield, $sortorder);
+	$sql.= $db->plimit($conf->liste_limit+1, $offset);
+
+	$result = $db->query($sql);
+
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$i = 0;
+
+		$urladd = "&amp;id=".$prev_id;
+
+		print_barre_liste("", $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
+		print"\n<!-- debut table -->\n";
+		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans("Lines"),$_SERVER["PHP_SELF"],"pl.rowid",'',$urladd);
+		print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="center"');
+		print_liste_field_titre('');
+		print "</tr>\n";
+
+		$var=false;
+
+		$total = 0;
+
+		while ($i < min($num,$conf->liste_limit))
+		{
+			$obj = $db->fetch_object($result);
+
+			print "<tr ".$bc[$var].">";
+
+			print "<td>";
+
+			print $ligne->LibStatut($obj->statut,2);
+			print "&nbsp;";
+
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+			print substr('000000'.$obj->rowid, -6);
+			print '</a></td>';
+
+			$thirdparty=new Societe($db);
+			$thirdparty->fetch($obj->socid);
+			print '<td>';
+			print $thirdparty->getNomUrl(1);
+			print "</td>\n";
+
+			print '<td align="center">'.price($obj->amount)."</td>\n";
+
+			print '<td>';
+
+			if ($obj->statut == 3)
+			{
+		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
+			}
+			else
+			{
+		  		print "&nbsp;";
+			}
+
+			print '</td></tr>';
+
+			$total += $obj->total_ttc;
+			$var=!$var;
+			$i++;
+		}
+
+		if($socid)
+		{
+			print "<tr ".$bc[$var].">";
+
+			print '<td>'.$langs->trans("Total").'</td>';
+
+			print '<td align="center">'.price($total)."</td>\n";
+
+			print '<td>&nbsp;</td>';
+
+			print '<td>&nbsp;</td>';
+
+			print "</tr>\n";
+		}
+
+		print "</table>";
+		$db->free($result);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+
+
+
 }
 
 

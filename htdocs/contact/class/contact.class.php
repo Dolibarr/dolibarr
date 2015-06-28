@@ -8,6 +8,7 @@
  * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	       <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
+ * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,9 +50,21 @@ class Contact extends CommonObject
 	var $zip;
 	var $town;
 
-	var $fk_departement;		// deprecated
-	var $departement_code;		// deprecated
-	var $departement;			// deprecated
+	/**
+	 * @deprecated
+	 * @see state_id
+	 */
+	var $fk_departement;
+	/**
+	 * @deprecated
+	 * @see state_code
+	 */
+	var $departement_code;
+	/**
+	 * @deprecated
+	 * @see state
+	 */
+	var $departement;
 	var $state_id;	        	// Id of department
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
@@ -79,7 +92,11 @@ class Contact extends CommonObject
 	var $birthday;
 	var $default_lang;
     var $note_public;           // Public note
-	var $note;                  // deprecated
+	/**
+	 * @deprecated
+	 * @see note_public, note_private
+	 */
+	var $note;
 	var $note_private;			// Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
@@ -565,7 +582,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        $this->skype			= $obj->skype;
+        		$this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -899,18 +916,29 @@ class Contact extends CommonObject
 		global $langs;
 
 		$result='';
+        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
+        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
+        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+        $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
+        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+        $phonelist=array();
+        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
+        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
+        if ($this->phone_pesro) $phonelist[]=$this->phone_perso;
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
-		$lienfin='</a>';
+        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
 
 		if ($option == 'xxx')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'">';
-			$lienfin='</a>';
+			$link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs),'contact').$lienfin.' ');
-		$result.=$lien.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
+        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
+		$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
 		return $result;
 	}
 
@@ -974,7 +1002,7 @@ class Contact extends CommonObject
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('StatusContactDraft');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
 			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
@@ -1089,4 +1117,20 @@ class Contact extends CommonObject
 		}
 	}
 
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old thirdparty id
+	 * @param int $dest_id New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'socpeople'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
 }

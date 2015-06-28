@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,13 @@ if ($action == 'add')
         	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
         	$action = 'create';
         }
+        if (GETPOST('type')=='link' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForLinkType");
+        	$action = 'create';
+        }
         if (GETPOST('type')=='radio' && !GETPOST('param'))
         {
         	$error++;
@@ -141,7 +148,21 @@ if ($action == 'add')
     				}
     			}
 
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params,(GETPOST('alwayseditable')?1:0));
+                $result=$extrafields->addExtraField(
+                	GETPOST('attrname'),
+                	GETPOST('label'),
+                	GETPOST('type'),
+                	GETPOST('pos'),
+                	$extrasize,
+                	$elementtype,
+                	(GETPOST('unique')?1:0),
+                	(GETPOST('required')?1:0),
+                	$default_value,
+                	$params,
+                	(GETPOST('alwayseditable')?1:0),
+                	(GETPOST('perms')?GETPOST('perms'):''),
+                	(GETPOST('list')?1:0)
+                );
     			if ($result > 0)
     			{
     				setEventMessage($langs->trans('SetupSaved'));
@@ -278,7 +299,20 @@ if ($action == 'update')
     					$params['options'][$key] = $value;
     				}
     			}
-    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params,(GETPOST('alwayseditable')?1:0));
+    			$result=$extrafields->update(
+    				GETPOST('attrname'),
+    				GETPOST('label'),
+    				GETPOST('type'),
+    				$extrasize,
+    				$elementtype,
+    				(GETPOST('unique')?1:0),
+    				(GETPOST('required')?1:0),
+    				$pos,
+    				$params,
+    				(GETPOST('alwayseditable')?1:0),
+    				(GETPOST('perms')?GETPOST('perms'):''),
+                	(GETPOST('list')?1:0)
+    			);
     			if ($result > 0)
     			{
     				setEventMessage($langs->trans('SetupSaved'));

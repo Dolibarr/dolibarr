@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Add features to manage Incoterm
+IncotermLabel=Incoterm
+IncotermSetupTitle1=Functionalitate
+IncotermSetupTitle2=Status
+IncotermSetup=Configurare  modul Incoterm
+IncotermFunctionDesc=Activare Functionalitati INcoterm ( Terti, Oferte, Comenzi, Facturi, Livrari )

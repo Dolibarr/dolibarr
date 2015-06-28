@@ -46,11 +46,11 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
 
 $object = new Project($db);
-if ($id > 0 || ! empty($ref))
-{
-	$object->fetch($id,$ref);
-	$object->fetch_thirdparty();
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not includ_once
+
+if ($id > 0 || ! empty($ref)) {
+    $upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
@@ -77,7 +77,11 @@ include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php
  * View
  */
 
-llxHeader('',$langs->trans('Project'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+$title=$langs->trans("Project").' - '.$langs->trans("Document").' - '.$object->ref.' '.$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->ref.' '.$object->name.' - '.$langs->trans("Document");
+$help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
+llxHeader('',$title,$help_url);
 
 $form = new Form($db);
 

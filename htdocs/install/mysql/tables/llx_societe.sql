@@ -4,6 +4,7 @@
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
+-- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@ create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
   nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
+  name_alias          varchar(128) NULL,
   entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
 
   ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)
@@ -70,6 +72,8 @@ create table llx_societe
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
   supplier_account         varchar(32),                         		-- compte client chez un fournisseur
   fk_prospectlevel         varchar(12),                         		-- prospect level (in llx_c_prospectlevel)
+  fk_incoterms             integer,										-- for incoterms
+  location_incoterms       varchar(255),								-- for incoterms
   customer_bad             tinyint        DEFAULT 0,            		-- mauvais payeur 0/1
   customer_rate            real           DEFAULT 0,            		-- taux fiabilite client (0 a 1)
   supplier_rate            real           DEFAULT 0,            		-- taux fiabilite fournisseur (0 a 1)

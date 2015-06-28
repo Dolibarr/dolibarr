@@ -44,7 +44,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	 *  Return list of active generation models
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -143,7 +143,7 @@ abstract class ModeleNumRefSuppliersOrders
  *  Create a document onto disk according to template model.
  *
  *  @param	    DoliDB		$db  			Database handler
- *  @param	    Object		$object			Object supplier order
+ *  @param	    CommandeFournisseur		$object			Object supplier order
  *  @param	    string		$modele			Force template to use ('' to not force)
  *  @param		Translate	$outputlangs	Object lang to use for traduction
  *  @param      int			$hidedetails    Hide details of lines
@@ -151,9 +151,12 @@ abstract class ModeleNumRefSuppliersOrders
  *  @param      int			$hideref        Hide ref
  *  @return     int          				0 if KO, 1 if OK
  * @deprecated Use the new function generateDocument of CommandeFournisseur class
+ * @see CommandeFournisseur::generateDocument()
  */
 function supplier_order_pdf_create(DoliDB $db, CommandeFournisseur $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
+	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 

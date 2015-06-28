@@ -89,7 +89,7 @@ llxHeader('',$pagetitle,'');
 
 $form=new Form($db);
 
-print_fiche_titre($pagetitle,'','resource.png@resource');
+print_fiche_titre($pagetitle,'','title_generic');
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource')
@@ -108,7 +108,7 @@ if(!$ret) {
 }
 else
 {
-	$var=false;
+	$var=true;
 
 	print '<table class="noborder" width="100%">'."\n";
 	print '<tr class="liste_titre">';
@@ -116,7 +116,7 @@ else
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Action'),"","","","",'width="60" align="center"',"","");
-	print '</tr>';
+	print "</tr>\n";
 
 	foreach ($object->lines as $resource)
 	{
@@ -139,7 +139,7 @@ else
 		print '</td>';
 
 		print '<td align="center">';
-		print '<a href="./card.php?action=update&id='.$resource->id.'">';
+		print '<a href="./card.php?action=edit&id='.$resource->id.'">';
 		print img_edit();
 		print '</a>';
 		print '&nbsp;';

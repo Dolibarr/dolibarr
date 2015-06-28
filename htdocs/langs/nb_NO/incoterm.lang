@@ -1,0 +1,7 @@
+Module62000Name=Incoterm
+Module62000Desc=Legg til egenskaper for å administrere Incoterm
+IncotermLabel=Incotermer
+IncotermSetupTitle1=Egenskap
+IncotermSetupTitle2=Status
+IncotermSetup=Oppsett av Incoterm-modulen
+IncotermFunctionDesc=Aktiver Incoterm (Tredjepart, Tilbud, Kundeordre, Kundefaktura, Forsendelse, Leverandørordre)

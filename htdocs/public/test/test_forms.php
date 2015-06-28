@@ -17,8 +17,8 @@ llxHeader();
 <h1>
 This page is a sample of page using Dolibarr HTML widget methods. It is designed to make test with<br>
 - css (add parameter &theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter dol_use_jmobile=1&dol_optimize_smallscreen=1 to enable view with jmobile)<br>
-- no javascript / usage for bind people (add parameter nojs=1 to force disable javascript)<br>
+- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&dol_optimize_smallscreen=1</a> to enable view with jmobile)<br>
+- no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 </h1>
 <br>
 
@@ -51,7 +51,7 @@ print "Test 4c: a select with ajax refresh<br>\n";
 //$array=array(0=>'',1=>'Search into xxx',2=>'Search into yyy',3=>'Search into zzz');
 $array=array();
 $selected=-1;
-print $form->selectArrayAjax(DOL_URL_ROOT.'/core/ajax/selecsearchbox.php', 'testselectc', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print $form->selectArrayAjax('testselectc', DOL_URL_ROOT.'/core/ajax/selecsearchbox.php', $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
 */
 
 print '<br><br>'."\n";
@@ -75,7 +75,7 @@ print '<br><br>'."\n";
 
 // Test4d: form->select_thirdparty
 print "Test 4d: Select thirdparty<br>\n";
-print $form->select_thirdparty(0,'thirdpartytest');
+print $form->select_company(0,'thirdpartytest');
 
 print '<br><br>'."\n";
 

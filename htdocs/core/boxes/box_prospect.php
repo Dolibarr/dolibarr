@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
+include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 
 /**
@@ -73,14 +74,19 @@ class box_prospect extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic=new Societe($db);
+		$thirdpartystatic=new Client($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid, s.fk_stcomm, s.datec, s.tms, s.status";
+			$sql = "SELECT s.nom as name, s.rowid as socid";
+			$sql.= ", s.code_client";
+            $sql.= ", s.client";
+            $sql.= ", s.code_fournisseur";
+            $sql.= ", s.fournisseur";
+            $sql.= ", s.logo";
+			$sql.= ", s.fk_stcomm, s.datec, s.tms, s.status";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (2, 3)";
@@ -96,49 +102,64 @@ class box_prospect extends ModeleBoxes
 			{
 				$num = $db->num_rows($resql);
 
-				$i = 0;
-				$prospectstatic=new Prospect($db);
-				while ($i < $num)
+				$line = 0;
+				while ($line < $num)
 				{
 					$objp = $db->fetch_object($resql);
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
+					$thirdpartystatic->id = $objp->socid;
+                    $thirdpartystatic->name = $objp->name;
+                    $thirdpartystatic->code_client = $objp->code_client;
+                    $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartystatic->client = $objp->client;
+                    $thirdpartystatic->fournisseur = $objp->fournisseur;
+                    $thirdpartystatic->logo = $objp->logo;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-			            'logo' => $this->boximg,
-			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="left"',
+                        'text' => $thirdpartystatic->getNomUrl(1),
+                    	'asis' => 1,
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-			            'text' => $objp->name,
-			            'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right"',
+                        'text' => dol_print_date($datem, "day"),
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
- 			           'text' => dol_print_date($datem, "day"));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => str_replace('img ','img height="14" ',$thirdpartystatic->LibProspCommStatut($objp->fk_stcomm,3)),
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
-     			       'text' => str_replace('img ','img height="14" ',$prospectstatic->LibProspStatut($objp->fk_stcomm,3)));
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                    );
 
-                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
-                    'text' => $thirdpartystatic->LibStatut($objp->status,3));
+                    $line++;
+                }
 
-                    $i++;
-				}
+                if ($num==0)
+                    $this->info_box_contents[$line][0] = array(
+                        'td' => 'align="center"',
+                        'text'=>$langs->trans("NoRecordedProspects"),
+                );
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProspects"));
-
-				$db->free($resql);
-			}
-			else
-			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
-    	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
-			}
-		}
-		else {
+                $db->free($resql);
+            } else {
+                $this->info_box_contents[0][0] = array(
+                    'td' => 'align="left"',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
+            }
+        } else {
 			dol_syslog("box_prospect::loadBox not allowed de read this box content",LOG_ERR);
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-        'text' => $langs->trans("ReadPermissionNotAllowed"));
+            $this->info_box_contents[0][0] = array(
+                'td' => 'align="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
 		}
 	}
 

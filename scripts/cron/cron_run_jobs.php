@@ -42,22 +42,24 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
+require_once ($path."../../htdocs/master.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
+require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+
+// Check parameters
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: ".$script_file." securitykey userlogin cronjobid(optional)\n";
+	usage($path,$script_file);
 	exit(-1);
 }
 $key=$argv[1];
 
 if (! isset($argv[2]) || ! $argv[2]) {
-	print "Usage: ".$script_file." securitykey userlogin cronjobid(optional)\n";
+	usage($path,$script_file);
 	exit(-1);
 } else {
 	$userlogin=$argv[2];
 }
 
-require_once ($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
-require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 
 // Global variables
 $version=DOL_VERSION;
@@ -160,3 +162,20 @@ if(is_array($object->lines) && (count($object->lines)>0))
 $db->close();
 
 exit(0);
+
+
+
+function usage($path,$script_file)
+{
+	global $conf;
+
+	print "Usage: ".$script_file." securitykey userlogin [cronjobid]\n";
+	print "The script return 0 when everything worked successfully.\n";
+	print "\n";
+	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";
+	print "For example, to run pending tasks each day at 3:30, you can add this line:\n";
+	print "30 3 * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
+	print "For example, to run pending tasks every 5mn, you can add this line:\n";
+	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
+}
+

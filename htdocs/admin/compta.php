@@ -44,7 +44,7 @@ $list = array(
     'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
     'ACCOUNTING_SERVICE_BUY_ACCOUNT',
     'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
-    'ACCOUNTING_VAT_ACCOUNT',
+    'ACCOUNTING_VAT_SOLD_ACCOUNT',
     'ACCOUNTING_VAT_BUY_ACCOUNT',
     'ACCOUNTING_ACCOUNT_CUSTOMER',
     'ACCOUNTING_ACCOUNT_SUPPLIER'
@@ -104,7 +104,7 @@ llxHeader();
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ComptaSetup'),$linkback,'setup');
+print_fiche_titre($langs->trans('ComptaSetup'),$linkback,'title_setup');
 
 print '<br>';
 
@@ -135,7 +135,6 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
-print '</form>';
 
 print "</table>\n";
 
@@ -163,11 +162,10 @@ foreach ($list as $key)
 	print '</td></tr>';
 }
 
-print '</form>';
 print "</table>\n";
 
 print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
-
+print '</form>';
 $db->close();
 
 llxFooter();

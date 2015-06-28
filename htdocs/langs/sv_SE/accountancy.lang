@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Redovisning
 Globalparameters=Globala parametrar
@@ -81,9 +88,8 @@ ACCOUNTING_LENGTH_AACCOUNT=Längd av tredjepartskonton
 
 ACCOUNTING_SELL_JOURNAL=Sell ​​tidskrift
 ACCOUNTING_PURCHASE_JOURNAL=Bara tidskrift
-ACCOUNTING_BANK_JOURNAL=Bank tidskrift
-ACCOUNTING_CASH_JOURNAL=Cash journal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diverse tidskrift
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social tidskrift
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Redogörelse för överföring

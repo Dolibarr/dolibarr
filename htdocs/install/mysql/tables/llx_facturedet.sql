@@ -3,6 +3,8 @@
 -- Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,7 +30,7 @@ create table llx_facturedet
   fk_product					integer    NULL,					-- Doit pouvoir etre nul pour ligne detail sans produits
   label							varchar(255) DEFAULT NULL,
   description					text,
-  tva_tx						double(6,3),						-- Taux tva produit/service (exemple 19.6)
+  tva_tx						double(6,3),						-- Vat rate (example 20%)
   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
   localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
@@ -41,8 +43,8 @@ create table llx_facturedet
   price							double(24,8),						-- Deprecated (Do not use)
   total_ht						double(24,8),						-- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva						double(24,8),						-- Total TVA de la ligne toute quantite et incluant remise ligne et globale
-  total_localtax1				double(24,8)  	 DEFAULT 0,			-- Total LocalTax1 for total quantity of line
-  total_localtax2				double(24,8)		 DEFAULT 0,		-- total LocalTax2 for total quantity of line
+  total_localtax1				double(24,8) DEFAULT 0,			-- Total LocalTax1 for total quantity of line
+  total_localtax2				double(24,8) DEFAULT 0,			-- total LocalTax2 for total quantity of line
   total_ttc						double(24,8),						-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
   product_type					integer    DEFAULT 0,
   date_start					datetime   DEFAULT NULL,			-- date debut si service
@@ -53,10 +55,14 @@ create table llx_facturedet
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
-  special_code					integer UNSIGNED DEFAULT 0,			-- code pour les lignes speciales
-  rang							integer    DEFAULT 0,				-- ordre d'affichage
-  import_key					varchar(14)
-  
+  special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
+  rang							integer    DEFAULT 0,				-- position of line
+  import_key					varchar(14),
+
+  situation_percent real,   -- % progression of lines invoicing
+  fk_prev_id        integer, -- id of the line in the previous situation,
+  fk_unit           integer DEFAULT NULL -- id of the unit code¡
+
 )ENGINE=innodb;
 
 -- 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      François Legastelois <flegastelois@teclib.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ if ($user->societe_id > 0) accessforbidden();
 
 
 // Si l'utilisateur n'a pas le droit de lire cette page
-if(!$user->rights->holiday->month_report) accessforbidden();
+if(!$user->rights->holiday->read_all) accessforbidden();
 
 
 
@@ -71,11 +71,18 @@ $sql.= " ORDER BY u.lastname,cp.date_debut";
 $result  = $db->query($sql);
 $num = $db->num_rows($result);
 
-print_fiche_titre($langs->trans('MenuReportMonth'));
+print_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm.png');
 
-print '<div class="tabBar">';
+// Get month of last update
+$lastUpdate = $cp->getConfCP('lastUpdate', 0);
+$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+$yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
+print $langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong><br><br>'."\n";
+
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
+dol_fiche_head();
 
 print $langs->trans('Month').': ';
 print $htmlother->select_month($month, 'month_start').' ';
@@ -83,8 +90,7 @@ print $htmlother->select_year($year,'year_start',1,10,3);
 
 print '<input type="submit" value="'.$langs->trans("Refresh").'" class="button" />';
 
-print '</form>';
-
+print '<br>';
 print '<br>';
 
 $var=true;
@@ -137,7 +143,11 @@ if($num == '0') {
 	}
 }
 print '</table>';
-print '</div>';
+
+dol_fiche_end();
+
+print '</form>';
+
 
 // Fin de page
 llxFooter();

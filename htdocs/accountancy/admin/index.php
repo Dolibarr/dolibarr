@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,8 @@ $list = array (
 		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
 		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
 		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+		'ACCOUNTING_VAT_BUY_ACCOUNT',
+		'ACCOUNTING_VAT_SOLD_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
 		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
 );
@@ -148,7 +151,7 @@ llxHeader();
 $form = new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'setup');
+print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'title_setup');
 
 $head = admin_accounting_prepare_head($accounting);
 
@@ -181,7 +184,6 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
-print '</form>';
 
 print "</table>\n";
 
@@ -221,7 +223,7 @@ if ($resql) {
 		$row = $db->fetch_row($resql);
 		
 		print '<option value="' . $row[0] . '"';
-		print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected="selected"' : '';
+		print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected' : '';
 		print '>' . $row[1] . ' - ' . $row[3] . '</option>';
 		
 		$i ++;
@@ -285,10 +287,10 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 }
 print '</tr>';
 
-print '</form>';
+
 print "</table>\n";
 
 print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
-
+print '</form>';
 llxFooter();
 $db->close();

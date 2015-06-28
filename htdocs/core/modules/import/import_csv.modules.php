@@ -88,7 +88,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return int		Id
+	 * @return string		Id
 	 */
 	function getDriverId()
 	{
@@ -305,7 +305,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Close file handle
 	 *
-	 *  @return	void
+	 *  @return	integer
 	 */
 	function import_close_file()
 	{
@@ -376,7 +376,7 @@ class ImportCsv extends ModeleImports
 						if ($obj) $tablewithentity_cache[$tablename]=1;		// table contains entity field
 						else $tablewithentity_cache[$tablename]=0;			// table does not contains entity field
 					}
-					else dol_print_error($this->db);;
+					else dol_print_error($this->db);
 				}
 				else
 				{

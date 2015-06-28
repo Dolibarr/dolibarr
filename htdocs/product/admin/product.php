@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-**
+ * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -53,6 +54,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity');	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity');
 }
+
+// Clean param
+if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) $conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+
 
 
 /*
@@ -155,6 +160,10 @@ else if ($action == 'viewProdTextsInThirdpartyLanguage')
 	$view = GETPOST('activate_viewProdTextsInThirdpartyLanguage','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
 }
+elseif ($action == 'mergePropalProductCard') {
+	$view = GETPOST('activate_mergePropalProductCard','alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_PDF_MERGE_PROPAL", $view,'chaine',0,'',$conf->entity);
+}
 else if ($action == 'usesearchtoselectproduct')
 {
 	$usesearch = GETPOST('activate_usesearchtoselectproduct','alpha');
@@ -171,6 +180,12 @@ else if ($action == 'set')
 	$ecotaxe = GETPOST("activate_useecotaxe");
 	$res = dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $ecotaxe,'chaine',0,'',$conf->entity);
 }*/
+
+else if ($action == 'useUnits')
+{
+    $useUnits = GETPOST('activate_units', 'alpha');
+    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $useUnits, 'chaine', 0, '', $conf->entity);
+}
 
 if($action)
 {
@@ -208,7 +223,7 @@ else if (empty($conf->service->enabled))
 llxHeader('',$title);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($title,$linkback,'setup');
+print_fiche_titre($title,$linkback,'title_setup');
 
 $head = product_admin_prepare_head();
 dol_fiche_head($head, 'general', $tab, 0, 'product');
@@ -418,6 +433,37 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+// Activate propal merge produt card
+/* disabled. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="mergePropalProductCard">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+print '</form>';*/
+
+// Use units
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="useUnits">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UseUnits").'</td>';
+print '<td width="60" align="right">';
+print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

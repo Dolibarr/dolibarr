@@ -61,7 +61,7 @@ class MenuManager
 	 *  Show menu
 	 *
      *	@param	string	$mode			'top', 'left', 'jmobile'
-     *  @return	void
+     *  @return	string
 	 */
 	function showmenu($mode)
 	{
@@ -177,10 +177,20 @@ class MenuManager
 						print '<div class="menu_contenu">';
 
 						if ($this->menu->liste[$i]['enabled'])
-							print $tabstring.'<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'],1).'">'.$this->menu->liste[$i]['titre'].'</a><br>';
+						{
+							print $tabstring;
+							if ($this->menu->liste[$i]['url']) print '<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'],1).'"'.($this->menu->liste[$i]['target']?' target="'.$this->menu->liste[$i]['target'].'"':'').'>';
+							else print '<span class="vsmenu">';
+							if ($this->menu->liste[$i]['url']) print $this->menu->liste[$i]['titre'].'</a>';
+							else print '</span>';
+						}
 						else
-							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$this->menu->liste[$i]['titre'].'</font><br>';
+						{
+							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$this->menu->liste[$i]['titre'].'</font>';
+						}
 
+						// If title is not pure text and contains a table, no carriage return added
+						if (! strstr($this->menu->liste[$i]['titre'],'<table')) print '<br>';
 						print '</div>'."\n";
 					}
 

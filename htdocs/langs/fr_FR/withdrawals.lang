@@ -84,6 +84,8 @@ WithdrawalFile=Fichier de prélèvement
 SetToStatusSent=Mettre au statut "Fichier envoyé"
 ThisWillAlsoAddPaymentOnInvoice=Ceci créera également les paiements sur les factures et les classera payées
 StatisticsByLineStatus=Statistiques par statut des lignes
+WithdrawRequestAmount=Montant de la demande de prélèvement :
+WithdrawRequestErrorNilAmount=Impossible de créer une demande de prélèvement avec un montant nul.
 
 ### Notifications
 InfoCreditSubject=Crédit prélèvement %s à la banque

@@ -80,7 +80,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 $sql.= " AND b.amount >= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -108,7 +108,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 $sql.= " AND b.amount <= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -137,14 +137,14 @@ $head=bank_prepare_head($acct);
 dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$acct->label;
-$lien=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
 
 print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 // Ref
-print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($_GET["account"])
 {
@@ -172,7 +172,7 @@ else
 print '</td></tr>';
 
 // Label
-print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+print '<tr><td>'.$langs->trans("Label").'</td>';
 print '<td colspan="3">';
 if (! empty($id))
 {
@@ -186,12 +186,14 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br>';
+dol_fiche_end();
+
 
 // Affiche tableau
-print '<table class="notopnoleftnoright" width="100%">';
+print '<div class="floatright">'.$link.'</div>';
 
-print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$lien.'</td></tr>';
+
+print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -245,23 +247,20 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print "</tr>\n";
 
-// Ligne vierge
-print '<tr><td>&nbsp;</td>';
-$nbcol=0;
-for ($annee = $year_start ; $annee <= $year_end ; $annee++)
-{
-	$nbcol+=2;
-}
-print "</tr>\n";
+print "</table>";
 
-// Solde actuel
+
+print '<br>';
+
+
+// Current balance
 $balance=0;
 
 $sql = "SELECT SUM(b.amount) as total";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 if (! empty($id))
 	$sql.= " AND b.fk_account IN (".$db->escape($id).")";
 
@@ -274,6 +273,9 @@ if ($resql)
 else {
 	dol_print_error($db);
 }
+
+print '<table class="noborder" width="100%">';
+
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" align="right">'.price($balance).'</td>';
 print "</tr>\n";
@@ -302,7 +304,7 @@ else
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity = ".$conf->entity;
+	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	if ($id && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$id.")";
 
 	$resql = $db->query($sql);
@@ -333,7 +335,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount > 0";
@@ -422,7 +424,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity = ".$conf->entity;
+		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount < 0";
@@ -496,11 +498,11 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-	print '<div class="fichecenter"><div class="fichehalfleft"><center>';
+	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">';	// do not use class="center" here, it will have no effect for the js graph inside.
 	print $show1;
-	print '</center></div><div class="fichehalfright"><div class="ficheaddleft"><center>';
+	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div align="center">';		// do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
-	print '</center></div></div></div>';
+	print '</div></div></div></div>';
 	print '<div style="clear:both"></div>';
 }
 

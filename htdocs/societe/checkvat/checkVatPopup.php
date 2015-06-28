@@ -39,7 +39,7 @@ print '<body style="margin: 10px">';
 print '<div>';
 print '<div>';
 
-print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','setup');
+print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','title_setup');
 
 
 if (! $_REQUEST["vatNumber"])
@@ -158,7 +158,7 @@ else
 print '<br>';
 print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$langs->trans("VATIntraCheckURL")).'<br>';
 print '<br>';
-print '<center><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></center>';
+print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 
 if ($messagetoshow)
 {
