@@ -280,10 +280,11 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
             $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
+            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
             $sql.= " 0 as payment_id, 0 as payment_amount";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+            $sql.= " ".MAIN_DB_PREFIX."societe as s,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
@@ -291,6 +292,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 			else $sql.= " AND f.type IN (0,1,2,3,5)";
             $sql.= " AND f.rowid = d.".$fk_facture;
+            $sql.= " AND s.rowid = f.fk_soc";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -325,10 +327,11 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
             $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
+            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef as date_f, s.nom as company_name, s.rowid as company_id,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
             $sql.= " 0 as payment_id, 0 as payment_amount";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+            $sql.= " ".MAIN_DB_PREFIX."societe as s,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
@@ -336,6 +339,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 			else $sql.= " AND f.type IN (0,1,2,3,5)";
             $sql.= " AND f.rowid = d.".$fk_facture;
+            $sql.= " AND s.rowid = f.fk_soc";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -384,6 +388,9 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
+                $list[$assoc['rate']]['datef'][] = $assoc['datef'];
+                $list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
+                $list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
                 $list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
                 $list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -438,10 +445,11 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
             $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
+            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
             $sql.= " 0 as payment_id, 0 as payment_amount";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+            $sql.= " ".MAIN_DB_PREFIX."societe as s,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
@@ -449,6 +457,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 			else $sql.= " AND f.type IN (0,1,2,3,5)";
             $sql.= " AND f.rowid = d.".$fk_facture;
+            $sql.= " AND s.rowid = f.fk_soc";
             if ($y && $m)
             {
                 $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -484,12 +493,13 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
             $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_tx as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
             $sql .=" d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
             $sql.= " d.date_start as date_start, d.date_end as date_end,";
-            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc,";
+            $sql.= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
             $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
             $sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
             $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
             $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
             $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
+            $sql.= " ".MAIN_DB_PREFIX."societe as s,";
             $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
             $sql.= " WHERE f.entity = " . $conf->entity;
@@ -497,6 +507,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
         	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 			else $sql.= " AND f.type IN (0,1,2,3,5)";
             $sql.= " AND f.rowid = d.".$fk_facture;
+            $sql.= " AND s.rowid = f.fk_soc";
             $sql.= " AND pf.".$fk_facture2." = f.rowid";
             $sql.= " AND pa.rowid = pf.".$fk_payment;
             if ($y && $m)
@@ -548,6 +559,9 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 }
                 $list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
                 $list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
+                $list[$assoc['rate']]['datef'][] = $assoc['datef'];
+                $list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
+                $list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
                 $list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
                 $list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
