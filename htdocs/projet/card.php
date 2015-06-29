@@ -486,21 +486,24 @@ if ($action == 'create' && $user->rights->projet->creer)
     print $form->select_date(($date_end?$date_end:-1),'projectend');
     print '</td></tr>';
 
-    // Opportunity status
-    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
-    print '<td>';
-    print $formproject->selectOpportunityStatus('opp_status',$object->opp_status);
-    print '</tr>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+	    // Opportunity status
+	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+	    print '<td>';
+	    print $formproject->selectOpportunityStatus('opp_status',$object->opp_status);
+	    print '</tr>';
 
-    // Opportunity amount
-    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-    print '<td><input size="4" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
-    print '</tr>';
+	    // Opportunity amount
+	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+	    print '<td><input size="4" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
+	    print '</tr>';
+    }
 
-    // Budget
-    print '<tr><td>'.$langs->trans("Budget").'</td>';
-    print '<td><input size="4" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
-    print '</tr>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td>';
+	print '<td><input size="4" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '</tr>';
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
@@ -644,17 +647,20 @@ else
         print $form->select_date($object->date_end?$object->date_end:-1,'projectend');
         print '</td></tr>';
 
-	    // Opportunity status
-	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
-    	print '<td>';
-	    print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1);
-	    print '</td>';
-	    print '</tr>';
+    	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	    {
+	        // Opportunity status
+		    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+	    	print '<td>';
+		    print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1);
+		    print '</td>';
+		    print '</tr>';
 
-	    // Opportunity amount
-	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-	    print '<td><input size="4" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
-	    print '</tr>';
+		    // Opportunity amount
+		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<td><input size="4" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
+		    print '</tr>';
+	    }
 
 	    // Budget
 	    print '<tr><td>'.$langs->trans("Budget").'</td>';
@@ -722,16 +728,19 @@ else
         print dol_print_date($object->date_end,'day');
         print '</td></tr>';
 
-        // Opportunity status
-        print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-        if ($code) print $langs->trans("OppStatus".$code);
-        print '</td></tr>';
+    	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	    {
+	        // Opportunity status
+	        print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+	        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+	        if ($code) print $langs->trans("OppStatus".$code);
+	        print '</td></tr>';
 
-        // Opportunity Amount
-        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
-        print '</td></tr>';
+	        // Opportunity Amount
+	        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+	        print '</td></tr>';
+	    }
 
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
