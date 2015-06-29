@@ -419,13 +419,8 @@ if ($object->fetch($id) >= 0)
 			print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$param,'','align="center"',$sortfield,$sortorder);
 		}
 
-		// Statut
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$param,'','align="right"',$sortfield,$sortorder);
-
-		//Search Icon
-		print '<td class="liste_titre">';
-		print '&nbsp';
-		print '</td>';
+		print_liste_field_titre('');
 
 		print '</tr>';
 

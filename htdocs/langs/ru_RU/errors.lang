@@ -170,6 +170,7 @@ ErrorGlobalVariableUpdater4=Ошибка SOAP-клиента '%s'
 ErrorGlobalVariableUpdater5=Не выбрана глобальная переменная
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
+ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
 
 # Warnings
 WarningMandatorySetupNotComplete=Обязательные параметры не определены

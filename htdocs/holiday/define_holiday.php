@@ -39,6 +39,8 @@ $action=GETPOST('action');
 
 $holiday = new Holiday($db);
 
+$langs->load('users');
+
 
 /*
  * Actions
@@ -100,7 +102,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
 		}
     }
 
-    if (! $error) setEventMessage($langs->trans('UpdateConfCPOK'));
+    if (! $error) setEventMessages($langs->trans('UpdateConfCPOK'), '', 'mesgs');
 }
 elseif($action == 'add_event')
 {
@@ -120,7 +122,7 @@ elseif($action == 'add_event')
 
     if ($error)
     {
-	    setEventMessage($langs->trans('ErrorAddEventToUserCP'), 'errors');
+	    setEventMessages($langs->trans('ErrorAddEventToUserCP'), '', 'errors');
     }
     else
 	{
@@ -133,7 +135,7 @@ elseif($action == 'add_event')
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 
-		setEventMessage($langs->trans('AddEventToUserOkCP'));
+		setEventMessages($langs->trans('AddEventToUserOkCP'), '', 'mesgs');
     }
 }
 
@@ -145,13 +147,20 @@ elseif($action == 'add_event')
 $form = new Form($db);
 $userstatic=new User($db);
 
-$langs->load('users');
-
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 print_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
-$holiday->updateSold();	// Create users into table holiday if they don't exists. TODO Remove if we use field into table user.
+print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
+if ($holiday->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+else print $langs->trans('None');
+print "</div><br>\n";
+
+$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
+if ($result < 0)
+{
+	setEventMessages($holiday->error, $holiday->errors, 'errors');
+}
 
 $listUsers = $holiday->fetchUsers(false,true);
 

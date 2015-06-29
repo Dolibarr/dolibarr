@@ -57,6 +57,7 @@ RemoveFromGroup=پاک کردن از گروه
 PasswordChangedAndSentTo=تغییر رمز عبور و ارسال <b>به٪ s.</b>
 PasswordChangeRequestSent=درخواست تغییر رمز عبور <b>برای٪ s ارسال به٪ s.</b>
 MenuUsersAndGroups=کاربران و گروهها
+MenuMyUserCard=My user card
 LastGroupsCreated=تاریخ و زمان آخرین٪ گروه های ایجاد شده
 LastUsersCreated=تاریخ و زمان آخرین٪ کاربران ایجاد شده
 ShowGroup=نمایش گروه

@@ -161,7 +161,7 @@ if ($resql)
     {
         print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
     }
-    print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre('');
 	print "</tr>\n";
 
     // Lines for filters fields

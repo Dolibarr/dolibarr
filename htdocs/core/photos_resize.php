@@ -37,7 +37,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -52,12 +51,19 @@ $cancel=GETPOST("cancel");
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
 $accessallowed=0;
-if ($modulepart=='produit|service')
+if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service')
 {
 	$result=restrictedArea($user,'produit|service',$id,'product&product');
 	if ($modulepart=='produit|service' && (! $user->rights->produit->lire && ! $user->rights->service->lire)) accessforbidden();
 	$accessallowed=1;
 }
+elseif ($modulepart == 'holiday')
+{
+	$result=restrictedArea($user,'holiday',$id,'holiday');
+	if ($modulepart=='holiday' && (! $user->rights->holiday->read)) accessforbidden();
+	$accessallowed=1;
+}
+
 
 // Security:
 // Limit access if permissions are wrong
@@ -66,15 +72,32 @@ if (! $accessallowed)
 	accessforbidden();
 }
 
-$object = new Product($db);
-if ($id > 0)
+// Define dir according to modulepart
+if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service')
 {
-	$result = $object->fetch($id);
-	if ($result <= 0) dol_print_error($db,'Failed to load object');
-	$dir=$conf->product->multidir_output[$object->entity];	// By default
-	if ($object->type == Product::TYPE_PRODUCT) $dir=$conf->product->multidir_output[$object->entity];
-	if ($object->type == Product::TYPE_SERVICE) $dir=$conf->service->multidir_output[$object->entity];
+	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	$object = new Product($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->product->multidir_output[$object->entity];	// By default
+		if ($object->type == Product::TYPE_PRODUCT) $dir=$conf->product->multidir_output[$object->entity];
+		if ($object->type == Product::TYPE_SERVICE) $dir=$conf->service->multidir_output[$object->entity];
+	}
 }
+elseif ($modulepart == 'holiday')
+{
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$object = new Holiday($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db,'Failed to load object');
+		$dir=$conf->holiday->dir_output;	// By default
+	}
+}
+
 
 /*
  * Actions

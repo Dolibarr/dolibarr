@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
-Module112000Name=Doğrudan yazdırma
-Module112000Desc=Doğrudan Yazdırma Sistemini Engelle
+Module64000Name=Doğrudan Yazdırma
+Module64000Desc=Doğrudan Yazdırma Sistemini etkinleştir
 PrintingSetup=Doğrudan Yazdırma Sistemi Ayarları
 PrintingDesc=Bu modül, çeşitli modüllerde belgeleri doğrudan yazıcıya göndermek için bir Yazdırma tuşu ekler (belge uygulamada açılmadan) 
 ModuleDriverSetup=Modül Sürücüsü Ayarları
@@ -49,7 +49,6 @@ PRINTIPP_PORT=Port
 PRINTIPP_USER=Oturum açma
 PRINTIPP_PASSWORD=Parola
 NoPrinterFound=Yazıcı bulunamadı (CUPS ayarlarınızı denetleyin)
-FileWasSentToPrinter=%s Dosyası yazıcıya gönderilmiştir
 NoDefaultPrinterDefined=Tanımlı varsayılan yazıcı yok
 DefaultPrinter=Varsayılan yazıcı
 Printer=Yazıcı

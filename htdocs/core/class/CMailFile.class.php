@@ -39,7 +39,7 @@ class CMailFile
 	var $subject;      	// Topic:       Subject of email
 	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>')
 	                   	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, use for Sender an email of the protected domain.
+	                   	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
 	                   	// Return-Path: Email where to send bounds.
 	var $errors_to;		// Errors-To:	Email where to send errors.
 	var $addr_to;
@@ -408,8 +408,8 @@ class CMailFile
 					$bounce = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
-						// le return-path dans les header ne fonctionne pas avec tous les MTA
-						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
+						// Le forcage de la valeure grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
 						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
@@ -427,7 +427,15 @@ class CMailFile
 
 					if (! $res)
 					{
-						$this->error="Failed to send mail with php mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+						$this->error="Failed to send mail with php mail";
+						$linuxlike=1;
+						if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
+						if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
+						if (! $linuxlike)
+						{
+							$this->error.=" to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port');	// This values are value used only for non linuxlike systems
+						}
+						$this->error.=".<br>Check your server logs and your firewalls setup";
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					}
 					else

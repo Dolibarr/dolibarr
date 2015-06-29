@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -244,6 +244,18 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
 <?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
+
+<?php
+if (! empty($hookmanager->resArray['options'])) {
+	foreach ($hookmanager->resArray['options'] as $format => $option)
+	{
+		if ($format == 'js') {
+			echo "\n".'<!-- Javascript by hook -->';
+			echo $option."\n";
+		}
+	}
+}
+?>
 
 <?php
 // Google Analytics (need Google module)

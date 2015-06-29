@@ -212,7 +212,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Execute hook getLoginPageOptions
 	// Should be an array with differents options in $hookmanager->resArray
 	$parameters=array('entity' => GETPOST('entity','int'));
-	$hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks. resArray is filled by hook.
 
 	// Login
 	$login = (! empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username","alpha") ? GETPOST("username","alpha") : $demologin));
@@ -238,7 +238,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
-
 	}
 
 	// Security graphical code

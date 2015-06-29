@@ -4,10 +4,10 @@ About = Hakkında
 CronAbout = Cron hakkında
 CronAboutPage = Cron hakkında sayfası
 # Right
-Permission23101 = Planlı görev oku
-Permission23102 = Planlı görev oluştur/güncelle
-Permission23103 = Planlı görev sil
-Permission23104 = Planlı görev yürüt
+Permission23101 = Planlı işleri oku
+Permission23102 = Planlı iş oluştur/güncelle
+Permission23103 = Planlı iş sil
+Permission23104 = Planlı iş yürüt
 # Admin
 CronSetup= Planlı iş yönetimi ayarları
 URLToLaunchCronJobs=Gerekliyse, Cron işlerini denetleyen ve başlatan İnternet adresi
@@ -26,11 +26,11 @@ CronLastOutput=Son çalıştırma çıktısı
 CronLastResult=Son sonuç kodu
 CronListOfCronJobs=Planlı işler listesi
 CronCommand=Komut
-CronList=Planlı iş
+CronList=Planlı işler
 CronDelete=Planlı işleri sil
-CronConfirmDelete=Bu planlı işi silmek istediğinizden emin misiniz?
+CronConfirmDelete=Bu planlı işleri silmek istediğinizden emin misiniz?
 CronExecute=Planlı işleri yükle
-CronConfirmExecute=Bu planlı işi şimdi yürütmek istediğinizden emin misiniz?
+CronConfirmExecute=Bu planlı işleri şimdi yürütmek istediğinizden emin misiniz?
 CronInfo=Planlı iş modülü planlanmış işlerin yürütülmesini sağlar
 CronWaitingJobs=İş bekliyor
 CronTask=İş
@@ -55,9 +55,9 @@ CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
 #Page card
 CronAdd= İş ekle
-CronHourStart= Görevin başlama saati ve tarihi
-CronEvery= Ve her işi yürüt
-CronObject= Oluşturulacak durum/nesne
+CronHourStart= İşin başlama saati ve tarihi
+CronEvery=İş yürütme zamanı
+CronObject=Oluşturulacak durum/nesne
 CronArgs=Parametreler
 CronSaveSucess=Kayıt başarılı
 CronNote=Yorum
@@ -79,10 +79,10 @@ CronCreateJob=Yeni Planlı İş oluştur
 # Info
 CronInfoPage=Bilgi
 # Common
-CronType=Görev türü
+CronType=İş türü
 CronType_method=Dolibarr Sınıfı çağırma yöntemi
 CronType_command=Kabuk komutu
 CronMenu=Kron
 CronCannotLoadClass=%s sınıfı ya da %s nesnesi yüklenemiyor
 UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Modül araçları - İş listesi" menüsüne gidin.
-TaskDisabled=Görev engellendi
+TaskDisabled=İş engellendi

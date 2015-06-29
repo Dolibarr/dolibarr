@@ -64,6 +64,7 @@ DatabaseSuperUserAccess=Accesso superutente al database
 CheckToCreateDatabase=Seleziona questa opzione se il database non esiste e deve essere creato.<br>Sarà necessario indicare login e password dell'account di root in fondo a questa pagina.
 CheckToCreateUser=Seleziona questa opzione se l'utente non esiste e deve essere creato.<br/>In questo caso, è necessario indicare login e password dell'account di root in fondo a questa pagina.
 Experimental=(Sperimentale)
+Deprecated=(deprecated)
 DatabaseRootLoginDescription=Login utente con permesso di creare nuovi database o nuovi utenti. Non è necessario se il database esiste già.
 KeepEmptyIfNoPassword=Lasciare vuoto se l'utente non ha alcuna password (da evitare per motivi di sicurezza)
 SaveConfigurationFile=Salva file

@@ -377,8 +377,8 @@ if ($socid && $action != 'edit' && $action != "create")
 			print '<td>'.$langs->trans("WithdrawMode").'</td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
-        print '<td width="40"></td>';
-        print '</tr>';
+        print_liste_field_titre('');
+		print "</tr>\n";
 
         foreach ($rib_list as $rib)
         {

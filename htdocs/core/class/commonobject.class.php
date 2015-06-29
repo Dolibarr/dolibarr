@@ -135,7 +135,7 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		$sql.= " WHERE entity IN (".getEntity($element).")" ;
+		$sql.= " WHERE entity IN (".getEntity($element,1).")" ;
 
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
@@ -3572,8 +3572,8 @@ abstract class CommonObject
      * Function to show lines of extrafields with output datas
      *
      * @param	object	$extrafields	Extrafield Object
-     * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			Optionnal parameters
+     * @param	string	$mode			Show output ('view') or input ('edit') for extrafield
+	 * @param	array	$params			Optionnal parameters. Example: array('colspan'=>2)
 	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string

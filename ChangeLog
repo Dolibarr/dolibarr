@@ -34,6 +34,7 @@ For translators:
 For developers:
 - New: Function yn can show a visual checkbox.
 - New: Introduced select2 jquery plugin.
+- New: Possibility to add javascript in main login page with "getLoginPageOptions" hook
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -42,8 +43,9 @@ Dolibarr better:
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
 - All fields "fk_societe" were renamed into "fk_soc".
-- Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType
-
+- Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType.
+- The trigger USER_LOGIN* are deprecated. They are still working but you should prefer use the 
+  hook afterLogin or afterLoginFailed instead.
 
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page

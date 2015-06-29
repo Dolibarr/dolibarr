@@ -57,6 +57,7 @@ RemoveFromGroup=Eltávolítás a csoportból
 PasswordChangedAndSentTo=A jelszó megváltoztatva és elküldve: <b>%s</b>.
 PasswordChangeRequestSent=<b>%s</b> által kért jelszóváltoztatás el lett küldve ide: <b>%s</b>.
 MenuUsersAndGroups=Felhasználók és csoportok
+MenuMyUserCard=My user card
 LastGroupsCreated=Utolsó %s létrehozott csoport
 LastUsersCreated=Utolsó %s létrehozott felhasználó
 ShowGroup=Csoport mutatása

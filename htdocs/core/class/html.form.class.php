@@ -398,7 +398,7 @@ class Form
         if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
 
         $htmltext=str_replace('"',"&quot;",$htmltext);
-        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td img tag to store tooltip
+        if ($tooltipon == 2 || $tooltipon == 3) $paramfortooltipimg=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on img tag to store tooltip
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
         if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
@@ -5146,11 +5146,11 @@ class Form
 	                 */
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img class="photo'.$modulepart.'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
+                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)),3).'?s='.$width.'&d='.urlencode(dol_buildpath($nophoto,2)).'">';	// gravatar need md5 hash
                 }
                 else
 				{
-                    $ret.='<img class="photo'.$modulepart.'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
+                    $ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'">';
                 }
             }
 
