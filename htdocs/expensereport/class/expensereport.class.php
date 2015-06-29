@@ -1142,9 +1142,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Update total of an expense report when you add a line.
 	 *
-	 *	@param		string		$ligne_total_ht
-	 *	@param		string		$ligne_total_tva
-	 *  @return		void
+	 *	@param    string    $ligne_total_ht    Amount without taxes
+	 *	@param    string    $ligne_total_tva    Amount of all taxes
+	 *  @return    void
 	 */
 	function update_totaux_add($ligne_total_ht,$ligne_total_tva)
 	{
@@ -1170,9 +1170,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Update total of an expense report when you delete a line.
 	 *
-	 *	@param		string		$ligne_total_ht
-	 *	@param		string		$ligne_total_tva
-	 *  @return		void
+	 *	@param    string    $ligne_total_ht    Amount without taxes
+	 *	@param    string    $ligne_total_tva    Amount of all taxes
+	 *  @return    void
 	 */
 	function update_totaux_del($ligne_total_ht,$ligne_total_tva)
 	{
