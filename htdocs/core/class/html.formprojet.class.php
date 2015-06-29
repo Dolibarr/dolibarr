@@ -364,7 +364,7 @@ class FormProjets
 						}
 						// Label for task
 						$labeltoshow.=' - '.$obj->tref.' '.dol_trunc($obj->tlabel,$maxlength);
-						
+
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
 							$out.= '<option value="'.$obj->rowid.'" selected';
@@ -408,8 +408,8 @@ class FormProjets
 			return -1;
 		}
 	}
-	
-	
+
+
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
@@ -467,7 +467,7 @@ class FormProjets
 			$i = 0;
 			if ($num > 0)
 			{
-				$sellist = '<select class="flat" name="elementselect">';
+				$sellist = '<select class="flat elementselect" name="elementselect">';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -497,5 +497,58 @@ class FormProjets
 		}
 	}
 
+
+	/**
+	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
+	 *
+	 *    @param	string		$htmlname			HTML name
+	 *    @param	int			$preselected		Preselected
+	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
+	 */
+	function selectOpportunityStatus($htmlname,$preselected=0)
+	{
+		global $conf, $langs;
+
+		$sql = "SELECT rowid, ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX.'c_lead_status';
+		$sql.= " ORDER BY ref DESC";
+
+		dol_syslog(get_class($this).'::selectOpportunityStatus', LOG_DEBUG);
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num > 0)
+			{
+				$sellist = '<select class="flat" name="'.$htmlname.'">';
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+
+					$sellist .='<option value="'.$obj->rowid.'">'.$ref.'</option>';
+					$i++;
+				}
+				$sellist .='</select>';
+			}
+			/*else
+			{
+				$sellist = '<select class="flat" name="elementselect">';
+				$sellist.= '<option value="0" disabled>'.$langs->trans("None").'</option>';
+				$sellist.= '</select>';
+			}*/
+			$this->db->free($resql);
+
+			return $sellist;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->errors[]=$this->db->lasterror();
+			dol_syslog(get_class($this) . "::selectOpportunityStatus " . $this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 }

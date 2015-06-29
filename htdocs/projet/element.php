@@ -487,7 +487,6 @@ foreach ($listofreferent as $key => $value)
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
 
-
 		$element = new $classname($db);
 
 		$addform='';
@@ -621,7 +620,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-					if ($element instanceof Task) 
+					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1,'withproject','time');
 						print ' - '.dol_trunc($element->label, 48);
@@ -692,8 +691,8 @@ foreach ($listofreferent as $key => $value)
 					{
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 						$total_ht_by_line = price2num($tmp['amount'],'MT');
-						if ($tmp['nblinesnull'] > 0) 
-						{	
+						if ($tmp['nblinesnull'] > 0)
+						{
 							$langs->load("errors");
 							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate");
 						}
@@ -808,6 +807,18 @@ foreach ($listofreferent as $key => $value)
 		}
 		print "</table>";
 	}
+}
+
+// Enhance with select2
+$nodatarole='';
+if ($conf->use_javascript_ajax)
+{
+	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	$comboenhancement = ajax_combobox('.elementselect');
+	$out.=$comboenhancement;
+	$nodatarole=($comboenhancement?' data-role="none"':'');
+
+	print $comboenhancement;
 }
 
 

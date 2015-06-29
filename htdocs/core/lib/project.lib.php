@@ -891,16 +891,17 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	$project_year_filter=0;
 
 	$title=$langs->trans("Project");
-	if ($statut != '' && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts[$statut]).')';
+	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts[$statut]).')';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($title,"index.php","","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
+	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
@@ -966,7 +967,8 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
 				print ' - '.dol_trunc($objp->title,24).'</td>';
-				print '<td align="right">'.$objp->nb.'</td>';
+				if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))  print '<td align="right">'.$objp->fk_opp_status.'</td>';
+				if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$objp->nb.'</td>';
 				$projectstatic->statut = $objp->fk_statut;
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 				print "</tr>\n";
