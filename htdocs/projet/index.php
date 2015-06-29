@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,6 +94,7 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 	print "<br>\n";
 }
 
+// List of draft projects
 print_projecttasks_array($db,$socid,$projectsListId,0,0);
 
 
@@ -164,7 +165,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
-	$sql = "SELECT p.ref, p.title, p.rowid as projectid, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
+	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -195,6 +196,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 		print '<tr class="liste_titre">';
 		//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
 		print '<th>'.$langs->trans('Projects').'</th>';
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print '<th>'.$langs->trans('OpportunityStatus').'</th>';
 		print '<th>'.$langs->trans('Task').'</th>';
 		print '<th>'.$langs->trans('DateStart').'</th>';
 		print '<th>'.$langs->trans('DateEnd').'</th>';
@@ -226,6 +228,13 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 			print $projectstatic->getNomUrl(1,'',16);
 			//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$obj->projectid.'">'.$obj->title.'</a>';
 			print '</td>';
+			if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+			{
+				print '<td>';
+				$code = dol_getIdFromCode($db, $obj->opp_status, 'c_lead_status', 'rowid', 'code');
+        		if ($code) print $langs->trans("OppStatus".$code);
+				print '</td>';
+			}
 			print '<td>';
 			if (! empty($obj->taskid))
 			{
@@ -264,7 +273,9 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 		if ($num > $max)
 		{
-			print '<tr><td colspan="6">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';
+			$colspan=6;
+			if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) $colspan++;
+			print '<tr><td colspan="'.$colspan.'">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';
 		}
 
 		print "</table>";

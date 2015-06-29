@@ -414,32 +414,36 @@ class FormProjets
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
 	 *    @param	string		$table_element		Table of the element to update
-	 *    @param	int			$socid				socid to filter
+	 *    @param	int			$socid				If of thirdparty to use as filter
+	 *    @param	string		$morecss			More CSS
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element,$socid=0)
+	function select_element($table_element,$socid=0,$morecss='')
 	{
 		global $conf, $langs;
 
 		if ($table_element == 'projet_task') return '';		// Special cas of element we never link to a project (already always done)
 
+		$linkedtothirdparty=false;
+		if (! in_array($table_element, array('don','expensereport_det','expensereport'))) $linkedtothirdparty=true;
+
 		$projectkey="fk_projet";
 		switch ($table_element)
 		{
 			case "facture":
-				$sql = "SELECT rowid, facnumber as ref";
+				$sql = "SELECT t.rowid, t.facnumber as ref";
 				break;
 			case "facture_fourn":
-				$sql = "SELECT rowid, ref, ref_supplier";
+				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
 				break;
 			case "commande_fourn":
-				$sql = "SELECT rowid, ref, ref_supplier";
+				$sql = "SELECT t.rowid, t.ref, t.ref_supplier";
 				break;
 			case "facture_rec":
-				$sql = "SELECT rowid, titre as ref";
+				$sql = "SELECT t.rowid, t.titre as ref";
 				break;
 			case "actioncomm":
-				$sql = "SELECT id as rowid, label as ref";
+				$sql = "SELECT t.id as rowid, t.label as ref";
 				$projectkey="fk_project";
 				break;
 			case "expensereport_det":
@@ -448,14 +452,16 @@ class FormProjets
 				$projectkey="fk_projet";
 				break;*/
 			default:
-				$sql = "SELECT rowid, ref";
+				$sql = "SELECT t.rowid, t.ref";
 				break;
 		}
-
-		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
+		if ($linkedtothirdparty) $sql.=", s.nom as name";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element." as t";
+		if ($linkedtothirdparty) $sql.=", ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE ".$projectkey." is null";
-		if (! empty($socid) && ! in_array($table_element, array('don'))) $sql.= " AND fk_soc=".$socid;
-		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND entity='.getEntity('project');
+		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
+		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity='.getEntity('project');
+		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
@@ -467,12 +473,14 @@ class FormProjets
 			$i = 0;
 			if ($num > 0)
 			{
-				$sellist = '<select class="flat elementselect" name="elementselect">';
+				$sellist = '<select class="flat elementselect css'.$table_element.($morecss?' '.$morecss:'').'" name="elementselect">';
+				$sellist .='<option value="-1"></option>';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
 					$ref=$obj->ref?$obj->ref:$obj->rowid;
 					if (! empty($obj->ref_supplier)) $ref.=' ('.$obj->ref_supplier.')';
+					if (! empty($obj->name)) $ref.=' - '.$obj->name;
 					$sellist .='<option value="'.$obj->rowid.'">'.$ref.'</option>';
 					$i++;
 				}
@@ -490,6 +498,7 @@ class FormProjets
 		}
 		else
 		{
+			dol_print_error($this->db);
 			$this->error=$this->db->lasterror();
 			$this->errors[]=$this->db->lasterror();
 			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
@@ -503,15 +512,18 @@ class FormProjets
 	 *
 	 *    @param	string		$htmlname			HTML name
 	 *    @param	int			$preselected		Preselected
+	 *    @param	int			$shwoempty			Add an empty line
+	 *    @param	int			$useshortlabel		Use short label
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname,$preselected=0)
+	function selectOpportunityStatus($htmlname,$preselected=0,$showempty=1,$useshortlabel=0)
 	{
 		global $conf, $langs;
 
-		$sql = "SELECT rowid, ref";
+		$sql = "SELECT rowid, code, label, percent";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_lead_status';
-		$sql.= " ORDER BY ref DESC";
+		$sql.= " WHERE active = 1";
+		$sql.= " ORDER BY position";
 
 		dol_syslog(get_class($this).'::selectOpportunityStatus', LOG_DEBUG);
 
@@ -522,12 +534,26 @@ class FormProjets
 			$i = 0;
 			if ($num > 0)
 			{
-				$sellist = '<select class="flat" name="'.$htmlname.'">';
+				$sellist = '<select class="flat oppstatus" name="'.$htmlname.'">';
+				if ($showempty) $sellist.= '<option value="-1"></option>';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .='<option value="'.$obj->rowid.'">'.$ref.'</option>';
+					$sellist .='<option value="'.$obj->rowid.'"';
+					if ($obj->rowid == $preselected) $sellist .= ' selected="selected"';
+					$sellist .= '>';
+					if ($useshortlabel)
+					{
+						$finallabel = ($langs->transnoentitiesnoconv("OppStatusShort".$obj->code) != "OppStatusShort".$obj->code ? $langs->transnoentitiesnoconv("OppStatusShort".$obj->code) : $obj->label);
+					}
+					else
+					{
+						$finallabel = ($langs->transnoentitiesnoconv("OppStatus".$obj->code) != "OppStatus".$obj->code ? $langs->transnoentitiesnoconv("OppStatus".$obj->code) : $obj->label);
+						$finallabel.= ' ('.$obj->percent.'%)';
+					}
+					$sellist .= $finallabel;
+					$sellist .='</option>';
 					$i++;
 				}
 				$sellist .='</select>';

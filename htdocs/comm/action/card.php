@@ -992,7 +992,7 @@ if ($id > 0)
 			print '</td>';
 
 			// Contact
-			print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
+			print '<td>'.$langs->trans("Contact").'</td><td>';
 			$form->select_contacts($object->socid, $object->contactid, 'contactid', 1, '', '', 0, 'minwidth200');
 			print '</td></tr>';
 		}
@@ -1065,7 +1065,7 @@ if ($id > 0)
 		if($action == 'clone')
 		{
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('CloneAction'), $langs->trans('ConfirmCloneAction', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
-			
+
 			print $formconfirm;
 		}
 
@@ -1275,7 +1275,7 @@ if ($id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
-			
+
 			if ($user->rights->agenda->allactions->create ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
 			{
@@ -1285,7 +1285,7 @@ if ($id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
-			
+
 			if ($user->rights->agenda->allactions->delete ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete))
 			{

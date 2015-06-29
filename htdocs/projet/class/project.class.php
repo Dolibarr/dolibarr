@@ -66,8 +66,8 @@ class Project extends CommonObject
 
     var $statuts_short;
     var $statuts_long;
-    var $statuts;			// 0=draft, 1=opened, 2=closed
 
+    var $statut;			// 0=draft, 1=opened, 2=closed
     var $opp_status;		// opportunity status, into table llx_c_lead_status
 
     var $oldcopy;
@@ -157,7 +157,7 @@ class Project extends CommonObject
         $sql.= ", '" . $this->db->escape($this->description) . "'";
         $sql.= ", " . ($this->socid > 0 ? $this->socid : "null");
         $sql.= ", " . $user->id;
-        $sql.= ", ".(is_numeric($this->statuts) ? $this->statuts : '0');
+        $sql.= ", ".(is_numeric($this->statut) ? $this->statut : '0');
         $sql.= ", ".(is_numeric($this->opp_status) ? $this->opp_status : 'NULL');
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", '".$this->db->idate($now)."'";
@@ -236,6 +236,7 @@ class Project extends CommonObject
         // Clean parameters
         $this->title = trim($this->title);
         $this->description = trim($this->description);
+		if ($this->opp_amount < 0) $this->opp_amount='';
 
         if (dol_strlen(trim($this->ref)) > 0)
         {
@@ -258,7 +259,7 @@ class Project extends CommonObject
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
             $sql.= " WHERE rowid = " . $this->id;
 
-            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
+            dol_syslog(get_class($this)."::update", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -317,13 +318,13 @@ class Project extends CommonObject
                 $this->error = $this->db->lasterror();
                 $this->errors[] = $this->error;
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::update error -2 " . $this->error, LOG_ERR);
                 $result = -2;
             }
         }
         else
         {
-            dol_syslog(get_class($this)."::Update ref null");
+            dol_syslog(get_class($this)."::update ref null");
             $result = -1;
         }
 

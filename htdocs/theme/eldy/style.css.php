@@ -1891,7 +1891,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top;
-	padding-top: 5px;
+	padding-top: 5px !important;
 	padding-bottom: 0px;
 }
 

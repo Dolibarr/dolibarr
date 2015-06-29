@@ -437,7 +437,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		print '<tr><td colspan="9">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="9">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 	print "</table>";
 
