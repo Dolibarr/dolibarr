@@ -231,11 +231,13 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 			while ($i < $num && $i < $max)
 			{
 				$obj = $db->fetch_object($result);
+				$expensereportstatic->id=$obj->rowid;
+				$expensereportstatic->ref=$obj->ref;
 				$userstatic->id=$obj->uid;
 				$userstatic->lastname=$obj->lastname;
 				$userstatic->firstname=$obj->firstname;
 				print '<tr '.$bc[$var].'>';
-				print '<td><a href="../expensereport/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->ref.'</a></td>';
+				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';

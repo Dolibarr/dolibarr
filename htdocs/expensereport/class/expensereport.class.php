@@ -371,7 +371,7 @@ class ExpenseReport extends CommonObject
     function set_paid($id, $fuser)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-		$sql.= " SET fk_statut = 6;
+		$sql.= " SET fk_statut = 6";
         $sql.= " WHERE rowid = $id AND fk_statut = 5";
 
 		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
@@ -1074,6 +1074,11 @@ class ExpenseReport extends CommonObject
 		}
 	}
 
+	/**
+	 * Return next reference of expense report not already used
+	 *
+	 * @return    string			free ref
+	 */	
 	function getNextNumRef()
 	{
 		global $conf;
@@ -1109,12 +1114,11 @@ class ExpenseReport extends CommonObject
 		endif;
 	}
 
-
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@return		string					Chaine avec URL
+	 *	@return		string					String with URL
 	 */
 	function getNomUrl($withpicto=0)
 	{
@@ -1135,8 +1139,15 @@ class ExpenseReport extends CommonObject
 		return $result;
 	}
 
-
-	function update_totaux_add($ligne_total_ht,$ligne_total_tva){
+	/**
+	 *	Update total of an expense report when you add a line.
+	 *
+	 *	@param		string		$ligne_total_ht
+	 *	@param		string		$ligne_total_tva
+	 *  @return		void
+	 */
+	function update_totaux_add($ligne_total_ht,$ligne_total_tva)
+	{
 		$this->total_ht = $this->total_ht + $ligne_total_ht;
 		$this->total_tva = $this->total_tva + $ligne_total_tva;
 		$this->total_ttc = $this->total_ht + $this->total_tva;
@@ -1156,7 +1167,15 @@ class ExpenseReport extends CommonObject
 		endif;
 	}
 
-	function update_totaux_del($ligne_total_ht,$ligne_total_tva){
+	/**
+	 *	Update total of an expense report when you delete a line.
+	 *
+	 *	@param		string		$ligne_total_ht
+	 *	@param		string		$ligne_total_tva
+	 *  @return		void
+	 */
+	function update_totaux_del($ligne_total_ht,$ligne_total_tva)
+	{
 		$this->total_ht = $this->total_ht - $ligne_total_ht;
 		$this->total_tva = $this->total_tva - $ligne_total_tva;
 		$this->total_ttc = $this->total_ht + $this->total_tva;
@@ -1490,12 +1509,12 @@ class ExpenseReportLine
 	/**
 	 * fetch record
 	 *
-	 * @param	int		$rowid		Row id to fetch
+	 * @param	int		$rowid		Id of object to load
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	function fetch($rowid, $ref='')
 	{
-		$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
+		$sql = 'SELECT fde.rowid, fde.ref, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
 		$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
 		$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 		$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
@@ -1503,7 +1522,7 @@ class ExpenseReportLine
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 		$sql.= ' WHERE fde.rowid = '.$rowid;
-
+		
 		$result = $this->db->query($sql);
 
 		if($result)
@@ -1511,6 +1530,8 @@ class ExpenseReportLine
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid = $objp->rowid;
+			$this->id = $obj->rowid;
+			$this->ref = $obj->ref;
 			$this->fk_expensereport = $objp->fk_expensereport;
 			$this->comments = $objp->comments;
 			$this->qty = $objp->qty;

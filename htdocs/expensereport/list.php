@@ -245,16 +245,21 @@ if ($resql)
 	$total_total_ht = 0;
 	$total_total_ttc = 0;
 	$total_total_tva = 0;
+	
+	$expensereportstatic=new ExpenseReport($db);
 
 	if($num > 0)
 	{
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($resql);
+			
+			$expensereportstatic->id=$objp->rowid;
+			$expensereportstatic->ref=$objp->ref;
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
-			print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->ref.'</a></td>';
+			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 			print '<td align="center">'.($objp->date_debut > 0 ? dol_print_date($objp->date_debut, 'day') : '').'</td>';
 			print '<td align="center">'.($objp->date_fin > 0 ? dol_print_date($objp->date_fin, 'day') : '').'</td>';
 			print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->id_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>';
