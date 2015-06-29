@@ -286,7 +286,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$invoice_customer->id=$x_coll[$my_coll_rate]['facid'][$id];
 			$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
 			$invoice_customer->type=$x_coll[$my_coll_rate]['type'][$id];
-            $company_static->fetch($x_coll[$my_coll_rate]['company_id'][$id]);
+			$company_static->fetch($x_coll[$my_coll_rate]['company_id'][$id]);
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
 				'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
 				'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
@@ -323,7 +323,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 			$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 			$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];
-            $company_static->fetch($x_paye[$my_paye_rate]['company_id'][$id]);
+			$company_static->fetch($x_paye[$my_paye_rate]['company_id'][$id]);
 			$x_both[$my_paye_rate]['paye']['detail'][] = array(
 				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
 				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
@@ -336,7 +336,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'dtotal_ttc'=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
 				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
 				'datef'     =>$x_paye[$my_paye_rate]['datef'][$id],
-                'company_link'=>$company_static->getNomUrl(1,'',20),
+				'company_link'=>$company_static->getNomUrl(1,'',20),
 				'ddate_start'=>$x_paye[$my_paye_rate]['ddate_start'][$id],
 				'ddate_end'  =>$x_paye[$my_paye_rate]['ddate_end'][$id],
 				'totalht'   =>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
@@ -414,8 +414,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 				// Invoice date
 				print '<td align="left">' . $fields['datef'] . '</td>';
-                // Company name
-                print '<td align="left">' . $fields['company_link'] . '</td>';
+				// Company name
+				print '<td align="left">' . $fields['company_link'] . '</td>';
 
 				// Description
 				print '<td align="left">';
@@ -524,7 +524,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 	if (count($x_coll) == 0) {  // Show a total ine if nothing shown
 		print '<tr class="liste_total">';
-        print '<td colspan="'.$span.'"></td>';
+		print '<td colspan="'.$span.'"></td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
 		if ($modetax == 0) {
 			print '<td class="nowrap" align="right">&nbsp;</td>';
@@ -582,8 +582,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
 				// Invoice date
 				print '<td align="left">' . $fields['datef'] . '</td>';
-                // Company name
-                print '<td align="left">' . $fields['company_link'] . '</td>';
+				// Company name
+				print '<td align="left">' . $fields['company_link'] . '</td>';
 
 				// Description
 				print '<td align="left">';
@@ -669,7 +669,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		}
 		// Total suppliers for this vat rate
 		print '<tr class="liste_total">';
-        print '<td colspan="'.$span.'"></td>';
+		print '<td colspan="'.$span.'"></td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
 		if ($modetax == 0) {
 			print '<td class="nowrap" align="right">&nbsp;</td>';
@@ -682,7 +682,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 	if (count($x_paye) == 0) {  // Show a total ine if nothing shown
 		print '<tr class="liste_total">';
-        print '<td colspan="'.$span.'"></td>';
+		print '<td colspan="'.$span.'"></td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
 		if ($modetax == 0) {
 			print '<td class="nowrap" align="right">&nbsp;</td>';
