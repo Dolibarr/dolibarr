@@ -82,7 +82,7 @@ class FormOrder
 		print '<select class="flat" name="'.$htmlname.'">';
 		if ($addempty) print '<option value="-1" selected>&nbsp;</option>';
 
-		// TODO Use a table called llx_c_input_reason
+		// TODO Use the table called llx_c_input_reason
 		print '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans('OrderSource0').'</option>';
 		print '<option value="1"'.($selected=='1'?' selected':'').'>'.$langs->trans('OrderSource1').'</option>';
 		print '<option value="2"'.($selected=='2'?' selected':'').'>'.$langs->trans('OrderSource2').'</option>';
@@ -109,9 +109,9 @@ class FormOrder
 		global $conf,$langs,$form;
 
         if (! is_object($form)) $form=new Form($this->db);
-		
+
         $listofmethods=array();
-		
+
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";

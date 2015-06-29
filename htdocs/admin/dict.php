@@ -70,7 +70,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,0,25,0,26);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,0,25,0,26);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -102,6 +102,7 @@ $tabname[25]= MAIN_DB_PREFIX."c_email_templates";
 $tabname[26]= MAIN_DB_PREFIX."c_units";
 $tabname[27]= MAIN_DB_PREFIX."c_stcomm";
 $tabname[28]= MAIN_DB_PREFIX."c_holiday_types";
+$tabname[29]= MAIN_DB_PREFIX."c_lead_status";
 
 // Dictionary labels
 $tablib=array();
@@ -133,6 +134,7 @@ $tablib[25]= "DictionaryEMailTemplates";
 $tablib[26]= "DictionaryUnits";
 $tablib[27]= "DictionaryProspectStatus";
 $tablib[28]= "DictionaryHolidayTypes";
+$tablib[29]= "DictionaryOpportunityStatus";
 
 // Requests to extract data
 $tabsql=array();
@@ -164,6 +166,7 @@ $tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, 
 $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
+$tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -195,6 +198,7 @@ $tabsqlsort[25]="label ASC";
 $tabsqlsort[26]="code ASC";
 $tabsqlsort[27]="code ASC";
 $tabsqlsort[28]="country ASC, code ASC";
+$tabsqlsort[29]="position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -226,6 +230,7 @@ $tabfield[25]= "label,type_template,private,position,topic,content";
 $tabfield[26]= "code,label,short_label";
 $tabfield[27]= "code,libelle";
 $tabfield[28]= "code,label,delay,newByMonth,country_id,country";
+$tabfield[29]= "code,label,percent,position";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -257,6 +262,7 @@ $tabfieldvalue[25]= "label,type_template,private,position,topic,content";
 $tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27]= "code,libelle";
 $tabfieldvalue[28]= "code,label,delay,newByMonth,country";
+$tabfieldvalue[29]= "code,label,percent,position";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -288,6 +294,7 @@ $tabfieldinsert[25]= "label,type_template,private,position,topic,content";
 $tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27]= "code,libelle";
 $tabfieldinsert[28]= "code,label,delay,newByMonth,fk_country";
+$tabfieldinsert[29]= "code,label,percent,position";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -321,6 +328,7 @@ $tabrowid[25]= "";
 $tabrowid[26]= "";
 $tabrowid[27]= "id";
 $tabrowid[28]= "";
+$tabrowid[29]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -352,6 +360,7 @@ $tabcond[25]= true; // && ! empty($conf->global->MAIN_EMAIL_EDIT_TEMPLATE_FROM_D
 $tabcond[26]= ! empty($conf->product->enabled);
 $tabcond[27]= ! empty($conf->societe->enabled);
 $tabcond[28]= ! empty($conf->holiday->enabled);
+$tabcond[29]= ! empty($conf->projet->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -383,6 +392,7 @@ $tabhelp[25] = array();
 $tabhelp[26] = array();
 $tabhelp[27] = array();
 $tabhelp[28] = array();
+$tabhelp[29] = array();
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -414,6 +424,7 @@ $tabfieldcheck[25] = array();
 $tabfieldcheck[26] = array();
 $tabfieldcheck[27] = array();
 $tabfieldcheck[28] = array();
+$tabfieldcheck[29] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);

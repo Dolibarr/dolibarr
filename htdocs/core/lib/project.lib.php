@@ -891,17 +891,17 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	$project_year_filter=0;
 
 	$title=$langs->trans("Project");
-	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts[$statut]).')';
+	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts_long[$statut]).')';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($title,"index.php","","","","",$sortfield,$sortorder);
-	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
+	//if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
 	if (empty($conf->global->PROJECT_HIDE_TASKS)) print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, COUNT(t.rowid) as nb";
+	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
@@ -939,7 +939,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 			$sql.= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter,1,false)).")";
 		}
 	}
-	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
+	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status";
 	$sql.= " ORDER BY p.title, p.ref";
 
 	$var=true;
@@ -967,9 +967,15 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
 				print ' - '.dol_trunc($objp->title,24).'</td>';
-				if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))  print '<td align="right">'.$objp->fk_opp_status.'</td>';
+				/*if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+				{
+					print '<td align="right">';
+					$code = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
+        			if ($code) print $langs->trans("OppStatus".$code);
+					print '</td>';
+				}*/
 				if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$objp->nb.'</td>';
-				$projectstatic->statut = $objp->fk_statut;
+				$projectstatic->statut = $objp->status;
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 				print "</tr>\n";
 			}

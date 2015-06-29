@@ -489,7 +489,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Opportunity status
     print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
     print '<td>';
-    print $formproject->selectOpportunityStatus('fk_opp_status',$object->opp_status);
+    print $formproject->selectOpportunityStatus('opp_status',$object->opp_status);
     print '</tr>';
 
     // Opportunity amount
@@ -503,7 +503,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '</tr>';
 
     // Description
-    print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
     print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
     print '</td></tr>';
@@ -628,7 +628,7 @@ else
         print $form->selectarray('public',$array,$object->public);
         print '</td></tr>';
 
-        // Statut
+        // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
         // Date start
@@ -646,7 +646,9 @@ else
 
 	    // Opportunity status
 	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
-	    print '<td><input size="4" type="text" name="fk_opp_status" value="'.(isset($_POST['fk_opp_status'])?GETPOST('fk_opp_status'):$object->opp_status).'"></td>';
+    	print '<td>';
+	    print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1);
+	    print '</td>';
 	    print '</tr>';
 
 	    // Opportunity amount
@@ -720,12 +722,13 @@ else
         print dol_print_date($object->date_end,'day');
         print '</td></tr>';
 
-        // Budget
+        // Opportunity status
         print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-        if ($object->fk_opp_status != '') print price($object->fk_opp_status,'',$langs,0,0,0,$conf->currency);
+        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+        if ($code) print $langs->trans("OppStatus".$code);
         print '</td></tr>';
 
-        // Opporutinity Amount
+        // Opportunity Amount
         print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
         if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
         print '</td></tr>';

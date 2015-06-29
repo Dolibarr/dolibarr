@@ -706,12 +706,22 @@ UPDATE llx_holiday_logs SET fk_type = 1 WHERE fk_type IS NULL;
 
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_VAT_SOLD_ACCOUNT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTING_VAT_ACCOUNT';
 
+create table llx_c_lead_status
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  code 		  varchar(10),
+  label       varchar(50),
+  position    integer,
+  percent     double(5,2),
+  active      tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
 -- Opportunities status
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (1,'PROSP'  ,'Prospection',0,1);
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (2,'QUAL'   ,'Qualification',20,1);
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (3,'PROPO'  ,'Proposal',40,1);
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (4,'NEGO'   ,'Negotiation',60,1);
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (5,'PENDING','Pending',50,0);
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (6,'WIN'    ,'Won',100,1);
-INSERT INTO llx_c_lead_status(rowid,code,label,percent,active) VALUES (7,'LOST'   ,'Lost',0,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (1,'PROSP'  ,'Prospection',  10, 0,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (2,'QUAL'   ,'Qualification',20, 20,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (3,'PROPO'  ,'Proposal',     30, 40,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (4,'NEGO'   ,'Negotiation',  40, 60,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (5,'PENDING','Pending',      50, 50,0);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (6,'WIN'    ,'Won',          60, 100,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (7,'LOST'   ,'Lost',         70, 0,1);
 
