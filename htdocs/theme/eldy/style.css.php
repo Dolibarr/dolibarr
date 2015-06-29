@@ -2554,9 +2554,9 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-top: 10px;
 }
 .photowithmargin {
-	-webkit-box-shadow: 0px 0px 3px #777;
+/*	-webkit-box-shadow: 0px 0px 3px #777;
 	-moz-box-shadow: 0px 0px 3px #777;
-	box-shadow: 0px 0px 3px #777;
+	box-shadow: 0px 0px 3px #777;*/
 }
 .photointoolitp {
 	margin-top: 6px;
