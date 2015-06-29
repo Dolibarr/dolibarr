@@ -1512,7 +1512,7 @@ class ExpenseReportLine
 	 * @param	int		$rowid		Id of object to load
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid, $ref='')
+	function fetch($rowid)
 	{
 		$sql = 'SELECT fde.rowid, fde.ref, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
 		$sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
@@ -1522,7 +1522,7 @@ class ExpenseReportLine
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 		$sql.= ' WHERE fde.rowid = '.$rowid;
-		
+
 		$result = $this->db->query($sql);
 
 		if($result)
