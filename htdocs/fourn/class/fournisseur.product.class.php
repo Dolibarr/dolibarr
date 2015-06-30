@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015	   Francis Appels			<francis.appels@z-application.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -686,6 +687,51 @@ class ProductFournisseur extends Product
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	/**
+	 *  get latest supplier product price
+	 *
+	 *  @param	int		$prodid	    Product id
+	 *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
+	 */
+	function fetchLatestProductSupplierPrice($prodid)
+	{
+		global $conf;
 
+		if (empty($prodid))
+		{
+			dol_syslog("Warning function fetchLatestProductSupplierPrice was called with prodid empty. May be a bug.", LOG_WARNING);
+			return 0;
+		}
+
+		$sql = "SELECT pfp.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND pfp.fk_product = ".$prodid;
+		$sql.= " AND pfp.fk_soc = s.rowid";
+		$sql.= " ORDER BY pfp.rowid DESC";
+		$sql.= " LIMIT 1";
+	
+		dol_syslog(get_class($this)."::fetchLatestProductSupplierPrice", LOG_DEBUG);
+	
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) 
+			{
+				return $this->fetch_product_fournisseur_price($obj->rowid);
+			}
+			else 
+			{
+				dol_syslog("Warning function fetchLatestProductSupplierPrice did not find any supplier price for product id ".$prodid, LOG_WARNING);
+				return 0;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 }
 

@@ -87,10 +87,9 @@ class FormMargin
 				if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
 					$line->pa_ht += $product->fourn_unitcharges;
 			}
-			// si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
-			if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
-				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
-			}
+
+			// define buy price (sets $this->pa_ht if 0)
+			$line->defineBuyPrice($line->pa_ht, $line->subprice, $line->remise_percent, $line->fk_product);
 
 			// calcul des marges
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise

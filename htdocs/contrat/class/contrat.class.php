@@ -1307,11 +1307,12 @@ class Contrat extends CommonObject
 			}
 
 		    if (empty($pa_ht)) $pa_ht=0;
-
-			// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
-			if ($pa_ht == 0) {
-				if ($pu_ht > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-					$pa_ht = $pu_ht * (1 - $remise_percent / 100);
+			
+			// define buy price (sets $this->pa_ht if 0)
+			if ($this->defineBuyPrice($pa_ht, $pu_ht, $remise_percent, $fk_product) < 0) 
+			{
+				$this->error='ErrorDefineBuyPrice';
+				return -4;
 			}
 
 			// Insertion dans la base
@@ -1482,7 +1483,8 @@ class Contrat extends CommonObject
 		}
 
 	    if (empty($pa_ht)) $pa_ht=0;
-
+		
+		// TODO add fk_product to get product pmp
 		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
 		if ($pa_ht == 0) {
 			if ($pu > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
@@ -2504,10 +2506,11 @@ class ContratLigne extends CommonObjectLine
 
 	    if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente
-		if ($this->pa_ht == 0) {
-			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
-				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+		// define buy price (sets $this->pa_ht if 0)
+		if ($this->defineBuyPrice($this->pa_ht, $this->subprice, $this->remise_percent, $this->fk_product) < 0) 
+		{
+			$this->error='ErrorDefineBuyPrice';
+			return -4;
 		}
 
 		$this->db->begin();
