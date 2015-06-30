@@ -9,6 +9,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015	   Francis Appels		<francis.appels@z-application.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3726,5 +3727,72 @@ abstract class CommonObject
 		}
 
 		return true;
+	}
+	
+		/**
+	 * define buy price if not defined
+	 *	set buy price = sell price if configured,
+	 *	 else if pmp is calculated, set pmp as buyprice
+	 *	 else set latest buy price as buy price
+	 *	 
+	 * @param float		$buyPrice		 buy price to define
+	 * @param float		$unitPrice		 product unit price
+	 * @param float		$discountPercent line discount percent
+	 * @param int		$fk_product		 product id
+	 *
+	 *	@return	int <0 if ko, 1 if defined, 0 if not defined
+	 */
+	public function defineBuyPrice(&$buyPrice, $unitPrice, $discountPercent, $fk_product) {
+		global $conf;
+	
+		if ($buyPrice == 0)
+		{
+			if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
+			{
+				$buyPrice = $unitPrice * (1 - $discountPercent / 100);
+			}
+			else
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				// Get PMP
+				if (! empty($fk_product))
+				{
+					$product = new Product($this->db);
+					$result = $product->fetch($fk_product);
+					if ($result <= 0)
+					{
+						$this->error='ErrorProductIdDoesNotExists';
+						return -1;
+					}
+					if (($product->pmp > 0))
+					{
+						$buyPrice = $product->pmp;
+					}
+					else
+					{
+						// TODO add option to set PMP of product
+						include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+						$productFournisseur = new ProductFournisseur($this->db);
+						if (($result = $productFournisseur->fetchLatestProductSupplierPrice($fk_product)) > 0)
+						{
+							if ($result > 0) {
+								$buyPrice = $productFournisseur->fourn_price;
+							}
+							else
+							{
+								return 0;
+							}
+						}
+						else
+						{
+							$this->error = $productFournisseur->error;
+							return -1;
+						}
+					}
+				}
+			}
+			return 1;
+		}
+		return 0;
 	}
 }

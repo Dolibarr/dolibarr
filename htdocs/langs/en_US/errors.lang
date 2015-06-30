@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorDefineBuyPrice=Could not define buy price for margin calculation
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
