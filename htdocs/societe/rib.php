@@ -377,7 +377,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			print '<td>'.$langs->trans("WithdrawMode").'</td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
-        print_liste_field_titre('');
+        print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
 
         foreach ($rib_list as $rib)

@@ -31,9 +31,10 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$sref=GETPOST("sref","alpha");
-$snom=GETPOST("snom","alpha");
+$search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref","alpha");
+$search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
 $sall=GETPOST("sall","alpha");
+$search_status=GETPOST("search_status","int");
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
@@ -52,6 +53,7 @@ $year = strftime("%Y",time());
  */
 
 $form=new Form($db);
+$warehouse=new Entrepot($db);
 
 $sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
 $sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
@@ -59,22 +61,14 @@ $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
-if ($sref)
-{
-    $sql.= " AND e.label LIKE '%".$db->escape($sref)."%'";
-}
-if ($sall)
-{
-    $sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
-    $sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
-    $sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
-    $sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
-    $sql.= " OR e.town LIKE '%".$db->escape($sall)."%')";
-}
+if ($search_ref) $sql.= natural_search("e.label", $search_ref);			// ref
+if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
+if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$search_status;
+if ($sall) $sql.= natural_search(array('e.label','e.description','e.lieu','e.address','e.town'), $sall);
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
-
+print $sql;
 $result = $db->query($sql);
 if ($result)
 {
@@ -87,6 +81,12 @@ if ($result)
 
 	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder,'',$num);
 
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
 	print '<table class="noborder" width="100%">';
 
 	print "<tr class=\"liste_titre\">";
@@ -95,7 +95,33 @@ if ($result)
     print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
+
+	// Lignes des champs de filtre
+	print '<tr class="liste_titre">';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
+	print '</td>';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
+	print '</td>';
+
+	print '<td class="liste_titre" colspan="2">';
+	print '</td>';
+
+	print '<td class="liste_titre" align="right">';
+	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
+	print '</td>';
+
+	print '<td class="liste_titre nowrap" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+
+	print '</tr>';
 
 	if ($num)
 	{
@@ -128,6 +154,9 @@ if ($result)
             print '</td>';
             // Status
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
+
+            print '<td></td>';
+
             print "</tr>\n";
 
             $total += price2num($objp->estimatedvalue,'MU');
@@ -148,7 +177,8 @@ if ($result)
            	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
 		}
         print '</td>';
-        print '<td align="right">&nbsp;</td>';
+        print '<td></td>';
+        print '<td></td>';
         print "</tr>\n";
 	}
 
@@ -156,6 +186,7 @@ if ($result)
 
 	print "</table>";
 
+	print '</form>';
 }
 else
 {

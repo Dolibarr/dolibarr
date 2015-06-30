@@ -501,12 +501,12 @@ if ($resql)
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" valign="right">';
-    print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
+    print '<input class="flat" type="text" size="2" maxlength="2" placeholder="'.dol_escape_htmltag($langs->trans("Month")).'" name="month" value="'.$month.'">';
     if (empty($conf->productbatch->enabled)) print '&nbsp;';
-    else print '<br>';
-    print $langs->trans('Year').': ';
+    //else print '<br>';
     $syear = $year?$year:-1;
-    $formother->select_year($syear,'year',1, 20, 5);
+    print '<input class="flat" type="text" size="2" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
+    //print $formother->selectyear($syear,'year',1, 20, 5);
     print '</td>';
     // Product Ref
     print '<td class="liste_titre" align="left">';

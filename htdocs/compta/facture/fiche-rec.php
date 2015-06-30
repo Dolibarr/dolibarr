@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
@@ -129,7 +129,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
-		
+
 		dol_fiche_head();
 
 		$rowspan=4;
@@ -202,7 +202,7 @@ if ($action == 'create')
 		$sql = 'SELECT l.fk_product, l.product_type, l.label as custom_label, l.description, l.qty, l.rowid, l.tva_tx,';
 		$sql.= ' l.fk_remise_except,';
 		$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
-		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.total_ht, l.total_tva as total_vat, l.total_ttc,';
 		$sql.= ' l.date_start,';
 		$sql.= ' l.date_end,';
 		$sql.= ' l.product_type,';
@@ -220,7 +220,7 @@ if ($action == 'create')
 			$num = $db->num_rows($result);
 			$i = 0; $total = 0;
 
-			echo '<table class="notopnoleftnoright" width="100%">';
+			echo '<table class="noborder" width="100%">';
 			if ($num)
 			{
 				print '<tr class="liste_titre">';
@@ -572,7 +572,7 @@ else
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT s.nom as name, s.rowid as socid, f.titre, f.total, f.rowid as facid";
+		$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
@@ -594,8 +594,10 @@ else
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Ref"));
 			print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"s.nom","","&socid=$socid","",$sortfiled,$sortorder);
-			print_liste_field_titre($langs->trans("Amount"),'','','','','align="right"');
-			print_liste_field_titre('');
+			print_liste_field_titre($langs->trans("AmountHT"),'','','','','align="right"');
+			print_liste_field_titre($langs->trans("AmountVAT"),'','','','','align="right"');
+			print_liste_field_titre($langs->trans("AmountTTC"),'','','','','align="right"');
+			print_liste_field_titre('');		// Field may contains ling text
 			print "</tr>\n";
 
 			if ($num > 0)
@@ -616,19 +618,21 @@ else
 					print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
 
 					print '<td align="right">'.price($objp->total).'</td>'."\n";
+					print '<td align="right">'.price($objp->total_vat).'</td>'."\n";
+					print '<td align="right">'.price($objp->total_ttc).'</td>'."\n";
 
-					echo '<td align="center">';
-
+					print '<td align="center">';
 					if ($user->rights->facture->creer)
 					{
-                        echo '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
-                        echo  $langs->trans("CreateBill"),'</a>';
+                        print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+                        print $langs->trans("CreateBill").'</a>';
 					}
 					else
 					{
-					    echo "&nbsp;";
+					    print "&nbsp;";
 					}
-					echo "</td></tr>\n";
+					print "</td>";
+					print "</tr>\n";
 					$i++;
 				}
 			}
