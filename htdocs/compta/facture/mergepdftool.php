@@ -654,13 +654,16 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Rest"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
+
+	$searchpitco='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	$searchpitco.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Reset"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	if (empty($mode))
 	{
-		print_liste_field_titre($langs->trans("PDFMerge"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($searchpitco,$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	}
 	else
 	{
-		print_liste_field_titre($langs->trans("Remind"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($searchpitco,$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	}
 	print "</tr>\n";
 
@@ -695,9 +698,6 @@ if ($resql)
 	print $form->selectarray('filtre', $liststatus, $filter, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '<br>';
 	if (empty($mode))
 	{
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';

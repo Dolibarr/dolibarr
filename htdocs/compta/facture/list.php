@@ -180,30 +180,12 @@ if ($filtre)
         $sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
     }
 }
-if ($search_ref)
-{
-    $sql .= natural_search('f.facnumber', $search_ref);
-}
-if ($search_refcustomer)
-{
-	$sql .= natural_search('f.ref_client', $search_refcustomer);
-}
-if ($search_societe)
-{
-    $sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_montant_ht != '')
-{
-    $sql.= natural_search('f.total', $search_montant_ht, 1);
-}
-if ($search_montant_ttc != '')
-{
-    $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-}
-if ($search_status != '')
-{
-	$sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
-}
+if ($search_ref) $sql .= natural_search('f.facnumber', $search_ref);
+if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
+if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
+if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
+if ($search_status != '') $sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -258,7 +240,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-
 $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
@@ -307,7 +288,7 @@ if ($resql)
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="10">';
+        print '<td class="liste_titre" colspan="11">';
         print $moreforfilter;
         print '</td></tr>';
     }
@@ -323,6 +304,7 @@ if ($resql)
     print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
     // Filters lines
@@ -345,9 +327,10 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.$search_societe.'"></td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
-    print '<td class="liste_titre" align="right">&nbsp;</td>';
+    print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
-    print '<td class="liste_titre" align="right">&nbsp;</td>';
+    print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";
@@ -439,7 +422,9 @@ if ($resql)
             print '<td align="right" class="nowrap">';
             print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$paiement,$objp->type);
             print "</td>";
-            //print "<td>&nbsp;</td>";
+
+            print "<td></td>";
+
             print "</tr>\n";
             $total_ht+=$objp->total_ht;
             $total_tva+=$objp->total_tva;
@@ -457,7 +442,8 @@ if ($resql)
             print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($totalrecu,0,$langs).'</td>';
-            print '<td class="liste_total" align="center">&nbsp;</td>';
+            print '<td class="liste_total"></td>';
+            print '<td class="liste_total"></td>';
             print '</tr>';
         }
     }
