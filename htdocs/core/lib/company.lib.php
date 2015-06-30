@@ -971,6 +971,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     $out.="<tr ".$bc[$var].">";
 
+                    // Date
                     $out.='<td width="120" align="left" class="nowrap">';
                     $out.=dol_print_date($datep,'dayhour');
                     if ($datep2 && $datep2 != $datep)
@@ -998,7 +999,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     // Title of event
                     //$out.='<td colspan="2">'.dol_trunc($obj->label,40).'</td>';
-                    $out.='<td colspan="2">'.$actionstatic->getNomUrl(1,40).'</td>';
+                    $out.='<td colspan="2">'.$actionstatic->getNomUrl(1,120).'</td>';
 
                     // Contact pour cette action
                     if (empty($objcon->id) && $obj->fk_contact > 0)
@@ -1240,14 +1241,14 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 //$actionstatic->libelle=$libelle;
                 $actionstatic->libelle=$histo[$key]['note'];
                 $actionstatic->id=$histo[$key]['id'];
-                $out.=$actionstatic->getNomUrl(1,40);
+                $out.=$actionstatic->getNomUrl(1,120);
             }
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing')
             {
                 $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-                $out.=dol_trunc($libelle,40);
+                $out.=dol_trunc($libelle,120);
             }
             $out.='</td>';
 

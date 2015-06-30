@@ -725,3 +725,7 @@ INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (6,'WIN'    ,'Won',          60, 100,1);
 INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (7,'LOST'   ,'Lost',         70, 0,1);
 
+
+DELETE FROM llx_c_action_trigger where code = 'PROPAL_CLASSIFYBILLED';
+DELETE FROM llx_c_action_trigger where code = 'FICHINTER_CLASSIFYBILLED';
+
