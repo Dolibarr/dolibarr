@@ -3083,7 +3083,7 @@ class Facture extends CommonInvoice
 	        $bac = new CompanyBankAccount($this->db);
 	        $bac->fetch(0,$this->socid);
 
-        	$sql = 'SELECT count(*)';
+			$sql = 'SELECT count(*)';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
@@ -3097,15 +3097,15 @@ class Facture extends CommonInvoice
 				{
 					$now=dol_now();
 
-                    $totalpaye  = $this->getSommePaiement();
-                    $totalcreditnotes = $this->getSumCreditNotesUsed();
-                    $totaldeposits = $this->getSumDepositsUsed();
-                    //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+					$totalpaye  = $this->getSommePaiement();
+					$totalcreditnotes = $this->getSumCreditNotesUsed();
+					$totaldeposits = $this->getSumDepositsUsed();
+					//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
-                    // We can also use bcadd to avoid pb with floating points
-                    // For example print 239.2 - 229.3 - 9.9; does not return 0.
-                    //$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
-                    //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					// We can also use bcadd to avoid pb with floating points
+					// For example print 239.2 - 229.3 - 9.9; does not return 0.
+					//$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 					if (empty($amount)) $amount = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
 
 					if (is_numeric($amount) && $amount != 0)
@@ -3125,52 +3125,52 @@ class Facture extends CommonInvoice
 						$resql=$this->db->query($sql);
 						if (! $resql)
 						{
-						    $this->error=$this->db->lasterror();
-						    dol_syslog(get_class($this).'::demandeprelevement Erreur');
-						    $error++;
+							$this->error=$this->db->lasterror();
+							dol_syslog(get_class($this).'::demandeprelevement Erreur');
+							$error++;
 						}
 					}
 					else
 					{
 						$this->error='WithdrawRequestErrorNilAmount';
-	                    dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
-	                    $error++;
+						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
+						$error++;
 					}
 
-        			if (! $error)
-        			{
-        				// Force payment mode of invoice to withdraw
-        				$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement');
-        				if ($payment_mode_id > 0)
-        				{
-        					$result=$this->setPaymentMethods($payment_mode_id);
-        				}
-        			}
+					if (! $error)
+					{
+						// Force payment mode of invoice to withdraw
+						$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement');
+						if ($payment_mode_id > 0)
+						{
+							$result=$this->setPaymentMethods($payment_mode_id);
+						}
+					}
 
-                    if ($error) return -1;
-                    return 1;
-                }
-                else
-                {
-                    $this->error="A request already exists";
-                    dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
-                    return 0;
-                }
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
-                return -2;
-            }
-        }
-        else
-        {
-            $this->error="Status of invoice does not allow this";
-            dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
-            return -3;
-        }
-    }
+					if ($error) return -1;
+					return 1;
+				}
+				else
+				{
+					$this->error="A request already exists";
+					dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
+					return 0;
+				}
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error="Status of invoice does not allow this";
+			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			return -3;
+		}
+	}
 
 	/**
 	 *  Supprime une demande de prelevement
@@ -3439,7 +3439,7 @@ class Facture extends CommonInvoice
 			{
 				$this->nb["invoices"]=$obj->nb;
 			}
-            $this->db->free($resql);
+			$this->db->free($resql);
 			return 1;
 		}
 		else
@@ -3466,7 +3466,7 @@ class Facture extends CommonInvoice
 		$sql.= ' l.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
 		$sql.= ' p.description as product_desc,';
-        $sql.= ' p.entity';
+		$sql.= ' p.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
@@ -3489,7 +3489,7 @@ class Facture extends CommonInvoice
 				$this->lines[$i]->description 		= $obj->description;
 				$this->lines[$i]->fk_product		= $obj->fk_product;
 				$this->lines[$i]->ref				= $obj->product_ref;
-                $this->lines[$i]->entity            = $obj->entity;         // Product entity
+				$this->lines[$i]->entity			= $obj->entity;		 // Product entity
 				$this->lines[$i]->product_label		= $obj->product_label;
 				$this->lines[$i]->product_desc		= $obj->product_desc;
 				$this->lines[$i]->fk_product_type	= $obj->fk_product_type;
@@ -3505,7 +3505,7 @@ class Facture extends CommonInvoice
 				$this->lines[$i]->total_ttc			= $obj->total_ttc;
 				$this->lines[$i]->fk_parent_line	= $obj->fk_parent_line;
 				$this->lines[$i]->situation_percent = $obj->situation_percent;
-				$this->lines[$i]->fk_prev_id        = $obj->fk_prev_id;
+				$this->lines[$i]->fk_prev_id		= $obj->fk_prev_id;
 				$this->lines[$i]->special_code		= $obj->special_code;
 				$this->lines[$i]->rang				= $obj->rang;
 				$this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
@@ -3538,7 +3538,7 @@ class Facture extends CommonInvoice
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
-	 *	@return int        					<0 if KO, >0 if OK
+	 *	@return int							<0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
@@ -3703,8 +3703,8 @@ class Facture extends CommonInvoice
  */
 class FactureLigne extends CommonInvoiceLine
 {
-    public $element='facturedet';
-    public $table_element='facturedet';
+	public $element='facturedet';
+	public $table_element='facturedet';
 
 	var $oldline;
 
@@ -3907,10 +3907,10 @@ class FactureLigne extends CommonInvoiceLine
 
 		// POS or by external module, take lowest buying price
 		if (!empty($this->fk_product) && empty($this->fk_fournprice) && empty($this->pa_ht)) {
-		    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-		    $productFournisseur = new ProductFournisseur($this->db);
-		    $productFournisseur->find_min_price_product_fournisseur($this->fk_product);
-		    $this->fk_fournprice = $productFournisseur->product_fourn_price_id;
+			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			$productFournisseur = new ProductFournisseur($this->db);
+			$productFournisseur->find_min_price_product_fournisseur($this->fk_product);
+			$this->fk_fournprice = $productFournisseur->product_fourn_price_id;
 		}
 
 		$this->db->begin();
@@ -3964,15 +3964,15 @@ class FactureLigne extends CommonInvoiceLine
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
 
-            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-            {
-            	$this->id=$this->rowid;
-            	$result=$this->insertExtraFields();
-            	if ($result < 0)
-            	{
-            		$error++;
-            	}
-            }
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 			// Si fk_remise_except defini, on lie la remise a la facture
 			// ce qui la flague comme "consommee".
@@ -4024,14 +4024,14 @@ class FactureLigne extends CommonInvoiceLine
 
 			if (! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('LINEBILL_INSERT',$user);
-                if ($result < 0)
-                {
+				// Call trigger
+				$result=$this->call_trigger('LINEBILL_INSERT',$user);
+				if ($result < 0)
+				{
 					$this->db->rollback();
 					return -2;
 				}
-                // End call triggers
+				// End call triggers
 			}
 
 			$this->db->commit();
@@ -4088,33 +4088,33 @@ class FactureLigne extends CommonInvoiceLine
 
 		$this->db->begin();
 
-        // Mise a jour ligne en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-        $sql.= " description='".$this->db->escape($this->desc)."'";
-        $sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-        $sql.= ",subprice=".price2num($this->subprice)."";
-        $sql.= ",remise_percent=".price2num($this->remise_percent)."";
-        if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
-        else $sql.= ",fk_remise_except=null";
-        $sql.= ",tva_tx=".price2num($this->tva_tx)."";
-        $sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
-        $sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+		$sql.= " description='".$this->db->escape($this->desc)."'";
+		$sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+		$sql.= ",subprice=".price2num($this->subprice)."";
+		$sql.= ",remise_percent=".price2num($this->remise_percent)."";
+		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
+		else $sql.= ",fk_remise_except=null";
+		$sql.= ",tva_tx=".price2num($this->tva_tx)."";
+		$sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
+		$sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
 		$sql.= ",localtax1_type='".$this->localtax1_type."'";
 		$sql.= ",localtax2_type='".$this->localtax2_type."'";
-        $sql.= ",qty=".price2num($this->qty)."";
-        $sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
-        $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-        $sql.= ",product_type=".$this->product_type;
-        $sql.= ",info_bits='".$this->info_bits."'";
-        $sql.= ",special_code='".$this->special_code."'";
-        if (empty($this->skip_update_total))
-        {
-        	$sql.= ",total_ht=".price2num($this->total_ht)."";
-        	$sql.= ",total_tva=".price2num($this->total_tva)."";
-        	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
-        	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
-        	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
-        }
+		$sql.= ",qty=".price2num($this->qty)."";
+		$sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+		$sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+		$sql.= ",product_type=".$this->product_type;
+		$sql.= ",info_bits='".$this->info_bits."'";
+		$sql.= ",special_code='".$this->special_code."'";
+		if (empty($this->skip_update_total))
+		{
+			$sql.= ",total_ht=".price2num($this->total_ht)."";
+			$sql.= ",total_tva=".price2num($this->total_tva)."";
+			$sql.= ",total_ttc=".price2num($this->total_ttc)."";
+			$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
+			$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
+		}
 		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
 		$sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
@@ -4127,26 +4127,26 @@ class FactureLigne extends CommonInvoiceLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-        	{
-        		$this->id=$this->rowid;
-        		$result=$this->insertExtraFields();
-        		if ($result < 0)
-        		{
-        			$error++;
-        		}
-        	}
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$this->id=$this->rowid;
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 			if (! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('LINEBILL_UPDATE',$user);
-                if ($result < 0)
+				// Call trigger
+				$result=$this->call_trigger('LINEBILL_UPDATE',$user);
+				if ($result < 0)
  				{
 					$this->db->rollback();
 					return -2;
 				}
-                // End call triggers
+				// End call triggers
 			}
 			$this->db->commit();
 			return 1;
