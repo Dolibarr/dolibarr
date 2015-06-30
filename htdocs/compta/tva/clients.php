@@ -118,6 +118,11 @@ foreach($listofparams as $param) {
     }
 }
 
+$special_report = false;
+if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
+    $special_report = true;
+}
+
 llxHeader('','','','',0,0,'','',$morequerystring);
 
 $fsearch.='<br>';
@@ -145,6 +150,15 @@ if ($modetax==1) {	// Calculate on invoice for goods and services
         $description.='<br>'.$langs->trans("DepositsAreIncluded");
     }
 	$description.=$fsearch;
+    $description.='<br>'
+        . '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
+        . $langs->trans('SimpleReport')
+        . '</input>'
+        . '<br>'
+        . '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
+        . $langs->trans('AddExtraReport')
+        . '</input>'
+        . '<br>';
 	$builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
@@ -180,6 +194,15 @@ if ($modetax==0) {	// Invoice for goods, payment for services
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
     //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
+    $description.='<br>'
+        . '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
+        . $langs->trans('SimpleReport')
+        . '</input>'
+        . '<br>'
+        . '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
+        . $langs->trans('AddExtraReport')
+        . '</input>'
+        . '<br>';
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
@@ -365,152 +388,163 @@ if (is_array($coll_list)) {
 
 print '</table>';
 
-// Get country 2-letters code
-global $mysoc;
-$country_id = $mysoc->country_id;
-$country = new Ccountry($db);
-$country->fetch($country_id);
+if ($special_report) {
+    // Get country 2-letters code
+    global $mysoc;
+    $country_id = $mysoc->country_id;
+    $country = new Ccountry($db);
+    $country->fetch($country_id);
 
-// Print listing of other-country customers as additional report
-// This matches tax requirements to list all same-country customers (only)
-print '<h3>Other countries customers</h3>';
-print 'Based on 2 first letters of VAT number being different from your company\'s country';
-$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+    // Print listing of other-country customers as additional report
+    // This matches tax requirements to list all same-country customers (only)
+    print '<h3>'.$langs->trans('OtherCountriesCustomersReport').'</h3>';
+    print $langs->trans('BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry');
+    $coll_list = vat_by_thirdparty($db, 0, $date_start, $date_end, $modetax,
+        'sell');
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Customer")."</td>";
-print "<td>".$langs->trans("VATIntra")."</td>";
-print "<td align=\"right\">".$langs->trans("AmountHTVATRealReceived")."</td>";
-print "<td align=\"right\">".$vatcust."</td>";
-print "</tr>\n";
+    print "<table class=\"noborder\" width=\"100%\">";
+    print "<tr class=\"liste_titre\">";
+    print '<td align="left">' . $langs->trans("Num") . "</td>";
+    print '<td align="left">' . $langs->trans("Customer") . "</td>";
+    print "<td>" . $langs->trans("VATIntra") . "</td>";
+    print "<td align=\"right\">" . $langs->trans("AmountHTVATRealReceived") . "</td>";
+    print "<td align=\"right\">" . $vatcust . "</td>";
+    print "</tr>\n";
 
-if (is_array($coll_list)) {
-    $var=true;
-    $total = 0;
-    $totalamount = 0;
-    $i = 1;
-    foreach($coll_list as $coll) {
-        if (substr($coll->tva_intra, 0, 2) == $country->code) {
-            // Only use different-country VAT codes
-            continue;
-        }
-        if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-            $var=!$var;
-            $intra = str_replace($find,$replace,$coll->tva_intra);
-            if (empty($intra)) {
-                if ($coll->assuj == '1') {
-                    $intra = $langs->trans('Unknown');
-                } else {
-                    //$intra = $langs->trans('NotRegistered');
-                    $intra = '';
-                }
+    if (is_array($coll_list)) {
+        $var = true;
+        $total = 0;
+        $totalamount = 0;
+        $i = 1;
+        foreach ($coll_list as $coll) {
+            if (substr($coll->tva_intra, 0, 2) == $country->code) {
+                // Only use different-country VAT codes
+                continue;
             }
-            print "<tr ".$bc[$var].">";
-            print '<td class="nowrap">'.$i."</td>";
-            $company_static->id=$coll->socid;
-            $company_static->name=$coll->name;
-            $company_static->client=1;
-            print '<td class="nowrap">'.$company_static->getNomUrl(1,'customer').'</td>';
-            $find = array(' ','.');
-            $replace = array('','');
-            print '<td class="nowrap">'.$intra."</td>";
-            print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-            print "<td class=\"nowrap\" align=\"right\">".price($coll->tva)."</td>";
-            $totalamount = $totalamount + $coll->amount;
-            $total = $total + $coll->tva;
-            print "</tr>\n";
-            $i++;
-        }
-    }
-    $x_coll_sum = $total;
-
-    print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-    print '<td class="nowrap" align="right">'.price($total).'</td>';
-    print '</tr>';
-} else {
-    $langs->load("errors");
-    if ($coll_list == -1) {
-        print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-    } else if ($coll_list == -2) {
-        print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-    } else {
-        print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
-    }
-}
-print '</table>';
-
-// Print listing of same-country customers as additional report
-// This matches tax requirements to list all same-country customers (only)
-print '<h3>Same country customers with VAT</h3>';
-print 'Based on 2 first letters of VAT number being the same as your company\'s country';
-$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
-
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Customer")."</td>";
-print "<td>".$langs->trans("VATIntra")."</td>";
-print "<td align=\"right\">".$langs->trans("AmountHTVATRealReceived")."</td>";
-print "<td align=\"right\">".$vatcust."</td>";
-print "</tr>\n";
-
-if (is_array($coll_list)) {
-    $var=true;
-    $total = 0;  $totalamount = 0;
-    $i = 1;
-    foreach ($coll_list as $coll) {
-        if (substr($coll->tva_intra, 0, 2) != $country->code) {
-            // Only use same-country VAT codes
-            continue;
-        }
-        if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-            $var=!$var;
-            $intra = str_replace($find,$replace,$coll->tva_intra);
-            if (empty($intra)) {
-                if ($coll->assuj == '1') {
-                    $intra = $langs->trans('Unknown');
-                } else {
-                    //$intra = $langs->trans('NotRegistered');
-                    $intra = '';
+            if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
+                $var = !$var;
+                $intra = str_replace($find, $replace, $coll->tva_intra);
+                if (empty($intra)) {
+                    if ($coll->assuj == '1') {
+                        $intra = $langs->trans('Unknown');
+                    } else {
+                        //$intra = $langs->trans('NotRegistered');
+                        $intra = '';
+                    }
                 }
+                print "<tr " . $bc[$var] . ">";
+                print '<td class="nowrap">' . $i . "</td>";
+                $company_static->id = $coll->socid;
+                $company_static->name = $coll->name;
+                $company_static->client = 1;
+                print '<td class="nowrap">' . $company_static->getNomUrl(1,
+                        'customer') . '</td>';
+                $find = array(' ', '.');
+                $replace = array('', '');
+                print '<td class="nowrap">' . $intra . "</td>";
+                print "<td class=\"nowrap\" align=\"right\">" . price($coll->amount) . "</td>";
+                print "<td class=\"nowrap\" align=\"right\">" . price($coll->tva) . "</td>";
+                $totalamount = $totalamount + $coll->amount;
+                $total = $total + $coll->tva;
+                print "</tr>\n";
+                $i++;
             }
-            print "<tr ".$bc[$var].">";
-            print '<td class="nowrap">'.$i."</td>";
-            $company_static->id=$coll->socid;
-            $company_static->name=$coll->name;
-            $company_static->client=1;
-            print '<td class="nowrap">'.$company_static->getNomUrl(1, 'customer').'</td>';
-            $find = array(' ', '.');
-            $replace = array('', '');
-            print '<td class="nowrap">'.$intra."</td>";
-            print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-            print "<td class=\"nowrap\" align=\"right\">".price($coll->tva)."</td>";
-            $totalamount = $totalamount + $coll->amount;
-            $total = $total + $coll->tva;
-            print "</tr>\n";
-            $i++;
+        }
+        $x_coll_sum = $total;
+
+        print '<tr class="liste_total"><td align="right" colspan="3">' . $langs->trans("Total") . ':</td>';
+        print '<td class="nowrap" align="right">' . price($totalamount) . '</td>';
+        print '<td class="nowrap" align="right">' . price($total) . '</td>';
+        print '</tr>';
+    } else {
+        $langs->load("errors");
+        if ($coll_list == -1) {
+            print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+        } else {
+            if ($coll_list == -2) {
+                print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+            } else {
+                print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
+            }
         }
     }
-    $x_coll_sum = $total;
+    print '</table>';
 
-    print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-    print '<td class="nowrap" align="right">'.price($total).'</td>';
-    print '</tr>';
-} else {
-    $langs->load("errors");
-    if ($coll_list == -1) {
-        print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-    } else if ($coll_list == -2) {
-        print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+    // Print listing of same-country customers as additional report
+    // This matches tax requirements to list all same-country customers (only)
+    print '<h3>'.$langs->trans('SameCountryCustomersWithVAT').'</h3>';
+    print $langs->trans('BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry');
+    $coll_list = vat_by_thirdparty($db, 0, $date_start, $date_end, $modetax,
+        'sell');
+
+    print "<table class=\"noborder\" width=\"100%\">";
+    print "<tr class=\"liste_titre\">";
+    print '<td align="left">' . $langs->trans("Num") . "</td>";
+    print '<td align="left">' . $langs->trans("Customer") . "</td>";
+    print "<td>" . $langs->trans("VATIntra") . "</td>";
+    print "<td align=\"right\">" . $langs->trans("AmountHTVATRealReceived") . "</td>";
+    print "<td align=\"right\">" . $vatcust . "</td>";
+    print "</tr>\n";
+
+    if (is_array($coll_list)) {
+        $var = true;
+        $total = 0;
+        $totalamount = 0;
+        $i = 1;
+        foreach ($coll_list as $coll) {
+            if (substr($coll->tva_intra, 0, 2) != $country->code) {
+                // Only use same-country VAT codes
+                continue;
+            }
+            if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
+                $var = !$var;
+                $intra = str_replace($find, $replace, $coll->tva_intra);
+                if (empty($intra)) {
+                    if ($coll->assuj == '1') {
+                        $intra = $langs->trans('Unknown');
+                    } else {
+                        //$intra = $langs->trans('NotRegistered');
+                        $intra = '';
+                    }
+                }
+                print "<tr " . $bc[$var] . ">";
+                print '<td class="nowrap">' . $i . "</td>";
+                $company_static->id = $coll->socid;
+                $company_static->name = $coll->name;
+                $company_static->client = 1;
+                print '<td class="nowrap">' . $company_static->getNomUrl(1,
+                        'customer') . '</td>';
+                $find = array(' ', '.');
+                $replace = array('', '');
+                print '<td class="nowrap">' . $intra . "</td>";
+                print "<td class=\"nowrap\" align=\"right\">" . price($coll->amount) . "</td>";
+                print "<td class=\"nowrap\" align=\"right\">" . price($coll->tva) . "</td>";
+                $totalamount = $totalamount + $coll->amount;
+                $total = $total + $coll->tva;
+                print "</tr>\n";
+                $i++;
+            }
+        }
+        $x_coll_sum = $total;
+
+        print '<tr class="liste_total"><td align="right" colspan="3">' . $langs->trans("Total") . ':</td>';
+        print '<td class="nowrap" align="right">' . price($totalamount) . '</td>';
+        print '<td class="nowrap" align="right">' . price($total) . '</td>';
+        print '</tr>';
     } else {
-        print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+        $langs->load("errors");
+        if ($coll_list == -1) {
+            print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+        } else {
+            if ($coll_list == -2) {
+                print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+            } else {
+                print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
+            }
+        }
     }
+    print '</table>';
 }
-
 
 llxFooter();
 
