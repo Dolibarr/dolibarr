@@ -121,6 +121,8 @@ ProjectCreatedInDolibarr=Project %s created
 TaskCreatedInDolibarr=Task %s created
 TaskModifiedInDolibarr=Task %s modified
 TaskDeletedInDolibarr=Task %s deleted
+OpportunityStatus=Opportunity status
+OpportunityAmount=Opportunity amount
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader
@@ -154,3 +156,5 @@ ResourceNotAssignedToTask=Not assigned to task
 AssignTaskToMe=Assign task to me
 AssignTask=Assign
 ProjectOverview=Overview
+ManageTasks=Use projects to follow tasks and time
+ManageOpportunitiesStatus=Use projects to follow leads/opportinuties

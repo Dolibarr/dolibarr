@@ -308,7 +308,9 @@ if ($resql)
 
 
 		// Statut
-		print '<td align="right" colspan="2">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+		print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+
+		print '<td></td>';
 
 		print "</tr>\n";
 		$i++;

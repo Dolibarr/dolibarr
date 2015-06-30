@@ -4650,7 +4650,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey	Field for code
  * 		@param	string	$fieldid	Field for id
  *      @return int					<0 if KO, Id of code if OK
- *      @see getLabelFromKey
+ *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 {
@@ -4665,7 +4665,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 		return $cache_codes[$tablename][$key];   // Found in cache
 	}
 
-	$sql = "SELECT ".$fieldid." as id";
+	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$key."'";
 	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
@@ -4673,7 +4673,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($obj) $cache_codes[$tablename][$key]=$obj->id;
+		if ($obj) $cache_codes[$tablename][$key]=$obj->valuetoget;
 		else $cache_codes[$tablename][$key]='';
 		$db->free($resql);
 		return $cache_codes[$tablename][$key];

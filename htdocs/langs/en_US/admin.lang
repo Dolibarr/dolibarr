@@ -821,6 +821,7 @@ DictionaryEMailTemplates=Emails templates
 DictionaryUnits=Units
 DictionaryProspectStatus=Prospection status
 DictionaryHolidayTypes=Type of leaves
+DictionaryOpportunityStatus=Opportunity status for project/lead
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
 BackToDictionaryList=Back to dictionaries list

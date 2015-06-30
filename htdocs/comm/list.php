@@ -55,7 +55,7 @@ $search_zipcode=GETPOST("search_zipcode");
 $search_town=GETPOST("search_town");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
-$search_status		= GETPOST("search_status",'int');
+$search_status= GETPOST("search_status",'int');
 
 // Load sale and categ filters
 $search_sale  = GETPOST("search_sale",'int');

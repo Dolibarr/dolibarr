@@ -1891,7 +1891,7 @@ div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border
 }
 div .tdtop {
     vertical-align: top;
-	padding-top: 5px;
+	padding-top: 5px !important;
 	padding-bottom: 0px;
 }
 
@@ -2554,9 +2554,9 @@ div.dolgraph div.legend table tbody tr { height: auto; }
 	margin-top: 10px;
 }
 .photowithmargin {
-	-webkit-box-shadow: 0px 0px 3px #777;
+/*	-webkit-box-shadow: 0px 0px 3px #777;
 	-moz-box-shadow: 0px 0px 3px #777;
-	box-shadow: 0px 0px 3px #777;
+	box-shadow: 0px 0px 3px #777;*/
 }
 .photointoolitp {
 	margin-top: 6px;
