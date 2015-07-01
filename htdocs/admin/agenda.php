@@ -169,8 +169,9 @@ if (! empty($triggers))
 		//print 'module='.$module.'<br>';
 		if (! empty($conf->$module->enabled))
 		{
-			// Discard special case.
+			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';

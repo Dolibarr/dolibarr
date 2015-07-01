@@ -130,13 +130,8 @@ $sql.= ' WHERE c.fk_soc = s.rowid';
 $sql.= ' AND c.entity IN ('.getEntity('commande', 1).')';
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($search_ref) {
-	$sql .= natural_search('c.ref', $search_ref);
-}
-if ($sall)
-{
-	$sql .= natural_search(array('c.ref', 'c.note_private'), $sall);
-}
+if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
+if ($sall) $sql .= natural_search(array('c.ref', 'c.note_private'), $sall);
 if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -3)
@@ -190,24 +185,12 @@ else if ($deliveryyear > 0)
 {
     $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,12,false))."'";
 }
-if (!empty($search_company))
-{
-	$sql .= natural_search('s.nom', $search_company);
-}
-if (!empty($search_ref_customer))
-{
-	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($search_ref_customer).'%\'';
-}
+if (!empty($search_company)) $sql .= natural_search('s.nom', $search_company);
+if (!empty($search_ref_customer)) $sql.= natural_search('c.ref_client', $search_ref_customer);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
-if ($search_user > 0)
-{
-    $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
-}
-if ($search_total_ht != '')
-{
-	$sql.= natural_search('c.total_ht', $search_total_ht, 1);
-}
-$sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
+if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
+$sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -215,7 +198,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
 
 $sql.= $db->plimit($limit + 1,$offset);
 
@@ -291,7 +273,7 @@ if ($resql)
 	if (! empty($moreforfilter))
 	{
 	    print '<tr class="liste_titre">';
-	    print '<td class="liste_titre" colspan="9">';
+	    print '<td class="liste_titre" colspan="10">';
 	    print $moreforfilter;
 	    print '</td></tr>';
 	}
@@ -304,6 +286,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
@@ -328,6 +311,7 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
 	print '</td>';
+	print '<td></td>';
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
@@ -493,6 +477,8 @@ if ($resql)
 		// Statut
 		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
+		print '<td></td>';
+
 		print '</tr>';
 
 		$total+=$objp->total_ht;
@@ -507,7 +493,8 @@ if ($resql)
 		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
 		// Total HT
 		print '<td align="right" class="nowrap">'.price($total).'</td>';
-		print '<td class="nowrap">&nbsp;</td>';
+		print '<td></td>';
+		print '<td></td>';
 		print '</tr>';
 	}
 
