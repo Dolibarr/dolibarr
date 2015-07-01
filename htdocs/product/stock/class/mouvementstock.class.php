@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015	   Francis Appels       <francis.appels@z-application.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,7 +233,37 @@ class MouvementStock extends CommonObject
 				{
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
-
+				
+				// delete empty stock record
+				$sql = "SELECT reel FROM ".MAIN_DB_PREFIX."product_stock";
+				$sql.= " WHERE rowid = ".$fk_product_stock;
+				
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($obj)
+					{
+						if ($obj->reel == 0)
+						{
+							dol_syslog(get_class($this)."::_create delete 0 stock record", LOG_DEBUG);
+							$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
+							$sql.= " WHERE rowid = ".$fk_product_stock;
+							$delsql=$this->db->query($sql);
+							if (! $delsql)
+							{
+								$this->errors[]=$this->db->lasterror();
+								$error = -8;
+							}
+						}
+					}
+					$this->db->free($resql);
+				} 
+				else 
+				{
+					$this->errors[]=$this->db->lasterror();
+					$error = -7;
+				}
 			}
 
 			// Update detail stock for sell-by date
