@@ -400,7 +400,7 @@ class RssParser
                     {
                         if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
                         {
-                            $itemLink = (string) $item['link']['href'];
+                            $itemLink = (isset($item['link']['href']) ? (string) $item['link']['href'] : '');
                             $itemTitle = (string) $item['title'];
                             $itemDescription = (string) $item['summary'];
                             $itemPubDate = (string) $item['created'];
@@ -409,7 +409,7 @@ class RssParser
                         }
                         else
                         {
-                            $itemLink = (string) $item['link']['href'];
+                            $itemLink = (isset($item['link']['href']) ? (string) $item['link']['href'] : '');
                             $itemTitle = (string) $item['title'];
                             $itemDescription = (string) $item['summary'];
                             $itemPubDate = (string) $item['created'];

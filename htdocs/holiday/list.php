@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2013-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ $holidaystatic=new Holiday($db);
 $fuser = new User($db);
 
 // Update sold
-$holiday->updateSold();
+$result = $holiday->updateBalance();
 
 $max_year = 5;
 $min_year = 10;
@@ -187,7 +187,7 @@ if ($id > 0)
 	$user_id = $fuser->id;
 }
 // Récupération des congés payés de l'utilisateur ou de tous les users
-if (!$user->rights->holiday->write_all || $id > 0)
+if (empty($user->rights->holiday->write_all) || $id > 0)
 {
 	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
 }
@@ -276,7 +276,7 @@ print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','',
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre('');
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 // FILTRES
@@ -292,13 +292,18 @@ $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
 // UTILISATEUR
-if($user->rights->holiday->write_all)
+if ($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre" align="left">';
     print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32);
     print '</td>';
-} else {
-    print '<td class="liste_titre">&nbsp;</td>';
+}
+else
+{
+    //print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="left">';
+    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32);
+    print '</td>';
 }
 
 // VALIDEUR
@@ -390,7 +395,8 @@ if (! empty($holiday->holiday))
 		print '</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
-		print '<td align="right" colspan="2">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
+		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
+		print '<td></td>';
 		print '</tr>'."\n";
 
 	}

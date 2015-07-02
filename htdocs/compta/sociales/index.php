@@ -164,6 +164,7 @@ if ($resql)
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
 
 		print '<tr class="liste_titre">';
@@ -183,6 +184,8 @@ if ($resql)
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
 		print '</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
+		// Status
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -227,6 +230,8 @@ if ($resql)
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
 			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5,$obj->alreadypayed).'</a></td>';
+
+			print '<td></td>';
 
 			print '</tr>';
 			$i++;

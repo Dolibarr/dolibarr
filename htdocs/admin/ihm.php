@@ -68,7 +68,15 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_THEME",						$_POST["main_theme"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",			$_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', join(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
+
+	$val=(join(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', join(',',colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array())),'chaine',0,'',$conf->entity);
+
+    dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",			$_POST["MAIN_SEARCHFORM_CONTACT"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",			$_POST["MAIN_SEARCHFORM_SOCIETE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",	$_POST["MAIN_SEARCHFORM_PRODUITSERVICE"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER",$_POST["MAIN_SEARCHFORM_PRODUITSERVICE_SUPPLIER"],'chaine',0,'',$conf->entity);
@@ -148,7 +156,7 @@ if ($action == 'edit')	// Edit
 
 	print '</table><br>'."\n";
 
-    // Themes
+    // Themes and themes options
     show_theme(null,1);
     print '<br>';
 

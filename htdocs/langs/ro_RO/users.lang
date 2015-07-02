@@ -57,6 +57,7 @@ RemoveFromGroup=Înlăturaţi din grup
 PasswordChangedAndSentTo=Parola schimbat şi a trimis <b>la %s.</b>
 PasswordChangeRequestSent=Cerere pentru a schimba parola <b>pentru %s %s</b> la trimis.
 MenuUsersAndGroups=Utilizatorii & Grupuri
+MenuMyUserCard=My user card
 LastGroupsCreated=Ultima %s creat grupuri
 LastUsersCreated=Ultima %s utilizatorii creat
 ShowGroup=Arata grup

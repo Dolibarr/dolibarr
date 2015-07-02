@@ -308,7 +308,7 @@ if ($id > 0)
 		print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="center"');
 		print_liste_field_titre('');
-		print '</tr>';
+		print "</tr>\n";
 
 		$var=false;
 

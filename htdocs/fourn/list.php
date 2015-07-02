@@ -42,6 +42,7 @@ $search_supplier_code		= GETPOST("search_supplier_code");
 $search_supplier_accounting = GETPOST("search_supplier_accounting");
 $search_datec				= GETPOST("search_datec");
 $search_categ				= GETPOST('search_categ','int');
+$search_status              = GETPOST("search_status",'int');
 $catid						= GETPOST("catid",'int');
 
 // Security check
@@ -73,8 +74,11 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_supplier_accounting="";
 	$search_datec="";
 	$search_categ="";
+    $search_status='';
 	$catid="";
 }
+
+if ($search_status=='') $search_status=1; // always display activ customer first
 
 $extrafields->fetch_name_optionals_label('thirdparty');
 
@@ -92,6 +96,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  *	View
  */
 
+$form=new Form($db);
 $htmlother=new FormOther($db);
 $thirdpartystatic=new Societe($db);
 
@@ -127,6 +132,7 @@ if ($search_town) $sql .= natural_search('s.town', $search_town);
 if ($search_supplier_code)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_supplier_code)."%'";
 if ($search_supplier_accounting) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_supplier_accounting)."%'";
 if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
+if ($search_status!='')  $sql.= " AND s.status = ".$db->escape($search_status);
 if ($catid > 0)          $sql.= " AND cf.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cf.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cf.fk_categorie = ".$search_categ;
@@ -156,6 +162,7 @@ if ($resql)
 
 	$param = "&amp;search_name=".$search_name."&amp;search_supplier_code=".$search_supplier_code."&amp;search_zipcode=".$search_zipcode."&amp;search_town=".$search_town;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
+ 	if ($search_status != '') $param.='&amp;search_status='.$search_status;
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies');
 
@@ -194,7 +201,8 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -220,6 +228,10 @@ if ($resql)
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSearch',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+
+    print '<td class="liste_titre" align="center">';
+    print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+    print '</td>';
 
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -253,7 +265,9 @@ if ($resql)
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
-		print '<td align="right">'.$thirdpartystatic->getLibStatut(3).'</td>';
+		print '<td align="center">'.$thirdpartystatic->getLibStatut(3).'</td>';
+
+		print '<td></td>';
 
 		print "</tr>\n";
 		$i++;

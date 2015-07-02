@@ -57,6 +57,7 @@ RemoveFromGroup=Verwijderen uit groep
 PasswordChangedAndSentTo=Wachtwoord veranderd en verstuurd naar <b>%s</b>.
 PasswordChangeRequestSent=Verzoek om wachtwoord te wijzigen van <b>%s</b> verstuurt naar <b>%s</b>.
 MenuUsersAndGroups=Gebruikers & groepen
+MenuMyUserCard=My user card
 LastGroupsCreated=Laatste %s gemaakte groep(en)
 LastUsersCreated=Laatste %s gemaakte gebruiker(s)
 ShowGroup=Toon groep

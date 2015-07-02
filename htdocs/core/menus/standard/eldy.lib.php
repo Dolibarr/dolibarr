@@ -1194,6 +1194,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire, '', $mainmenu, 'projects');
 				$newmenu->add("/projet/card.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 				$newmenu->add("/projet/list.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
+				$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
@@ -1217,19 +1218,21 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		*/
 		if ($mainmenu == 'hrm')
 		{
-			// Holiday module
+			// Leave/Holiday/Vacation module
 			if (! empty($conf->holiday->enabled))
 			{
 				$langs->load("holiday");
 
-				$newmenu->add("/holiday/index.php?&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->write, '', $mainmenu, 'hrm');
-				$newmenu->add("/holiday/card.php?&action=request", $langs->trans("MenuAddCP"), 1,$user->rights->holiday->write);
+				$newmenu->add("/holiday/list.php?&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'hrm');
+				$newmenu->add("/holiday/card.php?&action=request", $langs->trans("New"), 1,$user->rights->holiday->write);
+				$newmenu->add("/holiday/list.php?&leftmenu=hrm", $langs->trans("List"), 1,$user->rights->holiday->read);
+				$newmenu->add("/holiday/list.php?select_statut=2&leftmenu=hrm", $langs->trans("ListToApprove"), 2, $user->rights->holiday->read);
 				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->define_holiday);
-				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->view_log);
-				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->month_report);
+				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->define_holiday);
+				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->define_holiday);
 			}
 
-			// Trips and expenses
+			// Trips and expenses (old module)
 			if (! empty($conf->deplacement->enabled))
 			{
 				$langs->load("trips");

@@ -131,7 +131,7 @@ $formother=new FormOther($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.poste, p.email, p.skype,";
-$sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
+$sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " co.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
@@ -311,10 +311,10 @@ if ($result)
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut", $begin, $param, 'align="center"', $sortfield,$sortorder);
-    print '<td class="liste_titre">&nbsp;</td>';
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
-    // Ligne des champs de filtres
+    // Lines for filter fields
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_lastname" size="9" value="'.dol_escape_htmltag($search_lastname).'">';
@@ -377,6 +377,10 @@ if ($result)
 		$contactstatic->firstname='';
 		$contactstatic->id=$obj->cidp;
 		$contactstatic->statut=$obj->statut;
+		$contactstatic->poste=$obj->poste;
+		$contactstatic->phone_pro=$obj->phone_pro;
+		$contactstatic->phone_perso=$obj->phone_perso;
+		$contactstatic->phone_mobile=$obj->phone_mobile;
 		print $contactstatic->getNomUrl(1,'',20);
 		print '</td>';
 
@@ -403,7 +407,7 @@ if ($result)
         }
 
         // Phone
-        print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+        print '<td>'.dol_print_phone($obj->phone_pro,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         // Phone mobile
         print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         // Fax

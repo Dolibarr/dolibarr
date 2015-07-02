@@ -170,6 +170,7 @@ ErrorGlobalVariableUpdater4=SOAP istemcisinde '%s' hatası
 ErrorGlobalVariableUpdater5=Seçilmiş genel değişken yok
 ErrorFieldMustBeANumeric=<b>%s</b> alanı sayısal bir değer olmalıdır
 ErrorFieldMustBeAnInteger=<b>%s</b> alanı tamsayı olmalıdır
+ErrorMandatoryParametersNotProvided=Zorunlu parametre(ler) girilmemiş
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

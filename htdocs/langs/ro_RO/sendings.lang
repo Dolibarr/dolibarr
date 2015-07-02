@@ -53,7 +53,7 @@ DocumentModelSimple=Model simplu
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Atenţie,  nu sunt produse care aşteaptă să fie expediate.
 StatsOnShipmentsOnlyValidated=Statisticil ectuate privind numai livrările validate. Data folosită este data validării livrării (data de livrare planificată nu este întotdeauna cunoscută).
-DateDeliveryPlanned=Data de livrare planificată
+DateDeliveryPlanned=Planned date of delivery
 DateReceived=Data de livrare reală
 SendShippingByEMail=Trimite dispoziţia de livrare prin e-mail
 SendShippingRef=Transmitere livrare %s
@@ -67,7 +67,7 @@ SendingRunning=Produs din comenzile clientului comandate
 SuppliersReceiptRunning=Produs din comenzile furnizorului comandate
 ProductQtyInCustomersOrdersRunning=Cantitate produs in comenzile clientilor deschise
 ProductQtyInSuppliersOrdersRunning=Cantitate produs in comenzile furnizorilor deschise
-ProductQtyInShipmentAlreadySent=Cantitate produs din comenzile clientilor deschise deja trimise
+ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantitate produs din comenzile furnizorilor deschise deja primite
 
 # Sending methods

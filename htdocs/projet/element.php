@@ -157,6 +157,22 @@ print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 print dol_print_date($object->date_end,'day');
 print '</td></tr>';
 
+// Opportunity status
+print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+if ($code) print $langs->trans("OppStatus".$code);
+print '</td></tr>';
+
+// Opportunity Amount
+print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+print '</td></tr>';
+
+// Budget
+print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+print '</td></tr>';
+
 print '</table>';
 
 dol_fiche_end();
@@ -487,17 +503,21 @@ foreach ($listofreferent as $key => $value)
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
 
-
 		$element = new $classname($db);
 
 		$addform='';
-		$selectList=$formproject->select_element($tablename,$object->thirdparty->id);
+
+		$idtofilterthirdparty=0;
+		if (! in_array($tablename, array('facture_fourn', 'commande_fourn'))) $idtofilterthirdparty=$object->thirdparty->id;
+
+		$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth200');
 		if (! $selectList || ($selectList<0))
 		{
 			setEventMessages($formproject->error,$formproject->errors,'errors');
 		}
 		elseif($selectList)
 		{
+			// Define form with the combo list of elements to link
 			$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 			$addform.='<input type="hidden" name="action" value="addelement">';
@@ -621,7 +641,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-					if ($element instanceof Task) 
+					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1,'withproject','time');
 						print ' - '.dol_trunc($element->label, 48);
@@ -692,8 +712,8 @@ foreach ($listofreferent as $key => $value)
 					{
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);	// $element is a task. $elementuser may be empty
 						$total_ht_by_line = price2num($tmp['amount'],'MT');
-						if ($tmp['nblinesnull'] > 0) 
-						{	
+						if ($tmp['nblinesnull'] > 0)
+						{
 							$langs->load("errors");
 							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate");
 						}
@@ -807,7 +827,20 @@ foreach ($listofreferent as $key => $value)
 			print $elementarray;
 		}
 		print "</table>";
+		print "<br>\n";
 	}
+}
+
+// Enhance with select2
+$nodatarole='';
+if ($conf->use_javascript_ajax)
+{
+	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+	$comboenhancement = ajax_combobox('.elementselect');
+	$out.=$comboenhancement;
+	$nodatarole=($comboenhancement?' data-role="none"':'');
+
+	print $comboenhancement;
 }
 
 

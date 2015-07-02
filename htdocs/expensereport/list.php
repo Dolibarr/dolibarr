@@ -191,7 +191,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("TotalVAT"),$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalTTC"),$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	// Filters
@@ -263,10 +263,13 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 
 			$expensereporttmp->status=$objp->status;
-			print '<td align="right" colspan="2">';
+			print '<td align="right">';
 			//print $objp->status;
 			print $expensereporttmp->getLibStatut(5);
 			print '</td>';
+
+			print '<td></td>';
+
 			print "</tr>\n";
 
 			$total_total_ht = $total_total_ht + $objp->total_ht;

@@ -204,6 +204,7 @@ ClickHereToGoTo=Cliquez ici pour aller sur %s
 YouMustClickToChange=Vous devez toutefois auparavant cliquer sur le lien suivant, afin de valider ce changement de mot de passe
 ForgetIfNothing=Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message. Vos identifiants restent sécurisés.
 IfAmountHigherThan=Si le montant est supérieur à <strong>%s</strong>
+SourcesRepository=Répertoire pour les sources
 
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s

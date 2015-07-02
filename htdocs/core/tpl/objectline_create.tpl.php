@@ -527,7 +527,8 @@ jQuery(document).ready(function() {
 		      		}
 	      			if (this.id == 'pmpprice')
 	      			{
-		      			var defaultbuyprice = <?php echo (isset($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE)?int($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE):1); ?>;
+	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
+		      			var defaultbuyprice = <?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?1:0); ?>;
 		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
 	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      			}

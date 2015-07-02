@@ -19,4 +19,4 @@ printQty=Quantità: %d
 AddDispatchBatchLine=Aggiungi una riga per la durata a scaffale
 BatchDefaultNumber=Non definito
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
-ProductDoesNotUseBatchSerial=Questo prodotto non usa lotto/numero di serie
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

@@ -389,7 +389,7 @@ else
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
 			if ($user->rights->stock->creer)            print_liste_field_titre('');
-			print "</tr>";
+			print "</tr>\n";
 
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;
@@ -518,6 +518,10 @@ else
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+			$head = stock_prepare_head($object);
+
+			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -559,7 +563,9 @@ else
 
 			print '</table>';
 
-			print '<br><div class="center">';
+			dol_fiche_end();
+
+			print '<div class="center">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

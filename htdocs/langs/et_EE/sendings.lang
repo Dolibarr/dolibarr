@@ -53,7 +53,7 @@ DocumentModelSimple=Lihtsa dokumendi mudel
 DocumentModelMerou=Merou A5 mudel
 WarningNoQtyLeftToSend=Hoiatus: pole ühtki lähetamise ootel kaupa.
 StatsOnShipmentsOnlyValidated=Statistika põhineb vaid kinnitatud saadetistel. Kasutatavaks kuupäevaks on saadetise kinnitamise kuupäev (plaanitav kohaletoimetamise aeg ei ole alati teada).
-DateDeliveryPlanned=Plaanitud kohaletoimetamise aeg
+DateDeliveryPlanned=Planned date of delivery
 DateReceived=Saadetise kättesaamise kuupäev
 SendShippingByEMail=Saada saadetis e-postiga
 SendShippingRef=Submission of shipment %s
@@ -67,7 +67,7 @@ SendingRunning=Product from ordered customer orders
 SuppliersReceiptRunning=Product from ordered supplier orders
 ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods

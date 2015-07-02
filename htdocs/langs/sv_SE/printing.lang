@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
-Module112000Name=Direkt utskrift
-Module112000Desc=Aktivera System för Direkt Utskrift
+Module64000Name=Direct Printing
+Module64000Desc=Enable Direct Printing System
 PrintingSetup=Inställningar av System för Direkt Utskrift
 PrintingDesc=Denna modul lägger till en Utskrift-knapp i diverse moduler för att skicka dokument direkt till en skrivare (utan att öppna dokumentet i någon tillämpning).
 ModuleDriverSetup=Inställningar för Modul drivrutiner
@@ -49,7 +49,6 @@ PRINTIPP_PORT=Port
 PRINTIPP_USER=Inlogg
 PRINTIPP_PASSWORD=Lösenord
 NoPrinterFound=Ingen skrivare funnen (kontrollera CUPS-inställningar)
-FileWasSentToPrinter=Fil %s skickades till utskrift
 NoDefaultPrinterDefined=Ingen standarskrivare är definerad
 DefaultPrinter=Standard skrivare
 Printer=Skrivare

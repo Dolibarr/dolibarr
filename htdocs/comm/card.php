@@ -410,17 +410,19 @@ if ($id > 0)
 		print '</td><td colspan="3">';
 		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
 		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
 		// display amount and link to unpaid bill
 		$outstandingBills = $object->get_OutstandingBill();
-		if ($outstandingBills != 0)
+		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
+		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
+		if ($object->outstanding_limit != '') 
 		{
-			print ' ('.$langs->trans("CurrentOutstandingBill");
-			print ' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'&search_status=1">';
-			print price($outstandingBills, '', $langs, 0, -1, -1, $conf->currency);
-			print '</a>';
-			if ($outstandingBills > $object->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
-			print ')';
+			if ($outstandingBills > $object->outstanding_limit)
+				print img_warning($langs->trans("OutstandingBillReached"));
+			//print ' / ' . price($soc->outstanding_limit);
 		}
+		print ')';
+		
 		print '</td>';
 		print '</tr>';
 	}

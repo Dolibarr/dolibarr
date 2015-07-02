@@ -582,6 +582,24 @@ class FormOther
         }
     }
 
+
+    /**
+     *		Output a HTML thumb of color or a text if not defined.
+     *
+     *		@param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
+     *		@param	string		$textifnotdefined	Text to show if color not defined
+     * 		@return	string							HTML code for color thumb
+     *		@see selectColor
+     */
+    static function showColor($color, $textifnotdefined='')
+    {
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+    	$color = colorArrayToHex(colorStringToArray($color,array()),'');
+		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+		else print $textifnotdefined;
+    }
+
     /**
      *		Output a HTML code to select a color
      *
@@ -591,7 +609,7 @@ class FormOther
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
-     * 		@deprecated
+     * 		@deprecated Use instead selectColor
      *      @see selectColor()
      */
     function select_color($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='')
@@ -609,8 +627,9 @@ class FormOther
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
      * 		@return	string
+     *		@see showColor
      */
-    function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
+    static function selectColor($set_color='', $prefix='f_color', $form_name='', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
 	    // Deprecation warning
 	    if ($form_name) {
@@ -857,7 +876,7 @@ class FormOther
         $min_year = $currentyear-$min_year;
         if(empty($selected) && empty($useempty)) $selected = $currentyear;
 
-        $out.= '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
+        $out.= '<select class="flat" placeholder="aa" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
         if($useempty)
         {
         	$selected_html='';

@@ -55,7 +55,7 @@ $search_zipcode=GETPOST("search_zipcode");
 $search_town=GETPOST("search_town");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
-$search_status		= GETPOST("search_status",'int');
+$search_status= GETPOST("search_status",'int');
 
 // Load sale and categ filters
 $search_sale  = GETPOST("search_sale",'int');
@@ -205,7 +205,7 @@ if ($result)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';

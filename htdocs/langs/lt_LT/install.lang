@@ -64,6 +64,7 @@ DatabaseSuperUserAccess=Duomenų bazės serveris - Superuser prieiga
 CheckToCreateDatabase=Žymėti langelį, jei duomenų bazės nėra ir ji turi būti sukurta. <br>Tokiu atveju, turite užpildyti prisijungimo/slaptažodį superuser sąskaitai šio puslapio apačioje.
 CheckToCreateUser=Žymėti langelį, jei duomenų bazės savininko nėra ir jis turi būti sukurtas. <br>Šiuo atveju, jūs turite pasirinkti jo prisijungimo vardą ir slaptažodį ir užpildyti prisijungimo/slaptažodžio superuser sąskaitai šio puslapio apačioje. Jei šis langelis nepažymėtas, savininko duomenų bazė ir jos slaptažodis jau egzistuoja.
 Experimental=(eksperimentinis)
+Deprecated=(deprecated)
 DatabaseRootLoginDescription=Prisijungimas vartotojui leidžia kurti naujas duomenų bazes arba naujus vartotojus. Tai privaloma, jei Jūsų duomenų bazė ar jos savininkas dar neegzistuoja.
 KeepEmptyIfNoPassword=Palikite tuščią, jei vartotojas neturi slaptažodžio (praleisti)
 SaveConfigurationFile=Išsaugoti reikšmes

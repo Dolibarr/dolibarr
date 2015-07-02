@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Intervention validerade
 Notify_FICHINTER_SENTBYMAIL=Ingripande skickas per post
 Notify_BILL_VALIDATE=Kundfaktura validerade
 Notify_BILL_UNVALIDATE=Kundfakturan Fraktpris saknas
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Leverantör för godkänd
 Notify_ORDER_SUPPLIER_REFUSE=Leverantör för vägrat
 Notify_ORDER_VALIDATE=Kundorder validerade
@@ -203,6 +204,7 @@ ClickHereToGoTo=Klicka här för att gå till %s
 YouMustClickToChange=Du måste dock först klicka på följande länk för att bekräfta detta lösenord förändring
 ForgetIfNothing=Om du inte har begärt denna förändring, bara glömma detta mail. Dina referenser förvaras säkert.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Lägg till post i kalendern %s

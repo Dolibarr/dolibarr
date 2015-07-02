@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("sendings");
+$langs->load("deliveries");
 $langs->load('companies');
 
 // Security check
@@ -132,7 +133,7 @@ if ($resql)
     	print_liste_field_titre($langs->trans("DateReceived"), $_SERVER["PHP_SELF"],"l.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
 	}
 	print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -143,22 +144,24 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
 	print '</td>';
-	// Date
+	// Date delivery planned
 	print '<td class="liste_titre">&nbsp;</td>';
     if ($conf->livraison_bon->enabled)
     {
+    	// Delivery order
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
 		print '</td>';
-
+		// Date received
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	// Status
+	print '<td></td>';
+	// Search
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
-	print '<td class="liste_titre" align="center">';
-	print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
-	print '</td>';
 
 	print "</tr>\n";
 
@@ -170,8 +173,9 @@ if ($resql)
 
 		$var=!$var;
 
-		// Ref
 		print "<tr ".$bc[$var].">";
+
+		// Ref
 		print "<td>";
 		$shipment->id=$objp->rowid;
 		$shipment->ref=$objp->ref;
@@ -195,11 +199,6 @@ if ($resql)
 		}*/
 		print "</td>\n";
 
-		// Date real
-		print '<td align="center">';
-		print dol_print_date($db->jdate($objp->date_expedition),"day");
-		print '</td>'."\n";
-
         if ($conf->livraison_bon->enabled)
         {
 		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
@@ -209,13 +208,16 @@ if ($resql)
             print '<td>';
             print !empty($receiving) ? $receiving->getNomUrl($db) : '';
             print '</td>';
-
+			// Date received
         	print '<td align="center">';
 			print dol_print_date($db->jdate($objp->date_reception),"day");
 			print '</td>'."\n";
 		}
 
 		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
+
+		print '<td></td>';
+
 		print "</tr>\n";
 
 		$i++;

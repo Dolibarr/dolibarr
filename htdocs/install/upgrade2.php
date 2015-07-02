@@ -364,7 +364,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         {
        	    migrate_event_assignement($db,$langs,$conf);
         }
-        
+
         // Scripts for lat version
         $afterversionarray=explode('.','3.7.9');
         $beforeversionarray=explode('.','3.8.9');
@@ -381,6 +381,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 				    	'MAIN_MODULE_ECM',
 				    	'MAIN_MODULE_FACTURE',
 				    	'MAIN_MODULE_FOURNISSEUR',
+						'MAIN_MODULE_HOLIDAY',
 						'MAIN_MODULE_OPENSURVEY',
 						'MAIN_MODULE_PAYBOX',
 						'MAIN_MODULE_PRODUIT',
@@ -3824,7 +3825,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Service");
-	        
+
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
 	        if ($res) {
 	            $mod=new modService($db);
@@ -3835,7 +3836,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Commande");
-	        
+
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
 	        if ($res) {
 	            $mod=new modCommande($db);

@@ -430,5 +430,5 @@ NotLastInCycle=Hoá đơn này không phải là cuối cùng trong chu kỳ và
 DisabledBecauseNotLastInCycle=Tình huống tiếp theo đã tồn tại
 DisabledBecauseFinal=Tình huống này là cuối cùng
 CantBeLessThanMinPercent=Tiến trình này không thể nhỏ hơn giá trị của nó trong tình huống trước.
-NoSituations=Không có tình huống nào đã mở
+NoSituations=No open situations
 InvoiceSituationLast=Hóa đơn cuối cùng và tổng hợp

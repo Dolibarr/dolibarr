@@ -64,6 +64,7 @@ DatabaseSuperUserAccess=Adatbázis szerver - Superuser hozzáférés
 CheckToCreateDatabase=Pipálja ki a dobozt ha szeretné, hogy a rendszer létrehozza az adatbázist.<br>Ebbben az esetben a SuperUser bejelentkezési adatai ki kell tölteni az oldal alján.
 CheckToCreateUser=Pipálja ki a dobozt ha szeretné, hogy a rendszer létrehozza az adatbázis tulajdonos.<br>Ebbben az esetben a SuperUser bejelentkezési adatai ki kell tölteni az oldal alján. A a doboz nincs kipipálva akkor az adatbázisnak és a tulajdonosának léteznie kell.
 Experimental=(kísérleti)
+Deprecated=(deprecated)
 DatabaseRootLoginDescription=A felhasználó jogosúlt új adatbázisok vagy új felhasználók létrehozására, felesleges ha a szolgáltatás hostolt formában veszik igénybe.
 KeepEmptyIfNoPassword=Hagyja üresen ha a felhasználónak nincs jelszava (az ilyet jobb elkerülni)
 SaveConfigurationFile=Értékek mentése

@@ -30,6 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 $langs->load('projects');
 
@@ -68,6 +69,7 @@ $search_societe=GETPOST("search_societe");
 $search_year=GETPOST("search_year");
 $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
+$search_opp_status=GETPOST("search_opp_status",'int');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -90,6 +92,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_societe="";
 	$search_year="";
 	$search_status=-1;
+	$search_opp_status=-1;
 	$search_public="";
 	$search_sale="";
 	$search_user='';
@@ -115,15 +118,17 @@ $projectstatic = new Project($db);
 $socstatic = new Societe($db);
 $form = new Form($db);
 $formother = new FormOther($db);
+$formproject = new FormProjets($db);
 
 llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1,$socid);
 
-$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.public, p.fk_user_creat";
+$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_create, p.dateo as date_start, p.datee as date_end";
 $sql.= ", s.nom as name, s.rowid as socid";
+$sql.= ", cls.code as opp_status_code";
 // Add fields for extrafields
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
 // Add fields from hooks
@@ -132,6 +137,7 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // N
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
 
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -177,6 +183,7 @@ else if ($year > 0)
 }
 if ($search_all) $sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
 if ($search_status >= 0) $sql .= " AND p.fk_statut = ".$db->escape($search_status);
+if ($search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0) $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='project' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
@@ -205,6 +212,7 @@ if ($resql)
 	if ($search_label != '') 		$param.='&search_label='.$search_label;
 	if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
 	if ($search_status >= 0) 		$param.='&search_status='.$search_status;
+	if ($search_opp_status >= 0) 	$param.='&search_opp_status='.$search_opp_status;
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
@@ -271,8 +279,9 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),$_SERVER["PHP_SELF"],'p.fk_opp_statut',"",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -312,10 +321,17 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+		print '<td class="liste_titre nowrap">';
+		print $formproject->selectOpportunityStatus('search_opp_status',$search_opp_status,1,1);
+	    print '</td>';
+    }
+
 	print '<td class="liste_titre nowrap" align="right">';
 	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
     print '</td>';
-    print '<td width="56">';
+    print '<td>';
     print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
@@ -418,9 +434,18 @@ if ($resql)
         	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 		    print $hookmanager->resPrint;
 
+		    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    		{
+    			print '<td>';
+    			if ($objp->opp_status_code) print $langs->trans("OppStatusShort".$objp->opp_status_code);
+    			print '</td>';
+    		}
+
     		// Status
     		$projectstatic->statut = $objp->fk_statut;
-    		print '<td align="right" colspan="2">'.$projectstatic->getLibStatut(5).'</td>';
+    		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
+
+    		print '<td></td>';
 
     		print "</tr>\n";
 

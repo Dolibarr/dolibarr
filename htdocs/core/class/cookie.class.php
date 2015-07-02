@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009  Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2015  Regis Houssin  <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,23 @@
 
 
 /**
- *	\class      DolCookie
- *	\brief      Class to manage cookies
+ *	Class to manage cookies.
+ *  This class is used by external module multicompany but will be removed soon only and must not be used by
+ *
+ *  @deprecated PHP already provide function to read/store a cookie. No need to use a dedicated class. Also storing sensitive information into cookie is forbidden, so encryption is useless.
+ *  If a data is sensitive, it must be stored into database (if we need a long term retention) or into session.
  */
 class DolCookie
 {
-	var $myKey;
+	private $_myKey;
+	private $_iv;
+
 	var $myCookie;
 	var $myValue;
 	var $myExpire;
 	var $myPath;
 	var $myDomain;
 	var	$mySecure;
-	var $cookiearray;
 	var $cookie;
 
 	/**
@@ -45,8 +49,8 @@ class DolCookie
 	 */
 	function __construct($key = '')
 	{
-		$this->myKey = $key;
-		$this->cookiearray = array();
+		$this->_myKey = hash('sha256', $key, TRUE);
+		$this->_iv = md5(md5($this->_myKey));
 		$this->cookie = "";
 		$this->myCookie = "";
 		$this->myValue = "";
@@ -58,16 +62,12 @@ class DolCookie
 	 *
 	 * @return	void
 	 */
-	function cryptCookie()
+	private function _cryptCookie()
 	{
-		if (!empty($this->myKey))
+		if (!empty($this->_myKey) && !empty($this->_iv))
 		{
 			$valuecrypt = base64_encode($this->myValue);
-			$max=dol_strlen($valuecrypt)-1;
-			for ($f=0 ; $f <= $max; $f++)
-			{
-				$this->cookie .= intval(ord($valuecrypt[$f]))*$this->myKey."|";
-			}
+			$this->cookie = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->_myKey, $valuecrypt, MCRYPT_MODE_CBC, $this->_iv));
 		}
 		else
 		{
@@ -82,19 +82,12 @@ class DolCookie
 	 *
 	 * @return	string
 	 */
-	function decryptCookie()
+	private function _decryptCookie()
 	{
-		if (!empty($this->myKey))
+		if (!empty($this->_myKey) && !empty($this->_iv))
 		{
-			$this->cookiearray = explode("|",$_COOKIE[$this->myCookie]);
-			$this->myValue = "" ;
-			$num = (count($this->cookiearray) - 2);
-			for ($f = 0; $f <= $num; $f++)
-			{
-				if (!empty($this->myKey)) {
-					$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
-				}
-			}
+			$this->cookie = $_COOKIE[$this->myCookie];
+			$this->myValue = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->_myKey, base64_decode($this->cookie), MCRYPT_MODE_CBC, $this->_iv));
 
 			return(base64_decode($this->myValue));
 		}
@@ -115,7 +108,7 @@ class DolCookie
 	 * @param	int			$secure		0 or 1
 	 * @return	void
 	 */
-	function _setCookie($cookie, $value, $expire=0, $path="/", $domain="", $secure=0)
+	public function setCookie($cookie, $value, $expire=0, $path="/", $domain="", $secure=0)
 	{
 		$this->myCookie = $cookie;
 		$this->myValue = $value;
@@ -126,7 +119,7 @@ class DolCookie
 
 		//print 'key='.$this->myKey.' name='.$this->myCookie.' value='.$this->myValue.' expire='.$this->myExpire;
 
-		$this->cryptCookie();
+		$this->_cryptCookie();
 	}
 
 	/**
@@ -135,11 +128,11 @@ class DolCookie
 	 *  @param   	string		$cookie         Cookie name
 	 *  @return  	string						Decrypted value
 	 */
-	function _getCookie($cookie)
+	public function getCookie($cookie)
 	{
 		$this->myCookie = $cookie;
 
-		$decryptValue = $this->decryptCookie();
+		$decryptValue = $this->_decryptCookie();
 
 		return $decryptValue;
 	}

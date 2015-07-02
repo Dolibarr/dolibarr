@@ -57,6 +57,7 @@ RemoveFromGroup=Удалить из группы
 PasswordChangedAndSentTo=Пароль изменен и направил <b>в %s.</b>
 PasswordChangeRequestSent=Запрос на изменение пароля <b>для %s направлено %s.</b>
 MenuUsersAndGroups=Пользователи и Группы
+MenuMyUserCard=My user card
 LastGroupsCreated=Последнее %s созданы группы
 LastUsersCreated=Последнее %s пользователей создаются
 ShowGroup=Показать группы

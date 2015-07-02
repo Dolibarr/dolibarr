@@ -458,8 +458,7 @@ print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $pa
 print_liste_field_titre($langs->trans('Ordered'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('StockToBuy'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('Supplier'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-
-print '</tr>';
+print "</tr>\n";
 
 // Lignes des champs de filtre
 print '<tr class="liste_titre">'.

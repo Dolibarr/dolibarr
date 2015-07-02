@@ -170,6 +170,7 @@ ErrorGlobalVariableUpdater4=Le client SOAP a échoué avec l'erreur '%s'
 ErrorGlobalVariableUpdater5=Pas de variable globale
 ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
 ErrorFieldMustBeAnInteger=Le champ <b>%s</b> doit être un numérique
+ErrorMandatoryParametersNotProvided=Paramètre(s) obligatoire(s) non fournis
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ if ($id > 0 || ! empty($ref))
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
-	// Statut
+	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Date start
@@ -194,6 +194,22 @@ if ($id > 0 || ! empty($ref))
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+
+	// Opportunity status
+	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+	if ($code) print $langs->trans("OppStatus".$code);
+	print '</td></tr>';
+
+	// Opportunity Amount
+	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+	if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+	print '</td></tr>';
+
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
 	print '</td></tr>';
 
 	print "</table>";
