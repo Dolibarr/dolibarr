@@ -137,7 +137,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('nom','alpha')?GETPOST('nom','alpha'):GETPOST('name','alpha'));
-            $object->civility_id       = GETPOST('civility_id', 'int');
+            $object->civility_id       = GETPOST('civility_id');
             // Add non official properties
             $object->name_bis          = GETPOST('name','alpha')?GETPOST('name','alpha'):GETPOST('nom','alpha');
             $object->firstname         = GETPOST('firstname','alpha');
@@ -195,7 +195,11 @@ if (empty($reshook))
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
+		if ($ret < 0)
+		{
+			 $error++;
+			 $action = ($action=='add'?'create':'edit'); 
+		}
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);

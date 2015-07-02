@@ -1,34 +1,34 @@
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Zdroje
+MenuResourceAdd=Nový zdroj
+MenuResourcePlanning=Plánování zdrojů
+DeleteResource=Smazat zdroj
+ConfirmDeleteResourceElement=Potvrďte odstranění zdroje pro tento element
+NoResourceInDatabase=Žádný zdroj v databázi.
+NoResourceLinked=Žádný propojený zdroj
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=Výpis zdrojů
+ResourceSingular=Zdroj
+ResourceCard=Karta zdroje
+AddResource=Vytvořit zdroj
+ResourceFormLabel_ref=Název zdroje
+ResourceType=Typ zdroje
+ResourceFormLabel_description=Popis zdroje
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=Zdroje propojené s prvkem
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ShowResourcePlanning=Zobrazení plánování zdrojů
+GotoDate=Jdi na datum
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=Prvky zdrojů
+ResourceCreatedWithSuccess=Zdroj úspěšně vytvořen
+RessourceLineSuccessfullyDeleted=Propojení zdrojů bylo úspěšně odstraněno
+RessourceLineSuccessfullyUpdated=Propojení zdrojů bylo úspěšně aktualizováno
+ResourceLinkedWithSuccess=Zdroj úspěšně propojen
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+TitleResourceCard=Karta zdroje
+ConfirmDeleteResource=Potvrďte odstranění tohoto zdroje
+RessourceSuccessfullyDeleted=Zdroj úspěšně odstraněn
+DictionaryResourceType=Typy zdrojů
 
-SelectResource=Select resource
+SelectResource=Výběr zdroje

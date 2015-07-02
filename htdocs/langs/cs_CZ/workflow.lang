@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
-WorkflowSetup=Workflow modul nastavení
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Není workflow můžete upravit pro modul bylo aktivováno.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Vytvoření objednávky zákazníka automaticky po komerční Návrh je podepsán
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Vytvořte zákaznické faktury automaticky po komerční Návrh je podepsán
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Vytvořte zákaznické faktury automaticky po uzavření smlouvy ověřena
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Vytvořte zákaznické faktury automaticky po zákazníkovi, aby je uzavřen
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Třídit propojené zdrojový návrh účtoval když je objednávka zákazníka nastaven na placenou
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Třídit spojeny zdroj objednávka zákazníka (y) účtoval, když je zákazník faktury nastaven na placené
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Třídit propojený zdroj objednávky zákazníka (y) účtoval když je ověřen zákazníky faktura
+WorkflowSetup=Nastavení workflow modulu
+WorkflowDesc=Tento modul je určen k úpravě chování automatických akcí, v aplikaci. Ve výchozím nastavení workflow je otevřen (uděláte něco, co chcete). Můžete aktivovat automatické akce, které jsou zajímavé.
+ThereIsNoWorkflowToModify=Workflow zde není nastaven, můžete upravit modul pokud ho chcete aktivovat.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Vytvoření objednávky zákazníka automaticky po podepsání komerčního návrhu
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Vytvoření zákaznické faktury automaticky po podepsání komerčního návrhu
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Vytvoření zákaznické faktury automaticky po schválení kontraktu
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Vytvoření zákaznické faktury automaticky po uzavření objednávky zákazníka
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označit propojený zdrojový návrh jako zaúčtovaný, když je objednávka zákazníka nastavena jako placená
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označit propojenou zdrojovou objednávku zákazníka(ů) jako zaúčtované, když jsou zákaznické faktury nastaveny jako placené
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označit propojenou zdrojovou objednávku zákazníka(ů) jako zaúčtovanou, když je ověřená zákaznická faktura

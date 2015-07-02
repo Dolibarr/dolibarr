@@ -1,10 +1,10 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
 
-Accounting=Accounting
-Globalparameters=Global parameters
-Chartofaccounts=Chart of accounts
-Fiscalyear=Fiscal years
+Accounting=Raamatupidamine
+Globalparameters=Globaalsed parameetrid
+Chartofaccounts=Kontoplaan
+Fiscalyear=Majandusaastad
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
 MenuTools=Tools

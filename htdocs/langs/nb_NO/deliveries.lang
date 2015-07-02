@@ -24,3 +24,5 @@ Deliverer=Transportør :
 Sender=Avsender
 Recipient=Mottaker
 ErrorStockIsNotEnough=Ikke nok på lager
+Shippable=Kan sendes
+NonShippable=Kan ikke sendes
