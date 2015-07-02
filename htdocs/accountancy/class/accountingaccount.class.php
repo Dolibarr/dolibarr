@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +128,6 @@ class AccountingAccount extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
-		$now=dol_now();
 
 		// Clean parameters
 		if (isset($this->fk_pcg_version))

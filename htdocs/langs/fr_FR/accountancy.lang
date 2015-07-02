@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - fr_FR - Accounting Expert
 CHARSET=UTF-8
 ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonnes pour le fichier exporté
 ACCOUNTING_EXPORT_DATE=Date format for export file
@@ -83,6 +83,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencer le tri des pages de ventilation 
 
 AccountLength=Longueur des comptes comptables affichés dans Dolibarr 
 AccountLengthDesc=Fonction permettant de simuler une longueur de compte comptable en remplaçant les espaces par le chiffre zéro. Cette fonction touche uniquement à l'affichage, elle ne modifie pas les comptes comptables enregistrés dans Dolibarr. Pour l'export, cette fonction est nécessaire pour être compatible avec certains logiciels.
+ACCOUNTING_LENGTH_DESCRIPTION=Longueur de troncature pour l'affichage des lignes descriptifs produits & services (conseil 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur de troncature pour l'affichage du descriptif de selection du compte (conseil = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
 ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes tiers
 
@@ -152,7 +154,7 @@ DescVentilCustomer=Consultez ici la ventilation comptable annuelle de vos factur
 TotalVente=Chiffre d'affaires HT
 TotalMarge=Total marge
 DescVentilDoneCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
-DescVentilTodoCustomer=Consultez ici la liste des lignes de factures clients et leur compte comptable
+DescVentilTodoCustomer=Ventilez vos lignes de facture client avec un compte comptable
 ChangeAccount=Changer le compte comptable pour les lignes sélectionnées par le compte :
 Vide=-
 DescVentilSupplier=Consultez ici la ventilation comptable annuelle de vos factures fournisseurs
