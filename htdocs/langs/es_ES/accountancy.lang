@@ -76,6 +76,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "
 
 AccountLength=Longitud de las cuentas contables mostradas en Dolibarr
 AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo los espacios por cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registradas en Dolibarr. Esta función es necesaria para la exportación, para ser compatible con algunos programas.
+ACCOUNTING_LENGTH_DESCRIPTION=Longitud affichage descriptifs produits & services (conseil 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud affichage du descriptif de selection du compte (conseil = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas
 
