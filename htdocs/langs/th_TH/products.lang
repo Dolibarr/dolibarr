@@ -294,3 +294,5 @@ LastUpdated=อัพเดทล่าสุด
 CorrectlyUpdated=ปรับปรุงอย่างถูกต้อง
 PropalMergePdfProductActualFile=ไฟล์ที่ใช้ในการเพิ่มเป็น PDF ดาซูร์มี / เป็น
 PropalMergePdfProductChooseFile=ไฟล์ PDF เลือก
+IncludingProductWithTag=รวมทั้งสินค้าที่มีแท็ก
+DefaultPriceRealPriceMayDependOnCustomer=ราคาเริ่มต้นราคาที่แท้จริงอาจขึ้นอยู่กับลูกค้า

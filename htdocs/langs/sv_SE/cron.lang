@@ -76,6 +76,7 @@ CronMethodHelp=Objektet metod för att starta. <BR> För exemple att hämta meto
 CronArgsHelp=Metoden argument. <BR> Till exemple att hämta förfarande för Dolibarr Produkt objekt /htdocs/product/class/product.class.php kan värdet av paramters vara <i>0, ProductRef</i>
 CronCommandHelp=Systemet kommandoraden som ska köras.
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=Information
 # Common

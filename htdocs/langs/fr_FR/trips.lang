@@ -76,6 +76,7 @@ BROUILLONNER=Réouvrir
 SendToValid=Sent on approval
 ModifyInfoGen=Editer
 ValidateAndSubmit=Valider et envoyer pour approbation
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Vous n'êtes pas autorisé a approuver cette note de frais
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais. Opération annulé.

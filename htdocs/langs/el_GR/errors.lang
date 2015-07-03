@@ -191,3 +191,4 @@ WarningNotRelevant=Irrelevant operation for this dataset
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Απενεργοποιημένη λειτουργία όταν οι ρυθμίσεις της οθόνης έχουν προσαρμοστεί για χρήση από άτομα με προβλήματα όρασης ή φυλλομετρητές κειμένου.
 WarningPaymentDateLowerThanInvoiceDate=Η ημερομηνία πληρωμής (%s) είναι νωρίτερα από την ημερομηνία του τιμολογίου (%s) για το τιμολόγιο %s.
 WarningTooManyDataPleaseUseMoreFilters=Πάρα πολλά στοιχεία. Παρακαλούμε χρησιμοποιήστε περισσότερα φίλτρα
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

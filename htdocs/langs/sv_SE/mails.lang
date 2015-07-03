@@ -128,6 +128,7 @@ TagCheckMail=Spår post öppning
 TagUnsubscribe=Avanmälan länk
 TagSignature=Signatur sändande användarens
 TagMailtoEmail=Mottagarens EMail
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Anmälningar
 NoNotificationsWillBeSent=Inga e-postmeddelanden planeras för detta evenemang och företag

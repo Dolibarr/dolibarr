@@ -30,6 +30,7 @@ ThirdPartyContact=طرف ثالث اتصال
 StatusContactValidated=مركز الاتصال
 Company=شركة
 CompanyName=اسم الشركة
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=الشركات
 CountryIsInEEC=البلد داخل المجموعة الاقتصادية الأوروبية
 ThirdPartyName=اسم طرف ثالث

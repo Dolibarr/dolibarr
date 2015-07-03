@@ -128,6 +128,7 @@ TagCheckMail=Jälgi kirjade avamist
 TagUnsubscribe=Tellimuse tühistamise link
 TagSignature=Saatnud kasutaja allkiri
 TagMailtoEmail=Saaja e-posti aadress
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Teated
 NoNotificationsWillBeSent=Selle tegevuse ja ettevõttega ei ole plaanis saata ühtki e-kirja teadet

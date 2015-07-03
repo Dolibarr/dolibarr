@@ -76,6 +76,7 @@ BROUILLONNER=Redeschide
 SendToValid=Sent on approval
 ModifyInfoGen=Editare
 ValidateAndSubmit=Validareaza și trimite pentru aprobare
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Nu aveti permisiunea să aprobati acest raport de cheltuieli
 NOT_AUTHOR=Tu nu esti autorul acestui raport de cheltuieli. Operatiune anulata.

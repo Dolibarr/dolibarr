@@ -76,6 +76,7 @@ CronMethodHelp=Objekt způsob startu. <BR> Např načíst metody objektu .../htd
 CronArgsHelp=Metoda argumenty. <BR> Např načíst metody objektu výrobku .../htdocs/product/class/product.class.php, hodnota paramteru může být <i>0, ProductRef</i>
 CronCommandHelp=Spustit příkazový řádek. 
 CronCreateJob=Vytvořit novou naplánovanou úlohu
+CronFrom=From
 # Info
 CronInfoPage=Informace
 # Common

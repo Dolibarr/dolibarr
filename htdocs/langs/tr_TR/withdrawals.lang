@@ -84,6 +84,11 @@ WithdrawalFile=Para çekme dosyası
 SetToStatusSent="Dosya Gönderildi" durumuna ayarla
 ThisWillAlsoAddPaymentOnInvoice=Bu aynı zamanda faturalara ödeme oluşturur ve onları "ödendi" olarak sınıflandırır
 StatisticsByLineStatus=Durum satırlarına göre istatistkler
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Banka tarafından ödenen %s ödeme talimatı

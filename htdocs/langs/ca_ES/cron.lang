@@ -76,6 +76,7 @@ CronMethodHelp=El método a lanzar. <BR> Por ejemplo para llamar el método fetc
 CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para usar el método fetch del objeto Product deDolibarr /htdocs/product/class/product.class.php, el valor del parámetro podría ser <i>0, RefProduit</i>
 CronCommandHelp=El comando del sistema a executar
 CronCreateJob=Crear nova tasca programada
+CronFrom=From
 # Info
 CronInfoPage=Informació
 # Common

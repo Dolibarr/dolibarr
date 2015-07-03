@@ -294,3 +294,5 @@ LastUpdated=Dernière mise à jour
 CorrectlyUpdated=Mise à jour avec succès
 PropalMergePdfProductActualFile=Files use to add into PDF Azur are/is
 PropalMergePdfProductChooseFile=Select PDF files
+IncludingProductWithTag=Including product with tag
+DefaultPriceRealPriceMayDependOnCustomer=Default price, real price may depend on customer

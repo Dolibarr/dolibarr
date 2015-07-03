@@ -30,6 +30,7 @@ ThirdPartyContact=Third party contact/address
 StatusContactValidated=Status of contact/address
 Company=Company
 CompanyName=Company name
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Companies
 CountryIsInEEC=Country is inside European Economic Community
 ThirdPartyName=Third party name

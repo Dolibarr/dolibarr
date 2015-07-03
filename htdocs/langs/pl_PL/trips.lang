@@ -76,6 +76,7 @@ BROUILLONNER=Otworzyć na nowo
 SendToValid=Sent on approval
 ModifyInfoGen=Edycja
 ValidateAndSubmit=Weryfikacja i przedkłada do zatwierdzenia
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Nie masz uprawnień do zatwierdzania tego raportu wydatków
 NOT_AUTHOR=Nie jesteś autorem tego raportu wydatków. Operacja anulowana.

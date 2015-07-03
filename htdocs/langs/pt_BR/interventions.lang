@@ -1,29 +1,13 @@
 # Dolibarr language file - Source file is en_US - interventions
-Intervention=Intervenção
-Interventions=Intervenções
-InterventionCard=Ficha de Intervenção
-NewIntervention=Nova Intervenção
 AddIntervention=Criar Intervenção
-ListOfInterventions=Lista de Intervenções
-EditIntervention=Editar
 ActionsOnFicheInter=Açoes na intervençao
-LastInterventions=As %s últimas Intervenções
-AllInterventions=Todas as Intervenções
-CreateDraftIntervention=Criar Rascunho
 CustomerDoesNotHavePrefix=O cliente não tem prefixoo de definido
 InterventionContact=Contato Intervenção
-DeleteIntervention=Eliminar Intervenção
-ValidateIntervention=Confirmar Intervenção
 ModifyIntervention=Modificar intervençao
-DeleteInterventionLine=Eliminar Linha de Intervenção
 ConfirmDeleteIntervention=Tem certeza que quer eliminar esta intervenção?
 ConfirmValidateIntervention=Tem certeza que quer Confirmar esta intervenção?
 ConfirmModifyIntervention=Tem certeza que quer modificar esta intervenção?
 ConfirmDeleteInterventionLine=Tem certeza que quer eliminar esta linha?
-NameAndSignatureOfInternalContact=Nome e Assinatura do Participante:
-NameAndSignatureOfExternalContact=Nome e Assinatura do Cliente:
-DocumentModelStandard=Modelo da Norma Intervenção
-InterventionCardsAndInterventionLines=Fichas e Linhas de Intervenção
 InterventionClassifyBilled=Classificar "Faturado"
 InterventionClassifyUnBilled=Classificar "à faturar"
 StatusInterInvoiced=Faturado
@@ -36,16 +20,11 @@ InterventionValidatedInDolibarr=Intervenção %s validada
 InterventionModifiedInDolibarr=Intervenção %s alterada
 InterventionClassifiedBilledInDolibarr=Intervenção %s classificada como Faturada
 InterventionClassifiedUnbilledInDolibarr=Intervenção %s definida como à faturar
-InterventionSentByEMail=Intervenção %s enviada por e-mail
 InterventionDeletedInDolibarr=Intervenção %s excluída
 SearchAnIntervention=Pesquisar uma intervenção
-##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsável do Seguimento da Intervenção
-TypeContact_fichinter_internal_INTERVENING=Interveniente
 TypeContact_fichinter_external_BILLING=Contato do cliente da faturação da intervenção
 TypeContact_fichinter_external_CUSTOMER=Contato do cliente do seguimento da intervenção
-# Modele numérotation
-ArcticNumRefModelDesc1=Modelo de numeração genérico
 ArcticNumRefModelError=Ativação Impossível
 PacificNumRefModelDesc1=Devolve o número com o formato %syymm-nnnn onde yy é o ano, mm. O mês e nnnn um contador seq�êncial sem ruptura e sem ficar a 0
 PacificNumRefModelError=Uma fatura que começa por # $$syymm existe na base e é incompativel com esta numeração. Eliminia  ou renomea-la para ativar este módulo.

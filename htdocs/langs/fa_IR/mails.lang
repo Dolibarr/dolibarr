@@ -128,6 +128,7 @@ TagCheckMail=پیگیری پست الکترونیکی باز
 TagUnsubscribe=لینک لغو عضویت
 TagSignature=امضاء ارسال کاربر
 TagMailtoEmail=ایمیل دریافت کننده
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=اطلاعیه ها
 NoNotificationsWillBeSent=بدون اطلاعیه ها ایمیل ها برای این رویداد و شرکت برنامه ریزی

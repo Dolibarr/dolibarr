@@ -79,9 +79,9 @@ ConfirmClonePropal=Vuoi davvero clonare la proposta <b>%s</b>?
 ConfirmReOpenProp=Vuoi davvero riaprire la proposta <b>%s</b>?
 ProposalsAndProposalsLines=Proposta commerciale e le linee
 ProposalLine=Linea della proposta
-AvailabilityPeriod=Disponibilità ritardo
-SetAvailability=Imposta la disponibilità di ritardo
-AfterOrder=dopo la fine
+AvailabilityPeriod=Tempi di consegna
+SetAvailability=Imposta i tempi di consegna
+AfterOrder=dopo ordine
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immediato
 AvailabilityTypeAV_1W=1 settimana

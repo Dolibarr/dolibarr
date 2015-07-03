@@ -199,7 +199,8 @@ Entreprises=شرکت
 DOLIBARRFOUNDATION_PAYMENT_FORM=برای پرداخت اشتراک خود را با استفاده از یک انتقال بانکی، صفحه را ببینید <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> برای پرداخت با استفاده از یک کارت اعتباری یا پی پال، بر روی دکمه در پایین این صفحه کلیک کنید. <br>
 ByProperties=با ویژگی
 MembersStatisticsByProperties=آمار کاربران توسط ویژگی
-MembersByNature=کاربران از طبیعت
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=نرخ مالیات بر ارزش افزوده برای استفاده از اشتراک ها
 NoVatOnSubscription=بدون TVA برای اشتراک
 MEMBER_PAYONLINE_SENDEMAIL=ایمیل برای هشدار دادن به هنگام Dolibarr دریافت تایید از پرداخت اعتبار برای اشتراک

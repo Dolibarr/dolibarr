@@ -76,6 +76,7 @@ CronMethodHelp=Die Objektmethode, um zu starten. <BR> Zum Beispiel um die Method
 CronArgsHelp=Das Methodenargument/Input-Parameter.<BR>  Zum Beispiel um die Methode fetch vom  Dolibarr Produkt Objekt /htdocs/product/class/product.class.php aufzurufen, ist der Input-Parameter-Wert <i>0, RefProduit</i>
 CronCommandHelp=Die auszuführende System-Kommandozeile
 CronCreateJob=Erstelle neuen cronjob
+CronFrom=From
 # Info
 CronInfoPage=Information
 # Common

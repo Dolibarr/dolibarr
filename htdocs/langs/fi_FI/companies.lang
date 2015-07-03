@@ -30,6 +30,7 @@ ThirdPartyContact=Kolmannen osapuolen yhteystiedot/osoitteet
 StatusContactValidated=Yhteystietojen/osoitteiden tila
 Company=Yritys
 CompanyName=Yrityksen nimi
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Yritykset
 CountryIsInEEC=Maa kuuluu EU:hun
 ThirdPartyName=Kolmannen osapuolen nimi

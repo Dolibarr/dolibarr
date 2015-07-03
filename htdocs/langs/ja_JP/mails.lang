@@ -128,6 +128,7 @@ TagCheckMail=Track mail opening
 TagUnsubscribe=Unsubscribe link
 TagSignature=Signature sending user
 TagMailtoEmail=Recipient EMail
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=通知
 NoNotificationsWillBeSent=いいえ電子メール通知は、このイベントや会社のために計画されていません

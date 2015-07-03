@@ -84,6 +84,11 @@ WithdrawalFile=Archivo de la domiciliación
 SetToStatusSent=Clasificar como "Archivo enviado"
 ThisWillAlsoAddPaymentOnInvoice=Se crearán los pagos de las facturas y las clasificará como pagadas
 StatisticsByLineStatus=Estadísticas por estados de líneas
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Abono de domiciliación %s por el banco

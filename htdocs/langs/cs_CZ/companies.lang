@@ -30,6 +30,7 @@ ThirdPartyContact=Kontakty/adresy třetí strany
 StatusContactValidated=Stav kontaktu/adresy
 Company=Společnost
 CompanyName=Název společnosti
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Společnosti
 CountryIsInEEC=Země je uvnitř Evropského hospodářského společenství
 ThirdPartyName=Název třetí strany

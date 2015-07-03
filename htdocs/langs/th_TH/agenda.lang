@@ -95,3 +95,5 @@ AddEvent=สร้างกิจกรรม
 MyAvailability=ความพร้อมใช้งานของฉัน
 ActionType=ประเภทเหตุการณ์
 DateActionBegin=วันที่เริ่มต้นเหตุการณ์
+CloneAction=เหตุการณ์โคลน
+ConfirmCloneEvent=<b>คุณแน่ใจหรือว่าต้องการโคลนเหตุการณ์% s?</b>

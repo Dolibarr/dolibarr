@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=เวิร์กโฟลว์การติดตั้งโมดูล
 WorkflowDesc=โมดูลนี้ถูกออกแบบมาเพื่อปรับเปลี่ยนพฤติกรรมของการกระทำโดยอัตโนมัติลงในใบสมัคร โดยค่าเริ่มต้นขั้นตอนการทำงานจะเปิด (คุณสามารถทำสิ่งที่อยู่ในลำดับที่คุณต้องการ) คุณสามารถเปิดใช้การกระทำโดยอัตโนมัติคุณมีความสนใจใน
-ThereIsNoWorkflowToModify=ไม่มีขั้นตอนการทำงานคือการปรับเปลี่ยนสำหรับโมดูลเปิดใช้งาน
+ThereIsNoWorkflowToModify=ไม่มีการปรับเปลี่ยนขั้นตอนการทำงานที่มีอยู่กับโมดูลเปิดใช้งานคือ
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=โดยอัตโนมัติสร้างคำสั่งของลูกค้าหลังจากที่ข้อเสนอในเชิงพาณิชย์มีการลงนาม
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically สร้างใบแจ้งหนี้ลูกค้าหลังจากที่ข้อเสนอในเชิงพาณิชย์มีการลงนาม
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically สร้างใบแจ้งหนี้ลูกค้าหลังจากที่สัญญาจะถูกตรวจสอบ

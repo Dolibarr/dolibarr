@@ -191,3 +191,4 @@ WarningNotRelevant=Opération non pertinente pour cet ensemble de données
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Fonction désactivé quand l'affichage est en mode optimisé pour les personnes aveugles ou les navigateurs textes.
 WarningPaymentDateLowerThanInvoiceDate=La date de paiement (%s) est inférieure à la date de facturation (%s) de la facture %s.
 WarningTooManyDataPleaseUseMoreFilters=Trop de données. Utilisez des filtres plus précis.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

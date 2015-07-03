@@ -128,6 +128,7 @@ TagCheckMail=Eposta açılışlarını izle
 TagUnsubscribe=Aboneliğini kaldır bağlantısı
 TagSignature=Gönderen kullanıcı imzası
 TagMailtoEmail=Alıcı epostası
+NoEmailSentBadSenderOrRecipientEmail=Gönderilen eposta yok. Hatalı gönderici ya da alıcı epostası. Kullanıcı profilini doğrula.
 # Module Notifications
 Notifications=Bildirimler
 NoNotificationsWillBeSent=Bu etkinlik ve firma için hiçbir Eposta bildirimi planlanmamış

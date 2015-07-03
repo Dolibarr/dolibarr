@@ -76,6 +76,7 @@ CronMethodHelp=Kasutatava objekti korral käivitatav meetod. <BR> Näiteks Dolib
 CronArgsHelp=Meetodile antavad argumendid. <BR> Näiteks Dolibarri Product objekti /htdocs/product/class/product.class.php meetodi fetch kasutamisel võivad parameetrite väärtusteks olla <i>0, ProductRef</i>.
 CronCommandHelp=Käivitatav süsteemi käsk.
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=Informatsioon
 # Common

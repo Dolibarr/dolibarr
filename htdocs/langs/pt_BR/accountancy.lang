@@ -1,166 +1,72 @@
-# Dolibarr language file - en_US - Accounting Expert
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - accountancy
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de coluna para o arquivo de exportação
 ACCOUNTING_EXPORT_DATE=Formato de data para arquivo de exportação
 ACCOUNTING_EXPORT_PIECE=Exportar o número de peça?
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportação com conta global?
 ACCOUNTING_EXPORT_LABEL=Exportar o rótulo?
 ACCOUNTING_EXPORT_AMOUNT=Exportar o montante?
-ACCOUNTING_EXPORT_DEVISE=Export the devise ?
-
 Accounting=Contabilidade
 Globalparameters=Parametros globais
-Chartofaccounts=Plano de contas
-Fiscalyear=Anos fiscais
 Menuaccount=Contas contábeis
-Menuthirdpartyaccount=Contas de terceiros
-MenuTools=Ferramentas
-
 ConfigAccountingExpert=Configuração do módulo especialista em contabilidade
 Journaux=Jornais
 JournalFinancial=Jornais financeiros
-Exports=Exportações
-Export=Exportar
-Modelcsv=Modelo de exportação
 OptionsDeactivatedForThisExportModel=Para este modelo de exportação, as opções são desativadas
 Selectmodelcsv=Escolha um modelo de exportação
-Modelcsv_normal=Exportação classica
 Modelcsv_CEGID=Exportação em direção CEGID Especialista
-BackToChartofaccounts=Return chart of accounts
 Back=Retorno
-
 Definechartofaccounts=Definir um gráfico de contas
 Selectchartofaccounts=Selecionar um gráfico de contas
-Validate=Validade
 Addanaccount=Adicionar uma conta contábil
 AccountAccounting=Conta contábil
-Ventilation=Breakdown
-ToDispatch=A enviar
-Dispatched=Enviado
-
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
 TradeMargin=Margem de comercialização
-Reports=Relatórios
 ByCustomerInvoice=Pelos clientes faturas
-ByMonth=Por mês
-NewAccount=Nova conta contábil
-Update=Atualizar
-List=Lista
-Create=Criar
 UpdateAccount=Modificação de uma conta contábil
 UpdateMvts=A modificação de um movimento
 WriteBookKeeping=Registo das contas em contabilidade geral
-Bookkeeping=Contabilidade geral
 AccountBalanceByMonth=Saldo da conta por mês
-
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
-Line=Linha
-
 CAHTF=Total de HT compra fornecedor
-InvoiceLines=Lines of invoice to be ventilated
-InvoiceLinesDone=Ventilated lines of invoice
-IntoAccount=Na conta de contabilidade
-
-Ventilate=Ventilate
-VentilationAuto=Automatic breakdown
-
-Processing=Processando
 EndProcessing=A fim de processamento
-AnyLineVentilate=Any lines to ventilate
 SelectedLines=Linhas selecionadas
-Lineofinvoice=Linha de fatura
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
-
 ACCOUNTING_SEPARATORCSV=Separador de coluna no arquivo de exportação
-
-ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a ser mostrado por página (máxima recomendada: 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
-
-AccountLength=Length of the accounting accounts shown in Dolibarr
 AccountLengthDesc=Função que permite simular um comprimento de conta contábil, substituindo espaços pela figura zero. Esta função só toca a tela, ele não modifica as contas contábeis registrados no Dolibarr. Para a exportação, esta função é necessário para ser compatível com determinado software.
 ACCOUNTING_LENGTH_GACCOUNT=Comprimento das contas gerais
 ACCOUNTING_LENGTH_AACCOUNT=Comprimento do terceiro contas do partido
-
 ACCOUNTING_SELL_JOURNAL=Vender jornal
 ACCOUNTING_PURCHASE_JOURNAL=Compra jornal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Jornal Diversos
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Relatório de despesas jornal
 ACCOUNTING_SOCIAL_JOURNAL=Jornal social
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Conta de transferência
 ACCOUNTING_ACCOUNT_SUSPENSE=Conta de espera
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Contabilização conta por padrão para produtos comprados (se não for definido na folha de produto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Contabilização conta por padrão para os produtos vendidos (se não for definido na folha de produto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Contabilização conta por padrão para os serviços comprados (se não for definido na folha de serviço)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Contabilização conta por padrão para os serviços vendidos (se não for definido na folha de serviço)
-
-Doctype=Tipo de documento
-Docdate=Data
 Docref=Referência
-Numerocompte=Conta
 Code_tiers=Cliente/Fornecedor
 Labelcompte=Conta rótulo
-Debit=Débito
-Credit=Crédito
-Amount=Total
-Sens=Sens
 Codejournal=Jornal
-
 DelBookKeeping=Excluir os registros da contabilidade geral
-
-SellsJournal=Vendas jornal
-PurchasesJournal=Compras jornal
-DescSellsJournal=Vendas jornal
-DescPurchasesJournal=Diário de  Compras
 BankJournal=Banco jornal
 DescBankJournal=Jornal Banco incluindo todos os tipos de pagamentos que não sejam de caixa
 CashJournal=Dinheiro jornal
 DescCashJournal=Livro caixa, incluindo o tipo de dinheiro de pagamento
-
 CashPayment=Pagamento em dinheiro
-
-SupplierInvoicePayment=Pagamento de fornecedor fatura
-CustomerInvoicePayment=O pagamento da fatura do cliente
-
-ThirdPartyAccount=Conta de terceiros
-
 NewAccountingMvt=Nova movimentação
 NumMvts=Número de movimento
 ListeMvts=Lista do movimento
 ErrorDebitCredit=Débito e Crédito não pode ter um valor, ao mesmo tempo
-
 ReportThirdParty=Liste conta terceiros
 DescThirdPartyReport=Consulte aqui a lista dos clientes de terceiros e os fornecedores e as suas contas contábeis
-
 ListAccounts=Lista das contas contábeis
-
-Pcgversion=Versão do plano
-Pcgtype=Classe de conta
 Pcgsubtype=Sob classe de conta
-Accountparent=Raiz da conta
-Active=Extrato
-
-NewFiscalYear=Novo ano fiscal
-
 DescVentilCustomer=Consulte aqui a contabilização repartição anual dos seus clientes faturas
 TotalVente=HT volume de negócios total
 TotalMarge=Margem de vendas totais
 DescVentilDoneCustomer=Consultar aqui a lista das linhas de clientes faturas e sua conta de contabilidade
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
 ChangeAccount=Alterar a conta contábil para linhas selecionadas pela conta:
-Vide=-
 DescVentilSupplier=Consulte aqui a contabilização repartição anual das suas faturas de fornecedores
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consulte aqui a lista das linhas de faturas de fornecedores e sua conta de contabilidade
-
 ValidateHistory=Validar automáticamente
-
 ErrorAccountancyCodeIsAlreadyUse=Erro, você não pode excluir esta conta contábil, pois ela esta em uso
-
-FicheVentilation=Breakdown card
