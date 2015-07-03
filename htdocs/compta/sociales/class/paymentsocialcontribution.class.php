@@ -313,17 +313,20 @@ class PaymentSocialContribution extends CommonObject
 	{
 		global $conf, $langs;
 		$error=0;
+		
+		dol_syslog(get_class($this)."::delete");
 
 		$this->db->begin();
 
-	    if (! $error)
+	    if ($this->bank_line > 0)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_sc' AND url_id=".$this->id;
-
-            dol_syslog(get_class($this)."::delete sql=".$sql);
-            $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        	$accline = new AccountLine($this->db);
+			$accline->fetch($this->bank_line);
+			$result = $accline->delete();
+			if($result < 0) {
+				$this->errors[] = $accline->error;
+				$error++;
+			}
         }
 
 		if (! $error)
