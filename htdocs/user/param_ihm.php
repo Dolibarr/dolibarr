@@ -90,6 +90,9 @@ if ($action == 'update' && ($caneditfield || ! empty($user->admin)))
         if ($_POST["check_SIZE_LISTE_LIMIT"]=="on") $tabparam["MAIN_SIZE_LISTE_LIMIT"]=$_POST["main_size_liste_limit"];
         else $tabparam["MAIN_SIZE_LISTE_LIMIT"]='';
 
+        if ($_POST["check_ACCOUNTING_LENGTH_DESCRIPTION"]=="on") $tabparam["ACCOUNTING_LENGTH_DESCRIPTION"]=$_POST["accounting_lengh_description"];
+        else $tabparam["ACCOUNTING_LENGTH_DESCRIPTION"]='';
+
         if ($_POST["check_MAIN_THEME"]=="on") $tabparam["MAIN_THEME"]=$_POST["main_theme"];
         else $tabparam["MAIN_THEME"]='';
 
@@ -194,6 +197,18 @@ if ($action == 'edit')
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'') . '"></td></tr>';
 
+
+    // Taille d'affichage de description accountancy
+    $var=!$var;
+    //$mainlenghdescription = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("AcountingLenghDescription").'</td>';
+    print '<td>'.$conf->global->ACCOUNTING_LENGTH_DESCRIPTION.'</td>';
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_ACCOUNTING_LENGTH_DESCRIPTION" id="check_ACCOUNTING_LENGTH_DESCRIPTION" type="checkbox" '.(! empty($object->conf->ACCOUNTING_LENGTH_DESCRIPTION)?" checked":"");
+    print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
+    print '> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td><input class="flat" name="accounting_lengh_description" id="accounting_lengh_description" size="4" value="' . (! empty($object->conf->ACCOUNTING_LENGTH_DESCRIPTION)?$object->conf->ACCOUNTING_LENGTH_DESCRIPTION:'') . '"></td></tr>';
+
+
     print '</table><br>';
 
     // Theme
@@ -237,6 +252,13 @@ else
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'&nbsp;') . '</td></tr>';
+
+    // Taille d'affichage de description accountancy
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("AcountingLenghDescription").'</td>';
+    print '<td>'.(! empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION)?$conf->global->ACCOUNTING_LENGTH_DESCRIPTION:'&nbsp;').'</td>';
+    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->ACCOUNTING_LENGTH_DESCRIPTION)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td>' . (! empty($object->conf->ACCOUNTING_LENGTH_DESCRIPTION)?$object->conf->ACCOUNTING_LENGTH_DESCRIPTION:'&nbsp;') . '</td></tr>';
 
     print '</table><br>';
 

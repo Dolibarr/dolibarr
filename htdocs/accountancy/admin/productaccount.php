@@ -26,37 +26,60 @@
  * \brief		Onglet de gestion de parametrages des ventilations
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 
 	// Class
-dol_include_once("/core/lib/report.lib.php");
-dol_include_once("/core/lib/date.lib.php");
-dol_include_once("/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load("companies");
 $langs->load("compta");
 $langs->load("main");
 $langs->load("accountancy");
 
-// Security check
-if (!$user->admin)
-    accessforbidden();
+$search_ref     = GETPOST('search_ref','alpha');
+$search_label   = GETPOST('search_label','alpha');
+$search_desc    = GETPOST('search_desc','alpha');
 
-llxHeader('', $langs->trans("Accounts"));
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+$limit = $conf->liste_limit;
+
+if (! $sortfield) $sortfield="p.ref";
+if (! $sortorder) $sortorder="DESC";
+// Security check
+if ($user->societe_id > 0)
+	accessforbidden();
+//TODO after adding menu
+//if (! $user->rights->accounting->ventilation->dispatch)
+//	accessforbidden();
 
 $form = new Form($db);
 
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_ref='';
+    $search_label='';
+    $search_desc='';
+}
+
+/*
+ * View
+ */
+
+llxHeader('', $langs->trans("Accounts"));
+
 print '<input type="button" class="button" style="float: right;" value="Renseigner les comptes comptables produits manquant" onclick="launch_export();" />';
 
+//For updating account
 print '
 	<script type="text/javascript">
 		function launch_export() {
@@ -66,10 +89,32 @@ print '
 		}
 </script>';
 
+//TODO For select box
+print  '<script type="text/javascript">
+			$(function () {
+				$(\'#select-all\').click(function(event) {
+				    // Iterate each checkbox
+				    $(\':checkbox\').each(function() {
+				    	this.checked = true;
+				    });
+			    });
+			    $(\'#unselect-all\').click(function(event) {
+				    // Iterate each checkbox
+				    $(\':checkbox\').each(function() {
+				    	this.checked = false;
+				    });
+			    });
+			});
+			 </script>';
+
+
 $sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 //$sql .= " WHERE p.accountancy_code_sell IS NULL  AND p.tosell = 1  OR p.accountancy_code_buy IS NULL AND p.tobuy = 1";
 $sql .= " WHERE p.accountancy_code_sell ='' AND p.tosell = 1  OR p.accountancy_code_buy ='' AND p.tobuy = 1";
+$sql.= $db->order($sortfield,$sortorder);
+
+$sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog('accountancy/admin/productaccount.php:: $sql=' . $sql);
 $resql = $db->query($sql);
@@ -85,9 +130,12 @@ if ($resql) {
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td align="left">' . $langs->trans("Ref") . '</td>';
-	print '<td align="left">' . $langs->trans("Label") . '</td>';
-	print '<td align="left">' . $langs->trans("Description") . '</td>';
+//	print '<td align="left">' . $langs->trans("Ref") . '</td>';
+//	print '<td align="left">' . $langs->trans("Label") . '</td>';
+//	print '<td align="left">' . $langs->trans("Description") . '</td>';
+	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
 	print '<td align="left">' . $langs->trans("Accountancy_code_buy") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_buy_suggest") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell") . '</td>';
