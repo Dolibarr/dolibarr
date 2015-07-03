@@ -502,7 +502,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="4" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '<td><input size="6" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
 	print '</tr>';
 
     // Description
@@ -664,7 +664,7 @@ else
 
 	    // Budget
 	    print '<tr><td>'.$langs->trans("Budget").'</td>';
-	    print '<td><input size="4" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
+	    print '<td><input size="6" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
 	    print '</tr>';
 
 	    // Description
@@ -767,7 +767,7 @@ else
 	if ($action == 'edit' && $userWrite > 0)
 	{
 	    print '<div align="center">';
-    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp; &nbsp; &nbsp;';
     	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     	print '</div>';
 	}

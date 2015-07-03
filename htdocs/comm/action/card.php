@@ -924,8 +924,65 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 		if (GETPOST("afaire") == 1) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		//else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
 		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
+
+		$userepeatevent=0;	// Dev in progress
+		if ($userepeatevent)
+		{
+			// Repeat
+			print '<tr><td>'.$langs->trans("RepeatEvent").'</td><td colspan="3">';
+			print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
+			$arrayrecurrulefreq=array(
+					'no'=>$langs->trans("No"),
+					'MONTHLY'=>$langs->trans("EveryMonth"),
+					'WEEKLY'=>$langs->trans("EveryWeek"),
+					//'DAYLY'=>$langs->trans("EveryDay")
+					);
+			$selectedrecurrulefreq='no';
+			$selectedrecurrulebymonthday='';
+			$selectedrecurrulebyday='';
+			if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i',$object->recurrule,$reg)) $selectedrecurrulefreq=$reg[1];
+			if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i',$object->recurrule,$reg)) $selectedrecurrulebymonthday=$reg[1];
+			if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i',$object->recurrule,$reg)) $selectedrecurrulebyday=$reg[1];
+			print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq);
+			// If recurrulefreq is MONTHLY
+			print '<div class="repeateventBYMONTHDAY">';
+			print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
+			print '</div>';
+			// If recurrulefreq is WEEKLY
+			print '<div class="repeateventBYDAY">';
+			print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
+			print '</div>';
+			print '<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					function init_repeat()
+					{
+						if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
+						{
+							jQuery(".repeateventBYMONTHDAY").show();
+							jQuery(".repeateventBYDAY").hide();
+						}
+						else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
+						{
+							jQuery(".repeateventBYMONTHDAY").hide();
+							jQuery(".repeateventBYDAY").show();	
+						}
+						else
+						{
+							jQuery(".repeateventBYMONTHDAY").hide();
+							jQuery(".repeateventBYDAY").hide();
+						}
+					}
+					init_repeat();
+					jQuery("#recurrulefreq").change(function() {
+						init_repeat();
+					});
+				});
+				</script>';	
+			print '</td></tr>';
+		}
 
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
@@ -1000,17 +1057,15 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-
 			$formproject=new FormProjets($db);
 
-			// Projet associe
 			$langs->load("project");
 
 			print '<tr><td width="30%">'.$langs->trans("Project").'</td><td colspan="3">';
 			$numprojet=$formproject->select_projects($object->socid,$object->fk_project,'projectid');
 			if ($numprojet==0)
 			{
-				print ' &nbsp; <a href="../../projet/card.php?socid='.$object->socid.'&action=create">'.$langs->trans("AddProject").'</a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddProject").'</a>';
 			}
 			print '</td></tr>';
 		}

@@ -218,7 +218,7 @@ jQuery(document).ready(function() {
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
-		init_needroot();
+		init_myfunc();
 	});
 });
 </script>';
