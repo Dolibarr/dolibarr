@@ -35,6 +35,7 @@ For developers:
 - New: Function yn can show a visual checkbox.
 - New: Introduced select2 jquery plugin.
 - New: Possibility to add javascript in main login page with "getLoginPageOptions" hook
+- New: possibility to defined a tab for all entities in module descriptor
 
 WARNING: Following changes may create regression for some external modules, but was necessary to make
 Dolibarr better:
