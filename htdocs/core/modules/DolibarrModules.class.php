@@ -1412,7 +1412,6 @@ abstract class DolibarrModules
     	global $conf;
 
     	$error=0;
-    	$entity=$conf->entity;
 
     	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
@@ -1420,6 +1419,7 @@ abstract class DolibarrModules
     		{
     			if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
 
+    			$entity=$conf->entity; // Reset the current entity
     			$newvalue = $value;
 
     			// Serialize array parameters
