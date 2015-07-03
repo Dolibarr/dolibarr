@@ -28,6 +28,10 @@ then
 	echo "tx push -s $2 $3"
 	tx push -s $2 $3 
 else
-	echo "tx push --skip -t -l $1 $2 $3 $4"
-	tx push --skip -t -l $1 $2 $3 $4
+	for file in `find htdocs/langs/$1/*.lang -type f`
+	do
+		export basefile=`basename $file | sed -s s/\.lang//g`
+		echo "tx push --skip -r dolibarr.$basfile -t -l $1 $2 $3 $4"
+		tx push --skip -r dolibarr.$basefile -t -l $1 $2 $3 $4
+	done
 fi
