@@ -392,7 +392,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action != 'addline')
 		{
-			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
+			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT) && empty($conf->accounting->enabled))
 			{
 				if ($user->rights->banque->modifier)
 				{
@@ -466,15 +466,12 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="floatright">'.$navig.'</div>';
 	}
 	
-	print '<table class="noborder" width="100%">';
-
 	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
-		print '<tr>';
-		print '<td align="left" colspan="10"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
-		print '</tr>';
+        print_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>&nbsp;</td>';
@@ -507,10 +504,12 @@ if ($id > 0 || ! empty($ref))
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
-		print "</form>";
-
-		print '<tr class="noborder"><td colspan="10">&nbsp;</td></tr>'."\n";
+		print '</table>';
+		print '</form>';
+		print '<br>';
 	}
+
+	print '<table class="noborder" width="100%">';
 
 	/*
 	 * Affiche tableau des transactions bancaires
