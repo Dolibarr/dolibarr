@@ -1431,6 +1431,11 @@ abstract class DolibarrModules
     					$newvalue = json_encode($value['data']);
     					if (isset($value['entity'])) $entity = $value['entity'];
     				}
+    				else if (isset($value['data']) && !is_array($value['data']))
+    				{
+    					$newvalue = $value['data'];
+    					if (isset($value['entity'])) $entity = $value['entity'];
+    				}
     				else
     				{
     					$newvalue = json_encode($value);
