@@ -28,16 +28,28 @@
 
 require '../../main.inc.php';
 
-	// Class
+// Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Langs
 $langs->load("companies");
 $langs->load("compta");
 $langs->load("main");
 $langs->load("accountancy");
 
+//search & action GETPOST
+$action = GETPOST('action');
+$codeventil_buy = GETPOST('codeventil_buy', 'array');
+$codeventil_sell = GETPOST('codeventil_sell', 'array');
+$mesCasesCochees = GETPOST('mesCasesCochees', 'array');
+$account_number_buy  = GETPOST('account_number_buy');
+$account_number_sell = GETPOST('account_number_sell');
+$changeaccount_buy   = GETPOST('changeaccount_buy');
+$changeaccount_sell  = GETPOST('changeaccount_sell');
 $search_ref     = GETPOST('search_ref','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
@@ -45,15 +57,21 @@ $search_desc    = GETPOST('search_desc','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+if ($page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = $conf->liste_limit;
+} else {
+	$limit = $conf->liste_limit;
+}
+$offset = $limit * $page;
 
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
+
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -61,7 +79,22 @@ if ($user->societe_id > 0)
 //if (! $user->rights->accounting->ventilation->dispatch)
 //	accessforbidden();
 
-$form = new Form($db);
+$form = new FormVentilation($db);
+
+//Defaut AccountingAccount RowId Product / Service
+//at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
+//so we need to get those default value rowid first
+$accounting = new AccountingAccount($db);
+//TODO: we should need to check if result is a really exist accountaccount rowid.....
+$aarowid_servbuy  = $accounting->fetch('', ACCOUNTING_SERVICE_BUY_ACCOUNT);
+$aarowid_prodbuy  = $accounting->fetch('', ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+$aarowid_servsell = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
+$aarowid_prodsell = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+
+$aacompta_servbuy  = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_prodbuy  = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_servsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -70,18 +103,26 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_label='';
     $search_desc='';
 }
-/*
+
+//debug move header to top
+llxHeader('', $langs->trans("Accounts"));
+
+print 'DEBUG';
+print_r ($changeaccount);
 //TODO: modify to update all selected product with a sell account
-if (is_array($changeaccount_sell) && count($changeaccount_sell) > 0) {
+//if (is_array($changeaccount) && count($changeaccount) > 0) {
+print_r ($changeaccount);
 	$error = 0;
 	
-	$db->begin();
+//	$db->begin();
 	
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
-	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
-	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p";
+	$sql1 .= " SET p.accountancy_code_sell=" . $account_number_sell;
+	$sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
 	
-	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+//	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+	print_r ($sql1); return;
+/*
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -94,8 +135,9 @@ if (is_array($changeaccount_sell) && count($changeaccount_sell) > 0) {
 		$db->rollback();
 		setEventMessage($db->lasterror(), 'errors');
 	}
-}
 */
+//}
+
 /*
 //TODO: modify to update all selected product with a buy account
 if (is_array($changeaccount_buy) && count($changeaccount_buy) > 0) {
@@ -103,7 +145,7 @@ if (is_array($changeaccount_buy) && count($changeaccount_buy) > 0) {
 	
 	$db->begin();
 	
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p";
 	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
 	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
 	
@@ -123,16 +165,13 @@ if (is_array($changeaccount_buy) && count($changeaccount_buy) > 0) {
 }
 */
 
-
 /*
  * View
  */
 
-llxHeader('', $langs->trans("Accounts"));
+//llxHeader('', $langs->trans("Accounts"));
 
-print '<input type="button" class="button" style="float: right;" value="Renseigner les comptes comptables produits manquant" onclick="launch_export();" />';
-
-//For updating account
+//For updating account export
 print '<script type="text/javascript">
 		function launch_export() {
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
@@ -159,32 +198,91 @@ print  '<script type="text/javascript">
 			});
 			 </script>';
 
+/*
+ * Action
+ */
+//TODO 
+/*
+if ($action == 'ventil') {
+	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+	if (! empty($codeventil_buy) && ! empty($mesCasesCochees)) {
+	if (! empty($codeventil_sell) && ! empty($mesCasesCochees)) {
 
-//$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
-$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
+	} else {
+		print '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
+	}
+	print '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
+}
+*/
 //do we really need to exclude old product not tosell / tobuy ?
-$sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
+//$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
 //$sql .= " WHERE p.accountancy_code_sell IS NULL  AND p.tosell = 1  OR p.accountancy_code_buy IS NULL AND p.tobuy = 1";
 //$sql .= " WHERE p.accountancy_code_sell ='' AND p.tosell = 1  OR p.accountancy_code_buy ='' AND p.tobuy = 1";
-$sql .= " WHERE p.accountancy_code_sell =''  OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
-$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN (SELECT account_number FROM llx_accountingaccount WHERE fk_pcg_version='PCG99-BASE'))";
-$sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN (SELECT account_number FROM llx_accountingaccount WHERE fk_pcg_version='PCG99-BASE'))";
+$sql  = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
+$sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
+//$sql .= " , " . MAIN_DB_PREFIX . "accountingaccount as aa";
+$sql .= " WHERE (";
+$sql .= " p.accountancy_code_sell ='' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
+//TODO search on correct pcg version
+$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN (SELECT account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa WHERE fk_pcg_version='PCG99-BASE'))";
+$sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN (SELECT account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa WHERE fk_pcg_version='PCG99-BASE'))";
+$sql .= ")";
+//Add search filter like
+if (strlen(trim($search_ref))) {
+	$sql .= " AND (p.ref like '%" . $search_ref . "%')";
+}
+if (strlen(trim($search_label))) {
+	$sql .= " AND (p.label like '%" . $search_label . "%')";
+}
+if (strlen(trim($search_desc))) {
+	$sql .= " AND (p.description like '%" . $search_desc . "%')";
+}
 $sql.= $db->order($sortfield,$sortorder);
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountancy/admin/productaccount.php:: $sql=' . $sql);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
+dol_syslog("/accountancy/admin/productaccount.php :: sql=" . $sql, LOG_DEBUG);
+$result = $db->query($sql);
+if ($result) {
+	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
+
 /*
  * View
  */
-	
-	print '<br><br>';
-	
+	print_barre_liste($langs->trans("ProductAccountingAccountSelect"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+
+	print '<td align="left"><b>' . $langs->trans("DescProductAccountingAccount") . '</b></td>&nbsp;';
+	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"],"p.rowid","",$param,'',$sortfield,$sortorder);
+	print '&nbsp;&nbsp;';
+
+
+//DEBUG
+//print $sql;
+
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post"><br />';
+//	print '<input type="hidden" name="action" value="ventil">';
+
+	print '<table class="noborder" width="100%">';
+	print '<tr>';
+	print '<td width="33%">';
+	print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
+	print $langs->trans("Accountancy_code_buy") . ': ' . $form->select_account($account_number_buy, 'account_number_buy', 1);
+	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
+	print '</td>';
+
+	print '<td width="33%">';
+	print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
+	print $langs->trans("Accountancy_code_sell") . ': ' . $form->select_account($account_number_sell, 'account_number_sell', 1);
+	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
+	print '</td>';
+	print '<td width="33%">';
+	//TODO change button
+	print '<input type="button" class="button" style="float: right;" value="Renseigner les comptes comptables produits manquant" onclick="launch_export();" />';
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 //	print '<td align="left">' . $langs->trans("Ref") . '</td>';
@@ -197,34 +295,63 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Accountancy_code_buy_suggest") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell_suggest") . '</td>';
+	print_liste_field_titre('');
+//	print_liste_field_titre('');
+	print '<td align="center" colspan="2">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
+	print '</tr>';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
+
+	print '<td class="liste_titre" colspan="3">&nbsp;</td>';
+	print '<td align="right" colspan="4" class="liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+//	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '&nbsp;';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+//	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+//	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
 	print '</tr>';
 	
 	$var = true;
 	
-	while ( $i < min($num, 250) ) {
-		$obj = $db->fetch_object($resql);
+	while ( $i < min($num_lines, 250) ) {
+		$obj = $db->fetch_object($result);
 		$var = ! $var;
 		
 		$compta_prodsell = $obj->accountancy_code_sell;
 		if (empty($compta_prodsell)) {
-			if ($obj->product_type == 0)
+			if ($obj->product_type == 0) {
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			else
+				$compta_prodsell_id  = $aarowid_prodsell;
+			} else {
 				$compta_prodsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodsell_id  = $aarowid_servsell;
+			}
 		}
 		
 		$compta_prodbuy = $obj->accountancy_code_buy;
 		if (empty($compta_prodbuy)) {
-			if ($obj->product_type == 0)
+			if ($obj->product_type == 0) {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-			else
+				$compta_prodbuy_id  = $aarowid_prodbuy;
+			} else {
 				$compta_prodbuy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prodbuy_id  = $aarowid_servbuy;
+			}
 		}
 		
 		$product_static = new Product($db);
 		
 		print "<tr $bc[$var]>";
-		// Ref produit
+//debug
+print '<td align="left" colspan="6">Compte Suggeres compta_prodbuy=' . $compta_prodbuy . '  -- compta_prodbuy_id' . $compta_prodbuy_id . '-- compta_prodsell:' . $compta_prodsell . '-- compta_prodsell_id' . $compta_prodsell_id . '</td>';
+
+		print "</tr>";
+		print "<tr $bc[$var]>";
+		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->type;
@@ -234,24 +361,50 @@ if ($resql) {
 		else
 			print '-&nbsp;';
 		print '</td>';
-		//print '<td align="left">' . $obj->ref . '</td>';
 		print '<td align="left">' . $obj->label . '</td>';
-		print '<td align="left">' . $obj->description . '</td>';
-		
+//TODO ADJUST DESCRIPTION SIZE
+//		print '<td align="left">' . $obj->description . '</td>';
+		//TODO: we shoul set a user defined value to adjust user square / wide screen size
+		$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
+
+		//acountingaccount buy
 		print '<td align="left">' . $obj->accountancy_code_buy . '</td>';
-		print '<td align="left">' . $compta_prodbuy . '</td>';
-		
+//TODO: replace by select
+//		print '<td align="left">' . $compta_prodbuy . '</td>';
+		//TODO: we shoul set a user defined value to adjust user square / wide screen size
+		//$trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
+		print '<td align="center">';
+		print $form->select_account($compta_prodbuy_id, 'codeventil[]', 1);
+		print '</td>';
+
+		//acountingaccount sel
 		print '<td align="left">' . $obj->accountancy_code_sell . '</td>';
-		print '<td align="left">' . $compta_prodsell . '</td>';
-		
-		print "</tr>\n";
+//TODO: replace by select
+		//TODO: we shoul set a user defined value to adjust user square / wide screen size
+		//$trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
+		print '<td align="center">';
+		print $form->select_account($compta_prodsell_id, 'codeventil[]', 1);
+		print '</td>';
+		//action edit & select box
+		print '<td align="center">' . $obj->rowid . '</td>';
+		print '<td><a href="./card.php?id=' . $obj->rowid . '">';
+		print img_edit();
+		print '</a></td>';
+		//Checkbox select
+		print '<td align="center">';
+		print '<input type="checkbox" name="changeaccount[]" value="' . $obj->rowid . '"/></td>';
+
+		print "</tr>";
 		$i ++;
 	}
-	print "</table>";
-	$db->free($resql);
+	$db->free($result);
 } else {
+//	print $db->error();
 	dol_print_error($db);
 }
+
+print "</table></form>";
 
 llxFooter();
 $db->close();

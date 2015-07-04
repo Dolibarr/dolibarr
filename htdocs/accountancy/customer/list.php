@@ -44,6 +44,9 @@ $langs->load("accountancy");
 $action = GETPOST('action');
 $codeventil = GETPOST('codeventil', 'array');
 $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
+$search_ref     = GETPOST('search_ref','alpha');
+$search_label   = GETPOST('search_label','alpha');
+$search_desc    = GETPOST('search_desc','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
