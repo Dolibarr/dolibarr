@@ -34,6 +34,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -833,7 +834,6 @@ if ($action == 'delete')
  */
 if ($id)
 {
-
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
 
@@ -944,7 +944,7 @@ if ($id)
         if ($id == 4) print '<td></td>';
         print '<td colspan="4">';
         print '<input type="hidden" name="id" value="'.$id.'">';
-        print '&nbsp;</td>';
+        print '</td>';
         print '</tr>';
 
         // Line to enter new values
@@ -966,25 +966,37 @@ if ($id)
         $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-        if ($id == 3)
+        if ($id == 3) unset($fieldlist[2]);
+
+        if (empty($reshook))
         {
-        	unset($fieldlist[2]);
+        	if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
+        	{
+				fieldList($fieldlist,$obj,$tabname[$id],'hide');
+        	}
+        	else
+        	{
+        		fieldList($fieldlist,$obj,$tabname[$id],'add');
+        	}
         }
 
-        if (empty($reshook)) fieldList($fieldlist,$obj);
-
         if ($id == 4) print '<td></td>';
-        print '<td colspan="3" align="right"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
+        print '<td colspan="3" align="right">';
+        if ($tabname[$id] != MAIN_DB_PREFIX.'c_email_templates' || $action != 'edit')
+        {
+        	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+        }
+        print '</td>';
         print "</tr>";
 
         $colspan=count($fieldlist)+2;
         if ($id == 4) $colspan++;
 
-        if (! empty($alabelisused))  // Si un des champs est un libelle
+        if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
         {
         	print '<tr><td colspan="'.$colspan.'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
         }
-        print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';
+        print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
     }
 
     print '</form>';
@@ -1099,7 +1111,7 @@ if ($id)
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id]);
+                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id],'edit');
 
                     print '<td colspan="3" align="right"><a name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
@@ -1419,14 +1431,16 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist,$obj='',$tabname='')
+function fieldList($fieldlist, $obj='', $tabname='', $context='')
 {
 	global $conf,$langs,$db;
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList,$localtax_typeList;
+	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
@@ -1515,8 +1529,24 @@ function fieldList($fieldlist,$obj='',$tabname='')
 			print '<input type="text" class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
-		elseif (in_array($fieldlist[$field], array('libelle_facture','content'))) {
+		elseif (in_array($fieldlist[$field], array('libelle_facture'))) {
 			print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'</textarea></td>';
+		}
+		elseif (in_array($fieldlist[$field], array('content')))
+		{
+			if ($tabname == MAIN_DB_PREFIX.'c_email_templates')
+			{
+				print '<td colspan="4"></td></tr><tr class="pair nohover"><td colspan="5">';		// To create an artificial CR for the current tr we are on
+			}
+			else print '<td>';
+			if ($context != 'hide')
+			{
+				//print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'</textarea>';
+				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''), '', 140, 'dolibarr_mailings', 'In', 0, false, true, ROWS_5, '90%');
+				print $doleditor->Create(1);
+			}
+			else print '&nbsp;';
+			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i',$fieldlist[$field])) {
 			print '<td><input type="text" class="flat" value="'.price((! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'')).'" size="8" name="'.$fieldlist[$field].'"></td>';
@@ -1546,6 +1576,8 @@ function fieldList($fieldlist,$obj='',$tabname='')
 		{
 			print '<td>';
 			$size='';
+			if ($fieldlist[$field]=='code') $size='size="8" ';
+			if ($fieldlist[$field]=='position') $size='size="4" ';
 			if ($fieldlist[$field]=='libelle') $size='size="32" ';
 			if ($fieldlist[$field]=='tracking') $size='size="92" ';
 			if ($fieldlist[$field]=='accountancy_code') $size='size="10" ';
