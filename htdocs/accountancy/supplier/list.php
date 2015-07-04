@@ -22,7 +22,7 @@
 /**
  * \file		htdocs/accountancy/supplier/list.php
  * \ingroup		Accounting Expert
- * \brief		Ventilation page from suppliers invoices
+ * \brief		Page de ventilation des lignes de facture
  */
 
 require '../../main.inc.php';
@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Langs
 $langs->load("compta");
@@ -43,6 +44,18 @@ $action = GETPOST('action');
 $codeventil = GETPOST('codeventil', 'array');
 $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+
+if (! $sortfield) $sortfield="f.datef, f.ref, l.rowid";
+
+//if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) {
+	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+		$sortorder = " DESC ";
+	}
+}
+
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -51,7 +64,17 @@ if (! $user->rights->accounting->ventilation->dispatch)
 
 $formventilation = new FormVentilation($db);
 
+$accounting = new AccountingAccount($db);
+
+$aarowid_s = $accounting->fetch('', ACCOUNTING_SERVICE_BUY_ACCOUNT);
+$aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+
+/*
+ * View
+ */
+
 llxHeader('', $langs->trans("Ventilation"));
+
 
 print  '<script type="text/javascript">
 			$(function () {
@@ -69,6 +92,7 @@ print  '<script type="text/javascript">
 			    });
 			});
 			 </script>';
+
 /*
  * Action
  */
@@ -91,7 +115,7 @@ if ($action == 'ventil') {
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
 
-			dol_syslog('accountancy/supplier/list.php:: sql=' . $sql);
+			dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
 				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
 			} else {
@@ -126,22 +150,23 @@ $offset = $limit * $page;
 
 $sql = "SELECT f.ref, f.rowid as facid, f.ref_supplier, l.fk_product, l.description, l.total_ht as price, l.rowid, l.fk_code_ventilation, ";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy";
+$sql .= " , aa.rowid as aarowid";
+$sql .= " , f.datef";
+$sql .= " , l.product_type as type_l";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_buy = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
-$sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='')";
+$sql .= " AND (accsys.rowid='".$conf->global->CHARTOFACCOUNTS."' OR p.accountancy_code_buy IS NULL OR p.accountancy_code_buy = '' )";
 
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture_fourn", 1) . ")";
 }
 
-$sql .= " ORDER BY l.rowid";
-if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
-	$sql .= " DESC ";
-}
+$sql.= $db->order($sortfield,$sortorder);
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog('accountancy/supplier/list.php:: $sql=' . $sql);
@@ -154,19 +179,26 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 
 	print '<td align="left"><br><b>' . $langs->trans("DescVentilTodoSupplier") . '</b></br></td>';
+  print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"],"f.datef","",$param,'',$sortfield,$sortorder);	
+	print '&nbsp;&nbsp;';
+	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"],"l.rowid","",$param,'',$sortfield,$sortorder);	
+	
+
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>Facture</td>';
-	print '<td align="left">' . $langs->trans("Ref") . '</td>';
-	print '<td align="left">' . $langs->trans("Label") . '</td>';
-	print '<td>' . $langs->trans("Description") . '</td>';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"],"f.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
 	print '<td align="right">' . $langs->trans("Amount") . '</td>';
-	print '<td align="right">' . $langs->trans("Compte") . '</td>';
+	print '<td align="right">' . $langs->trans("AccountAccounting") . '</td>';
 	print '<td align="center">' . $langs->trans("IntoAccount") . '</td>';
-	print '<td align="center">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
+	print_liste_field_titre('');
+	print '<td align="center">'.$langs->trans("Ventilate").'<br /><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
 	print "</tr>\n";
 
 	$facturefourn_static = new FactureFournisseur($db);
@@ -181,18 +213,38 @@ if ($result) {
 		// product_type: 0 = service ? 1 = product
 		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
-		$code_buy_notset = '';
-		
-		if (empty($objp->code_buy)) {
-			$code_buy_notset = 'color:red';
+		$objp->code_buy_l = '';
+		$objp->code_buy_p = '';
+		$objp->aarowid_suggest = '';
+		$code_buy_p_l_differ = '';
+
+		$code_buy_p_notset = '';
+		$objp->aarowid_suggest = $objp->aarowid;
+		if ( ! empty($objp->code_buy)) {
+			$objp->code_buy_p = $objp->code_buy;
+		} else {
+			$code_buy_p_notset = 'color:red';
 			if ($objp->type == 1) {
-				$objp->code_buy = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
-			} else {
-				$objp->code_buy = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));					
+				$objp->code_buy_p = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
-		}else {
-			$code_buy_notset = 'color:blue';
+			elseif ($objp->type == 0) {
+				$objp->code_buy_p = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+			}
 		}
+		
+			if ($objp->type_l == 1) {
+				$objp->code_buy_l = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				if ($objp->aarowid == '') $objp->aarowid_suggest = $aarowid_s;
+			}
+			elseif ($objp->type_l == 0) {
+				$objp->code_buy_l = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				if ($objp->aarowid == '') $objp->aarowid_suggest = $aarowid_p;
+			}
+		
+				if ($objp->code_buy_l <> $objp->code_buy_p) $code_buy_p_l_differ = 'color:red';
+
+
+		
 		
 		print "<tr $bc[$var]>";
 
@@ -212,29 +264,33 @@ if ($result) {
 			print '&nbsp;';
 		print '</td>';
 
-		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->ref.'</a></td>';
-
-		// print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.$objp->ref_supplier.'</a></td>';
-
-		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
-
-		print '<td>' . stripslashes(nl2br($objp->description)) . '</td>';
-
+		print '<td style="' . $code_buy_p_l_differ . '">' . dol_trunc($objp->product_label, 24) . '</td>';
+		//TODO: we shoul set a user defined value to adjust user square / wide screen size
+		$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
+		print '<td style="' . $code_buy_p_l_differ . '">' . nl2br(dol_trunc($objp->description, $trunclengh)) . '</td>';
 		print '<td align="right">';
 		print price($objp->price);
 		print '</td>';
-
-		print '<td align="center" style="' . $code_buy_notset . '">';
-		print $objp->code_buy;
+		print '<td align="center" style="' . $code_buy_p_notset . '">';
+		//if not same kind of product_type stored in product & facturedt we display both account and let user choose
+		if ($objp->code_buy_l == $objp->code_buy_p) {
+			print $objp->code_buy_l;
+		} else {
+			print 'lines='.$objp->code_buy_l . '<br />product=' . $objp->code_buy_p;
+		}
 		print '</td>';
+
+
+
 
 		// Colonne choix du compte
 		print '<td align="center">';
-		print $formventilation->select_account($objp->aarowid, 'codeventil[]', 1);
+		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil[]', 1);
 		print '</td>';
+		print '<td align="center">' . $objp->rowid . '</td>';
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
-		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid_suggest ? "checked" : "") . '/>';
 		print '</td>';
 
 		print "</tr>";
