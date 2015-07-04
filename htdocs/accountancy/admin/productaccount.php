@@ -53,7 +53,7 @@ $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 
 if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) $sortorder="ASC";
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -70,6 +70,59 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_label='';
     $search_desc='';
 }
+/*
+//TODO: modify to update all selected product with a sell account
+if (is_array($changeaccount_sell) && count($changeaccount_sell) > 0) {
+	$error = 0;
+	
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
+	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
+	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	
+	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		setEventMessage($db->lasterror(), 'errors');
+	}
+	if (! $error) {
+		$db->commit();
+		setEventMessage($langs->trans('Save'), 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	}
+}
+*/
+/*
+//TODO: modify to update all selected product with a buy account
+if (is_array($changeaccount_buy) && count($changeaccount_buy) > 0) {
+	$error = 0;
+	
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
+	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
+	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	
+	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		setEventMessage($db->lasterror(), 'errors');
+	}
+	if (! $error) {
+		$db->commit();
+		setEventMessage($langs->trans('Save'), 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	}
+}
+*/
+
 
 /*
  * View
@@ -80,8 +133,7 @@ llxHeader('', $langs->trans("Accounts"));
 print '<input type="button" class="button" style="float: right;" value="Renseigner les comptes comptables produits manquant" onclick="launch_export();" />';
 
 //For updating account
-print '
-	<script type="text/javascript">
+print '<script type="text/javascript">
 		function launch_export() {
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
@@ -108,10 +160,15 @@ print  '<script type="text/javascript">
 			 </script>';
 
 
-$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
+//$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type , p.tosell , p.tobuy ";
+$sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
+//do we really need to exclude old product not tosell / tobuy ?
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 //$sql .= " WHERE p.accountancy_code_sell IS NULL  AND p.tosell = 1  OR p.accountancy_code_buy IS NULL AND p.tobuy = 1";
-$sql .= " WHERE p.accountancy_code_sell ='' AND p.tosell = 1  OR p.accountancy_code_buy ='' AND p.tobuy = 1";
+//$sql .= " WHERE p.accountancy_code_sell ='' AND p.tosell = 1  OR p.accountancy_code_buy ='' AND p.tobuy = 1";
+$sql .= " WHERE p.accountancy_code_sell =''  OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
+$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN (SELECT account_number FROM llx_accountingaccount WHERE fk_pcg_version='PCG99-BASE'))";
+$sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN (SELECT account_number FROM llx_accountingaccount WHERE fk_pcg_version='PCG99-BASE'))";
 $sql.= $db->order($sortfield,$sortorder);
 
 $sql .= $db->plimit($limit + 1, $offset);
