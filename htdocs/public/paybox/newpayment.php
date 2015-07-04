@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
 
 $langs->load("main");
 $langs->load("other");
