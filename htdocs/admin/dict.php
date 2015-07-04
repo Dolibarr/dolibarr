@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->load("errors");
 $langs->load("admin");
 $langs->load("companies");
+$langs->load("resource");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -364,35 +365,35 @@ $tabcond[29]= ! empty($conf->projet->enabled);
 
 // List of help for fields
 $tabhelp=array();
-$tabhelp[1]  = array();
-$tabhelp[2]  = array();
-$tabhelp[3]  = array();
-$tabhelp[4]  = array();
-$tabhelp[5]  = array();
-$tabhelp[6]  = array();
-$tabhelp[7]  = array();
-$tabhelp[8]  = array();
-$tabhelp[9]  = array();
-$tabhelp[10] = array();
+$tabhelp[1]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[2]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[3]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[4]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[5]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[6]  = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[7]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[8]  = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[9]  = array('code'=>$langs->trans("EnterAnyCode"), 'unicode'=>$langs->trans("UnicodeCurrency"));
+$tabhelp[10] = array('taux'=>$langs->trans("SellTaxRate"), 'recuperableonly'=>$langs->trans("RecuperableOnly"), 'localtax1_type'=>$langs->trans("LocalTaxDesc"), 'localtax2_type'=>$langs->trans("LocalTaxDesc"));
 $tabhelp[11] = array();
-$tabhelp[12] = array();
-$tabhelp[13] = array();
-$tabhelp[14] = array();
-$tabhelp[15] = array();
-$tabhelp[16] = array();
-$tabhelp[17] = array();
-$tabhelp[18] = array();
-$tabhelp[19] = array();
-$tabhelp[20] = array();
-$tabhelp[21] = array();
-$tabhelp[22] = array();
+$tabhelp[12] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[13] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[14] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[15] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[16] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[17] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[18] = array('code'=>$langs->trans("EnterAnyCode"), 'tracking'=>$langs->trans("UrlTrackingDesc"));
+$tabhelp[19] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[20] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[22] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[23] = array();
-$tabhelp[24] = array();
-$tabhelp[25] = array();
-$tabhelp[26] = array();
-$tabhelp[27] = array();
-$tabhelp[28] = array();
-$tabhelp[29] = array();
+$tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[25] = array('type_template'=>$langs->trans("TemplateFor"),'private'=>$langs->trans("TemplateIsVisibleByYouOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[28] = array('delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
+$tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -869,9 +870,9 @@ if ($id)
 				else $valuetoshow=$langs->trans("Amount");
 				$align='right';
             }
-            if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 2",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
+            if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 2"; $align="center"; $sortable=0; }
             if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2";}
-            if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 3",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
+            if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 3"; $align="center"; $sortable=0; }
             if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3";}
             if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
@@ -1013,9 +1014,9 @@ if ($id)
 					else $valuetoshow=$langs->trans("Amount");
 					$align='right';
 	            }
-                if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 2",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
+                if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 2"; $align="center"; $sortable=0; }
                 if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2"; $sortable=0; }
-                if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 3",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
+                if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$langs->trans("UseLocalTax")." 3"; $align="center"; $sortable=0; }
                 if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3"; $sortable=0; }
                 if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
                 if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }

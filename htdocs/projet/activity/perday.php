@@ -63,8 +63,14 @@ $day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"
 $day = (int) $day;
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 
+
+$monthofday=GETPOST('addtimemonth');
+$dayofday=GETPOST('addtimeday');
+$yearofday=GETPOST('addtimeyear');
+
 $daytoparse = $now;
-if ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, $year);
+if ($yearofday && $monthofday && $dayofday) $daytoparse=dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday);	// xxxofday is value of day after submit action 'addtime'
+else if ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, $year);							// this are value submited after submit of action 'submitdateselect'
 
 $object=new Task($db);
 
@@ -106,6 +112,7 @@ if ($action == 'assign')
 
 	if ($result < 0)
 	{
+		$error++;
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
@@ -115,6 +122,11 @@ if ($action == 'assign')
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	}
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans("TaskAssignedToEnterTime"), null);
 	}
 
 	$action='';
@@ -154,15 +166,25 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 	        $object->timespent_fk_user = $user->id;
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {
-	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
+	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
 	        	$object->timespent_withhour = 1;
 	        }
 	        else
 			{
-	        	$object->timespent_date = dol_mktime(12,0,0,GETPOST($key."month"),GETPOST($key."day"),GETPOST($key."year"));
+	        	$object->timespent_date = dol_mktime(12,0,0,$monthofday,$dayofday,$yearofday);
 			}
 
-			$result=$object->addTimeSpent($user);
+			if ($object->timespent_date > 0)
+			{
+				$result=$object->addTimeSpent($user);
+			}
+			else
+			{
+				setEventMessages($langs->trans("ErrorBadDate"), null, 'errors');
+				$error++;
+				break;
+			}
+
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -176,7 +198,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 	    	setEventMessage($langs->trans("RecordSaved"));
 
     	    // Redirect to avoid submit twice on back
-        	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:''));
+        	header('Location: '.$_SERVER["PHP_SELF"].($projectid?'?id='.$projectid:'?').($mode?'&mode='.$mode:'').'&year='.$yearofday.'&month='.$monthofday.'&day='.$dayofday);
         	exit;
     	}
     }
@@ -252,6 +274,10 @@ print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].($proje
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
+$tmp = dol_getdate($daytoparse);
+print '<input type="hidden" name="addtimeyear" value="'.$tmp['year'].'">';
+print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
+print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head=project_timesheet_prepare_head($mode);
 dol_fiche_head($head, 'inputperday', '', 0, 'task');
@@ -351,7 +377,7 @@ print '<input type="hidden" name="year" value="'.$year.'">';
 print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
 print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->select_task($socid?$socid:-1, $taskid, 'taskid');
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
 print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
 print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
 print '</form>';

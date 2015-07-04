@@ -159,4 +159,5 @@ ProjectOverview=Overview
 ManageTasks=Use projects to follow tasks and time
 ManageOpportunitiesStatus=Use projects to follow leads/opportinuties
 ProjectNbProjectByMonth=Nb of created projects by month
-ProjectsStatistics=Statistics on projects/leads 
+ProjectsStatistics=Statistics on projects/leads
+TaskAssignedToEnterTime=Task assigned. Entering time on this task should be possible.
