@@ -227,7 +227,7 @@ $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
 $tabfield[23]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[24]= "code,label";
-$tabfield[25]= "label,type_template,private,position,topic,content";
+$tabfield[25]= "label,type_template,position,topic,content";
 $tabfield[26]= "code,label,short_label";
 $tabfield[27]= "code,libelle";
 $tabfield[28]= "code,label,delay,newByMonth,country_id,country";
@@ -259,7 +259,7 @@ $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[23]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[24]= "code,label";
-$tabfieldvalue[25]= "label,type_template,private,position,topic,content";
+$tabfieldvalue[25]= "label,type_template,position,topic,content";
 $tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27]= "code,libelle";
 $tabfieldvalue[28]= "code,label,delay,newByMonth,country";
@@ -291,7 +291,7 @@ $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[23]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24]= "code,label";
-$tabfieldinsert[25]= "label,type_template,private,position,topic,content";
+$tabfieldinsert[25]= "label,type_template,position,topic,content";
 $tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27]= "code,libelle";
 $tabfieldinsert[28]= "code,label,delay,newByMonth,fk_country";
@@ -389,7 +389,7 @@ $tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[22] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[23] = array();
 $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[25] = array('type_template'=>$langs->trans("TemplateFor"),'private'=>$langs->trans("TemplateIsVisibleByYouOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[25] = array('type_template'=>$langs->trans("TemplateForElement"),'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[28] = array('delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
@@ -467,6 +467,24 @@ if ($id == 11)
 	$sourceList = array(
 			'internal' => $langs->trans('Internal'),
 			'external' => $langs->trans('External')
+	);
+}
+if ($id == 25)
+{
+	// We save list of template type Dolibarr can manage. This list can found by a grep into code on "->param['models']"
+	$elementList = array(
+			'propal_send'    => $langs->trans('MailToSendProposal'),
+			'order_send'     => $langs->trans('MailToSendOrder'),
+			'facture_send'   => $langs->trans('MailToSendInvoice'),
+
+			'shipping_send'  => $langs->trans('MailToSendShipment'),
+			'fichinter_send' => $langs->trans('MailToSendIntervention'),
+
+			'askpricesupplier_send'  => $langs->trans('MailToSendSupplierRequestForQuotation'),
+			'order_supplier_send'    => $langs->trans('MailToSendSupplierOrder'),
+			'invoice_supplier_send'  => $langs->trans('MailToSendSupplierInvoice'),
+
+			'thirdparty'    => $langs->trans('MailToThirdparty')
 	);
 }
 
@@ -904,6 +922,7 @@ if ($id)
             if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
             if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
 	        if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
+            if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -970,6 +989,8 @@ if ($id)
 
     print '</form>';
 
+
+
     // List of available values in database
     dol_syslog("htdocs/admin/dict", LOG_DEBUG);
     $resql=$db->query($sql);
@@ -984,7 +1005,7 @@ if ($id)
             if ($num > $listlimit)
             {
                 print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
-                print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.$id,($num > $listlimit),$langs->trans("Page").' '.($page+1));
+                print_fleche_navigation($page, $_SERVER["PHP_SELF"], '&id='.$id, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page+1).'</span></li>');
                 print '</td></tr>';
             }
 
@@ -1042,6 +1063,7 @@ if ($id)
                 if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
                 if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
 	            if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
+            	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
 
                 // Affiche nom du champ
                 if ($showfield)
@@ -1097,6 +1119,10 @@ if ($id)
                             $showfield=1;
                         	$align="left";
                             $valuetoshow=$obj->$fieldlist[$field];
+                            if ($value == 'type_template')
+                            {
+                                $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
+                            }
                             if ($value == 'element')
                             {
                                 $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
@@ -1407,7 +1433,8 @@ function fieldList($fieldlist,$obj='',$tabname='')
 
 	foreach ($fieldlist as $field => $value)
 	{
-		if ($fieldlist[$field] == 'country') {
+		if ($fieldlist[$field] == 'country')
+		{
 			if (in_array('region_id',$fieldlist))
 			{
 				print '<td>';
@@ -1420,7 +1447,8 @@ function fieldList($fieldlist,$obj='',$tabname='')
 			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28);
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'country_id') {
+		elseif ($fieldlist[$field] == 'country_id')
+		{
 			if (! in_array('country',$fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
 			{
 				$country_id = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
@@ -1429,20 +1457,30 @@ function fieldList($fieldlist,$obj='',$tabname='')
 				print '</td>';
 			}
 		}
-		elseif ($fieldlist[$field] == 'region') {
+		elseif ($fieldlist[$field] == 'region')
+		{
 			print '<td>';
 			$formcompany->select_region($region_id,'region');
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'region_id') {
+		elseif ($fieldlist[$field] == 'region_id')
+		{
 			$region_id = (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:0);
 			print '<td>';
 			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$region_id.'">';
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'lang') {
+		elseif ($fieldlist[$field] == 'lang')
+		{
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
+			print '</td>';
+		}
+		// Le type de template
+		elseif ($fieldlist[$field] == 'type_template')
+		{
+			print '<td>';
+			print $form->selectarray('type_template', $elementList,(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''));
 			print '</td>';
 		}
 		// Le type de l'element (pour les type de contact)

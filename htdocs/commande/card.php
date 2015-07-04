@@ -32,6 +32,7 @@
  * \ingroup commande
  * \brief Page to show customer order
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formorder.class.php';
@@ -2362,8 +2363,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$file = $fileparams['fullname'];
 			}
 
+			print '<div class="clearboth"></div>';
 			print '<br>';
-			print_titre($langs->trans('SendOrderByMail'));
+			print_fiche_titre($langs->trans('SendOrderByMail'), '', 'object_email');
+
+			dol_fiche_head('');
 
 			// Cree l'objet formulaire mail
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -2402,8 +2406,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$contactarr = array();
 			$contactarr = $object->liste_contact(- 1, 'external');
 
-			if (is_array($contactarr) && count($contactarr) > 0) {
-				foreach ($contactarr as $contact) {
+			if (is_array($contactarr) && count($contactarr) > 0)
+			{
+				foreach ($contactarr as $contact)
+				{
 					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
 						$contactstatic->fetch($contact ['id']);
@@ -2432,7 +2438,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			// Show form
 			print $formmail->get_form();
 
-			print '<br>';
+			dol_fiche_end();
 		}
 	}
 }
