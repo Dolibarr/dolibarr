@@ -3857,7 +3857,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans($titreform), '', 'object_email');
+		print_fiche_titre($langs->trans($titreform));
 
 		// Cree l'objet formulaire mail
 		dol_fiche_head();

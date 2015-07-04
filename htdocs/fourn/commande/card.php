@@ -2296,9 +2296,11 @@ elseif (! empty($object->id))
 			$file=$fileparams['fullname'];
 		}
 
+		print '<div class="clearboth"></div>';
 		print '<br>';
+		print_fiche_titre($langs->trans('SendOrderByMail'));
 
-		print_titre($langs->trans('SendOrderByMail'));
+		dol_fiche_head('');
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -2367,7 +2369,7 @@ elseif (! empty($object->id))
 		// Show form
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 	/*
 	 * Action webservice

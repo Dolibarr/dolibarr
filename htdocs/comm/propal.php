@@ -2370,7 +2370,7 @@ if ($action == 'create')
 
 		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans('SendPropalByMail'), '', 'object_email');
+		print_fiche_titre($langs->trans('SendPropalByMail'));
 
 		dol_fiche_head('');
 

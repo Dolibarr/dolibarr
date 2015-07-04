@@ -1768,8 +1768,11 @@ if ($action == 'create')
 			$file = $fileparams['fullname'];
 		}
 
+		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans('SendAskByMail'));
+		print_fiche_titre($langs->trans('SendAskByMail'));
+
+		dol_fiche_head('');
 
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -1816,7 +1819,7 @@ if ($action == 'create')
 
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 }
 

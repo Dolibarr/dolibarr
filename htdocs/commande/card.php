@@ -2365,7 +2365,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			print '<div class="clearboth"></div>';
 			print '<br>';
-			print_fiche_titre($langs->trans('SendOrderByMail'), '', 'object_email');
+			print_fiche_titre($langs->trans('SendOrderByMail'));
 
 			dol_fiche_head('');
 
