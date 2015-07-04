@@ -128,6 +128,7 @@ TagCheckMail=Urmăreşte deschiderea emailului
 TagUnsubscribe=Link Dezabonare
 TagSignature=Semnătura utilizator expeditor
 TagMailtoEmail=Recipient EMail
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Anunturi
 NoNotificationsWillBeSent=Nu notificări prin email sunt planificate pentru acest eveniment şi a companiei

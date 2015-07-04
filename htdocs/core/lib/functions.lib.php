@@ -2901,11 +2901,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
  *	@param	string			$options         	Other url paramaters to propagate ("" by default)
  *	@param	integer			$nextpage	    	Do we show a next page button
- *	@param	string			$betweenarrows		HTML content to show between arrows. Must contains '<li> </li>' tags.
+ *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
  *	@return	void
  */
-function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='',$afterarrows='')
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='')
 {
 	global $conf, $langs;
 
@@ -2915,8 +2915,10 @@ function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarr
 		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
 		else print '<li><a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a></li>';
 	}
-	//if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
-	print $betweenarrows;
+	if ($betweenarrows)
+	{
+		print $betweenarrows;
+	}
 	if ($nextpage > 0)
 	{
 		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationnext" href="'.$file.'?page='.($page+1).$options.'">></a></li>';

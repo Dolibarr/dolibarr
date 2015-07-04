@@ -489,11 +489,11 @@ IMG;
 		$name=preg_replace('/\.odt/i', '', $name);
 		if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
 		{
-			$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.$name.' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+			$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 		}
 		else
 		{
-			$command = '../../scripts/odt2pdf/odt2pdf.sh '.$name.' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+			$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 		}
 
 

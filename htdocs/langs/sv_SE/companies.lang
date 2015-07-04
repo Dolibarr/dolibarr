@@ -30,6 +30,7 @@ ThirdPartyContact=Tredje part kontakt/adress
 StatusContactValidated=Status för kontakt/adress
 Company=Företag
 CompanyName=Företagets namn
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Företag
 CountryIsInEEC=Landet är inom Europeiska ekonomiska gemenskapen
 ThirdPartyName=Tredje parts namn

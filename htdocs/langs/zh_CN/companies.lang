@@ -30,6 +30,7 @@ ThirdPartyContact=第三方联系人
 StatusContactValidated=联系人/地址 状态
 Company=公司
 CompanyName=公司名称
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=公司
 CountryIsInEEC=国家是欧共体内
 ThirdPartyName=第三方的名称

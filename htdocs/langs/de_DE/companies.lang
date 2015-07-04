@@ -30,6 +30,7 @@ ThirdPartyContact=Partnerkontakt
 StatusContactValidated=Status des Kontakts
 Company=Firma
 CompanyName=Firmenname
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Unternehmen
 CountryIsInEEC=Land ist innerhalb der EU
 ThirdPartyName=Name des Partners

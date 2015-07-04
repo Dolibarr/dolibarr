@@ -30,6 +30,7 @@ ThirdPartyContact=Contacto de Terceiro
 StatusContactValidated=Estado do Contacto
 Company=Empresa
 CompanyName=Razão social
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Empresas
 CountryIsInEEC=País da Comunidade Económica Europeia
 ThirdPartyName=Nome de terceiros

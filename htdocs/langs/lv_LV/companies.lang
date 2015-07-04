@@ -30,6 +30,7 @@ ThirdPartyContact=Trešās puses kontakts / adrese
 StatusContactValidated=Kontaktu/ adrešu statuss
 Company=Uzņēmums
 CompanyName=Uzņēmuma nosaukums
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Uzņēmumi
 CountryIsInEEC=Valsts ir Eiropas Ekonomikas kopienas dalībvalsts
 ThirdPartyName=Trešās puses nosaukums

@@ -199,7 +199,8 @@ Entreprises=Įmonės
 DOLIBARRFOUNDATION_PAYMENT_FORM=Norint atlikti pasirašymo apmokėjimą naudojant banko pervedimą, žiūrėti psl.: <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br> Mokėti naudojant kreditinę kortelę arba PayPal, spauskite mygtuką šio puslapio apačioje.<br>
 ByProperties=Pagal savybes
 MembersStatisticsByProperties=Narių statistiniai duomenys pagal savybes
-MembersByNature=Nariai pagal kilmę
+MembersByNature=Šis ekranas rodo Jums statistinius duomenis apie narius pagal jų tipą.
+MembersByRegion=Šis ekranas rodo Jums statistinius duomenis apie narius pagal regionus.
 VATToUseForSubscriptions=Pasirašymams naudojamas PVM tarifas
 NoVatOnSubscription=Pasirašymams nėra PVM
 MEMBER_PAYONLINE_SENDEMAIL=Įspėti, kai Dolibarr gauna patvirtinimą apie mokėjimą už pasirašymą, nusiunčiant e-laišką

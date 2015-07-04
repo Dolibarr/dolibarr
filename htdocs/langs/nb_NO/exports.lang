@@ -55,7 +55,7 @@ LineQty=Kvantum for linje
 LineTotalHT=Netto etter skatt for linje
 LineTotalTTC=Beløp med skatt for linje
 LineTotalVAT=MVA-beløp for linje
-TypeOfLineServiceOrProduct=Linjetype (0=produkt, 1=tjeneste)
+TypeOfLineServiceOrProduct=Linjetype (0=vare, 1=tjeneste)
 FileWithDataToImport=Fil med data som skal importeres
 FileToImport=Kildefilen du vil importere
 FileMustHaveOneOfFollowingFormat=Filen som skal importeres må ha ett av følgende format
@@ -118,7 +118,7 @@ ExportFieldAutomaticallyAdded=Feltet <b>%s</b> ble lagt til automatisk. Det vil 
 CsvOptions=CSV innstillinger
 Separator=Separator
 Enclosure=Innbygging
-SuppliersProducts=Leverandørs produkter
+SuppliersProducts=Leverandørs varer
 BankCode=Bank code (ikke i Norge)
 DeskCode=Desk code (ikke i Norge)
 BankAccountNumber=Kontonummer

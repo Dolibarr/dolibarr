@@ -992,6 +992,9 @@ else
 
 			// Print mail content
 			print_fiche_titre($langs->trans("EMail"),'','');
+
+			dol_fiche_head('');
+
 			print '<table class="border" width="100%">';
 
 			// Subject
@@ -1042,7 +1045,8 @@ else
 			print '</tr>';
 
 			print '</table>';
-			print "<br>";
+
+			dol_fiche_end();
 		}
 		else
 		{

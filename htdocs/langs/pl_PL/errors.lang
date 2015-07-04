@@ -191,3 +191,4 @@ WarningNotRelevant=Bez znaczenia dla tej operacji zbiorze
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funkcja wyłączona podczas konfiguracji wyświetlacz jest zoptymalizowana dla osoby niewidomej lub tekstowych przeglądarek.
 WarningPaymentDateLowerThanInvoiceDate=Termin płatności (% s) jest wcześniejsza niż dzień wystawienia faktury (% s) dla faktury% s.
 WarningTooManyDataPleaseUseMoreFilters=Zbyt wiele danych. Proszę używać więcej filtrów
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

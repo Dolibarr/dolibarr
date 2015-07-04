@@ -76,6 +76,7 @@ BROUILLONNER=Открыть заново
 SendToValid=Sent on approval
 ModifyInfoGen=Редактировать
 ValidateAndSubmit=Проверить и отправить запрос на утверждение
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Вы не можете утвердить этот отчёт о затратах
 NOT_AUTHOR=Вы не автор этого отчёта о затратах. Операция отменена.

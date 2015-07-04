@@ -2721,7 +2721,10 @@ class Facture extends CommonInvoice
 				$dir = dol_buildpath($reldir."core/modules/facture/");
 
 				// Load file with numbering class (if found)
-				$mybool|=@include_once $dir.$file;
+				if (is_file($dir.$file) && is_readable($dir.$file))
+				{
+                    $mybool |= include_once $dir . $file;
+                }
 			}
 
 			// For compatibility
@@ -2734,8 +2737,11 @@ class Facture extends CommonInvoice
 				foreach ($conf->file->dol_document_root as $dirroot)
 				{
 					$dir = $dirroot."/core/modules/facture/";
+
 					// Load file with numbering class (if found)
-					$mybool|=@include_once $dir.$file;
+					if (is_file($dir.$file) && is_readable($dir.$file)) {
+                        $mybool |= include_once $dir . $file;
+                    }
 				}
 			}
 

@@ -76,6 +76,7 @@ CronMethodHelp=Nome del metodo dell'oggetto da eseguire. <BR>Per esempio per ott
 CronArgsHelp=Argomenti del metodo.<br/> Per esempio per ottenere il metodo corretto dell'oggetto /htdocs/product/class/<u>product.class.php</u>, il valore dei parametri può essere <i>0, ProductRef</i>
 CronCommandHelp=Il comando da eseguire sul sistema
 CronCreateJob=Crea nuovo job programmato
+CronFrom=From
 # Info
 CronInfoPage=Informazioni
 # Common

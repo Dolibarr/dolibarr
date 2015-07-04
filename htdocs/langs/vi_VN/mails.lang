@@ -128,6 +128,7 @@ TagCheckMail=Ca khúc mở đầu email
 TagUnsubscribe=Liên kết Hủy đăng ký
 TagSignature=Chữ ký gửi người sử dụng
 TagMailtoEmail=Người nhận thư điện tử
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Thông báo
 NoNotificationsWillBeSent=Không có thông báo email được lên kế hoạch cho sự kiện này và công ty

@@ -76,6 +76,7 @@ CronMethodHelp=วิธีวัตถุที่จะเปิดตัว <
 CronArgsHelp=วิธีการขัดแย้ง <BR> สำหรับ exemple สามารถดึงข้อมูลวิธีการ Dolibarr วัตถุสินค้า /htdocs/product/class/product.class.php ค่าของพารามิเตอร์สามารถ <i>0, ProductRef</i>
 CronCommandHelp=บรรทัดคำสั่งระบบที่จะดำเนินการ
 CronCreateJob=สร้างงานใหม่กำหนด
+CronFrom=จาก
 # Info
 CronInfoPage=ข้อมูล
 # Common

@@ -199,7 +199,8 @@ Entreprises=Компании
 DOLIBARRFOUNDATION_PAYMENT_FORM=Чтобы сделать вашу подписку оплаты с помощью банковского перевода, см. стр. <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Для оплаты с помощью кредитной карты или Paypal, нажмите на кнопку в нижней части этой страницы. <br>
 ByProperties=По характеристикам
 MembersStatisticsByProperties=Стастистика участников по характеристикам
-MembersByNature=Участники по природе
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Значение НДС, для ипользования в подписках
 NoVatOnSubscription=Нет НДС для подписок
 MEMBER_PAYONLINE_SENDEMAIL=Адрес электронно почты, куда будут отправляться предупреждения, когда будет получено подтверждение о завершенном платеже за подписку

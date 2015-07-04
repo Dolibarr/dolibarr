@@ -128,6 +128,7 @@ TagCheckMail=Izsekot pasta atvēršanu
 TagUnsubscribe=Atrakstīšanās saite
 TagSignature=Paraksts sūtītājam
 TagMailtoEmail=Saņēmēja e-pasts
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Paziņojumi
 NoNotificationsWillBeSent=Nav e-pasta paziņojumi ir plānota šī notikuma, un uzņēmums

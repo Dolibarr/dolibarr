@@ -30,6 +30,7 @@ ThirdPartyContact=サードパーティの連絡先
 StatusContactValidated=接点の状態
 Company=会社
 CompanyName=会社名
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=企業
 CountryIsInEEC=国が欧州経済共同体の内部にある
 ThirdPartyName=サードパーティの名前

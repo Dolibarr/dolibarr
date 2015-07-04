@@ -30,6 +30,7 @@ ThirdPartyContact=Контакт контрагента
 StatusContactValidated=Статус контакта
 Company=Компания
 CompanyName=Название компании
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Компании
 CountryIsInEEC=Страна входит в состав Европейского экономического сообщества
 ThirdPartyName=Наименование контрагента

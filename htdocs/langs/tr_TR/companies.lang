@@ -30,6 +30,7 @@ ThirdPartyContact=Üçüncü parti kişisi/adresi
 StatusContactValidated=Kişi/adres durumu
 Company=Firma
 CompanyName=Firma adı
+AliasNames=Rumuz adları (ticari, marka, ...)
 Companies=Firmalar
 CountryIsInEEC=Ülke, Avrupa Ekonomik Topluluğu içindedir
 ThirdPartyName=Üçüncü parti adı

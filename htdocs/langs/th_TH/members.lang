@@ -199,7 +199,8 @@ Entreprises=บริษัท
 DOLIBARRFOUNDATION_PAYMENT_FORM=ที่จะทำให้การชำระเงินการสมัครของคุณโดยใช้การโอนเงินผ่านธนาคารดูหน้า <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> <br> เพื่อชำระเงินโดยใช้บัตรเครดิตหรือ Paypal คลิกที่ปุ่มด้านล่างของหน้านี้ <br>
 ByProperties=โดยลักษณะ
 MembersStatisticsByProperties=สถิติสมาชิกตามลักษณะ
-MembersByNature=สมาชิกโดยธรรมชาติ
+MembersByNature=แสดงหน้าจอนี้คุณสถิติเกี่ยวกับสมาชิกโดยธรรมชาติ
+MembersByRegion=แสดงหน้าจอนี้คุณสถิติเกี่ยวกับสมาชิกตามภูมิภาค
 VATToUseForSubscriptions=อัตราภาษีมูลค่าเพิ่มที่จะใช้สำหรับการสมัครสมาชิก
 NoVatOnSubscription=ไม่มี TVA สำหรับการสมัครสมาชิก
 MEMBER_PAYONLINE_SENDEMAIL=อีเมล์เตือนเมื่อ Dolibarr ได้รับการยืนยันการชำระเงินของการตรวจสอบสำหรับการสมัครสมาชิก

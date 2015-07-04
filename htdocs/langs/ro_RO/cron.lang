@@ -76,6 +76,7 @@ CronMethodHelp=Metoda obiectului de încărcat. <BR> De exemplu să aducă metod
 CronArgsHelp=Argumentele metodei . <BR> De exemplu să aducă metoda  obiect ului Produs Dolibarr  /htdocs/product/class/product.class.php, valoarea parametrilor pot fi este  <i>0, ProductRef</i>
 CronCommandHelp=Linia de comandă de sistem pentru a executa.
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=Informatie
 # Common

@@ -1,7 +1,5 @@
-Module62000Name=Incoterm
+# Dolibarr language file - Source file is en_US - incoterm
 Module62000Desc=Adicione recursos para gerenciar Incoterm
 IncotermLabel=Incotermos
-IncotermSetupTitle1=Função
-IncotermSetupTitle2=Estado
 IncotermSetup=Configurações do modulo Incoterm
 IncotermFunctionDesc=Ativar recursos Incoterm (Terceiros, Propostas, Ordems de clientes, Faturas de clientes, Envios, Ordems de fornecedores)

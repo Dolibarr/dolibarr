@@ -84,6 +84,11 @@ WithdrawalFile=Απόσυρση αρχείο
 SetToStatusSent=Ρυθμίστε την κατάσταση "αποστολή αρχείου"
 ThisWillAlsoAddPaymentOnInvoice=Αυτό θα ισχύει επίσης για τις πληρωμές προς τα τιμολόγια και θα τα χαρακτηρίσουν ως "Πληρωμένα"
 StatisticsByLineStatus=Στατιστικά στοιχεία από την κατάσταση των γραμμών
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Η πληρωμή των πάγιων %s ώστε από την τράπεζα

@@ -128,6 +128,7 @@ TagCheckMail=ติดตามการเปิดอีเมล
 TagUnsubscribe=ยกเลิกการเชื่อมโยง
 TagSignature=ลายเซ็นผู้ส่ง
 TagMailtoEmail=ผู้รับอีเมล
+NoEmailSentBadSenderOrRecipientEmail=ส่งอีเมลไม่มี ผู้ส่งที่ไม่ดีหรืออีเมลของผู้รับ ตรวจสอบรายละเอียดของผู้ใช้
 # Module Notifications
 Notifications=การแจ้งเตือน
 NoNotificationsWillBeSent=ไม่มีการแจ้งเตือนอีเมลที่มีการวางแผนสำหรับเหตุการณ์และ บริษัท นี้

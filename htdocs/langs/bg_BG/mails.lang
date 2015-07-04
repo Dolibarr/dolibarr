@@ -128,6 +128,7 @@ TagCheckMail=Tracker поща отвори
 TagUnsubscribe=Отписване връзка
 TagSignature=Подпис изпращане на потребителя
 TagMailtoEmail=E-mail на получателя
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Известия
 NoNotificationsWillBeSent=Не са планирани за това събитие и компания известия по имейл

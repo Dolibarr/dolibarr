@@ -191,3 +191,4 @@ WarningNotRelevant=Operació irrellevant per a aquest conjunt de dades
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalitat desactivada quant la configuració de visualització és optimitzada per a persones cegues o navegadors de text.
 WarningPaymentDateLowerThanInvoiceDate=La data de pagament (%s) és anterior a la data (%s) de la factura %s.
 WarningTooManyDataPleaseUseMoreFilters=Masses dades. Utilitzi més filtres.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

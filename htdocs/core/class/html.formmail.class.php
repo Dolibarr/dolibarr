@@ -276,7 +276,8 @@ class FormMail extends Form
 
         	// Get message template
 			$model_id=0;
-        	if (array_key_exists('models_id',$this->param)) {
+        	if (array_key_exists('models_id',$this->param))
+        	{
         		$model_id=$this->param["models_id"];
         	}
         	$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
@@ -295,23 +296,26 @@ class FormMail extends Form
         	}
 
         	$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
-        	if ($result<0) {
+        	if ($result<0)
+        	{
         		setEventMessage($this->error,'errors');
         	}
         	$modelmail_array=array();
-        	foreach($this->lines_model as $line) {
+        	foreach($this->lines_model as $line)
+        	{
         		$modelmail_array[$line->id]=$line->label;
         	}
 
-        	if (count($modelmail_array)>0) {
-	        	$out.= '<table class="nobordernopadding" width="100%"><tr><td width="20%">'."\n";
+        	// Zone to select its email template
+        	if (count($modelmail_array)>0)
+        	{
+	        	$out.= '<div style="padding: 3px 0 3px 0">'."\n";
 	        	$out.= $langs->trans('SelectMailModel').':'.$this->selectarray('modelmailselected', $modelmail_array,$model_id);
-	        	$out.= '</td>';
-	        	$out.= '<td width="5px">';
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-	        	$out.= '</td>';
-	        	$out.= '<td><input class="flat" type="submit" value="'.$langs->trans('Valid').'" name="modelselected" id="modelselected"></td>';
-	        	$out.= '</tr></table>';
+	        	$out.= ' &nbsp; ';
+	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Valid').'" name="modelselected" id="modelselected">';
+	        	$out.= ' &nbsp; ';
+	        	$out.= '</div>';
         	}
 
 

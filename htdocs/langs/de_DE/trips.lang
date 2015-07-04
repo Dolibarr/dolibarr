@@ -7,7 +7,7 @@ TripsAndExpenses=Reise- und Fahrtspesen
 TripsAndExpensesStatistics=Reise- und Spesen Statistik
 TripCard=Reisekosten Karte
 AddTrip=Reisekostenabrechnung erstellen
-ListOfTrips=Liste Reisekostenabrechnungen
+ListOfTrips=Liste Reise- und Spesenabrechnungen
 ListOfFees=Liste der Spesen
 NewTrip=neue Reisekostenabrechnung
 CompanyVisited=Besuchter Partner
@@ -40,11 +40,10 @@ TF_BUS=Bus
 TF_CAR=Auto
 TF_PEAGE=Mautgebühr
 TF_ESSENCE=Kraftstoff
-TF_HOTEL=Herberge
+TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnliche Datumsbereich erstellt.
-ListTripsAndExpenses=Liste Reise- und Spesenabrechnungen
 AucuneNDF=Keine Spesenabrechnungen für diese Kriterien gefunden
 AucuneLigne=Es wurde noch keine Spesenabrechnung erstellt.
 AddLine=Neue Zeile hinzufügen
@@ -56,12 +55,12 @@ ModePaiement=Zahlungsart
 Note=Hinweis
 Project=Projekt
 
-VALIDATOR=Benutzer über die Genehmigung informieren
+VALIDATOR=verantwortlicher Benutzer für Genehmigung
 VALIDOR=genehmigt durch
 AUTHOR=gespeichert von
-AUTHORPAIEMENT=einbezahlt von
+AUTHORPAIEMENT=Einbezahlt von
 REFUSEUR=abgelehnt durch
-CANCEL_USER=verworfen von
+CANCEL_USER=gelöscht von
 
 MOTIF_REFUS=Grund
 MOTIF_CANCEL=Grund
@@ -74,9 +73,10 @@ DATE_PAIEMENT=Zahlungsdatum
 
 TO_PAID=bezahlen
 BROUILLONNER=entwerfen
-SendToValid=senden zu genehmigen
+SendToValid=Zur Genehmigung einreichen
 ModifyInfoGen=Bearbeiten
 ValidateAndSubmit=Validieren und zur Genehmigung einreichen
+ValidatedWaitingApproval=Validated (waiting for approval)
 
 NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesennabrechnung zu genehmigen
 NOT_AUTHOR=Sie sind nicht der Autor dieser Spesenabrechnung. Vorgang abgebrochen.
@@ -93,7 +93,7 @@ ConfirmPaidTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Bezahl
 CancelTrip=Abrechen einer Spesenabrechnung
 ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich abbrechen?
 
-BrouillonnerTrip=Gehen Sie zurück Spesenabrechnung zu Status "Entwurf"
+BrouillonnerTrip=Spesenabrechnung rückgängig, auf den Status "Entwurf"
 ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Entwurf" ändern?
 
 SaveTrip=Bestätige Spesenabrechnung

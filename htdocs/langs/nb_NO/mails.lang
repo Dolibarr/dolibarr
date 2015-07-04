@@ -128,6 +128,7 @@ TagCheckMail=Spor post åpning
 TagUnsubscribe=Avmeldingslink
 TagSignature=Signatur avsender
 TagMailtoEmail=Mottaker e-post
+NoEmailSentBadSenderOrRecipientEmail=Ingen e-post sendt. Feil på avsender eller mottaker. Verifiser brukerprofil
 # Module Notifications
 Notifications=Varsler
 NoNotificationsWillBeSent=Ingen e-postvarsler er planlagt for denne hendelsen/firmaet

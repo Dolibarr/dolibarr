@@ -1000,7 +1000,18 @@ print $sql;
             $i=0;
             foreach ($this->tabs as $key => $value)
             {
-                if ($value)
+            	if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+
+            	$entity=$conf->entity;
+            	$newvalue = $value;
+
+            	if (is_array($value))
+            	{
+            		$newvalue = $value['data'];
+            		if (isset($value['entity'])) $entity = $value['entity'];
+            	}
+
+                if ($newvalue)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
                     $sql.= "name";
