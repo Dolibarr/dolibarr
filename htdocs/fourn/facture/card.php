@@ -2313,6 +2313,11 @@ else
 
             print '<div class="tabsAction">';
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		                                                                                          // modified by hook
+		if (empty($reshook)) {
+
 		    // Modify a validated invoice with no payments
 			if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 			{
@@ -2432,6 +2437,7 @@ else
 				print '</div></div></div>';
                 //print '</td></tr></table>';
             }
+		}
         }
         /*
          * Show mail form
