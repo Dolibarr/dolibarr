@@ -517,7 +517,7 @@ class FormProjets
 	 *
 	 *    @param	string		$htmlname			HTML name
 	 *    @param	int			$preselected		Preselected
-	 *    @param	int			$shwoempty			Add an empty line
+	 *    @param	int			$showempty			Add an empty line
 	 *    @param	int			$useshortlabel		Use short label
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
