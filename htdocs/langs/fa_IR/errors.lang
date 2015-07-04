@@ -191,3 +191,4 @@ WarningNotRelevant=عملیات بی ربط برای این مجموعه داد�
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=قابلیت غیر فعال زمانی که راه اندازی صفحه نمایش برای فرد نابینا یا از مرورگرهای متن بهینه شده است.
 WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=Too many data. Please use more filters
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

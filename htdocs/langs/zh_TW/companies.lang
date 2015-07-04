@@ -30,6 +30,7 @@ ThirdPartyContact=客戶/供應商聯絡人
 StatusContactValidated=聯絡人狀態
 Company=公司
 CompanyName=公司名稱
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=公司
 CountryIsInEEC=國家是歐共體內
 ThirdPartyName=客戶/供應商名稱

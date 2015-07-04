@@ -76,6 +76,7 @@ CronMethodHelp=Objekto metodas įkėlimui. <BR> Pvz.: Dolibarr Produkto objekto 
 CronArgsHelp=Metodo argumentai. <BR> Pvz.: Dolibarr Produkto objekto patraukimo metodas /htdocs/product/class/product.class.php, parametrų reikšmė gali būti <i>0, ProductRef</i>
 CronCommandHelp=Sistemos komandinė eilutė vykdymui
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=Informacija
 # Common

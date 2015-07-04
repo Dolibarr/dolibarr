@@ -221,7 +221,26 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
 	}
 	else
 	{
-		setEventMessage($paiement->error, 'errors');
+		setEventMessage($object->error, 'errors');
+	}
+}
+
+if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->banque->cheque)
+{
+	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
+	$rejected_check = GETPOST('bankid');
+
+	$object->fetch($id);
+	$paiement_id = $object->reject_check($rejected_check, $reject_date);
+	if ($paiement_id > 0)
+	{
+		setEventMessage($langs->trans("CheckRejectedAndInvoicesReopened"));
+		header("Location: ".DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id);
+		exit;
+	}
+	else
+	{
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -334,6 +353,18 @@ else
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 
 	}
+
+	/*
+	 * Confirm check rejection
+	 */
+	if ($action == 'reject_check')
+	{
+		$formquestion = array(
+			array('type' => 'hidden','name' => 'bankid','value' => GETPOST('lineid')),
+			array('type' => 'date','name' => 'rejectdate_','label' => $langs->trans("RejectCheckDate"),'value' => dol_now())
+		);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check',$formquestion,'',1);
+	}
 }
 
 $accounts = array();
@@ -350,7 +381,7 @@ if ($action == 'new')
 	print '<input type="hidden" name="action" value="new">';
 
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
@@ -361,9 +392,9 @@ if ($action == 'new')
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
-	
+
 	dol_fiche_end();
-	
+
     print '<div class="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
     if ($filterdate || $filteraccountid > 0)
@@ -377,10 +408,9 @@ if ($action == 'new')
 
 	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as chqid, ";
 	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
-	$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (b.fk_account = ba.rowid)";
 	$sql.= " WHERE b.fk_type = 'CHQ'";
-	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_bordereau = 0";
 	$sql.= " AND b.amount > 0";
@@ -599,12 +629,11 @@ else
 	// Liste des cheques
 	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " b.dateo as date, b.datec as datec, b.banque,";
-	$sql.= " p.rowid as pid, ba.rowid as bid";
+	$sql.= " p.rowid as pid, ba.rowid as bid, p.statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (b.fk_account = ba.rowid)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
-	$sql.= " WHERE ba.rowid = b.fk_account";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " WHERE ba.entity IN (".getEntity('bank_account', 1).")";
 	$sql.= " AND b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$object->id;
 	$sql.= " ORDER BY $sortfield $sortorder";
@@ -625,7 +654,8 @@ else
 		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre('');
+		print_liste_field_titre($langs->trans("Payment"),$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
 		$i=1;
 		$var=false;
@@ -654,13 +684,25 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
-			if ($object->statut == 0)
+			print '<td align="center">';
+			$paymentstatic->id=$objp->pid;
+			$paymentstatic->ref=$objp->pid;
+			if ($paymentstatic->id)
 			{
-				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
+				print $paymentstatic->getNomUrl(1);
 			}
 			else
 			{
-				print '<td>&nbsp;</td>';
+				print '&nbsp;';
+			}
+			print '</td>';
+			if ($object->statut == 0)
+			{
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a></td>';
+			}
+			else if($objp->statut == 2) {
+				print '<td align="right">'.img_picto($langs->trans('CheckRejected'),'statut8').'</a></td>';
 			}
 			print '</tr>';
 			$var=!$var;

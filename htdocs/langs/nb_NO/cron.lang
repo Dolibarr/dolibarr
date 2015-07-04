@@ -69,13 +69,14 @@ CronTaskInactive=Denne jobben er deaktivert
 CronDtLastResult=Dato for siste resultat
 CronId=ID
 CronClassFile=Klasser (filnavn.klasse.php)
-CronModuleHelp=Navn på Dolibarr-modul katalogen (også arbeid med ekstern Dolibarr-modul). <BR> For eksempel hente-metode for Dolibarr Product objekt /htdocs/<u>product</u>/class/product.class.php, er verdien av modulen <i>produkt</i>
-CronClassFileHelp=Filnavn å laste. <BR> For eksempel hente metode for Dolibarr Produkt object/htdocs/produkt/klasse/<u>product.class.php</u>, er verdien av klassen filnavnet <i> product.class.php </i>
+CronModuleHelp=Navn på Dolibarr-modul katalogen (også arbeid med ekstern Dolibarr-modul). <BR> For eksempel hente-metode for Dolibarr Product objekt /htdocs/<u>product</u>/class/product.class.php, er verdien av modulen <i>vare</i>
+CronClassFileHelp=Filnavn å laste. <BR> For eksempel hente metode for Dolibarr Vare object/htdocs/vare/klasse/<u>product.class.php</u>, er verdien av klassen filnavnet <i> product.class.php </i>
 CronObjectHelp=Objektnavn som skal lastes.<BR> For eksempel metode for å hente Dolibarr Product object /htdocs/product/class/product.class.php, er verdien av klasse-filnavn <i>Product</i>
-CronMethodHelp=Objekt-metode for å starte. <BR> For eksempel hente Dolibarr Produkt objekt /htdocs/product/class/product.class.php, er verdien av metoden <i> fecth </i>
+CronMethodHelp=Objekt-metode for å starte. <BR> For eksempel hente Dolibarr Vare objekt /htdocs/product/class/product.class.php, er verdien av metoden <i> fecth </i>
 CronArgsHelp=Metode argumenter. <BR> For eksempel hent Dolibarr Product object /htdocs/product/class/product.class.php, kan parameterverdien være <i>0, ProductRef</i>
 CronCommandHelp=System kommandolinje som skal kjøres
 CronCreateJob=Opprett ny planlagt jobb
+CronFrom=Fra
 # Info
 CronInfoPage=Informasjon
 # Common

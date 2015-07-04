@@ -128,6 +128,7 @@ TagCheckMail=Sekti pašto atidarymą
 TagUnsubscribe=Pašalinti sąsają
 TagSignature=Siuntimo vartotojo parašas
 TagMailtoEmail=Gavėjo e-paštas
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Pranešimai
 NoNotificationsWillBeSent=Nėra numatytų e-pašto pranešimų šiam įvykiui ir įmonei

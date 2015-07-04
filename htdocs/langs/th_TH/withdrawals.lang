@@ -84,6 +84,11 @@ WithdrawalFile=ไฟล์ถอนเงิน
 SetToStatusSent=ตั้งสถานะ "แฟ้มส่ง"
 ThisWillAlsoAddPaymentOnInvoice=นอกจากนี้ยังจะใช้การชำระเงินให้กับใบแจ้งหนี้และจะจัดให้เป็น "การชำระเงิน"
 StatisticsByLineStatus=สถิติตามสถานะของสาย
+RUM=รัม
+RUMWillBeGenerated=จำนวนรัมจะถูกสร้างขึ้นครั้งเดียวข้อมูลบัญชีธนาคารจะถูกบันทึกไว้
+WithdrawMode=ถอนโหมด (frst หรือเกิดขึ้นอีก)
+WithdrawRequestAmount=จำนวนเงินที่ถอนคำขอ:
+WithdrawRequestErrorNilAmount=ไม่สามารถสร้างถอนการร้องขอสำหรับจำนวนเงินที่ศูนย์
 
 ### Notifications
 InfoCreditSubject=การชำระเงินเพื่อการยืน% s โดยธนาคาร

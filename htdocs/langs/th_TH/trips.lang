@@ -76,6 +76,7 @@ BROUILLONNER=เปิดใหม่
 SendToValid=ส่งความเห็นชอบ
 ModifyInfoGen=แก้ไข
 ValidateAndSubmit=ตรวจสอบและส่งเพื่อขออนุมัติ
+ValidatedWaitingApproval=การตรวจสอบ (รอการอนุมัติ)
 
 NOT_VALIDATOR=คุณยังไม่ได้รับอนุญาตให้อนุมัติรายงานค่าใช้จ่ายนี้
 NOT_AUTHOR=คุณไม่ได้เป็นผู้เขียนรายงานค่าใช้จ่ายนี้ การดำเนินงานที่ยกเลิก

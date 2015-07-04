@@ -261,7 +261,7 @@ class FormProjets
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
 	 *	@param  int		$selected   	Id task preselected
-	 *	@param  string	$htmlname   	Nom de la zone html
+	 *	@param  string	$htmlname   	Name of HTML select
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
@@ -270,7 +270,7 @@ class FormProjets
      *  @param	int		$disabled		Disabled
 	 *	@return int         			Nber of project if OK, <0 if KO
 	 */
-	function select_task($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0)
+	function selectTasks($socid=-1, $selected='', $htmlname='taskid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0)
 	{
 		global $user,$conf,$langs;
 
@@ -289,8 +289,11 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
-		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p, '.MAIN_DB_PREFIX.'projet_task as t';
+		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
+		$sql.= ' s.nom as name';
+		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
+		$sql.= ', '.MAIN_DB_PREFIX.'projet_task as t';
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		$sql.= " AND t.fk_projet = p.rowid";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
@@ -312,7 +315,7 @@ class FormProjets
 	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
-            	$minmax='minwidth100';
+            	$minmax='minwidth200';
 			}
 
 			if (empty($option_only)) {
@@ -345,6 +348,8 @@ class FormProjets
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
+
+						if ($obj->name) $labeltoshow.=' ('.$obj->name.')';
 
 						$disabled=0;
 						if ($obj->fk_statut == 0)
@@ -512,7 +517,7 @@ class FormProjets
 	 *
 	 *    @param	string		$htmlname			HTML name
 	 *    @param	int			$preselected		Preselected
-	 *    @param	int			$shwoempty			Add an empty line
+	 *    @param	int			$showempty			Add an empty line
 	 *    @param	int			$useshortlabel		Use short label
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */

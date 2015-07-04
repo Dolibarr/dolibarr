@@ -2313,6 +2313,11 @@ else
 
             print '<div class="tabsAction">';
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		                                                                                          // modified by hook
+		if (empty($reshook)) {
+
 		    // Modify a validated invoice with no payments
 			if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 			{
@@ -2432,6 +2437,7 @@ else
 				print '</div></div></div>';
                 //print '</td></tr></table>';
             }
+		}
         }
         /*
          * Show mail form
@@ -2474,8 +2480,11 @@ else
                 $file=$fileparams['fullname'];
             }
 
+			print '<div class="clearboth"></div>';
             print '<br>';
-            print_titre($langs->trans('SendBillByMail'));
+            print_fiche_titre($langs->trans('SendBillByMail'));
+
+            dol_fiche_head('');
 
             // Cree l'objet formulaire mail
             include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -2539,7 +2548,7 @@ else
             // Show form
             print $formmail->get_form();
 
-            print '<br>';
+            dol_fiche_end();
         }
     }
 }

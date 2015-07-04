@@ -294,3 +294,5 @@ LastUpdated=Son güncelleme
 CorrectlyUpdated=Doru olarak güncellendi
 PropalMergePdfProductActualFile=PDF Azur'a eklenmek için kullanılacak dosya/lar
 PropalMergePdfProductChooseFile=PDF dosyası seç
+IncludingProductWithTag=Etiketli ürünleri içerir
+DefaultPriceRealPriceMayDependOnCustomer=Varsayılan fiyat, gerçek fiyat müşteriye bağlı olabilir

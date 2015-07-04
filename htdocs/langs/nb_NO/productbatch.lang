@@ -19,4 +19,4 @@ printQty=Ant: %d
 AddDispatchBatchLine=Legg til en linje for holdbarhetsdato
 BatchDefaultNumber=Udefinert
 WhenProductBatchModuleOnOptionAreForced=Når Lot/serienummer-modulen er aktivert, vil øk/minsk lager være tvunget til siste valg, og kan ikke modifiseres. Alle andre opsjoner kan endres
-ProductDoesNotUseBatchSerial=Dette produktet har ikke lot/serienummer
+ProductDoesNotUseBatchSerial=Denne varen har ikke lot/serienummer

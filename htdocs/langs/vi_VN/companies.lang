@@ -30,6 +30,7 @@ ThirdPartyContact=Liên lạc/địa chỉ bên thứ ba
 StatusContactValidated=Trạng thái liên lạc/địa chỉ
 Company=Công ty
 CompanyName=Tên công ty
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Các công ty
 CountryIsInEEC=Quốc gia thuộc Cộng đồng Kinh tế châu Âu
 ThirdPartyName=Tên của bên thứ ba

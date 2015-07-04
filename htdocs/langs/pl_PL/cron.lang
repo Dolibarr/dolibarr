@@ -76,6 +76,7 @@ CronMethodHelp=Metoda obiektu, aby uruchomić. <BR> Dla exemple sprowadzić meto
 CronArgsHelp=Argumenty metody. <BR> Reprezentują np sprowadzić sposób Dolibarr obiektu Product /htdocs/product/class/product.class.php, wartość paramters może wynosić <i>0, ProductRef</i>
 CronCommandHelp=System linii poleceń do wykonania.
 CronCreateJob=Utwórz nowe zaplanowane zadanie
+CronFrom=From
 # Info
 CronInfoPage=Informacja
 # Common

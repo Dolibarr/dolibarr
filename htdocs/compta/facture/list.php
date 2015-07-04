@@ -63,6 +63,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
+$search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
@@ -121,6 +122,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_categ='';
     $search_user='';
     $search_sale='';
+    $search_product_category='';
     $search_ref='';
     $search_refcustomer='';
     $search_societe='';
@@ -144,8 +146,8 @@ $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new Facture($db);
 
-if (! $sall) $sql = 'SELECT';
-else $sql = 'SELECT DISTINCT';
+$sql = 'SELECT';
+if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
@@ -155,6 +157,8 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
+if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid=pd.fk_facture';
+if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
@@ -165,7 +169,8 @@ if ($search_user > 0)
 $sql.= ' WHERE f.fk_soc = s.rowid';
 $sql.= " AND f.entity = ".$conf->entity;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql.= ' AND s.rowid = '.$socid;
+if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
+if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if ($userid)
 {
     if ($userid == -1) $sql.=' AND f.fk_user_author IS NULL';
@@ -275,16 +280,30 @@ if ($resql)
  	if ($user->rights->societe->client->voir || $socid)
  	{
  		$langs->load("commercial");
+ 		$moreforfilter.='<div class="divsearchfield">';
  		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
+	 	$moreforfilter.='</div>';
  	}
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
-        $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-        $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+		$moreforfilter.='<div class="divsearchfield">';
+    	$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+        $moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	 	$moreforfilter.='</div>';
     }
+	// If the user can view prospects other than his'
+	if ($conf->categorie->enabled && $user->rights->produit->lire)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.='</div>';
+	}
+
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
@@ -330,7 +349,10 @@ if ($resql)
     print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="6" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre"></td>';
+    print '<td class="liste_titre" align="right">';
+	$liststatus=array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"), '3'=>$langs->trans("Cancel"));
+	print $form->selectarray('search_status', $liststatus, $search_status, 1);
+    print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print "</td></tr>\n";

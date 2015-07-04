@@ -2502,8 +2502,8 @@ if ($action == 'create')
 	}
 
 	print '<br>';
-} 
-else if ($id > 0 || ! empty($ref)) 
+}
+else if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Show object in view mode
@@ -2860,7 +2860,7 @@ else if ($id > 0 || ! empty($ref))
 		$outstandingBills = $soc->get_OutstandingBill();
 		print ' - ' . $langs->trans('CurrentOutstandingBill') . ': ';
 		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
-		if ($soc->outstanding_limit != '') 
+		if ($soc->outstanding_limit != '')
 		{
 			if ($outstandingBills > $soc->outstanding_limit)
 				print img_warning($langs->trans("OutstandingBillReached"));
@@ -2950,7 +2950,7 @@ else if ($id > 0 || ! empty($ref))
 		} else
 			print '. ';
 	}
-	if ($absolute_creditnote > 0) 
+	if ($absolute_creditnote > 0)
 	{
 		// If validated, we show link "add credit note to payment"
 		if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
@@ -3855,8 +3855,9 @@ else if ($id > 0 || ! empty($ref))
 			$file = $fileparams['fullname'];
 		}
 
+		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans($titreform));
+		print_fiche_titre($langs->trans($titreform));
 
 		// Cree l'objet formulaire mail
 		dol_fiche_head();

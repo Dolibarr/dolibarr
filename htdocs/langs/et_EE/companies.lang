@@ -30,6 +30,7 @@ ThirdPartyContact=Kolmanda isiku kontakt/aadress
 StatusContactValidated=Kontakti/aadressi staatus
 Company=Ettevõte
 CompanyName=Ettevõtte nimi
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Ettevõtted
 CountryIsInEEC=Riik on Euroopa Majandusühenduse liige
 ThirdPartyName=Kolmanda isiku nimi

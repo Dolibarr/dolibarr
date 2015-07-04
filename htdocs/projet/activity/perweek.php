@@ -124,6 +124,7 @@ if ($action == 'assign')
 
 	if ($result < 0)
 	{
+		$error++;
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
@@ -133,6 +134,11 @@ if ($action == 'assign')
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	}
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans("TaskAssignedToEnterTime"), null);
 	}
 
 	$action='';
@@ -376,7 +382,7 @@ print '<input type="hidden" name="year" value="'.$year.'">';
 print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="day" value="'.$day.'">';
 print $langs->trans("AssignTaskToMe").'<br>';
-$formproject->select_task($socid?$socid:-1, $taskid, 'taskid');
+$formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
 print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 1);
 print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AssignTask").'">';
 print '</form>';

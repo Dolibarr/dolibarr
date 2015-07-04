@@ -1,13 +1,9 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Codigo contabilidade para pagamentos de salarios
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codigo contabilidade para despesas financeiras
-Salary=Salário
-Salaries=Salários
-Employee=Empregado
 NewSalaryPayment=Novo pagamento de salário
 SalaryPayment=Pagamento de salário
 SalariesPayments=Pagamentos de salários
-ShowSalaryPayment=Mostrar pagamento de salário
 THM=Preço medio por hora
 TJM=Preço medio por diaria
 CurrentSalary=Salário atual

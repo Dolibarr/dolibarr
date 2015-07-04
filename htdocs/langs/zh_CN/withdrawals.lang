@@ -84,6 +84,11 @@ WithdrawalFile=撤回文件
 SetToStatusSent=设置状态“发送的文件”
 ThisWillAlsoAddPaymentOnInvoice=这也将创造在付款发票上，将它们归类支付
 StatisticsByLineStatus=Statistics by status of lines
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=由银行支付的长期订单%s

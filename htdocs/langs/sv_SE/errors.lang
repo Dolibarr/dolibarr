@@ -191,3 +191,4 @@ WarningNotRelevant=Irrelevant operation för denna datamängd
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature inaktiveras när display inställning är optimerad för blinda personer eller textbaserade webbläsare.
 WarningPaymentDateLowerThanInvoiceDate=Betalningsdag (%s) är tidigare än fakturadatum (%s) för faktura %s.
 WarningTooManyDataPleaseUseMoreFilters=För många uppgifter. Använd flera filter
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

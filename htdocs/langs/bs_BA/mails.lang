@@ -128,6 +128,7 @@ TagCheckMail=Prati otvaranje mailova
 TagUnsubscribe=Link za ispisivanje
 TagSignature=Korisnik sa slanjem potpisa
 TagMailtoEmail=E-pošta primalac
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Notifikacije
 NoNotificationsWillBeSent=Nema planiranih email notifikacija za ovaj događaj i kompaniju

@@ -76,6 +76,7 @@ CronMethodHelp=La méthode à lancer. <BR> Par exemple pour appeler la méthode 
 CronArgsHelp=Les arguments de la méthode. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être <i>0, RefProduit</i>
 CronCommandHelp=La commande système a exécuter.
 CronCreateJob=Créer un nouveau travail planifié
+CronFrom=From
 # Info
 CronInfoPage=Information
 # Common

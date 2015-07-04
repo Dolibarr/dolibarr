@@ -25,6 +25,7 @@
  *	\brief      File with class to manage cheque delivery receipts
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 
 /**
@@ -647,17 +648,83 @@ class RemiseCheque extends CommonObject
 
 			$resql = $this->db->query($sql);
 			if ($resql)
-	  {
-	  	$this->updateAmount();
-	  }
-	  else
-	  {
-	  	$this->errno = -1032;
-	  	dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
-	  }
+			{
+				$this->updateAmount();
+			}
+			else
+			{
+				$this->errno = -1032;
+				dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
+			}
 		}
 		return 0;
 	}
+
+	/**
+	 *	Check rejection management
+	 *	Reopen linked invoices and saves a new negative payment
+	 *
+	 *	@param	int		$bank_id 		Id of bank line concerned
+	 *	@param	date	$rejection_date	Date to use on the negative payment
+	 * 	@return	int
+	 */
+	function reject_check($bank_id, $rejection_date)
+	{
+		global $db, $user;
+
+		$payment = new Paiement($db);
+		$payment->fetch(0,0,$bank_id);
+
+		$bankaccount = $payment->fk_account;
+
+		// Get invoice list to reopen them
+		$sql = 'SELECT pf.fk_facture, pf.amount';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
+		$sql.= ' WHERE pf.fk_paiement = '.$payment->id;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$rejectedPayment = new Paiement($db);
+			$rejectedPayment->amounts = array();
+			$rejectedPayment->datepaye = $rejection_date;
+			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement');
+			$rejectedPayment->num_paiement = $payment->numero;
+
+			while($obj = $db->fetch_object($resql))
+			{
+				$invoice = new Facture($db);
+				$invoice->fetch($obj->fk_facture);
+				$invoice->set_unpaid($user);
+
+				$rejectedPayment->amounts[$obj->fk_facture] = price2num($obj->amount) * -1;
+			}
+
+			if ($rejectedPayment->create($user) > 0)
+			{
+				$result=$rejectedPayment->addPaymentToBank($user,'payment','(CheckRejected)',$bankaccount,'','');
+				if ($result > 0)
+				{
+					$payment->reject();
+					return $rejectedPayment->id;
+				}
+				else
+				{
+					return -1;
+				}
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
 	/**
 	 *	Charge les proprietes ref_previous et ref_next
 	 *
@@ -747,7 +814,7 @@ class RemiseCheque extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql.= " SET number = '".$number."'" ;
 			$sql.= " WHERE rowid = ".$this->id;
-			
+
 			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)

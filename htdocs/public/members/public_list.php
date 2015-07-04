@@ -36,7 +36,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 
 // Security check
-if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
 
 
 $langs->load("main");

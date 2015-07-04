@@ -2288,6 +2288,9 @@ if ($action == 'create')
 	}
 	print "<br>\n";
 
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) $action = 'presend';
+
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -2330,10 +2333,6 @@ if ($action == 'create')
 	/*
 	 * Action presend
  	 */
-	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
 	if ($action == 'presend')
 	{
 		$object->fetch_projet();
@@ -2369,8 +2368,11 @@ if ($action == 'create')
 			$file = $fileparams['fullname'];
 		}
 
+		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans('SendPropalByMail'));
+		print_fiche_titre($langs->trans('SendPropalByMail'));
+
+		dol_fiche_head('');
 
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -2439,7 +2441,7 @@ if ($action == 'create')
 
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 }
 

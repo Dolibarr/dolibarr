@@ -76,6 +76,7 @@ CronMethodHelp=Objekt spôsob štartu. <BR> Napr načítať metódy objektu výr
 CronArgsHelp=Metóda argumenty. <BR> Napr načítať metódy objektu výrobku Dolibarr / htdocs / produktu / trieda / product.class.php, môže byť hodnota paramters byť <i>0, ProductRef</i>
 CronCommandHelp=Systém príkazového riadka spustiť.
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=Informácie
 # Common

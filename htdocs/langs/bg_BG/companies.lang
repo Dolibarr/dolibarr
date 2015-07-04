@@ -30,6 +30,7 @@ ThirdPartyContact=От страна на трети лица за контакт
 StatusContactValidated=Състояние на контакт/адрес
 Company=Фирма
 CompanyName=Име на фирмата
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Фирми
 CountryIsInEEC=Държавата е част от Европейската икономическа общност
 ThirdPartyName=Име на Трета страна

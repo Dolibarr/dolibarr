@@ -76,6 +76,7 @@ CronMethodHelp=Phương pháp đối tượng để khởi động. <BR> Đối 
 CronArgsHelp=Các đối số phương pháp. <BR> Đối với exemple phương pháp của Dolibarr đối tượng sản phẩm /htdocs/product/class/product.class.php lấy, giá trị của paramters có thể là <i>0, ProductRef</i>
 CronCommandHelp=Các dòng lệnh hệ thống để thực thi.
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=Thông tin
 # Common

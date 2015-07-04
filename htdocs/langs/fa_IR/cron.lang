@@ -76,6 +76,7 @@ CronMethodHelp=روش شی برای راه اندازی. <BR> برای exemple �
 CronArgsHelp=استدلال از روش. <BR> برای exemple به بهانه روش Dolibarr محصولات شی / htdocs / محصول / کلاس / product.class.php، مقدار پارامترهای می تواند <i>0، ProductRef</i>
 CronCommandHelp=خط فرمان سیستم را اجرا کند.
 CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 CronInfoPage=اطلاعات
 # Common

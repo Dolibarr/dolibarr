@@ -199,7 +199,8 @@ Entreprises=Societăţi
 DOLIBARRFOUNDATION_PAYMENT_FORM=Pentru a face plata cotizaţiei folosind un transfer bancar, a se vedea pagina <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Pentru a plăti cu un card de credit sau Paypal, faceţi clic pe butonul de la partea de jos a acestei pagini. <br>
 ByProperties=După caracteristici
 MembersStatisticsByProperties=Statistici Membri după caracteristici
-MembersByNature=Membri după personalitate juridică
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Rata TVA utilizată pentru înscrieri
 NoVatOnSubscription=Fără TVA la adeziuni
 MEMBER_PAYONLINE_SENDEMAIL=Email de avertizare atunci când Dolibarr primeşte o confirmare a unei plăți validate pentru înscriere

@@ -30,6 +30,7 @@ ThirdPartyContact=Contactpersoon van Klant
 StatusContactValidated=Status van contactpersoon
 Company=Bedrijf
 CompanyName=Bedrijfsnaam
+AliasNames=Alias names (commercial, trademark, ...)
 Companies=Bedrijven
 CountryIsInEEC=Lidstaat van de Europese Unie
 ThirdPartyName=Naam van Klant

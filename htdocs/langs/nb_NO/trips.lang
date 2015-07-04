@@ -76,6 +76,7 @@ BROUILLONNER=Gjenåpne
 SendToValid=Sendt til godkjenning
 ModifyInfoGen=Endre
 ValidateAndSubmit=Valider og send til godkjenning
+ValidatedWaitingApproval=Validert (venter på godkjenning)
 
 NOT_VALIDATOR=Du har ikke tillatelse til å godkjenne denne reiseregningen
 NOT_AUTHOR=Reiseregningener ikke opprettet av deg. Operasjonen avbrutt.
