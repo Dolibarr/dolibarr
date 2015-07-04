@@ -47,8 +47,21 @@ $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
+//Should move to top with all GETPOST
+$page = GETPOST('page');
+if ($page < 0) $page = 0;
 
-// TODO : remove comment
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = $conf->liste_limit;
+} else {
+	$limit = $conf->liste_limit;
+}
+$offset = $limit * $page;
+//End Should move to top with all GETPOST
+
+// TODO : remove comment 
 //elarifr we can not use only
 //$sql .= " ORDER BY l.rowid";
 // f.datef will order like FA08 FA09 FA10 FA05 FA06 FA07 FA04...
@@ -56,7 +69,6 @@ $sortorder = GETPOST('sortorder','alpha');
 // l.rowid when an invoice is edited rowid are added at end of table & facturedet.rowid are not ordered
 //if (! $sortfield) $sortfield="l.rowid";
 if (! $sortfield) $sortfield="f.datef, f.facnumber, l.rowid";
-
 //if (! $sortorder) $sortorder="DESC";
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
@@ -80,6 +92,13 @@ $accounting = new AccountingAccount($db);
 $aarowid_s = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
 $aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
 
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $search_ref='';
+    $search_label='';
+    $search_desc='';
+}
 /*
  * View
  */
@@ -146,19 +165,8 @@ if ($action == 'ventil') {
 /*
  * Customer Invoice lines
  */
-$page = GETPOST('page');
-if ($page < 0)
-	$page = 0;
 
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
-	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
-} else {
-	$limit = $conf->liste_limit;
-}
 
-$offset = $limit * $page;
 
 $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell";
@@ -176,6 +184,16 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountan
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
+//Add search filter like
+if (strlen(trim($search_ref))) {
+	$sql .= " AND (p.ref like '%" . $search_ref . "%')";
+}
+if (strlen(trim($search_label))) {
+	$sql .= " AND (p.label like '%" . $search_label . "%')";
+}
+if (strlen(trim($search_desc))) {
+	$sql .= " AND (l.description like '%" . $search_desc . "%')";
+}
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
@@ -218,10 +236,24 @@ if ($result) {
 	print '<td align="right">' . $langs->trans("AccountAccounting") . '</td>';
 	print '<td align="center">' . $langs->trans("IntoAccount") . '</td>';
 	print_liste_field_titre('');
-	print '<td align="center">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
-//	do we need to add search filter ?
-
+	print '<td align="center" colspan="2">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
 	print '</tr>';
+//	We add search filter
+/*	But Hit Enter will validate ventilation....
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" >&nbsp;</td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
+
+	print '<td class="liste_titre" colspan="3">&nbsp;</td>';
+	print '<td align="right" colspan="2" class="liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '&nbsp;';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '</td>';
+	print '</tr>';
+*/
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 	$form = new Form($db);
@@ -321,6 +353,7 @@ if ($result) {
 		print '<td align="center">' . $objp->rowid . '</td>';
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
+		//TODO checked only if account exist in product, if only suggested do not check, user must validate 
 		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid_suggest ? "checked" : "") . '/>';
 		print '</td>';
 //debug
