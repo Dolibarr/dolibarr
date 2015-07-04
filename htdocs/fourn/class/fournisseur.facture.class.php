@@ -8,7 +8,7 @@
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- *	Copyright (C) 2015      Bahfir Abbes			<bafbes@gmail.com>
+ * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1987,8 +1987,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Retrieves a supplier invoice line
 	 *
-	 * @param int $rowid Line id
-	 * @return int <0 KO; 0 NOT FOUND; 1 OK
+	 * @param    int    $rowid    Line id
+	 * @return   int              <0 KO; 0 NOT FOUND; 1 OK
 	 */
 	public function fetch($rowid)
 	{
@@ -2052,8 +2052,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Deletes a line
 	 *
-	 * @param bool|int $notrigger
-	 * @return int -1 KO; 1 OK
+	 * @param     bool|int    $notrigger    1=Does not execute triggers, 0= execute triggers
+	 * @return    int                       0 if KO, 1 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
