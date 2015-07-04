@@ -81,7 +81,7 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		$sql.= " WHERE entity IN (".getEntity($element).")" ; 
+		$sql.= " WHERE entity IN (".getEntity($element,1).")" ; 
 		
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";

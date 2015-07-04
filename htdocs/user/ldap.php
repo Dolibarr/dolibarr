@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,9 @@ $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, '&user', $feature2);
 
-$fuser = new User($db);
-$fuser->fetch($id);
-$fuser->getrights();
+$object = new User($db);
+$object->fetch($id);
+$object->getrights();
 
 
 /*
@@ -57,8 +57,8 @@ if ($_GET["action"] == 'dolibarr2ldap')
     $ldap=new Ldap();
     $result=$ldap->connect_bind();
 
-    $info=$fuser->_load_ldap_info();
-    $dn=$fuser->_load_ldap_dn($info);
+    $info=$object->_load_ldap_info();
+    $dn=$object->_load_ldap_dn($info);
     $olddn=$dn;	// We can say that old dn = dn as we force synchro
 
     $result=$ldap->update($dn,$info,$user,$olddn);
@@ -84,7 +84,7 @@ llxHeader();
 
 $form = new Form($db);
 
-$head = user_prepare_head($fuser);
+$head = user_prepare_head($object);
 
 $title = $langs->trans("User");
 dol_fiche_head($head, 'ldap', $title, 0, 'user');
@@ -94,29 +94,29 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
 print '<td>';
-print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 print '</td>';
 print '</tr>';
 
 // Lastname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$fuser->lastname.'</td>';
+print '<td>'.$object->lastname.'</td>';
 print "</tr>\n";
 
 // Firstname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$fuser->firstname.'</td>';
+print '<td>'.$object->firstname.'</td>';
 print "</tr>\n";
 
 // Login
 print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-if ($fuser->ldap_sid)
+if ($object->ldap_sid)
 {
     print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 }
 else
 {
-    print '<td>'.$fuser->login.'</td>';
+    print '<td>'.$object->login.'</td>';
 }
 print '</tr>';
 
@@ -126,7 +126,7 @@ if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
     $result = $ldap->connect_bind();
     if ($result > 0)
     {
-        $userSID = $ldap->getObjectSid($fuser->login);
+        $userSID = $ldap->getObjectSid($object->login);
     }
     print '<tr><td width="25%" valign="top">'.$langs->trans("SID").'</td>';
     print '<td>'.$userSID.'</td>';
@@ -158,7 +158,7 @@ print '<div class="tabsAction">';
 
 if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 {
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fuser->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
@@ -182,9 +182,9 @@ $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
 {
-    $info=$fuser->_load_ldap_info();
-    $dn=$fuser->_load_ldap_dn($info,1);
-    $search = "(".$fuser->_load_ldap_dn($info,2).")";
+    $info=$object->_load_ldap_info();
+    $dn=$object->_load_ldap_dn($info,1);
+    $search = "(".$object->_load_ldap_dn($info,2).")";
     $records=$ldap->getAttribute($dn,$search);
 
     //print_r($records);

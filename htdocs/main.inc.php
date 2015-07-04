@@ -89,6 +89,7 @@ function test_sql_and_script_inject($val, $type)
         $sql_inj += preg_match('/union.+select/i', 	 $val);
         $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
         $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
+        $sql_inj += preg_match('/onerror=/i', 	     $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
@@ -574,7 +575,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
         else
-       {
+		{
 	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 	       $hookmanager->initHooks(array('main'));
 

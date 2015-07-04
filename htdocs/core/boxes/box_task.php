@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -18,7 +19,6 @@
  *	\file       htdocs/core/boxes/box_task.php
  *	\ingroup    Projet
  *	\brief      Module to Task activity of the current year
- *	\version	$Id: box_task.php,v 1.1 2012/09/11 Charles-François BENKE
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
@@ -39,11 +39,11 @@ class box_task extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-	*      \brief      Constructeur de la classe
-	*
-	*  @return	void
-	*/
+	/** 
+	 *  Constructor
+	 *
+	 *  @return	void
+	 */
 	function box_task()
 	{
 		global $langs;
@@ -120,8 +120,7 @@ class box_task extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][1] = array('td' => '', 'text' => "");
+		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left" colspan="2" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
 		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
