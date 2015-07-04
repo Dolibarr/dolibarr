@@ -242,16 +242,19 @@ if ($resql)
 	if ($user->rights->societe->client->voir || $socid)
 	{
 		$langs->load("commercial");
+		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
-		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
+		$moreforfilter.='</div>';
 	}
 	// If the user can view prospects other than his'
 
 	if (($user->rights->societe->client->voir || $socid) && !$mine)
 	{
-		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-		$moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
+		$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		$moreforfilter.='</div>';
 	}
 	if (! empty($moreforfilter))
 	{
@@ -274,12 +277,10 @@ if ($resql)
 	if (! empty($conf->global->PROJECT_LIST_SHOW_STARTDATE)) print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
-
 	$parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-
-    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),$_SERVER["PHP_SELF"],'p.fk_opp_statut',"",$param,'',$sortfield,$sortorder);
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
@@ -401,6 +402,7 @@ if ($resql)
     					$userstatic->id=$val['id'];
     					$userstatic->lastname=$val['lastname'];
     					$userstatic->firstname=$val['firstname'];
+    					$userstatic->email=$val['email'];
     					print $userstatic->getNomUrl(1);
     					$j++;
     					if ($j < $nbofsalesrepresentative) print ', ';
