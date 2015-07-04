@@ -229,7 +229,7 @@ if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->ban
 {
 	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
 	$rejected_check = GETPOST('bankid');
-	
+
 	$object->fetch($id);
 	$paiement_id = $object->reject_check($rejected_check, $reject_date);
 	if ($paiement_id > 0)
@@ -353,7 +353,7 @@ else
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 
 	}
-	
+
 	/*
 	 * Confirm check rejection
 	 */
@@ -381,7 +381,7 @@ if ($action == 'new')
 	print '<input type="hidden" name="action" value="new">';
 
 	dol_fiche_head();
-	
+
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
@@ -392,9 +392,9 @@ if ($action == 'new')
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
 	print '</table>';
-	
+
 	dol_fiche_end();
-	
+
     print '<div class="center">';
 	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
     if ($filterdate || $filteraccountid > 0)
@@ -655,8 +655,7 @@ else
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Payment"),$_SERVER["PHP_SELF"],"p.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre('');
-
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
 		$i=1;
 		$var=false;
@@ -699,17 +698,11 @@ else
 			print '</td>';
 			if ($object->statut == 0)
 			{
-				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a></td>';
 			}
-			else
-			{
-				if($objp->statut == 0)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reject_check&amp;lineid='.$objp->rowid.'">'.img_picto($langs->trans("RejectCheck"),'disable').'</a></td>';
-				}
-				else if($objp->statut == 2) {
-					print '<td align="right">'.img_picto($langs->trans('CheckRejected'),'statut8').'</a></td>';
-				}
+			else if($objp->statut == 2) {
+				print '<td align="right">'.img_picto($langs->trans('CheckRejected'),'statut8').'</a></td>';
 			}
 			print '</tr>';
 			$var=!$var;

@@ -79,10 +79,11 @@ class Paiement extends CommonObject
 	 *    Load payment from database
 	 *
 	 *    @param	int		$id			Id of payment to get
+	 *    @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
 	 *    @return   int		<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id, $fk_bank='')
+	function fetch($id, $ref='', $fk_bank='')
 	{
 		$sql = 'SELECT p.rowid, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
@@ -91,10 +92,12 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
-		if ($fk_bank)
-			$sql.= ' AND p.fk_bank = '.$fk_bank;
-		else
+		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
+		else if ($ref)
+			$sql.= ' AND p.rowid = '.$ref;
+		else if ($fk_bank)
+			$sql.= ' AND p.fk_bank = '.$fk_bank;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -670,7 +673,7 @@ class Paiement extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *    Reject payment
 	 *
