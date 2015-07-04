@@ -131,7 +131,7 @@ if ($resql)
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr><td align="center" colspan="2">';
+        print '<tr '.$bc[false].'><td align="center" colspan="2">';
         $data=array('series'=>$dataseries);
         dol_print_graph('stats',300,180,$data,1,'pie',1);
         print '</td></tr>';
