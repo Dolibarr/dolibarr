@@ -400,11 +400,12 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 // If internal user: Check permission for internal users that are restricted on their objects
                 else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
                 {
-                    $sql = "SELECT dbt.rowid";
+                    $sql = "SELECT dbt.".$dbt_select;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = '".$user->id."'";
-                    $sql.= " WHERE dbt.rowid = ".$objectid;
-                    $sql.= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)";	// Contact not linked to a company or to a company of user
+                    $sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+                    $sql.= " AND (dbt.".$dbt_keyfield. IS NULL OR (sc.fk_soc IS NOT NULL";	// Contact not linked to a company or to a company of user
+                    $sql.= " AND sc.fk_user = ".$user->id." ))";
                     $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
                 // If multicompany and internal users with all permissions, check user is in correct entity
