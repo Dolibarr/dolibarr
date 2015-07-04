@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,8 +86,6 @@ if ($action == 'update') {
     if (! $res > 0) $error++;
     $res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
     if (! $res > 0) $error++;
-
-
 
 	// Others options
     foreach ($list as $constname) {
