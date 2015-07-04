@@ -1773,13 +1773,9 @@ table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-right-width: 1px;
-	border-right-color: #CCC;
-	border-right-style: solid;
-
-	border-left-width: 1px;
-	border-left-color: #CCC;
-	border-left-style: solid;
+	border-width: 1px;
+	border-color: #CCC;
+	border-style: solid;
 
 	margin: 0px 0px 2px 0px;
 
