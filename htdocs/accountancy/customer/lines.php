@@ -51,12 +51,20 @@ $search_account = GETPOST('search_account','alpha');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+//if ($page == -1) { $page = 0; }
+if ($page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
+//$limit = $conf->liste_limit;
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = $conf->liste_limit;
+} else {
+	$limit = $conf->liste_limit;
+}
+//$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 
 // TODO : remove comment
 //elarifr we can not use only
