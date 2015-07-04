@@ -374,43 +374,34 @@ if ($id > 0 || ! empty($ref))
 	 * Boutons actions
 	 */
 
-	if ($action != 'delete')
-	{
+	if ($action != 'delete') {
 		print '<div class="tabsAction">';
 
-		if ($object->type != 2 && $object->rappro)  // If not cash account and can be reconciliate
-		{
-			if ($user->rights->banque->consolidate)
-			{
+		if ($object->type != 2 && $object->rappro) { // If not cash account and can be reconciliate
+			if ($user->rights->banque->consolidate) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
+			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
 		}
 
-		if ($action != 'addline')
-		{
-			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
-			{
-				if ($user->rights->banque->modifier)
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
-				}
-				else
-				{
-					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-				}
-			}
-			else
-			{
-				print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-			}
-		}
-
-		print '</div>';
-	}
+		if ($action != 'addline') {
+			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+                if (empty($conf->accounting->enabled)) {
+                    if ($user->rights->banque->modifier) {
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+                    } else {
+                        print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+                    }
+                } else {
+                    print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+                }
+			} else {
+                print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+            }
+        }
+        print '</div>';
+    }
 	
 	print '<br>';
 		
@@ -466,15 +457,12 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="floatright">'.$navig.'</div>';
 	}
 	
-	print '<table class="noborder" width="100%">';
-
 	// Form to add a transaction with no invoice
 	if ($user->rights->banque->modifier && $action == 'addline')
 	{
-		print '<tr>';
-		print '<td align="left" colspan="10"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
-		print '</tr>';
+        print_fiche_titre($langs->trans("AddBankRecordLong"),'','');
 
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>&nbsp;</td>';
@@ -507,10 +495,12 @@ if ($id > 0 || ! empty($ref))
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
-		print "</form>";
-
-		print '<tr class="noborder"><td colspan="10">&nbsp;</td></tr>'."\n";
+		print '</table>';
+		print '</form>';
+		print '<br>';
 	}
+
+	print '<table class="noborder" width="100%">';
 
 	/*
 	 * Affiche tableau des transactions bancaires
