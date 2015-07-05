@@ -1777,26 +1777,29 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 						series: {
 							pie: {
 								show: true,
-								radius: 3/4,
+								radius: 0.8,
+								combine: {
+								 	threshold: 0.05
+								},
 								label: {
 									show: true,
-									radius: 3/4,
+									radius: 0.9,
 									formatter: function(label, series) {
 										var percent=Math.round(series.percent);
 										var number=series.data[0][1];
 										return \'';
-										print '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">';
+										print '<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
 										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
-										print '\'+'.($showlegend?'number':'label+\'<br/>\'+number');
+										print '\'+'.($showlegend?'number':'label+\' \'+number');
 										if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
 										print '+\'';
 										if ($url) print '</a>';
 										print '</div>\';
 									},
 									background: {
-										opacity: 0.5,
+										opacity: 0.0,
 										color: \'#000000\'
-									}
+									},
 								}
 							}
 						},

@@ -48,6 +48,10 @@ $search_statut=GETPOST('search_statut','int');
 
 if ($search_statut == '') $search_statut='1';
 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_statut="";
+}
 
 
 /*
@@ -87,6 +91,7 @@ foreach($fulltree as $key => $val)
 
 	$entity=$val['entity'];
 	$entitystring='';
+
 	// TODO Set of entitystring should be done with a hook
 	if (is_object($mc))
 	{
@@ -109,14 +114,15 @@ foreach($fulltree as $key => $val)
 	$data[] = array(
 		'rowid'=>$val['rowid'],
 		'fk_menu'=>$val['fk_user'],
-		'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.$li.'</td><td align="right">'.$userstatic->getLibStatut(5).'</td></tr></table>'
+		'statut'=>$val['statut'],
+		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(5).'</td></tr></table>'
 	);
 }
 
 
-/*print $langs->trans("Status").': ';
-print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
-*/
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
+$param="search_statut=".$search_statut;
 
 print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre">';
@@ -132,7 +138,7 @@ print '<td>&nbsp;</td>';
 print '<td>&nbsp;</td>';
 // Status
 print '<td align="right">';
-print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
 print '</td>';
 print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -165,7 +171,19 @@ else
 }
 
 print "</table>";
+print "</form>\n";
 
+//
+/*print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_myfunc()
+	{
+		jQuery(".usertddisabled").hide();
+	}
+	init_myfunc();
+});
+</script>';
+*/
 
 llxFooter();
 
