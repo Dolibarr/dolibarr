@@ -41,7 +41,6 @@ $search_task_label=GETPOST('search_task_label');
 $search_project_user=GETPOST('search_project_user');
 $search_task_user=GETPOST('search_task_user');
 
-
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -63,7 +62,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_task_ref="";
 	$search_task_label="";
 }
-if (empty($search_status)) $search_status=1;
+if (empty($search_status) && $search_status == '') $search_status=1;
 
 
 /*
@@ -108,8 +107,8 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task assigned to a user can have a parent that is not assigned to him and we need such parents).
 $morewherefilter='';
-if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref, 0, 1);
-if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label, 0, 1);
+if ($search_task_ref)   $morewherefilter.=natural_search('t.ref', $search_task_ref);
+if ($search_task_label) $morewherefilter.=natural_search('t.label', $search_task_label);
 $tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status, $morewherefilter, $search_project_user, $search_task_user);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
@@ -121,22 +120,26 @@ print '<table class="noborder" width="100%">';
 // If the user can view users
 if ($user->rights->user->user->lire)
 {
-	$moreforfilter.=($moreforfilter?' &nbsp; ':'');
+	$moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ' ';
-    $moreforfilter.=$form->select_dolusers($search_project_user,'search_project_user',1);
+    $moreforfilter.=$form->select_dolusers($search_project_user, 'search_project_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$moreforfilter.='</div>';
 }
 if ($user->rights->user->user->lire)
 {
-	$moreforfilter.=($moreforfilter?' &nbsp; ':'');
+	$moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.=$langs->trans('TasksWithThisUserAsContact'). ' ';
-    $moreforfilter.=$form->select_dolusers($search_task_user,'search_task_user',1);
+    $moreforfilter.=$form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$moreforfilter.='</div>';
 }
 if (! empty($moreforfilter))
 {
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre" colspan="10">';
-    print $moreforfilter;
-    print '</td></tr>';
+	print '<div class="liste_titre">';
+	print $moreforfilter;
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 }
 
 print '<tr class="liste_titre">';
@@ -165,10 +168,10 @@ foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$lang
 print $form->selectarray('search_status', $listofstatus, $search_status);
 print '</td>';
 print '<td class="liste_titre">';
-print '<input type="text" class="flat" name="search_task_ref" value="'.$search_task_ref.'" size="4">';
+print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" size="4">';
 print '</td>';
 print '<td class="liste_titre">';
-print '<input type="text" class="flat" name="search_task_label" value="'.$search_task_label.'" size="8">';
+print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" size="8">';
 print '</td>';
 print '<td class="liste_titre" colspan="5">';
 print '&nbsp;';

@@ -871,10 +871,11 @@ class Project extends CommonObject
      * 	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      * 	@param	string	$option			Variant ('', 'nolink')
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
-     *  @param	string	$moreinpopup	Text to add into popu
+     *  @param	string	$moreinpopup	Text to add into popup
+     *  @param	string	$sep			Separator between ref and label if option addlabel is set
      * 	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='')
+    function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ')
     {
         global $langs;
 
@@ -905,7 +906,7 @@ class Project extends CommonObject
 
         if ($withpicto) $result.=($link . img_object($label, $picto, 'class="classfortooltip"') . $linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link . $this->ref . $linkend . (($addlabel && $this->title) ? ' - ' . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+        if ($withpicto != 2) $result.=$link . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
         return $result;
     }
 
