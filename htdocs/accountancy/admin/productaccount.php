@@ -48,8 +48,9 @@ $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 $account_number_buy  = GETPOST('account_number_buy');
 $account_number_sell = GETPOST('account_number_sell');
-$changeaccount_buy   = GETPOST('changeaccount_buy');
-$changeaccount_sell  = GETPOST('changeaccount_sell');
+$changeaccount  = GETPOST('changeaccount','array');
+$changeaccount_buy   = GETPOST('changeaccount_buy','array');
+$changeaccount_sell  = GETPOST('changeaccount_sell','array');
 $search_ref     = GETPOST('search_ref','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
@@ -107,49 +108,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 //debug move header to top
 llxHeader('', $langs->trans("Accounts"));
 
-print 'DEBUG';
-print_r ($changeaccount);
 //TODO: modify to update all selected product with a sell account
-//if (is_array($changeaccount) && count($changeaccount) > 0) {
-print_r ($changeaccount);
-	$error = 0;
-	
-//	$db->begin();
-	
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p";
-	$sql1 .= " SET p.accountancy_code_sell=" . $account_number_sell;
-	$sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
-	
-//	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
-	print_r ($sql1); return;
-/*
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		setEventMessage($db->lasterror(), 'errors');
-	}
-	if (! $error) {
-		$db->commit();
-		setEventMessage($langs->trans('Save'), 'mesgs');
-	} else {
-		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
-	}
-*/
-//}
-
-/*
-//TODO: modify to update all selected product with a buy account
-if (is_array($changeaccount_buy) && count($changeaccount_buy) > 0) {
+if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->trans("Accountancy_code_sell")) {
+//print_r ($changeaccount);
 	$error = 0;
 	
 	$db->begin();
 	
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p";
-	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
-	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	$sql1 .= " SET p.accountancy_code_sell=" . $account_number_sell;
+	$sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
 	
-	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+	dol_syslog('accountancy/customer/lines.php::changeaccount product sell sql= ' . $sql1);
+print_r ($sql1);
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -163,7 +134,31 @@ if (is_array($changeaccount_buy) && count($changeaccount_buy) > 0) {
 		setEventMessage($db->lasterror(), 'errors');
 	}
 }
-*/
+
+//TODO: modify to update all selected product with a buy account
+if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->trans("Accountancy_code_buy")) {
+	$error = 0;
+	
+	$db->begin();
+	
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p";
+	$sql1 .= " SET p.accountancy_code_buy=" . $account_number_buy;
+	$sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
+print_r ($sql1);	
+	dol_syslog('accountancy/customer/lines.php::changeaccount product buy sql= ' . $sql1);
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		setEventMessage($db->lasterror(), 'errors');
+	}
+	if (! $error) {
+		$db->commit();
+		setEventMessage($langs->trans('Save'), 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	}
+}
 
 /*
  * View
@@ -267,14 +262,14 @@ if ($result) {
 	print '<tr>';
 	print '<td width="33%">';
 	print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
-	print $langs->trans("Accountancy_code_buy") . ': ' . $form->select_account($account_number_buy, 'account_number_buy', 1);
-	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
+	print $langs->trans("Accountancy_code_buy") . ': ' . $form->select_account_number($account_number_buy, 'account_number_buy', 1);
+	print '<input type="submit" class="butAction" name="action" value="' . $langs->trans("Accountancy_code_buy") . '"/></div>';
 	print '</td>';
 
 	print '<td width="33%">';
 	print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
-	print $langs->trans("Accountancy_code_sell") . ': ' . $form->select_account($account_number_sell, 'account_number_sell', 1);
-	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
+	print $langs->trans("Accountancy_code_sell") . ': ' . $form->select_account_number($account_number_sell, 'account_number_sell', 1);
+	print '<input type="submit" class="butAction" name="action" value="' . $langs->trans("Accountancy_code_sell") . '"/></div>';
 	print '</td>';
 	print '<td width="33%">';
 	//TODO change button
