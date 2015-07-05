@@ -46,6 +46,8 @@ $userstatic=new User($db);
 $companystatic = new Societe($db);
 $search_statut=GETPOST('search_statut','int');
 
+if ($search_statut == '') $search_statut='1';
+
 
 
 /*
@@ -117,8 +119,25 @@ print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Dis
 */
 
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("HierarchicView").'</td><td></td><td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td></tr>';
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("HierarchicView"));
+print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
+print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
+print '</tr>';
+
+print '<tr class="liste_titre">';
+print '<td>&nbsp;</td>';
+print '<td>&nbsp;</td>';
+// Status
+print '<td align="right">';
+print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+print '</td>';
+print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+print '</td>';
+print '</tr>';
 
 $nbofentries=(count($data) - 1);
 
@@ -126,17 +145,22 @@ if ($nbofentries > 0)
 {
 	print '<tr '.$bc[false].'><td colspan="3">';
 	tree_recur($data,$data[0],0);
-	print '</td></tr>';
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
 }
 else
 {
 	print '<tr '.$bc[true].'>';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<td colspan="3">';
+	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';
 	print '<td>&nbsp;</td>';
-	print '</table></td>';
+	print '</table>';
+	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 }
 
