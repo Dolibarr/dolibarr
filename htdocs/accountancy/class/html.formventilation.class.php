@@ -164,58 +164,9 @@ class FormVentilation extends Form
      *
 	 *	@return	string					String with HTML select
 	 */
-	/* removed as merged in select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 1, $aabase = '')
-	function select_account_number($selectid, $htmlname = 'account', $showempty = 0, $event = array())
-	{
-		global $conf;
-
-		$out = '';
-
-		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount as aa";
-		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
-		$sql .= " AND aa.active = 1";
-		$sql .= " ORDER BY aa.account_number";
-
-		dol_syslog(get_class($this) . "::select_account_number sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-
-			$out .= ajax_combobox($htmlname, $event);
-			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
-			if ($showempty)
-				$out .= '<option value="-1"></option>';
-			$num = $this->db->num_rows($resql);
-			$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : '50';
-			$i = 0;
-			if ($num) {
-				while ( $i < $num ) {
-					$obj = $this->db->fetch_object($resql);
-					$label = $obj->account_number . ' - ' . $obj->label;
-					$label = dol_trunc($label, $trunclengh);
-					// Remember guy's we store in database llx_facturedet the rowid of accountingaccount and not the account_number
-					// Because same account_number can be share between different accounting_system and do have the same meaning
-					if (($selectid != '') && $selectid == $obj->rowid) {
-						// $out .= '<option value="' . $obj->account_number . '" selected>' . $label . '</option>';
-						$out .= '<option value="' . $obj->account_number . '" selected>' . $label . '</option>';
-					} else {
-						// $out .= '<option value="' . $obj->account_number . '">' . $label . '</option>';
-						$out .= '<option value="' . $obj->account_number . '">' . $label . '</option>';
-					}
-					$i ++;
-				}
-			}
-			$out .= '</select>';
-		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
-			return - 1;
-		}
-		$this->db->free($resql);
-		return $out;
-	}
-	*/
+	// removed as merged in select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 1, $aabase = '')
+	//function select_account_number($selectid, $htmlname = 'account', $showempty = 0, $event = array())
+	//
 
 	/**
 	 *	Return list of accounts with label by class of accounts
