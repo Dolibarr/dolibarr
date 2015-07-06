@@ -262,13 +262,13 @@ if ($result) {
 	print '<tr>';
 	print '<td width="33%">';
 	print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
-	print $langs->trans("Accountancy_code_buy") . ': ' . $form->select_account_number($account_number_buy, 'account_number_buy', 1);
+	print $langs->trans("Accountancy_code_buy") . ': ' . $form->select_account($account_number_buy, 'account_number_buy', 1,'', 0, 1);
 	print '<input type="submit" class="butAction" name="action" value="' . $langs->trans("Accountancy_code_buy") . '"/></div>';
 	print '</td>';
 
 	print '<td width="33%">';
 	print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
-	print $langs->trans("Accountancy_code_sell") . ': ' . $form->select_account_number($account_number_sell, 'account_number_sell', 1);
+	print $langs->trans("Accountancy_code_sell") . ': ' . $form->select_account($account_number_sell, 'account_number_sell', 1, '', 0, 1);
 	print '<input type="submit" class="butAction" name="action" value="' . $langs->trans("Accountancy_code_sell") . '"/></div>';
 	print '</td>';
 	print '<td width="33%">';
