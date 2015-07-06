@@ -43,7 +43,7 @@ $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
-dolibarr_install_syslog("--- step4: Entering step4.php page");
+dolibarr_install_syslog("--- step4: entering step4.php page");
 
 $err=0;
 $ok = 0;
@@ -107,7 +107,7 @@ if ($db->ok)
 
 }
 
-dolibarr_install_syslog("--- install/step4.php end", LOG_INFO);
+dolibarr_install_syslog("--- step4: end");
 
 pFooter($err,$setuplang);
 

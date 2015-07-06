@@ -69,7 +69,7 @@ $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
-dolibarr_install_syslog("--- step5: Entering step5.php page", LOG_INFO);
+dolibarr_install_syslog("--- step5: entering step5.php page");
 
 
 /*
@@ -154,7 +154,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         // Active module user
         $modName='modUser';
         $file = $modName . ".class.php";
-        dolibarr_install_syslog('install/step5.php Load module user '.DOL_DOCUMENT_ROOT ."/core/modules/".$file, LOG_INFO);
+        dolibarr_install_syslog('step5: load module user ' . DOL_DOCUMENT_ROOT . "/core/modules/" . $file, LOG_INFO);
         include_once DOL_DOCUMENT_ROOT ."/core/modules/".$file;
         $objMod = new $modName($db);
         $result=$objMod->init();
@@ -189,13 +189,13 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
             {
                 if ($newuser->error == 'ErrorLoginAlreadyExists')
                 {
-                    dolibarr_install_syslog('install/step5.php AdminLoginAlreadyExists', LOG_WARNING);
+                    dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
                     print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists",$_POST["login"])."</div><br>";
                     $success = 1;
                 }
                 else
                 {
-                    dolibarr_install_syslog('install/step5.php FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
+                    dolibarr_install_syslog('step5: FailedToCreateAdminLogin ' . $newuser->error, LOG_ERR);
                     print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
                 }
             }
@@ -204,7 +204,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
             {
                 $db->begin();
 
-                dolibarr_install_syslog('install/step5.php set MAIN_VERSION_LAST_INSTALL const to '.$targetversion, LOG_DEBUG);
+                dolibarr_install_syslog('step5: set MAIN_VERSION_LAST_INSTALL const to ' . $targetversion, LOG_DEBUG);
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_INSTALL'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_VERSION_LAST_INSTALL',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version when install',0)");
@@ -213,7 +213,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 
                 if ($useforcedwizard)
                 {
-                    dolibarr_install_syslog('install/step5.php set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
+                    dolibarr_install_syslog('step5: set MAIN_REMOVE_INSTALL_WARNING const to 1', LOG_DEBUG);
                     $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_REMOVE_INSTALL_WARNING'");
                     if (! $resql) dol_print_error($db,'Error in setup program');
                     $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING',1).",".$db->encrypt(1,1).",'chaine',1,'Disable install warnings',0)");
@@ -233,7 +233,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                         print $langs->trans("ActivateModule",$modtoactivatenew).'<br>';
 
                         $file=$modtoactivatenew.'.class.php';
-                        dolibarr_install_syslog('install/step5.php Activate module file='.$file);
+                        dolibarr_install_syslog('step5: activate module file=' . $file);
                         $res=dol_include_once("/core/modules/".$file);
 
                         $res=activateModule($modtoactivatenew,1);
@@ -241,7 +241,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                     }
                 }
 
-                dolibarr_install_syslog('install/step5.php Remove MAIN_NOT_INSTALLED const', LOG_DEBUG);
+                dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
 
@@ -272,7 +272,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 
             if ($tagdatabase)
             {
-                dolibarr_install_syslog('install/step5.php set MAIN_VERSION_LAST_UPGRADE const to value '.$targetversion, LOG_DEBUG);
+                dolibarr_install_syslog('step5: set MAIN_VERSION_LAST_UPGRADE const to value ' . $targetversion);
                 $resql=$db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_VERSION_LAST_UPGRADE'");
                 if (! $resql) dol_print_error($db,'Error in setup program');
                 $resql=$db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE',1).",".$db->encrypt($targetversion,1).",'chaine',0,'Dolibarr version for last upgrade',0)");
@@ -281,7 +281,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
             }
             else
             {
-                dolibarr_install_syslog('install/step5.php We run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.', LOG_DEBUG);
+                dolibarr_install_syslog('step5: we run an upgrade to version ' . $targetversion . ' but database was already upgraded to ' . $conf->global->MAIN_VERSION_LAST_UPGRADE . '. We keep MAIN_VERSION_LAST_UPGRADE as it is.');
             }
         }
         else
@@ -291,7 +291,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     }
     else
     {
-        dol_print_error('','install/step5.php Unknown choice of action');
+        dol_print_error('','step5.php: unknown choice of action');
     }
 
     // May fail if parameter already defined
@@ -405,7 +405,7 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 }
 else
 {
-    dol_print_error('','install/step5.php Unknown choice of action');
+    dol_print_error('','step5.php: unknown choice of action');
 }
 
 
@@ -414,6 +414,6 @@ else
 clearstatcache();
 
 
-dolibarr_install_syslog("--- install/step5.php Dolibarr setup finished", LOG_INFO);
+dolibarr_install_syslog("--- step5: Dolibarr setup finished");
 
 pFooter(1,$setuplang);

@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +44,7 @@ $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
-dolibarr_install_syslog("Dolibarr install/upgrade process started");
-
+dolibarr_install_syslog("--- check: Dolibarr install/upgrade process started");
 
 
 /*
@@ -167,11 +167,11 @@ if ($memmaxorig != '')
 }
 
 
-// If config file presente and filled
+// If config file present and filled
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
-	dolibarr_install_syslog("conf file '$conffile' already defined");
+	dolibarr_install_syslog("check: conf file '" . $conffile . "' already defined");
 	$confexists=1;
 	include_once $conffile;
 
@@ -189,19 +189,19 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 else
 {
 	// If not, we create it
-	dolibarr_install_syslog("we try to create conf file '$conffile'");
+	dolibarr_install_syslog("check: we try to create conf file '" . $conffile . "'");
 	$confexists=0;
 
 	// First we try by copying example
 	if (@copy($conffile.".example", $conffile))
 	{
 		// Success
-		dolibarr_install_syslog("copied file ".$conffile.".example into ".$conffile." done successfully.");
+		dolibarr_install_syslog("check: successfully copied file " . $conffile . ".example into " . $conffile);
 	}
 	else
 	{
 		// If failed, we try to create an empty file
-		dolibarr_install_syslog("failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.", LOG_WARNING);
+		dolibarr_install_syslog("check: failed to copy file " . $conffile . ".example into " . $conffile . ". We try to create it.", LOG_WARNING);
 
 		$fp = @fopen($conffile, "w");
 		if ($fp)
@@ -210,7 +210,7 @@ else
 			@fputs($fp,"\n");
 			fclose($fp);
 		}
-		else dolibarr_install_syslog("failed to create a new file ".$conffile." into current dir ".getcwd().". Check permission.", LOG_ERR);
+		else dolibarr_install_syslog("check: failed to create a new file " . $conffile . " into current dir " . getcwd() . ". Please check permissions.", LOG_ERR);
 	}
 
 	// First install, we can't upgrade
@@ -282,7 +282,7 @@ else
 				if (! file_exists($dolibarr_main_document_root."/core/lib/admin.lib.php"))
 				{
 				    print '<font class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</font><br>'."\n";
-				    dol_syslog("A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.", LOG_WARNING);
+				    dol_syslog("A '" . $conffiletoshow . "' file exists with a dolibarr_main_document_root to " . $dolibarr_main_document_root . " that seems wrong. Try to fix or remove the '" . $conffiletoshow . "' file.", LOG_WARNING);
 				}
 				else
 				{
@@ -531,5 +531,6 @@ $(".runupgrade").click(function() {
 
 </script>';
 
+dolibarr_install_syslog("--- check: end");
 pFooter(true);	// Never display next button
 

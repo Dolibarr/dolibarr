@@ -71,8 +71,8 @@ if ($dolibarr_main_db_type == "pgsql") $choix=2;
 if ($dolibarr_main_db_type == "mssql") $choix=3;
 
 
-dolibarr_install_syslog("upgrade: Entering upgrade.php page");
-if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized",LOG_ERR);
+dolibarr_install_syslog("--- upgrade: Entering upgrade.php page");
+if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
 
 
 /*
@@ -146,13 +146,13 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     {
         print '<tr><td class="nowrap">';
         print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
-        dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
+        dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerConnection") . ": $dolibarr_main_db_host " . $langs->transnoentities("OK"));
         $ok = 1;
     }
     else
     {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>\n";
-        dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+        dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok = 0;
     }
 
@@ -162,13 +162,13 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         {
             print '<tr><td class="nowrap">';
             print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
-            dolibarr_install_syslog("upgrade: Database connection successfull : $dolibarr_main_db_name");
+            dolibarr_install_syslog("upgrade: Database connection successful: " . $dolibarr_main_db_name);
             $ok=1;
         }
         else
         {
             print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
-            dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+            dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
             $ok=0;
         }
     }
@@ -180,7 +180,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $versionarray=$db->getVersionArray();
         print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
         print '<td align="right">'.$version.'</td></tr>';
-        dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerVersion")." : $version");
+        dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
 
         // Test database version requirement
         $versionmindb=$db::VERSIONMIN;
@@ -190,7 +190,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         {
         	// Warning: database version too low.
         	print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow",join('.',$versionarray),join('.',$versionmindb))."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
-        	dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionTooLow",join('.',$versionarray),join('.',$versionmindb)));
+        	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb)));
         	$ok=0;
         }
 
@@ -217,7 +217,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 		        {
 		        	// Warning: database version too low.
 		        	print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration",join('.',$versionarray),$listofforbiddenversion)."</div></td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
-		        	dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration",join('.',$versionarray),$listofforbiddenversion));
+		        	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion));
 		        	$ok=0;
 		        	break;
 		        }
@@ -247,7 +247,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			    $filles=array();
 			    $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
 			    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-			    dolibarr_install_syslog("upgrade: search duplicate", LOG_DEBUG);
+			    dolibarr_install_syslog("upgrade: search duplicate");
 			    $resql = $db->query($sql);
 			    if ($resql)
 			    {
@@ -264,7 +264,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			            }
 			        }
 
-			        dolibarr_install_syslog("upgrade: result is num=".$num." count(couples)=".count($couples));
+			        dolibarr_install_syslog("upgrade: result is num=" . $num . " count(couples)=" . count($couples));
 
 			        // If there is duplicates couples or child with two parents
 			        if (count($couples) > 0 && $num > count($couples))
@@ -275,7 +275,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 			            // We delete all
 			            $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-			            dolibarr_install_syslog("upgrade: delete association", LOG_DEBUG);
+			            dolibarr_install_syslog("upgrade: delete association");
 			            $resqld=$db->query($sql);
 			            if ($resqld)
 			            {
@@ -284,7 +284,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			                {
 			                    $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
 			                    $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
-			                    dolibarr_install_syslog("upgrade: insert association", LOG_DEBUG);
+			                    dolibarr_install_syslog("upgrade: insert association");
 			                    $resqli=$db->query($sql);
 			                    if (! $resqli) $error++;
 			                }
@@ -482,6 +482,7 @@ $ret=0;
 if (! $ok && isset($argv[1])) $ret=1;
 dol_syslog("Exit ".$ret);
 
+dolibarr_install_syslog("--- upgrade: end");
 pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule),$setuplang);
 
 if ($db->connected) $db->close();

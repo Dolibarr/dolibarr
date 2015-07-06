@@ -36,7 +36,7 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 $langs->load("errors");
 
-dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
+dolibarr_install_syslog("--- fileconf: entering fileconf.php page");
 
 // You can force preselected values of the config step of Dolibarr by adding a file
 // install.forced.php into directory htdocs/install (This is the case with some wizard
@@ -76,7 +76,9 @@ pHeader($langs->trans("ConfigurationFile"),"step1","set","",(empty($force_doliba
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
+    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+	dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
+	dolibarr_install_syslog("--- fileconf: end");
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
@@ -584,4 +586,5 @@ function jscheckparam()
 
 // $db->close();	Not database connexion yet
 
+dolibarr_install_syslog("--- fileconf: end");
 pFooter($err,$setuplang,'jscheckparam');
