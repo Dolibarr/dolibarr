@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/install/etape4.php
+ *	\file       htdocs/install/step4.php
  *	\ingroup	install
  *	\brief      Ask login and password of Dolibarr admin user
  */
@@ -42,7 +43,7 @@ $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
-dolibarr_install_syslog("--- etape4: Entering etape4.php page");
+dolibarr_install_syslog("--- step4: Entering step4.php page");
 
 $err=0;
 $ok = 0;
@@ -53,7 +54,7 @@ $ok = 0;
  *	View
  */
 
-pHeader($langs->trans("AdminAccountCreation"),"etape5");
+pHeader($langs->trans("AdminAccountCreation"),"step5");
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -106,7 +107,7 @@ if ($db->ok)
 
 }
 
-dolibarr_install_syslog("--- install/etape4.php end", LOG_INFO);
+dolibarr_install_syslog("--- install/step4.php end", LOG_INFO);
 
 pFooter($err,$setuplang);
 

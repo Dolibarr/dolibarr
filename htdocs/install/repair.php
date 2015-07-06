@@ -29,7 +29,7 @@ require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
 $grant_query='';
-$etape = 2;
+$step = 2;
 $ok = 0;
 
 

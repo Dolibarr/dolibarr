@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  */
 
 /**
- *		\file       htdocs/install/etape1.php
+ *		\file       htdocs/install/step1.php
  *		\ingroup	install
  *		\brief      Build conf file on disk
  */
@@ -64,7 +65,7 @@ $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
-dolibarr_install_syslog("--- etape1: Entering etape1.php page");
+dolibarr_install_syslog("--- step1: Entering step1.php page");
 
 $error = 0;
 
@@ -74,7 +75,7 @@ $error = 0;
  */
 
 
-pHeader($langs->trans("ConfigurationFile"),"etape2");
+pHeader($langs->trans("ConfigurationFile"),"step2");
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -299,7 +300,7 @@ if (! $error && $db->connected && $action == "set")
     {
         if (! is_dir($main_dir))
         {
-            dolibarr_install_syslog("etape1: Repertoire '".$main_dir."' inexistant ou non accessible");
+            dolibarr_install_syslog("step1: Repertoire '".$main_dir."' inexistant ou non accessible");
 
             print "<tr><td>";
             print $langs->trans("ErrorDirDoesNotExists",$main_dir).'<br>';
@@ -314,7 +315,7 @@ if (! $error && $db->connected && $action == "set")
 
     if (! $error)
     {
-        dolibarr_install_syslog("etape1: Directory '".$main_dir."' exists");
+        dolibarr_install_syslog("step1: Directory '".$main_dir."' exists");
     }
 
 
@@ -343,7 +344,7 @@ if (! $error && $db->connected && $action == "set")
             $pathhtaccess=$main_data_dir.'/.htaccess';
             if (! file_exists($pathhtaccess))
             {
-                dolibarr_install_syslog("etape1: .htaccess file does not exists, we create it in '".$main_data_dir."'");
+                dolibarr_install_syslog("step1: .htaccess file does not exists, we create it in '".$main_data_dir."'");
                 $handlehtaccess=@fopen($pathhtaccess,'w');
                 if ($handlehtaccess)
                 {
@@ -351,7 +352,7 @@ if (! $error && $db->connected && $action == "set")
                     fwrite($handlehtaccess,'Deny from all'."\n");
 
                     fclose($handlehtaccess);
-                    dolibarr_install_syslog("etape1: .htaccess file created");
+                    dolibarr_install_syslog("step1: .htaccess file created");
                 }
             }
 
@@ -372,7 +373,7 @@ if (! $error && $db->connected && $action == "set")
             {
                 if (is_dir($dir[$i]))
                 {
-                    dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' exists");
+                    dolibarr_install_syslog("step1: Directory '".$dir[$i]."' exists");
                 }
                 else
                 {
@@ -387,7 +388,7 @@ if (! $error && $db->connected && $action == "set")
                     }
                     else
                     {
-                        dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' created");
+                        dolibarr_install_syslog("step1: Directory '".$dir[$i]."' created");
                     }
                 }
             }
@@ -475,7 +476,7 @@ if (! $error && $db->connected && $action == "set")
         // Si creation utilisateur admin demandee, on le cree
         if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
         {
-            dolibarr_install_syslog("etape1: Create database user: ".$dolibarr_main_db_user);
+            dolibarr_install_syslog("step1: Create database user: ".$dolibarr_main_db_user);
 
             //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->port;
             $databasefortest=$conf->db->name;
@@ -523,7 +524,7 @@ if (! $error && $db->connected && $action == "set")
                         || $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
                         || $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS')
                         {
-                            dolibarr_install_syslog("etape1: User already exists");
+                            dolibarr_install_syslog("step1: User already exists");
                             print '<tr><td>';
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
@@ -532,7 +533,7 @@ if (! $error && $db->connected && $action == "set")
                         }
                         else
                         {
-                            dolibarr_install_syslog("etape1: Failed to create user");
+                            dolibarr_install_syslog("step1: Failed to create user");
                             print '<tr><td>';
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
@@ -569,7 +570,7 @@ if (! $error && $db->connected && $action == "set")
         // If database creation is asked, we create it
         if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
         {
-        	dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user, LOG_DEBUG);
+            dolibarr_install_syslog("step1: Create database : ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user, LOG_DEBUG);
         	$newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
             //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
 
@@ -587,11 +588,11 @@ if (! $error && $db->connected && $action == "set")
 
                     $check1=$newdb->getDefaultCharacterSetDatabase();
                     $check2=$newdb->getDefaultCollationDatabase();
-                    dolibarr_install_syslog('etape1: Note that default server was charset='.$check1.' collation='.$check2, LOG_DEBUG);
+                    dolibarr_install_syslog('step1: Note that default server was charset='.$check1.' collation='.$check2, LOG_DEBUG);
 
                     // If values differs, we save conf file again
-                    //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('etape1: Value for character_set is not the one asked for database creation', LOG_WARNING);
-                    //if ($check2 != $dolibarr_main_db_collation)     dolibarr_install_syslog('etape1: Value for collation is not the one asked for database creation', LOG_WARNING);
+                    //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('step1: Value for character_set is not the one asked for database creation', LOG_WARNING);
+                    //if ($check2 != $dolibarr_main_db_collation)     dolibarr_install_syslog('step1: Value for collation is not the one asked for database creation', LOG_WARNING);
                 }
                 else
                 {
@@ -603,7 +604,7 @@ if (! $error && $db->connected && $action == "set")
                     print '<br>';
                     print '</td></tr>';
 
-                    dolibarr_install_syslog('etape1: Failed to create database '.$dolibarr_main_db_name.' '.$newdb->lasterrno().' '.$newdb->lasterror(), LOG_ERR);
+                    dolibarr_install_syslog('step1: Failed to create database '.$dolibarr_main_db_name.' '.$newdb->lasterrno().' '.$newdb->lasterror(), LOG_ERR);
                     $error++;
                 }
                 $newdb->close();
@@ -632,14 +633,14 @@ if (! $error && $db->connected && $action == "set")
         // We test access with dolibarr database user (not admin)
         if (! $error)
         {
-            dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name, LOG_DEBUG);
+            dolibarr_install_syslog("step1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name, LOG_DEBUG);
             //print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
             $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
             if ($db->connected)
             {
-                dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
+                dolibarr_install_syslog("step1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
                 print "<tr><td>";
                 print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                 print $dolibarr_main_db_host;
@@ -650,7 +651,7 @@ if (! $error && $db->connected && $action == "set")
                 // si acces serveur ok et acces base ok, tout est ok, on ne va pas plus loin, on a meme pas utilise le compte root.
                 if ($db->database_selected)
                 {
-                    dolibarr_install_syslog("etape1: connexion to database : ".$conf->db->name.", by user : ".$conf->db->user." is ok", LOG_DEBUG);
+                    dolibarr_install_syslog("step1: connexion to database : ".$conf->db->name.", by user : ".$conf->db->user." is ok", LOG_DEBUG);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                     print $dolibarr_main_db_name;
@@ -662,7 +663,7 @@ if (! $error && $db->connected && $action == "set")
                 }
                 else
                 {
-                    dolibarr_install_syslog("etape1: connexion to database ".$conf->db->name.", by user : ".$conf->db->user." has failed", LOG_ERR);
+                    dolibarr_install_syslog("step1: connexion to database ".$conf->db->name.", by user : ".$conf->db->user." has failed", LOG_ERR);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                     print $dolibarr_main_db_name;
@@ -682,7 +683,7 @@ if (! $error && $db->connected && $action == "set")
             }
             else
             {
-                dolibarr_install_syslog("etape1: la connexion au serveur par le user ".$conf->db->user." est rate");
+                dolibarr_install_syslog("step1: la connexion au serveur par le user ".$conf->db->user." est rate");
                 print "<tr><td>";
                 print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                 print $dolibarr_main_db_host;
@@ -723,7 +724,7 @@ function jsinfo()
 
 <?php
 
-dolibarr_install_syslog("--- install/etape1.php end", LOG_INFO);
+dolibarr_install_syslog("--- install/step1.php end", LOG_INFO);
 
 pFooter($error,$setuplang,'jsinfo',1);
 

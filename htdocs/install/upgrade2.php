@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2015      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ require_once $dolibarr_main_document_root . '/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
 
 $grant_query='';
-$etape = 2;
+$step = 2;
 $error = 0;
 
 
@@ -98,7 +99,7 @@ if (! $versionfrom && ! $versionto)
 	exit;
 }
 
-pHeader('','etape5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('','step5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
 if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
