@@ -32,7 +32,7 @@
 abstract class CommonDocGenerator
 {
 	var $error='';
-	public $db;
+	protected $db;
 	
 	
 	/**
