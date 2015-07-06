@@ -746,7 +746,6 @@ function write_main_file($mainfile,$main_dir)
         fputs($fp, '<?php'."\n");
         fputs($fp, "// Wrapper to include main into htdocs\n");
         fputs($fp, "include_once '".$main_dir."/main.inc.php';\n");
-        fputs($fp, '?>');
         fclose($fp);
     }
 }
@@ -768,7 +767,6 @@ function write_master_file($masterfile,$main_dir)
         fputs($fp, '<?php'."\n");
         fputs($fp, "// Wrapper to include master into htdocs\n");
         fputs($fp, "include_once '".$main_dir."/master.inc.php';\n");
-        fputs($fp, '?>');
         fclose($fp);
     }
 }
@@ -930,7 +928,6 @@ function write_conf_file($conffile)
         fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
         fputs($fp,"\n");
 
-		fputs($fp, '?>');
 		fclose($fp);
 
 		if (file_exists("$conffile"))
