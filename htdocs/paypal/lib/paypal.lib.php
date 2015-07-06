@@ -69,7 +69,7 @@ function llxHeaderPaypal($title, $head = "")
 
 		// JQuery. Must be before other includes
 		print '<!-- Includes JS for JQuery -->'."\n";
-		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min'.$ext.'"></script>'."\n";
 		// jQuery jnotify
 		if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY))
 		{
