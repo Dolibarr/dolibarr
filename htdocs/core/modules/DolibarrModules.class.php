@@ -1000,7 +1000,18 @@ print $sql;
             $i=0;
             foreach ($this->tabs as $key => $value)
             {
-                if ($value)
+            	if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+
+            	$entity=$conf->entity;
+            	$newvalue = $value;
+
+            	if (is_array($value))
+            	{
+            		$newvalue = $value['data'];
+            		if (isset($value['entity'])) $entity = $value['entity'];
+            	}
+
+                if ($newvalue)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
                     $sql.= "name";
@@ -1370,10 +1381,11 @@ print $sql;
             $menu->target=$this->menu[$key]['target'];
             $menu->user=$this->menu[$key]['user'];
             $menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
-
+            $menu->position=$this->menu[$key]['position'];
+            
             if (! $err)
             {
-                $result=$menu->create($user);
+                $result=$menu->create($user);	// Save menu entry into table llx_menu
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;

@@ -57,7 +57,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 // Security check
-if (empty($conf->agenda->enabled)) accessforbidden('',1,1,1);
+if (empty($conf->agenda->enabled)) accessforbidden('',0,0,1);
 
 // Not older than
 if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY=100;	// default limit

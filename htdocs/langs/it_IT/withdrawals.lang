@@ -84,6 +84,11 @@ WithdrawalFile=Ricevuta bancaria
 SetToStatusSent=Imposta stato come "file inviato"
 ThisWillAlsoAddPaymentOnInvoice=Verranno anche creati dei pagamenti tra le ricevuti e saranno classificati come pagati
 StatisticsByLineStatus=Statistics by status of lines
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Il pagamento dell'ordine permanente %s da parte della banca

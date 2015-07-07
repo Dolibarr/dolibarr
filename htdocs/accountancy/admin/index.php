@@ -48,7 +48,7 @@ $action = GETPOST('action', 'alpha');
 // Other parameters ACCOUNTING_*
 $list = array (
 		'ACCOUNTING_LIMIT_LIST_VENTILATION',
-		'ACCOUNTING_LENGTH_DESCRIPTION',		// adjust size displayed for lines description for dol_trunc
+		'ACCOUNTING_LENGTH_DESCRIPTION',				// adjust size displayed for lines description for dol_trunc
 		'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT',		// adjust size displayed for select account description for dol_trunc
 		'ACCOUNTING_LENGTH_GACCOUNT',
 		'ACCOUNTING_LENGTH_AACCOUNT',
@@ -58,6 +58,8 @@ $list = array (
 		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
 		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
 		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+		'ACCOUNTING_VAT_BUY_ACCOUNT',
+		'ACCOUNTING_VAT_SOLD_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
 		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
 );

@@ -1,18 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-UnpackPackageInDolibarrRoot=Unpack package file into directory dedicated to external modules: <b>%s</b>
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (vat is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
-Module1780Desc=Create tags/category (products, customers, suppliers, contacts or members)
-Module39000Name=Product lot
-Module39000Desc=Lot or serial number, eat-by and sell-by date management on products
-MAIN_ROUNDING_RULE_TOT=Size of rounding range (for rare countries where rounding is done on something else than base 10)
-BackupDesc2=Save content of documents directory (<b>%s</b>) that contains all uploaded and generated files (you can make a zip for example).
-BackupDesc3=Save content of your database (<b>%s</b>) into a dump file. For this, you can use following assistant.
-RestoreDesc2=Restore archive file (zip file for example) of documents directory to extract tree of files in documents directory of a new Dolibarr installation or into this current documents directoy (<b>%s</b>).
-RestoreDesc3=Restore the data, from a backup dump file, into the database of the new Dolibarr installation or into the database of this current installation (<b>%s</b>). Warning, once restore is finished, you must use a login/password, that existed when backup was made, to connect again. To restore a backup database into this current installation, you can follow this assistant.
-NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one contact at time.<br>* or by setting global target email addresses in module setup page.
-CashDeskDoNotDecreaseStock=Disable stock decrease when a sell is done from Point of Sale (if "no", stock decrease is done for each sell done from POS, whatever is option set into module Stock).
-StockDecreaseForPointOfSaleDisabledbyBatch=Stock decrease in POS is not compatible with lot management
-MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)

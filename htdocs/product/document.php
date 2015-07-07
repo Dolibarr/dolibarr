@@ -87,10 +87,10 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	//Delete line if product propal merge is linked to a file
-	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
+	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
+	{
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			print 'toto';
 			//extract file name
 			$urlfile = GETPOST('urlfile', 'alpha');
 			$filename = basename($urlfile);
@@ -109,7 +109,8 @@ if (empty($reshook))
 
 }
 
-if ($action=='filemerge') {
+if ($action=='filemerge')
+{
 	$is_refresh = GETPOST('refresh');
 	if (empty($is_refresh)) {
 

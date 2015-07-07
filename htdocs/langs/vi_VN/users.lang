@@ -57,6 +57,7 @@ RemoveFromGroup=Xóa khỏi nhóm
 PasswordChangedAndSentTo=Mật khẩu thay đổi và gửi đến <b>%s</b>.
 PasswordChangeRequestSent=Yêu cầu thay đổi mật khẩu cho <b>%s</b> đã gửi đến <b>% s</b>.
 MenuUsersAndGroups=Người dùng & Nhóm
+MenuMyUserCard=My user card
 LastGroupsCreated=%s Nhóm được tạo ra cuối
 LastUsersCreated=%s người dùng được tạo ra cuối
 ShowGroup=Hiển thị nhóm

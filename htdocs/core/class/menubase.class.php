@@ -95,6 +95,7 @@ class Menubase
         $this->perms=trim($this->perms);
         $this->enabled=trim($this->enabled);
         $this->user=trim($this->user);
+        $this->position=trim($this->position);
         if (! $this->level) $this->level=0;
 
         // Check parameters

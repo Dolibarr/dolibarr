@@ -651,7 +651,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $masktri='00000';
         $maskcounter='00000';
     }
-    
+
     $maskraz=-1;
     $maskoffset=0;
     $resetEveryMonth=false;
@@ -670,7 +670,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
     }
     else $maskrefclient='';
-    
+
     // fail if there is neither a global nor a third party counter
     if (! $hasglobalcounter && ($maskrefclient_maskcounter == ''))
     {
@@ -1915,29 +1915,30 @@ function fetchObjectByElement($element_id,$element_type) {
 
 
 /**
- *	Convert an array with RGB value into hex RGB value
+ *	Convert an array with RGB value into hex RGB value.
+ *  This is the opposite function of colorStringToArray
  *
  *  @param	array	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
- *  @return	string						RGB hex value (without # before). For example: FF00FF
- *  @see	Make the opposite of colorStringToArray
+ *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
+ *  @see	colorStringToArray
  */
 function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
 	if (empty($arraycolor)) return $colorifnotfound;
-	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
+	return sprintf("%02s",dechex($arraycolor[0])).sprintf("%02s",dechex($arraycolor[1])).sprintf("%02s",dechex($arraycolor[2]));
 }
-
 
 /**
  *	Convert a string RGB value ('FFFFFF', '255,255,255') into an array RGB array(255,255,255).
+ *  This is the opposite function of colorArrayToHex.
  *  If entry is already an array, return it.
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
  *  @return	string						RGB hex value (without # before). For example: FF00FF
- *  @see	Make the opposite of colorArrayToHex
+ *  @see	colorArrayToHex
  */
 function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 {

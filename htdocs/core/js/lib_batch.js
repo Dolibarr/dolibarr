@@ -20,6 +20,8 @@
 //
 
 /**
+ * addLineBatch
+ * 
  * @param	index	int		number of produt. 0 = first product line
  */
 function addLineBatch(index) 

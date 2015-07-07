@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  */
 
 /**
- *		\file       htdocs/install/repair.php
+ *      \file       htdocs/install/repair.php
  *      \brief      Run repair script
  */
 
@@ -29,7 +30,7 @@ require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
 $grant_query='';
-$etape = 2;
+$step = 2;
 $ok = 0;
 
 
@@ -54,8 +55,8 @@ if ($dolibarr_main_db_type == "pgsql") $choix=2;
 if ($dolibarr_main_db_type == "mssql") $choix=3;
 
 
-dolibarr_install_syslog("repair: Entering upgrade.php page");
-if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initialized",LOG_ERR);
+dolibarr_install_syslog("--- repair: entering upgrade.php page");
+if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initialized", LOG_ERR);
 
 
 /*
@@ -105,13 +106,13 @@ if ($db->connected)
 {
     print '<tr><td class="nowrap">';
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-    dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
+    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
     $ok = 1;
 }
 else
 {
     print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
-    dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+    dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
 }
 
@@ -121,13 +122,13 @@ if ($ok)
     {
         print '<tr><td class="nowrap">';
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-        dolibarr_install_syslog("repair: Database connection successfull : $dolibarr_main_db_name");
+        dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
         $ok=1;
     }
     else
     {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-        dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+        dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok=0;
     }
 }
@@ -139,7 +140,7 @@ if ($ok)
     $versionarray=$db->getVersionArray();
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
     print '<td align="right">'.$version.'</td></tr>';
-    dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion")." : $version");
+    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
     //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 }
 
@@ -514,6 +515,7 @@ print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($_POST["l
 print $langs->trans("GoToDolibarr");
 print '</a></div>';
 
+dolibarr_install_syslog("--- repair: end");
 pFooter(1,$setuplang);
 
 if ($db->connected) $db->close();

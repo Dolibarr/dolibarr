@@ -57,6 +57,7 @@ RemoveFromGroup=Gruptan kaldır
 PasswordChangedAndSentTo=Parola değiştirildi ve <b>%s</b> e gönderildi.
 PasswordChangeRequestSent=Parola değiştirildi ve <b>%s</b> e gönderildi.
 MenuUsersAndGroups=Kullanıcılar ve Gruplar
+MenuMyUserCard=Kullanıcı kartım
 LastGroupsCreated=Son olarak %s grup oluşturuldu
 LastUsersCreated=Son olarak %s kullanıcı oluşturuldu
 ShowGroup=Grubu göster

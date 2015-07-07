@@ -57,6 +57,7 @@ RemoveFromGroup=Pašalinti iš grupės
 PasswordChangedAndSentTo=Slaptažodis pakeistas ir išsiųstas į <b>%s</b>.
 PasswordChangeRequestSent=Prašymas pakeisti slaptažodį <b>%s</b> išsiųstą į <b>%s</b>
 MenuUsersAndGroups=Vartotojai ir grupės
+MenuMyUserCard=Mano vartotojo kortelė
 LastGroupsCreated=Paskutinės %s sukurtos grupės
 LastUsersCreated=Paskutiniai %s sukurti vartotojai
 ShowGroup=Rodyti grupę

@@ -1,13 +1,15 @@
 # Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
-Salary=Salary
-Salaries=Salaries
-Employee=Employee
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
-THM=Average hourly price
-TJM=Average daily price
-CurrentSalary=Current salary
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=รหัสบัญชีสำหรับการชำระเงินเงินเดือน
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=รหัสบัญชีสำหรับค่าใช้จ่ายทางการเงิน
+Salary=เงินเดือน
+Salaries=เงินเดือน
+Employee=ลูกจ้าง
+NewSalaryPayment=การชำระเงินเงินเดือนใหม่
+SalaryPayment=การชำระเงินเงินเดือน
+SalariesPayments=การชำระเงินเงินเดือน
+ShowSalaryPayment=แสดงการชำระเงินเงินเดือน
+THM=ราคาเฉลี่ยรายชั่วโมง
+TJM=ราคาเฉลี่ยรายวัน
+CurrentSalary=เงินเดือนปัจจุบัน
+THMDescription=ค่านี้อาจจะใช้ในการคำนวณค่าใช้จ่ายของเวลาที่ใช้ในโครงการที่ป้อนโดยผู้ใช้หากโครงการโมดูลถูกนำมาใช้
+TJMDescription=ค่านี้เป็นในปัจจุบันเป็นข้อมูลเท่านั้นและไม่ได้ใช้ในการคำนวณใด ๆ

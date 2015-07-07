@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Export-Datei
+ACCOUNTING_EXPORT_DATE=Das Datumsformat für die Exportdatei.
+ACCOUNTING_EXPORT_PIECE=Exportiere eine Anzahl an Teile?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportiere mit Globalen Konto.
+ACCOUNTING_EXPORT_LABEL=Exportiere die Beschriftung?
+ACCOUNTING_EXPORT_AMOUNT=Exportiere den Betrag?
+ACCOUNTING_EXPORT_DEVISE=Exporiere die Konstruktion?
 
 Accounting=Buchhaltung
 Globalparameters=Globale Parameter
@@ -81,9 +88,8 @@ ACCOUNTING_LENGTH_AACCOUNT=Länge der Partner
 
 ACCOUNTING_SELL_JOURNAL=Verkaufsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal
-ACCOUNTING_BANK_JOURNAL=Bankauszug
-ACCOUNTING_CASH_JOURNAL=Kassenbeleg
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Verschiedenes Journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Sozial-Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto der Transaktion

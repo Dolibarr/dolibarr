@@ -13,6 +13,7 @@
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Ari Elbaz (elarifr)		<github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,26 @@ if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/pro
 if (! empty($conf->facture->enabled))  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
+//Check if enable accountancy accounting module
+if (! empty($conf->accounting->enabled)) {
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+
+$form_selectaccount = new FormVentilation($db);
+//$form_accounting = new  new AccountingAccount($db);
+$accounting = new AccountingAccount($db);
+/* no more needed as we can use function select_account with in= out= 1 = account_number
+//TODO: we should need to check if result is a really exist accountaccount rowid.....
+$aarowid_servbuy  = $accounting->fetch('', ACCOUNTING_SERVICE_BUY_ACCOUNT);
+$aarowid_prodbuy  = $accounting->fetch('', ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+$aarowid_servsell = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
+$aarowid_prodsell = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
+*/
+$aacompta_servbuy  = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_prodbuy  = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_servsell = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+$aacompta_prodsell = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+}
 $langs->load("products");
 $langs->load("other");
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
@@ -979,12 +1000,12 @@ else
 	    $doleditor->Create();
 
         print "</td></tr>";
-		
+
 		if($conf->categorie->enabled) {
 			// Categories
-			print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, 250);
+			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
 
@@ -1037,16 +1058,28 @@ else
         }
         else
         {*/
+            //elarifr 3.7.1
+            //set default sell / buy account according to product create type
+            if ($type == 0) { $object->accountancy_code_sell=$aacompta_prodsell ; $object->accountancy_code_buy=$aacompta_prodbuy;};
+            if ($type == 1) { $object->accountancy_code_sell=$aacompta_servsell ; $object->accountancy_code_buy=$aacompta_servbuy;};
             print '<table class="border" width="100%">';
 
             // Accountancy_code_sell
             print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
-            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            //elarifr 3.7.1
+            //print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            print '<td>';
+            print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
+            print 'select' . $form_selectaccount->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '',1 , 1);
             print '</td></tr>';
 
             // Accountancy_code_buy
             print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            //elarifr 3.7.1
+            //print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            print '<td>';
+            print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
+            print 'select' . $form_selectaccount->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '',1 , 1);
             print '</td></tr>';
 
             print '</table>';
@@ -1272,7 +1305,7 @@ else
             $doleditor->Create();
 
             print "</td></tr>";
-			
+
 			if($conf->categorie->enabled) {
 				// Categories
 				print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -1285,7 +1318,7 @@ else
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
-			
+
 	        // Units
 	        if($conf->global->PRODUCT_USE_UNITS)
 	        {
@@ -1309,12 +1342,22 @@ else
 
                 // Accountancy_code_sell
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
-                print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+                //elarifr 3.7.1
+                //print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+                //$account_sell  = $accounting->fetch('', $object->accountancy_code_sell);
+                print '<td>';
+                print '<div class="inline-block divButAction">' .$object->accountancy_code_sell . ' - ' . $langs->trans("ChangeAccount") . '<br />';
+                print $form_selectaccount->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '',1 , 1);
                 print '</td></tr>';
 
                 // Accountancy_code_buy
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-                print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+                //elarifr 3.7.1
+                //print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+                //$account_buy  = $accounting->fetch('', $object->accountancy_code_buy);
+                print '<td>';
+                print '<div class="inline-block divButAction">' .$object->accountancy_code_buy . ' - ' . $langs->trans("ChangeAccount") . '<br />';
+                print $form_selectaccount->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '',1 , 1);
                 print '</td></tr>';
 
                 print '</table>';
@@ -1602,7 +1645,7 @@ else
 				print $form->showCategories($object->id,'product',1);
 				print "</td></tr>";
 			}
-			
+
             print "</table>\n";
 
             dol_fiche_end();

@@ -204,6 +204,7 @@ ClickHereToGoTo=Klikšķiniet šeit, lai dotos uz %s
 YouMustClickToChange=Jums ir Taču vispirms noklikšķiniet uz šīs saites, lai apstiprinātu šo paroles maiņa
 ForgetIfNothing=Ja Jums nav lūgt šīs izmaiņas, vienkārši aizmirst šo e-pastu. Jūsu akreditācijas dati tiek glabāti drošībā.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Pievienot ierakstu kalendārā %s

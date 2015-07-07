@@ -337,8 +337,8 @@ class Translate
 	}
 
 	/**
-	 * Return translated value of key. Search in lang file, then into database.
-	 * Key must be any complete entry into lang file: CurrencyEUR, ...
+	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
+	 * Search in lang file, then into database. Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
 	 * The string return is not formated (translated with transnoentitiesnoconv)
 	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), if you modify this function,
@@ -354,25 +354,33 @@ class Translate
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
 		$newstr=$key;
-		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
-		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
-		}
-		else if (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
-		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
-		}
-        else if (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
-        {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
-        }
-        else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
+	    if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
             $newstr=$this->getLabelFromKey($db,$reg[1],'c_civility','code','label');
         }
-        else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
+		elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
+		{
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
+		}
+		elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
+		{
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
+		}
+        elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-        	// TODO Add a table for OrderSourceX
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
+        }
+		elseif (preg_match('/^OppStatusShort([0-9A-Z]+)$/i',$key,$reg))
+        {
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
+        }
+        elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i',$key,$reg))
+        {
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_lead_status','code','label');
+        }
+        elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
+        {
+        	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
         return $newstr;

@@ -90,6 +90,7 @@ function test_sql_and_script_inject($val, $type)
         $sql_inj += preg_match('/union.+select/i', 	 $val);
         $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
         $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
+        $sql_inj += preg_match('/onerror=/i', 	     $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
@@ -422,6 +423,15 @@ if (! defined('NOLOGIN'))
                     $error++;
                 }
                 // End Call of triggers
+
+                // Hooks on failed login
+		        $action='';
+		        $hookmanager->initHooks(array('login'));
+		        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+		        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+		        if ($reshook < 0) $error++;
+
+		        // Note: exit is done later
             }
         }
 
@@ -479,6 +489,7 @@ if (! defined('NOLOGIN'))
                 // We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
                 if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
+                // TODO We should use a hook afterLoginFailed here, not a trigger.
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -487,6 +498,15 @@ if (! defined('NOLOGIN'))
                     $error++;
                 }
                 // End Call of triggers
+
+                // Hooks on failed login
+		        $action='';
+		        $hookmanager->initHooks(array('login'));
+		        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+		        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+		        if ($reshook < 0) $error++;
+
+		        // Note: exit is done in next chapter
             }
         }
 
@@ -521,7 +541,7 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$user->error;
             }
 
-            // TODO We should use a hook here, not a trigger.
+            // TODO We should use a hook afterLoginFailed here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
@@ -530,6 +550,13 @@ if (! defined('NOLOGIN'))
                 $error++;
             }
             // End call triggers
+
+	        // Hooks on failed login
+	        $action='';
+	        $hookmanager->initHooks(array('login'));
+	        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+	        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+	        if ($reshook < 0) $error++;
 
             header('Location: '.DOL_URL_ROOT.'/index.php');
             exit;
@@ -574,11 +601,18 @@ if (! defined('NOLOGIN'))
             }
             // End call triggers
 
+	        // Hooks on failed login
+	        $action='';
+	        $hookmanager->initHooks(array('login'));
+	        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginmesg'=>$_SESSION["dol_loginmesg"]);
+	        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+	        if ($reshook < 0) $error++;
+
             header('Location: '.DOL_URL_ROOT.'/index.php');
             exit;
         }
         else
-       {
+        {
 	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 	       $hookmanager->initHooks(array('main'));
 
@@ -623,9 +657,11 @@ if (! defined('NOLOGIN'))
 
         $user->update_last_login_date();
 
-        $user->trigger_mesg = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
+        $loginfo = 'TZ='.$_SESSION["dol_tz"].';TZString='.$_SESSION["dol_tz_string"].';Screen='.$_SESSION["dol_screenwidth"].'x'.$_SESSION["dol_screenheight"];
 
-        // TODO We should use a hook here, not a trigger
+        $user->trigger_mesg = $loginfo;
+
+        // TODO We should use hook afterLogin here, not a trigger
         // Call triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($db);
@@ -635,43 +671,24 @@ if (! defined('NOLOGIN'))
         }
         // End call triggers
 
+        // Hooks on successfull login
+        $action='';
+        $hookmanager->initHooks(array('login'));
+        $parameters=array('dol_authmode'=>$dol_authmode, 'dol_loginfo'=>$loginfo);
+        $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook < 0) $error++;
+
         if ($error)
         {
             $db->rollback();
             session_destroy();
-            dol_print_error($db,'Error in some triggers on action USER_LOGIN');
+            dol_print_error($db,'Error in some hooks afterLogin (or old trigger USER_LOGIN)');
             exit;
         }
         else
-        {
+		{
             $db->commit();
         }
-
-        // Create entity cookie, just used for login page
-        // TODO Multicompany Move this into hook
-        if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
-
-            $entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
-
-            $prefix=dol_getprefix();
-            $entityCookieName = 'DOLENTITYID_'.$prefix;
-            // TTL : is defined in the config page multicompany
-            $ttl = (! empty($conf->global->MULTICOMPANY_COOKIE_TTL) ? dol_now()+$conf->global->MULTICOMPANY_COOKIE_TTL : dol_now()+60*60*8 );
-            // Cryptkey : will be created randomly in the config page multicompany
-            $cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-            $entityCookie = new DolCookie($cryptkey);
-            $entityCookie->_setCookie($entityCookieName, $entity, $ttl);
-        }
-
-        // Hooks on successfull login
-        $action='';
-        $hookmanager->initHooks(array('login'));
-        $parameters=array('dol_authmode'=>$dol_authmode);
-        $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
-        if ($reshook < 0) $error++;
     }
 
 
@@ -830,18 +847,6 @@ else
 }
 
 $heightforframes=52;
-
-// Switch to another entity
-// TODO Multicompany Remove this
-if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
-{
-    if ($mc->switchEntity(GETPOST('entity','int')) > 0)
-    {
-        header("Location: ".DOL_URL_ROOT.'/');
-        exit;
-    }
-}
-
 
 // Init menu manager
 if (! defined('NOREQUIREMENU'))
@@ -1442,6 +1447,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $toprightmenu.=$user->getPhotoUrl(16,16,'loginphoto');
 	    $toprightmenu.='</div></div>';
 
+	    // Login name with tooltip
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem" style="padding: 0px;">';
         $toprightmenu.=$user->getNomurl(0, '', true, 0, 11);
         $toprightmenu.='</div></div>';
@@ -1526,7 +1532,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', $langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleftt', img_object('','company'));
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'socname', 'T', 'searchleftt', img_object('','company'));
 	    }
 
 	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
@@ -1553,6 +1559,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    {
 	        $langs->load("members");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+	    }
+
+    	if (! empty($conf->projet->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_PROJECT) && $user->rights->projet->lire)
+	    {
+	        $langs->load("members");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'M', 'searchleftproj', img_object('','projectpub'));
 	    }
 
 	    // Execute hook printSearchForm

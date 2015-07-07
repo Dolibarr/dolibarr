@@ -53,7 +53,7 @@ DocumentModelSimple=Mô hình tài liệu đơn giản
 DocumentModelMerou=Mô hình Merou A5
 WarningNoQtyLeftToSend=Cảnh báo, không có sản phẩm chờ đợi để được vận chuyển.
 StatsOnShipmentsOnlyValidated=Thống kê tiến hành với các chuyến hàng chỉ xác nhận. Ngày sử dụng là ngày xác nhận giao hàng (dự ngày giao hàng không phải luôn luôn được biết đến).
-DateDeliveryPlanned=Ngày quy hoạch giao hàng
+DateDeliveryPlanned=Planned date of delivery
 DateReceived=Ngày giao nhận
 SendShippingByEMail=Gửi hàng bằng thư điện tử
 SendShippingRef=Nộp hàng% s
@@ -67,7 +67,7 @@ SendingRunning=Product from ordered customer orders
 SuppliersReceiptRunning=Product from ordered supplier orders
 ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods

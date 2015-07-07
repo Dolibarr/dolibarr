@@ -1561,8 +1561,11 @@ else if ($id || $ref)
 			$file=$fileparams['fullname'];
 		}
 
+		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans('SendShippingByEMail'));
+		print_fiche_titre($langs->trans('SendShippingByEMail'));
+
+		dol_fiche_head('');
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1638,7 +1641,7 @@ else if ($id || $ref)
 		// Show form
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 
 	if ($action != 'presend' && ! empty($origin) && $object->$origin->id)

@@ -230,7 +230,6 @@ $linuxlike=1;
 if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
 if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 
-
 if (empty($conf->global->MAIN_MAIL_SENDMODE)) $conf->global->MAIN_MAIL_SENDMODE='mail';
 $port=! empty($conf->global->MAIN_MAIL_SMTP_PORT)?$conf->global->MAIN_MAIL_SMTP_PORT:ini_get('smtp_port');
 if (! $port) $port=25;
@@ -275,8 +274,21 @@ if ($action == 'edit')
                             ';
 		if ($linuxlike)
 		{
-			print '         jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);';
-			print '         jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);';
+			print '
+			               jQuery("#MAIN_MAIL_SMTP_SERVER").hide();
+			               jQuery("#MAIN_MAIL_SMTP_PORT").hide();
+			               jQuery("#smtp_server_mess").show();
+			               jQuery("#smtp_port_mess").show();
+			               ';
+		}
+		else
+		{
+			print '
+			               jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
+			               jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
+			               jQuery("#smtp_server_mess").hide();
+			               jQuery("#smtp_port_mess").hide();
+			               ';
 		}
 		print '
                         }
@@ -287,7 +299,11 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
-                        }
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").show();
+                            jQuery("#MAIN_MAIL_SMTP_PORT").show();
+                            jQuery("#smtp_server_mess").hide();
+			                jQuery("#smtp_port_mess").hide();
+						}
                     }
                     initfields();
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
@@ -336,7 +352,7 @@ if ($action == 'edit')
 	}
 	print '</td></tr>';
 
-	// Server
+	// Host server
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>';
 	if (! $conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
@@ -357,6 +373,7 @@ if ($action == 'edit')
 		{
 			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $mainserver . '">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_sav" name="MAIN_MAIL_SMTP_SERVER_sav" value="' . $mainserver . '">';
+			print '<span id="smtp_server_mess">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 		}
 		else
 		{
@@ -389,6 +406,7 @@ if ($action == 'edit')
 		{
 			print '<input class="flat" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" size="3" value="' . $mainport . '">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT_sav" name="MAIN_MAIL_SMTP_PORT_sav" value="' . $mainport . '">';
+			print '<span id="smtp_port_mess">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 		}
 		else
 		{
@@ -509,7 +527,7 @@ else
 	print $text;
 	print '</td></tr>';
 
-	// Server
+	// Host server
 	$var=!$var;
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{

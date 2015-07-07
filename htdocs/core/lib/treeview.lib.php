@@ -144,7 +144,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid'])
 		{
 			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
-			print "\n".'<li>';
+			print "\n".'<li '.($tab[$x]['statut']?' class="liuseractive"':'class="liuserdisabled"').'>';
 			print $tab[$x]['entry'];
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);
@@ -153,7 +153,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 		elseif (! empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'])
 		{
 			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
-			print "\n".'<li>';
+			print "\n".'<li '.($tab[$x]['statut']?' class="liuseractive"':'class="liuserdisabled"').'>';
 			print $tab[$x]['entry'];
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);

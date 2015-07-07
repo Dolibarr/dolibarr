@@ -58,11 +58,12 @@ class Menu
      * @param   string	$target		Target lien
      * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
      * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
+     * @param	int		$position	Position (not used yet)
      * @return	void
      */
-    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
+    function add($url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0)
     {
-        $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu);
+        $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position);
     }
 
     /**
@@ -76,12 +77,13 @@ class Menu
      * @param   string	$target		Target lien
      * @param	string	$mainmenu	Main menu ('home', 'companies', 'products', ...)
      * @param	string	$leftmenu	Left menu ('setup', 'system', 'admintools', ...)
+     * @param	int		$position	Position (not used yet)
      * @return	void
      */
-    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='')
+    function insert($idafter, $url, $titre, $level=0, $enabled=1, $target='',$mainmenu='',$leftmenu='',$position=0)
     {
         $array_start = array_slice($this->liste,0,($idafter+1));
-        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu));
+        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position));
         $array_end   = array_slice($this->liste,($idafter+1));
         $this->liste=array_merge($array_start,$array_new,$array_end);
     }

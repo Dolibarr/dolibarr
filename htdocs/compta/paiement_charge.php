@@ -176,6 +176,8 @@ if ($_GET["action"] == 'create')
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
+	dol_fiche_head('', '');
+
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
 	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("SocialContribution")."</td>";
@@ -235,7 +237,7 @@ if ($_GET["action"] == 'create')
 
 	print '</table>';
 
-	print '<br>';
+	dol_fiche_end();
 
 	/*
  	 * Autres charges impayees

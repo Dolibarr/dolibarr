@@ -42,5 +42,5 @@ SentToSuppliers=Enviado para os fornecedores
 ListOfSupplierOrders=Lista das encomendas do fornecedor
 MenuOrdersSupplierToBill=Encomendas do fornecedor para faturar
 NbDaysToDelivery=Delivery delay in days
-DescNbDaysToDelivery=O maior atraso é exibido entre a lista do produto da encomenda
+DescNbDaysToDelivery=The biggest deliver delay of the products from this order
 UseDoubleApproval=Use double approval (the second approval can be done by any user with the dedicated permission)

@@ -84,6 +84,11 @@ WithdrawalFile=Файл изъятия средств
 SetToStatusSent=Установить статус "Файл отправлен"
 ThisWillAlsoAddPaymentOnInvoice=Это также применит оплату по счетам и установит статус счетов на "Оплачен"
 StatisticsByLineStatus=Статистика статуса по строкам
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Оплата постоянных %s порядке банк

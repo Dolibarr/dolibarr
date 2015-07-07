@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -137,7 +137,7 @@ if ($action == 'add' && ! $_POST["cancel"])
 	    $account->proprio         = $_POST["proprio"];
 	    $account->owner_address   = $_POST["owner_address"];
 		$account->frstrecur       = GETPOST('frstrecur');
-		
+
 	    $result = $account->update($user);	// TODO Use create and include update into create method
 	    if (! $result)
 	    {
@@ -157,7 +157,7 @@ if ($action == 'setasdefault')
 {
     $account = new CompanyBankAccount($db);
     $res = $account->setAsDefault(GETPOST('ribid','int'));
-    if ($res) 
+    if ($res)
     {
         $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id;
         header('Location: '.$url);
@@ -230,7 +230,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 if ($socid && $action != 'edit' && $action != "create")
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
-	
+
 	// Confirm delete third party
     if ($action == 'delete')
     {
@@ -377,8 +377,8 @@ if ($socid && $action != 'edit' && $action != "create")
 			print '<td>'.$langs->trans("WithdrawMode").'</td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
-        print '<td width="40"></td>';
-        print '</tr>';
+        print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+		print "</tr>\n";
 
         foreach ($rib_list as $rib)
         {
@@ -396,8 +396,10 @@ if ($socid && $action != 'edit' && $action != "create")
 
             if (! empty($conf->prelevement->enabled))
             {
+            	// RUM
 				print '<td>'.$prelevement->buildRumNumber($soc->code_client, $rib->datec, $rib->id).'</td>';
-				
+
+				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
             }
 
@@ -429,8 +431,8 @@ if ($socid && $action != 'edit' && $action != "create")
         	print '</td>';
 	        print '</tr>';
         }
-        
-        if (count($rib_list) == 0) 
+
+        if (count($rib_list) == 0)
         {
         	$colspan=7;
         	if (! empty($conf->prelevement->enabled)) $colspan+=2;
@@ -441,7 +443,7 @@ if ($socid && $action != 'edit' && $action != "create")
     } else {
         dol_print_error($db);
     }
-    
+
     dol_fiche_end();
 }
 
@@ -449,7 +451,7 @@ if ($socid && $action != 'edit' && $action != "create")
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
-	
+
 	print '<table class="border" width="100%">';
 
     print '<tr><td valign="top" width="35%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
@@ -546,20 +548,24 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     if ($conf->prelevement->enabled)
     {
 		print '<br>';
-		
+
     	print '<table class="border" width="100%">';
 
+    	if (empty($account->rum)) $account->rum = $prelevement->buildRumNumber($soc->code_client, $account->datec, $account->id);
+
+    	// RUM
     	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
 	    print '<td colspan="4">'.$account->rum.'</td></tr>';
-	    
+
+	    // FRSTRECUR
 	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
 	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
-	    
+
 	    print '</table>';
     }
-    
+
 	dol_fiche_end();
-    
+
 	print '<div align="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -572,7 +578,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
-	
+
 	print '<table class="border" width="100%">';
 
 
@@ -633,27 +639,29 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print "</textarea></td></tr>";
 
     print '</table>';
-    
+
     if ($conf->prelevement->enabled)
     {
 		print '<br>';
-		
+
     	print '<table class="border" width="100%">';
 
+    	// RUM
     	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
 	    print '<td colspan="4">'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
-	    
+
+	    // FRSTRECUR
 	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
 	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
-	    
+
 	    print '</table>';
     }
-    
+
 	dol_fiche_end();
-    
+
 	print '<div align="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
-    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
     print '</div>';
 }

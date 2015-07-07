@@ -180,6 +180,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px1->mode='depth';
 					$px1->SetType(array('pie'));
 					$px1->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Invoices")));
+					$px1->combine = 0.05;
 
 					$px1->draw($filenamenb,$fileurlnb);
 				}
@@ -238,6 +239,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px2->mode='depth';
 					$px2->SetType(array('pie'));
 					$px2->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Proposals")));
+					$px2->combine = 0.05;
 
 					$px2->draw($filenamenb,$fileurlnb);
 				}
@@ -297,6 +299,8 @@ class box_graph_product_distribution extends ModeleBoxes
 					//$px3->mode='depth';
 					$px3->SetType(array('pie'));
 					$px3->SetTitle($langs->trans("BoxProductDistributionFor",$paramtitle,$langs->transnoentitiesnoconv("Orders")));
+					$px3->combine = 0.05;
+
 					$px3->draw($filenamenb,$fileurlnb);
 				}
 			}

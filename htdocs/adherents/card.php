@@ -34,9 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("companies");
@@ -239,7 +240,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && $cancel='' && $user->rights->adherent->creer)
+	if ($action == 'update' && ! $cancel && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -322,8 +323,29 @@ if (empty($reshook))
 			}
 
 			$result=$object->update($user,0,$nosyncuser,$nosyncuserpass);
+
 			if ($result >= 0 && ! count($object->errors))
 			{
+				// Categories association
+				// First we delete all categories association
+				$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'categorie_member';
+				$sql .= ' WHERE fk_member = ' . $object->id;
+				$resql = $db->query($sql);
+				if (! $resql) dol_print_error($db);
+
+				// Then we add the associated categories
+				$categories = GETPOST('memcats', 'array');
+
+				if (! empty($categories))
+				{
+					$cat = new Categorie($db);
+					foreach ($categories as $id_category)
+					{
+						$cat->fetch($id_category);
+						$cat->add_type($object, 'member');
+					}
+				}
+
 				// Logo/Photo save
 				$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1,$object,'member').'/photos';
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
@@ -536,6 +558,18 @@ if (empty($reshook))
 			$result=$object->create($user);
 			if ($result > 0)
 			{
+				// Categories association
+				$memcats = GETPOST('memcats', 'array');
+				if (! empty($memcats))
+				{
+					$cat = new Categorie($db);
+					foreach ($memcats as $id_category)
+					{
+						$cat->fetch($id_category);
+						$cat->add_type($object, 'member');
+					}
+				}
+
 				$db->commit();
 				$rowid=$object->id;
 				$action='';
@@ -899,6 +933,15 @@ else
 		print $form->selectyesno("public",$object->public,1);
 		print "</td></tr>\n";
 
+		// Categories
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		{
+			print '<tr><td>' . fieldLabel('Categories', 'memcars') . '</td><td>';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
+			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
+			print "</td></tr>";
+		}
+
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -976,7 +1019,6 @@ else
 
 		$head = member_prepare_head($object);
 
-		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -1020,10 +1062,12 @@ else
 		print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
+		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$object->id.'</td></tr>';
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -1069,7 +1113,7 @@ else
 		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
 
 		// Civility
-		print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
+		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
 		print $formcompany->select_civility(isset($_POST["civility_id"])?$_POST["civility_id"]:$object->civility_id)."\n";
 		print '</td>';
 		print '</tr>';
@@ -1143,12 +1187,27 @@ else
 		print $form->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
 		print "</td></tr>\n";
 
+		// Categories
+		if (! empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
+		{
+			print '<tr><td>' . fieldLabel('Categories', 'memcats') . '</td>';
+			print '<td colspan="2">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
+			$c = new Categorie($db);
+			$cats = $c->containing($object->id, Categorie::TYPE_MEMBER);
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print "</td></tr>";
+		}
+
 		// Other attributes
-		$parameters=array();
+		$parameters=array("colspan"=>2);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print $object->showOptionals($extrafields,'edit');
+			print $object->showOptionals($extrafields,'edit',$parameters);
 		}
 
 		// Third party Dolibarr
@@ -1179,7 +1238,9 @@ else
 
 		print '</table>';
 
-		print '<br><div class="center">';
+		dol_fiche_end();
+
+		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
@@ -1187,7 +1248,6 @@ else
 
 		print '</form>';
 
-		print '</div>';
 	}
 
 	if ($rowid && $action != 'edit')
@@ -1277,7 +1337,7 @@ else
 			$texttosend=$object->makeSubstitution($adht->getMailOnValid());
 
 			$tmp=$langs->trans("SendAnEMailToMember");
-			$tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent='';
 			$helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
@@ -1289,7 +1349,7 @@ else
 			$helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 			$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
 
-			// Cree un tableau formulaire
+			// Create form popup
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
@@ -1298,7 +1358,7 @@ else
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
 		}
 
 		// Confirm send card by mail
@@ -1319,7 +1379,7 @@ else
 			$texttosend=$object->makeSubstitution($adht->getMailOnResiliate());
 
 			$tmp=$langs->trans("SendAnEMailToMember");
-			$tmp.=' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent='';
 			$helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
@@ -1335,7 +1395,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
 		}
 
 		// Confirm remove member
@@ -1463,12 +1523,21 @@ else
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
 
+		// Categories
+		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+		{
+			print '<tr><td>' . $langs->trans("Categories") . '</td>';
+			print '<td colspan="2">';
+			print $form->showCategories($object->id, 'member', 1);
+			print '</td></tr>';
+		}
+
 		// Other attributes
-		$parameters=array();
+		$parameters=array('colspan'=>2);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print $object->showOptionals($extrafields);
+			print $object->showOptionals($extrafields, 'view', $parameters);
 		}
 
 		// Third party Dolibarr

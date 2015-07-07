@@ -340,7 +340,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
- * @param	string	$htmlname					Name of html select field
+ * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
  * @param	array	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field

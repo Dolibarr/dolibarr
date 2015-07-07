@@ -643,7 +643,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".urlencode($object->name));
+            header("Location: ".DOL_URL_ROOT."/societe/list.php?delsoc=".urlencode($object->name));
             exit;
         }
         else
@@ -2204,7 +2204,7 @@ else
             print '</td></tr>';
         }
 
-		// Categories
+		// Tags / categories
 	    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 	    {
 	        print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';

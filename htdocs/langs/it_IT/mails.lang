@@ -77,7 +77,7 @@ CheckRead=Conferma di lettura
 YourMailUnsubcribeOK=La mail <b>%s</b> è stata cancellata correttamente dalla lista di invio
 MailtoEMail=Collegamento ipertestuale alla email
 ActivateCheckRead=Permetti l'utilizzo del link "Cancella sottoscrizione"
-ActivateCheckReadKey=Chiave utilizzata per criptare l'URL usato per le funzioni "Leggere Ricevuta" e "Annulla Iscrizione"
+ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=Email inviata a %s destinatari
 XTargetsAdded=<b>%s</b> destinatari aggiunti alla lista di invio
 EachInvoiceWillBeAttachedToEmail=Un documento che usa il template di fattura di default sarà creato ed allegato ad ogni email.
@@ -128,6 +128,7 @@ TagCheckMail=Traccia apertura mail
 TagUnsubscribe=Link di cancellazione alla mailing list
 TagSignature=Firma di invio per l'utente
 TagMailtoEmail=Mail destinatario
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Notifiche
 NoNotificationsWillBeSent=Non sono previste notifiche per questo evento o società

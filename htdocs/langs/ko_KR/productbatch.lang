@@ -19,4 +19,4 @@ printQty=Qty: %d
 AddDispatchBatchLine=Add a line for Shelf Life dispatching
 BatchDefaultNumber=Undefined
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
-ProductDoesNotUseBatchSerial=This product does not use batch/serial number
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

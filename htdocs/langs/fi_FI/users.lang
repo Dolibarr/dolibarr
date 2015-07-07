@@ -57,6 +57,7 @@ RemoveFromGroup=Poista ryhmästä
 PasswordChangedAndSentTo=Salasana muutettu ja <b>lähetetään %s.</b>
 PasswordChangeRequestSent=Pyynnön vaihtaa <b>salasana %s lähetetään %s.</b>
 MenuUsersAndGroups=Käyttäjät & ryhmät
+MenuMyUserCard=My user card
 LastGroupsCreated=Viimeisin %s luonut ryhmiä
 LastUsersCreated=Viimeisin %s käyttäjät luotu
 ShowGroup=Näytä ryhmä

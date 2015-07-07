@@ -53,7 +53,7 @@ DocumentModelSimple=Eenvoudig documentmodel
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Waarschuwing, geen producten die op verzending wachten.
 StatsOnShipmentsOnlyValidated=Statistiek op verzendingen die bevestigd zijn.  Datum is de datum van bevestiging van de verzending (geplande leverdatum is niet altijd bekend).
-DateDeliveryPlanned=Geplande leveringsdatum
+DateDeliveryPlanned=Planned date of delivery
 DateReceived=Datum leveringsonvangst
 SendShippingByEMail=Stuur verzending per e-mail
 SendShippingRef=Indiening van de zending %s
@@ -67,7 +67,7 @@ SendingRunning=Product uit bestelde klantbestellingen
 SuppliersReceiptRunning=Product van bestelde leverancier bestellingen
 ProductQtyInCustomersOrdersRunning=Hoeveelheid producte in geopende klant bestellingen
 ProductQtyInSuppliersOrdersRunning=Hoeveelheid producten in geopende leveranciers bestellingen
-ProductQtyInShipmentAlreadySent=Hoeveelheid producten uit open bestelling van de klant al verstuurd
+ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Hoeveelheid producte uit geopende leverancier bestelling reeds ontvangen
 
 # Sending methods

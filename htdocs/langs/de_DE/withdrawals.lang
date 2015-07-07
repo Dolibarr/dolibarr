@@ -84,6 +84,11 @@ WithdrawalFile=Datei abbuchen
 SetToStatusSent=Setze in Status "Datei versandt"
 ThisWillAlsoAddPaymentOnInvoice=Dies wird auch Zahlungen auf Rechnungen erstellen und diese als bezahlt markieren
 StatisticsByLineStatus=Statistiken nach Statuszeilen
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Zahlung Abbucher %s an die Bank

@@ -53,7 +53,7 @@ function project_prepare_head($object)
 	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("ProjectReferers");
+		$head[$h][1] = $langs->trans("Overview");
 		$head[$h][2] = 'element';
 		$h++;
 	}
@@ -872,13 +872,15 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * Return HTML table with list of projects and number of opened tasks
  *
  * @param	DoliDB	$db					Database handler
+ * @param	Form	$form				Object form
  * @param   int		$socid				Id thirdparty
  * @param   int		$projectsListId     Id of project i have permission on
  * @param   int		$mytasks            Limited to task i am contact to
  * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
+ * @param	array	$listofoppstatus	List of opportunity status
  * @return	void
  */
-function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $statut=-1)
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=0, $statut=-1, $listofoppstatus=array())
 {
 	global $langs,$conf,$user,$bc;
 
@@ -890,17 +892,22 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	$sortorder='';
 	$project_year_filter=0;
 
-	$title=$langs->trans("Project");
-	if ($statut != '' && $statut >= 0) $title=$langs->trans("Project").' ('.$langs->trans($projectstatic->statuts[$statut]).')';
+	$title=$langs->trans("Projects");
+	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$statut]);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($title,"index.php","","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	{
+		print_liste_field_titre($langs->trans("OpportunityAmount"),"","","","",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("OpportunityStatus"),"","","","",'align="right"',$sortfield,$sortorder);
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
+	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut as status, p.fk_opp_status as opp_status, p.opp_amount, COUNT(DISTINCT t.rowid) as nb";	// We use DISTINCT here because line can be doubled if task has 2 links to same user
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
@@ -927,24 +934,31 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 	{
 		$sql.= " AND p.fk_statut = ".$statut;
 	}
-	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
+	{
 		$project_year_filter = GETPOST("project_year_filter");
 		//Check if empty or invalid year. Wildcard ignores the sql check
-		if ($project_year_filter != "*") {
-			if (empty($project_year_filter) || !ctype_digit($project_year_filter)) { //
+		if ($project_year_filter != "*")
+		{
+			if (empty($project_year_filter) || !ctype_digit($project_year_filter))
+			{
 				$project_year_filter = date("Y");
 			}
 			$sql.= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter,12,false)).")";
 			$sql.= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter,1,false)).")";
 		}
 	}
-	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
+	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount";
 	$sql.= " ORDER BY p.title, p.ref";
 
 	$var=true;
 	$resql = $db->query($sql);
 	if ( $resql )
 	{
+		$total_task = 0;
+		$total_opp_amount = 0;
+		$ponderated_opp_amount = 0;
+
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -966,14 +980,33 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $sta
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
 				print ' - '.dol_trunc($objp->title,24).'</td>';
-				print '<td align="right">'.$objp->nb.'</td>';
-				$projectstatic->statut = $objp->fk_statut;
+				if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+				{
+					print '<td align="right">';
+        			if ($objp->opp_amount) print price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency);
+					print '</td>';
+					print '<td align="right">';
+					$code = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
+        			if ($code) print $langs->trans("OppStatus".$code);
+					print '</td>';
+				}
+				$projectstatic->statut = $objp->status;
+				if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$objp->nb.'</td>';
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 				print "</tr>\n";
+
+				$total_task = $total_task + $objp->nb;
+				$total_opp_amount = $total_opp_amount + $objp->opp_amount;
+				$ponderated_opp_amount = $ponderated_opp_amount + price2num($listofoppstatus[$objp->opp_status] * $objp->opp_amount / 100);
 			}
 
 			$i++;
 		}
+
+		print '<tr><td>'.$langs->trans("Total")."</td>";
+		print '<td align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
+		print '<td align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$total_task.'</td>';
 
 		$db->free($resql);
 	}

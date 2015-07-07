@@ -46,6 +46,8 @@
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
+<?php dol_fiche_head(); ?>
+
 <table summary="listofattributes" class="border centpercent">
 
 <?php
@@ -123,7 +125,9 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($typ
 <?php } ?>
 </table>
 
-<div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;
+<?php dol_fiche_end(); ?>
+
+<div align="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>

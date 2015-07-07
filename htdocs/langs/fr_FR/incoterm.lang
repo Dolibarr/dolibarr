@@ -1,5 +1,5 @@
-Module210009Name=incoterm
-Module210009Desc=Ajouts pour incoterm
+Module62000Name=Incoterm
+Module62000Desc=Ajouts de fonctionnalités pour gérer les incoterms
 IncotermLabel=Incoterms
 IncotermSetupTitle1=Fonction
 IncotermSetupTitle2=État

@@ -38,6 +38,15 @@ filter-pristine-tar = True
 END
 
 
+# Complete .bashrc with DEBEMAIL and DEBFULLNAME
+Example:
+export DEBFULLNAME="Laurent Destailleur (eldy)" 
+export DEBEMAIL=eldy@users.sourceforge.net
+Other example:
+export DEBFULLNAME="Laurent Destailleur" 
+export DEBEMAIL="eldy@destailleur.fr"
+
+
 # To use Alioth.debian.org
 * Create an account login
 * Update your ~/.ssh/config file to add:
@@ -111,7 +120,7 @@ severity 123 xxx
 ##### Update but tracker system
 
 To set status of a bug to "pending"
-> bts tag 999999 +pending
+> bts --smtp-host=yoursmtpserver tag 999999 +pending
 
 or replay to email 999999@bugs.debian.org + submitter of bug
 With a message starting with: 
