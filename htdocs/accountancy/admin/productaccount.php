@@ -219,9 +219,15 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 //$sql .= " , " . MAIN_DB_PREFIX . "accountingaccount as aa";
 $sql .= " WHERE (";
 $sql .= " p.accountancy_code_sell ='' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
-//TODO search on correct pcg version
-$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN (SELECT account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa WHERE fk_pcg_version='PCG99-BASE'))";
-$sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN (SELECT account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa WHERE fk_pcg_version='PCG99-BASE'))";
+
+//Search on correct pcg version
+$pcgver = $conf->global->CHARTOFACCOUNTS;
+$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN
+	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid = " . $pcgver . "))";
+   //(SELECT account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa WHERE fk_pcg_version='PCG99-BASE'))";
+$sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN
+	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid = " . $pcgver . "))";
+   //(SELECT account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa WHERE fk_pcg_version='PCG99-BASE'))";
 $sql .= ")";
 //Add search filter like
 if (strlen(trim($search_ref))) {
