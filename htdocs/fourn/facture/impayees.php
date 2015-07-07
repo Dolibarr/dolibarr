@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Vinicius Nogueira       <viniciusvgn@gmail.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Andre Schild			<a.schild@aarboard.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,16 @@ $search_company = GETPOST('search_company','alpha');
 $search_amount_no_tax = GETPOST('search_amount_no_tax','alpha');
 $search_amount_all_tax = GETPOST('search_amount_all_tax','alpha');
 
+$op1month=GETPOST('op1month');
+$op1day=GETPOST('op1day');
+$op1year=GETPOST('op1year');
+$filter_op1=GETPOST('filter_op1');
+
+$op2month=GETPOST('op2month');
+$op2day=GETPOST('op2day');
+$op2year=GETPOST('op2year');
+$filter_op2=GETPOST('filter_op2');
+
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
@@ -71,6 +82,14 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$search_company="";
 	$search_amount_no_tax="";
 	$search_amount_all_tax="";
+	$op1month="";
+	$op1day="";
+	$op1year="";
+	$filter_op1="";
+	$op2month="";
+	$op2day="";
+	$op2year="";
+	$filter_op2="";
 }
 
 /*
@@ -78,6 +97,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
  */
 
 $now=dol_now();
+$form=new Form($db);
 
 llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
 
@@ -101,6 +121,10 @@ if ($user->rights->fournisseur->facture->lire)
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
+        $filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
+        if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND f.datef ".$filter_op1." '".$db->idate($filter_date1)."'";
+        $filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
+        if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND f.date_lim_reglement ".$filter_op2." '".$db->idate($filter_date2)."'";
 	if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
@@ -168,6 +192,10 @@ if ($user->rights->fournisseur->facture->lire)
 		if ($search_company)     	$param.='&amp;search_company='.urlencode($search_company);
 		if ($search_amount_no_tax)	$param.='&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
 		if ($search_amount_all_tax) $param.='&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
+                if (! empty($filter_op1) && $filter_op1 != -1) $param.='&amp;filter_op1='.urlencode($filter_op1);
+                if ($filter_date1 != '') $param.='&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
+                if (! empty($filter_op2) && $filter_op2 != -1) $param.='&amp;filter_op2='.urlencode($filter_op2);
+                if ($filter_date2 != '') $param.='&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 
 		$param.=($option?"&option=".$option:"");
 		if (! empty($late)) $param.='&late='.urlencode($late);
@@ -206,8 +234,20 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'"></td>';
-		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">';
+                $arrayofoperators=array('<'=>'<','>'=>'>');
+                print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
+                print ' ';
+                $filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
+                print $form->select_date($filter_date1,'op1',0,0,1);
+                print '</td>';
+		print '<td class="liste_titre">';
+                $arrayofoperators=array('<'=>'<','>'=>'>');
+                print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
+                print ' ';
+                $filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
+                print $form->select_date($filter_date2,'op2',0,0,1);
+                print '</td>';
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
 		print '</td><td class="liste_titre" align="right">';
