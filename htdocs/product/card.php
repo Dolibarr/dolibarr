@@ -1052,40 +1052,39 @@ else
             print '<br>';
         }
 
-        /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
-        {
+          /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled)) { */
+            print '<table class="border" width="100%">';
+            if ( empty($conf->accounting->enabled)) {
             // Don't show accounting field when accounting id disabled.
-        }
-        else
-        {*/
-            //elarifr 3.7.1
+            // Accountancy_code_sell
+            print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+            print '</td></tr>';
+            // Accountancy_code_buy
+            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+            print '</td></tr>';
+            } else {
+            //elarifr 3.8.0
             //set default sell / buy account according to product create type
             if ($type == 0) { $object->accountancy_code_sell=$aacompta_prodsell ; $object->accountancy_code_buy=$aacompta_prodbuy;};
             if ($type == 1) { $object->accountancy_code_sell=$aacompta_servsell ; $object->accountancy_code_buy=$aacompta_servbuy;};
-            print '<table class="border" width="100%">';
-
             // Accountancy_code_sell
             print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
-            //elarifr 3.7.1
-            //print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
             print '<td>';
             print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
             print 'select' . $form_selectaccount->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '',1 , 1);
             print '</td></tr>';
-
             // Accountancy_code_buy
             print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-            //elarifr 3.7.1
-            //print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
             print '<td>';
             print '<div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br />';
             print 'select' . $form_selectaccount->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '',1 , 1);
             print '</td></tr>';
-
+            }
             print '</table>';
 
             print '<br>';
-        //}
 
         dol_fiche_end();
 
@@ -1332,36 +1331,44 @@ else
 
             print '<br>';
 
-            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
-            {
-                // Don't show accounting field when accounting id disabled.
-            }
-            else
-            {*/
-                print '<table class="border" width="100%">';
-
+            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled)) { */
+            //elarifr 3.8.0
+            print '<table class="border" width="100%">';
+            if ( empty($conf->accounting->enabled)) {
+            // Don't show accounting field when accounting id disabled.
                 // Accountancy_code_sell
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
-                //elarifr 3.7.1
+                print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+                print '</td></tr>';
+                // Accountancy_code_buy
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+                print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+                print '</td></tr>';
+                print '</table>';
+                print '<br>';
+            } else {
+                print '<table class="border" width="100%">';
+                // Accountancy_code_sell
+                print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
                 //print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
                 //$account_sell  = $accounting->fetch('', $object->accountancy_code_sell);
                 print '<td>';
                 print '<div class="inline-block divButAction">' .$object->accountancy_code_sell . ' - ' . $langs->trans("ChangeAccount") . '<br />';
                 print $form_selectaccount->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '',1 , 1);
+                print '</td>';
                 print '</td></tr>';
-
                 // Accountancy_code_buy
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-                //elarifr 3.7.1
                 //print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
                 //$account_buy  = $accounting->fetch('', $object->accountancy_code_buy);
                 print '<td>';
                 print '<div class="inline-block divButAction">' .$object->accountancy_code_buy . ' - ' . $langs->trans("ChangeAccount") . '<br />';
                 print $form_selectaccount->select_account($object->accountancy_code_buy, 'accountancy_code_buy', 1, '',1 , 1);
+                print '</td>';
                 print '</td></tr>';
-
                 print '</table>';
-            //}
+                print '<br>';
+            }
 
             dol_fiche_end();
 
