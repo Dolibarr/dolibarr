@@ -61,10 +61,11 @@ $page = GETPOST('page','int');
 if ($page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+//bug in page limit if ACCOUNTING_LIMIT_LIST_VENTILATION < $conf->liste_limit there is no pagination displayed !
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) && $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION >= $conf->liste_limit) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = $conf->liste_limit;
+//} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+//	$limit = $conf->liste_limit;
 } else {
 	$limit = $conf->liste_limit;
 }
@@ -163,7 +164,7 @@ print_r ($sql1);
 /*
  * View
  */
-
+//DEBUG elarifr 
 //llxHeader('', $langs->trans("Accounts"));
 
 //For updating account export
@@ -236,7 +237,7 @@ $sql.= $db->order($sortfield,$sortorder);
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("/accountancy/admin/productaccount.php :: sql=" . $sql, LOG_DEBUG);
+dol_syslog("/accountancy/admin/productaccount.php:: sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
