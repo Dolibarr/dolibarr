@@ -194,6 +194,13 @@ abstract class DolibarrModules
      */
     public $core_enabled;
 
+	/**
+	 * Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 * @param DoliDB		$db      Database handler
+	 */
+	abstract public function __construct($db);
+
     /**
      * Enables a module.
      * Inserts all informations into database
@@ -1671,5 +1678,31 @@ print $sql;
         }
         return $err;
     }
+
+	/**
+	 * Function called when module is enabled.
+	 * The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 * It also creates data directories
+	 *
+	 * @param string $options    Options when enabling module ('', 'noboxes')
+	 * @return int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		return $this->_init(array(), $options);
+	}
+
+	/**
+	 * Function called when module is disabled.
+	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * Data directories are not deleted
+	 *
+	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @return     int             	1 if OK, 0 if KO
+	 */
+	public function remove($options = '')
+	{
+		return $this->_remove(array(), $options);
+	}
 
 }
