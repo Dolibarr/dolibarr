@@ -225,10 +225,10 @@ $sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  !=
 $sql .= ")";
 //Add search filter like
 if (strlen(trim($search_ref))) {
-	$sql .= " AND (p.ref like '%" . $search_ref . "%')";
+	$sql .= " AND (p.ref like '" . $search_ref . "%')";
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND (p.label like '%" . $search_label . "%')";
+	$sql .= " AND (p.label like '" . $search_label . "%')";
 }
 if (strlen(trim($search_desc))) {
 	$sql .= " AND (p.description like '%" . $search_desc . "%')";
@@ -296,8 +296,8 @@ if ($result) {
 	print '<td align="center" colspan="2">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
 	print '</tr>';
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre">%<input type="text" class="flat" size="20" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre">%<input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
 
 	print '<td class="liste_titre" colspan="3">&nbsp;</td>';
