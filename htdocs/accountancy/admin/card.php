@@ -261,7 +261,7 @@ else if ($id)
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td colspan="2">' . $accounting->pcg_subtype . '</td></tr>';
 
-			print '<tr><td>' . $langs->trans("Active") . '</td>';
+			print '<tr><td>' . $langs->trans("Activated") . '</td>';
 			print '<td colspan="2">';
 
 			if (empty($accounting->active)) {
