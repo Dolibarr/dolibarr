@@ -122,7 +122,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->SetType(array (
 					'pie'
 			));
-			$px->SetTitle($langs->trans('ProjectNbProjectByStatus'));
+			$px->SetTitle($langs->trans('ProjectOpenedProjectByOppStatus'));
 			$result=$px->draw($filenamenb, $fileurlnb);
 			if ($result<0) {
 				setEventMessages($px->error, null, 'errors');
@@ -194,12 +194,12 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
 		$px2->SetWidth($WIDTH);
 		$px2->SetHeight($HEIGHT);
-		$px2->SetYLabel($langs->trans("ProjectAmountOfProject"));
+		$px2->SetYLabel($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 		$px2->SetShading(3);
 		$px2->SetHorizTickIncrement(1);
 		$px2->SetPrecisionY(0);
 		$px2->mode='depth';
-		$px2->SetTitle($langs->trans("ProjectAmountOfProjectsByMonth"));
+		$px2->SetTitle($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 
 		$px2->draw($filenamenb,$fileurlnb);
 	}
@@ -208,7 +208,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	// Build graphic with transformation rate
-	$data = $stats_project->getTransformRateByMonthWithPrevYear($endyear,$startyear);
+	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear,$startyear);
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
@@ -231,12 +231,12 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px3->SetMinValue(min(0,$px3->GetFloorMinValue()));
 		$px3->SetWidth($WIDTH);
 		$px3->SetHeight($HEIGHT);
-		$px3->SetYLabel($langs->trans("ProjectTransRateOfProject"));
+		$px3->SetYLabel($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
 		$px3->SetShading(3);
 		$px3->SetHorizTickIncrement(1);
 		$px3->SetPrecisionY(0);
 		$px3->mode='depth';
-		$px3->SetTitle($langs->trans("ProjectTransRateOfProjectsByMonth"));
+		$px3->SetTitle($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
 
 		$px3->draw($filenamenb,$fileurlnb);
 	}
@@ -340,15 +340,12 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 $stringtoshow.= '<table class="border" width="100%"><tr valign="top"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
-	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
-		$stringtoshow.= $px->show();
-		$stringtoshow.= "<br>\n";
-	}
 	$stringtoshow.= $px1->show();
 	$stringtoshow.= "<br>\n";
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
+		$stringtoshow.= $px->show();
+		$stringtoshow.= "<br>\n";
 		$stringtoshow.= $px2->show();
 		$stringtoshow.= "<br>\n";
 		$stringtoshow.= $px3->show();

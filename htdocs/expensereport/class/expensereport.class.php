@@ -417,22 +417,22 @@ class ExpenseReport extends CommonObject
         global $langs;
 
         if ($mode == 0)
-            return $langs->trans($this->statuts[$status]);
+            return $langs->transnoentities($this->statuts[$status]);
 
         if ($mode == 1)
-            return $langs->trans($this->statuts_short[$status]);
+            return $langs->transnoentities($this->statuts_short[$status]);
 
         if ($mode == 2)
-            return img_picto($langs->trans($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->trans($this->statuts_short[$status]);
+            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts_short[$status]);
 
         if ($mode == 3)
-            return img_picto($langs->trans($this->statuts_short[$status]), $this->statuts_logo[$status]);
+            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
 
         if ($mode == 4)
-            return img_picto($langs->trans($this->statuts_short[$status]),$this->statuts_logo[$status]).' '.$langs->trans($this->statuts[$status]);
+            return img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
 
         if ($mode == 5)
-            return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$status]).' </span>'.img_picto($langs->trans($this->statuts_short[$status]),$this->statuts_logo[$status]);
+            return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]),$this->statuts_logo[$status]);
 
     }
 

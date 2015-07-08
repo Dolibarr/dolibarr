@@ -34,11 +34,11 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modMyModule extends DolibarrModules
 {
 	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$db      Database handler
+	 * @param DoliDB $db Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
         global $langs,$conf;
 
@@ -249,24 +249,24 @@ class modMyModule extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options='')
 	{
 		$sql = array();
 
-		$result=$this->_load_tables('/mymodule/sql/');
+		//$this->_load_tables('/mymodule/sql/');
 
 		return $this->_init($sql, $options);
 	}
 
 	/**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted
+	 * Function called when module is disabled.
+	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @return     int             	1 if OK, 0 if KO
 	 */
-	function remove($options='')
+	public function remove($options = '')
 	{
 		$sql = array();
 
