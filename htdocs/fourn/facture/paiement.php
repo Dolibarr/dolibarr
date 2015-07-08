@@ -321,6 +321,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	             * Autres factures impayees
 	             */
 	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df, date_lim_reglement as duedate';
+                    $sql.= ', DATEDIFF(f.date_lim_reglement, NOW()) as duedays';
 	            $sql.= ', SUM(pf.amount) as am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -355,6 +356,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
 	                    print '<td align="center">'.$langs->trans('Date').'</td>';
 	                    print '<td align="center">'.$langs->trans('DateMaxPayment').'</td>';
+	                    print '<td align="right">'.$langs->trans('DueDays').'</td>';
 	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
 	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -394,6 +396,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td align="center"><b>!!!</b></td>';
 	                        }
+	                        print '<td align="right">'.$objp->duedays.'</td>';
 	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
 	                        print '<td align="right">'.price($objp->am).'</td>';
 	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
@@ -412,7 +415,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    {
 	                        // Print total
 	                        print '<tr class="liste_total">';
-	                        print '<td colspan="4" align="left">'.$langs->trans('TotalTTC').':</td>';
+	                        print '<td colspan="5" align="left">'.$langs->trans('TotalTTC').':</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
