@@ -706,7 +706,8 @@ if (empty($reshook))
 		// Credit note invoice
 		if ($_POST['type'] == Facture::TYPE_CREDIT_NOTE)
 		{
-			if (! ($_POST['fac_avoir'] > 0))
+			$sourceinvoice = GETPOST('fac_avoir');
+			if (! ($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
 			{
 				$error ++;
 				setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), 'errors');
@@ -739,7 +740,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 
 				// Proprietes particulieres a facture avoir
-				$object->fk_facture_source = $_POST['fac_avoir'];
+				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
 				$object->type = Facture::TYPE_CREDIT_NOTE;
 
 				$id = $object->create($user);
@@ -2878,7 +2879,7 @@ else if ($id > 0 || ! empty($ref))
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' (' . $langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)) . ')';
 	}
-	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+	if ($object->type == Facture::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {
 		$facusing = new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
 		print ' (' . $langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)) . ')';
