@@ -48,6 +48,7 @@ NewAccount=New accounting account
 Update=Update
 List=List
 Create=Create
+CreateMvts=Create movement
 UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Record accounts in general ledger
