@@ -58,8 +58,8 @@ $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_author=GETPOST('search_author','alpha');
 $search_product_category=GETPOST('search_product_category','int');
 $search_town=GETPOST('search_town','alpha');
-$viewstatut=$db->escape(GETPOST('viewstatut'));
-$object_statut=$db->escape(GETPOST('propal_statut'));
+$viewstatut=GETPOST('viewstatut');
+$object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));

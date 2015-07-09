@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,12 @@
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+
+$object_statut=GETPOST('propal_statut');
 
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -55,11 +58,12 @@ $mode=GETPOST('mode');
  */
 
 $form=new Form($db);
+$formpropal=new FormPropal($db);
 
 $langs->load('propal');
 $langs->load('other');
 
-llxHeader();
+llxHeader('', $langs->trans("ProposalsStatistics"));
 
 print_fiche_titre($langs->trans("ProposalsStatistics"),'','title_commercial.png');
 
@@ -67,7 +71,9 @@ $dir=$conf->propal->dir_temp;
 
 dol_mkdir($dir);
 
+
 $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0));
+if ($object_statut != '' && $object_statut >= 0) $stats->where .= ' AND p.fk_statut IN ('.$object_statut.')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -113,7 +119,7 @@ if (! $mesg)
 }
 
 // Build graphic amount of object
-$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,0);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -154,7 +160,7 @@ if (! $mesg)
     $px2->draw($filenameamount,$fileurlamount);
 }
 
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
+$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, $filter);
 
 $fileurl_avg='';
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -238,6 +244,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
 	print $form->select_dolusers($userid,'userid',1);
+	print '</td></tr>';
+	// Status
+	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	$formpropal->selectProposalStatus($object_statut,0,1);
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
