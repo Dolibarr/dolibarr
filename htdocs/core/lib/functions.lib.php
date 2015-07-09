@@ -13,6 +13,7 @@
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)	<github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +72,8 @@ function getStaticMember($class, $member)
 		}
 
 		if ($found) return $result;
-	}*/
-
+	}
+	*/
 	if (isset($class::$member)) return $class::$member;
 	dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
 	return null;
@@ -1255,16 +1256,20 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  * 								'tzuser' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode='gmt')
+function dol_now($mode='gmt',$virtual=1)
 {
+	//elarifr test to add tz virtual offset and only affect dol_now
+	//by default offset is always added like a virtual extra timezone. 
+	// if we need real time must pass virtual=0
+	if ( $virtual==1 AND defined('DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET')) { $tzvirtual = DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET * 24 * 60 * 60 ;} elseif ($virtual==0){$tzvirtual = 0;}
 	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
-	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
+	if ($mode == 'gmt') $ret=time()+ $tzvirtual;	// Time for now at greenwich.
 	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
-		$ret=dol_now('gmt')+($tzsecond*3600);
+		$ret=dol_now('gmt')+($tzsecond*3600)+ $tzvirtual;
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
@@ -1277,8 +1282,9 @@ function dol_now($mode='gmt')
 		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
-		$ret=dol_now('gmt')+($offsettz+$offsetdst);
+		$ret=dol_now('gmt')+($offsettz+$offsetdst+$tzvirtual);
 	}
+	// elarifr add virtual time zone
 	return $ret;
 }
 
