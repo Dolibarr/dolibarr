@@ -1,0 +1,4 @@
+adjust name of mytable
+INSERT INTO `matable`.`llx_boxes_def` (`rowid`, `file`, `entity`, `tms`, `note`) VALUES (NULL, 'box_date_offset.php', '1', CURRENT_TIMESTAMP, 'experimental. elarifr');
+
+In dolibarr set constant  DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET with the number of day to +add/ -remove
