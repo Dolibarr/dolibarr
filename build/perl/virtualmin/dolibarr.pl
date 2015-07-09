@@ -242,7 +242,7 @@ if ($upgrade) {
 			  [ "versionfrom", $upgrade->{'version'} ],
 			  [ "versionto", $ver ],
 			 );
-	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, "step5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory.
@@ -268,12 +268,12 @@ else {
 			  [ "usealternaterootdir", "1" ],
 			  [ "main_alt_dir_name", "custom" ],
 			 );
-	local $err = &call_dolibarr_wizard_page(\@params, "etape1", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, "step1", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Second page (Populate database)
 	local @params = ( [ "action", "set" ] );
-	local $err = &call_dolibarr_wizard_page(\@params, "etape2", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, "step2", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Third page (Add administrator account)
@@ -282,7 +282,7 @@ else {
 			  [ "pass", $dompass ],
 			  [ "pass_verif", $dompass ],
 	 		 );
-	local $err = &call_dolibarr_wizard_page(\@params, "etape5", $d, $opts);
+	local $err = &call_dolibarr_wizard_page(\@params, "step5", $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory and protect config file.

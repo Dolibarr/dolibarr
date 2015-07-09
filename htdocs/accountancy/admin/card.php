@@ -39,6 +39,7 @@ $mesg = '';
 $action = GETPOST('action');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
+$cancel = GETPOST('cancel');
 
 // Security check
 if (!$user->admin)
@@ -49,7 +50,7 @@ $accounting = new AccountingAccount($db);
 // Action
 if ($action == 'add')
 {
-	if (! GETPOST('cancel', 'alpha')) {
+	if (! $cancel) {
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 
 		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
@@ -59,7 +60,7 @@ if ($action == 'add')
 		$accounting->fk_pcg_version = $obj->pcg_version;
 		$accounting->pcg_type = GETPOST('pcg_type');
 		$accounting->pcg_subtype = GETPOST('pcg_subtype');
-		$accounting->account_number = GETPOST('account_number', 'int');
+		$accounting->account_number = GETPOST('account_number');
 		$accounting->account_parent = GETPOST('account_parent', 'int');
 		$accounting->label = GETPOST('label', 'alpha');
 		$accounting->active = 1;
@@ -94,7 +95,7 @@ else if ($action == 'edit')
 		$accounting->fk_pcg_version = $obj->pcg_version;
 		$accounting->pcg_type = GETPOST('pcg_type');
 		$accounting->pcg_subtype = GETPOST('pcg_subtype');
-		$accounting->account_number = GETPOST('account_number', 'int');
+		$accounting->account_number = GETPOST('account_number');
 		$accounting->account_parent = GETPOST('account_parent', 'int');
 		$accounting->label = GETPOST('label', 'alpha');
 
@@ -261,7 +262,7 @@ else if ($id)
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td colspan="2">' . $accounting->pcg_subtype . '</td></tr>';
 
-			print '<tr><td>' . $langs->trans("Active") . '</td>';
+			print '<tr><td>' . $langs->trans("Activated") . '</td>';
 			print '<td colspan="2">';
 
 			if (empty($accounting->active)) {

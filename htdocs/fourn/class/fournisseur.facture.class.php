@@ -1283,82 +1283,44 @@ class FactureFournisseur extends CommonInvoice
             $product_type = $type;
         }
 
-        $this->db->begin();
+	    $line = new SupplierInvoiceLine($this->db);
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
-        $sql.= " description ='".$this->db->escape($desc)."'";
-        $sql.= ", pu_ht = ".price2num($pu_ht);
-        $sql.= ", pu_ttc = ".price2num($pu_ttc);
-        $sql.= ", qty = ".price2num($qty);
-        $sql.= ", remise_percent = ".price2num($remise_percent);
-        $sql.= ", tva_tx = ".price2num($vatrate);
-        $sql.= ", localtax1_tx = ".price2num($txlocaltax1);
-        $sql.= ", localtax2_tx = ".price2num($txlocaltax2);
-		$sql.= ", localtax1_type = '".$localtaxes_type[0]."'";
-		$sql.= ", localtax2_type = '".$localtaxes_type[2]."'";
-        $sql.= ", total_ht = ".price2num($total_ht);
-        $sql.= ", tva= ".price2num($total_tva);
-        $sql.= ", total_localtax1= ".price2num($total_localtax1);
-        $sql.= ", total_localtax2= ".price2num($total_localtax2);
-        $sql.= ", total_ttc = ".price2num($total_ttc);
-        if ($idproduct) $sql.= ", fk_product = ".$idproduct;
-        else $sql.= ", fk_product = null";
-        $sql.= ", product_type = ".$product_type;
-        $sql.= ", info_bits = ".$info_bits;
-	    $sql.= ", fk_unit = ".($fk_unit ? "'".$this->db->escape($fk_unit)."'":"null");
-        $sql.= " WHERE rowid = ".$id;
+	    if ($line->fetch($id) < 1) {
+		    return -1;
+	    }
 
-        dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->rowid = $id;
+	    $line->description = $desc;
+	    $line->subprice = $pu_ht;
+	    $line->pu_ht = $pu_ht;
+	    $line->pu_ttc = $pu_ttc;
+	    $line->qty = $qty;
+	    $line->remise_percent = $remise_percent;
+	    $line->tva_tx = $vatrate;
+	    $line->localtax1_tx = $txlocaltax1;
+	    $line->localtax2_tx = $txlocaltax2;
+		$line->localtax1_type = $localtaxes_type[0];
+		$line->localtax2_type = $localtaxes_type[2];
+	    $line->total_ht = $total_ht;
+	    $line->total_tva = $total_tva;
+	    $line->total_localtax1 = $total_localtax1;
+	    $line->total_localtax2 = $total_localtax2;
+	    $line->total_ttc = $total_ttc;
+	    $line->fk_product = $idproduct;
+	    $line->product_type = $product_type;
+	    $line->info_bits = $info_bits;
+	    $line->fk_unit = $fk_unit;
+	    $line->array_options = $array_options;
 
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$linetmp = new SupplierInvoiceLine($this->db);
-				$linetmp->id=$this->rowid;
-				$linetmp->array_options = $array_options;
-				$result=$linetmp->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
+	    $res = $line->update($notrigger);
 
-            if (! $error && ! $notrigger)
-            {
-                global $conf, $langs, $user;
-                // Call trigger
-                $result=$this->call_trigger('LINEBILL_SUPPLIER_UPDATE',$user);
-                if ($result < 0)
-                {
-                    $this->db->rollback();
-                    return -1;
-                }
-                // End call triggers
-            }
+	    if ($res < 1) {
+		    $this->errors[] = $line->error;
+	    } else {
+		    // Update total price into invoice record
+		    $res = $this->update_price('','auto');
+	    }
 
-            // Update total price into invoice record
-            $result=$this->update_price('','auto');
-
-			if (! $error)
-			{
-	            $this->db->commit();
-            	return $result;
-			}
-			else
-			{
-	            $this->db->rollback();
-            	return -1;
-			}
-        }
-        else
-        {
-            $this->db->rollback();
-            $this->error=$this->db->lasterror();
-            return -1;
-        }
+	    return $res;
     }
 
     /**
@@ -1972,6 +1934,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $fk_parent_line;
 	public $special_code;
 	public $rang;
+	public $localtax1_type;
+	public $localtax2_type;
 
 
 	/**
@@ -1993,12 +1957,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public function fetch($rowid)
 	{
 		$sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx';
-		$sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
+		$sql.= ', f.localtax1_type, f.localtax2_type, f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
 		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
 		$sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-		$sql.= ' WHERE rowid = '.$rowid;
+		$sql.= ' WHERE f.rowid = '.$rowid;
 		$sql.= ' ORDER BY f.rang, f.rowid';
 
 		$query = $this->db->query($sql);
@@ -2029,6 +1993,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->tva_tx			= $obj->tva_tx;
 		$this->localtax1_tx		= $obj->localtax1_tx;
 		$this->localtax2_tx		= $obj->localtax2_tx;
+		$this->localtax1_type		= $obj->localtax1_type;
+		$this->localtax2_type		= $obj->localtax2_type;
 		$this->qty				= $obj->qty;
 		$this->remise_percent    = $obj->remise_percent;
 		$this->tva				= $obj->total_tva;
@@ -2095,5 +2061,113 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 	}
 
+	/**
+	 * Update a supplier invoice line
+	 *
+	 * @param int $notrigger Disable triggers
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function update($notrigger = 0)
+	{
+		global $conf;
+
+		$pu = price2num($this->pu_ht);
+		$qty  = price2num($this->qty);
+
+		// Check parameters
+		if (! is_numeric($pu) || ! is_numeric($qty)) {
+			return -1;
+		}
+
+		if ($this->product_type < 0) {
+			return -1;
+		}
+
+		// Clean parameters
+		if (empty($this->tva_tx)) {
+			$this->tva_tx = 0;
+		}
+		if (empty($this->localtax1_tx)) {
+			$this->localtax1_tx = 0;
+		}
+		if (empty($this->localtax2_tx)) {
+			$this->localtax2_tx = 0;
+		}
+
+		$this->db->begin();
+
+		if ($this->fk_product) {
+			$fk_product = "null";
+		} else {
+			$fk_product = $this->fk_product;
+		}
+
+		if ($this->fk_unit) {
+			$fk_unit = "'".$this->db->escape($this->fk_unit)."'";
+		} else {
+			$fk_unit = "null";
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
+		$sql.= " description ='".$this->db->escape($this->description)."'";
+		$sql.= ", pu_ht = ".price2num($this->pu_ht);
+		$sql.= ", pu_ttc = ".price2num($this->pu_ttc);
+		$sql.= ", qty = ".price2num($this->qty);
+		$sql.= ", remise_percent = ".price2num($this->remise_percent);
+		$sql.= ", tva_tx = ".price2num($this->tva_tx);
+		$sql.= ", localtax1_tx = ".price2num($this->localtax1_tx);
+		$sql.= ", localtax2_tx = ".price2num($this->localtax2_tx);
+		$sql.= ", localtax1_type = '".$this->localtax1_type."'";
+		$sql.= ", localtax2_type = '".$this->localtax2_type."'";
+		$sql.= ", total_ht = ".price2num($this->total_ht);
+		$sql.= ", tva= ".price2num($this->total_tva);
+		$sql.= ", total_localtax1= ".price2num($this->total_localtax1);
+		$sql.= ", total_localtax2= ".price2num($this->total_localtax2);
+		$sql.= ", total_ttc = ".price2num($this->total_ttc);
+		$sql.= ", fk_product = ".$fk_product;
+		$sql.= ", product_type = ".$this->product_type;
+		$sql.= ", info_bits = ".$this->info_bits;
+		$sql.= ", fk_unit = ".$fk_unit;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$this->rowid = $this->id;
+		$error = 0;
+
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			if ($this->insertExtraFields() < 0) {
+				$error++;
+			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			global $langs, $user;
+
+			// Call trigger
+			if ($this->call_trigger('LINEBILL_SUPPLIER_UPDATE',$user) < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
 }
 

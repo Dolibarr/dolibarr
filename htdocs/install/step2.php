@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,8 @@
  */
 
 /**
- *      \file       htdocs/install/etape2.php
- *		\ingroup	install
+ *      \file       htdocs/install/step2.php
+ *      \ingroup    install
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
  */
 
@@ -27,7 +28,7 @@ include 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
-$etape = 2;
+$step = 2;
 $ok = 0;
 
 
@@ -54,7 +55,7 @@ if ($dolibarr_main_db_type == "mssql")  $choix=3;
 if ($dolibarr_main_db_type == "sqlite")  $choix=4;
 if ($dolibarr_main_db_type == "sqlite3")  $choix=5;
 
-//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into etape2.php page');
+//if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into step2.php page');
 
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
@@ -62,14 +63,14 @@ $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
 if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
-dolibarr_install_syslog("--- etape2: Entering etape2.php page");
+dolibarr_install_syslog("--- step2: entering step2.php page");
 
 
 /*
  *	View
  */
 
-pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
+pHeader($langs->trans("CreateDatabaseObjects"),"step4");
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -103,11 +104,11 @@ if ($action == "set")
     {
         if($db->database_selected)
         {
-            dolibarr_install_syslog("etape2: Connexion successful to database : ".$conf->db->name);
+            dolibarr_install_syslog("step2: successful connection to database: " . $conf->db->name);
         }
         else
         {
-            dolibarr_install_syslog("etape2: Connexion failed to database : ".$conf->db->name);
+            dolibarr_install_syslog("step2: failed connection to database :" . $conf->db->name, LOG_ERR);
             print "<tr><td>Failed to select database ".$conf->db->name.'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
             $ok = 0 ;
         }
@@ -131,7 +132,7 @@ if ($action == "set")
     $requestnb=0;
 
     // To disable some code, so you can call step2 with url like
-    // http://localhost/dolibarrnew/install/etape2.php?action=set&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
+    // http://localhost/dolibarrnew/install/step2.php?action=set&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
     $createtables=isset($_GET['createtables'])?GETPOST('createtables'):1;
     $createkeys=isset($_GET['createkeys'])?GETPOST('createkeys'):1;
     $createfunctions=isset($_GET['createfunctions'])?GETPOST('createfunction'):1;
@@ -155,7 +156,7 @@ if ($action == "set")
 
         $ok = 0;
         $handle=opendir($dir);
-        dolibarr_install_syslog("Open tables directory ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("step2: open tables directory " . $dir . " handle=" . $handle);
         $tablefound = 0;
         $tabledata=array();
         if (is_resource($handle))
@@ -211,7 +212,7 @@ if ($action == "set")
                 //print "<tr><td>Creation de la table $name/td>";
                 $requestnb++;
 
-                dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+                dolibarr_install_syslog("step2: request: " . $buffer);
                 $resql=$db->query($buffer,0,'dml');
                 if ($resql)
                 {
@@ -241,7 +242,7 @@ if ($action == "set")
                 print "</td>";
                 print '<td><font class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</td></tr>';
                 $error++;
-                dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
+                dolibarr_install_syslog("step2: failed to open file " . $dir . $file, LOG_ERR);
             }
         }
 
@@ -257,7 +258,7 @@ if ($action == "set")
         else
         {
             print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles",$dir).'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
-            dolibarr_install_syslog("Failed to find files to create database in directory ".$dir,LOG_ERR);
+            dolibarr_install_syslog("step2: failed to find files to create database in directory " . $dir, LOG_ERR);
         }
     }
 
@@ -275,7 +276,7 @@ if ($action == "set")
 
         $okkeys = 0;
         $handle=opendir($dir);
-        dolibarr_install_syslog("Open keys directory ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("step2: open keys directory " . $dir . " handle=" . $handle);
         $tablefound = 0;
         $tabledata=array();
         if (is_resource($handle))
@@ -354,7 +355,7 @@ if ($action == "set")
                         //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
                         $requestnb++;
 
-                        dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+                        dolibarr_install_syslog("step2: request: " . $buffer);
                         $resql=$db->query($buffer,0,'dml');
                         if ($resql)
                         {
@@ -390,7 +391,7 @@ if ($action == "set")
                 print "</td>";
                 print '<td><font class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</font></td></tr>";
                 $error++;
-                dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
+                dolibarr_install_syslog("step2: failed to open file " . $dir . $file, LOG_ERR);
             }
         }
 
@@ -421,7 +422,7 @@ if ($action == "set")
         if (file_exists($dir.$file))
         {
             $fp = fopen($dir.$file,"r");
-            dolibarr_install_syslog("Open function file ".$dir.$file." handle=".$fp,LOG_DEBUG);
+            dolibarr_install_syslog("step2: open function file " . $dir . $file . " handle=" . $fp);
             if ($fp)
             {
                 $buffer='';
@@ -444,7 +445,7 @@ if ($action == "set")
                 $buffer=trim($buffer);
                 if ($buffer)
                 {
-                    dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+                    dolibarr_install_syslog("step2: request: " . $buffer);
                     print "<!-- Insert line : ".$buffer."<br>-->\n";
                     $resql=$db->query($buffer,0,'dml');
                     if ($resql)
@@ -500,7 +501,7 @@ if ($action == "set")
 
         // Insert data
         $handle=opendir($dir);
-        dolibarr_install_syslog("Open directory data ".$dir." handle=".$handle,LOG_DEBUG);
+        dolibarr_install_syslog("step2: open directory data " . $dir . " handle=" . $handle);
         $tablefound = 0;
         $tabledata=array();
         if (is_resource($handle))
@@ -526,7 +527,7 @@ if ($action == "set")
         {
             $name = substr($file, 0, dol_strlen($file) - 4);
             $fp = fopen($dir.$file,"r");
-            dolibarr_install_syslog("Open data file ".$dir.$file." handle=".$fp,LOG_DEBUG);
+            dolibarr_install_syslog("step2: open data file " . $dir . $file . " handle=" . $fp);
             if ($fp)
             {
                 $arrayofrequests=array();
@@ -555,7 +556,7 @@ if ($action == "set")
                 }
                 fclose($fp);
 
-                dolibarr_install_syslog("Found ".$linefound." records, defined ".count($arrayofrequests)." group(s).",LOG_DEBUG);
+                dolibarr_install_syslog("step2: found " . $linefound . " records, defined " . count($arrayofrequests) . " group(s).");
 
                 $okallfile=1;
                 $db->begin();
@@ -569,7 +570,7 @@ if ($action == "set")
                 		$buffer=preg_replace('/llx_/i',$dolibarr_main_db_prefix,$buffer);
                 	}
 
-                    //dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+                    //dolibarr_install_syslog("step2: request: " . $buffer);
                     $resql=$db->query($buffer,1);
                     if ($resql)
                     {
@@ -613,7 +614,7 @@ else
     print 'Parameter action=set not defined';
 }
 
-dolibarr_install_syslog("--- install/etape2.php end", LOG_INFO);
+dolibarr_install_syslog("--- step2: end");
 
 pFooter(!$ok,$setuplang);
 
