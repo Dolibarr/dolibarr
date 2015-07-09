@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
- * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>   
  *
@@ -39,7 +39,7 @@ $langs->load("accountancy");
 $account_parent = GETPOST('account_parent');
 $changeaccount  = GETPOST('changeaccount');
 $search_ref     = GETPOST('search_ref','alpha');
-$search_facture = GETPOST('search_facture','alpha');
+$search_invoice = GETPOST('search_invoice','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
 $search_amount  = GETPOST('search_amount','alpha');
@@ -49,13 +49,37 @@ $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+//if ($page == -1) { $page = 0; }
+if ($page < 0) $page = 0;
+
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = $conf->liste_limit;
-if (! $sortfield) $sortfield="f.facnumber";
-if (! $sortorder) $sortorder="DESC";
+//$limit = $conf->liste_limit;
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+	$limit = $conf->liste_limit;
+} else {
+	$limit = $conf->liste_limit;
+}
+//$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
+
+// TODO : remove comment
+//elarifr we can not use only
+//$sql .= " ORDER BY l.rowid";
+// f.datef will order like FA08 FA09 FA10 FA05 FA06 FA07 FA04...
+// f.facnumber will not order properly invoice / avoir / accompte you can have All AC then All AV and all FA
+// l.rowid when an invoice is edited rowid are added at end of table & facturedet.rowid are not ordered
+//if (! $sortfield) $sortfield="f.facnumber";
+if (! $sortfield) $sortfield="f.datef, f.facnumber, l.rowid";
+
+//if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) {
+	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
+		$sortorder = " DESC ";
+	}
+}
 
 // Security check
 if ($user->societe_id > 0)
@@ -69,7 +93,7 @@ $formventilation = new FormVentilation($db);
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref='';
-    $search_facture='';
+    $search_invoice='';
     $search_label='';
     $search_desc='';
     $search_amount='';
@@ -106,6 +130,31 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 llxHeader('', $langs->trans("CustomersVentilation") . ' - ' . $langs->trans("Dispatched"));
 
+print  '<script type="text/javascript">
+			$(function () {
+				$(\'#select-all\').click(function(event) {
+				    // Iterate each checkbox
+				    $(\':checkbox\').each(function() {
+				    	this.checked = true;
+				    });
+			    });
+			    $(\'#unselect-all\').click(function(event) {
+				    // Iterate each checkbox
+				    $(\':checkbox\').each(function() {
+				    	this.checked = false;
+				    });
+			    });
+			});
+			 </script>';
+
+/*
+ * Action
+ */
+
+
+/*
+ * Customer Invoice lines
+ */
 $sql = "SELECT l.rowid , f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.qty, l.tva_tx, l.fk_code_ventilation, aa.label, aa.account_number,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
@@ -114,8 +163,8 @@ $sql .= " , " . MAIN_DB_PREFIX . "facturedet as l";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 $sql .= " AND aa.rowid = l.fk_code_ventilation";
-if (strlen(trim(GETPOST("search_facture")))) {
-	$sql .= " AND f.facnumber like '%" . $search_facture . "%'";
+if (strlen(trim($search_invoice))) {
+	$sql .= " AND f.facnumber like '%" . $search_invoice . "%'";
 }
 if (strlen(trim($search_ref))) {
 	$sql .= " AND p.ref like '%" . $search_ref . "%'";
@@ -151,7 +200,7 @@ if ($result) {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<table class="noborder" width="100%">';
 	
-	print '<br><br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
+	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account($account_parent, 'account_parent', 1);
 	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
 	
@@ -164,10 +213,11 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"],"aa.account_number","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre('');
-	print_liste_field_titre('');
+	print_liste_field_titre($langs->trans("Ventilate").'<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>','','','','','align="center"');
 	print "</tr>\n";
-	
-	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_facture" size="8" value="' . $search_facture . '"></td>';
+
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
@@ -188,12 +238,12 @@ if ($result) {
 		
 		print "<tr $bc[$var]>";
 		
-		// Ref facture
+		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->facid;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 		
-		// Ref produit
+		// Ref Product
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;
@@ -208,8 +258,8 @@ if ($result) {
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . $codecompta . '</td>';
-		print '<td>' . $objp->rowid . '</td>';
-		print '<td><a href="./card.php?id=' . $objp->rowid . '">';
+		print '<td align="right">' . $objp->rowid . '</td>';
+		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a></td>';
 		
