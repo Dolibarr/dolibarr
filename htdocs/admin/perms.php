@@ -255,7 +255,7 @@ function printSubmit($value = 'submit')
 	print '<tr>';
 	print '<td colspan="3" align="right">';
 	print '<button name="submit" type="submit" value="' . $value . '" class="button">';
-	print $langs->trans('Modify');
+	print $langs->trans('Save');
 	print '</button>';
 	print '</td>';
 	print '</tr>';
