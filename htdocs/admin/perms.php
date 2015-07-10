@@ -146,7 +146,6 @@ $head=security_prepare_head();
 
 dol_fiche_head($head, 'default', $langs->trans("Security"));
 
-
 // Show warning about external users
 print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 
@@ -210,18 +209,22 @@ if ($result)
         $var=!$var;
         print '<tr '. $bc[$var].'>';
 
-        print '<td>'.img_object('',$picto).' '.$objMod->getName();
-        print '<a name="'.$objMod->getName().'">&nbsp;</a>';
+        print '<td>' . img_object('',$picto).' '.$objMod->getName();
 
         print '<td align="center">';
 
-		print '<input type="hidden" id="permcache_' . $obj->id . '" name="permissions_cache[' .$obj->id . ']" value=' . (1 == $obj->bydefault?'checked':'') . '>';
+		print '<input type="hidden" id="permcache_' . $obj->id . '" name="permissions_cache[' .$obj->id . ']" value="' . (1 == $obj->bydefault?'checked':'') . '">';
 		print '<input type="checkbox" id="perm_' . $obj->id . '" name="permissions[' . $obj->id . ']"' . (1 == $obj->bydefault?' checked':'') . '>';
 
 		print '</td>';
 
-		$perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-		print '<td>'.$perm_libelle. '</td>';
+		$perm_label=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
+
+		print '<td>';
+		print '<label for="perm_' . $obj->id . '">';
+		print $perm_label;
+		print '</label>';
+		print '</td>';
 
 		print '</tr>';
         $i++;
@@ -231,7 +234,7 @@ if ($result)
 
 print '</table>';
 
-print '</div>';
+dol_fiche_end();
 
 $db->close();
 
