@@ -66,7 +66,7 @@ if ($action == 'update') {
 	}
 
 	// Redirect to the latest modified subsection
-	header('Location: ' .$_SERVER["PHP_SELF"] . '#' . $anchor);
+	header('Location: ' . $_SERVER["PHP_SELF"] . '#' . $anchor);
 }
 
 // Get permissions
@@ -149,8 +149,8 @@ dol_fiche_head($head, 'default', $langs->trans("Security"));
 // Show warning about external users
 print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder" width="100%">';
@@ -167,7 +167,7 @@ if ($result)
         $obj = $db->fetch_object($result);
 
 		// If module is not present anymore (in includes/module), ignore the line
-        if (! $modules[$obj->module])
+        if (empty($modules[$obj->module]))
         {
             $i++;
             continue;
@@ -193,7 +193,9 @@ if ($result)
         // Break found, it's a new module to catch
         if ($oldmod <> $obj->module)
         {
-			if (0 != $i) printSubmit($oldmod);
+			if (0 != $i) {
+				printSubmit($oldmod);
+			}
 
         	$oldmod	= $obj->module;
             $objMod	= $modules[$obj->module];
@@ -211,14 +213,15 @@ if ($result)
 
         print '<td>' . img_object('',$picto).' '.$objMod->getName();
 
-        print '<td align="center">';
+		print '<td align="center">';
 
-		print '<input type="hidden" id="permcache_' . $obj->id . '" name="permissions_cache[' .$obj->id . ']" value="' . (1 == $obj->bydefault?'checked':'') . '">';
-		print '<input type="checkbox" id="perm_' . $obj->id . '" name="permissions[' . $obj->id . ']"' . (1 == $obj->bydefault?' checked':'') . '>';
+		$checked = (1 == $obj->bydefault ? ' checked' : '');
+		print '<input type="hidden" id="permcache_' . $obj->id . '" name="permissions_cache[' . $obj->id . ']" value="' . $checked . '">';
+		print '<input type="checkbox" id="perm_' . $obj->id . '" name="permissions[' . $obj->id . ']"' . $checked . '>';
 
 		print '</td>';
 
-		$perm_label=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
+		$perm_label = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced" . $obj->id) != ("PermissionAdvanced" . $obj->id)) ? $langs->trans("PermissionAdvanced" . $obj->id) : (($langs->trans("Permission" . $obj->id) != ("Permission" . $obj->id)) ? $langs->trans("Permission" . $obj->id) : $obj->libelle));
 
 		print '<td>';
 		print '<label for="perm_' . $obj->id . '">';
@@ -227,8 +230,8 @@ if ($result)
 		print '</td>';
 
 		print '</tr>';
-        $i++;
-    }
+		$i++;
+	}
 	printSubmit($oldmod);
 }
 
