@@ -1004,8 +1004,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		}
 
 		print '<tr><td>'.$langs->trans("Total")."</td>";
-		print '<td align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
-		print '<td align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			print '<td align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
+			print '<td align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmount"), 1).'</td>';
+		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) print '<td align="right">'.$total_task.'</td>';
 
 		$db->free($resql);

@@ -127,7 +127,9 @@ TaskCreatedInDolibarr=Task %s created
 TaskModifiedInDolibarr=Task %s modified
 TaskDeletedInDolibarr=Task %s deleted
 OpportunityStatus=Opportunity status
+OpportunityStatusShort=Opp. status
 OpportunityAmount=Opportunity amount
+OpportunityAmountShort=Opp. amount
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader
