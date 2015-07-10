@@ -1256,20 +1256,25 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  * 								'tzuser' => we add the user timezone
  *	@return int   $date	Timestamp
  */
-function dol_now($mode='gmt',$virtual=1)
+function dol_now($mode='gmt',$realtime=false)
 {
 	//elarifr test to add tz virtual offset and only affect dol_now
-	//by default offset is always added like a virtual extra timezone. 
-	// if we need real time must pass virtual=0
-	if ( $virtual==1 AND defined('DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET')) { $tzvirtual = DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET * 24 * 60 * 60 ;} elseif ($virtual==0){$tzvirtual = 0;}
+	//by default offset is always added like a virtual extra timezone and dol_now() work in a dream time.
+	//if we need real time must pass realtime=true
+	// With $virtual a boolean @rdoursenaud
+	$offsetvtz = 0;
+	if ( !$realtime AND defined('DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET')) {
+		$offsetvtz = DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET * 24 * 60 * 60 ;
+	}
+//	if ( $virtual==1 AND defined('DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET')) { $tzvirtual = DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET * 24 * 60 * 60 ;} elseif ($virtual==0){$tzvirtual = 0;}
 	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
-	if ($mode == 'gmt') $ret=time()+ $tzvirtual;	// Time for now at greenwich.
+	if ($mode == 'gmt') $ret=time()+ $offsetvtz;	// Time for now at greenwich.
 	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
-		$ret=dol_now('gmt')+($tzsecond*3600)+ $tzvirtual;
+		$ret=dol_now('gmt')+($tzsecond*3600)+ $offsetvtz;
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
@@ -1282,9 +1287,8 @@ function dol_now($mode='gmt',$virtual=1)
 		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
-		$ret=dol_now('gmt')+($offsettz+$offsetdst+$tzvirtual);
+		$ret=dol_now('gmt')+($offsettz+$offsetdst+$offsetvtz);
 	}
-	// elarifr add virtual time zone
 	return $ret;
 }
 

@@ -115,8 +115,7 @@ class box_date_offset extends ModeleBoxes {
 		dol_syslog("Box_date_offset::loadBox", LOG_DEBUG);
 */
 		$result = $db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $db->num_rows($result);
 			$now=dol_now();
 			$line = 0;
@@ -163,85 +162,8 @@ class box_date_offset extends ModeleBoxes {
                     );
 				$line++;
 			}
-			if ($num==0)
-			     $this->info_box_contents[$line][0] = array(
-		 	    'td' => 'align="center"',
-			    'text'=>$langs->trans("NoRecordedInvoices"),
-			);
-			//TimeZone
-			$line++;
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="left"',
-			    'text' => $langs->trans("RealDateTzServer"),
-			    'asis' => 1,
-		 	);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="left"',
-			    'text' => '',
-			    'asis' => 1,
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right"',
-		 	    'text' => '',
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right"',
-			    'text' => dol_print_date(dol_now('gmt',0),'day'),
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right" width="18"',
-			    'text' => '',
-			);
-			//TimeZone Offset
-			$line++;
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="left"',
-			    'text' => $langs->trans("VirtualDateTzOffset"),
-			    'asis' => 1,
-		 	);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="left"',
-			    'text' => 'set experimental DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET',
-			    'asis' => 1,
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right"',
-		 	    'text' => DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET . ' ' . $langs->trans("days"),
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right"',
-			    'text' => dol_print_date(dol_now(),'day'),
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right" width="18"',
-			    'text' => '',
-			);
-			//TimeZone Offset
-			$line++;
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="left"',
-			    'text' => $langs->trans("TzOffsetDate"),
-			    'asis' => 1,
-		 	);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="left"',
-			    'text' => '',
-			    'asis' => 1,
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right"',
-		 	    'text' => '',
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right"',
-			    'text' => dol_print_date(dol_now(),'day'),
-			);
-			$this->info_box_contents[$line][] = array(
-			    'td' => 'align="right" width="18"',
-			    'text' => '',
-			);
+			//$db->free($result);
 
-		    $db->free($result);
 		} else {
 		    $this->info_box_contents[0][0] = array(
 		        'td' => 'align="left"',
@@ -249,12 +171,104 @@ class box_date_offset extends ModeleBoxes {
 		        'text' => ($db->error().' sql='.$sql),
 		    );
 		}
+		// end no invoice avalaible
 		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'align="left"',
 			    'text' => $langs->trans("DateOffsetPermissionNotAllowed"),
 			);
 		}
+		//end no permission read invoice
+		if ($num==0)
+			$line++;
+		     $this->info_box_contents[$line][0] = array(
+	 	    'td' => 'colspan="2" align="center"',
+		    'text'=>$langs->trans("NoRecordedInvoices"),
+		);
+		// debug for test
+		//Check date + offset & alert if offset before last invoice
+		$date = dol_now('gmt',true);
+		if ($date > dol_now()) {
+			$line++;
+		    $this->info_box_contents[$line][0] = array(
+		        'td' => 'colspan="2" align="left" style="color: red; font-weight: bold;"',
+		        'maxlength'=>500,
+		        'text' => 'INFO: ERROR DATE. Can not set date before last invoice - Should be verified before',
+		    );
+			}
+		//TimeZone
+		$line++;
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="left"',
+		    'text' => $langs->trans("RealDateTzServer"),
+		    'asis' => 1,
+	 	);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="left"',
+		    'text' => '',
+		    'asis' => 1,
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right"',
+	 	    'text' => '',
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right"',
+		    'text' => dol_print_date(dol_now('gmt',true),'day'),
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right" width="18"',
+		    'text' => '',
+		);
+		//TimeZone Offset
+		$line++;
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="left"',
+		    'text' => $langs->trans("VirtualDateTzOffset"),
+		    'asis' => 1,
+	 	);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="left"',
+		    'text' => 'set experimental DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET',
+		    'asis' => 1,
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right"',
+	 	    'text' => DOLIBARR_VIRTUAL_TIME_ZONE_OFFSET . ' ' . $langs->trans("days"),
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right"',
+		    'text' => dol_print_date(dol_now('gmt',false),'day'),
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right" width="18"',
+		    'text' => '',
+		);
+		//TimeZone Offset
+		$line++;
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="left"',
+		    'text' => $langs->trans("TzOffsetDate"),
+		    'asis' => 1,
+	 	);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="left"',
+		    'text' => '',
+		    'asis' => 1,
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right"',
+	 	    'text' => '',
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right"',
+		    'text' => dol_print_date(dol_now('gmt',true),'day'),
+		);
+		$this->info_box_contents[$line][] = array(
+		    'td' => 'align="right" width="18"',
+		    'text' => '',
+		);
+
 	}
 
 	/**
