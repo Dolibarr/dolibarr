@@ -348,6 +348,7 @@ if ($id)
 		printSubmit($oldmod);
 	}
 	print '</table>';
+	print '</form>';
 }
 
 dol_fiche_end();

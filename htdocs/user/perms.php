@@ -422,6 +422,7 @@ if ($result)
 else dol_print_error($db);
 
 print '</table>';
+print '</form>';
 
 // For multicompany transversal mode
 // TODO Place a hook here

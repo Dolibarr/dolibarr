@@ -236,6 +236,7 @@ if ($result)
 }
 
 print '</table>';
+print '</form>';
 
 dol_fiche_end();
 
