@@ -257,6 +257,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     global $conf,$langs,$db;
     global $bc;
 
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+
     $formother = new FormOther($db);
 
     //$dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
