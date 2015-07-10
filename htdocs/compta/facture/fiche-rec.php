@@ -444,7 +444,8 @@ else
 
 			print "</table>";
 
-			print '</div>';
+			dol_fiche_end();
+//			print '</div>';
 
 			/*
 			 * Lines

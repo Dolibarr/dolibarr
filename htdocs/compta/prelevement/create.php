@@ -140,7 +140,9 @@ print '</tr>';
 //print '</td></tr>';
 
 print '</table>';
-print '</div>';
+
+dol_fiche_end() ;
+//print '</div>';
 
 if ($mesg) print $mesg;
 
