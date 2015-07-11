@@ -40,29 +40,39 @@ $langs->load("main");
 $langs->load("accountancy");
 
 $action = GETPOST('action');
+
+//Select Box
 $codeventil = GETPOST('codeventil', 'array');
 $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
+
+//Search Getpost
 $search_invoice = GETPOST('search_invoice','alpha');
 $search_ref     = GETPOST('search_ref','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
+$search_amount  = GETPOST('search_amount','alpha');
+$search_account = GETPOST('search_account','alpha');
 $search_vat     = GETPOST('search_vat','alpha');
 
+//Getpost Order and column and limit page
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-//Should move to top with all GETPOST
-$page = GETPOST('page');
+$page = GETPOST('page','int');
 if ($page < 0) $page = 0;
 
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) 
+{
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+}
+else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) 
+{
 	$limit = $conf->liste_limit;
-} else {
+}
+else 
+{
 	$limit = $conf->liste_limit;
 }
 $offset = $limit * $page;
-//End Should move to top with all GETPOST
 
 // TODO : remove comment 
 //elarifr we can not use only
@@ -70,11 +80,12 @@ $offset = $limit * $page;
 // f.datef will order like FA08 FA09 FA10 FA05 FA06 FA07 FA04...
 // f.facnumber will not order properly invoice / avoir / accompte you can have All AC then All AV and all FA
 // l.rowid when an invoice is edited rowid are added at end of table & facturedet.rowid are not ordered
-//if (! $sortfield) $sortfield="l.rowid";
 if (! $sortfield) $sortfield="f.datef, f.facnumber, l.rowid";
 //if (! $sortorder) $sortorder="DESC";
-if (! $sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+if (! $sortorder) 
+{
+	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) 
+    {
 		$sortorder = " DESC ";
 	}
 }
@@ -99,8 +110,12 @@ $aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref='';
+    $search_invoice='';
     $search_label='';
     $search_desc='';
+    $search_amount='';
+    $search_account='';
+    $search_vat='';
 }
 /*
  * View
@@ -136,11 +151,13 @@ print  '<script type="text/javascript">
 if ($action == $langs->trans("Ventilate"))
 {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
-	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
+	if (! empty($codeventil) && ! empty($mesCasesCochees)) 
+    {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
-		foreach ( $mesCasesCochees as $maLigneCochee ) {
+		foreach ( $mesCasesCochees as $maLigneCochee ) 
+        {
 			// print '<div><font color="red">id selectionnee : '.$monChoix."</font></div>";
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
@@ -152,7 +169,8 @@ if ($action == $langs->trans("Ventilate"))
 			$sql .= " WHERE rowid = " . $monId;
 
 			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
-			if ($db->query($sql)) {
+			if ($db->query($sql)) 
+            {
 				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
 			} else {
 				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
@@ -172,13 +190,11 @@ if ($action == $langs->trans("Ventilate"))
 
 
 
-$sql = "SELECT f.facnumber, f.rowid as facid, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
+$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod";
 // A REVOIR elarifr si vraiment necessaire de rajouter , p.fk_product_type as type. le type produit / service est de facto defini pour chaque ligne de facturedet.product_type
 // il est donc plus logique de se servir de l.product_type au lieu de p.fk_product_type
 $sql .= " , aa.rowid as aarowid";
-// we need f.datef to reorder lines
-$sql .= " , f.datef";
 // we need to use llx_facturedet l.product_type as used at the time on invoice. if llx_product fk_product_type is changed later it could not change the sell already made !
 $sql .= " , l.product_type as type_l, l.tva_tx as tva_tx_line";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
@@ -206,6 +222,14 @@ if (strlen(trim($search_desc)))
 {
 	$sql .= " AND (l.description like '%" . $search_desc . "%')";
 }
+if (strlen(trim($search_amount))) 
+{
+	$sql .= " AND l.total_ht like '" . $search_amount . "%'";
+}
+if (strlen(trim($search_account))) 
+{
+	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+}
 if (strlen(trim($search_vat))) 
 {
 	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
@@ -227,7 +251,8 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
-if ($result) {
+if ($result) 
+{
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 
@@ -250,8 +275,9 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
 //	do we need to reorder by amount / account.... ????
-	print '<td align="right">' . $langs->trans("Amount") . '</td>';
-	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"],"l.tva_tx","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
+//	print '<td align="right">' . $langs->trans("Amount") . '</td>';
+	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"],"l.tva_tx","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td align="right">' . $langs->trans("AccountAccounting") . '</td>';
 	print '<td align="center">' . $langs->trans("IntoAccount") . '</td>';
 	print_liste_field_titre('');
@@ -261,12 +287,12 @@ if ($result) {
 //	But Hit Enter will validate ventilation....
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_invoice" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre">%<input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre">%<input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount. '"></td>';
+	print '<td class="liste_titre" align="center">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre" align="center">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -280,9 +306,10 @@ if ($result) {
 	$form = new Form($db);
 
 	$var = true;
-	while ( $i < min($num_lines, $limit) ) {
-		$objp = $db->fetch_object($result);
+	while ( $i < min($num_lines, $limit) ) 
+	{
 		$var = ! $var;
+		$objp = $db->fetch_object($result);
 
 
 		// product_type: 0 = service ? 1 = product
@@ -372,9 +399,12 @@ if ($result) {
 		print '</td>';
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
 		//if not same kind of product_type stored in product & facturedt we display both account and let user choose
-		if ($objp->code_sell_l == $objp->code_sell_p) {
+		if ($objp->code_sell_l == $objp->code_sell_p) 
+        {
 			print $objp->code_sell_l;
-		} else {
+		} 
+        else 
+        {
 			print 'lines='.$objp->code_sell_l . '<br />product=' . $objp->code_sell_p;
 		}
 		print '</td>';
