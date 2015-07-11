@@ -45,6 +45,7 @@ $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 $search_ref     = GETPOST('search_ref','alpha');
 $search_label   = GETPOST('search_label','alpha');
 $search_desc    = GETPOST('search_desc','alpha');
+$search_vat    = GETPOST('search_vat','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -170,24 +171,25 @@ if ($action == 'ventil') {
 
 
 $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell";
+$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod";
 // A REVOIR elarifr si vraiment necessaire de rajouter , p.fk_product_type as type. le type produit / service est de facto defini pour chaque ligne de facturedet.product_type
 // il est donc plus logique de se servir de l.product_type au lieu de p.fk_product_type
 $sql .= " , aa.rowid as aarowid";
 // we need f.datef to reorder lines
 $sql .= " , f.datef";
 // we need to use llx_facturedet l.product_type as used at the time on invoice. if llx_product fk_product_type is changed later it could not change the sell already made !
-$sql .= " , l.product_type as type_l";
+$sql .= " , l.product_type as type_l, l.tva_tx as tva_tx_line";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_sell = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
+$sql .= " AND l.product_type IN (0,1)";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 //Add search filter like
 if (strlen(trim($search_ref))) {
-	$sql .= " AND (p.ref like '%" . $search_ref . "%')";
+	$sql .= " AND (p.ref like '" . $search_ref . "%')";
 }
 if (strlen(trim($search_label))) {
 	$sql .= " AND (p.label like '%" . $search_label . "%')";
@@ -195,6 +197,10 @@ if (strlen(trim($search_label))) {
 if (strlen(trim($search_desc))) {
 	$sql .= " AND (l.description like '%" . $search_desc . "%')";
 }
+if (strlen(trim($search_vat))) {
+	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
+}
+
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
@@ -218,7 +224,7 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 
 	print '<td align="left"><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></td>&nbsp;';
-	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"],"f.datef","",$param,'',$sortfield,$sortorder);	
+	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"],"f.datef","",$param,'',$sortfield,$sortorder);
 	print '&nbsp;&nbsp;';
 	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"],"l.rowid","",$param,'',$sortfield,$sortorder);	
 	
@@ -234,6 +240,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
 //	do we need to reorder by amount / account.... ????
 	print '<td align="right">' . $langs->trans("Amount") . '</td>';
+	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"],"l.tva_tx","",$param,'',$sortfield,$sortorder);
 	print '<td align="right">' . $langs->trans("AccountAccounting") . '</td>';
 	print '<td align="center">' . $langs->trans("IntoAccount") . '</td>';
 	print_liste_field_titre('');
@@ -243,11 +250,12 @@ if ($result) {
 /*	But Hit Enter will validate ventilation....
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" >&nbsp;</td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre">%<input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="30" name="search_desc" value="' . $search_desc . '"></td>';
 
-	print '<td class="liste_titre" colspan="3">&nbsp;</td>';
+	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
+	print '<td class="liste_titre">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp;';
@@ -335,6 +343,15 @@ if ($result) {
 		print '<td align="right">';
 		print price($objp->total_ht);
 		print '</td>';
+        //TODO PRINT Alert Message when vat rate is not same as default soc tax rate for this product
+        //Change default account by 
+        //ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRACOM',
+        //ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXTRACOM',
+		//if not same vat rate for product and facturedet
+		if ($objp->vat_tx_l <> $objp->vat_tx_p) $code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		print '<td style="' . $code_vat_differ . '" align="center">';
+		print price($objp->tva_tx_line);
+		print '</td>';
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
 		//if not same kind of product_type stored in product & facturedt we display both account and let user choose
 		if ($objp->code_sell_l == $objp->code_sell_p) {
@@ -354,7 +371,7 @@ if ($result) {
 		print '<td align="center">' . $objp->rowid . '</td>';
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
-		//TODO checked only if account exist in product, if only suggested do not check, user must validate 
+		//TODO checked only if account exist in product, if only suggested do not check, user must validate
 		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid_suggest ? "checked" : "") . '/>';
 		print '</td>';
 //debug
