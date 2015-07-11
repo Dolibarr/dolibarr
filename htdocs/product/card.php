@@ -49,7 +49,8 @@ if (! empty($conf->facture->enabled))  require_once DOL_DOCUMENT_ROOT.'/compta/f
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 //Check if enable accountancy accounting module
-if (! empty($conf->accounting->enabled)) {
+if (! empty($conf->accounting->enabled)) 
+{
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
@@ -174,8 +175,8 @@ if (empty($reshook))
 		}
     }
 
-    if ($action == 'setaccountancy_code_buy') {
-
+    if ($action == 'setaccountancy_code_buy') 
+    {
 	    $result = $object->setAccountancyCode('buy', GETPOST('accountancy_code_buy'));
         if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
         $action="";
@@ -305,9 +306,11 @@ if (empty($reshook))
             {
 				// Category association
 				$categories = GETPOST('categories');
-				if(!empty($categories)) {
+				if(!empty($categories)) 
+                {
 					$cat = new Categorie($db);
-					foreach($categories as $id_category) {
+					foreach($categories as $id_category) 
+                    {
 						$cat->fetch($id_category);
 						$cat->add_type($object, 'product');
 					}
@@ -366,7 +369,8 @@ if (empty($reshook))
 
 	            $units = GETPOST('units', 'int');
 
-	            if ($units > 0) {
+	            if ($units > 0) 
+                {
 		            $object->fk_unit = $units;
 	            } else {
 		            $object->fk_unit = null;
@@ -407,10 +411,12 @@ if (empty($reshook))
 
 						// Then we add the associated categories
 						$categories = GETPOST('categories');
-						if(!empty($categories)) {
+						if(!empty($categories)) 
+                        {
 							$cat = new Categorie($db);
 
-							foreach($categories as $id_category) {
+							foreach($categories as $id_category) 
+                            {
 								$cat->fetch($id_category);
 								$cat->add_type($object, 'product');
 							}
@@ -618,8 +624,10 @@ if (empty($reshook))
 			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
 
 			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-			if ($result) {
-				if (count($prodcustprice->lines) > 0) {
+			if ($result) 
+            {
+				if (count($prodcustprice->lines) > 0) 
+                {
 					$pu_ht = price($prodcustprice->lines [0]->price);
 					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 					$price_base_type = $prodcustprice->lines [0]->price_base_type;
@@ -1001,7 +1009,8 @@ else
 
         print "</td></tr>";
 
-		if($conf->categorie->enabled) {
+		if($conf->categorie->enabled) 
+        {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
@@ -1054,7 +1063,8 @@ else
 
           /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled)) { */
             print '<table class="border" width="100%">';
-            if ( empty($conf->accounting->enabled)) {
+            if ( empty($conf->accounting->enabled)) 
+            {
             // Don't show accounting field when accounting id disabled.
             // Accountancy_code_sell
             print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -1162,7 +1172,8 @@ else
             print '</td></tr>';
 
 			// Batch number managment
-			if ($conf->productbatch->enabled) {
+			if ($conf->productbatch->enabled) 
+            {
 				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
@@ -1305,13 +1316,15 @@ else
 
             print "</td></tr>";
 
-			if($conf->categorie->enabled) {
+			if($conf->categorie->enabled) 
+            {
 				// Categories
 				print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
-				foreach($cats as $cat) {
+				foreach($cats as $cat) 
+                {
 					$arrayselected[] = $cat->id;
 				}
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
@@ -1334,7 +1347,8 @@ else
             /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled)) { */
             //elarifr 3.8.0
             print '<table class="border" width="100%">';
-            if ( empty($conf->accounting->enabled)) {
+            if ( empty($conf->accounting->enabled)) 
+            {
             // Don't show accounting field when accounting id disabled.
                 // Accountancy_code_sell
                 print '<tr><td width="20%">'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -1505,7 +1519,8 @@ else
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
-            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+            {
                 print ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
             } else {
                 print $object->getLibStatut(2,0);
@@ -1514,7 +1529,8 @@ else
 
             // Status (to buy)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+            {
                 print ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
             } else {
                 print $object->getLibStatut(2,1);
@@ -1522,9 +1538,11 @@ else
             print '</td></tr>';
 
             // Batch number management (to batch)
-            if (! empty($conf->productbatch->enabled)) {
+            if (! empty($conf->productbatch->enabled)) 
+            {
                 print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) 
+                {
                     print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
                 } else {
                     print $object->getLibStatut(0,2);
@@ -1618,7 +1636,8 @@ else
 				$unit = $object->getLabelOfUnit();
 
 				print '<tr><td>'.$langs->trans('Unit').'</td><td>';
-				if ($unit !== '') {
+				if ($unit !== '') 
+                {
 					print $langs->trans($unit);
 				}
 				print '</td></tr>';
@@ -1647,7 +1666,8 @@ else
             print '<!-- End show Note --> '."\n";
 
 			// Categories
-			if($conf->categorie->enabled) {
+			if($conf->categorie->enabled) 
+            {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id,'product',1);
 				print "</td></tr>";
