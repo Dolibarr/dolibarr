@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - orders
-StatusOrderOnProcessShort=Ordered
-StatusOrderOnProcess=Ordered - Standby reception
-ApproveOrder=Approve order
-LastOrders=Last %s customer orders

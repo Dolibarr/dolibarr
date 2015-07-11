@@ -907,7 +907,7 @@ else
         }
 
         // Description (used in invoice, propal...)
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
         $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
         $doleditor->Create();
@@ -915,7 +915,7 @@ else
         print "</td></tr>";
 
         // Public URL
-        print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
 		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
         print '</td></tr>';
 
@@ -1001,7 +1001,7 @@ else
         }
 
         // Note (private, no output on invoices, propales...)
-        print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
         // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
         $doleditor = new DolEditor('note', GETPOST('note'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
@@ -1207,7 +1207,7 @@ else
 	        }
 
             // Description (used in invoice, propal...)
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
+            print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 
             // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
             $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
@@ -1217,7 +1217,7 @@ else
             print "\n";
 
             // Public Url
-            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
 			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
             print '</td></tr>';
 
@@ -1309,7 +1309,7 @@ else
             }
 
             // Note
-            print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
+            print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
 
             $doleditor = new DolEditor('note', $object->note, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
             $doleditor->Create();
@@ -1319,7 +1319,7 @@ else
 			if($conf->categorie->enabled) 
             {
 				// Categories
-				print '<tr><td valign="top">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
@@ -1551,10 +1551,10 @@ else
             }
 
             // Description
-            print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
+            print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
 
             // Public URL
-            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="2">';
 			print dol_print_url($object->url);
             print '</td></tr>';
 
@@ -1662,7 +1662,7 @@ else
 
             // Note
             print '<!-- show Note --> '."\n";
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
+            print '<tr><td class="tdtop">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
             print '<!-- End show Note --> '."\n";
 
 			// Categories

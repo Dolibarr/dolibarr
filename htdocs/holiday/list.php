@@ -276,7 +276,7 @@ print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','',
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre('');
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 // FILTRES
@@ -395,7 +395,8 @@ if (! empty($holiday->holiday))
 		print '</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
-		print '<td align="right" colspan="2">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
+		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
+		print '<td></td>';
 		print '</tr>'."\n";
 
 	}
