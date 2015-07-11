@@ -546,7 +546,7 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->fk_unit
 					);
 
-					if ( $result_insert < 0)
+					if ($result_insert < 0)
 					{
 						$error++;
 						$this->error=$this->db->error();
@@ -3186,7 +3186,7 @@ class Facture extends CommonInvoice
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 		$sql .= ' WHERE rowid = '.$did;
 		$sql .= ' AND traite = 0';
-		if ( $this->db->query($sql) )
+		if ($this->db->query($sql) )
 		{
 			return 0;
 		}
