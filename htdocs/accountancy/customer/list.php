@@ -170,7 +170,7 @@ if ($action == 'ventil') {
 
 
 
-$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
+$sql = "SELECT f.facnumber, f.rowid as facid, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod";
 // A REVOIR elarifr si vraiment necessaire de rajouter , p.fk_product_type as type. le type produit / service est de facto defini pour chaque ligne de facturedet.product_type
 // il est donc plus logique de se servir de l.product_type au lieu de p.fk_product_type
