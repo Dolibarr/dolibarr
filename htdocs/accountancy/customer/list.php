@@ -228,7 +228,7 @@ if ($result) {
 	print '&nbsp;&nbsp;';
 	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"],"l.rowid","",$param,'',$sortfield,$sortorder);	
 	
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post"><br />';
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 	
 	print '<table class="noborder" width="100%">';
@@ -290,14 +290,19 @@ if ($result) {
 		//and we set suggested accounting account rowid as $objp->aarowid_s
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
-		if ( ! empty($objp->code_sell)) {
+		if ( ! empty($objp->code_sell)) 
+		{
 			$objp->code_sell_p = $objp->code_sell;
-		} else {
+		}
+		else
+		{
 			$code_sell_p_notset = 'color:red';
-			if ($objp->type == 1) {
+			if ($objp->type == 1) 
+			{
 				$objp->code_sell_p = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
-			elseif ($objp->type == 0) {
+			elseif ($objp->type == 0) 
+			{
 				$objp->code_sell_p = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
 		}
@@ -305,18 +310,20 @@ if ($result) {
 //		if ( ! empty($objp->type_l)) {
 //			$objp->code_sell_l = $objp->type_l;
 //		} else {
-			if ($objp->type_l == 1) {
+			if ($objp->type_l == 1) 
+			{
 				$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 				if ($objp->aarowid == '') $objp->aarowid_suggest = $aarowid_s;
 			}
-			elseif ($objp->type_l == 0) {
+			elseif ($objp->type_l == 0) 
+			{
 				$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 				if ($objp->aarowid == '') $objp->aarowid_suggest = $aarowid_p;
 			}
 //		}
 
 
-		//if not same code for product fk_prouct_type and facturedet.product_type, product has been change after sale and must report
+		//if not same code for product fk_product_type and facturedet.product_type, product has been change after sale and must report
 		if ($objp->code_sell_l <> $objp->code_sell_p) $code_sell_p_l_differ = 'color:red';
 
 		print "<tr $bc[$var]>";
@@ -325,7 +332,6 @@ if ($result) {
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->facid;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
-//		print '<td> </td>';
 		// Ref produit
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -363,8 +369,6 @@ if ($result) {
 
 		// Colonne choix du compte
 		print '<td align="center">';
-		//TODO: we shoul set a user defined value to adjust user square / wide screen size
-		//$trunclenghform = defined('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT') ? ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT : 50;
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil[]', 1);
 		print '</td>';
 		//elarifr display rowid as in customer/lines.php
