@@ -20,6 +20,7 @@ FIX: #2957 : missing $langs object for trigger
 FIX: #2983 Load gravatar avatar images securely over HTTPS
 FIX: #2987: removed dead function moneyMeter()
 FIX: #3009: Better filtering to prevent SQL injection
+FIX: #3009: Better filtering to prevent SQL injection
 FIX: #3091 TotalHT amount in supplier order is bold unlike the rest of Dolibarr
 FIX: #3138 - Too much visible thing when access is denied on public pages
 FIX: #3173 Overlapping of shipment ref
@@ -30,6 +31,7 @@ FIX: Bad logo for status "Do not contact" of thirdparty.
 FIX: Bad variable usage
 FIX: Better management error into the color conversion functions
 FIX: [bug #1883] missing field in SQL installation
+FIX: Bug on order and supplier invoice numeration mask when use supplier code
 FIX: Bug on order and supplier invoice numeration mask when use supplier code
 FIX: button create payment hide if tax amount is less than 1
 FIX: can receive new batch product on supplier order
@@ -54,6 +56,7 @@ FIX: event for restricted user was restricted if company null
 FIX: event not linked to contact on creation
 FIX: Export of tags for contact and member
 FIX: extrafields required on thirdparty
+FIX: Force ref
 FIX: Function expects an int, not a boolean
 FIX: Function was expecting a boolean not a string
 FIX: hide category if it's not enable
@@ -68,13 +71,22 @@ FIX: Payed invoices are showed as canceled FIX: Bad date filter on customer orde
 FIX: Ref/label of product on contract line was not visible, nor into page, nor into PDF.
 FIX: Removed concatenation on undeclared variable
 FIX: remove deprecated property 'libelle' on product object
+FIX: Removed HTML file preventing PHP service
+FIX: Removed undeclared variable
+FIX: Removed undeclared variables
+FIX: Removed unused variable
+FIX: Replaced deprecated call
+FIX: Replaced deprecated property
 FIX: Save of filters into export profiles failed.
 FIX: "script" balise with wrong syntax
 FIX: send mail, copy sendto don't read the list of contact
 FIX: top links menu have target attribute with wrong value
 FIX: total amount in tpl linked object are not reset
+FIX: Typo
 FIX; Unknown field 'sc.fk_soc' in field list
 FIX: update usergroup name
+FIX: Variable declared boolean
+FIX: Variable might not be traversable
 FIX: We did a test on a permission to export contract when permission did not exists.
 FIX: when mailing is deleted, the targets list was kept in database
 FIX: when multicompany was enabled, this function didn't check just on the good entity (problem when both company use same mask)
