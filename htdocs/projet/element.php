@@ -320,10 +320,10 @@ if (! $showdatefilter)
 	print '<input type="hidden" name="action" value="view">';
 	print '<table><tr>';
 	print '<td>'.$langs->trans("From").' ';
-	print $form->select_date($dates,'dates',0,0,1);
+	print $form->select_date($dates,'dates',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td>'.$langs->trans("to").' ';
-	print $form->select_date($datee,'datee',0,0,1);
+	print $form->select_date($datee,'datee',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td>';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
