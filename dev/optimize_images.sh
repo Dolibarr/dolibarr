@@ -6,7 +6,7 @@ PROGNAME=${0##*/}
 INPUT=''
 QUIET='0'
 NOSTATS='0'
-INPLACE='0'
+INPLACE='0'				 # (1=Images are replaced, 0=New images are stored into $OUTPUT)
 max_input_size=0
 max_output_size=0
 
