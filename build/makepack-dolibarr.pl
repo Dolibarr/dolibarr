@@ -715,7 +715,7 @@ if ($nboftargetok) {
 			$ret=`$cmd`;
 			print "Move $RPMDIR/SOURCES/".$FILENAMETGZ2.".tgz into $NEWDESTI/".$FILENAMETGZ2.".tgz\n";
 			$cmd="mv \"$RPMDIR/SOURCES/".$FILENAMETGZ2.".tgz\" \"$NEWDESTI/".$FILENAMETGZ2.".tgz\"";
-			$ret=`$cmd`;
+			#$ret=`$cmd`;
 			next;
 		}
 
