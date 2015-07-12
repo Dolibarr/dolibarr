@@ -837,13 +837,13 @@ function unActivateModule($value, $requiredby=1)
     }
     else
     {
-        // TODO Cannot instantiate abstract class
-    	//$genericMod = new DolibarrModul($db);
-        //$genericMod->name=preg_replace('/^mod/i','',$modName);
-        //$genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
-        //$genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
+        // TODO Replace this afte DolibarrModules is moved as abstract class with a try catch to show module is bugged
+        $genericMod = new DolibarrModules($db);
+        $genericMod->name=preg_replace('/^mod/i','',$modName);
+        $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
+        $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);
-        //$genericMod->_remove();
+        $genericMod->_remove();
     }
 
     // Desactivation des modules qui dependent de lui

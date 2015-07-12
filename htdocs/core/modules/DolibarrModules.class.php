@@ -199,8 +199,11 @@ abstract class DolibarrModules
 	 *
 	 * @param DoliDB		$db      Database handler
 	 */
-	abstract public function __construct($db);
-
+	//public function __construct($db);
+	// We should but can't set this as abstract because this will make dolibarr hang
+	// after migration due to old module not implementing. We must wait PHP is able to make
+	// a try catch on Fatal error to manage this correctly.
+	
     /**
      * Enables a module.
      * Inserts all informations into database
