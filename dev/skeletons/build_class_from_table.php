@@ -340,7 +340,7 @@ foreach($property as $key => $prop)
 	{
 		$i++;
 		
-		$varprop.="\t\t\$sql. = ' ";
+		$varprop.="\t\t\$sql .= ' ";
 		$varprop.=$prop['field'].' = ';
 		if ($prop['field']=='tms') {
 			$varprop.='\'.(dol_strlen($this->'.$prop['field'].') != 0 ? "\'".$this->db->idate(';
