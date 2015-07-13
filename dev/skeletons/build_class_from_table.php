@@ -273,7 +273,7 @@ foreach($property as $key => $prop)
 	{
 		$i++;
 		
-		$varprop.="\t\t\$sql. = ' ";
+		$varprop.="\t\t\$sql .= ' ";
 		if ($prop['field']=='datec')
 		{
 			$varprop.='\'."\'".$this->db->idate(dol_now())."\'"';
