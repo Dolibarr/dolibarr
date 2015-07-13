@@ -180,21 +180,18 @@ if ($resql)
 		$entity=$obj->entity;
 		$entitystring='';
         // TODO Set of entitystring should be done with a hook
-        if (is_object($mc))
-        {
-			if (! empty($conf->multicompany->enabled))
-	        {
-	        	if (empty($entity))
-	        	{
-	        		$entitystring=$langs->trans("AllEntities");
-	        	}
-	        	else
-	        	{
-	        		$mc->getInfo($entity);
-	        		$entitystring=$mc->label;
-	        	}
-	        }
-        }
+		if (! empty($conf->multicompany->enabled) && is_object($mc))
+		{
+			if (empty($entity))
+			{
+				$entitystring=$langs->trans("AllEntities");
+			}
+			else
+			{
+				$mc->getInfo($entity);
+				$entitystring=$mc->label;
+			}
+		}
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
@@ -259,7 +256,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			if (! empty($conf->multicompany->enabled))
+			if (! empty($conf->multicompany->enabled) && is_object($mc))
 			{
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';
