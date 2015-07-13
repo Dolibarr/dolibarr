@@ -68,6 +68,7 @@ Country=Country
 CountryCode=Country code
 CountryId=Country id
 Phone=Phone
+PhoneShort=Phone
 Skype=Skype
 Call=Call
 Chat=Chat

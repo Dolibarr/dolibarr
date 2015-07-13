@@ -238,7 +238,6 @@ if ($id > 0 || ! empty($ref))
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
-		print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource().'</td>';
 		print '</tr>';
 
 		// Delivery date planned
@@ -265,9 +264,9 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td>';
 		// Note on several rows
-		print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-		print nl2br($commande->note_public);
-		print '</td>';
+		//print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
+		//print nl2br($commande->note_public);
+		//print '</td>';
 		print '</tr>';
 
         // Shipping Method
@@ -307,7 +306,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Mode of payment
-		print '<tr><td height="10">';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
@@ -324,11 +323,42 @@ if ($id > 0 || ! empty($ref))
 		}
 		print '</td></tr>';
 
+		// Availability
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('AvailabilityPeriod');
+		print '</td>';
+		if ($action != 'editavailability')
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetAvailability'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editavailability') {
+			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $commande->id, $commande->availability_id, 'availability_id', 1);
+		} else {
+			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $commande->id, $commande->availability_id, 'none', 1);
+		}
+		print '</td></tr>';
+
+		// Source
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Source');
+		print '</td>';
+		if ($action != 'editdemandreason')
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editdemandreason') {
+			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $commande->id, $commande->demand_reason_id, 'demand_reason_id', 1);
+		} else {
+			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $commande->id, $commande->demand_reason_id, 'none');
+		}
+
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
 			$langs->load('projects');
-			print '<tr><td height="10">';
+			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
@@ -373,15 +403,14 @@ if ($id > 0 || ! empty($ref))
 		 *  Lignes de commandes avec quantite livrees et reste a livrer
 		 *  Les quantites livrees sont stockees dans $commande->expeditions[fk_product]
 		 */
-		print '<table class="liste" width="100%">';
+		print '<table class="noborder noshadow" width="100%">';
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type, cd.label, cd.description,";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql.= " cd.price, cd.tva_tx, cd.subprice,";
 		$sql.= " cd.qty,";
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
-		$sql.= ' p.label as product_label, p.entity, p.ref, p.fk_product_type, p.rowid as prodid,';
-		$sql.= ' p.description as product_desc, p.fk_product_type as product_type';
+		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
@@ -419,7 +448,8 @@ if ($id > 0 || ! empty($ref))
 				$var=!$var;
 
 				// Show product and description
-				$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+				$type=isset($objp->type)?$objp->type:$objp->product_type;
+
 				// Try to enhance type detection using date_start and date_end for free lines where type
 				// was not saved.
 				if (! empty($objp->date_start)) $type=1;
@@ -459,7 +489,7 @@ if ($id > 0 || ! empty($ref))
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
 					// Show product and description
-					$product_static->type=$objp->fk_product_type;
+					$product_static->type=$type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
                     $product_static->entity = $objp->entity;

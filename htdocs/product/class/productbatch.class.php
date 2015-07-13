@@ -462,16 +462,17 @@ class Productbatch extends CommonObject
     /**
      * Return all batch detail records for given product and warehouse
      *
-     *  @param	DoliDB			$db    database object
-     *  @param	int			$fk_product_stock    id product_stock for objet
-     *  @param	int			$with_qty    doesn't return line with 0 quantity
-	 *  @return int          	<0 if KO, >0 if OK
+     *  @param	DoliDB		$db    				database object
+     *  @param	int			$fk_product_stock	id product_stock for objet
+     *  @param	int			$with_qty    		doesn't return line with 0 quantity
+	 *  @return int         					<0 if KO, >0 if OK
      */
     public static function findAll($db,$fk_product_stock,$with_qty=0)
     {
     	global $langs;
 		$ret = array();
-        $sql = "SELECT";
+
+		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.tms,";
 		$sql.= " t.fk_product_stock,";
@@ -480,12 +481,10 @@ class Productbatch extends CommonObject
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
 		$sql.= " t.import_key";
-
-
-        $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t";
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
-
 		if ($with_qty) $sql.= " AND qty<>0";
+
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)

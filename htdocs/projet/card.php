@@ -411,7 +411,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-    print dol_fiche_head();
+    dol_fiche_head();
 
     print '<table class="border" width="100%">';
 
