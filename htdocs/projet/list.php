@@ -274,13 +274,17 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SalesRepresentative"),$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
-	if (! empty($conf->global->PROJECT_LIST_SHOW_STARTDATE)) print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
+	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) 
+    {
+    	print_liste_field_titre($langs->trans("OpportunityAmountShort"),$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("OpportunityStatusShort"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'',$sortfield,$sortorder);
+    }
 	$parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) print_liste_field_titre($langs->trans("OpportunityStatus"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
@@ -298,7 +302,7 @@ if ($resql)
 	// Sale representative
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Start date
-	if (! empty($conf->global->PROJECT_LIST_SHOW_STARTDATE))
+	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE))
 	{
 		print '<td class="liste_titre center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="sday" value="'.$sday.'">';
@@ -325,6 +329,8 @@ if ($resql)
     if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
 		print '<td class="liste_titre nowrap">';
+	    print '</td>';
+    	print '<td class="liste_titre nowrap">';
 		print $formproject->selectOpportunityStatus('search_opp_status',$search_opp_status,1,1);
 	    print '</td>';
     }
@@ -417,10 +423,13 @@ if ($resql)
     		print '</td>';
 
     		// Date start
-    		print '<td class="center">';
-    		print dol_print_date($db->jdate($objp->date_start),'day');
-    		print '</td>';
-
+			if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) 
+			{
+				print '<td class="center">';
+	    		print dol_print_date($db->jdate($objp->date_start),'day');
+	    		print '</td>';
+			}
+			
     		// Date end
     		print '<td class="center">';
     		print dol_print_date($db->jdate($objp->date_end),'day');
@@ -438,6 +447,10 @@ if ($resql)
 
 		    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     		{
+    			print '<td>';
+    			if ($objp->opp_status_code) print $langs->trans("OppAmount".$objp->opp_amount);
+    			print '</td>';
+    			
     			print '<td>';
     			if ($objp->opp_status_code) print $langs->trans("OppStatusShort".$objp->opp_status_code);
     			print '</td>';
