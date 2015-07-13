@@ -385,7 +385,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td class="nowrap">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print $form->select_date($newdate,'time',1,1,2,"timespent_date");
+			print $form->select_date($newdate,'time',1,1,2,"timespent_date",1,0,1);
 			print '</td>';
 
 			// Contributor
@@ -486,7 +486,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td class="nowrap">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_date($db->jdate($date2?$date2:$date1),'timeline',1,1,2,"timespent_date");
+				print $form->select_date($db->jdate($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
 			}
 			else
 			{

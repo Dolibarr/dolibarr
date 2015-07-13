@@ -386,7 +386,7 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
-	print $form->select_date($filterdate,'fd',0,0,1,'',1,1);
+	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);

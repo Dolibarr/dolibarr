@@ -952,6 +952,15 @@ else
             print '</td></tr>';
         }
 
+        // Units
+	    if($conf->global->PRODUCT_USE_UNITS)
+	    {
+		    print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
+		    print '<td colspan="3">';
+		    print $form->selectUnits('','units');
+		    print '</td></tr>';
+	    }
+
         // Custom code
         if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         {
@@ -987,15 +996,6 @@ else
 			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
-
-	    // Units
-	    if($conf->global->PRODUCT_USE_UNITS)
-	    {
-		    print '<tr><td>'.$langs->trans('Unit').'</td>';
-		    print '<td colspan="3">';
-		    print $form->selectUnits("units");
-		    print '</td></tr>';
-	    }
 
         print '</table>';
 
@@ -1223,7 +1223,7 @@ else
                 print '</td></tr>';
             }
             else
-            {
+			{
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
@@ -1245,6 +1245,14 @@ else
                 print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
                 print '</td></tr>';
             }
+        	// Units
+	        if($conf->global->PRODUCT_USE_UNITS)
+	        {
+		        print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
+		        print '<td colspan="3">';
+		        print $form->selectUnits($object->fk_unit, 'units');
+		        print '</td></tr>';
+	        }
 
 	        // Custom code
     	    if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
@@ -1285,15 +1293,6 @@ else
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
-
-	        // Units
-	        if($conf->global->PRODUCT_USE_UNITS)
-	        {
-		        print '<tr><td>'.$langs->trans('Unit').'</td>';
-		        print '<td colspan="3">';
-		        print $form->selectUnits($object->fk_unit);
-		        print '</td></tr>';
-	        }
 
             print '</table>';
 
@@ -1567,7 +1566,7 @@ else
 			{
 				$unit = $object->getLabelOfUnit();
 
-				print '<tr><td>'.$langs->trans('Unit').'</td><td>';
+				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
 				if ($unit !== '') {
 					print $langs->trans($unit);
 				}

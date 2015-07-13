@@ -1380,6 +1380,7 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
+	// Line of interventions
  	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
  	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
@@ -1556,9 +1557,9 @@ else if ($id > 0 || ! empty($ref))
 				print '<td colspan="4">&nbsp;</td>';
 				print "</tr>\n";
 
-				$var=false;
+				$var=true;
 
-				print '<tr '.$bc[$var].">\n";
+				print '<tr '.$bcnd[$var].">\n";
 				print '<td>';
 				// editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

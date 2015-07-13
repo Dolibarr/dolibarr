@@ -635,11 +635,11 @@ else
             $form=new Form($db);
             if ($object->birthday)
             {
-                print $form->select_date($object->birthday,'birthday',0,0,0,"perso");
+                print $form->select_date($object->birthday,'birthday',0,0,0,"perso", 1, 0, 1);
             }
             else
             {
-                print $form->select_date('','birthday',0,0,1,"perso");
+                print $form->select_date('','birthday',0,0,1,"perso", 1, 0, 1);
             }
             print '</td>';
 
@@ -1156,7 +1156,7 @@ else
 		print $langs->trans("VCard");
 		print '</a>';
         print '</td></tr>';
-        
+
         print "</table>";
 
         print dol_fiche_end();

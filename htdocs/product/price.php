@@ -829,7 +829,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 	}
 }
 
-// Liste des evolutions du prix
+// List of price changes (ordered by descending date)
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.recuperableonly,";
 $sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
 $sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
@@ -1156,7 +1156,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	}
 	elseif ($action == 'showlog_customer_price')
 	{
-
 		$filter = array('t.fk_product' => $object->id,'t.fk_soc' => GETPOST('socid', 'int'));
 
 		// Count total nb of records
@@ -1199,6 +1198,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 			foreach ($prodcustprice->lines as $line)
 			{
+				$var = ! $var;
 				print "<tr ".$bc[$var].">";
 				// Date
 				$staticsoc = new Societe($db);
@@ -1237,7 +1237,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Count total nb of records
 		$nbtotalofrecords = 0;
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetch_all($sortfield, $sortorder, 0, 0, $filter);
 		}
 
 		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
