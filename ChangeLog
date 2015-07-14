@@ -199,28 +199,28 @@ For translators:
 NEW: Update language files.
 NEW: When a translation is not available we always jump to en_US and only en_US.
 NEW: All language tranlsations (except source en_US) is now managed on https://www.transifex.com/projects/p/dolibarr/.
-FIX: Typo errors in translation
+FIX: Typo errors in translation.
 
 For developers:
 NEW: Function yn can show a visual checkbox.
 NEW: Introduced select2 jquery plugin.
-NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook
-NEW: possibility to defined a tab for all entities in module descriptor
-NEW: add restler framework First step to build REST API into Dolibarr
-NEW: add an explorer for REST API consultation & documentation
-NEW: script to build API class from existing class
+NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook.
+NEW: possibility to defined a tab for all entities in module descriptor.
+NEW: add restler framework First step to build REST API into Dolibarr.
+NEW: add an explorer for REST API consultation & documentation.
+NEW: script to build API class from existing class.
 NEW: Add function dolCopyDir to copy directory with recursive content.
-NEW: Introduce function dolGetFirstLineOfText
+NEW: Introduce function dolGetFirstLineOfText.
 
-WARNING: Following changes may create regression for some external modules, but was necessary to make
+WARNING: Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
-- Removed hoo supplierorderdao into supplier order creation. This is a business event, so we must use the 
+- Removed hook supplierorderdao into supplier order creation. This is a business event, so we must use the 
   trigger ORDER_SUPPLIER_CREATE instead.
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
-- All fields "fk_societe" were renamed into "fk_soc".
+- All fields "fk_societe" and "fk_soc" are now named "fk_soc" (same name for all fields).
 - Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType.
-- The trigger USER_LOGIN* are deprecated. They are still working but you should prefer use the 
+- The triggers USER_LOGIN* are deprecated. They are still working but you should prefer use the 
   hook afterLogin or afterLoginFailed instead.
 
 
