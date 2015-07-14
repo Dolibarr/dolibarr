@@ -116,7 +116,7 @@ else
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Action'),"","","","",'width="60" align="center"',"","");
-	print '</tr>';
+	print "</tr>\n";
 
 	foreach ($object->lines as $resource)
 	{

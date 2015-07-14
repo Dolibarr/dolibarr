@@ -199,8 +199,9 @@ Entreprises=Selskaper
 DOLIBARRFOUNDATION_PAYMENT_FORM=For å gjøre abonnementet innbetaling med en bankoverføring, se side <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Å betale med et kredittkort eller Paypal, klikk på knappen nederst på denne siden. <br>
 ByProperties=Av egenskaper
 MembersStatisticsByProperties=Medlemsstatistikk av egenskaper
-MembersByNature=Medlemmer av natur
+MembersByNature=Dette skjermbildet viser statistikk over medlemmer etter type.
+MembersByRegion=Dette skjermbildet viser statistikk over medlemmer etter region.
 VATToUseForSubscriptions=Mva-sats som skal brukes for abonnementer
 NoVatOnSubscription=Ingen TVA for abonnementer
 MEMBER_PAYONLINE_SENDEMAIL=Send e-post når Dolibarr mottar en bekreftelse på en validert betaling for abonnement
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkt brukt for abonnementslinje i faktura: %s
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Vare brukt for abonnementslinje i faktura: %s

@@ -227,3 +227,6 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
 
 
+delete from llx_menu where menu_handler = 'smartphone';
+
+

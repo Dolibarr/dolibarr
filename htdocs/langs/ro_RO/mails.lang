@@ -77,7 +77,7 @@ CheckRead=Confirmarea de primire
 YourMailUnsubcribeOK=Emailul  <b>%s</b>  este dezabonat din mailing list
 MailtoEMail=Hyper link către email
 ActivateCheckRead=Permite utiliyarea linkului  "Dezabonare"
-ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare"
+ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail trimis la %s destinatari.
 XTargetsAdded=<b>%s</b> destinatari adăugaţi în lista target
 EachInvoiceWillBeAttachedToEmail=Un document folosind modelul implicit al documentului va fi creat și atașat la fiecare e-mail.
@@ -128,6 +128,7 @@ TagCheckMail=Urmăreşte deschiderea emailului
 TagUnsubscribe=Link Dezabonare
 TagSignature=Semnătura utilizator expeditor
 TagMailtoEmail=Recipient EMail
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Anunturi
 NoNotificationsWillBeSent=Nu notificări prin email sunt planificate pentru acest eveniment şi a companiei

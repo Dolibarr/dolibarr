@@ -86,10 +86,9 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-	public function __construct( DoliDB $db )
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
 		return 1;
 	}
 
@@ -101,18 +100,18 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @return int <0 if KO, Id of created object if OK
 	 */
-	public function create( User $user, $notrigger = false )
+	public function create(User $user, $notrigger = false)
 	{
-		dol_syslog( __METHOD__, LOG_DEBUG );
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-		if (isset( $this->prop1 )) {
-			$this->prop1 = trim( $this->prop1 );
+		if (isset($this->prop1)) {
+			$this->prop1 = trim($this->prop1);
 		}
-		if (isset( $this->prop2 )) {
-			$this->prop2 = trim( $this->prop2 );
+		if (isset($this->prop2)) {
+			$this->prop2 = trim($this->prop2);
 		}
 		//...
 
@@ -132,15 +131,15 @@ class Skeleton_Class extends CommonObject
 
 		$this->db->begin();
 
-		$resql = $this->db->query( $sql );
+		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog( __METHOD__ . ' ' . join( ',', $this->errors ), LOG_ERR );
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id( MAIN_DB_PREFIX . $this->table_element );
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -173,9 +172,9 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch( $id, $ref = null )
+	public function fetch($id, $ref = null)
 	{
-		dol_syslog( __METHOD__, LOG_DEBUG );
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
@@ -189,18 +188,18 @@ class Skeleton_Class extends CommonObject
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
 
-		$resql = $this->db->query( $sql );
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$numrows = $this->db->num_rows( $resql );
+			$numrows = $this->db->num_rows($resql);
 			if ($numrows) {
-				$obj = $this->db->fetch_object( $resql );
+				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
 				$this->prop1 = $obj->field1;
 				$this->prop2 = $obj->field2;
 				//...
 			}
-			$this->db->free( $resql );
+			$this->db->free($resql);
 
 			if ($numrows) {
 				return 1;
@@ -209,7 +208,7 @@ class Skeleton_Class extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog( __METHOD__ . ' ' . join( ',', $this->errors ), LOG_ERR );
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -226,9 +225,9 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll( $sortorder, $sortfield, $limit, $offset, array $filter = array() )
+	public function fetchAll($sortorder, $sortfield, $limit, $offset, array $filter = array())
 	{
-		dol_syslog( __METHOD__, LOG_DEBUG );
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
@@ -239,23 +238,23 @@ class Skeleton_Class extends CommonObject
 
 		// Manage filter
 		$sqlwhere = array();
-		if (count( $filter ) > 0) {
+		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = ' AND ' . $key . ' LIKE \'%' . $this->db->escape( $value ) . '%\'';
+				$sqlwhere [] = ' AND ' . $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 			}
 		}
-		if (count( $sqlwhere ) > 0) {
-			$sql .= ' WHERE ' . implode( ' AND ', $sqlwhere );
+		if (count($sqlwhere) > 0) {
+			$sql .= ' WHERE ' . implode(' AND ', $sqlwhere);
 		}
-		$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder . ' ' . $this->db->plimit( $limit + 1, $offset );
+		$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder . ' ' . $this->db->plimit($limit + 1, $offset);
 
 		$this->lines = array();
 
-		$resql = $this->db->query( $sql );
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $this->db->num_rows( $resql );
+			$num = $this->db->num_rows($resql);
 
-			while ($obj = $this->db->fetch_object( $resql )) {
+			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new Skeleton_ClassLine();
 
 				$line->id = $obj->rowid;
@@ -265,12 +264,12 @@ class Skeleton_Class extends CommonObject
 				$this->lines[] = $line;
 				//...
 			}
-			$this->db->free( $resql );
+			$this->db->free($resql);
 
 			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog( __METHOD__ . ' ' . join( ',', $this->errors ), LOG_ERR );
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -284,18 +283,18 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function update( User $user, $notrigger = false )
+	public function update(User $user, $notrigger = false)
 	{
 		$error = 0;
 
-		dol_syslog( __METHOD__, LOG_DEBUG );
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		if (isset( $this->prop1 )) {
-			$this->prop1 = trim( $this->prop1 );
+		if (isset($this->prop1)) {
+			$this->prop1 = trim($this->prop1);
 		}
-		if (isset( $this->prop2 )) {
-			$this->prop2 = trim( $this->prop2 );
+		if (isset($this->prop2)) {
+			$this->prop2 = trim($this->prop2);
 		}
 		//...
 
@@ -304,13 +303,13 @@ class Skeleton_Class extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		if (isset( $this->field1 )) {
-			$sql .= ' field1=\'' . $this->db->escape( $this->field1 ) . '\',';
+		if (isset($this->field1)) {
+			$sql .= ' field1=\'' . $this->db->escape($this->field1) . '\',';
 		} else {
 			$sql .= ' field1=null' . ',';
 		}
-		if (isset( $this->field2 )) {
-			$sql .= ' field2=\'' . $this->db->escape( $this->field2 ) . '\'';
+		if (isset($this->field2)) {
+			$sql .= ' field2=\'' . $this->db->escape($this->field2) . '\'';
 		} else {
 			$sql .= ' field2=null';
 		}
@@ -319,11 +318,11 @@ class Skeleton_Class extends CommonObject
 
 		$this->db->begin();
 
-		$resql = $this->db->query( $sql );
+		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog( __METHOD__ . ' ' . join( ',', $this->errors ), LOG_ERR );
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && !$notrigger) {
@@ -356,9 +355,9 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function delete( User $user, $notrigger = false )
+	public function delete(User $user, $notrigger = false)
 	{
-		dol_syslog( __METHOD__, LOG_DEBUG );
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
@@ -380,11 +379,11 @@ class Skeleton_Class extends CommonObject
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE rowid=' . $this->id;
 
-			$resql = $this->db->query( $sql );
+			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog( __METHOD__ . ' ' . join( ',', $this->errors ), LOG_ERR );
+				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -407,18 +406,18 @@ class Skeleton_Class extends CommonObject
 	 *
 	 * @return int New id of clone
 	 */
-	public function createFromClone( $fromid )
+	public function createFromClone($fromid)
 	{
-		dol_syslog( __METHOD__, LOG_DEBUG );
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		global $user;
 		$error = 0;
-		$object = new Skeleton_Class( $this->db );
+		$object = new Skeleton_Class($this->db);
 
 		$this->db->begin();
 
 		// Load source object
-		$object->fetch( $fromid );
+		$object->fetch($fromid);
 		// Reset object
 		$object->id = 0;
 
@@ -426,13 +425,13 @@ class Skeleton_Class extends CommonObject
 		// ...
 
 		// Create clone
-		$result = $object->create( $user );
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0) {
 			$error ++;
 			$this->errors = $object->errors;
-			dol_syslog( __METHOD__ . ' ' . join( ',', $this->errors ), LOG_ERR );
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
 		// End

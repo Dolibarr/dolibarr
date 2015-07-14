@@ -123,7 +123,7 @@ if ($object->id)
     print "<td>";
     if ($action == 'edit')
     {
-        print $form->select_date($object->datestart, 'start', 0, 0, 0, 'loan', 1);
+        print $form->select_date($object->datestart, 'start', 0, 0, 0, 'loan', 1, 0, 1);
     }
     else
     {
@@ -137,7 +137,7 @@ if ($object->id)
     print "<td>";
     if ($action == 'edit')
     {
-        print $form->select_date($object->dateend, 'end', 0, 0, 0, 'loan', 1);
+        print $form->select_date($object->dateend, 'end', 0, 0, 0, 'loan', 1, 0, 1);
     }
     else
     {

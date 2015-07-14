@@ -131,8 +131,8 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param,"",$sortfield,$sortorder);
-	print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
-	print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
+	print_liste_field_titre($langs->trans("Email"));
+	print_liste_field_titre($langs->trans("Phone"));
 	print "</tr>\n";
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.$_GET["type"].'" method="GET">';

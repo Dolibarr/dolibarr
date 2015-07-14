@@ -1,7 +1,7 @@
-Module210009Name=Incoterm
-Module210009Desc=Add features to manage Incoterm
+Module62000Name=Incoterm
+Module62000Desc=เพิ่มคุณสมบัติในการจัดการ Incoterm
 IncotermLabel=Incoterms
-IncotermSetupTitle1=Feature
-IncotermSetupTitle2=Status
-IncotermSetup=Setup of module Incoterm
-IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)
+IncotermSetupTitle1=ลักษณะ
+IncotermSetupTitle2=สถานะ
+IncotermSetup=การติดตั้งโมดูล Incoterm
+IncotermFunctionDesc=เปิดใช้งานคุณสมบัติ Incoterm (Thirdparty, ข้อเสนอ, สั่งซื้อของลูกค้า, ใบแจ้งหนี้ของลูกค้า, การจัดส่งคำสั่งผลิต)

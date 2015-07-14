@@ -57,6 +57,7 @@ RemoveFromGroup=Rimuovi dal gruppo
 PasswordChangedAndSentTo=Password cambiata ed inviata a <b>%s</b>
 PasswordChangeRequestSent=Richiesta di cambio password per <b>%s</b> da inviare a <b>%s</b>.
 MenuUsersAndGroups=Utenti e gruppi
+MenuMyUserCard=My user card
 LastGroupsCreated=Ultimi %s gruppi creati
 LastUsersCreated=Ultimi %s utenti creati
 ShowGroup=Visualizza gruppo

@@ -101,7 +101,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	if (! $testdate) {
 		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), 'errors');
 	}
-	
+
 	if ($titre && $testdate)
 	{
 		if (! empty($creation_sondage_date))
@@ -156,7 +156,7 @@ print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 
-print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0);
+print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0,1);
 
 print '</tr>'."\n";
 print '</table>'."\n";

@@ -90,7 +90,7 @@ if ($resql) {
 	print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "bk.montant", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "bk.sens", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "bk.code_journal", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("&nbsp;");
+	print_liste_field_titre('');
 	print "</tr>\n";
 	
 	$var = True;

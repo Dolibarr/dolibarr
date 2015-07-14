@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Nastavitev modula poteka dela
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Za aktiviran modul ni na voljo poteka dela, ki bi ga lahko spreminjali
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Po podpisu komercialne ponudbe avtomatsko ustvari naročilo kupca
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Po podpisu komercialne ponudbe avtomatsko ustvari račun za kupca
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Po potrditvi pogodbe avtomatsko ustvari račun za kupca
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Po zaključku naročila kupca avtomatsko ustvari račun za kupca
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označi povezano izvorno ponudbo kot "zaračunano", ko naročilo kupca dobi status "plačano"
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označi povezano izvorno naročilo (ali več naročil) kupca kot "zaračunano", ko račun za kupca dobi status "plačano"
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označi povezano izvorno naročilo (ali več naročil) kupca kot "zaračunano", ko naročilo kupca dobi status "potrjeno"

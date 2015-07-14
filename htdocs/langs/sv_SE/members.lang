@@ -199,7 +199,8 @@ Entreprises=Företag
 DOLIBARRFOUNDATION_PAYMENT_FORM=För att göra din prenumeration betalning via en banköverföring, se sidan <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Att betala med kreditkort eller Paypal, klicka på knappen längst ner på denna sida. <br>
 ByProperties=På egenskaper
 MembersStatisticsByProperties=Medlemsstatistik på egenskaper
-MembersByNature=Medlemmar på sort
+MembersByNature=This screen show you statistics on members by nature.
+MembersByRegion=This screen show you statistics on members by region.
 VATToUseForSubscriptions=Moms-sats för prenumeration
 NoVatOnSubscription=Ingen moms för prenumeration
 MEMBER_PAYONLINE_SENDEMAIL=E-post för att varna när Dolibarr mottager en bekräftelse för en validerad betalning för en prenumeration

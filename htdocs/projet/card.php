@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -40,6 +41,7 @@ $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
 $status=GETPOST('status','int');
+$opp_status=GETPOST('opp_status','int');
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && ! $_POST["cancel"])) accessforbidden();
 
@@ -136,11 +138,13 @@ if (empty($reshook))
 	        $object->socid           = GETPOST('socid','int');
 	        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
 	        $object->public          = GETPOST('public','alpha');
-	        $object->budget_amount   = GETPOST('budget_amount','int');
+	        $object->opp_amount      = price2num(GETPOST('opp_amount'));
+	        $object->budget_amount   = price2num(GETPOST('budget_amount'));
 	        $object->datec=dol_now();
 	        $object->date_start=$date_start;
 	        $object->date_end=$date_end;
 	        $object->statuts         = $status;
+	        $object->opp_status      = $opp_status;
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -223,15 +227,23 @@ if (empty($reshook))
 	        $object->socid        = GETPOST('socid','int');
 	        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
 	        $object->public       = GETPOST('public','alpha');
-	        $object->budget_amount= GETPOST('budget_amount','int');
 	        $object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 	        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
+	        if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount'));
+	        if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount'));
+	        if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 			if ($ret < 0) $error++;
 	    }
 
+		if ($object->opp_amount && ($object->opp_status <= 0))
+	    {
+	       	$error++;
+	    	setEventMessage($langs->trans("ErrorOppStatusRequiredIfAmount"),'errors');
+	    }
+	    
 	    if (! $error)
 	    {
 	    	$result=$object->update($user);
@@ -379,6 +391,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formproject = new FormProjets($db);
 $userstatic = new User($db);
 
 $title=$langs->trans("Project").' - '.$object->ref.' '.$object->name;
@@ -471,21 +484,35 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date(($date_start?$date_start:''),'projectstart');
+    print $form->select_date(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
     print '</td></tr>';
 
     // Date end
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date(($date_end?$date_end:-1),'projectend');
+    print $form->select_date(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
     print '</td></tr>';
 
-    // Budget
-    print '<tr><td>'.$langs->trans("Budget").'</td>';
-    print '<td><input size="4" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td></tr>';
-    print '</td></tr>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+	    // Opportunity status
+	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+	    print '<td>';
+	    print $formproject->selectOpportunityStatus('opp_status',$object->opp_status);
+	    print '</tr>';
+
+	    // Opportunity amount
+	    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+	    print '<td><input size="4" type="text" name="opp_amount" value="'.(GETPOST('opp_amount')!=''?price(GETPOST('opp_amount')):'').'"></td>';
+	    print '</tr>';
+    }
+
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td>';
+	print '<td><input size="6" type="text" name="budget_amount" value="'.(GETPOST('budget_amount')!=''?price(GETPOST('budget_amount')):'').'"></td>';
+	print '</tr>';
 
     // Description
-    print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
+    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
     print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
     print '</td></tr>';
@@ -588,11 +615,11 @@ else
         print '<table class="border" width="100%">';
 
         // Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
+        print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
         print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
 
         // Label
-        print '<tr><td>'.$langs->trans("Label").'</td>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
         print '<td><input size="40" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
@@ -610,12 +637,12 @@ else
         print $form->selectarray('public',$array,$object->public);
         print '</td></tr>';
 
-        // Statut
+        // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $form->select_date($object->date_start?$object->date_start:-1,'projectstart');
+        print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
         print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -623,15 +650,30 @@ else
 
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-        print $form->select_date($object->date_end?$object->date_end:-1,'projectend');
+        print $form->select_date($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
         print '</td></tr>';
+
+    	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	    {
+	        // Opportunity status
+		    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+	    	print '<td>';
+		    print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1);
+		    print '</td>';
+		    print '</tr>';
+
+		    // Opportunity amount
+		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<td><input size="6" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
+		    print '</tr>';
+	    }
 
 	    // Budget
 	    print '<tr><td>'.$langs->trans("Budget").'</td>';
-	    print '<td><input size="4" type="text" name="budget_amount" value="'.(price(isset($_POST['budget_amount'])?GETPOST('budget_amount'):$object->budget_amount)).'"></td></tr>';
-	    print '</td></tr>';
+	    print '<td><input size="6" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount'])?GETPOST('budget_amount'):(strcmp($object->budget_amount,'')?price($object->budget_amount):'')).'"></td>';
+	    print '</tr>';
 
-        // Description
+	    // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
         print '<td>';
         print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
@@ -692,9 +734,23 @@ else
         print dol_print_date($object->date_end,'day');
         print '</td></tr>';
 
+    	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	    {
+	        // Opportunity status
+	        print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+	        $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+	        if ($code) print $langs->trans("OppStatus".$code);
+	        print '</td></tr>';
+
+	        // Opportunity Amount
+	        print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+	        if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+	        print '</td></tr>';
+	    }
+
         // Budget
         print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-        if ($object->budget_amount != '') print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+        if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
         print '</td></tr>';
 
         // Description
@@ -717,7 +773,7 @@ else
 	if ($action == 'edit' && $userWrite > 0)
 	{
 	    print '<div align="center">';
-    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp; &nbsp; &nbsp;';
     	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     	print '</div>';
 	}
@@ -849,7 +905,6 @@ else
     // Hook to add more things on page
     $parameters=array();
     $reshook=$hookmanager->executeHooks('mainCardTabAddMore',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-
 }
 
 llxFooter();

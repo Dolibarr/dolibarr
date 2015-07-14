@@ -209,7 +209,7 @@ if ($result > 0)
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
-    print '</tr>';
+	print "</tr>\n";
 
     $var=false;
     $listofemails=$object->thirdparty_and_contact_email_array();

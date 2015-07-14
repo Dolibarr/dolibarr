@@ -191,14 +191,14 @@ if ($resql)
 	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
 	print ' ';
 	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
-	print $form->select_date($filter_date1,'op1',0,0,1);
+	print $form->select_date($filter_date1,'op1',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-	print $form->select_date($filter_date2,'op2',0,0,1);
+	print $form->select_date($filter_date2,'op2',0,0,1,'',1,0,1);
 	print '</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

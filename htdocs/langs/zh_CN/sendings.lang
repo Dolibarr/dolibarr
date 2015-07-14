@@ -53,7 +53,7 @@ DocumentModelSimple=简单的文档模型
 DocumentModelMerou=梅鲁河五大模式
 WarningNoQtyLeftToSend=警告，没有产品等待装运。
 StatsOnShipmentsOnlyValidated=对货物进行统计验证。使用的数据的验证的装运日期(计划交货日期并不总是已知)。
-DateDeliveryPlanned=刨交货日期
+DateDeliveryPlanned=Planned date of delivery
 DateReceived=交货日期收到
 SendShippingByEMail=通过电子邮件发送货物
 SendShippingRef=Submission of shipment %s
@@ -67,7 +67,7 @@ SendingRunning=Product from ordered customer orders
 SuppliersReceiptRunning=Product from ordered supplier orders
 ProductQtyInCustomersOrdersRunning=Product quantity into opened customers orders
 ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
-ProductQtyInShipmentAlreadySent=Product quantity from opended customer order already sent
+ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 
 # Sending methods

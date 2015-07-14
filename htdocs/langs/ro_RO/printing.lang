@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
-Module112000Name=Imprimare directa
-Module112000Desc=Activeaza Sistemul  Imprimare directa\n\n 
+Module64000Name=Direct Printing
+Module64000Desc=Enable Direct Printing System
 PrintingSetup=Configurarea Sistemuluii Imprimare directă
 PrintingDesc=Acest modul adauga un buton de imprimare pentru a trimite documentele direct la o imprimantă ( fara deschiderea documentului in aplicatie) cu diferite module.
 ModuleDriverSetup=Configurare Modul Driver
@@ -49,7 +49,6 @@ PRINTIPP_PORT=Port
 PRINTIPP_USER=Login
 PRINTIPP_PASSWORD=Parolă
 NoPrinterFound=Nu există imprimante (verificați setarea CUPS)
-FileWasSentToPrinter=Fișierul %s a fost trimis la imprimantă
 NoDefaultPrinterDefined=Nicio imprimantă implicită definită
 DefaultPrinter=Imprimantă implicită
 Printer=Imprimanta

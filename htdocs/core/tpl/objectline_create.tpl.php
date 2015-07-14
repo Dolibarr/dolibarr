@@ -347,9 +347,9 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	else
 	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-		echo $form->select_date($date_start,'date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
+		echo $form->select_date($date_start,'date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct",1,0,1);
 		echo ' '.$langs->trans('to').' ';
-		echo $form->select_date($date_end,'date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
+		echo $form->select_date($date_end,'date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct",1,0,1);
 	}
 	?>
 	</td>
@@ -527,7 +527,8 @@ jQuery(document).ready(function() {
 		      		}
 	      			if (this.id == 'pmpprice')
 	      			{
-		      			var defaultbuyprice = <?php echo (isset($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE)?int($conf->global->MARGIN_PMP_AS_DEFAULT_BUY_PRICE):1); ?>;
+	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
+		      			var defaultbuyprice = <?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?1:0); ?>;
 		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
 	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      			}

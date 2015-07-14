@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Configuração do módulo de Workflow
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can activate the automatic actions that you are interesting in.
-ThereIsNoWorkflowToModify=Não há fluxo de trabalho você pode modificar para o módulo que você tenha ativado.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar um pedido do cliente automaticamente, após uma proposta comercial ser assinada
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente, após uma proposta comercial ser assinada
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente depois de um contrato ser validado
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente após um pedido do cliente estar fechado
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICEAutomatically create a customer invoice after a commercial proposal is signed
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICEAutomatically create a customer invoice after a contract is validated
+descWORKFLOW_ORDER_AUTOCREATE_INVOICEAutomatically create a customer invoice after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifique a fonte ligada como prposta a cobrança quando a ordem do cliente for definida como paga
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifique a fonte ligada como cobrado quando a ordem(s) do cliente for definida como paga
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifique a fonte ligada a ordem(s) de clientes quando a fatura de cliente for validada

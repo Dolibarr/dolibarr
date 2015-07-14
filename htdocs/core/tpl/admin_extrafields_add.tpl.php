@@ -75,6 +75,8 @@
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
 
+<?php dol_fiche_head(); ?>
+
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
@@ -121,7 +123,9 @@
 <?php } ?>
 </table>
 
-<div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;
+<?php dol_fiche_end(); ?>
+
+<div align="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>

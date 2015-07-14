@@ -138,8 +138,8 @@ if ($result)
     print_liste_field_titre($langs->trans("DateCreation"),$_SERVER['PHP_SELF'],"u.datec",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u2.login",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"u.statut",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre('');
+    print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"u.statut",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
     // Search bar
@@ -153,7 +153,7 @@ if ($result)
     print '<td colspan="'.$colspan.'">&nbsp;</td>';
 
 	// Status
-    print '<td>';
+    print '<td align="right">';
     print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
     print '</td>';
 
@@ -256,7 +256,7 @@ if ($result)
 
         // Statut
 		$userstatic->statut=$obj->statut;
-		print '<td width="100" align="center">'.$userstatic->getLibStatut(5).'</td>';
+		print '<td align="right">'.$userstatic->getLibStatut(5).'</td>';
         print '<td>&nbsp;</td>';
         print "</tr>\n";
         $i++;

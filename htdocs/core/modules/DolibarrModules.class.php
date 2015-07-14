@@ -194,6 +194,16 @@ abstract class DolibarrModules
      */
     public $core_enabled;
 
+	/**
+	 * Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 * @param DoliDB		$db      Database handler
+	 */
+	//public function __construct($db);
+	// We should but can't set this as abstract because this will make dolibarr hang
+	// after migration due to old module not implementing. We must wait PHP is able to make
+	// a try catch on Fatal error to manage this correctly.
+	
     /**
      * Enables a module.
      * Inserts all informations into database
@@ -1000,7 +1010,18 @@ print $sql;
             $i=0;
             foreach ($this->tabs as $key => $value)
             {
-                if ($value)
+            	if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+
+            	$entity=$conf->entity;
+            	$newvalue = $value;
+
+            	if (is_array($value))
+            	{
+            		$newvalue = $value['data'];
+            		if (isset($value['entity'])) $entity = $value['entity'];
+            	}
+
+                if ($newvalue)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
                     $sql.= "name";
@@ -1370,10 +1391,11 @@ print $sql;
             $menu->target=$this->menu[$key]['target'];
             $menu->user=$this->menu[$key]['user'];
             $menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
-
+            $menu->position=$this->menu[$key]['position'];
+            
             if (! $err)
             {
-                $result=$menu->create($user);
+                $result=$menu->create($user);	// Save menu entry into table llx_menu
                 if ($result > 0)
                 {
                     $this->menu[$key]['rowid']=$result;
@@ -1659,5 +1681,31 @@ print $sql;
         }
         return $err;
     }
+
+	/**
+	 * Function called when module is enabled.
+	 * The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 * It also creates data directories
+	 *
+	 * @param string $options    Options when enabling module ('', 'noboxes')
+	 * @return int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		return $this->_init(array(), $options);
+	}
+
+	/**
+	 * Function called when module is disabled.
+	 * Remove from database constants, boxes and permissions from Dolibarr database.
+	 * Data directories are not deleted
+	 *
+	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @return     int             	1 if OK, 0 if KO
+	 */
+	public function remove($options = '')
+	{
+		return $this->_remove(array(), $options);
+	}
 
 }

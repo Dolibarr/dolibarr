@@ -167,6 +167,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/accountancy
 %_datadir/dolibarr/htdocs/adherents
 %_datadir/dolibarr/htdocs/admin
+%_datadir/dolibarr/htdocs/api
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/bookmarks

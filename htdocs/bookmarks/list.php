@@ -103,7 +103,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","","",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('','','');
+    print_liste_field_titre('');
     print "</tr>\n";
 
     $var=True;

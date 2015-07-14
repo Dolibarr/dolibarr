@@ -12,6 +12,7 @@ Notify_FICHINTER_VALIDATE=Validação Ficha Intervenção
 Notify_FICHINTER_SENTBYMAIL=Intervenções enviadas por correio
 Notify_BILL_VALIDATE=Validação factura
 Notify_BILL_UNVALIDATE=Fatura do cliente não validada
+Notify_ORDER_SUPPLIER_VALIDATE=Supplier order recorded
 Notify_ORDER_SUPPLIER_APPROVE=Fornecedor fim aprovado
 Notify_ORDER_SUPPLIER_REFUSE=Fornecedor fim recusado
 Notify_ORDER_VALIDATE=Pedido do cliente validado
@@ -203,6 +204,7 @@ ClickHereToGoTo=Clique aqui para ir para %s
 YouMustClickToChange=You must however first click on the following link to validate this password change
 ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
+SourcesRepository=Repository for sources
 
 ##### Calendar common #####
 AddCalendarEntry=Adicionar entrada ao calendario

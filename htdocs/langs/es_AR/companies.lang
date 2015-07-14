@@ -1,5 +1,0 @@
-# Dolibarr language file - Source file is en_US - companies
-VATIntra=CUIT
-VATIntraShort=CUIT
-VATIntraVeryShort=CUIT
-CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> notas de crédito/anticipos disponibles

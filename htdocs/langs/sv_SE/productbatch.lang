@@ -19,4 +19,4 @@ printQty=Antal: %d
 AddDispatchBatchLine=Lägg en linje för Hållbarhet avsändning
 BatchDefaultNumber=Odefinierat
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
-ProductDoesNotUseBatchSerial=Denna artikel använder inte batch- / serienummer
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

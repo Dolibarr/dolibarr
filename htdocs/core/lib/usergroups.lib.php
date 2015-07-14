@@ -254,7 +254,12 @@ function entity_prepare_head($object, $aEntities)
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
-    global $conf,$langs,$bc;
+    global $conf,$langs,$db;
+    global $bc;
+
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+
+    $formother = new FormOther($db);
 
     //$dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
     $dirthemes=array('/theme');
@@ -380,8 +385,47 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
 	    $hoverdisabled=(isset($conf->global->THEME_ELDY_USE_HOVER) && $conf->global->THEME_ELDY_USE_HOVER == '0');
 	    print '<td colspan="'.($colspan-1).'"><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
-	    print ' ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
+	    print '</tr>';
+
+	    //if ($conf->theme == 'eldy')
+	    //{
+		    // TopMenuBackgroundColor
+		    $var=!$var;
+		    print '<tr '.$bc[$var].'>';
+		    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
+		    print '<td colspan="'.($colspan-1).'">';
+		    if ($edit)
+		    {
+				print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
+		    }
+		   	else
+		   	{
+		   		$color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+				if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; width: 36px; background-color: #'.$color.'" value="'.$color.'">';
+				else print $langs->trans("Default");
+		   	}
+	    	print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+		    print '</td>';
+
+		    // BackgroundTableTitleColor
+		    $var=!$var;
+		    print '<tr '.$bc[$var].'>';
+		    print '<td>'.$langs->trans("BackgroundTableTitleColor").'</td>';
+		    print '<td colspan="'.($colspan-1).'">';
+		    if ($edit)
+		    {
+				print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_BACKTITLE1,array()),''),'THEME_ELDY_BACKTITLE1','formcolor',1).' ';
+		    }
+		   	else
+		   	{
+		   		print $formother->showColor($conf->global->THEME_ELDY_BACKTITLE1, $langs->trans("Default"));
+		   	}
+	    	print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+		    print '</td>';
+	    //}
+
 	    print '</tr>';
 	}
 

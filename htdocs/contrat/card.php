@@ -1687,11 +1687,11 @@ else
                 }
 
                 print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
-                print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active");
+                print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
                 print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
-                print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active");
+                print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
                 print '<td align="center" rowspan="2" valign="middle">';
@@ -1744,7 +1744,7 @@ else
                     if ($objp->statut == 4)
                     {
                         print $langs->trans("DateEndReal").' ';
-                        $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1);
+                        print $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
                     }
                 }
                 print '</td>';

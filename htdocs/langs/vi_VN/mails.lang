@@ -77,7 +77,7 @@ CheckRead=Đọc nhận
 YourMailUnsubcribeOK=Email <b>%s</b> là đúng unsubcribe từ danh sách gửi thư
 MailtoEMail=Siêu liên kết email
 ActivateCheckRead=Cho phép sử dụng "Unsubcribe" liên kết
-ActivateCheckReadKey=Sử dụng chìa khóa để sử dụng mã hóa URL cho "Đọc Tiếp nhận" và "Unsubcribe" tính năng
+ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=Thư điện tử gửi đến người nhận %s.
 XTargetsAdded=Người nhận <b>%s</b> thêm vào danh sách mục tiêu
 EachInvoiceWillBeAttachedToEmail=Một tài liệu mặc định sử dụng hóa đơn mẫu tài liệu sẽ được tạo ra và gắn liền với mỗi email.
@@ -128,6 +128,7 @@ TagCheckMail=Ca khúc mở đầu email
 TagUnsubscribe=Liên kết Hủy đăng ký
 TagSignature=Chữ ký gửi người sử dụng
 TagMailtoEmail=Người nhận thư điện tử
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Thông báo
 NoNotificationsWillBeSent=Không có thông báo email được lên kế hoạch cho sự kiện này và công ty

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
@@ -332,24 +332,33 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    }
 	    else
 	    {
-	    	// Extrafields
-			$extrafields = new ExtraFields($db);
-			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-			$array_options = $extrafields->getOptionalsFromPost($extralabels);
+	    	// Fill array 'array_options' with data from add form
+	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	    	if ($ret < 0) {
+	    		$error ++;
+	    		$action = 'create';
+	    	}
 
-	        $object->array_options = $array_options;
+	    	if (! $error)
+	    	{
+	    		// Extrafields
+	    		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	    		$array_options = $extrafields->getOptionalsFromPost($extralabels);
 
-			$result = $object->create($user);
-	        if ($result > 0)
-	        {
-	            $id=$result;      // Force raffraichissement sur fiche venant d'etre cree
-	        }
-	        else
-	        {
-	            $langs->load("errors");
-	            setEventMessages($object->error, $object->errors, 'errors');
-	            $action = 'create';
-	        }
+	    		$object->array_options = $array_options;
+
+	    		$result = $object->create($user);
+	    		if ($result > 0)
+	    		{
+	    			$id=$result;      // Force raffraichissement sur fiche venant d'etre cree
+	    		}
+	    		else
+	    		{
+	    			$langs->load("errors");
+	    			setEventMessages($object->error, $object->errors, 'errors');
+	    			$action = 'create';
+	    		}
+	    	}
         }
     }
     else
@@ -1371,6 +1380,7 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
+	// Line of interventions
  	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
  	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
@@ -1547,9 +1557,9 @@ else if ($id > 0 || ! empty($ref))
 				print '<td colspan="4">&nbsp;</td>';
 				print "</tr>\n";
 
-				$var=false;
+				$var=true;
 
-				print '<tr '.$bc[$var].">\n";
+				print '<tr '.$bcnd[$var].">\n";
 				print '<td>';
 				// editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1786,8 +1796,11 @@ else if ($id > 0 || ! empty($ref))
 			$file=$fileparams['fullname'];
 		}
 
+		print '<div class="clearboth"></div>';
 		print '<br>';
-		print_titre($langs->trans('SendInterventionByMail'));
+		print_fiche_titre($langs->trans('SendInterventionByMail'));
+
+		dol_fiche_head('');
 
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1851,7 +1864,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print $formmail->get_form();
 
-		print '<br>';
+		dol_fiche_end();
 	}
 }
 

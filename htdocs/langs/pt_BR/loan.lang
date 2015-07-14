@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Emprestimo
+Loans=Emprestimos
+NewLoan=Novo emprestimo
+ShowLoan=Mostrar emprestimo
+PaymentLoan=Pagamento do emprestimo
+ShowLoanPayment=Mostrar pagamento do emprestimo
+Interest=Juro
+Nbterms=Numero de termos
+LoanPayment=Pagamento de empréstimo
+ConfirmDeleteLoan=Confirme a exclusão deste empréstimo
+LoanPaid=Empréstimo pago
+ErrorLoanCapital=Montante do empréstimo tem de ser numérico e maior que zero.
+ErrorLoanLength=Prazo do empréstimo tem de ser numérico e maior que zero.
+ErrorLoanInterest=Juros anual tem de ser numérico e maior que zero.
+PurchaseFinanceInfo=Compra e Financiamento Informação
+SalePriceOfAsset=Preço de venda de ativos
+PercentageDown=Percentagem de Down
+LengthOfMortgage=Duração do Mortgage
+AnnualInterestRate=Taxa de juros anual
+ExplainCalculations=Explique Cálculos
+ShowMeCalculationsAndAmortization=Mostre-me os cálculos e amortização
+MortgagePaymentInformation=Informação do pagamento de hipoteca
+DownPayment=Pagamento Inicial
+AmountFinanced=Valor Financiado
+AmortizationMonthlyPaymentOverYears=Amortização de pagamento mensal: <b>%s%</b>de  %s ao longo dos anos
+Totalsforyear=Os totais de ano

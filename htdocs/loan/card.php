@@ -46,7 +46,7 @@ $object = new Loan($db);
 /*
  * Actions
  */
- 
+
 // Classify paid
 if ($action == 'confirm_paid' && $confirm == 'yes')
 {
@@ -86,7 +86,7 @@ if ($action == 'add' && $user->rights->loan->write)
 	{
 		$datestart=@dol_mktime(12,0,0, $_POST["startmonth"], $_POST["startday"], $_POST["startyear"]);
 		$dateend=@dol_mktime(12,0,0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-		
+
 		if (! $datestart)
 		{
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateStart")), 'errors');
@@ -218,13 +218,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1);
+    print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Date End
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1);
+    print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Number of terms
@@ -356,7 +356,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1);
+			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
 		}
 		else
 		{
@@ -369,7 +369,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1);
+			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
 		}
 		else
 		{
@@ -402,7 +402,7 @@ if ($id > 0)
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 			print '</form>';
-		} 
+		}
 
 		dol_fiche_end();
 

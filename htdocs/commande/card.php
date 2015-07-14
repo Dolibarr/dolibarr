@@ -32,6 +32,7 @@
  * \ingroup commande
  * \brief Page to show customer order
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formorder.class.php';
@@ -1371,7 +1372,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 	// Date
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
-	//$form->select_date($dateorder, 're', '', '', '', "crea_commande", 1, 1);
 	$form->select_date('', 're', '', '', '', "crea_commande", 1, 1);			// Always autofill date with current date
 	print '</td></tr>';
 
@@ -1430,7 +1430,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-		print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -2362,8 +2362,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$file = $fileparams['fullname'];
 			}
 
+			print '<div class="clearboth"></div>';
 			print '<br>';
-			print_titre($langs->trans('SendOrderByMail'));
+			print_fiche_titre($langs->trans('SendOrderByMail'));
+
+			dol_fiche_head('');
 
 			// Cree l'objet formulaire mail
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
@@ -2402,8 +2405,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$contactarr = array();
 			$contactarr = $object->liste_contact(- 1, 'external');
 
-			if (is_array($contactarr) && count($contactarr) > 0) {
-				foreach ($contactarr as $contact) {
+			if (is_array($contactarr) && count($contactarr) > 0)
+			{
+				foreach ($contactarr as $contact)
+				{
 					if ($contact['libelle'] == $langs->trans('TypeContact_commande_external_CUSTOMER')) {	// TODO Use code and not label
 						$contactstatic = new Contact($db);
 						$contactstatic->fetch($contact ['id']);
@@ -2432,7 +2437,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			// Show form
 			print $formmail->get_form();
 
-			print '<br>';
+			dol_fiche_end();
 		}
 	}
 }

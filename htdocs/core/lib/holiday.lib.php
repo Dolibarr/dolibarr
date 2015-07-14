@@ -34,10 +34,15 @@ function holiday_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT . '/holiday/card.php?id='.$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Document');
+	$head[$h][2] = 'documents';
+	$h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

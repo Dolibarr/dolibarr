@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
- * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@ $action = GETPOST('action', 'alpha');
 // Other parameters ACCOUNTING_*
 $list = array (
 		'ACCOUNTING_LIMIT_LIST_VENTILATION',
+        'ACCOUNTING_LENGTH_DESCRIPTION',				// adjust size displayed for lines description for dol_trunc
+		'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT',		// adjust size displayed for select account description for dol_trunc
 		'ACCOUNTING_LENGTH_GACCOUNT',
 		'ACCOUNTING_LENGTH_AACCOUNT',
 		'ACCOUNTING_ACCOUNT_CUSTOMER',
@@ -56,6 +58,8 @@ $list = array (
 		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
 		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
 		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+		'ACCOUNTING_VAT_BUY_ACCOUNT',
+		'ACCOUNTING_VAT_SOLD_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
 		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
 );
@@ -284,7 +288,6 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '</a></td>';
 }
 print '</tr>';
-
 
 print "</table>\n";
 

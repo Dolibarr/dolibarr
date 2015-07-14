@@ -643,12 +643,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
-		
+
 		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
-	
+
 	if (empty($onlynumber) && ! empty($account->domiciliation))
 	{
 		$pdf->SetXY($curx, $cury);
@@ -659,7 +659,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
 	}
-	
+
 	if (! empty($account->proprio))
 	{
 		$pdf->SetXY($curx, $cury);
@@ -668,9 +668,9 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$tmpy=$pdf->getStringHeight(100, $val);
 		$cury+=$tmpy;
 	}
-	
+
 	else if (! $usedetailedbban) $cury+=1;
-	
+
 	// Use correct name of bank id according to country
 	$ibankey="IBANNumber";
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
@@ -1735,12 +1735,22 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$objects[$i]->fetchObjectLinked();
 				$order = $objects[$i]->linkedObjects['commande'][0];
 
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
-				$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-				$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+				if (! empty($object->linkedObjects['commande']))	// There is already a link to order so we show only info of shipment
+				{
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
+					$linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($objects[$i]->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
+					$linkedobjects[$objecttype]['date_value'].= dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+				}
+				else	// We show both info of order and shipment
+				{
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
+					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
+					$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
+				}
 			}
 		}
 	}

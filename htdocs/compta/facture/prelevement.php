@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  *
@@ -68,14 +68,19 @@ if ($action == "new")
 {
     if ($object->id > 0)
     {
-        $result = $object->demande_prelevement($user);
+    	$db->begin();
+
+        $result = $object->demande_prelevement($user, GETPOST('withdraw_request_amount'));
         if ($result > 0)
         {
+        	$db->commit();
+
             setEventMessage($langs->trans("RecordSaved"));
         }
         else
-        {
-        	setEventMessage($object->error, 'errors');
+		{
+        	$db->rollback();
+        	setEventMessage($object->error, $object->errors, 'errors');
         }
     }
     $action='';
@@ -309,7 +314,7 @@ if ($object->id > 0)
 	print '</td>';
 	print '</tr>';
 
-	// Conditions de reglement
+	// Payment condition
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
@@ -370,11 +375,11 @@ if ($object->id > 0)
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id');
 	}
 	else
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
 
@@ -478,7 +483,13 @@ if ($object->id > 0)
 	{
 		if ($user->rights->prelevement->bons->creer)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=new">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			print '<form method="POST" action="">';
+			print '<input type="hidden" name="id" value="' . $object->id . '" />';
+			print '<input type="hidden" name="action" value="new" />';
+			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
+			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
+			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
+			print '</form>';
 		}
 		else
 		{
@@ -508,10 +519,12 @@ if ($object->id > 0)
 
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$langs->trans("DateRequest").'</td>';
-	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td align="center">'.$langs->trans("User").'</td>';
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
-	print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td>&nbsp;</td>';
 	print '</tr>';
 	$var=true;
 
@@ -526,15 +539,18 @@ if ($object->id > 0)
 
 			print "<tr ".$bc[$var].">";
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
-			print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td>&nbsp;</td>';
-			print '<td>';
+
+			print '<td align="center">'.$langs->trans("OrderWaiting").'</td>';
+
+			print '<td align="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
 			print img_delete();
 			print '</a></td>';
+
 			print "</tr>\n";
 			$i++;
 		}
@@ -574,7 +590,7 @@ if ($object->id > 0)
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite),'day')."</td>\n";
+			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 			print '<td align="center">'.price($obj->amount).'</td>';
 
@@ -585,9 +601,10 @@ if ($object->id > 0)
 			print $withdrawreceipt->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
-
 			print '<td>&nbsp;</td>';
+
+			print '<td align="center">'.dol_print_date($db->jdate($obj->date_traite),'day')."</td>\n";
+
 			print '<td>&nbsp;</td>';
 
 			print "</tr>\n";

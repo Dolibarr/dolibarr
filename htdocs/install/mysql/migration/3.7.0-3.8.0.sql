@@ -231,7 +231,6 @@ CREATE TABLE llx_expensereport (
   date_approve		datetime,
   date_refuse 		datetime,
   date_cancel 		datetime,
-  date_paiement 	datetime,
   tms 		 		timestamp,
   fk_user_author 	integer NOT NULL,
   fk_user_modif 	integer DEFAULT NULL,
@@ -240,7 +239,6 @@ CREATE TABLE llx_expensereport (
   fk_user_approve   integer DEFAULT NULL,
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
-  fk_user_paid 		integer DEFAULT NULL,
   fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
   fk_c_paiement 	integer DEFAULT NULL,
   paid 				smallint default 0 NOT NULL,
@@ -260,17 +258,16 @@ CREATE TABLE llx_expensereport_det
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
    fk_projet integer,
-   fk_c_tva integer,
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
    value_unit real NOT NULL,
    remise_percent real,
-   tva_tx						double(6,3),						    -- Vat rat
-   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
-   localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
-   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
-   localtax2_type			 	varchar(10)	  	 NULL, 				 	-- localtax2 type
+   tva_tx						double(6,3),					-- Vat rat
+   localtax1_tx               	double(6,3)  DEFAULT 0,    		-- localtax1 rate
+   localtax1_type			 	varchar(10)	  	 NULL, 			-- localtax1 type
+   localtax2_tx               	double(6,3)  DEFAULT 0,    		-- localtax2 rate
+   localtax2_type			 	varchar(10)	  	 NULL, 			-- localtax2 type
    total_ht double(24,8) DEFAULT 0 NOT NULL,
    total_tva double(24,8) DEFAULT 0 NOT NULL,
    total_localtax1				double(24,8)  	DEFAULT 0,		-- Total LocalTax1 for total quantity of line
@@ -338,7 +335,8 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_parent_line integer NULL a
 
 ALTER TABLE llx_projet ADD COLUMN date_close datetime DEFAULT NULL;
 ALTER TABLE llx_projet ADD COLUMN fk_user_close integer DEFAULT NULL;
-
+ALTER TABLE llx_projet ADD COLUMN fk_opp_status integer DEFAULT NULL after fk_statut;
+ALTER TABLE llx_projet ADD COLUMN opp_amount double(24,8) DEFAULT NULL;
 
 
 -- Module AskPriceSupplier --
@@ -706,4 +704,28 @@ ALTER TABLE llx_holiday_logs ADD COLUMN fk_type integer NOT NULL DEFAULT 1;
 UPDATE llx_holiday_users SET fk_type = 1 WHERE fk_type IS NULL;
 UPDATE llx_holiday_logs SET fk_type = 1 WHERE fk_type IS NULL;
 
+UPDATE llx_const SET name = __ENCRYPT('ACCOUNTING_VAT_SOLD_ACCOUNT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTING_VAT_ACCOUNT';
+
+create table llx_c_lead_status
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  code 		  varchar(10),
+  label       varchar(50),
+  position    integer,
+  percent     double(5,2),
+  active      tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+-- Opportunities status
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (1,'PROSP'  ,'Prospection',  10, 0,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (2,'QUAL'   ,'Qualification',20, 20,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (3,'PROPO'  ,'Proposal',     30, 40,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (4,'NEGO'   ,'Negotiation',  40, 60,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (5,'PENDING','Pending',      50, 50,0);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (6,'WIN'    ,'Won',          60, 100,1);
+INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (7,'LOST'   ,'Lost',         70, 0,1);
+
+
+DELETE FROM llx_c_action_trigger where code = 'PROPAL_CLASSIFYBILLED';
+DELETE FROM llx_c_action_trigger where code = 'FICHINTER_CLASSIFYBILLED';
 

@@ -1,5 +1,12 @@
 # Dolibarr language file - en_US - Accounting Expert
 CHARSET=UTF-8
+ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
+ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_PIECE=Export the number of piece ?
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account ?
+ACCOUNTING_EXPORT_LABEL=Export the label ?
+ACCOUNTING_EXPORT_AMOUNT=Export the amount ?
+ACCOUNTING_EXPORT_DEVISE=Export the devise ?
 
 Accounting=Contabilitate
 Globalparameters=Parametri globali
@@ -81,9 +88,8 @@ ACCOUNTING_LENGTH_AACCOUNT=Lungimea conturilor de terţi
 
 ACCOUNTING_SELL_JOURNAL=Jurnal vânzări
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal cumpărări
-ACCOUNTING_BANK_JOURNAL=Jurnal bancă
-ACCOUNTING_CASH_JOURNAL=Jurnal casă
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal Diverse
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cont transfer

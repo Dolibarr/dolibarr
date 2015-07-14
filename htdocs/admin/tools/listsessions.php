@@ -134,7 +134,7 @@ if ($savehandler == 'files')
 	print_liste_field_titre($langs->trans("DateModification"),$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Age"),$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Raw"),$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre('','','');
+	print_liste_field_titre('');
 	print "</tr>\n";
 
 	$var=True;

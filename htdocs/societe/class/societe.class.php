@@ -1652,7 +1652,7 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT u.rowid, u.lastname, u.firstname";
+        $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
         $sql.= " AND entity in (0, ".$conf->entity.")";
@@ -1668,6 +1668,7 @@ class Societe extends CommonObject
                 $reparray[$i]['id']=$obj->rowid;
                 $reparray[$i]['lastname']=$obj->lastname;
                 $reparray[$i]['firstname']=$obj->firstname;
+                $reparray[$i]['email']=$obj->email;
                 $i++;
             }
             return $reparray;
@@ -2132,16 +2133,33 @@ class Societe extends CommonObject
 
 
     /**
-     *    Return bank number property of thirdparty
+     *  Return bank number property of thirdparty (label or rum)
      *
-     *    @return	string		Bank number
+     *	@param	string	$mode	'label' or 'rum'
+     *  @return	string			Bank number
      */
-    function display_rib()
+    function display_rib($mode='label')
     {
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
-        return $bac->getRibLabel(true);
+
+        if ($mode == 'label')
+        {
+        	return $bac->getRibLabel(true);
+        }
+        elseif ($mode == 'rum')
+        {
+        	if (empty($bac->rum))
+        	{
+        		$prelevement = new BonPrelevement($this->db);
+        		$bac->fetch_thirdparty();
+        		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+        	}
+        	return $bac->rum;
+        }
+
+        return 'BadParameterToFunctionDisplayRib';
     }
 
     /**

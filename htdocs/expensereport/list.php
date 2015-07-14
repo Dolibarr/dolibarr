@@ -191,7 +191,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("TotalVAT"),$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("TotalTTC"),$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	// Filters
@@ -245,16 +245,21 @@ if ($resql)
 	$total_total_ht = 0;
 	$total_total_ttc = 0;
 	$total_total_tva = 0;
+	
+	$expensereportstatic=new ExpenseReport($db);
 
 	if($num > 0)
 	{
 		while ($i < min($num,$limit))
 		{
 			$objp = $db->fetch_object($resql);
+			
+			$expensereportstatic->id=$objp->rowid;
+			$expensereportstatic->ref=$objp->ref;
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
-			print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->ref.'</a></td>';
+			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 			print '<td align="center">'.($objp->date_debut > 0 ? dol_print_date($objp->date_debut, 'day') : '').'</td>';
 			print '<td align="center">'.($objp->date_fin > 0 ? dol_print_date($objp->date_fin, 'day') : '').'</td>';
 			print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->id_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>';
@@ -263,10 +268,13 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 
 			$expensereporttmp->status=$objp->status;
-			print '<td align="right" colspan="2">';
+			print '<td align="right">';
 			//print $objp->status;
 			print $expensereporttmp->getLibStatut(5);
 			print '</td>';
+
+			print '<td></td>';
+
 			print "</tr>\n";
 
 			$total_total_ht = $total_total_ht + $objp->total_ht;

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if ($user->societe_id > 0) accessforbidden();
 
 // Si l'utilisateur n'a pas le droit de lire cette page
-if(!$user->rights->holiday->view_log) accessforbidden();
+if(!$user->rights->holiday->read_all) accessforbidden();
 
 $year=GETPOST('year');
 if (empty($year))
@@ -41,21 +41,26 @@ if (empty($year))
 	$year=$tmpdate['year'];
 }
 
+$langs->load('users');
+
 
 /*
  * View
  */
 
-$langs->load('users');
+$cp = new Holiday($db);
 
 llxHeader(array(),$langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
-
-$cp = new Holiday($db);
 // Recent changes are more important than old changes
 $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year,1,1))."' AND '".$db->idate(dol_get_last_day($year,12,1))."'");	// Load $cp->logs
 
 print load_fiche_titre($langs->trans('LogCP'), '<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'">&lt;</a><li class="pagination"><a href="">'.$langs->trans("Year").' '.$year.'</a></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'">&gt;</a></li></lu></div>', 'title_hrm.png');
+
+print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
+if ($cp->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+else print $langs->trans('None');
+print "</div><br>\n";
 
 print '<table class="noborder" width="100%">';
 print '<tbody>';
@@ -107,6 +112,6 @@ print '</tbody>'."\n";
 print '</table>'."\n";
 
 
-// Fin de page
-$db->close();
 llxFooter();
+
+$db->close();

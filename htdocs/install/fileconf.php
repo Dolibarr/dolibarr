@@ -36,7 +36,7 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 $langs->load("errors");
 
-dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
+dolibarr_install_syslog("--- fileconf: entering fileconf.php page");
 
 // You can force preselected values of the config step of Dolibarr by adding a file
 // install.forced.php into directory htdocs/install (This is the case with some wizard
@@ -71,12 +71,14 @@ if (@file_exists($forcedfile)) {
 
 session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
 
-pHeader($langs->trans("ConfigurationFile"),"etape1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
+pHeader($langs->trans("ConfigurationFile"),"step1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
 {
-    print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
+    print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
+	dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
+	dolibarr_install_syslog("--- fileconf: end");
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
@@ -306,7 +308,8 @@ if (! empty($force_install_message))
                     $class='DoliDB'.ucfirst($type);
                     include_once $dir."/".$file;
 
-                    if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete until sqlite does not manage foreign key creation after table creation
+                    if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
+                    if ($type == 'sqlite3') continue;   // We hide sqlite3 because support can't be complete until sqlite does not manage foreign key creation after table creation (ALTER TABLE child ADD CONSTRAINT not supported)
 
 		            // Version min of database
                     $versionbasemin=explode('.',$class::VERSIONMIN);
@@ -584,4 +587,5 @@ function jscheckparam()
 
 // $db->close();	Not database connexion yet
 
+dolibarr_install_syslog("--- fileconf: end");
 pFooter($err,$setuplang,'jscheckparam');

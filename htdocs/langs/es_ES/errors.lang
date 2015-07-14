@@ -170,6 +170,7 @@ ErrorGlobalVariableUpdater4=El cliente SOAP ha fallado con el error '%s'
 ErrorGlobalVariableUpdater5=Sin variable global seleccionada
 ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
 ErrorFieldMustBeAnInteger=El campo <b>%s</b> debe de ser un entero
+ErrorMandatoryParametersNotProvided=Los parámetro(s) obligatorio(s) no están todavía definidos
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
@@ -190,3 +191,4 @@ WarningNotRelevant=Operación irrelevante para este conjunto de datos
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalidad desactivada cuando la configuración de visualización es optimizada para personas ciegas o navegadores de texto.
 WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fecha (%s) de la factura %s.
 WarningTooManyDataPleaseUseMoreFilters=Demasiados datos. Utilice más filtros
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.

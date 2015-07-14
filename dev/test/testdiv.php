@@ -9,10 +9,10 @@
 <link rel="shortcut icon" type="image/x-icon" href="/dolibarrnew/theme/eldy/img/favicon.ico"/>
 <title>Login Dolibarr 3.4.0-alpha</title>
 <!-- Includes for JQuery (Ajax library) -->
-<link rel="stylesheet" type="text/css" href="/dolibarrnew/includes/jquery/css/smoothness/jquery-ui-latest.custom.css" />
+<link rel="stylesheet" type="text/css" href="/dolibarrnew/includes/jquery/css/smoothness/jquery-ui.custom.css" />
 <link rel="stylesheet" type="text/css" title="default" href="/dolibarrnew/custom/filemanager/css/filemanager.css.php"><!-- Added by module filemanager-->
 <!-- Includes JS for JQuery -->
-<script type="text/javascript" src="/dolibarrnew/includes/jquery/js/jquery-latest.min.js"></script>
+<script type="text/javascript" src="/dolibarrnew/includes/jquery/js/jquery.min.js"></script>
 <script type="text/javascript" src="/dolibarrnew/core/js/dst.js"></script>
 <link rel="stylesheet" type="text/css" href="/dolibarrnew/theme/eldy/style.css.php?lang=fr_FR" />
 <!-- HTTP_USER_AGENT = Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.97 Safari/537.22 -->

@@ -74,6 +74,7 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('skeleton'));
+$extrafields = new ExtraFields($db);
 
 
 
@@ -217,7 +218,7 @@ jQuery(document).ready(function() {
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
-		init_needroot();
+		init_myfunc();
 	});
 });
 </script>';
@@ -230,8 +231,18 @@ if ($action == 'list' || empty($id))
     $sql.= " t.rowid,";
     $sql.= " t.field1,";
     $sql.= " t.field2";
+	// Add fields for extrafields
+	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+	// Add fields from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+	$sql.=$hookmanager->resPrint;
     $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
     $sql.= " WHERE field3 = 'xxx'";
+	// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+	$sql.=$hookmanager->resPrint;
     $sql.= " ORDER BY field1 ASC";
 
 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -241,7 +252,8 @@ if ($action == 'list' || empty($id))
 		print '<div class="liste_titre">';
 		print $moreforfilter;
     	$parameters=array();
-    	$formconfirm=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
 	    print '</div>';
 	}
 
@@ -252,7 +264,8 @@ if ($action == 'list' || empty($id))
     print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
     $parameters=array();
-    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     print '</tr>'."\n";
 
     // Fields title search
@@ -264,7 +277,8 @@ if ($action == 'list' || empty($id))
 	print '<input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10">';
 	print '</td>';
     $parameters=array();
-    $formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     print '</tr>'."\n";
 
 
@@ -287,8 +301,9 @@ if ($action == 'list' || empty($id))
                 print $obj->field2;
                 print '</td>';
 		        $parameters=array('obj' => $obj);
-        		$formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
-                print '</tr>';
+        		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+                print $hookmanager->resPrint;
+        		print '</tr>';
             }
             $i++;
         }
@@ -302,7 +317,8 @@ if ($action == 'list' || empty($id))
     $db->free($resql);
 
 	$parameters=array('sql' => $sql);
-	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>\n";
 	print "</form>\n";

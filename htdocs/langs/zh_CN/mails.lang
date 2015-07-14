@@ -77,7 +77,7 @@ CheckRead=已读回执
 YourMailUnsubcribeOK=电子邮件<b>%s</b>被正确地从邮件列表中退定
 MailtoEMail=超链接的电子邮件
 ActivateCheckRead=允许使用“取消订阅”链接
-ActivateCheckReadKey=“读回执”和“取消订阅”功能键用于加密URL使用
+ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=电子邮件发送到 %s 的收件人。
 XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
@@ -128,6 +128,7 @@ TagCheckMail=追踪邮件打开
 TagUnsubscribe=退订链接
 TagSignature=签名发送给用户
 TagMailtoEmail=收件人电子邮件
+NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=通知
 NoNotificationsWillBeSent=没有电子邮件通知此事件的计划和公司

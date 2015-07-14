@@ -84,6 +84,11 @@ WithdrawalFile=Datoteka nakazila
 SetToStatusSent=Nastavi status na "Datoteka poslana"
 ThisWillAlsoAddPaymentOnInvoice=S tem bodo plačila povezana z računi, ki bodo spremenili status v "Plačano"
 StatisticsByLineStatus=Statistika po statusu vrstic
+RUM=RUM
+RUMWillBeGenerated=RUM number will be generated once bank account information are saved
+WithdrawMode=Withdraw mode (FRST or RECUR)
+WithdrawRequestAmount=Withdraw request amount:
+WithdrawRequestErrorNilAmount=Unable to create withdraw request for nil amount.
 
 ### Notifications
 InfoCreditSubject=Plačilo odprtega naročila %s s strani banke
