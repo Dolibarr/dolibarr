@@ -258,7 +258,7 @@ textarea.cke_source:focus
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
-    background: #FDFDFD;
+    background: #FFF;
     color: #111;
     border: 1px solid #C0C0C0;
     margin: 0px 0px 0px 0px;
