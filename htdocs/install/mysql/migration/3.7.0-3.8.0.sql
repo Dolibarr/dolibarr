@@ -729,3 +729,4 @@ INSERT INTO llx_c_lead_status(rowid,code,label,position,percent,active) VALUES (
 DELETE FROM llx_c_action_trigger where code = 'PROPAL_CLASSIFYBILLED';
 DELETE FROM llx_c_action_trigger where code = 'FICHINTER_CLASSIFYBILLED';
 
+ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(62);
