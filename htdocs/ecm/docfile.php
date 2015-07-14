@@ -161,6 +161,7 @@ $form=new Form($db);
 
 $fullpath=$conf->ecm->dir_output.'/'.$ecmdir->label.'/'.$urlfile;
 
+$file = new stdClass();
 $file->section_id=$ecmdir->id;
 $file->label=$urlfile;
 
@@ -253,7 +254,7 @@ print '</div>';
 if ($_GET['action'] == 'delete_file')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
-    
+
 }
 
 if ($_GET["action"] != 'edit')
