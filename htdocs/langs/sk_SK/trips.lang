@@ -9,6 +9,7 @@ TripCard=Expense report card
 AddTrip=Create expense report
 ListOfTrips=List of expense reports
 ListOfFees=Sadzobník poplatkov
+ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=Firma / nadácie navštívil
 Kilometers=Kilometre

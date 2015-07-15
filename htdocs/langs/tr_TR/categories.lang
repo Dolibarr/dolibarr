@@ -108,3 +108,4 @@ CategorieRecursiv=Otomatik ana etiketli/kategorili bağlantı
 CategorieRecursivHelp=Etkinse, ürün bir alt kategoriye eklenirken aynı zamanda ana kategoriye de eklenecektir
 AddProductServiceIntoCategory=Aşağıdaki ürünü/hizmeti ekle
 ShowCategory=Etiketi/kategoriyi göster
+ByDefaultInList=B listede varsayılana göre

@@ -1,4 +1,39 @@
 # Dolibarr language file - Source file is en_US - admin
-AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
-AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+FilesUpdated=Mettre à jour les fichiers
+InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
+DownloadPackageFromWebSite=Télécharger le package %s.
+UnpackPackageInDolibarrRoot=Décompresser le paquet dans le répertoire dédié aux modules externes : <b>%s</b>
+YouCanSubmitFile=Sélectionner le module :
+HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TVA (TPS) sur les PDF générés
+OldVATRates=Ancien taux de TVA (TPS)
+NewVATRates=Nouveau taux de TVA (TPS)
+LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>2 : taxe locale sur les produits et services avant tva (TPS) (la taxe locale est appliquée sur le montant + tva (TPS))<br>3 : taxe locale uniquement sur les produits hors tva (TPS) (la taxe locale est calculée sur le montant hors taxe)<br>4 : taxe locale uniquement sur les produits avant tva(TPS) (la taxe locale est calculée sur le montant + tva)<br>5 : taxe locale uniquement sur les services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>6 : taxe locale uniquement sur les service avant tva (la taxe locale est calculée sur le montant + tva)
+Module500Name=Dépenses spéciales (taxes, charges, dividendes)
+Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
+Module770Name=Note de frais
+Module2600Name=WebServices
+Module2600Desc=Active le serveur de Web Services de Dolibarr
+Permission41=Consulter les projets et tâches (partagés ou dont je suis contact)
+Permission91=Consulter les charges et la TVA (TPS)
+Permission92=Créer/modifier les charges et la TVA (TPS)
+Permission93=Supprimer les charges et la TVA (TPS)
+Permission94=Exporter les charges
+Permission141=Consulter tous les projets et tâches (y compris privés dont je ne suis pas contact)
+Permission144=Supprimer tous les projets et tâches (y compris privés dont je ne suis pas contact)
+DictionarySocialContributions=Types de charges sociales
+DictionaryVAT=Taux de TVA (TPS) ou de Taxes de Ventes
+VATManagement=Gestion TVA (TPS)
+VATIsUsedDesc=Le taux de TVA (TPS) proposé par défaut lors de la création de proposition commerciale, facture, commande, etc... répond à la règle standard suivante :<br>Si vendeur non assujetti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transport neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payée par acheteur au centre d'impôts de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu (TVA pays vendeur si < seuil du pays et si  avant 01/01/2015, TVA pays acheteur après le 01/01/2015). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.<br>Sinon TVA proposée par défaut=0. Fin de règle.<br>
+VATIsNotUsedDesc=Le taux de TVA (TPS) proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
+LocalTax1IsUsedDesc=Utilisation d'un 2ème type taxe (autre que TVA (TPS))
+LocalTax1IsNotUsedDesc=Pas d'utilisation de 2ème type taxe (autre que TVA (TPS))
+LocalTax2IsUsedDesc=Utilisation d'un 3ème type taxe (autre que TVA(TPS))
+LocalTax2IsNotUsedDesc=Pas d'utilisation de 3ème type taxe (autre que TVA(TPS))
+ShowBugTrackLink=Afficher le lien "Signaler un défaut"
+MAIN_ROUNDING_RULE_TOT=Taille du pas des arrondis (pour les très rares pays qui arrondissent sur une autre base que la base 10)
+OnlyFollowingModulesAreOpenedToExternalUsers=Remarque, seuls les modules suivants sont ouverts aux utilisateurs externes (quelles que soient les permissions de ces utilisateurs) :
+UseUnits=Support units
+TaxSetup=Configuration du module Taxes, charges sociales et dividendes
+YourCompanyDoesNotUseVAT=Votre institution est configurée comme non assujettie à la TVA (TPS) (Accueil - Configuration - Société/Institution), aussi il n'y a aucune option sur la gestion TVA à paramétrer.
+Opened=Ouverte

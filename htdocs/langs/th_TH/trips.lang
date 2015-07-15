@@ -9,6 +9,7 @@ TripCard=บัตรรายงานค่าใช้จ่าย
 AddTrip=สร้างรายงานค่าใช้จ่าย
 ListOfTrips=รายชื่อของรายงานค่าใช้จ่าย
 ListOfFees=รายการค่าใช้จ่าย
+ShowTrip=Show expense report
 NewTrip=รายงานค่าใช้จ่ายใหม่
 CompanyVisited=บริษัท / มูลนิธิเข้าเยี่ยมชม
 Kilometers=กิโลเมตร

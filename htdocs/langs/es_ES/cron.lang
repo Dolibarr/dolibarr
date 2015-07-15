@@ -76,7 +76,7 @@ CronMethodHelp=El métpdp a lanzar. <BR> Por ejemplo para realizar un fetch del 
 CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, los valores pueden ser <i>0, ProductRef</i>
 CronCommandHelp=El comando en línea del sistema a ejecutar.
 CronCreateJob=Crear nueva tarea programada
-CronFrom=From
+CronFrom=De
 # Info
 CronInfoPage=Información
 # Common

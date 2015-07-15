@@ -9,6 +9,7 @@ TripCard=Reisekosten Karte
 AddTrip=Reisekostenabrechnung erstellen
 ListOfTrips=Liste Reise- und Spesenabrechnungen
 ListOfFees=Liste der Spesen
+ShowTrip=Spesenreport anzeigen
 NewTrip=neue Reisekostenabrechnung
 CompanyVisited=Besuchter Partner
 Kilometers=Kilometerstand
@@ -76,7 +77,7 @@ BROUILLONNER=entwerfen
 SendToValid=Zur Genehmigung einreichen
 ModifyInfoGen=Bearbeiten
 ValidateAndSubmit=Validieren und zur Genehmigung einreichen
-ValidatedWaitingApproval=Validated (waiting for approval)
+ValidatedWaitingApproval=Validiert (Wartet auf Genehmigung)
 
 NOT_VALIDATOR=Sie sind nicht berechtigt, diese Spesennabrechnung zu genehmigen
 NOT_AUTHOR=Sie sind nicht der Autor dieser Spesenabrechnung. Vorgang abgebrochen.
@@ -85,16 +86,16 @@ RefuseTrip=Verweigern eine Spesenabrechnung
 ConfirmRefuseTrip=Möchten Sie diese Spesenabrechnung wirklich ablehnen?
 
 ValideTrip=Genehmigen Spesenabrechnung
-ConfirmValideTrip=Sind Sie sicher, dass diese Spesenabrechnung genehmigen möchten?
+ConfirmValideTrip=Möchten Sie diese Spesenabrechnung wirklich genehmigen?
 
 PaidTrip=Spesenabrechnung bezahlen
-ConfirmPaidTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Bezahlt" ändern?
+ConfirmPaidTrip=Möchten Sie den Status dieser Spesenabrechnung auf "Bezahlt" ändern?
 
 CancelTrip=Abrechen einer Spesenabrechnung
 ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich abbrechen?
 
 BrouillonnerTrip=Spesenabrechnung rückgängig, auf den Status "Entwurf"
-ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Reisekostenabrechnung auf "Entwurf" ändern?
+ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Spesenabrechnung wirklich auf "Entwurf" ändern?
 
 SaveTrip=Bestätige Spesenabrechnung
 ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung überprüfen wollen?

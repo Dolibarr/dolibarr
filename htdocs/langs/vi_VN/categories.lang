@@ -108,3 +108,4 @@ CategorieRecursiv=Link with parent tag/category automatically
 CategorieRecursivHelp=Nếu được kích hoạt, sản phẩm này cũng sẽ liên quan đến chủ đề chính khi thêm vào một tiểu thể loại
 AddProductServiceIntoCategory=Thêm sản phẩm / dịch vụ sau đây
 ShowCategory=Show tag/category
+ByDefaultInList=By default in list

@@ -108,3 +108,4 @@ CategorieRecursiv=Enllaçar amb l'etiqueta/categoria automàticament
 CategorieRecursivHelp=Si esta activat, el producte s'enllaçara a la categoria pare si l'afegim a una subcategoria
 AddProductServiceIntoCategory=Afegir el següent producte/servei
 ShowCategory=Mostrar etiqueta/categoria
+ByDefaultInList=By default in list

@@ -108,3 +108,4 @@ CategorieRecursiv=Automatisk lenke til overordnet merke/kategori
 CategorieRecursivHelp=Hvis aktivert, vil varen også knyttes til overordnet kategori når du legger inn en underkategori
 AddProductServiceIntoCategory=Legg til følgende vare/tjeneste
 ShowCategory=Vis merke/kategori
+ByDefaultInList=Som standard i liste

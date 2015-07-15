@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
+AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Cotizaciones
 Module20Desc=Gestión de cotizaciones/propuestas comerciales
 Permission21=Consultar cotizaciones
@@ -18,4 +21,7 @@ ProposalsPDFModules=Modelos de documentos de cotizaciones
 HideTreadedPropal=Ocultar las cotizaciones procesados del listado
 FreeLegalTextOnProposal=Texto libre en cotizaciones
 WatermarkOnDraftProposal=Marca de agua en cotizaciones borrador (en caso de estar vacío)
+UseUnits=Support units
+SendingsAbility=Support shipment sheets for customer deliveries
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, cotizaciones, facturas, etc.)
+UrlTrackingDesc=If the provider or transport service offer a page or web site to check status of your shipment, you can enter it here. You can use the key {TRACKID} into URL parameters so the system will replace it with value of tracking number user entered into shipment card.

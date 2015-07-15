@@ -5,9 +5,9 @@ CronAbout = Über Cron
 CronAboutPage = Über cron Seite
 # Right
 Permission23101 = geplante Aufgabe einsehen
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23102 = Erstelle/ändere geplanten Job
+Permission23103 = Lösche geplanten Job
+Permission23104 = Führe geplanten Job aus
 # Admin
 CronSetup= Jobverwaltungs-Konfiguration
 URLToLaunchCronJobs=URL zum Prüfen und Starten von Cronjobs wenn nötig
@@ -55,8 +55,8 @@ CronEach=Jede
 JobFinished=Job gestarted und beendet
 #Page card
 CronAdd= Jobs hinzufügen
-CronHourStart= Start hour and date of job
-CronEvery=Execute job each
+CronHourStart= Start Datum und Zeit des Jobs
+CronEvery=Jeden Job ausführen
 CronObject=Instanz/Objekt zu erstellen
 CronArgs=Parameter
 CronSaveSucess=Speichern erfolgreich
@@ -76,7 +76,7 @@ CronMethodHelp=Die Objektmethode, um zu starten. <BR> Zum Beispiel um die Method
 CronArgsHelp=Das Methodenargument/Input-Parameter.<BR>  Zum Beispiel um die Methode fetch vom  Dolibarr Produkt Objekt /htdocs/product/class/product.class.php aufzurufen, ist der Input-Parameter-Wert <i>0, RefProduit</i>
 CronCommandHelp=Die auszuführende System-Kommandozeile
 CronCreateJob=Erstelle neuen cronjob
-CronFrom=From
+CronFrom=Von
 # Info
 CronInfoPage=Information
 # Common

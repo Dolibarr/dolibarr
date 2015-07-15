@@ -108,3 +108,4 @@ CategorieRecursiv=Link with parent tag/category automatically
 CategorieRecursivHelp=If activated, product will also linked to parent category when adding into a subcategory
 AddProductServiceIntoCategory=Add the following product/service
 ShowCategory=Show tag/category
+ByDefaultInList=By default in list

@@ -9,6 +9,7 @@ TripCard=Išlaidų ataskaitos kortelė
 AddTrip=Sukurti išlaidų ataskaitą
 ListOfTrips=List of expense reports
 ListOfFees=Įmokų sąrašas
+ShowTrip=Show expense report
 NewTrip=Nauja išlaidų ataskaita
 CompanyVisited=Aplankyta įmonė/organizacija
 Kilometers=Kilometrų

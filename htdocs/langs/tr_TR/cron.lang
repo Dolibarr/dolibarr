@@ -76,7 +76,7 @@ CronMethodHelp=Çalıştırılacak nesne yöntemi. <BR> Örneğin; Dolibarr Ür�
 CronArgsHelp=Yöntem parametreleri. <BR> Örneğin; Dolibarr Ürün nesnesi alım yöntemi /htdocs/product/class/product.class.php, parametre değerleri <i>0, ProductRef</i> olabilir
 CronCommandHelp=Yürütülecek sistem komut satırı.
 CronCreateJob=Yeni Planlı İş oluştur
-CronFrom=From
+CronFrom=Gönderen
 # Info
 CronInfoPage=Bilgi
 # Common

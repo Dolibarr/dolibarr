@@ -9,6 +9,7 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
 CompanyVisited=Société/institution visitée
 Kilometers=Kilomètres
@@ -73,10 +74,10 @@ DATE_PAIEMENT=Date de paiement
 
 TO_PAID=Payer
 BROUILLONNER=Réouvrir
-SendToValid=Sent on approval
+SendToValid=Envoyer approbation
 ModifyInfoGen=Editer
 ValidateAndSubmit=Valider et envoyer pour approbation
-ValidatedWaitingApproval=Validated (waiting for approval)
+ValidatedWaitingApproval=Validé (en attente d'approbation)
 
 NOT_VALIDATOR=Vous n'êtes pas autorisé a approuver cette note de frais
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais. Opération annulé.
@@ -93,7 +94,7 @@ ConfirmPaidTrip=Êtes-vous sûr de vouloir changer le statut de cette note de fr
 CancelTrip=Annuler note de frais
 ConfirmCancelTrip=Êtes-vous sûr de vouloir annuler cette note de frais ?
 
-BrouillonnerTrip=Move back expense report to status "Draft"
+BrouillonnerTrip=Passer le rapport de dépenses au statut "Brouillon"
 ConfirmBrouillonnerTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Brouillon" ?
 
 SaveTrip=Valider note de frais
