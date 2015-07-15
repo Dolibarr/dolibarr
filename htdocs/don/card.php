@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -658,8 +659,10 @@ if (! empty($id) && $action != 'edit')
         print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td>';
 		print '<td>';
-		$object->fetch_projet();
-		print $object->project->getNomUrl(4);
+			$projettmp=new Project($db);
+			$projettmp->id=$object->fk_projet;
+			$projettmp->ref=$object->project;
+			print $projettmp->getNomUrl(1);
 		print '</td>';
 		print '</tr>';
     }

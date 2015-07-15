@@ -608,7 +608,7 @@ class Don extends CommonObject
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_projet, d.model_pdf,";
-        $sql.= " p.title as project_label,";
+        $sql.= " p.ref as project_ref,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
@@ -652,7 +652,7 @@ class Don extends CommonObject
 				$this->email          = $obj->email;
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
-                $this->project        = $obj->project_label;
+                $this->project        = $obj->project_ref;
                 $this->fk_projet      = $obj->fk_projet;
                 $this->public         = $obj->public;
                 $this->modepaymentid  = $obj->fk_payment;
