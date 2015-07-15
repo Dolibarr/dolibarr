@@ -64,7 +64,7 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 if ($msg)	print $msg.'<br>';
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " c.dateadh,";
 $sql.= " c.datef,";
@@ -98,7 +98,7 @@ if ($result)
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.lastname",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"cotisations.php","d.lastname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Login"),"cotisations.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield,$sortorder);
     if (! empty($conf->banque->enabled))
@@ -131,6 +131,9 @@ if ($result)
         $adherent->id=$objp->rowid;
         $adherent->login=$objp->login;
 
+		$adherent->societe = $adherent->company = $objp->company;
+		$companyname = $objp->company;
+
         $var=!$var;
 
         if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
@@ -144,7 +147,11 @@ if ($result)
         print '<td>'.$cotisation->getNomUrl(1).'</td>';
 
         // Lastname
-        print '<td>'.$adherent->getNomUrl(1).'</td>';
+		print '<td><a href="'.dol_buildpath('/adherents/fiche.php?rowid='.$adherent->id, 2).'">'.img_object($langs->trans("ShowMember"),'user');
+		print ((! empty($adherent->lastname) || ! empty($adherent->firstname)) ? dol_trunc($adherent->ref) : '');
+		print (((! empty($adherent->lastname) || ! empty($adherent->firstname)) && ! empty($adherent->company)) ? ' / ' : '');
+		print (! empty($adherent->company) ? dol_trunc($adherent->company, 32) : '');
+		print "</a></td>";
 
         // Login
         print '<td>'.$adherent->login.'</td>';
