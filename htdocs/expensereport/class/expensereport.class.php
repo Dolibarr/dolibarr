@@ -56,8 +56,8 @@ class ExpenseReport extends CommonObject
     var $user_author_infos;
     var $user_validator_infos;
 
-    var $modepayment;
-    var $modepaymentid;
+    var $fk_typepayment;
+	var $num_payment;
     var $code_paiement;
     var $code_statut;
 
