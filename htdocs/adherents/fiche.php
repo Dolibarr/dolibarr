@@ -262,11 +262,13 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
 		}
-		if ($morphy == 'mor' && (empty($societe) || $societe == -1) )
+		
+		$fk_soc = GETPOST('societe', 'int');
+		if ($morphy == 'mor' && (empty($fk_soc) || $fk_soc == -1))
 		{
 			$error++;
 			$langs->load("errors");
-			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Societe"))."<br>\n";
+			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Company"))."<br>\n";
 		}
 
 		// Create new object
@@ -282,7 +284,7 @@ if (empty($reshook)) {
 			$object->pass        = trim($_POST["pass"]);
 
 			$soc = new Societe($db);
-			$soc->fetch(GETPOST('societe', 'int'));
+			$soc->fetch($fk_soc);
 			$object->societe     = $soc->name;
 			$object->company     = trim($_POST["societe"]);
 
@@ -488,7 +490,7 @@ if (empty($reshook)) {
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		// Check parameters
-		if (empty($morphy) || $morphy == "-1") {
+		if (empty($morphy)) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature"))."<br>\n";
 		}
@@ -525,6 +527,11 @@ if (empty($reshook)) {
 			$error++;
 			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+		}
+		if ($morphy == 'mor' && (empty($fk_soc) || $fk_soc == -1)) {
+			$error++;
+			$langs->load("errors");
+			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Company"))."<br>\n";
 		}
 		if (! ($typeid > 0)) {	// Keep () before !
 			$error++;
