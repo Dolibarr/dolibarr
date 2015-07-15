@@ -251,7 +251,7 @@ if (empty($reshook)) {
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
-		$morphy=$morphy=$_POST["morphy"];;
+		$morphy=$_POST["morphy"];
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
@@ -261,6 +261,12 @@ if (empty($reshook)) {
 			$error++;
 			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+		}
+		if ($morphy == 'mor' && (empty($societe) || $societe == -1) )
+		{
+			$error++;
+			$langs->load("errors");
+			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Societe"))."<br>\n";
 		}
 
 		// Create new object
@@ -425,11 +431,12 @@ if (empty($reshook)) {
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
 		
+		//$societe=$_POST["societe"];
+		$fk_soc = GETPOST('societe', 'int');
 		$soc = new Societe($db);
-		$soc->fetch(GETPOST('societe', 'int'));
+		$soc->fetch($fk_soc);
 		$societe = $soc->name;
 		
-		//$societe=$_POST["societe"];
 		$address=$_POST["address"];
 		$zip=$_POST["zipcode"];
 		$town=$_POST["town"];
