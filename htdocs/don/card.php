@@ -595,8 +595,8 @@ if (! empty($id) && $action != 'edit')
 			print "<tr ".$bc[$var]."><td>";
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-		        $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->paiement_type;
-                               print "<td>".$labeltype.' '.$object->num_paiement."</td>\n";
+		        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
+                               print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 			print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 			print "</tr>";
 			$totalpaid += $objp->amount;

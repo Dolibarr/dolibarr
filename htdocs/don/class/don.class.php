@@ -55,8 +55,8 @@ class Don extends CommonObject
     var $email;
     var $public;
     var $fk_projet;
-    var $modepaiement;
-    var $modepaiementid;
+    var $fk_typepayment;
+	var $num_payment;
     var $note_private;
     var $note_public;
     var $statut;

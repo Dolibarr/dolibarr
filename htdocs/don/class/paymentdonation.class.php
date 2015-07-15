@@ -90,8 +90,8 @@ class PaymentDonation extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_donation)) 		$this->fk_donation=trim($this->fk_donation);
 		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->typepayment))	    $this->typepayment=trim($this->typepayment);
-		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
+		if (isset($this->fk_typepayment))   $this->fk_typepayment=trim($this->fk_typepayment);
+		if (isset($this->num_payment))      $this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
