@@ -584,6 +584,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
+			$newmenu->add("/societe/list.php?leftmenu=thirdparties", $langs->trans("List"),1);
+
 			// Prospects
 			if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 			{
