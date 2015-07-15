@@ -1715,7 +1715,7 @@ class ExpenseReportLine
  */
 function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempty=1)
 {
-    global $db;
+    global $db, $langs;
 
     $tmpep=new ExpenseReport($db);
 
@@ -1731,7 +1731,7 @@ function select_expensereport_statut($selected='',$htmlname='fk_statut',$useempt
         {
             print '<option value="'.$key.'">';
         }
-        print $val;
+        print $langs->trans($val);
         print '</option>';
     }
     print '</select>';
