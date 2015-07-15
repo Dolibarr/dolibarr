@@ -986,8 +986,8 @@ class ExpenseReport extends CommonObject
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET ref = '".$this->ref."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
             $sql.= " date_refuse='".$this->db->idate($now)."',";
-            $sql.= " detail_refuse='".$this->db->escape($details)."'";
-            $sql.= " fk_user_approve=NULL,";
+            $sql.= " detail_refuse='".$this->db->escape($details)."',";
+            $sql.= " fk_user_approve = NULL";
             $sql.= ' WHERE rowid = '.$this->id;
             if ($this->db->query($sql))
             {

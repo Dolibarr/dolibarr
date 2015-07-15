@@ -576,7 +576,7 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 	}
 	else
 	{
-		setEventMessage($object->error, $object->errors);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -1407,7 +1407,14 @@ else
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
 				print '<td>'.price($object->total_ht).'</td>';
-				print '<td rowspan="7" valign="top">';
+				$rowspan = 5;
+				if ($object->fk_statut < 3) $rowspan++;
+				elseif($object->fk_statut == 4) $rowspan+=2;
+				else $rowspan+=2;
+				if ($object->fk_statut==99 || !empty($object->detail_refuse)) $rowspan+=2;
+				if($object->fk_statut==6) $rowspan+=2;
+
+				print '<td rowspan="'.$rowspan.'" valign="top">';
 				/*
 				 * Payments
 				 */
@@ -1501,7 +1508,7 @@ else
 				print '</tr>';
 
 				// User to inform
-				if($object->fk_statut<3)	// informed
+				if ($object->fk_statut < 3)	// informed
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("VALIDATOR").'</td>';
@@ -1515,7 +1522,7 @@ else
 					}
 					print '</td></tr>';
 				}
-				elseif($object->fk_statut==4)
+				elseif($object->fk_statut == 4)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("CANCEL_USER").'</span></td>';
@@ -1554,7 +1561,7 @@ else
 					print '</tr>';
 				}
 
-				if($object->fk_statut==99 || !empty($object->detail_refuse))
+				if ($object->fk_statut==99 || !empty($object->detail_refuse))
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("REFUSEUR").'</td>';
