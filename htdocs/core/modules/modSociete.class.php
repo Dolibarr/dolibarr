@@ -355,6 +355,9 @@ class modSociete extends DolibarrModules
         			case 'sellist':
         				$typeFilter="List:".$obj->param;
         				break;
+					case 'select':
+						$typeFilter="Select:".$obj->param;
+						break;
         		}
         		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
         		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
