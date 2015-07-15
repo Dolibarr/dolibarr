@@ -12,7 +12,7 @@ beta version of Dolibarr, step by step.
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
 - Update version number with x.y.z-w in build/debian/changelog
 - Commit all changes.
-- Add a Tag (x.y.betaz_YYYYMMDD) and push it: git push --tags
+- Add a Tag (x.y.z-beta) and push it: git push --tags
 - Create a branch (x.y).
 
 - Run makepack-dolibarr.pl to generate all packages.

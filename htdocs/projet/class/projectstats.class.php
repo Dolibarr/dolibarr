@@ -19,6 +19,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
+/**
+ * Class to manage statistics on projects
+ */
 class ProjectStats extends Stats
 {
 	protected $db;
@@ -26,13 +29,14 @@ class ProjectStats extends Stats
 	public $userid;
 	public $socid;
 	public $year;
-	function __construct($db) {
+	
+	function __construct($db) 
+	{
 		global $conf, $user;
 
 		$this->db = $db;
 
 		require_once 'project.class.php';
-
 		$this->project = new Project($this->db);
 	}
 
@@ -113,11 +117,15 @@ class ProjectStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
+	
+	
 	/**
-	 *
+	 * Build the where part
+	 * 
 	 * @return string
 	 */
-	public function buildWhere() {
+	public function buildWhere() 
+	{
 		$sqlwhere_str = '';
 		$sqlwhere = array();
 
@@ -148,7 +156,8 @@ class ProjectStats extends Stats
 	 * @param int $year scan
 	 * @return array of values
 	 */
-	function getNbByMonth($year) {
+	function getNbByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;
@@ -174,7 +183,8 @@ class ProjectStats extends Stats
 	 * @param int $year scan
 	 * @return array with amount by month
 	 */
-	function getAmountByMonth($year) {
+	function getAmountByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;
@@ -289,18 +299,19 @@ class ProjectStats extends Stats
 
 
 	/**
-	 * Return the Project amount by month for a year
+	 * Return the Project weighted opp amount by month for a year
 	 *
 	 * @param int $year scan
 	 * @return array with amount by month
 	 */
-	function getWeightedAmountByMonth($year) {
+	function getWeightedAmountByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;
 
-		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount)";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$sql = "SELECT date_format(t.datec,'%m') as dm, SUM(t.opp_amount * ".$this->db->ifsql('cls.percent IS NULL', '0', 'cls.percent')." / 100)";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t LEFT JOIN ".MAIN_DB_PREFIX.'c_lead_status as cls ON t.fk_opp_status = cls.rowid';
 		if (! $user->rights->societe->client->voir && ! $user->societe_id)
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql .= $this->buildWhere();
@@ -401,7 +412,8 @@ class ProjectStats extends Stats
 	 * @param int $year scan
 	 * @return array with amount by month
 	 */
-	function getTransformRateByMonth($year) {
+	function getTransformRateByMonth($year) 
+	{
 		global $user;
 
 		$this->yearmonth = $year;

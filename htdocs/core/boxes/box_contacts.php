@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -62,7 +62,7 @@ class box_contacts extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc";
+			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 			$sql.= ", s.nom as socname";
             $sql.= ", s.code_client";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
@@ -91,7 +91,8 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
-
+					$contactstatic->statut=$objp->status;
+					
                     $societestatic->id = $objp->fk_soc;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->name = $objp->socname;
@@ -113,6 +114,12 @@ class box_contacts extends ModeleBoxes
                         'text' => dol_print_date($datem, "day"),
                     );
 
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'align="right" class="nowrap" width="18"',
+                        'text' => $contactstatic->getLibStatut(3),
+                        'asis'=>1,
+                    );
+                    
                     $line++;
                 }
 

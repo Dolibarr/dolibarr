@@ -30,7 +30,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0-alpha');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.8.0-beta');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -57,12 +57,16 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) return;
 // Define vars
 $conffiletoshowshort = "conf.php";
 // Define localization of conf file
+// --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
+
+// Include configuration
+// --- End of part replaced by Dolibarr packager makepack-dolibarr
 // Replace conf filename with "conf" parameter on url by GET
 if (! empty($_GET['conf']))
 {

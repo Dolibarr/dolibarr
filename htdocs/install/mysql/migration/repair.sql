@@ -54,6 +54,7 @@ delete from llx_adherent_extrafields where fk_object not in (select rowid from l
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
+update llx_product_batch set batch = '' where batch = 'Non d&eacute;fini';
 
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;

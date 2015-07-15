@@ -64,6 +64,13 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
+if ($SOURCE !~ /^\//)
+{
+	print "Error: Launch the script $PROG.$Extension with its full path from /.\n";
+	print "$PROG.$Extension aborted.\n";
+	sleep 2;
+	exit 1;
+}
 if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
 	print "Error: Missing environment variables.\n";
@@ -337,8 +344,8 @@ foreach my $target (sort keys %CHOOSEDPUBLISH) {
 
 if ($nboftargetok) {
 
-	# Update CVS if required
-	#-----------------------
+	# Update GIT tag if required
+	#---------------------------
 	if ($nbofpublishneedtag)
 	{
 		print "Go to directory $SOURCE\n";
@@ -420,6 +427,7 @@ if ($nboftargetok) {
 
 		$ret=`rm -fr  $BUILDROOT/$PROJECT/htdocs/install/mssql`;
 
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ansible`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codesniffer`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
@@ -428,6 +436,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/mail`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/multitail`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpcheckstyle`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/phpunit`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/security`;
@@ -469,12 +478,12 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/nltechno*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/oscim*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/pos*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		# Removed other test files
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/eldy/*.new`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/api/explorer`;				# This is a dev tool
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
@@ -683,7 +692,7 @@ if ($nboftargetok) {
 			use Date::Language;
 			$lang=Date::Language->new('English');
 			$datestring = $lang->time2str("%a %b %e %Y", time);
-    		$changelogstring="* ".$datestring." Laurent Destailleur $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n- Upstream release\n";
+    		$changelogstring="* ".$datestring." Laurent Destailleur (eldy) $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n- Upstream release\n";
 
 			print "Generate file $BUILDROOT/$BUILDFIC from $SOURCE/build/rpm/${BUILDFICSRC}\n";
 			open (SPECFROM,"<$SOURCE/build/rpm/${BUILDFICSRC}") || die "Error";
@@ -715,7 +724,7 @@ if ($nboftargetok) {
 			$ret=`$cmd`;
 			print "Move $RPMDIR/SOURCES/".$FILENAMETGZ2.".tgz into $NEWDESTI/".$FILENAMETGZ2.".tgz\n";
 			$cmd="mv \"$RPMDIR/SOURCES/".$FILENAMETGZ2.".tgz\" \"$NEWDESTI/".$FILENAMETGZ2.".tgz\"";
-			$ret=`$cmd`;
+			#$ret=`$cmd`;
 			next;
 		}
 
@@ -805,8 +814,17 @@ if ($nboftargetok) {
 			print "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
 			$ret=`mkdir "$BUILDROOT/$PROJECT.tmp/debian"`;
 			print "Copy $SOURCE/build/debian/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
+			# Add files for dpkg-source (changelog)
+			#$ret=`cp -f  "$SOURCE/build/debian/changelog"      "$BUILDROOT/$PROJECT.tmp/debian"`;
+			open (SPECFROM,"<$SOURCE/build/debian/changelog") || die "Error";
+			open (SPECTO,">$BUILDROOT/$PROJECT.tmp/debian/changelog") || die "Error";
+			while (<SPECFROM>) {
+				$_ =~ s/__VERSION__/$MAJOR.$MINOR.$newbuild/;
+				print SPECTO $_;
+			}
+			close SPECFROM;
+			close SPECTO;
 			# Add files for dpkg-source
-			$ret=`cp -f  "$SOURCE/build/debian/changelog"      "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/build/debian/compat"         "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/build/debian/control"        "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/build/debian/copyright"      "$BUILDROOT/$PROJECT.tmp/debian"`;

@@ -1234,23 +1234,34 @@ class Expedition extends CommonObject
 				$this->total_localtax1+= $tabprice[9];
 				$this->total_localtax2+= $tabprice[10];
 
+                $line->detail_batch = array();
+
 				// Eat-by date
-				if (! empty($conf->productbatch->enabled)) {
-                    /* test on conf at begining of file sometimes doesn't include expeditionbatch
-                     * May be conf is not well initialized for dark reason
-                     */
+				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0)
+				{
                     require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-                    if ($originline != $obj->fk_origin_line)
+
+                    $newdetailbatch = ExpeditionLineBatch::fetchAll($this->db,$obj->line_id);
+                    if (is_array($newdetailbatch))
                     {
-                        $line->detail_batch = ExpeditionLineBatch::fetchAll($this->db,$obj->line_id);
-                    } else {
-                        $line->detail_batch = array_merge($line->detail_batch,ExpeditionLineBatch::fetchAll($this->db,$obj->line_id));
+	                    if ($originline != $obj->fk_origin_line)
+	                    {
+	                        $line->detail_batch = $newdetailbatch;
+	                    }
+	                    else
+						{
+	                        $line->detail_batch = array_merge($line->detail_batch, $newdetailbatch);
+	                    }
                     }
 				}
-				if ($originline != $obj->fk_origin_line) {
+
+				if ($originline != $obj->fk_origin_line)
+				{
 				    $this->lines[$lineindex] = $line;
 				    $lineindex++;
-				} else {
+				}
+				else
+				{
 				    $line->total_ht			+= $tabprice[0];
 				    $line->total_localtax1 	+= $tabprice[9];
 				    $line->total_localtax2 	+= $tabprice[10];

@@ -238,6 +238,12 @@ if (empty($reshook))
 			if ($ret < 0) $error++;
 	    }
 
+		if ($object->opp_amount && ($object->opp_status <= 0))
+	    {
+	       	$error++;
+	    	setEventMessage($langs->trans("ErrorOppStatusRequiredIfAmount"),'errors');
+	    }
+	    
 	    if (! $error)
 	    {
 	    	$result=$object->update($user);
@@ -411,7 +417,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-    print dol_fiche_head();
+    dol_fiche_head();
 
     print '<table class="border" width="100%">';
 
@@ -658,7 +664,7 @@ else
 
 		    // Opportunity amount
 		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="4" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
+		    print '<td><input size="6" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount):'')).'"></td>';
 		    print '</tr>';
 	    }
 
@@ -899,7 +905,6 @@ else
     // Hook to add more things on page
     $parameters=array();
     $reshook=$hookmanager->executeHooks('mainCardTabAddMore',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-
 }
 
 llxFooter();
