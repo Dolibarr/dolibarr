@@ -1010,13 +1010,13 @@ else
 		{
             print '<table class="border" width="100%">';
 
-            // PRIX
+            // Price
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" size="10" value="'.$object->price.'">';
             print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
             print '</td></tr>';
 
-            // MIN PRICE
+            // Min price
             print '<tr><td>'.$langs->trans("MinPrice").'</td>';
             print '<td><input name="price_min" size="10" value="'.$object->price_min.'">';
             print '</td></tr>';
@@ -1031,28 +1031,21 @@ else
             print '<br>';
         }
 
-        /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
-        {
-            // Don't show accounting field when accounting id disabled.
-        }
-        else
-        {*/
-            print '<table class="border" width="100%">';
+        print '<table class="border" width="100%">';
 
-            // Accountancy_code_sell
-            print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
-            print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
-            print '</td></tr>';
+        // Accountancy_code_sell
+        print '<tr><td>'.$langs->trans("ProductAccountancySellCode").'</td>';
+        print '<td><input name="accountancy_code_sell" size="16" value="'.$object->accountancy_code_sell.'">';
+        print '</td></tr>';
 
-            // Accountancy_code_buy
-            print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
-            print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
-            print '</td></tr>';
+        // Accountancy_code_buy
+        print '<tr><td width="20%">'.$langs->trans("ProductAccountancyBuyCode").'</td>';
+        print '<td><input name="accountancy_code_buy" size="16" value="'.$object->accountancy_code_buy.'">';
+        print '</td></tr>';
 
-            print '</table>';
+        print '</table>';
 
-            print '<br>';
-        //}
+        print '<br>';
 
         dol_fiche_end();
 
@@ -1435,22 +1428,15 @@ else
                 print '</td></tr>'."\n";
             }
 
-            /*if (empty($conf->accounting->enabled) && empty($conf->comptabilite->enabled) && empty($conf->accountingexpert->enabled))
-            {
-                // Don't show accounting field when accounting id disabled.
-            }
-            else
-            {*/
-                // Accountancy sell code
-                print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-                print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
-                print '</td></tr>';
+            // Accountancy sell code
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+            print '</td></tr>';
 
-                // Accountancy buy code
-                print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
-                print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
-                print '</td></tr>';
-            //}
+            // Accountancy buy code
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
+            print '</td></tr>';
 
             // Status (to sell)
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
