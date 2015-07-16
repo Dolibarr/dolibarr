@@ -220,7 +220,7 @@ else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
 // Description
-print '<tr><td valign="top">'.$langs->trans("Description") .'</td><td colspan="2">';
+print '<tr><td class="tdtop">'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
@@ -228,12 +228,7 @@ if ($action == 'edit')
 }
 else
 {
-	if (empty($conf->fckeditor->enabled)) print dol_htmlentitiesbr($object->commentaires);
-	else
-	{
-		$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120,1);
-		$doleditor->Create(0,'');
-	}
+	 print (dol_textishtml($object->commentaires)?$object->commentaires:dol_nl2br($object->commentaires,1,true));
 }
 print '</td></tr>';
 
