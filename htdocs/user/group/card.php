@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -239,7 +239,7 @@ if ($action == 'create')
 	print '<td class="valeur"><input size="30" type="text" id="nom" name="nom" value=""></td></tr>';
 
 	// Multicompany
-	if (! empty($conf->multicompany->enabled))
+	if (! empty($conf->multicompany->enabled) && is_object($mc))
 	{
 		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
@@ -326,7 +326,7 @@ else
 			print "</td></tr>\n";
 
 			// Multicompany
-			if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
@@ -401,7 +401,7 @@ else
                 print $form->select_dolusers('','user',1,$exclude,0,'','',$object->entity);
                 print ' &nbsp; ';
                 // Multicompany
-                if (! empty($conf->multicompany->enabled))
+                if (! empty($conf->multicompany->enabled) && is_object($mc))
                 {
                     if ($conf->entity == 1 && $conf->multicompany->transverse_mode)
                     {
@@ -455,7 +455,7 @@ else
             		print '</td>';
             		print '<td>'.$useringroup->lastname.'</td>';
             		print '<td>'.$useringroup->firstname.'</td>';
-            		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            		if (! empty($conf->multicompany->enabled)  && is_object($mc) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             		{
             			print '<td class="valeur">';
             			if (! empty($useringroup->usergroup_entity))
@@ -513,7 +513,7 @@ else
             print "</td></tr>\n";
 
             // Multicompany
-            if (! empty($conf->multicompany->enabled))
+            if (! empty($conf->multicompany->enabled) && is_object($mc))
             {
                 if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                 {
