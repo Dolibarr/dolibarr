@@ -905,8 +905,7 @@ class Contrat extends CommonObject
 				$modCodeContract = new $module();
 			}
 
-			//Commerce Efficace - Debut : Modification r�f�rence Contrat
-			/*if (!empty($modCodeContract->code_auto)) {
+			if (!empty($modCodeContract->code_auto)) {
 				// Mise a jour ref
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 				if ($this->db->query($sql))
@@ -916,8 +915,7 @@ class Contrat extends CommonObject
 						$this->ref="(PROV".$this->id.")";
 					}
 				}
-			}*/
-			//Commerce Efficace - Fin : Modification r�f�rence Contrat
+			}
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
