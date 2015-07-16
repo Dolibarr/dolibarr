@@ -303,16 +303,8 @@ class Skeleton_Class extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		if (isset($this->field1)) {
-			$sql .= ' field1=\'' . $this->db->escape($this->field1) . '\',';
-		} else {
-			$sql .= ' field1=null' . ',';
-		}
-		if (isset($this->field2)) {
-			$sql .= ' field2=\'' . $this->db->escape($this->field2) . '\'';
-		} else {
-			$sql .= ' field2=null';
-		}
+		$sql .= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
+        $sql .= " field2=".(isset($this->field2)?"'".$this->db->escape($this->field2)."'":"null")."";
 		//...
 		$sql .= ' WHERE rowid=' . $this->id;
 
