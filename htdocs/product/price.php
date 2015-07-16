@@ -361,6 +361,11 @@ if (empty($reshook))
 
 $form = new Form($db);
 
+if (! empty($id) || ! empty($ref))
+{
+	// fetch updated prices
+	$object->fetch($id, $ref);
+}
 llxHeader("", "", $langs->trans("CardProduct" . $object->type));
 
 $head = product_prepare_head($object);
