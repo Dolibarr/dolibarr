@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,21 +180,18 @@ if ($resql)
 		$entity=$obj->entity;
 		$entitystring='';
         // TODO Set of entitystring should be done with a hook
-        if (is_object($mc))
-        {
-			if (! empty($conf->multicompany->enabled))
-	        {
-	        	if (empty($entity))
-	        	{
-	        		$entitystring=$langs->trans("AllEntities");
-	        	}
-	        	else
-	        	{
-	        		$mc->getInfo($entity);
-	        		$entitystring=$mc->label;
-	        	}
-	        }
-        }
+		if (! empty($conf->multicompany->enabled) && is_object($mc))
+		{
+			if (empty($entity))
+			{
+				$entitystring=$langs->trans("AllEntities");
+			}
+			else
+			{
+				$mc->getInfo($entity);
+				$entitystring=$mc->label;
+			}
+		}
         print ($entitystring?' ('.$entitystring.')':'');
 
 		print '</td>';
@@ -259,7 +256,7 @@ if ($canreadperms)
 				print img_picto($langs->trans("GlobalGroup"),'redstar');
 			}
 			print "</td>";
-			if (! empty($conf->multicompany->enabled))
+			if (! empty($conf->multicompany->enabled) && is_object($mc))
 			{
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';

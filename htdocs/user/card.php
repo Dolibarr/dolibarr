@@ -2195,7 +2195,8 @@ else
             }
 
             // Multicompany
-            if (! empty($conf->multicompany->enabled))
+            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+            if (! empty($conf->multicompany->enabled) && is_object($mc))
             {
             	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             	{
