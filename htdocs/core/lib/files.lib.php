@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2013	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2015	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				'sortcriteria' => $sortcriteria,
 				'sortorder' => $sortorder,
 				'loaddate' => $loaddate,
-				'loadsize' => $loadsize
+				'loadsize' => $loadsize,
+				'mode' => $mode
 		);
 		$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
 	}
