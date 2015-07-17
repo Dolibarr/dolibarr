@@ -2271,7 +2271,9 @@ class Form
     function load_cache_availability()
     {
         global $langs;
-
+		
+		$langs->load('propal');
+		
         if (count($this->cache_availability)) return 0;    // Cache deja charge
 
         $sql = "SELECT rowid, code, label";
