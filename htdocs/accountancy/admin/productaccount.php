@@ -116,7 +116,10 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->
     $sql1 .= " SET p.accountancy_code_sell=" . $account_number_sell;
     $sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
     
-    dol_syslog('accountancy/customer/lines.php::changeaccount product sell sql= ' . $sql1);
+    // Debug
+    // print_r ($sql1);     
+
+	dol_syslog('accountancy/customer/lines.php::changeaccount product sell sql= ' . $sql1);
 
     $resql1 = $db->query($sql1);
     if (! $resql1) {
@@ -146,9 +149,6 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->
     // print_r ($sql1);    
 
 	dol_syslog('accountancy/customer/lines.php::changeaccount product buy sql= ' . $sql1);
-
-    // Debug
-    // print_r ($sql1); 
 
 	$resql1 = $db->query($sql1);
     if (! $resql1) {
