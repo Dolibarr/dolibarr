@@ -9,6 +9,7 @@ TripCard=Scheda nota spese
 AddTrip=Crea nota spese
 ListOfTrips=List of expense reports
 ListOfFees=Elenco delle tariffe
+ShowTrip=Show expense report
 NewTrip=Nuova nota spese
 CompanyVisited=Società/Fondazione visitata
 Kilometers=Kilometri

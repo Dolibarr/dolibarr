@@ -9,6 +9,7 @@ TripCard=Expense report card
 AddTrip=Create expense report
 ListOfTrips=List of expense reports
 ListOfFees=費用清單
+ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=公司/基礎訪問
 Kilometers=公裏

@@ -27,6 +27,7 @@ ECMDocumentsSection=Documento da pasta
 ECMSearchByKeywords=Busca usando palavras chave
 ECMSearchByEntity=Busca por objeto
 ECMSectionOfDocuments=Pastas de documentos
+ECMDocsBySocialContributions=Documentos ligados a impostos sociais ou fiscais
 ECMDocsByThirdParties=Documentos associados a fornecedores
 ECMDocsByProposals=Documentos associados a orçamentos
 ECMDocsByInvoices=Documentos associados a faturas do cliente

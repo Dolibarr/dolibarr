@@ -176,6 +176,7 @@ IncludedVAT=ICMS incluido
 HT=Sem ICMS
 TTC=ICMS Incluido
 VAT=ICMS
+VATs=Impostos sobre vendas
 VATRate=Taxa ICMS
 OtherStatistics=Outras estatisticas
 Favorite=Favorito

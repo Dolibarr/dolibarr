@@ -108,3 +108,4 @@ CategorieRecursiv=Związek z dominującą tag / kategorii automatycznie
 CategorieRecursivHelp=Jeśli aktywna, produkt będzie również związany z kategorii nadrzędnej podczas dodawania do podkategorii
 AddProductServiceIntoCategory=Dodaj następujący produkt / usługę
 ShowCategory=Pokaż tag / kategoria
+ByDefaultInList=By default in list

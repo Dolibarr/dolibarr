@@ -9,6 +9,7 @@ TripCard=Gider raporu kartı
 AddTrip=Gider raporu oluştur
 ListOfTrips=Gider raporları listesi
 ListOfFees=Ücretler listesi
+ShowTrip=Gider raporu göster
 NewTrip=Yeni gider raporu
 CompanyVisited=Ziyaret edilen firma/kuruluş
 Kilometers=Kilometre
@@ -76,7 +77,7 @@ BROUILLONNER=Yeniden aç
 SendToValid=Onay üzerine gönderilmiş
 ModifyInfoGen=Düzenle
 ValidateAndSubmit=Doğrula ve onay için gönder
-ValidatedWaitingApproval=Validated (waiting for approval)
+ValidatedWaitingApproval=Doğrulanmış (onay bekliyor)
 
 NOT_VALIDATOR=Bu gider raporunu onaylama yetiniz yok
 NOT_AUTHOR=Bu gider raporunu yazan siz değilsiniz. İşlem iptal edildi.

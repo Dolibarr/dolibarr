@@ -120,7 +120,7 @@ if ($conf->use_javascript_ajax)
 {
     print '<tr '.$bc[0].'><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',320,180,$data,1,'pie',0);
+    dol_print_graph('stats',320,180,$data,1,'pie',0,'',0);
     print '</td></tr>';
 }
 

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kontierungs-Code Konto für die Zahlung der Löhne
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Kontierungs-Code Konto für Finanzaufwendungen
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungs-Konto für die Zahlung der Löhne/Gehälter
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard Buchhaltungs-Konto für Finanzaufwendungen
 Salary=Lohn
 Salaries=Löhne
 Employee=Angestellter

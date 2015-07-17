@@ -9,6 +9,7 @@ TripCard=Ficha de gasto
 AddTrip=Crear gasto
 ListOfTrips=Listado de gastos
 ListOfFees=Listado de honorarios
+ShowTrip=Ver informe de gastos
 NewTrip=Nuevo gasto
 CompanyVisited=Empresa/institución visitada
 Kilometers=Kilometros
@@ -76,7 +77,7 @@ BROUILLONNER=Reabrir
 SendToValid=Enviado para aprobar
 ModifyInfoGen=Modificar
 ValidateAndSubmit=Validar y enviar para aprobar
-ValidatedWaitingApproval=Validated (waiting for approval)
+ValidatedWaitingApproval=Validado (en espera de aprobación)
 
 NOT_VALIDATOR=No está autorizado para aprobar este gasto
 NOT_AUTHOR=No es el autor de este gasto. Operación cancelada.

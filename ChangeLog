@@ -70,19 +70,14 @@ FIX: No check warehouse is provided if module stock is not enabled.
 FIX: Payed invoices are showed as canceled FIX: Bad date filter on customer order
 FIX: Ref/label of product on contract line was not visible, nor into page, nor into PDF.
 FIX: Removed concatenation on undeclared variable
-FIX: remove deprecated property 'libelle' on product object
-FIX: Removed HTML file preventing PHP service
-FIX: Removed undeclared variable
-FIX: Removed undeclared variables
-FIX: Removed unused variable
-FIX: Replaced deprecated call
-FIX: Replaced deprecated property
+FIX: Remove deprecated property 'libelle' on product object
+FIX: Replaced some deprecated call
+FIX: Replaced some deprecated property
 FIX: Save of filters into export profiles failed.
 FIX: "script" balise with wrong syntax
 FIX: send mail, copy sendto don't read the list of contact
 FIX: top links menu have target attribute with wrong value
 FIX: total amount in tpl linked object are not reset
-FIX: Typo
 FIX; Unknown field 'sc.fk_soc' in field list
 FIX: update usergroup name
 FIX: Variable declared boolean
@@ -100,7 +95,6 @@ FIX: Missing visibility of static property
 NEW: Add a button to purge criteria in user list
 NEW: add all assigned users and all extrafields data in new event when we createFromClone
 NEW: Add a new component to select categories/tags from the main edit page of product. The dedicated tab is also removed.
-NEW: add an explorer for REST API consultation & documentation
 NEW: Add a search field and report on hrm area
 NEW: Add a tab document in donation card
 NEW: Add bank account owner in invoice/proposal/orders footer
@@ -113,7 +107,6 @@ NEW: Add exemple of setup for multitail to render dolibarr log files
 NEW: Add filter on status on invoice list
 NEW: Add filter on task ref and task label into list of tasks
 NEW: Add filter on user contact or user task into task list
-NEW: Add function dolCopyDir to copy directory with recursive content.
 NEW: Add gender property managed on user card FIX: Better error messages when uploading photo of user when permission to write are not granted
 NEW: Add help tooltips on fields of dictionary edit pages. Fix: visible list of tasks are for opened project only.
 NEW: Add hidden option MAIN_MAILFORM_DISABLE_ENTERKEY to disable the key enter into the form to send email.
@@ -125,7 +118,6 @@ NEW: Add option THEME_ELDY_DISABLE_IMAGE to disable images into menu eldy.
 NEW: add PDF icon on linked element into project
 NEW: add "productpricecard" hook and uniformize code
 NEW: Add ref and label of project into export
-NEW: add restler framework First step to build REST API into Dolibarr
 NEW: Add search box for supplier order search.
 NEW: Add status into filters of graph
 NEW: Add tab document on salaries payment
@@ -165,7 +157,6 @@ NEW: Hidden option THEME_ELDY_USE_HOVER is stable enough to become officialy vis
 NEW: If module salaries is on, you can set a hourly value for tome consumed by users. Each time a user enter its time consumed on a project, a calculation is done to provide the cost for human services. This value appears into the "Transversal view" of project.
 NEW: Implement option SUPPLIER_ORDER_USE_DISPATCH_STATUS to add a status into each dispathing line of supplier order to "verify" a reception is ok. Status of order can be set to "total/done" only if line is verified.
 NEW: Into the overview of projects, the name of thirdparty appears into combo lists of elements to link to project.
-NEW: Introduce function dolGetFirstLineOfText
 NEW: Introduce option SUPPLIER_ORDER_DOUBLE_APPROVAL to allow 2 approvals to make a supplier order approved. Activating this option introduce a new permission to the second level approval.
 NEW: Introduce TCPDI as replacement of FPDI.
 NEW: List of recent modified supplier product prices in Supplier card
@@ -175,7 +166,6 @@ NEW: Product stock and subproduct stock are independant
 NEW: Propal merge product card PDF into azur
 NEW: Rename install etape to step
 NEW: Replace category edition page on members with new select2 component.
-NEW: script to build API class from existing class
 NEW: Show difference between timespent by everybody and time spent by user making timesheet into timesheet pages. NEW: Can enter start hours of task when creating timesheet
 NEW: Show last official stable version into system - update page.
 NEW: Show photo of logged user into login top right block. NEW: If no photo is available for user, we show a generic photo depending on gender
@@ -208,22 +198,29 @@ NEW: Add module batch management.
 For translators:
 NEW: Update language files.
 NEW: When a translation is not available we always jump to en_US and only en_US.
+NEW: All language tranlsations (except source en_US) is now managed on https://www.transifex.com/projects/p/dolibarr/.
+FIX: Typo errors in translation.
 
 For developers:
 NEW: Function yn can show a visual checkbox.
 NEW: Introduced select2 jquery plugin.
-NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook
-NEW: possibility to defined a tab for all entities in module descriptor
+NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook.
+NEW: possibility to defined a tab for all entities in module descriptor.
+NEW: add restler framework First step to build REST API into Dolibarr.
+NEW: add an explorer for REST API consultation & documentation.
+NEW: script to build API class from existing class.
+NEW: Add function dolCopyDir to copy directory with recursive content.
+NEW: Introduce function dolGetFirstLineOfText.
 
-WARNING: Following changes may create regression for some external modules, but was necessary to make
+WARNING: Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
-- Removed hoo supplierorderdao into supplier order creation. This is a business event, so we must use the 
+- Removed hook supplierorderdao into supplier order creation. This is a business event, so we must use the 
   trigger ORDER_SUPPLIER_CREATE instead.
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
-- All fields "fk_societe" were renamed into "fk_soc".
+- All fields "fk_societe" and "fk_soc" are now named "fk_soc" (same name for all fields).
 - Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType.
-- The trigger USER_LOGIN* are deprecated. They are still working but you should prefer use the 
+- The triggers USER_LOGIN* are deprecated. They are still working but you should prefer use the 
   hook afterLogin or afterLoginFailed instead.
 
 

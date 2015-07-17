@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
@@ -227,8 +227,8 @@ if ($id > 0)
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
-	// Alias names (commercial, trademark or alias names)
-	print '<tr><td>'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	// Alias name (commercial, trademark or alias name)
+	print '<tr><td>'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 

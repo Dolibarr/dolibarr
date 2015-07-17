@@ -9,6 +9,7 @@ TripCard=Expense report card
 AddTrip=Create expense report
 ListOfTrips=List of expense reports
 ListOfFees=Списък на такси
+ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=Фирмата/организацията е посетена
 Kilometers=Км

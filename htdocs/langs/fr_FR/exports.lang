@@ -132,3 +132,4 @@ SelectFilterFields=Si vous voulez filtrer sur certaines valeurs, saisissez ces v
 FilterableFields=Champs filtrables
 FilteredFields=Champs filtrés
 FilteredFieldsValues=Valeurs de filtrage
+FormatControlRule=Règle de contrôle de format
