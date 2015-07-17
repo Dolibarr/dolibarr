@@ -106,13 +106,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_desc='';
 }
 
-//debug move header to top
-llxHeader('', $langs->trans("Accounts"));
-
-
 //TODO: modify to update all selected product with a sell account
 if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->trans("Accountancy_code_sell")) {
-//print_r ($changeaccount);
     $error = 0;
     
     $db->begin();
@@ -122,7 +117,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->
     $sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
     
     dol_syslog('accountancy/customer/lines.php::changeaccount product sell sql= ' . $sql1);
-print_r ($sql1);
+
     $resql1 = $db->query($sql1);
     if (! $resql1) {
         $error ++;
@@ -137,7 +132,6 @@ print_r ($sql1);
     }
 }
 
-
 //TODO: modify to update all selected product with a buy account
 if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->trans("Accountancy_code_buy")) {
     $error = 0;
@@ -147,9 +141,16 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->
     $sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p";
     $sql1 .= " SET p.accountancy_code_buy=" . $account_number_buy;
     $sql1 .= ' WHERE p.rowid IN (' . implode(',', $changeaccount) . ')';
-print_r ($sql1);    
-    dol_syslog('accountancy/customer/lines.php::changeaccount product buy sql= ' . $sql1);
-    $resql1 = $db->query($sql1);
+
+    // Debug
+    // print_r ($sql1);    
+
+	dol_syslog('accountancy/customer/lines.php::changeaccount product buy sql= ' . $sql1);
+
+    // Debug
+    // print_r ($sql1); 
+
+	$resql1 = $db->query($sql1);
     if (! $resql1) {
         $error ++;
         setEventMessage($db->lasterror(), 'errors');
@@ -166,12 +167,10 @@ print_r ($sql1);
 /*
  * View
  */
-//DEBUG elarifr 
-//llxHeader('', $langs->trans("Accounts"));
+llxHeader('', $langs->trans("Accounts"));
 
-//For updating account export
+// For updating account export
 print '<script type="text/javascript">
-
         function launch_export() {
             $("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
             $("div.fiche div.tabBar form input[type=\"submit\"]").click();
