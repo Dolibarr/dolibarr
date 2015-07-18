@@ -180,7 +180,7 @@ if ($type_element == 'order')
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
 	$where.= " AND c.entity = ".$conf->entity;
-	$datePrint = 'c.datef';
+	$datePrint = 'c.date_commande';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
