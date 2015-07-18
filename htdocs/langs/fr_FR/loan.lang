@@ -12,7 +12,7 @@ Nbterms=Nombre de termes
 LoanAccountancyCapitalCode=Compte comptable capital
 LoanAccountancyInsuranceCode=Compte comptable assurance
 LoanAccountancyInterestCode=Compte comptable intérêt
-LoanPayment=Loan payment
+LoanPayment=Paiement du prêt
 ConfirmDeleteLoan=Confirmer la suppression de cet emprunt ?
 LoanDeleted=Emprunt supprimé avec succès
 ConfirmPayLoan=Classer cet emprunt comme payé
@@ -41,13 +41,13 @@ AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down
 AmountFinanced=Amount Financed
 AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
 Totalsforyear=Totals for year
-MonthlyPayment=Monthly Payment
+MonthlyPayment=Paiement mensuel
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
 GoToInterest=%s will go towards INTEREST
 GoToPrincipal=%s will go towards PRINCIPAL
 YouWillSpend=You will spend %s on your house in year %s
 # Admin
-ConfigLoan=Configuration of the module loan
+ConfigLoan=Configuration du module Emprunt
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default

@@ -108,3 +108,4 @@ CategorieRecursiv=Link with parent tag/category automatically
 CategorieRecursivHelp=Εάν είναι ενεργοποιημένο, το προϊόν θα συνδέεται επίσης με γονική κατηγορία κατά την προσθήκη σε μια υποκατηγορία
 AddProductServiceIntoCategory=Προσθέστε το ακόλουθο προϊόν/υπηρεσία
 ShowCategory=Show tag/category
+ByDefaultInList=By default in list

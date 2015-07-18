@@ -9,6 +9,7 @@ TripCard=Expense report card
 AddTrip=Create expense report
 ListOfTrips=List of expense reports
 ListOfFees=List tasude
+ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=Äriühingu/ühenduse külastas
 Kilometers=Kilomeetrid

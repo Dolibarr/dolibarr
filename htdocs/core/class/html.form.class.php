@@ -3217,11 +3217,11 @@ class Form
             {
                 foreach ($formquestion as $key => $input)
                 {
-                    if (isset($input['name'])) array_push($inputok,$input['name']);
+                	//print "xx ".$key." rr ".is_array($input)."<br>\n";
+                    if (is_array($input) && isset($input['name'])) array_push($inputok,$input['name']);
                     if (isset($input['inputko']) && $input['inputko'] == 1) array_push($inputko,$input['name']);
                 }
             }
-
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) {

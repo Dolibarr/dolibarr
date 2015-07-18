@@ -108,3 +108,4 @@ CategorieRecursiv=Link with parent tag/category automatically
 CategorieRecursivHelp=اگر فعال شود، محصول نیز به دسته پدر و مادر مرتبط است که با اضافه کردن به زیرشاخه
 AddProductServiceIntoCategory=افزودن پیگیری محصول/سرویس
 ShowCategory=Show tag/category
+ByDefaultInList=By default in list

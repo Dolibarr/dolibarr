@@ -132,3 +132,4 @@ SelectFilterFields=Om du vill filtrera på vissa värderingar, fyll i ingångsv�
 FilterableFields=Champs Filtrables
 FilteredFields=Filtrerad fält
 FilteredFieldsValues=Värde för filter
+FormatControlRule=Format control rule

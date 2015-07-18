@@ -77,7 +77,7 @@ CheckRead=Potrditev branja
 YourMailUnsubcribeOK=E-pošni naslov <b>%s</b>  je uspešno odjavljen s seznama za pošiljanje
 MailtoEMail=Hiperovezava na email
 ActivateCheckRead=Dovoljena uporaba povezave za "Odjavo"
-ActivateCheckReadKey=Key used to encrypt URL used for "Read Receipt" and "Unsubcribe" feature
+ActivateCheckReadKey=Ključ za enkripcijo URL, ki je uporabljen za funkciji "Branje potrdila" in "Odpoved naročnine"
 EMailSentToNRecipients=E-pošta poslana %s prejemnikom.
 XTargetsAdded=<b>%s</b> prejemnikov dodanih na ciljni seznam
 EachInvoiceWillBeAttachedToEmail=Ustvarjen bo dokument na osnovi privzete predloge in pripet k vsakemu elektronskemu sporočilu
@@ -128,7 +128,7 @@ TagCheckMail=Odpiranje sledenja pošte
 TagUnsubscribe=Povezava za odjavo
 TagSignature=Podpis pošiljatelja
 TagMailtoEmail=Prejemnik E-pošte
-NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
+NoEmailSentBadSenderOrRecipientEmail=Email ni bil poslan. Napačen naslov pošiljatelja ali prejemnika. Preverite profil uporabnika.
 # Module Notifications
 Notifications=Obvestila
 NoNotificationsWillBeSent=Za ta dogodek in podjetje niso predvidena obvestila po e-pošti
