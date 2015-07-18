@@ -38,6 +38,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
 - Fix: [ bug #2891 ] Category hooks do not work
+- Fix: [ bug #2696 ] Adding complementary attribute fails if code is numerics
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
