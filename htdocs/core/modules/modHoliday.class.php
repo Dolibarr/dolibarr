@@ -80,7 +80,7 @@ class modHoliday extends DolibarrModules
 		//$this->style_sheet = '/mymodule/mymodule.css.php';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
+		// $this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -115,7 +115,7 @@ class modHoliday extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-		$this->tabs = array('user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->write:/holiday/index.php?mainmenu=holiday&id=__ID__');
+		$this->tabs = array('user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->write:/holiday/list.php?mainmenu=holiday&id=__ID__');
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

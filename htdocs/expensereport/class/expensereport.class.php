@@ -736,7 +736,7 @@ class ExpenseReport extends CommonObject
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
-        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.tva_tx as vatrate,';
+        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.tva_tx,';
         $sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
         $sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
         $sql.= ' p.ref as ref_projet, p.title as title_projet';
@@ -773,7 +773,8 @@ class ExpenseReport extends CommonObject
 
                 $deplig->type_fees_code     = $objp->code_type_fees;
                 $deplig->type_fees_libelle  = $objp->libelle_type_fees;
-                $deplig->vatrate            = $objp->vatrate;
+				$deplig->tva_tx			    = $objp->tva_tx;
+                $deplig->vatrate            = $objp->tva_tx;
                 $deplig->projet_ref         = $objp->ref_projet;
                 $deplig->projet_title       = $objp->title_projet;
 
