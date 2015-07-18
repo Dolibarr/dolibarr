@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *

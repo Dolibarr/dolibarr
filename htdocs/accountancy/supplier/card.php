@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2013-2015  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro    <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry	      <florian.henry@open-concept.pro>
  * Copyright (C) 2014	    Juanjo Menent		  <jmenent@2byte.es>

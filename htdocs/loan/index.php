@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014       Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+/* Copyright (C) 2014       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  *

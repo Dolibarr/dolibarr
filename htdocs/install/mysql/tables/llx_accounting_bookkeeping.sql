@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
--- Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+-- Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
