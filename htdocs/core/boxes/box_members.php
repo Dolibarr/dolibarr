@@ -105,6 +105,7 @@ class box_members extends ModeleBoxes
 
 					$memberstatic->lastname=$objp->lastname;
 					$memberstatic->firstname=$objp->firstname;
+					$memberstatic->id = $objp->rowid;
                     $memberstatic->ref = $objp->rowid;
 
 					if (! empty($objp->fk_soc)) {
