@@ -97,11 +97,17 @@ ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_INVOICE_DEPOSIT=Account of Invoice Deposit
+ACCOUNTING_ACCOUNT_INVOICE_SITUATION=Account of Invoice Situation
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRACOM=Accounting account by default for sold products INTRACOM
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXTRACOM=Accounting account by default for sold products EXTRACOM
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT_INTRACOM=Accounting account by default for sold services INTRACOM
+ACCOUNTING_SERVICE_SOLD_ACCOUNT_EXTRACOM=Accounting account by default for sold services INTRACOM
 
 Doctype=Type of document
 Docdate=Date
