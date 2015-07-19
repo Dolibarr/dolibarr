@@ -60,24 +60,25 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $soc = new Societe($db);
-$soc->fetch($socid);
-$soc->info($socid);
+$result = $soc->fetch($socid);
 
-/*
- * Affichage onglets
- */
-$head = societe_prepare_head($soc);
+if ($result > 1) {
+	$soc->info($socid);
 
-dol_fiche_head($head, 'info', $langs->trans("ThirdParty"),0,'company');
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($soc);
+
+	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
 
 
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($soc);
+	print '</td></tr></table>';
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($soc);
-print '</td></tr></table>';
-
-print '</div>';
-
+	print '</div>';
+}
 
 llxFooter();
 
