@@ -407,7 +407,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	                }
 	                else
 	              {
-		              setEventMessage($object->error, 'errors');
+		            	setEventMessages($object->error, $object->errors, 'errors');
 	                }
 	            }
             }
