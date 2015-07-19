@@ -40,6 +40,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('infothirdparty'));
 
+$object = new Societe($db);
 
 
 /*
@@ -59,26 +60,25 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$object = new Societe($db);
-$object->fetch($socid);
-$object->info($socid);
+if ($socid > 0)
+{
+	$result = $object->fetch($socid);
+	$object->info($socid);
 
-/*
- * Affichage onglets
- */
-$head = societe_prepare_head($object);
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("ThirdParty"),0,'company');
-
-
-
-print '<table width="100%"><tr><td>';
-dol_print_object_info($object);
-print '</td></tr></table>';
+	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
 
 
-dol_fiche_end();
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
 
+	dol_fiche_end();
+}
 
 llxFooter();
 
