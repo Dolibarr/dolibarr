@@ -22,6 +22,7 @@ Fix: [ bug #2861 ] Undefined variable $res when migrating
 Fix: [ bug #2837 ] Product list table column header does not match column body
 Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
 Fix: [ bug #2814 ] JPEG photos are not displayed in Product photos page
+Fix: [ bug #2715 ] Statistics page has broken layout with long thirdparty names
 Fix: [ bug #3206 ] PropaleLigne, OrderLine and FactureLigne given to triggers through update function does not contain all the information
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
