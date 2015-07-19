@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,8 @@ $action = GETPOST('action');
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
-if ($pastmonth == 0) {
+if ($pastmonth == 0) 
+{
 	$pastmonth = 12;
 	$pastmonthyear --;
 }
@@ -98,7 +100,8 @@ $sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " WHERE fd.fk_code_ventilation > 0 ";
-if (! empty($conf->multicompany->enabled)) {
+if (! empty($conf->multicompany->enabled)) 
+{
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
 $sql .= " AND f.fk_statut > 0";
@@ -113,7 +116,8 @@ $sql .= " ORDER BY f.datef";
 
 dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
 $result = $db->query($sql);
-if ($result) {
+if ($result) 
+{
 	$tabfac = array ();
 	$tabht = array ();
 	$tabtva = array ();
@@ -123,14 +127,16 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	while ( $i < $num ) {
+	while ( $i < $num ) 
+	{
 		$obj = $db->fetch_object($result);
 		// les variables
 		$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef");
 		$compta_soc = (! empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
 
 		$compta_prod = $obj->compte;
-		if (empty($compta_prod)) {
+		if (empty($compta_prod)) 
+		{
 			if ($obj->product_type == 0)
 				$compta_prod = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
 			else
@@ -143,7 +149,8 @@ if ($result) {
 		$line = new FactureLigne($db);
 		$line->fetch($obj->rowid);
 		$prev_progress = $line->get_prev_progress();
-		if ($obj->situation_percent == 0) { // Avoid divide by 0
+		if ($obj->situation_percent == 0) 
+		{ // Avoid divide by 0
 			$situation_ratio = 0;
 		} else {
 			$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
@@ -210,11 +217,14 @@ if ($action == 'writebookkeeping')
 		}
 
 		// Product / Service
-		foreach ($tabht[$key] as $k => $mt) {
-			if ($mt) {
+		foreach ($tabht[$key] as $k => $mt) 
+		{
+			if ($mt) 
+			{
 				// get compte id and label
 				$accountingaccount = new AccountingAccount($db);
-				if ($accountingaccount->fetch(null, $k)) {
+				if ($accountingaccount->fetch(null, $k)) 
+				{
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
@@ -283,14 +293,16 @@ if ($action == 'export_csv')
 	{
 		$sep = ";";
 
-		foreach ( $tabfac as $key => $val ) {
+		foreach ( $tabfac as $key => $val ) 
+		{
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
 
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
-			foreach ( $tabttc[$key] as $k => $mt ) {
+			foreach ( $tabttc[$key] as $k => $mt ) 
+			{
 				print $date . $sep;
 				print $sell_journal . $sep;
 				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
@@ -303,8 +315,10 @@ if ($action == 'export_csv')
 			}
 
 			// Product / Service
-			foreach ( $tabht[$key] as $k => $mt ) {
-				if ($mt) {
+			foreach ( $tabht[$key] as $k => $mt ) 
+			{
+				if ($mt) 
+				{
 					print $date . $sep;
 					print $sell_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
@@ -318,8 +332,10 @@ if ($action == 'export_csv')
 			}
 
 			// TVA
-			foreach ( $tabtva[$key] as $k => $mt ) {
-				if ($mt) {
+			foreach ( $tabtva[$key] as $k => $mt ) 
+			{
+				if ($mt) 
+				{
 					print $date . $sep;
 					print $sell_journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
@@ -343,7 +359,8 @@ if ($action == 'export_csv')
 
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 
-			foreach ( $tabttc[$key] as $k => $mt ) {
+			foreach ( $tabttc[$key] as $k => $mt ) 
+			{
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
@@ -359,7 +376,8 @@ if ($action == 'export_csv')
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(null, $k);
 
-				if ($mt) {
+				if ($mt) 
+				{
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -373,7 +391,8 @@ if ($action == 'export_csv')
 			// VAT
 			foreach ($tabtva[$key] as $k => $mt)
 			{
-				if ($mt) {
+				if ($mt) 
+				{
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -475,7 +494,8 @@ if ($action == 'export_csv')
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k);
 
-			if ($mt) {
+			if ($mt) 
+			{
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
@@ -490,7 +510,8 @@ if ($action == 'export_csv')
 		// VAT
 		foreach ($tabtva[$key] as $k => $mt)
 		{
-			if ($mt) {
+			if ($mt) 
+			{
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
