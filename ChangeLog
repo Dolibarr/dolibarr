@@ -268,6 +268,7 @@ Dolibarr better:
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
 - Fix: [ bug #2891 ] Category hooks do not work
+- Fix: [ bug #2696 ] Adding complementary attribute fails if code is numerics
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -447,6 +448,10 @@ Fix: [ bug #2861 ] Undefined variable $res when migrating
 Fix: [ bug #2837 ] Product list table column header does not match column body
 Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
 Fix: [ bug #2814 ] JPEG photos are not displayed in Product photos page
+Fix: [ bug #2715 ] Statistics page has broken layout with long thirdparty names
+Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
+Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
+Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

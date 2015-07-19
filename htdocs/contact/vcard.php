@@ -28,14 +28,20 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
+$contact = new Contact($db);
+
 
 $id = GETPOST('id', 'int');
 
 // Security check
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
-$contact = new Contact($db);
 $result=$contact->fetch($id);
+if (! $result)
+{
+	dol_print_error($contact->error);
+	exit;	
+}
 
 $physicalperson=1;
 
@@ -43,7 +49,6 @@ $company = new Societe($db);
 if ($contact->socid)
 {
 	$result=$company->fetch($contact->socid);
-	//print "ee";
 }
 
 // We create VCard
@@ -100,4 +105,3 @@ header("Connection: close");
 header("Content-Type: text/x-vcard; name=\"".$filename."\"");
 
 print $output;
-
