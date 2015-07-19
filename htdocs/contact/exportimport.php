@@ -45,67 +45,68 @@ llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Em
 $form = new Form($db);
 
 $contact = new Contact($db);
-$contact->fetch($id, $user);
+$result = $contact->fetch($id, $user);
+
+if ($result > 1) {
+
+	$head = contact_prepare_head($contact);
+
+	dol_fiche_head($head, 'exportimport', $title, 0, 'contact');
 
 
-$head = contact_prepare_head($contact);
+	/*
+	 * Fiche en mode visu
+	 */
+	print '<table class="border" width="100%">';
 
-dol_fiche_head($head, 'exportimport', $title, 0, 'contact');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+
+	// Ref
+	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+	print $form->showrefnav($contact, 'id', $linkback);
+	print '</td></tr>';
+
+	// Name
+	print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$contact->lastname.'</td>';
+	print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+	// Company
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+	{
+	    if ($contact->socid > 0)
+	    {
+	        $objsoc = new Societe($db);
+	        $objsoc->fetch($contact->socid);
+
+	        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+	    }
+	    else
+	    {
+	        print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+	        print $langs->trans("ContactNotLinkedToCompany");
+	        print '</td></tr>';
+	    }
+	}
+
+	// Civility
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+	print $contact->getCivilityLabel();
+	print '</td></tr>';
+
+	print '</table>';
+
+	print '</div>';
+
+	print '<br>';
+
+	print $langs->trans("ExportCardToFormat").': ';
+	print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
+	print img_picto($langs->trans("VCard"),'vcard.png').' ';
+	print $langs->trans("VCard");
+	print '</a>';
 
 
-/*
- * Fiche en mode visu
- */
-print '<table class="border" width="100%">';
-
-$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-
-// Ref
-print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-print $form->showrefnav($contact, 'id', $linkback);
-print '</td></tr>';
-
-// Name
-print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$contact->lastname.'</td>';
-print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
-
-// Company
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-{
-    if ($contact->socid > 0)
-    {
-    	$objsoc = new Societe($db);
-    	$objsoc->fetch($contact->socid);
-
-    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-    }
-    else
-    {
-    	print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
-    	print $langs->trans("ContactNotLinkedToCompany");
-    	print '</td></tr>';
-    }
 }
-
-// Civility
-print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-print $contact->getCivilityLabel();
-print '</td></tr>';
-
-print '</table>';
-
-print '</div>';
-
-print '<br>';
-
-print $langs->trans("ExportCardToFormat").': ';
-print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
-print img_picto($langs->trans("VCard"),'vcard.png').' ';
-print $langs->trans("VCard");
-print '</a>';
-
-
-
 
 $db->close();
 
