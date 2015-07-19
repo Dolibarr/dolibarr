@@ -519,6 +519,12 @@ class Contact extends CommonObject
 		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 		global $langs;
 
+		if (empty($id) && empty($ref_ext))
+		{
+			$this->error='BadParameter';
+			return -1;
+		}
+
 		$langs->load("companies");
 
 		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";

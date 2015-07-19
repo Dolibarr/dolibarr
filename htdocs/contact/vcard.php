@@ -36,11 +36,12 @@ $id = GETPOST('id', 'int');
 // Security check
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
+
 $result=$contact->fetch($id);
-if (! $result)
+if ($result <= 0)
 {
 	dol_print_error($contact->error);
-	exit;	
+	exit;
 }
 
 $physicalperson=1;

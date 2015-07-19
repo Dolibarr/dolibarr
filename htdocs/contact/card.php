@@ -1151,7 +1151,7 @@ else
 
         print '<tr><td>';
         print $langs->trans("ExportCardToFormat").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
+		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
 		print img_picto($langs->trans("VCard"),'vcard.png').' ';
 		print $langs->trans("VCard");
 		print '</a>';
