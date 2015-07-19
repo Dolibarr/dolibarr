@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -825,7 +826,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    if(! empty($conf->api->enabled)) {
+    if(! empty($conf->api->enabled)) 
+    {
         // API key
         $generated_api_key = '';
         require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -836,50 +838,56 @@ if (($action == 'create') || ($action == 'adduserldap'))
         if (! empty($conf->use_javascript_ajax))
             print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
         print '</td></tr>';
+    }
+    else
+    {
+        // PARTIAL WORKAROUND
+        $generated_fake_api_key=getRandomPassword(false);
+        print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
+    }
 
-        // Administrator
-        if (! empty($user->admin))
+    // Administrator
+    if (! empty($user->admin))
+    {
+        print '<tr><td>'.$langs->trans("Administrator").'</td>';
+        print '<td>';
+        print $form->selectyesno('admin',GETPOST('admin'),1);
+
+        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
-            print '<tr><td>'.$langs->trans("Administrator").'</td>';
-            print '<td>';
-            print $form->selectyesno('admin',GETPOST('admin'),1);
-
-            if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
+            if (! empty($conf->use_javascript_ajax))
             {
-                if (! empty($conf->use_javascript_ajax))
-                {
-                    print '<script type="text/javascript">
-                                $(function() {
-                                    $("select[name=admin]").change(function() {
-                                         if ( $(this).val() == 0 ) {
-                                            $("input[name=superadmin]")
-                                                .prop("disabled", true)
-                                                .prop("checked", false);
-                                            $("select[name=entity]")
-                                                .prop("disabled", false);
-                                         } else {
-                                            $("input[name=superadmin]")
-                                                .prop("disabled", false);
-                                         }
-                                    });
-                                    $("input[name=superadmin]").change(function() {
-                                        if ( $(this).is(":checked") ) {
-                                            $("select[name=entity]")
-                                                .prop("disabled", true);
-                                        } else {
-                                            $("select[name=entity]")
-                                                .prop("disabled", false);
-                                        }
-                                    });
+                print '<script type="text/javascript">
+                            $(function() {
+                                $("select[name=admin]").change(function() {
+                                     if ( $(this).val() == 0 ) {
+                                        $("input[name=superadmin]")
+                                            .prop("disabled", true)
+                                            .prop("checked", false);
+                                        $("select[name=entity]")
+                                            .prop("disabled", false);
+                                     } else {
+                                        $("input[name=superadmin]")
+                                            .prop("disabled", false);
+                                     }
                                 });
-                        </script>';
-                }
-                $checked=($_POST["superadmin"]?' checked':'');
-                $disabled=($_POST["superadmin"]?'':' disabled');
-                print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+                                $("input[name=superadmin]").change(function() {
+                                    if ( $(this).is(":checked") ) {
+                                        $("select[name=entity]")
+                                            .prop("disabled", true);
+                                    } else {
+                                        $("select[name=entity]")
+                                            .prop("disabled", false);
+                                    }
+                                });
+                            });
+                    </script>';
             }
-            print "</td></tr>\n";
+            $checked=($_POST["superadmin"]?' checked':'');
+            $disabled=($_POST["superadmin"]?'':' disabled');
+            print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
         }
+        print "</td></tr>\n";
     }
 
     // Type
