@@ -36,6 +36,8 @@ $contactid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
 
+$contact = new Contact($db);
+
 
 
 /*
@@ -45,23 +47,23 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 
 llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
+if ($contactid > 0)
+{
+	$result = $contact->fetch($contactid, $user);
 
-$contact = new Contact($db);
-$contact->fetch($contactid, $user);
-$contact->info($contactid);
-
-
-$head = contact_prepare_head($contact);
-
-dol_fiche_head($head, 'info', $title, 0, 'contact');
+	$contact->info($contactid);
 
 
-print '<table width="100%"><tr><td>';
-print '</td></tr></table>';
+	$head = contact_prepare_head($contact);
 
-dol_print_object_info($contact);
+	dol_fiche_head($head, 'info', $title, 0, 'contact');
 
-print "</div>";
+	// TODO Put here ref of card
+
+	dol_print_object_info($contact);
+
+	dol_fiche_end();
+}
 
 llxFooter();
 

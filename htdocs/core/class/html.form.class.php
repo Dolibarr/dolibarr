@@ -984,7 +984,7 @@ class Form
                         $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
                     }
 
-                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->name, 'label'=>$obj->name));
+                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->rowid, 'label'=>$label));
 
                     $i++;
                     if (($i % 10) == 0) $out.="\n";
@@ -2383,6 +2383,8 @@ class Form
         if ($num > 0) return 0;    // Cache already loaded
 
         dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$langs->load('propal');
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';

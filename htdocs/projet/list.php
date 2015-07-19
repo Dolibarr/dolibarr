@@ -205,8 +205,10 @@ if ($resql)
 	$i = 0;
 
 	$param='';
+	if ($mine)				        $param.='&mode=mine';
 	if ($month)              		$param.='&month='.$month;
 	if ($year)               		$param.='&year=' .$year;
+	if ($socid)				        $param.='&socid='.$socid;
 	if ($search_all != '') 			$param.='&search_all='.$search_all;
 	if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
 	if ($search_label != '') 		$param.='&search_label='.$search_label;
@@ -266,7 +268,6 @@ if ($resql)
     	print '</div>';
 	}
 
-
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -277,7 +278,7 @@ if ($resql)
 	if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"p.dateo","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"p.datee","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","",$param,"",$sortfield,$sortorder);
-    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) 
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
     	print_liste_field_titre($langs->trans("OpportunityAmountShort"),$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'',$sortfield,$sortorder);
     	print_liste_field_titre($langs->trans("OpportunityStatusShort"),$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'',$sortfield,$sortorder);
@@ -423,13 +424,13 @@ if ($resql)
     		print '</td>';
 
     		// Date start
-			if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE)) 
+			if (empty($conf->global->PROJECT_LIST_HIDE_STARTDATE))
 			{
 				print '<td class="center">';
 	    		print dol_print_date($db->jdate($objp->date_start),'day');
 	    		print '</td>';
 			}
-			
+
     		// Date end
     		print '<td class="center">';
     		print dol_print_date($db->jdate($objp->date_end),'day');
@@ -450,7 +451,7 @@ if ($resql)
     			print '<td>';
     			if ($objp->opp_status_code) print $langs->trans("OppAmount".$objp->opp_amount);
     			print '</td>';
-    			
+
     			print '<td>';
     			if ($objp->opp_status_code) print $langs->trans("OppStatusShort".$objp->opp_status_code);
     			print '</td>';
