@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
 
  *
@@ -106,6 +107,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_desc='';
 }
 
+//Debug elarifr move header to top - remove @ view line 173
+//llxHeader('', $langs->trans("Accounts"));
 //TODO: modify to update all selected product with a sell account
 if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->trans("Accountancy_code_sell")) {
     $error = 0;
@@ -167,6 +170,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $action == $langs->
 /*
  * View
  */
+//DEBUG elarifr moved hearder to top
 llxHeader('', $langs->trans("Accounts"));
 
 // For updating account export
