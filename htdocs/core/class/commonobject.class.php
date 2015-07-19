@@ -3532,7 +3532,8 @@ abstract class CommonObject
 
 
     /**
-     * Call trigger based on this instance
+     * Call trigger based on this instance.
+     * Some context information may also be provided into array property this->context.
      * NB: Error from trigger are stacked in interface->errors
      * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
      *

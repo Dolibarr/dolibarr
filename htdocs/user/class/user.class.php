@@ -978,8 +978,10 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::create_from_contact", LOG_DEBUG);
 			if ($resql)
 			{
+				$this->context['createfromcontact']='createfromcontact';
+
                 // Call trigger
-                $result=$this->call_trigger('USER_CREATE_FROM_CONTACT',$user);
+                $result=$this->call_trigger('USER_CREATE',$user);
                 if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
 
