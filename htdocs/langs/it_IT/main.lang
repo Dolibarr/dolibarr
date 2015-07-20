@@ -710,6 +710,8 @@ Denied=Rifiutata
 ListOfTemplates=List of templates
 Genderman=Man
 Genderwoman=Woman
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Lunedì
 Tuesday=Martedì

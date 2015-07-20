@@ -710,6 +710,8 @@ Denied=Avvist
 ListOfTemplates=Liste over maler
 Genderman=Mann
 Genderwoman=Kvinne
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Mandag
 Tuesday=Tirsdag

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Per favore immetti un valore per la lista di control
 ErrorNoValueForRadioType=Per favore immetti un valore per la lista radio
 ErrorBadFormatValueList=La lista non può avere più di un'entrata : <u>%s</u>, ma ne serve almeno una: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Il campo <b>%s</b> non può contenere caratteri speciali.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Il campo <b>%s</b> non deve contenere caratteri speciali o maiuscole.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Modulo contabilità disattivato
 ErrorExportDuplicateProfil=Questo nome profilo già esiste per questo set di esportazione
 ErrorLDAPSetupNotComplete=La configurazione per l'uso di LDAP è incompleta
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Il campo <b>%s</b> deve essere un valore numerico
 ErrorFieldMustBeAnInteger=Il campo <b>%s</b> deve essere un numero intero
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=I parametri di configurazione obbligatori non sono ancora stati definiti

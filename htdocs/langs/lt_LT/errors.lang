@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Prašome užpildyti reikšmę žymės laukelių sąr
 ErrorNoValueForRadioType=Prašome užpildyti reikšmę žymių (radio) sąrašui
 ErrorBadFormatValueList=Sąrašo reikšmė negali būti daugiau nei viena <u>%s</u>, bet reikia bent vienos: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Laukelyje <b>%s</b> neturi būti specialiųjų simbolių
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Laukelyje <b>%s</b> negali būti nei specialių simbolių, nei didžiųjų raidžių.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nėra aktyvaus apskaitos modulio
 ErrorExportDuplicateProfil=Profilio vardas jau egzistuoja šiam eksporto rinkiniui
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP derinimas nėra pilnas
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Privalomi nustatymų parametrai dar nėra apibrėžti

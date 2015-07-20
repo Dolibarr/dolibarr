@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=请填写复选框列表值
 ErrorNoValueForRadioType=请填写电台列表的值
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=菲尔德<b>%s</b>必须不包含特殊字符。
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=没有一个会计模块激活
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP的匹配是不完整的。
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=强制设置参数尚未定义

@@ -710,6 +710,8 @@ Denied=Denied
 ListOfTemplates=List of templates
 Genderman=Man
 Genderwoman=Woman
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Thứ Hai
 Tuesday=Thứ Ba

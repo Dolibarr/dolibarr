@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Vyplňte, prosím, hodnotu checkbox zoznamu
 ErrorNoValueForRadioType=Prosím vyplňte hodnotu pre rozhlasové zoznamu
 ErrorBadFormatValueList=Zoznam Hodnota nemôže mať viac ako jeden príde: <u>%s,</u> ale potrebujete aspoň jeden: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Terénne <b>%s</b> nesmie obsahuje špeciálne znaky.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nie účtovníctva modul aktivovaný
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP zhoda nie je úplná.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Povinné parametre sú doteraz stanovené

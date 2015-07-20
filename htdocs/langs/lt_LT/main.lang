@@ -710,6 +710,8 @@ Denied=Atmestas
 ListOfTemplates=Šablonų sąrašas
 Genderman=Vyras
 Genderwoman=Moteris
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Pirmadienis
 Tuesday=Antradienis

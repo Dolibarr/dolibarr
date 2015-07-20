@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Vänligen fyll i värde för krysslista
 ErrorNoValueForRadioType=Vänligen fyll i värde för radiolista
 ErrorBadFormatValueList=Listans värd kan inte ha mer än ett komma: <u>%s</u>,  men behöver åtminstone en: Llave, valores
 ErrorFieldCanNotContainSpecialCharacters=Fält <b>%s</b> inte innehåller specialtecken.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Fältet <b>%s</b> får inte innehåller specialtecken eller versaler.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Ingen bokföring modul aktiverad
 ErrorExportDuplicateProfil=Detta profilnamn finns redan för denna export.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchning inte är fullständig.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriska inställningsparametrarna har ännu inte definierat

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Lūdzu, aizpildiet vērtību rūtiņu sarakstā
 ErrorNoValueForRadioType=Lūdzu, aizpildiet vērtību radio pogu sarakstā
 ErrorBadFormatValueList=Saraksts vērtība nevar būt vairāk kā viens nāk: <u>%s,</u> bet ir nepieciešams vismaz viens: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Lauks <b>%s</b> nedrīkst saturēt speciālos simbolus.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nav grāmatvedības modulis aktivizēts
 ErrorExportDuplicateProfil=Šāds profila nosaukums jau eksistē šim eksportam.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP saskaņošana nav pilnīga.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas

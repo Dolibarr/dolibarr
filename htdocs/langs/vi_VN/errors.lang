@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Xin vui lòng điền giá trị so với danh sách
 ErrorNoValueForRadioType=Xin vui lòng điền giá trị so với danh sách phát thanh
 ErrorBadFormatValueList=Giá trị danh sách không thể có nhiều hơn một <u>đến:% s,</u> nhưng cần ít nhất một: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Dòng% s</b> không được chứa các ký tự đặc biệt.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>Dòng% s</b> không được chứa các ký tự đặc biệt, cũng không phải ký tự trường hợp trên.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Không có mô-đun kế toán kích hoạt
 ErrorExportDuplicateProfil=Tên hồ sơ này đã tồn tại cho bộ xuất khẩu này.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP phù hợp là không đầy đủ.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Thiết lập các thông số bắt buộc chưa được xác định

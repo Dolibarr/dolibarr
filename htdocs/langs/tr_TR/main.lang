@@ -710,6 +710,8 @@ Denied=Reddedildi
 ListOfTemplates=Şablon listesi
 Genderman=Adam
 Genderwoman=Kadın
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Pazartesi
 Tuesday=Salı

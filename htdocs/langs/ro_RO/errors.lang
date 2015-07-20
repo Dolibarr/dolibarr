@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Completaţi valorile pentru lista checkbox
 ErrorNoValueForRadioType=Completaţi valorile pentru lista radio
 ErrorBadFormatValueList=Valorile din lista nu pot aveae mai mult de o virgulă: <b>% s </ b>, dar trebuie să aibă cel puțin una: cheie, valoare
 ErrorFieldCanNotContainSpecialCharacters=<b>Câmp %s</b> trebuie să nu conţine caractere speciale.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Câmpul <b>%s</b> nu trebuie să conțină caractere speciale, nici litere mari.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Modul de contabilitate neactivat 
 ErrorExportDuplicateProfil=Acest profil nume există deja pentru acest set de export.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

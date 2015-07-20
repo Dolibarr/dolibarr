@@ -710,6 +710,8 @@ Denied=Denegada
 ListOfTemplates=Listado de plantillas
 Genderman=Hombre
 Genderwoman=Mujer
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Lunes
 Tuesday=Martes

@@ -40,7 +40,6 @@ RuleForStockManagementDecrease=Regra de Administração de decrementos de estoqu
 RuleForStockManagementIncrease=Regra de Administração de incrementos de estoque
 DeStockOnBill=Diminuir ações reais em clientes validação facturas / notas de crédito
 DeStockOnValidateOrder=Decrementar os estoques físicos sobre os pedidos
-DeStockOnShipment=Decrementar os estoques físicos sobre os envios (recomendado)
 ReStockOnBill=Incrementar os estoques físicos sobre as faturas/recibos
 ReStockOnValidateOrder=Incrementar os estoques físicos sobre os pedidos
 ReStockOnDispatchOrder=Aumentar os estoques reais no envio manual para armazenamento, depois de receber ordem fornecedor

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> πεδίου δεν πρέπει να περιέχει ειδικούς χαρακτήρες.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Το πεδίο <b>%s</b> δεν πρέπει να περιέχει ειδικούς χαρακτήρες, ούτε κεφαλαία γράμματα.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Δεν λογιστική μονάδα ενεργοποιηθεί
 ErrorExportDuplicateProfil=Αυτό το όνομα προφίλ υπάρχει ήδη για αυτό το σύνολο των εξαγωγών.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP αντιστοίχιση δεν είναι πλήρης.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

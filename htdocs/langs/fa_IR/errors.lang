@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=لطفا ارزش برای استخراج را پر 
 ErrorNoValueForRadioType=لطفا ارزش برای فهرست های رادیویی را پر کنید
 ErrorBadFormatValueList=ارزش لیست نیست می توانید بیش از یک آمده <u>است:٪ s را،</u> اما باید حداقل یک: هیدرولیکی Llave، VALORES
 ErrorFieldCanNotContainSpecialCharacters=<b>٪</b> درست <b>ها</b> باید شامل کاراکترهای خاص نیست.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>٪</b> درست <b>ها</b> باید شامل کاراکترهای خاص، و نه حروف بزرگ نیست.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=بدون ماژول حسابداری فعال
 ErrorExportDuplicateProfil=این نام مشخصات در حال حاضر برای این مجموعه صادرات وجود دارد.
 ErrorLDAPSetupNotComplete=تطبیق Dolibarr-LDAP کامل نیست.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=پارامترهای راه اندازی اجباری هنوز تعریف نشده

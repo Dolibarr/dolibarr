@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Proszę wypełnić pole wyboru wartości dla listy
 ErrorNoValueForRadioType=Proszę wypełnić wartość liście radiowej
 ErrorBadFormatValueList=Wartość lista nie może mieć więcej niż jeden <u>pochodzić:% s,</u> ale potrzeba co najmniej jeden: llave, valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Pole %s</b> nie zawiera znaki specjalne.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>Pole% s</b> nie musi zawiera znaki specjalne, ani dużych liter.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Nr rachunkowych moduł aktywowany
 ErrorExportDuplicateProfil=Ta nazwa profil już istnieje dla tego zestawu eksportu.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP dopasowywania nie jest kompletna.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Globalna zmienna wybrana
 ErrorFieldMustBeANumeric=Pole <b>%s</b> musi mieć wartość numeryczną
 ErrorFieldMustBeAnInteger=Pole <b>%s</b> musi być liczbą całkowitą
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametry konfiguracyjne obowiązkowe nie są jeszcze określone

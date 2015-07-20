@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Palun sisesta märkenuppude väärtused
 ErrorNoValueForRadioType=Palun sisesta raadionuppude väärtused
 ErrorBadFormatValueList=Nimekirja väärtus ei saa olla rohkem,  kui ühe komaga: <u>%s</u>, ent on vaja vähemalt üht: võti,väärtused
 ErrorFieldCanNotContainSpecialCharacters=Väli <b>%s</b> ei tohi sisaldada erisümboleid.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Ühtki raamatupidamise moodulit pole aktiveeritud
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP sobitamine ei ole täielik.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Kohustuslikud seadistusparameetrid on määratlemata

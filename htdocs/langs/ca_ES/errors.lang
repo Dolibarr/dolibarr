@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Els valors de la llista han de ser indicats
 ErrorNoValueForRadioType=Els valors de la llista han de ser indicats
 ErrorBadFormatValueList=Els valors de la llista no peudo contenir més d'una coma: <u>%s </u>, però necessita una: clau, valors
 ErrorFieldCanNotContainSpecialCharacters=El camp <b>%s</b> no ha de contenir caràcters especials
-ErrorFieldCanNotContainSpecialNorUpperCharacters=El camp <b>%s</b> no ha de contenir majúscules ni caràcters especials
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Mòdul de comptabilitat no activat
 ErrorExportDuplicateProfil=El nom d'aquest perfil ja existeix per aquest conjunt d'exportació
 ErrorLDAPSetupNotComplete=La configuració Dolibarr-LDAP és incompleta.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Sense variable global seleccionada
 ErrorFieldMustBeANumeric=El camp <b>%s</b> ha de contenir un valor numèric
 ErrorFieldMustBeAnInteger=El camp <b>%s</b> ha de ser un enter
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits

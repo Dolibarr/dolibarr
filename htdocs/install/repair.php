@@ -48,6 +48,7 @@ $versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?
 
 $langs->load("admin");
 $langs->load("install");
+$langs->load("other");
 
 if ($dolibarr_main_db_type == "mysql") $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;

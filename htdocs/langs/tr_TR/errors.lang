@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Lütfen onay kutusu listesi için değer girin
 ErrorNoValueForRadioType=Lütfen onay düğmesi için değer girin
 ErrorBadFormatValueList=Listedeki değeri birden fazla virgül içeremez: <u>%s</u>, ama en az bir tane olması gerekir: anahtar, değer
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içermemelidir.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=b>%s</b> alanı ne özel karakterler ne de büyük harfler içermemelidir.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
 ErrorExportDuplicateProfil=Bu profil adı bu dışaaktarma seti için zaten var.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP eşleşmesi tamamlanmamış.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=Seçilmiş genel değişken yok
 ErrorFieldMustBeANumeric=<b>%s</b> alanı sayısal bir değer olmalıdır
 ErrorFieldMustBeAnInteger=<b>%s</b> alanı tamsayı olmalıdır
 ErrorMandatoryParametersNotProvided=Zorunlu parametre(ler) girilmemiş
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

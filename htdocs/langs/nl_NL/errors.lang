@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Vul waarde in voor checkbox lijst
 ErrorNoValueForRadioType=Vul waarde in voor knoppen lijst
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Veld <b>%s</b> mag geen speciale tekens bevat.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Veld <b>%s</b> mag geen speciale tekens bevatten, noch hoofdletters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
 ErrorNoAccountancyModuleLoaded=Geen boekhoudingsmodule geactiveerd
 ErrorExportDuplicateProfil=Deze profile naam bestaat al voor deze export set.
 ErrorLDAPSetupNotComplete=De Dolibarr-LDAP installatie is niet compleet.
@@ -171,6 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
+ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
 
 # Warnings
 WarningMandatorySetupNotComplete=Verplichte setup parameters zijn nog niet gedefinieerd

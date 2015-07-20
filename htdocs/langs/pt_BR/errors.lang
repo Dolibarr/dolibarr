@@ -53,7 +53,6 @@ ErrorNoValueForCheckBoxType=Por favor, preencha valor para a lista de caixa de s
 ErrorNoValueForRadioType=Por favor, preencha  valor para a lista de rádio
 ErrorBadFormatValueList=O valor da lista não pode ter mais do que um <u>vir:% s,</u> mas precisa de pelo menos um: chave ou valores
 ErrorFieldCanNotContainSpecialCharacters=o campo <b>%s</b> não deve contener caracter0es especiais
-ErrorFieldCanNotContainSpecialNorUpperCharacters=O <b>campo% s</b> não deve contém caracteres especiais, nem caracteres maiúsculos.
 ErrorNoAccountancyModuleLoaded=Módulo de Contabilidade não ativado
 ErrorExportDuplicateProfil=Este nome de perfil já existe para este lote de exportação.
 ErrorLDAPSetupNotComplete=a configuração Dolibarr-LDAP é incompleta.

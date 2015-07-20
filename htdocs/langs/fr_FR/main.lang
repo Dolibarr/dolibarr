@@ -710,6 +710,8 @@ Denied=Refusé
 ListOfTemplates=Liste des modèles
 Genderman=Homme
 Genderwoman=Femme
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Lundi
 Tuesday=Mardi

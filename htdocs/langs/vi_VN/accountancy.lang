@@ -48,6 +48,7 @@ NewAccount=Tài khoản kế toán mới
 Update=Cập nhật
 List=Danh sách
 Create=Tạo
+CreateMvts=Create movement
 UpdateAccount=Sự biến đổi của một tài khoản kế toán
 UpdateMvts=Sửa đổi của một thay đổi
 WriteBookKeeping=Tài khoản ghi trong sổ kế toán tổng
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Chiều dài của kế toán tài khoản thể hiện trong Dolibarr
 AccountLengthDesc=Chức năng cho phép để giả vờ chiều dài của tài khoản kế toán bằng cách thay thế không gian bởi các con số không. Chức năng này chỉ chạm vào màn hình, nó không sửa đổi các tài khoản kế toán đăng ký tại Dolibarr. Đối với xuất khẩu, chức năng này là cần thiết để tương thích với phần mềm nhất định.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Chiều dài của các tài khoản tổng hợp
 ACCOUNTING_LENGTH_AACCOUNT=Chiều dài của các tài khoản của bên thứ ba
 

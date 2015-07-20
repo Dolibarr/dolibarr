@@ -155,7 +155,6 @@ PriceCatalogue=Preço único por produto / serviço
 PricingRule=Regras para os preços dos clientes
 AddCustomerPrice=Adicione preço por cliente
 ForceUpdateChildPriceSoc=Situado mesmo preço em outros pedidos dos clientes
-PriceByCustomerLog=Preço por cliente
 MinimumPriceLimit=Preço mínimo não pode ser inferior, em seguida %s
 MinimumRecommendedPrice=Preço minimo recomendado e: %s
 PriceExpressionEditor=Editor de expressão Preço

@@ -710,6 +710,8 @@ Denied=Запрещено
 ListOfTemplates=Список шаблонов
 Genderman=Мужчина
 Genderwoman=Женщина
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Понедельник
 Tuesday=Вторник

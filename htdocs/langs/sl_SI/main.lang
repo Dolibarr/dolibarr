@@ -710,6 +710,8 @@ Denied=Zavrnjen
 ListOfTemplates=Seznam predlog
 Genderman=Moški
 Genderwoman=Ženska
+ViewList=List view
+Mandatory=Mandatory
 # Week day
 Monday=Ponedeljek
 Tuesday=Torek

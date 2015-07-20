@@ -422,6 +422,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
     global $conf,$langs;
 
     $langs->load("main");
+    $langs->load("other");
     $langs->load("admin");
 
     print '</td></tr></table>'."\n";
