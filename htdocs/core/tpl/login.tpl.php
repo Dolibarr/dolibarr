@@ -81,7 +81,7 @@ $(document).ready(function () {
 
 <div id="login_left">
 
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+<img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
 
 </div>
 
