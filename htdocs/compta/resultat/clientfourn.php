@@ -543,17 +543,23 @@ if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
  * Salaries
  */
 
+if ($modecompta == 'CREANCES-DETTES') {
+    $column = 'p.datev';
+} else {
+    $column = 'p.datep';
+}
+
 print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';    
-$sql = "SELECT p.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount, u.firstname, u.lastname, p.fk_user";
+$sql = "SELECT p.label as nom, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount, u.firstname, u.lastname, p.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if (! empty($date_start) && ! empty($date_end))
-	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 	
 $sql.= " GROUP BY u.rowid, p.label, p.datep, p.fk_user";
 $sql.= " ORDER BY u.firstname";
-    
+
 dol_syslog("get payment salaries sql=".$sql);
 $result=$db->query($sql);
 $subtotal_ht = 0;
