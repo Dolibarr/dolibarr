@@ -132,3 +132,4 @@ SelectFilterFields=Süzmek istediğiniz değerleri buraya yazın.
 FilterableFields=Süzülebilir Champs
 FilteredFields=Süzülmüş alanlar
 FilteredFieldsValues=Süzgeç değeri
+FormatControlRule=Biçim denetimi kuralı

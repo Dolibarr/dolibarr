@@ -108,3 +108,4 @@ CategorieRecursiv=Link with parent tag/category automatically
 CategorieRecursivHelp=Ако е активирано, продукта ще бъде свързан също и с родителската категория при добавяне в под-категория
 AddProductServiceIntoCategory=Add the following product/service
 ShowCategory=Show tag/category
+ByDefaultInList=By default in list

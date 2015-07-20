@@ -9,6 +9,7 @@ TripCard=Skjema for reiseregninger
 AddTrip=Opprett reiseregning
 ListOfTrips=Liste over reiseregninger
 ListOfFees=Oversikt over avgifter
+ShowTrip=Vis utgiftsrapport
 NewTrip=Ny reiseregning
 CompanyVisited=Firma/organiasjon besøkt
 Kilometers=Kilometer

@@ -90,3 +90,4 @@ ExportNumericFilter=filtros "NNNNN" por um valor <br> filtros "NNNNN + NNNNN 'ma
 SelectFilterFields=Se você deseja filtrar alguns valores, apenas os valores de entrada aqui.
 FilteredFields=Campos filtrados
 FilteredFieldsValues=Valor para o filtro
+FormatControlRule=Regra de controle de formato

@@ -9,6 +9,7 @@ TripCard=Expense report card
 AddTrip=Create expense report
 ListOfTrips=List of expense reports
 ListOfFees=Lista de Taxas
+ShowTrip=Show expense report
 NewTrip=Novo relatório de despesas
 CompanyVisited=Empresa/Instituição Visitada
 Kilometers=Quilómetros

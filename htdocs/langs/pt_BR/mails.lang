@@ -72,6 +72,7 @@ TagCheckMail=Seguir quando o e-mail sera lido
 TagUnsubscribe=Atalho para se desenscrever
 TagSignature=Assinatura do remetente
 TagMailtoEmail=E-mail destinatario
+NoEmailSentBadSenderOrRecipientEmail=Nenhum e-mail enviado. Bad remetente ou destinatário de e-mail. Verifique perfil de usuário.
 AddNewNotification=Ativar uma nova notificação email para alvo
 ListOfActiveNotifications=Listar todos os alvos ativos para notificação de email
 ListOfNotificationsDone=Listar todas as notificações de e-mail enviadas

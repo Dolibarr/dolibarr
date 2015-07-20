@@ -203,7 +203,7 @@ abstract class DolibarrModules
 	// We should but can't set this as abstract because this will make dolibarr hang
 	// after migration due to old module not implementing. We must wait PHP is able to make
 	// a try catch on Fatal error to manage this correctly.
-	
+
     /**
      * Enables a module.
      * Inserts all informations into database
@@ -1392,7 +1392,7 @@ print $sql;
             $menu->user=$this->menu[$key]['user'];
             $menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
             $menu->position=$this->menu[$key]['position'];
-            
+
             if (! $err)
             {
                 $result=$menu->create($user);	// Save menu entry into table llx_menu
@@ -1587,7 +1587,6 @@ print $sql;
         global $conf;
 
         $error=0;
-        $entity=$conf->entity;
 
         if (is_array($this->module_parts) && ! empty($this->module_parts))
         {
@@ -1595,22 +1594,28 @@ print $sql;
             {
     			if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
 
-                $newvalue = $value;
+    			$entity=$conf->entity; // Reset the current entity
+    			$newvalue = $value;
 
-                // Serialize array parameters
-                if (is_array($value))
-                {
-                    // Can defined other parameters
-                    if (is_array($value['data']) && ! empty($value['data']))
-                    {
-                        $newvalue = json_encode($value['data']);
-                        if (isset($value['entity'])) $entity = $value['entity'];
-                    }
-                    else
-                    {
-                        $newvalue = json_encode($value);
-                    }
-                }
+    			// Serialize array parameters
+    			if (is_array($value))
+    			{
+    				// Can defined other parameters
+    				if (is_array($value['data']) && ! empty($value['data']))
+    				{
+    					$newvalue = json_encode($value['data']);
+    					if (isset($value['entity'])) $entity = $value['entity'];
+    				}
+    				else if (isset($value['data']) && !is_array($value['data']))
+    				{
+    					$newvalue = $value['data'];
+    					if (isset($value['entity'])) $entity = $value['entity'];
+    				}
+    				else
+    				{
+    					$newvalue = json_encode($value);
+    				}
+    			}
 
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (";
                 $sql.= "name";

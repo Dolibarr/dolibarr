@@ -352,7 +352,7 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
-		$sql.= " WHERE entity IN (".getEntity($element,1).")" ;
+		$sql.= " WHERE entity IN (".getEntity($element, true).")" ;
 
 		if ($id > 0) $sql.= " AND rowid = ".$db->escape($id);
 		else if ($ref) $sql.= " AND ref = '".$db->escape($ref)."'";
@@ -3532,7 +3532,8 @@ abstract class CommonObject
 
 
     /**
-     * Call trigger based on this instance
+     * Call trigger based on this instance.
+     * Some context information may also be provided into array property this->context.
      * NB: Error from trigger are stacked in interface->errors
      * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
      *

@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 $langs->load("admin");
 $langs->load("bills");
 $langs->load("margins");
+$langs->load("stocks");
 
 if (! $user->admin) accessforbidden();
 
@@ -137,11 +138,13 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
-print '<td align="right">'.$langs->trans('MargeBrute');
+print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
 if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
 	print 'checked ';
-print '/><br>';
+print '/> ';
+print $langs->trans('MargeType1');
+print '<br>';
 /*print $langs->trans('MargeNette');
 print ' <input type="radio" name="MARGIN_TYPE" value="2" ';
 if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '2')
@@ -150,18 +153,18 @@ print '/>';*/
 // TODO Check that PMP is available when stock module is not enabled. If not, make this choice greyed when stock module disabled.
 //if (! empty($conf->stock->enabled))
 //{
-	print $langs->trans('MargeNette');
 	print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
 	if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
 		print 'checked ';
-	print '/>';
+	print '/> ';
+	print $langs->trans('MargeType2');
 //}
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" class="button">';
 print '</td>';
-print '<td>'.$langs->trans('MARGIN_TYPE_DETAILS');
-print ' ('.$langs->trans("PMP").')';
+print '<td>'.$langs->trans('MarginTypeDesc');
+print ' ('.$langs->trans("PMPValueShort").')';
 print '</td>';
 print '</tr>';
 print '</form>';

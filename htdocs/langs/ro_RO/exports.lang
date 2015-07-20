@@ -132,3 +132,4 @@ SelectFilterFields=Dacă doriți să filtrați pe anumite valori, doar introduce
 FilterableFields=Câmpuri filtrabile
 FilteredFields=Câmpuri filtrate
 FilteredFieldsValues=Valoare pentru filtru
+FormatControlRule=Format control rule

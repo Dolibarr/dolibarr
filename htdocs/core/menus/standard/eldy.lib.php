@@ -584,6 +584,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
+			$newmenu->add("/societe/list.php?leftmenu=thirdparties", $langs->trans("List"),1);
+
 			// Prospects
 			if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 			{
@@ -1222,6 +1224,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			if (! empty($conf->holiday->enabled))
 			{
 				$langs->load("holiday");
+				$langs->load("trips");
 
 				$newmenu->add("/holiday/list.php?&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'hrm');
 				$newmenu->add("/holiday/card.php?&action=request", $langs->trans("New"), 1,$user->rights->holiday->write);

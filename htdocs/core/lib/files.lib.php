@@ -388,7 +388,6 @@ function dol_is_url($url)
     return false;
 }
 
-
 /**
  * 	Test if a folder is empty
  *

@@ -360,6 +360,8 @@ class modSociete extends DolibarrModules
 						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
 						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
 						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+					case 'select':
+						$typeFilter="Select:".$obj->param;
 						break;
         		}
         		$this->export_fields_array[$r][$fieldname]=$fieldlabel;

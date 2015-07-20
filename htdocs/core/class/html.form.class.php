@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -984,7 +984,7 @@ class Form
                         $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
                     }
 
-                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->name, 'label'=>$obj->name));
+                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->rowid, 'label'=>$label));
 
                     $i++;
                     if (($i % 10) == 0) $out.="\n";
@@ -2384,6 +2384,8 @@ class Form
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$langs->load('propal');
+
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
         $sql.= " WHERE active > 0";
@@ -3217,11 +3219,11 @@ class Form
             {
                 foreach ($formquestion as $key => $input)
                 {
-                    if (isset($input['name'])) array_push($inputok,$input['name']);
+                	//print "xx ".$key." rr ".is_array($input)."<br>\n";
+                    if (is_array($input) && isset($input['name'])) array_push($inputok,$input['name']);
                     if (isset($input['inputko']) && $input['inputko'] == 1) array_push($inputko,$input['name']);
                 }
             }
-
 			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
             if (! empty($more)) {

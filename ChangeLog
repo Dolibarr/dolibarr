@@ -199,36 +199,38 @@ For translators:
 NEW: Update language files.
 NEW: When a translation is not available we always jump to en_US and only en_US.
 NEW: All language tranlsations (except source en_US) is now managed on https://www.transifex.com/projects/p/dolibarr/.
-FIX: Typo errors in translation
+FIX: Typo errors in translation.
 
 For developers:
 NEW: Function yn can show a visual checkbox.
 NEW: Introduced select2 jquery plugin.
-NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook
-NEW: possibility to defined a tab for all entities in module descriptor
-NEW: add restler framework First step to build REST API into Dolibarr
-NEW: add an explorer for REST API consultation & documentation
-NEW: script to build API class from existing class
+NEW: Possibility to add javascript in main login page with "getLoginPageOptions" hook.
+NEW: possibility to defined a tab for all entities in module descriptor.
+NEW: add restler framework First step to build REST API into Dolibarr.
+NEW: add an explorer for REST API consultation & documentation.
+NEW: script to build API class from existing class.
 NEW: Add function dolCopyDir to copy directory with recursive content.
-NEW: Introduce function dolGetFirstLineOfText
+NEW: Introduce function dolGetFirstLineOfText.
 
-WARNING: Following changes may create regression for some external modules, but was necessary to make
+WARNING: Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
-- Removed hoo supplierorderdao into supplier order creation. This is a business event, so we must use the 
+- Removed hook supplierorderdao into supplier order creation. This is a business event, so we must use the 
   trigger ORDER_SUPPLIER_CREATE instead.
 - Hooks 'printLeftBlock' and 'formConfirm' are now compliant with hook development rules. They are
   "addreplace" hooks, so you must return content with "->resprints='mycontent'" and not with "return 'mycontent'"  
-- All fields "fk_societe" were renamed into "fk_soc".
+- All fields "fk_societe" and "fk_soc" are now named "fk_soc" (same name for all fields).
 - Method select_PriceBaseType and load_PriceBaseType were merged into selectPriceBaseType.
-- The trigger USER_LOGIN* are deprecated. They are still working but you should prefer use the 
+- The triggers USER_LOGIN* are deprecated. They are still working but you should prefer use the 
   hook afterLogin or afterLoginFailed instead.
-
+- The trigger USER_CREATE_FROM_CONTACT has been replace with USER_CREATE and property context is now filled
+  to make difference between creation from contact or not.
 
 
 ***** ChangeLog for 3.7.2 compared to 3.7.1 *****
 FIX [ bug #2855 ] Wrong translation key in localtax report page
 FIX [ bug #1852 ] JS error when editing a customer order line
 FIX [ bug #2900 ] Courtesy title is not stored in create thirdparty form
+FIX [ bug #3055 ] Product image thumbnails were not deleted after deleting the image
 
 ***** ChangeLog for 3.7.1 compared to 3.7.* *****
 FIX Bug in the new photo system
@@ -485,6 +487,7 @@ Dolibarr better:
 - Fix: [ bug #2542 ] Contracts store localtax preferences
 - Fix: Bad permission assignments for stock movements actions
 - Fix: [ bug #2891 ] Category hooks do not work
+- Fix: [ bug #2696 ] Adding complementary attribute fails if code is numerics
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -664,6 +667,10 @@ Fix: [ bug #2861 ] Undefined variable $res when migrating
 Fix: [ bug #2837 ] Product list table column header does not match column body
 Fix: [ bug #2835 ] Customer prices of a product shows incorrect history order
 Fix: [ bug #2814 ] JPEG photos are not displayed in Product photos page
+Fix: [ bug #2715 ] Statistics page has broken layout with long thirdparty names
+Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
+Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
+Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

@@ -132,3 +132,4 @@ SelectFilterFields=Chcete-li filtrovat některé hodnoty, stačí zadat hodnoty 
 FilterableFields=Champs Filtrables
 FilteredFields=Filtrované pole
 FilteredFieldsValues=Hodnota za filtrem
+FormatControlRule=Format control rule

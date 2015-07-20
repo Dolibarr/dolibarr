@@ -9,6 +9,7 @@ TripCard=Karta zpráv výdajů
 AddTrip=Vytvoření zprávy o výdajích
 ListOfTrips=Seznam vyúčtování výdajů
 ListOfFees=Sazebník poplatků
+ShowTrip=Show expense report
 NewTrip=Nová zpráva výdaje
 CompanyVisited=Firma/nadace navštívena
 Kilometers=Kilometry

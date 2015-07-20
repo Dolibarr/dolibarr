@@ -9,7 +9,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
@@ -1725,11 +1725,12 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *  @param		string	$type			Type of graph ('pie', 'barline')
  *  @param		int		$showpercent	Show percent (with type='pie' only)
  *  @param		string	$url			Param to add an url to click values
+ *  @param		int		$combineother	0=No combine, 0.05=Combine if lower than 5%
  *  @return		void
  *  @deprecated
  *  @see DolGraph
  */
-function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='')
+function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
@@ -1777,10 +1778,15 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 						series: {
 							pie: {
 								show: true,
-								radius: 0.8,
+								radius: 0.8,';
+			if ($combineother)
+			{
+				print '
 								combine: {
-								 	threshold: 0.05
-								},
+								 	threshold: '.$combineother.'
+								},';
+			}
+			print '
 								label: {
 									show: true,
 									radius: 0.9,

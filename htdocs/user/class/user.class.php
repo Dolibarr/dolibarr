@@ -8,7 +8,7 @@
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -978,8 +978,10 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::create_from_contact", LOG_DEBUG);
 			if ($resql)
 			{
+				$this->context['createfromcontact']='createfromcontact';
+
                 // Call trigger
-                $result=$this->call_trigger('USER_CREATE_FROM_CONTACT',$user);
+                $result=$this->call_trigger('USER_CREATE',$user);
                 if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
 

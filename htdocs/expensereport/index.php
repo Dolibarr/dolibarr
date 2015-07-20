@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ if ($conf->use_javascript_ajax)
 {
     print '<tr '.$bc[0].'><td align="center" colspan="4">';
     $data=array('series'=>$dataseries);
-    dol_print_graph('stats',320,180,$data,1,'pie',0);
+    dol_print_graph('stats',320,180,$data,1,'pie',0,'',0);
     print '</td></tr>';
 }
 
@@ -141,7 +142,7 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
@@ -177,8 +178,8 @@ if ($result)
         while ($i < $num && $i < $max)
         {
             $obj = $db->fetch_object($result);
-            $expensereportstatic->ref=$obj->rowid;
             $expensereportstatic->id=$obj->rowid;
+            $expensereportstatic->ref=$obj->ref;
             $userstatic->id=$obj->uid;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;

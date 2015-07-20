@@ -108,3 +108,4 @@ CategorieRecursiv=Link with parent tag/category automatically
 CategorieRecursivHelp=Om aktiverad kommer produkten även länkas till förälderkategori när den läggs i en underkategori
 AddProductServiceIntoCategory=Lägg till följande produkt / tjänst
 ShowCategory=Show tag/category
+ByDefaultInList=By default in list

@@ -128,7 +128,7 @@ TagCheckMail=Seguimiento de la apertura del email
 TagUnsubscribe=Link de desuscripción
 TagSignature=Firma del usuario remitente
 TagMailtoEmail=Email del destinatario
-NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
+NoEmailSentBadSenderOrRecipientEmail=No se ha enviado el e-mail. El remitente o destinatario es incorrecto. Compruebe los datos del usuario.
 # Module Notifications
 Notifications=Notificaciones
 NoNotificationsWillBeSent=Ninguna notificación por e-mail está prevista para este evento y empresa
