@@ -92,7 +92,7 @@ $(document).ready(function () {
 <table class="left centpercent" summary="Login pass">
 <!-- Login -->
 <tr>
-<td valign="middle" class="nowrap center">
+<td class="nowrap center valignmiddle">
 <label for="username" hidden><?php echo $langs->trans("Login"); ?></label>
 <span class="span-icon-user">
 <input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
@@ -101,7 +101,7 @@ $(document).ready(function () {
 </tr>
 <!-- Password -->
 <tr>
-<td valign="middle" class="nowrap center">
+<td class="nowrap center valignmiddle">
 <label for="password" hidden><?php echo $langs->trans("Password"); ?></label>
 <span class="span-icon-password">
 <input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
@@ -128,7 +128,7 @@ if (! empty($hookmanager->resArray['options'])) {
 ?>
 	<!-- Captcha -->
 	<tr>
-	<td valign="top" class="nowrap none center">
+	<td class="nowrap none center">
 
 	<table class="login_table_securitycode centpercent"><tr>
 	<td>
