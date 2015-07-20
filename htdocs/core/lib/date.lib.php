@@ -272,6 +272,7 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 
 /**
  *	Convert a string date into a GM Timestamps date
+ *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
  *	@param	string	$string		Date in a string
  *				     	        YYYYMMDD
@@ -306,8 +307,8 @@ function dol_stringtotime($string, $gm=1)
         $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
     }
     else if (
-    	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format RFC3339
-		|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
+    	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i',$string,$reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+    	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i',$string,$reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
    		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i',$string,$reg)		// Convert date with format YYYYMMDDTHHMMSSZ
     )
     {

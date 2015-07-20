@@ -887,7 +887,7 @@ if (empty($reshook))
 	if (GETPOST('linkedOrder')) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
-		$result = $object->add_object_linked('commande', GETPOST('linkedOrder'));
+		$result = $object->add_object_linked('order_supplier', GETPOST('linkedOrder'));
 	}
 
 	// Add file in email form

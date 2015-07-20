@@ -456,11 +456,12 @@ class ActionComm extends CommonObject
     /**
      *    Load object from database
      *
-     *    @param	int		$id     Id of action to get
-     *    @param	string	$ref    Ref of action to get
-     *    @return	int				<0 if KO, >0 if OK
+     *    @param	int		$id     	Id of action to get
+     *    @param	string	$ref    	Ref of action to get
+     *    @param	string	$ref_ext	Ref ext to get
+     *    @return	int					<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='')
+    function fetch($id, $ref='',$ref_ext='')
     {
         global $langs;
 
@@ -484,11 +485,12 @@ class ActionComm extends CommonObject
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
         $sql.= " WHERE ";
-        if ($ref) $sql.= " a.id=".$ref;		// No field ref, we use id
+        if ($ref) $sql.= " a.id=".$ref;											// No field ref, we use id
+        elseif ($ref_ext) $sql.= " a.ref_ext='".$this->db->escape($ref_ext)."'";
         else $sql.= " a.id=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
