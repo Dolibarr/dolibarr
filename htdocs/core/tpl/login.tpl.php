@@ -71,7 +71,7 @@ $(document).ready(function () {
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
 <table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
+<tr class="vmenu"><td class="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
 </table>
 <br>
 
