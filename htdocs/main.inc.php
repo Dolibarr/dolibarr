@@ -1020,11 +1020,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES) || (defined('REQUIRE_JQUERY_DATATABLES') && constant('REQUIRE_JQUERY_DATATABLES')))     // jQuery datatables
             {
                 //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/css/jquery.dataTables_jui.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColReorder/css/ColReorder.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVis.css'.($ext?'?'.$ext:'').'">'."\n";
-                //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVisAlt.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/css/TableTools.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/media/css/jquery.dataTables.min.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/ColVis/css/dataTables.colVis.min.css'.($ext?'?'.$ext:'').'">'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/TableTools/css/dataTables.tableTools.min.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
             {
@@ -1183,10 +1182,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery DataTables
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES) || (defined('REQUIRE_JQUERY_DATATABLES') && constant('REQUIRE_JQUERY_DATATABLES')))
             {
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/js/jquery.dataTables.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColReorder/js/ColReorder.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/media/js/jquery.dataTables.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/ColVis/js/dataTables.colVis.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery Timepicker
             if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
