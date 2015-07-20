@@ -93,6 +93,7 @@ $(document).ready(function () {
 <!-- Login -->
 <tr>
 <td valign="middle" class="nowrap center">
+<label for="username" hidden><?php echo $langs->trans("Login"); ?></label>
 <span class="span-icon-user">
 <input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
@@ -101,6 +102,7 @@ $(document).ready(function () {
 <!-- Password -->
 <tr>
 <td valign="middle" class="nowrap center">
+<label for="password" hidden><?php echo $langs->trans("Password"); ?></label>
 <span class="span-icon-password">
 <input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
 </span>
