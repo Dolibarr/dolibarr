@@ -70,7 +70,7 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
+<table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <tr class="vmenu"><td class="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
 </table>
 <br>
@@ -89,7 +89,7 @@ $(document).ready(function () {
 
 <div id="login_right">
 
-<table class="left centpercent" summary="Login pass">
+<table class="left centpercent" title="Login pass">
 <!-- Login -->
 <tr>
 <td class="nowrap center valignmiddle">
