@@ -50,7 +50,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div align="center">
+<div class="center">
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -167,7 +167,7 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div align="center" style="margin-top: 8px;">';
+	echo '<div class="center" style="margin-top: 8px;">';
 	if ($forgetpasslink) {
 		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
 		echo $langs->trans('PasswordForgotten');
@@ -194,7 +194,7 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	echo '<br>';
-	echo '<div align="center" style="margin-top: 4px;">';
+	echo '<div class="center" style="margin-top: 4px;">';
 
 	$url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 	if (! empty($url)) print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
@@ -288,7 +288,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 	if (empty($conf->dol_use_jmobile))
 	{
 ?>
-	<div align="center"><br>
+	<div class="center"><br>
 		<script type="text/javascript"><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
