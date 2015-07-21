@@ -287,7 +287,7 @@ if (! empty($conf->margin->enabled))
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "markRate" && rate.val() >= 100)
+		if (npRate == "np_markRate" && rate.val() >= 100)
 		{
 			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
@@ -303,10 +303,11 @@ if (! empty($conf->margin->enabled))
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
 
-			if (npRate == "marginRate")
+			if (npRate == "np_marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "markRate")
+			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+				
 		}
 		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
