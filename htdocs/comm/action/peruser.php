@@ -694,7 +694,7 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname"'.($var?' style="background: #F8F8F8"':'').'>' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">' . $username->getNomUrl(1). '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week
@@ -1022,8 +1022,8 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 
 
-		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
-		else echo '<td class="'.$style.' cal_peruser"'.($var?' style="background: #F8F8F8"':'').'>';
+		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
+		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
 		if (count($cases1[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases1[$h]);
