@@ -243,7 +243,7 @@ if (empty($reshook))
 			$object->note_public = GETPOST('note_public');
 			$object->source = GETPOST('source_id', 'int');
 			$object->fk_project = GETPOST('projectid', 'int');
-			$object->ref_client = GETPOST('ref_client', 'int');
+			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->modelpdf = GETPOST('model', 'alpha');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
