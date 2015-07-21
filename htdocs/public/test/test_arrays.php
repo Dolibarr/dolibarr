@@ -217,7 +217,7 @@ $(document).ready(function(){
 			}
 		},
 		"aaSorting": [[0,'desc']],
-		"sDom": 'T<"clear">lfrtip',
+		"sDom": 'CT<"clear">lfrtip',
 //To get flash tools
  		"oTableTools": {
 			"sSwfPath": "<?php echo dol_buildpath('/includes/jquery/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',1); ?>"
