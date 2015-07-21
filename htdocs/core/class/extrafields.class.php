@@ -1035,6 +1035,10 @@ class ExtraFields
 				}
 			}
 		}
+		if ($type == 'text')
+		{
+			$value=nl2br($value);
+		}
 		else
 		{
 			$showsize=round($size);
