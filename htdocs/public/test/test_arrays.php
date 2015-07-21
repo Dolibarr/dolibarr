@@ -31,7 +31,7 @@ if (empty($usedolheader))
 	<title>Test page</title>
 	<!-- Includes for JQuery (Ajax library) -->
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui.custom.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/css/jquery.dataTables.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" />
 	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
 	<?php } ?>
@@ -39,7 +39,7 @@ if (empty($usedolheader))
 	<!-- Includes JS for JQuery -->
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
-	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script>
 	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
 	<?php } ?>
@@ -53,8 +53,8 @@ if (empty($usedolheader))
 }
 else
 {
-	$arraycss=array('/includes/jquery/plugins/datatables/css/jquery.dataTables.css');
-	$arrayjs=array('/includes/jquery/plugins/datatables/js/jquery.dataTables.js');
+	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css');
+	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js');
 	llxHeader('','','','',0,0,$arrayjs,$arraycss);
 }
 
@@ -217,12 +217,12 @@ $(document).ready(function(){
 			}
 		},
 		"aaSorting": [[0,'desc']],
-		"sDom": 'T<"clear">lfrtip',
-/* To get flash tools
+		"sDom": 'CT<"clear">lfrtip',
+//To get flash tools
  		"oTableTools": {
-			"sSwfPath": "<?php echo DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/swf/copy_csv_xls_pdf.swf'; ?>"
-		}
-*/
+			"sSwfPath": "<?php echo dol_buildpath('/includes/jquery/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',1); ?>"
+		},
+
 /* To use in ajax mode
 		"bProcessing": true,	// Show	"processing message"
 		"bServerSide": true,
