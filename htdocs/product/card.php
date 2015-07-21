@@ -210,9 +210,9 @@ if (empty($reshook))
             $object->localtax2_tx 			   = get_localtax($object->tva_tx,2);
 
             $object->type               	 = $type;
-            $object->status             	 = GETPOST('statut');
-            $object->status_buy            = GETPOST('statut_buy');
-			$object->status_batch          	= GETPOST('status_batch');
+            $object->status             	 = GETPOST('statut', 'int');
+            $object->status_buy            = GETPOST('statut_buy', 'int');
+			$object->status_batch          	= GETPOST('status_batch', 'int');
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
@@ -234,11 +234,11 @@ if (empty($reshook))
             $object->url					 = GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode              = GETPOST('customcode');
-            $object->country_id              = GETPOST('country_id');
+            $object->country_id              = GETPOST('country_id', 'int');
             $object->duration_value     	 = GETPOST('duration_value');
-            $object->duration_unit      	 = GETPOST('duration_unit');
-            $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
-            $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
+            $object->duration_unit      	 = GETPOST('duration_unit', 'alpha');
+            $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte', 'int')?GETPOST('seuil_stock_alerte', 'int'):0;
+            $object->desiredstock            = GETPOST('desiredstock', 'int')?GETPOST('desiredstock', 'int'):0;
             $object->canvas             	 = GETPOST('canvas');
             $object->weight             	 = GETPOST('weight');
             $object->weight_units       	 = GETPOST('weight_units');
@@ -323,12 +323,12 @@ if (empty($reshook))
             	$object->url					= GETPOST('url');
                 $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
                 $object->customcode             = GETPOST('customcode');
-                $object->country_id             = GETPOST('country_id');
-                $object->status                 = GETPOST('statut');
-                $object->status_buy             = GETPOST('statut_buy');
-                $object->status_batch	        = GETPOST('status_batch');
-                $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
-                $object->desiredstock           = GETPOST('desiredstock');
+                $object->country_id             = GETPOST('country_id', 'int');
+                $object->status                 = GETPOST('statut', 'int');
+                $object->status_buy             = GETPOST('statut_buy', 'int');
+                $object->status_batch	        = GETPOST('status_batch', 'int');
+                $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte', 'int');
+                $object->desiredstock           = GETPOST('desiredstock', 'int');
                 $object->duration_value         = GETPOST('duration_value');
                 $object->duration_unit          = GETPOST('duration_unit');
                 $object->canvas                 = GETPOST('canvas');

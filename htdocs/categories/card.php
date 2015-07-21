@@ -46,8 +46,8 @@ $urlfrom	= GETPOST('urlfrom','alpha');
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
 $description=GETPOST('description');
-$visible=GETPOST('visible');
-$parent=GETPOST('parent');
+$visible=GETPOST('visible', 'int');
+$parent=GETPOST('parent', 'int');
 
 if ($origin)
 {
