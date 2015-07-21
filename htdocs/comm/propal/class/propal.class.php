@@ -2876,11 +2876,12 @@ class PropaleLigne  extends CommonObject
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;
         if (empty($this->remise)) $this->remise=0;
-        if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->remise_percent) || ! is_numeric($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
+		if (! is_numeric($this->qty)) $this->qty = 0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2910,14 +2911,14 @@ class PropaleLigne  extends CommonObject
         $sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
         $sql.= " '".$this->product_type."',";
         $sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
-        $sql.= " '".price2num($this->qty)."',";
+        $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->localtax1_type."',";
 		$sql.= " '".$this->localtax2_type."',";
         $sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
-        $sql.= " '".price2num($this->remise_percent)."',";
+        $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";
