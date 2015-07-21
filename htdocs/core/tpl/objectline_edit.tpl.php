@@ -287,7 +287,7 @@ if (! empty($conf->margin->enabled))
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
-		if (npRate == "np_markRate" && rate.val() >= 100)
+		if (npRate == "markRate" && rate.val() >= 100)
 		{
 			alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
 			e.stopPropagation();
@@ -303,9 +303,9 @@ if (! empty($conf->margin->enabled))
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
 
-			if (npRate == "np_marginRate")
+			if (npRate == "marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "np_markRate")
+			else if (npRate == "markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 				
 		}
