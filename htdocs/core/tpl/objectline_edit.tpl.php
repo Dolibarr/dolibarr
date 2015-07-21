@@ -259,7 +259,7 @@ if (! empty($conf->margin->enabled))
 		{
 		?>
 			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_markRate");
+				return checkEditLine(e, "markRate");
 			});
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkEditLine(e, "markRate");
