@@ -317,14 +317,27 @@ if ($conf->use_javascript_ajax)
 				$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val ['name'] . ' &nbsp; </div>';
 			}
 		}
+
+		//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+
+		// Calendars from hooks
+	    $parameters=array(); $object=null;
+		$reshook=$hookmanager->executeHooks('addCalendarChoice',$parameters,$object,$action);
+	    if (empty($reshook))
+	    {
+			$s.= $hookmanager->resPrint;
+	    }
+	    elseif ($reshook > 1)
+		{
+	    	$s = $hookmanager->resPrint;
+	    }
 	}
-	//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
 }
 
 
 
 $link='';
-print_fiche_titre($s,$link.' &nbsp; &nbsp; '.$nav, '');
+print_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '');
 
 
 // Get event in an array
