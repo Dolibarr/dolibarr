@@ -784,5 +784,5 @@ UPDATE llx_c_departements SET code_departement='Z' WHERE ncc='ZARAGOZA' AND fk_r
 UPDATE llx_c_departements SET code_departement='VI' WHERE ncc='ALAVA' AND fk_region=419;
 UPDATE llx_c_departements SET code_departement='CE' WHERE ncc='CEUTA' AND fk_region=407;
 UPDATE llx_c_departements SET code_departement='ML' WHERE ncc='MELILLA' AND fk_region=409;
-DELETE FROM llx_c_departements WHERE nnc='OTROS' AND fk_region=420;
+DELETE FROM llx_c_departements WHERE ncc='OTROS' AND fk_region=420;
 DELETE FROM llx_c_regions WHERE code_region=420 and fk_pays=4;
