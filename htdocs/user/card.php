@@ -347,7 +347,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->login		= GETPOST("login",'alpha');
             $object->gender		= GETPOST("gender",'alpha');
             $object->pass		= GETPOST("password");
-            $object->api_key    = GETPOST("api_key");
+            $object->api_key    = (GETPOST("api_key", 'alpha'))?GETPOST("api_key", 'alpha'):$object->api_key;
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone",'alpha');
             $object->office_fax	= GETPOST("office_fax",'alpha');
