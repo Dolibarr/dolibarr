@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1312,67 +1312,48 @@ class Contrat extends CommonObject
 					$pa_ht = $pu_ht * (1 - $remise_percent / 100);
 			}
 
-			// Insertion dans la base
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
-			$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
-			$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
-			$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
-			$sql.= " info_bits,";
-			$sql.= " price_ht, remise, fk_product_fournisseur_price, buy_price_ht";
-			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
-			if ($date_end > 0)   { $sql.= ",date_fin_validite"; }
-			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
-			$sql.= ($fk_product>0 ? $fk_product : "null").",";
-			$sql.= " '".$qty."',";
-			$sql.= " '".$txtva."',";
-			$sql.= " '".$txlocaltax1."',";
-			$sql.= " '".$txlocaltax2."',";
-			$sql.= " '".$localtax1_type."',";
-			$sql.= " '".$localtax2_type."',";
-			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
-			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
-			$sql.= " '".$info_bits."',";
-			$sql.= " ".price2num($price).",".price2num($remise).",";
-			if (isset($fk_fournprice)) $sql.= ' '.$fk_fournprice.',';
-			else $sql.= ' null,';
-			if (isset($pa_ht)) $sql.= ' '.price2num($pa_ht);
-			else $sql.= ' null';
-			if ($date_start > 0) { $sql.= ",'".$this->db->idate($date_start)."'"; }
-			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
-			$sql.= ")";
+			$line = new ContratLigne($this->db);
 
-			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
+			$line->fk_contrat = $this->id;
+			$line->label = $desc;
+			$line->description = $desc;
+			$line->fk_product = $fk_product;
+			$line->qty = $qty;
+			$line->tva_tx = $txtva;
+			$line->localtax1_tx = $txlocaltax1;
+			$line->localtax2_tx = $txlocaltax2;
+			$line->localtax1_type = $localtax1_type;
+			$line->localtax2_type = $localtax2_type;
+			$line->remise_percent = $remise_percent;
+			$line->subprice = $pu_ht;
+			$line->total_ht = $total_ht;
+			$line->total_tva = $total_tva;
+			$line->total_localtax1 = $total_localtax1;
+			$line->total_localtax2 = $total_localtax2;
+			$line->total_ttc = $total_ttc;
+			$line->info_bits = $info_bits;
+			$line->price_ht = $price;
+			$line->remise = $remise;
 
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$result=$this->update_statut($user);
-				if ($result > 0)
-				{
-				    // Call trigger
-				    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
-				    if ($result < 0)
-				    {
-				        $this->db->rollback();
-				        return -1;
-				    }
-				    // End call triggers
-
-					$this->db->commit();
-					return 1;
-				}
-				else
-				{
-					$this->db->rollback();
-					return -1;
-				}
+			if (isset($fk_fournprice)) {
+				$line->fk_fournprice = $fk_fournprice;
 			}
-			else
-			{
+
+			if (isset($pa_ht)) {
+				$line->pa_ht = $pa_ht;
+			}
+			$line->date_ouverture_prevue = $date_start;
+			$line->date_fin_validite = $date_end;
+
+			$result = $line->insert();
+
+			if ($result < 1) {
 				$this->db->rollback();
-				$this->error=$this->db->error()." sql=".$sql;
 				return -1;
 			}
+
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
@@ -2545,4 +2526,71 @@ class ContratLigne extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Inserts a contrat line into database
+	 *
+	 * @param int $notrigger Set to 1 if you don't want triggers to be fired
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function insert($notrigger = 0)
+	{
+		global $user;
+
+		// Insertion dans la base
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
+		$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
+		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
+		$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
+		$sql.= " info_bits,";
+		$sql.= " price_ht, remise, fk_product_fournisseur_price, buy_price_ht";
+		if ($this->date_ouverture_prevue > 0) { $sql.= ",date_ouverture_prevue"; }
+		if ($this->date_fin_validite > 0)   { $sql.= ",date_fin_validite"; }
+		$sql.= ") VALUES ($this->fk_contrat, '', '" . $this->db->escape($this->description) . "',";
+		$sql.= ($this->fk_product>0 ? $this->fk_product : "null").",";
+		$sql.= " '".$this->qty."',";
+		$sql.= " '".$this->tva_tx."',";
+		$sql.= " '".$this->localtax1_tx."',";
+		$sql.= " '".$this->localtax2_tx."',";
+		$sql.= " '".$this->localtax1_type."',";
+		$sql.= " '".$this->localtax2_type."',";
+		$sql.= " ".price2num($this->remise_percent).",".price2num($this->subprice).",";
+		$sql.= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
+		$sql.= " '".$this->info_bits."',";
+		$sql.= " ".price2num($this->price_ht).",".price2num($this->remise).",";
+		if ($this->fk_fournprice > 0) $sql.= ' '.$this->fk_fournprice.',';
+		else $sql.= ' null,';
+		if ($this->pa_ht > 0) $sql.= ' '.price2num($this->pa_ht);
+		else $sql.= ' null';
+		if ($this->date_ouverture_prevue > 0) { $sql.= ",'".$this->db->idate($this->date_ouverture_prevue)."'"; }
+		if ($this->date_fin_validite > 0) { $sql.= ",'".$this->db->idate($this->date_fin_validite)."'"; }
+		$sql.= ")";
+
+		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LINECONTRACT_CREATE', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->error()." sql=".$sql;
+			return -1;
+		}
+	}
 }
