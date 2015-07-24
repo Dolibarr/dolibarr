@@ -1868,6 +1868,32 @@ class Product extends CommonObject
 			$this->stats_commande['nb']=$obj->nb;
 			$this->stats_commande['rows']=$obj->nb_rows;
 			$this->stats_commande['qty']=$obj->qty?$obj->qty:0;
+
+			// if it's a virtual product, maybe it is in order by extension			
+			$TFather = $this->getFather();
+			if(is_array($TFather) && !empty($TFather)) {
+				
+				foreach($TFather as &$fatherData) {
+					
+					$pFather = new Product($this->db);
+					$pFather->id = $fatherData['id'];  
+					$qtyCoef = $fatherData['qty'];
+
+					if($fatherData['incdec']) {
+						$pFather->load_stats_commande($socid, $filtrestatut);
+						
+						$this->stats_commande['customers']+=$pFather->stats_commande['customers'];
+						$this->stats_commande['nb']+=$pFather->stats_commande['nb'];
+						$this->stats_commande['rows']+=$pFather->stats_commande['rows'];
+						$this->stats_commande['qty']+=$pFather->stats_commande['qty'] * $qtyCoef;
+						
+					}
+					
+					
+				}
+				
+			}
+			
 			return 1;
 		}
 		else
