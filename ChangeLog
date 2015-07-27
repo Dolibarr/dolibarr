@@ -40,6 +40,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #2891 ] Category hooks do not work
 - Fix: [ bug #2696 ] Adding complementary attribute fails if code is numerics
 - Fix: [ bug #3074 ] Accruals accounting use payment date instead of commitment date in turnover reports for salaries
+- Fix: Not showing product supplier reference when page break
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
