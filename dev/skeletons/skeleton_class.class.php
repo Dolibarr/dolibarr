@@ -234,7 +234,7 @@ class Skeleton_Class extends CommonObject
 		$sql .= ' t.field1,';
 		$sql .= ' t.field2';
 		//...
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mytable as t';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
 		$sqlwhere = array();

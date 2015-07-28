@@ -227,6 +227,13 @@ foreach($property as $key => $prop)
 $targetcontent=preg_replace('/if \(isset\(\$this->prop1\)\) {((\n|\r|\t)*)\$this->prop1 = trim\(\$this->prop1\);((\n|\r|\t)*)}/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/if \(isset\(\$this->prop2\)\) {((\n|\r|\t)*)\$this->prop2 = trim\(\$this->prop2\);((\n|\r|\t)*)}/', '', $targetcontent);
 
+
+$no_output_field=0;
+foreach($property as $key => $prop)
+{
+	if ($prop['field'] == 'tms') $no_output_field++;	// This is a field of type timestamp edited automatically
+	if ($prop['extra'] == 'auto_increment') $no_output_field++;
+}
 // Substitute insert into parameters
 $varprop="\n";
 $cleanparam='';
@@ -241,7 +248,7 @@ foreach($property as $key => $prop)
 	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= '".$prop['field'];
-		if ($i < count($property)) $varprop.=",";
+		if ($i <= count($property)-$no_output_field) $varprop.=",";
 		$varprop.="';";
 		$varprop.="\n";
 	}
@@ -255,12 +262,7 @@ $cleanparam='';
 $i=0;
 
 //Count nb field to output to manage commat at end SQL instruction
-$no_output_field=0;
-foreach($property as $key => $prop)
-{
-	if ($prop['field'] == 'tms') $no_output_field++;	// This is a field of type timestamp edited automatically
-	if ($prop['extra'] == 'auto_increment') $no_output_field++;
-}
+
 
 foreach($property as $key => $prop)
 {
@@ -307,6 +309,7 @@ foreach($property as $key => $prop)
 			$varprop.='.\').';
 			
 		}
+		
 		if ($i < (count($property)-$no_output_field)) $varprop.=".','";
 		$varprop.=';';
 		$varprop.="\n";
