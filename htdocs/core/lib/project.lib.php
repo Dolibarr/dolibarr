@@ -401,7 +401,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$plannedworkloadoutputformat='allhourmin';
 				$timespentoutputformat='allhourmin';
 				if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
-				if (! empty($conf->global->PROJECT_TIMES_PENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+				if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
 
 				// Planned Workload (in working hours)
 				print '<td align="right">';

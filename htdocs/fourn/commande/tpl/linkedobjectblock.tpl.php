@@ -45,8 +45,8 @@ foreach($linkedObjectBlock as $object)
 {
 	$var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?> ><td>
-	<a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$object->ref; ?></a></td>
+<tr <?php echo $bc[$var]; ?> >
+	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id ?>"><?php echo img_object($langs->trans("ShowOrder"),"order").' '.$object->ref; ?></a></td>
 	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->fournisseur->commande->lire) {
@@ -60,7 +60,7 @@ foreach($linkedObjectBlock as $object)
 
 ?>
 <tr class="liste_total">
-	<td align="left" colspan="2"><?php echo $langs->trans('TotalHT'); ?></td>
+	<td align="left" colspan="2"><?php echo $langs->trans("TotalHT"); ?></td>
 	<td align="right"><?php
 		if ($user->rights->fournisseur->commande->lire) {
 			echo price($total);

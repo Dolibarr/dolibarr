@@ -4900,20 +4900,20 @@ class Form
 				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
 				print '<td align="left">' . $langs->trans("Company") . '</td>';
 				print '</tr>';
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$objp = $this->db->fetch_object($resqlorderlist);
-					if ($objp->socid == $societe->id) {
-						$var = ! $var;
-						print '<tr ' . $bc [$var] . '>';
-						print '<td aling="left">';
-						print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-						print '<td align="center">' . $objp->ref . '</td>';
-						print '<td>' . $objp->ref_supplier . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
-						print '<td>' . $objp->name . '</td>';
-						print '</td>';
-						print '</tr>';
-					}
+
+					$var = ! $var;
+					print '<tr ' . $bc [$var] . '>';
+					print '<td aling="left">';
+					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '<td align="center">' . $objp->ref . '</td>';
+					print '<td>' . $objp->ref_supplier . '</td>';
+					print '<td>' . price($objp->total_ht) . '</td>';
+					print '<td>' . $objp->name . '</td>';
+					print '</td>';
+					print '</tr>';
 
 					$i ++;
 				}

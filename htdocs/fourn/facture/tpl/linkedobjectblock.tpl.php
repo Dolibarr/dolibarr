@@ -49,7 +49,7 @@ foreach($linkedObjectBlock as $object)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> >
-	<td></td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$object->ref; ?></a></td>
+	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$object->ref; ?></a></td>
 	<td align="left"><?php echo $object->ref_supplier; ?></td>
 	<td align="center"><?php echo dol_print_date($object->date,'day'); ?></td>
 	<td align="right"><?php
