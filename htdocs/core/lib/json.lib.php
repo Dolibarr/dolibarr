@@ -251,7 +251,9 @@ function dol_json_decode($json, $assoc=false)
 		if (! empty($array))
 		{
 			$object = false;
-
+			if (count($array)>0) {
+				$object = (object) array();
+			}
 			foreach ($array as $key => $value)
 			{
 				if ($key) $object->{$key} = $value;

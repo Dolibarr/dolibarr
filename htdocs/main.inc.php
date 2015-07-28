@@ -660,7 +660,7 @@ if (! defined('NOLOGIN'))
             $cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
             $entityCookie = new DolCookie($cryptkey);
-            $entityCookie->_setCookie($entityCookieName, $entity, $ttl);
+            $entityCookie->setCookie($entityCookieName, $entity, $ttl);
         }
 
         // Hooks on successfull login
