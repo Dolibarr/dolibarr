@@ -1037,7 +1037,7 @@ class ExtraFields
 		}
 		if ($type == 'text')
 		{
-			$value=nl2br($value);
+			$value=dol_htmlentitiesbr($value);
 		}
 		else
 		{
