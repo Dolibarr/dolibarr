@@ -770,7 +770,8 @@ class Task extends CommonObject
         {
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
             $ret = $tasktime_id;
-
+			$this->timespent_id = $ret;
+			
             if (! $notrigger)
             {
                 // Call triggers
