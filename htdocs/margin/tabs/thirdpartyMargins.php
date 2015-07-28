@@ -250,13 +250,15 @@ else
 }
 
 
+print '
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#totalMargin").html("'. price($totalMargin, null, null, null, null, $rounding).'");
+        $("#marginRate").html("'.(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%").'");
+        $("#markRate").html("'.(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%").'");
+    });
+    </script>
+';
+
 llxFooter();
 $db->close();
-?>
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
-	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");
-	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%"); ?>");
-});
-</script>

@@ -164,6 +164,8 @@ UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 A
 UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_SMTPS_PW";
 UPDATE llx_const SET entity = __ENCRYPT('1')__ WHERE __DECRYPT('entity')__ = 0 AND __DECRYPT('name')__ = "MAIN_MAIL_EMAIL_TLS";
 
+-- This option with this value is not compatible with 3.8. Value must be set to 'mutiselect', 'select2'...
+DELETE from llx_const where name = 'MAIN_USE_JQUERY_MULTISELECT' and value = '1';
 
 create table llx_bank_account_extrafields
 (
