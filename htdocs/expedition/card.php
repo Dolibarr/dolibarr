@@ -82,6 +82,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
 
+$permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
+
+
 
 /*
  * Actions
@@ -114,6 +117,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
 	if ($action == 'add')
 	{
 	    $error=0;

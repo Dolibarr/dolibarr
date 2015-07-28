@@ -90,6 +90,7 @@ $extrafieldsline = new ExtraFields($db);
 $extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -97,6 +98,8 @@ $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
 if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer)
 {
