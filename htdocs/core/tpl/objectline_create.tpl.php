@@ -493,7 +493,7 @@ jQuery(document).ready(function() {
 		jQuery('#trlinefordates').show();
 	});
 
-	/* Sur changemenr de produit, on recharge la liste des prix fournisseur */
+	/* When changing predefined product, we reload list of supplier prices */
 	$("#idprod, #idprodfournprice").change(function()
 	{
 		setforpredef();
@@ -521,6 +521,11 @@ jQuery(document).ready(function() {
 	      			if (this.id != 'pmpprice')
 		      		{
 		        		i++;
+
+			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
+		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')?'bestsupplierprice':''); ?>';
+		      			if (i == 1 && this.price > 0 && 'bestsupplierprice' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+
 		        		options += '<option value="'+this.id+'" price="'+this.price+'"';
 		        		if (this.price > 0 && i == 1) { defaultkey = this.id; defaultprice = this.price; }
 		        		options += '>'+this.label+'</option>';
@@ -528,16 +533,19 @@ jQuery(document).ready(function() {
 	      			if (this.id == 'pmpprice')
 	      			{
 	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
-		      			var defaultbuyprice = <?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?1:0); ?>;
-		      			if (this.price > 0 && 1 == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+		      			var defaultbuyprice = '<?php echo ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')?'pmp':''); ?>';
+		      			if (this.price > 0 && 'pmp' == defaultbuyprice) { defaultkey = this.id; defaultprice = this.price; }
+
 	    	      		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 	      			}
 	      		});
 	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
 
-				/* alert(defaultkey+' '+defaultprice); */
 	      		$("#fournprice_predef").html(options).show();
-	      		$("#fournprice_predef").val(defaultkey);
+	      		if (defaultkey != '')
+				{
+		      		$("#fournprice_predef").val(defaultkey);
+		      	}
 
 	      		/* At loading, no product are yet selected, so we hide field of buying_price */
 	      		$("#buying_price").hide();
