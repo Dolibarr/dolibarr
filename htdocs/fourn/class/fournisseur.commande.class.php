@@ -703,7 +703,10 @@ class CommandeFournisseur extends CommonOrder
 			{
 	            $sql.= " date_approve='".$this->db->idate($now)."',";
     	        $sql.= " fk_user_approve = ".$user->id;
-    	        if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)) $movetoapprovestatus=false;
+    	        if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+    	        {
+    	        	if (empty($this->user_approve_id2)) $movetoapprovestatus=false;		// second level approval not done
+    	        }
 			}
 			else	// request a second level approval
 			{
