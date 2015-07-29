@@ -171,7 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
-ErrorOppStatusRequiredIfAmount=You antered an estimated amount for this opportunity/lead. So you must also enter its status
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
