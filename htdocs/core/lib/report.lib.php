@@ -39,7 +39,7 @@
 */
 function report_header($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='')
 {
-	global $langs, $hselected;
+	global $langs;
 
 	print "\n\n<!-- debut cartouche rapport -->\n";
 
@@ -48,7 +48,7 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
 
-	dol_fiche_head($head, $hselected);
+	dol_fiche_head($head, 'report');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	foreach($moreparam as $key => $value)
