@@ -125,6 +125,7 @@ CloneOrder=Klonēt pasūtījumu
 ConfirmCloneOrder=Vai jūs tiešām vēlaties klonēt šo pasūtījumu <b>%s</b> ?
 DispatchSupplierOrder=Saņemšanas piegādātājs pasūtījuma %s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Pārstāvis turpinot darboties klienta pasūtījumu
 TypeContact_commande_internal_SHIPPING=Pārstāvis turpinot darboties kuģniecības

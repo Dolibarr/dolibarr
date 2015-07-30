@@ -130,7 +130,6 @@ nbJours=Nombre jours
 TitleAdminCP=Configuration du module congés
 NoticePeriod=Délai de prévenance
 #Messages
-Hello=Bonjour
 HolidaysToValidate=Valider les demandes de congés
 HolidaysToValidateBody=Veuillez trouver ci-dessous une demande de congés à valider.
 HolidaysToValidateDelay=Cette demande de congés a été effectuée dans un délai de moins de %s jours avant ceux-ci.

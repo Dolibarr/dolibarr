@@ -127,6 +127,7 @@ Disable=Inaktivera
 Disabled=Inaktiverad
 Add=Lägg till
 AddLink=Lägg till länk
+RemoveLink=Remove link
 Update=Uppdatera
 AddActionToDo=Lägg till åtgärder att uföra
 AddActionDone=Lägg till åtgärder utförda
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Måndag
 Tuesday=Tisdag

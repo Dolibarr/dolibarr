@@ -12,7 +12,6 @@ Creditor=الدائن
 PaymentCode=دفع رمز
 PayBoxDoPayment=على الدفع
 YouWillBeRedirectedOnPayBox=سوف يتم نقلك على تأمين Paybox لك صفحة لإدخال معلومات بطاقة الائتمان
-PleaseBePatient=من فضلك ، والتحلي بالصبر
 Continue=التالي
 ToOfferALinkForOnlinePayment=عنوان دفع %s
 ToOfferALinkForOnlinePaymentOnOrder=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للأمر

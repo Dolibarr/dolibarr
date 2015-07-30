@@ -130,7 +130,6 @@ nbJours=Antal dagar
 TitleAdminCP=Konfiguration av Leaves
 NoticePeriod=Notice period
 #Messages
-Hello=Hallå
 HolidaysToValidate=Validera ledighets förfrågningar
 HolidaysToValidateBody=Nedan finns en ledighet begäran om att validera
 HolidaysToValidateDelay=Denna ledighet begäran kommer att ske inom en period på mindre än %s dagar.

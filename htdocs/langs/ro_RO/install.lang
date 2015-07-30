@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Dacă baza de date există deja, du-te îna
 WarningBrowserTooOld=Versiune prea veche a browser-ului. Actualizarea browser-ul dvs. la o versiune recentă a Firefox, Chrome sau Opera este foarte recomandată.
 PHPVersion=Versiunea PHP
 YouCanContinue=Puteţi continua ...
-PleaseBePatient=Vă rugăm să aveţi răbdare ...
 License=Utilizarea de licenţă
 ConfigurationFile=Fişier de configurare
 WebPagesDirectory=Director în cazul în care paginile web sunt stocate

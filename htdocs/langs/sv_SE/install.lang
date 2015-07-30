@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Om databasen redan finns, gå tillbaka och 
 WarningBrowserTooOld=För gammal version av webbläsare. Uppgradering av din webbläsare till en sen utgåva av Firefox, Chrome eller Opera är högeligen rekommenderad.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsätta ...
-PleaseBePatient=Ha tålamod ...
 License=Använda licens
 ConfigurationFile=Konfigurationsfil
 WebPagesDirectory=Katalog där webbsidor lagras

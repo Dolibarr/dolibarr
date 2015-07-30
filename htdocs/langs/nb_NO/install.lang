@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Hvis databasen allerede eksisterer, gå til
 WarningBrowserTooOld=Nettleseren din er utdatert. Det anbefales å oppgradere til siste versjon av Firefox, Chrome eller Opera.
 PHPVersion=PHP versjon
 YouCanContinue=Du kan fortsette ...
-PleaseBePatient=Vær tålmodig ...
 License=Bruk lisens
 ConfigurationFile=Konfigurasjonsfil
 WebPagesDirectory=Mappe der websider lagres

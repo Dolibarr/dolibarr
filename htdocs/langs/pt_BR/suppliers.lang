@@ -23,4 +23,3 @@ ListOfSupplierOrders=Lista de pedidos do fornecedor
 MenuOrdersSupplierToBill=Pedidos a se faturar do foprnecedor
 NbDaysToDelivery=Atraso de entrega em dias
 DescNbDaysToDelivery=O maior atraso de entregar os produtos a partir deste fim
-UseDoubleApproval=Use a aprovação de casal (a segunda aprovação pode ser feito por qualquer usuário com a permissão dedicado)

@@ -171,7 +171,7 @@ ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Il campo <b>%s</b> deve essere un valore numerico
 ErrorFieldMustBeAnInteger=Il campo <b>%s</b> deve essere un numero intero
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
-ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=I parametri di configurazione obbligatori non sono ancora stati definiti
