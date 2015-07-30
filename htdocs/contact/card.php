@@ -769,7 +769,7 @@ else
             print '</tr>';
 
             // Jabberid
-            print '<tr><td><label for="jabberid">'.$langs->trans("Jabberid").'</label></td>';
+            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
 	        print '<td><input name="jabberid" id="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
