@@ -139,7 +139,6 @@ RefExt=Ref externo
 ToCreateAPredefinedInvoice=Para criar uma Fatura predefinida, criar uma fatura padrão, em seguida, sem validá-la, clique no botão "Converter para fatura pré-definida".
 LinkedOrder=Atalho para ordem
 CalculationRuleDesc=Para calcular o total do VAT, há dois métodos: <br> Método 1 é arredondamento cuba em cada linha, em seguida, soma-los. <br> Método 2 é somando tudo cuba em cada linha, em seguida, o arredondamento resultado. <br> Resultado final pode difere de alguns centavos. O modo padrão é o <b>modo% s.</b>
-CalculationRuleDescSupplier=De acordo com o fornecedor, escolher o método adequado aplicar mesma regra de cálculo e obter mesmo resultado esperado pelo seu fornecedor.
 TurnoverPerProductInCommitmentAccountingNotRelevant=Relatório Volume de negócios por produto, quando se usa um modo de <b>contabilidade de caixa</b> não é relevante. Este relatório está disponível somente quando utilizar o modo de <b>contabilidade engajamento</b> (ver configuração do módulo de contabilidade).
 AccountancyJournal=Codigo do jornal fiscal
 ACCOUNTING_VAT_SOLD_ACCOUNT=Código de contabilidade padrão para cobrança do IVA

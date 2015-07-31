@@ -2166,7 +2166,7 @@ abstract class CommonObject
         }
 
         // Links between objects are stored in table element_element
-        $sql = 'SELECT fk_source, sourcetype, fk_target, targettype';
+        $sql = 'SELECT rowid, fk_source, sourcetype, fk_target, targettype';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'element_element';
         $sql.= " WHERE ";
         if ($justsource || $justtarget)
@@ -2201,11 +2201,11 @@ abstract class CommonObject
                 $obj = $this->db->fetch_object($resql);
                 if ($obj->fk_source == $sourceid)
                 {
-                    $this->linkedObjectsIds[$obj->targettype][]=$obj->fk_target;
+                    $this->linkedObjectsIds[$obj->targettype][$obj->rowid]=$obj->fk_target;
                 }
                 if ($obj->fk_target == $targetid)
                 {
-                    $this->linkedObjectsIds[$obj->sourcetype][]=$obj->fk_source;
+                    $this->linkedObjectsIds[$obj->sourcetype][$obj->rowid]=$obj->fk_source;
                 }
                 $i++;
             }
@@ -2260,16 +2260,15 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
+                    // Here $module, $classfile and $classname are set
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
-                        $num=count($objectids);
-
-                        for ($i=0;$i<$num;$i++)
+                        foreach($objectids as $i => $objectid);	// $i is rowid into llx_element_element
                         {
                             $object = new $classname($this->db);
-                            $ret = $object->fetch($objectids[$i]);
+                            $ret = $object->fetch($objectid);
                             if ($ret >= 0)
                             {
                                 $this->linkedObjects[$objecttype][$i] = $object;
@@ -2338,10 +2337,11 @@ abstract class CommonObject
      *	@param  string	$sourcetype		Object source type
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
-	 *	@return     int	>0 if OK, <0 if KO
+     *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
+	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
 	 */
-	function deleteObjectLinked($sourceid=null, $sourcetype='', $targetid=null, $targettype='')
+	function deleteObjectLinked($sourceid=null, $sourcetype='', $targetid=null, $targettype='', $rowid='')
 	{
 		$deletesource=false;
 		$deletetarget=false;
@@ -2356,21 +2356,28 @@ abstract class CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE";
-		if ($deletesource)
+		if ($rowid > 0)
 		{
-			$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
-			$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->element."'";
-		}
-		else if ($deletetarget)
-		{
-			$sql.= " fk_target = ".$targetid." AND targettype = '".$targettype."'";
-			$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->element."'";
+			$sql.=" rowid = ".$rowid;
 		}
 		else
 		{
-			$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
-			$sql.= " OR";
-			$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+			if ($deletesource)
+			{
+				$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
+				$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->element."'";
+			}
+			else if ($deletetarget)
+			{
+				$sql.= " fk_target = ".$targetid." AND targettype = '".$targettype."'";
+				$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->element."'";
+			}
+			else
+			{
+				$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
+				$sql.= " OR";
+				$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+			}
 		}
 
 		dol_syslog(get_class($this)."::deleteObjectLinked", LOG_DEBUG);
@@ -2381,6 +2388,7 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
+			$this->errors[]=$this->error;
 			return -1;
 		}
 	}

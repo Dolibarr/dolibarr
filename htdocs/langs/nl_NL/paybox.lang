@@ -12,7 +12,6 @@ Creditor=Crediteur
 PaymentCode=Betalingscode
 PayBoxDoPayment=Ga naar betaling
 YouWillBeRedirectedOnPayBox=U wordt doorverwezen naar een beveiligde Paybox pagina om uw credit card informatie in te voeren
-PleaseBePatient=Een moment geduld a.u.b.
 Continue=Volgende
 ToOfferALinkForOnlinePayment=URL voor %s betaling
 ToOfferALinkForOnlinePaymentOnOrder=URL om een %s online betalingsgebruikersinterface aan te bieden voor een order

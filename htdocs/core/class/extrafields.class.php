@@ -1324,6 +1324,10 @@ class ExtraFields
 				$value=$object->getNomUrl(3);
 			}
 		}
+		elseif ($type == 'text')
+		{
+			$value=dol_htmlentitiesbr($value);
+		}
 		else
 		{
 			$showsize=round($size);

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Les valeurs de la liste de case à cochées doivent 
 ErrorNoValueForRadioType=Les valeurs de la liste d'options doivent être renseignées
 ErrorBadFormatValueList=Les valeurs de la liste ne peuvent pas contenir plus d'une virgule : <b>%s</b>, mais doivent en avoir au moins une: clef,valeur
 ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Le champ <b>%s</b> ne doit pas contenir de caractères spéciaux, ni majuscules et ne peut contenir que des chiffres.
 ErrorNoAccountancyModuleLoaded=Aucun module de comptabilité activé
 ErrorExportDuplicateProfil=Ce nom de profil existe déjà pour ce lot d'export.
 ErrorLDAPSetupNotComplete=Le matching Dolibarr-LDAP est incomplet.
@@ -171,7 +171,7 @@ ErrorGlobalVariableUpdater5=Pas de variable globale
 ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
 ErrorFieldMustBeAnInteger=Le champ <b>%s</b> doit être un numérique
 ErrorMandatoryParametersNotProvided=Paramètre(s) obligatoire(s) non fournis
-ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
+ErrorOppStatusRequiredIfAmount=Vous avez fixé un montant estimé pour cette opportunité/affaire. Aussi, vous devez également entrer son statut
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

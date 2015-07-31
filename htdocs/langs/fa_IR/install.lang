@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=اگر پایگاه داده در حال ح
 WarningBrowserTooOld=نسخه خیلی قدیمی از مرورگر. به روز رسانی مرورگر خود را به آخرین ورژن فایرفاکس، کروم و اپرا است که به شدت توصیه.
 PHPVersion=PHP نسخه
 YouCanContinue=شما می توانید ادامه ...
-PleaseBePatient=لطفا صبور باشید ...
 License=با استفاده از مجوز
 ConfigurationFile=فایل پیکربندی
 WebPagesDirectory=دایرکتوری که در آن صفحات وب ذخیره می شوند

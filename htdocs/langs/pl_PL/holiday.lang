@@ -130,7 +130,6 @@ nbJours=Liczba dni
 TitleAdminCP=Konfiguracja Liście
 NoticePeriod=Notice period
 #Messages
-Hello=Halo
 HolidaysToValidate=Weryfikacja wniosków urlopowych
 HolidaysToValidateBody=Poniżej jest wniosek o dopuszczenie do sprawdzenia
 HolidaysToValidateDelay=Wniosek ten urlop odbędzie się w ciągu mniej niż% s dni.

@@ -130,7 +130,6 @@ nbJours=Număr zile
 TitleAdminCP=Configurarea modulului concedii
 NoticePeriod=Notice period
 #Messages
-Hello=Salut
 HolidaysToValidate=Validează cereri concedii
 HolidaysToValidateBody=Mai jos este o cerere de concediu de validat
 HolidaysToValidateDelay=Această cerere de concediuva avea loc intr-o  perioadă de mai puţin de %s zile.

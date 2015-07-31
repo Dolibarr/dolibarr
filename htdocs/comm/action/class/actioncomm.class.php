@@ -110,8 +110,8 @@ class ActionComm extends CommonObject
     var $note;          // Description
 
 	var $userassigned = array();	// Array of user ids
-    var $userownerid;		// Id of user owner
-    var $userdoneid;	// Id of user done
+    var $userownerid;	// Id of user owner = fk_user_action into table
+    var $userdoneid;	// Id of user done (deprecated)
 
     /**
      * Object user of owner

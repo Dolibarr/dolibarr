@@ -475,7 +475,7 @@ foreach ($listofreferent as $key => $value)
 }
 // and the final balance
 print '<tr class="liste_total">';
-print '<td align="right" colspan=2 >'.$langs->trans("Total").'</td>';
+print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
 print '<td align="right" >'.price($balance_ht).'</td>';
 print '<td align="right" >'.price($balance_ttc).'</td>';
 print '</tr>';

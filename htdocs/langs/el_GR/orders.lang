@@ -125,6 +125,7 @@ CloneOrder=Κλωνοποίηση παραγγελίας
 ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b> ?
 DispatchSupplierOrder=Receiving supplier order %s
 FirstApprovalAlreadyDone=Η πρώτη έγκριση ήδη έγινε
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representative following-up customer order
 TypeContact_commande_internal_SHIPPING=Representative following-up shipping

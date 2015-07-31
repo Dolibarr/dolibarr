@@ -168,19 +168,11 @@ else if ($action == 'addcat')
 else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
-	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL');
-	//$doubleapprovalgroup = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') > 0 ? GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP') : '';
+	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL','alpha');
+	$doubleapproval = price2num($doubleapproval );
 
     $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
     $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL",$doubleapproval,'chaine',0,'',$conf->entity);
-    /*if (isset($_POST["SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP"]))
-    {
-    	$res3 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP",$doubleapprovalgroup,'chaine',0,'',$conf->entity);
-    }
-    else
-    {
-    	$res3=1;
-    }*/
 
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -486,18 +478,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 	print $langs->trans("UseDoubleApproval").'<br>';
 	print $langs->trans("IfSetToYesDontForgetPermission");
 	print '</td><td>';
-	print $form->selectyesno('SUPPLIER_ORDER_DOUBLE_APPROVAL', $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL, 1);
+	print '<input type="text" size="3" name="SUPPLIER_ORDER_DOUBLE_APPROVAL" value="'.$conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL.'">';
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
 	$var=!$var;
-	/*print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("GroupOfUserForSecondApproval").'</td><td>';
-	print $form->select_dolgroups($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP,'SUPPLIER_ORDER_DOUBLE_APPROVAL_GROUP', 1);
-	print '</td><td align="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td></tr>\n";
-	$var=!$var;*/
 }
 
 print '<tr '.$bc[$var].'><td colspan="2">';

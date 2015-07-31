@@ -127,6 +127,7 @@ Disable=Engelle
 Disabled=Engelli
 Add=Ekle
 AddLink=Bağlantı ekle
+RemoveLink=Remove link
 Update=Güncelle
 AddActionToDo=Yapılacak etkinlik ekle
 AddActionDone=Bitmiş etkinlik ekle
@@ -712,6 +713,8 @@ Genderman=Adam
 Genderwoman=Kadın
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Pazartesi
 Tuesday=Salı

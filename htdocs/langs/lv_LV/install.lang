@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Ja datu bāze jau pastāv, dodieties atpaka
 WarningBrowserTooOld=Pārāk vecs pārlūkprogrammas versija. Pārlūkprogrammu Firefox, Chrome vai Opera jaunāko versiju uzstādīšana  ir ļoti ieteicama.
 PHPVersion=PHP versija
 YouCanContinue=Jūs varat turpināt ...
-PleaseBePatient=Lūdzu, esiet pacietīgi ...
 License=Izmantojot licenci
 ConfigurationFile=Konfigurācijas fails
 WebPagesDirectory=Katalogs kur web lapas tiek uzglabātas

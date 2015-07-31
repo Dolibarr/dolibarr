@@ -125,6 +125,7 @@ CloneOrder=Klooni tellimus
 ConfirmCloneOrder=Kas oled täiesti kindel, et soovid kloonida tellimuse <b>%s</b> ?
 DispatchSupplierOrder=Ostutellimuse %s vastu võtmine
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Müügitellimuse järelkajaga tegelev müügiesindaja
 TypeContact_commande_internal_SHIPPING=Saatmise järelkajaga tegelev müügiesindaja

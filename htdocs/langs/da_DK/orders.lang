@@ -125,6 +125,7 @@ CloneOrder=Klon orden
 ConfirmCloneOrder=Er du sikker på at du vil klone denne <b>ordre %s?</b>
 DispatchSupplierOrder=Modtagelse leverandør for %s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Repræsentant opfølgning kundeordre
 TypeContact_commande_internal_SHIPPING=Repræsentant opfølgning shipping

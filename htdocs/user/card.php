@@ -347,7 +347,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->login		= GETPOST("login",'alpha');
             $object->gender		= GETPOST("gender",'alpha');
             $object->pass		= GETPOST("password");
-            $object->api_key    = GETPOST("api_key");
+            $object->api_key    = (GETPOST("api_key", 'alpha'))?GETPOST("api_key", 'alpha'):$object->api_key;
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone",'alpha');
             $object->office_fax	= GETPOST("office_fax",'alpha');
@@ -826,7 +826,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    if(! empty($conf->api->enabled)) 
+    if(! empty($conf->api->enabled))
     {
         // API key
         $generated_api_key = '';
@@ -2093,14 +2093,20 @@ else
             	$langs->load("salaries");
 
             	// THM
-			    print '<tr><td>'.$langs->trans("THM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("THM");
+			    print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
 			    print '</td>';
 			    print "</tr>\n";
 
 			    // TJM
-			    print '<tr><td>'.$langs->trans("TJM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("TJM");
+			    print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
 			    print '</td>';

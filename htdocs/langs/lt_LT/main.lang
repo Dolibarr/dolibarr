@@ -127,6 +127,7 @@ Disable=Išjungti
 Disabled=Išjungtas
 Add=Pridėti
 AddLink=Pridėti nuorodą
+RemoveLink=Remove link
 Update=Atnaujinimas
 AddActionToDo=Pridėti įvykį vykdymui
 AddActionDone=Pridėti įvykdytą įvykį
@@ -712,6 +713,8 @@ Genderman=Vyras
 Genderwoman=Moteris
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Pirmadienis
 Tuesday=Antradienis
