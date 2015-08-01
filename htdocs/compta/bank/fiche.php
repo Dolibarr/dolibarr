@@ -419,7 +419,7 @@ else
 
 		// State
 		print '<tr><td>'.$langs->trans('State').'</td><td>';
-		if ($account->fk_departement > 0) print getState($account->fk_departement);
+		if ($account->state_id > 0) print getState($account->state_id);
 		print '</td></tr>';
 
 		// Conciliate
