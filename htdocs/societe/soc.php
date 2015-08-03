@@ -740,7 +740,7 @@ $formcompany = new FormCompany($db);
 
 if ($socid > 0 && empty($object->id))
 {
-    $res=$object->fetch($socid);
+    $result=$object->fetch($socid);
 	if ($result <= 0) dol_print_error('',$object->error);
 }
 
