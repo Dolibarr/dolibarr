@@ -702,8 +702,9 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs;
-
+	global $conf,$langs, $hookmanager;;
+	
+	$tabsname=str_replace ("@","",$picto);
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	// Show title
@@ -731,7 +732,8 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// if =0 we don't use the feature
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
-
+	$nbintab=0;
+	
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
@@ -746,6 +748,8 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 		if ($i <= $limittoshow || $isactive )
 		{
+			if ($isactive) $hookmanager->initHooks(array($tabsname."-".$links[$i][2]. '-tabs'));
+			
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
@@ -787,6 +791,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 
 			$outmore.='</div>';
+			$nbintab++;
 		}
 		$displaytab=$i;
 	}
@@ -795,7 +800,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	{
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").'...</a>';
+		$out.='<a href="" data-role="button" style="background-color: #f0f0f0;" class="tab inline-block">'.$langs->trans("More").' <span class="badge">'.$nbintab.'.'</span></a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
 		$out.="</div>\n";
 
@@ -808,6 +813,9 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	$out.="</div>\n";
 
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
+
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	return $out;
 }
@@ -4898,7 +4906,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
  */
 function printCommonFooter($zone='private')
 {
-	global $conf;
+	global $conf, $hookmanager;
 	global $micro_start_time;
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
@@ -4975,6 +4983,9 @@ function printCommonFooter($zone='private')
 		//print '</div>'."\n";
 		print "End of log output -->\n";
 	}
+
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 }
 
