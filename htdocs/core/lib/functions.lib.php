@@ -149,7 +149,7 @@ function getBrowserInfo($user_agent)
 	$os='unknown';
 	$phone = '';
 
-	$detectmobile = new MobileDetect(null, $user_agent);
+	$detectmobile = new Mobile_Detect(null, $user_agent);
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
