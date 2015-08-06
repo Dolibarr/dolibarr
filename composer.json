@@ -28,5 +28,8 @@
         "ext-soap": "*",
         "ext-zip": "*",
         "ext-xml": "*"
+    },
+    "config": {
+        "vendor-dir": "htdocs/includes"
     }
 }
