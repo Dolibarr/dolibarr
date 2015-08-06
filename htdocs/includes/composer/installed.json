@@ -199,5 +199,81 @@
             "xls",
             "xlsx"
         ]
+    },
+    {
+        "name": "restler/framework",
+        "version": "3.0.0",
+        "version_normalized": "3.0.0.0",
+        "target-dir": "Luracast/Restler",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Luracast/Restler-Framework.git",
+            "reference": "6ee10b3e5dbc6376916fed55ec2340a37cce436b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Luracast/Restler-Framework/zipball/6ee10b3e5dbc6376916fed55ec2340a37cce436b",
+            "reference": "6ee10b3e5dbc6376916fed55ec2340a37cce436b",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "replace": {
+            "luracast/restler": "3.*"
+        },
+        "require-dev": {
+            "bshaffer/oauth2-server-php": "v1.0",
+            "luracast/explorer": "*",
+            "mustache/mustache": "dev-master",
+            "rodneyrehm/plist": "dev-master",
+            "symfony/yaml": "*",
+            "twig/twig": "v1.13.0",
+            "zendframework/zendamf": "dev-master"
+        },
+        "suggest": {
+            "bshaffer/oauth2-server-php": "Restler can provide OAuth2 authentication using this library (see require-dev for details)",
+            "luracast/explorer": "Restler's very own api explorer (see require-dev for details)",
+            "mustache/mustache": "Restler can render HtmlView using mustache/handlebar templates (see require-dev for details)",
+            "rodneyrehm/plist": "Restler supports tho Apple plist xml format (see require-dev for details)",
+            "symfony/yaml": "Restler can produce content in yaml format as well (see require-dev for details)",
+            "twig/twig": "Restler can render HtmlView using twig templates (see require-dev for details)",
+            "zendframework/zendamf": "Support for the amf document format  (see require-dev for details)"
+        },
+        "time": "2015-08-04 07:52:49",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "master": "v3.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Luracast\\Restler": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-2.1"
+        ],
+        "authors": [
+            {
+                "name": "Luracast",
+                "email": "arul@luracast.com"
+            },
+            {
+                "name": "Nick nickl- Lombard",
+                "email": "github@jigsoft.co.za"
+            }
+        ],
+        "description": "Just the Restler Framework without the tests and examples",
+        "homepage": "http://luracast.com/products/restler/",
+        "keywords": [
+            "api",
+            "framework",
+            "rest",
+            "server"
+        ]
     }
 ]

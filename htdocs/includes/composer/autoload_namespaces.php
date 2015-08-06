@@ -7,6 +7,7 @@ $baseDir = dirname(dirname($vendorDir));
 
 return array(
     'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
+    'Luracast\\Restler' => array($vendorDir . '/restler/framework'),
     'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
     'ChromePhp' => array($vendorDir . '/ccampbell/chromephp'),
 );
