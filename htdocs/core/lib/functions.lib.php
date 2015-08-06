@@ -4986,7 +4986,6 @@ function printCommonFooter($zone='private')
 
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
-
 }
 
 /**
