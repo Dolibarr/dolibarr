@@ -1229,7 +1229,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
-                $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
+                $pathckeditor = DOL_URL_ROOT . '/includes/ckeditor/ckeditor/';
                 $jsckeditor='ckeditor.js';
                 if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
                 {

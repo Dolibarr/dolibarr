@@ -43,5 +43,48 @@
             "log",
             "logging"
         ]
+    },
+    {
+        "name": "ckeditor/ckeditor",
+        "version": "4.3.3",
+        "version_normalized": "4.3.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ckeditor/ckeditor-releases.git",
+            "reference": "0068dd540ce8bf1815abb7b5455c55354bc56334"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/0068dd540ce8bf1815abb7b5455c55354bc56334",
+            "reference": "0068dd540ce8bf1815abb7b5455c55354bc56334",
+            "shasum": ""
+        },
+        "time": "2014-02-26 15:34:37",
+        "type": "library",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+",
+            "LGPL-2.1+",
+            "MPL-1.1+"
+        ],
+        "authors": [
+            {
+                "name": "CKSource - Frederico Knabben",
+                "homepage": "http://cksource.com"
+            }
+        ],
+        "description": "JavaScript WYSIWYG web text editor.",
+        "homepage": "http://ckeditor.com",
+        "keywords": [
+            "CKEditor",
+            "editor",
+            "fckeditor",
+            "html",
+            "javascript",
+            "richtext",
+            "text",
+            "wysiwyg"
+        ]
     }
 ]

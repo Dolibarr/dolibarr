@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d4bc0e8dc03940896fd0efc420cc6503",
+    "hash": "f24ac28663637d0eab7a69e3375081a8",
     "packages": [
         {
             "name": "ccampbell/chromephp",
@@ -48,6 +48,47 @@
                 "logging"
             ],
             "time": "2013-06-26 03:44:33"
+        },
+        {
+            "name": "ckeditor/ckeditor",
+            "version": "4.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ckeditor/ckeditor-releases.git",
+                "reference": "0068dd540ce8bf1815abb7b5455c55354bc56334"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/0068dd540ce8bf1815abb7b5455c55354bc56334",
+                "reference": "0068dd540ce8bf1815abb7b5455c55354bc56334",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+",
+                "LGPL-2.1+",
+                "MPL-1.1+"
+            ],
+            "authors": [
+                {
+                    "name": "CKSource - Frederico Knabben",
+                    "homepage": "http://cksource.com"
+                }
+            ],
+            "description": "JavaScript WYSIWYG web text editor.",
+            "homepage": "http://ckeditor.com",
+            "keywords": [
+                "CKEditor",
+                "editor",
+                "fckeditor",
+                "html",
+                "javascript",
+                "richtext",
+                "text",
+                "wysiwyg"
+            ],
+            "time": "2014-02-26 15:34:37"
         }
     ],
     "packages-dev": [],
