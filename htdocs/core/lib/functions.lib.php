@@ -702,7 +702,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	global $conf,$langs, $hookmanager;;
+	global $conf,$langs, $hookmanager;
 	
 	$tabsname=str_replace ("@","",$picto);
 	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
