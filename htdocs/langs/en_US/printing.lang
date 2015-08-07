@@ -10,6 +10,7 @@ PrintTestDesc=List of Printers.
 FileWasSentToPrinter=File %s was sent to printer
 NoActivePrintingModuleFound=No active module to print document
 PleaseSelectaDriverfromList=Please select a driver from list.
+PleaseConfigureDriverfromList=Please configure the selected driver from list.
 SetupDriver=Driver setup
 TestDriver=Test
 TargetedPrinter=Targeted printer
