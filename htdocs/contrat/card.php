@@ -782,21 +782,33 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 			exit;
 		}
 	}
-} elseif ($action=='setref') {
-    $result = $object->fetch($id);
-    if ($result < 0) {
-        setEventMessage($object->errors, 'errors');
+    else {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+        exit;
     }
-	$object->ref=GETPOST('ref','alpha');
+} elseif ($action=='setref') {
+    $cancelbutton = GETPOST('cancel');
 
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessage($object->errors,'errors');
-		$action='editref';
-	} else {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
+    if (!$cancelbutton) {
+        $result = $object->fetch($id);
+        if ($result < 0) {
+            setEventMessage($object->errors, 'errors');
+        }
+        $object->ref = GETPOST('ref', 'alpha');
+
+        $result = $object->update($user);
+        if ($result < 0) {
+            setEventMessage($object->errors, 'errors');
+            $action = 'editref';
+        } else {
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
+            exit;
+        }
+    }
+    else {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+        exit;
+    }
 }
 
 // Generation doc (depuis lien ou depuis cartouche doc)
