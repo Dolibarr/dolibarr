@@ -2072,10 +2072,12 @@ class Form
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
                 $opt.=$objp->ref;
-                if (! empty($objp->idprodfournprice)) $opt.=' ('.$objp->ref_fourn.')';
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                	$opt.=' ('.$objp->ref_fourn.')';
                 $opt.=' - ';
                 $outval.=$objRef;
-                if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                	$outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
                 $opt.=dol_trunc($label, 72).' - ';
                 $outval.=dol_trunc($label, 72).' - ';
@@ -2110,7 +2112,7 @@ class Form
                         $outval.= ' '.$langs->transnoentities("Units");
                     }
 
-                    if ($objp->quantity >= 1)
+                    if ($objp->quantity > 1)
                     {
                         $opt.=" (".price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
                         $outval.=" (".price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
