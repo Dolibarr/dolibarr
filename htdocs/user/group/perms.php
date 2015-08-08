@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
  */
 
 /**
- *       \file       htdocs/user/group/perms.php
- *       \brief      Onglet user et permissions de la fiche utilisateur
+ * \file    htdocs/user/group/perms.php
+ * \brief   Group permissions setup page
  */
 
 require '../../main.inc.php';
@@ -38,9 +39,9 @@ $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
 
-// Defini si peux lire les permissions
+// Defines permissions readability
 $canreadperms=($user->admin || $user->rights->user->user->lire);
-// Defini si peux modifier les permissions
+// Defines permissions editability
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 // Advanced permissions
 $advancedpermsactive=false;
@@ -57,6 +58,37 @@ if (! $canreadperms) accessforbidden();
 /**
  * Actions
  */
+
+if ($action == 'update' && $caneditperms) {
+	$permissions_cache = GETPOST('permissions_cache', 'array');
+	$permissions = GETPOST('permissions', 'array');
+	$anchor = GETPOST('submit');
+
+	// Since permissions is a checkbox list, only checked boxes are reported.
+	// We use the cache to make sure we don't miss one.
+	foreach ($permissions_cache as $cached_perm_id => $cached_perm_status) {
+		// Detect which permissions have changed.
+		if (empty($permissions[$cached_perm_id]) != empty($cached_perm_status)) {
+			// Reverse the permissions cache to infer the new status.
+			$newstatus = !(' checked' === $cached_perm_status);
+
+			$editgroup = new Usergroup($db);
+			$result = $editgroup->fetch($id);
+			if ($result > 0) {
+				if ($newstatus) {
+					$editgroup->addrights($cached_perm_id);
+				} else {
+					$editgroup->delrights($cached_perm_id);
+				}
+			}
+		}
+	}
+
+	// Redirect to the latest modified subsection
+	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id . '#' . $anchor);
+}
+
+// All module permissions
 if ($action == 'addrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
@@ -87,13 +119,13 @@ if ($id)
     $fgroup->getrights();
 
     /*
-     * Affichage onglets
+     * Tabs display
      */
     $head = group_prepare_head($fgroup);
     $title = $langs->trans("Group");
     dol_fiche_head($head, 'rights', $title, 0, 'group');
 
-    // Charge les modules soumis a permissions
+    // Load modules with permissions
     $modules = array();
     $modulesdir = dolGetModulesDirs();
 
@@ -139,54 +171,48 @@ if ($id)
 
     $db->commit();
 
-    // Lecture des droits groupes
-    $permsgroup = array();
+	// Get group permissions
+	$permsgroup = array();
 
-    $sql = "SELECT r.id, r.libelle, r.module ";
-    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-    $sql.= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
-    $sql.= " WHERE ugr.fk_id = r.id";
-    if(! empty($conf->multicompany->enabled))
-    {
-        if (empty($conf->multicompany->transverse_mode))
-        {
-        	$sql.= " AND r.entity = ".$fgroup->entity;
-        }
-        else
-        {
-        	$sql.= " AND r.entity IN (0,1)";
-        }
-    }
-    else
-    {
-    	$sql.= " AND r.entity IN (0,".$conf->entity.")";
-    }
+	$sql = "SELECT r.id, r.libelle, r.module ";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "rights_def as r";
+	$sql .= ", " . MAIN_DB_PREFIX . "usergroup_rights as ugr";
+	$sql .= " WHERE ugr.fk_id = r.id";
+	if (!empty($conf->multicompany->enabled)) {
+		if (empty($conf->multicompany->transverse_mode)) {
+			$sql .= " AND r.entity = " . $fgroup->entity;
+		} else {
+			$sql .= " AND r.entity IN (0,1)";
+		}
+	} else {
+		$sql .= " AND r.entity IN (0," . $conf->entity . ")";
+	}
 
-    $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
+	$sql .= " AND ugr.fk_usergroup = " . $fgroup->id;
 
-    $result=$db->query($sql);
+	$result = $db->query($sql);
 
-    if ($result)
-    {
-        $num = $db->num_rows($result);
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($result);
-            array_push($permsgroup,$obj->id);
-            $i++;
-        }
-        $db->free($result);
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	if ($result) {
+		$num = $db->num_rows($result);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
+			array_push($permsgroup, $obj->id);
+			$i++;
+		}
+		$db->free($result);
+	} else {
+		dol_print_error($db);
+	}
 
 
     /*
-     * Ecran ajout/suppression permission
+     * Add/remove permission screen
      */
+
+	print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">';
+	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+	print '<input type="hidden" name="action" value="update">';
 
     print '<table class="border" width="100%">';
 
@@ -218,14 +244,14 @@ if ($id)
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
-    if ($caneditperms) print '<td width="24">&nbsp</td>';
-    print '<td align="center" width="24">&nbsp;</td>';
+	print '<td width="24">&nbsp</td>';
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
 
     $sql = "SELECT r.id, r.libelle, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-    $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+	$sql .= " WHERE r.libelle NOT LIKE 'tou%'";    // Ignore "tous" (all) permission
+
     if(! empty($conf->multicompany->enabled))
     {
         if (empty($conf->multicompany->transverse_mode))
@@ -258,7 +284,7 @@ if ($id)
         {
             $obj = $db->fetch_object($result);
 
-            // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
+			// If module is not present anymore (in includes/module), ignore the line
             if (empty($modules[$obj->module]))
             {
                 $i++;
@@ -267,65 +293,87 @@ if ($id)
 
             if ($oldmod <> $obj->module)
             {
+				if (0 != $i) {
+					printSubmit($oldmod);
+				}
+
                 $oldmod = $obj->module;
                 $var = !$var;
 
-                // Rupture detectee, on recupere objMod
+                // Change detected, let's get objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 
-                if ($caneditperms)
-                {
-                    print '<tr '. $bc[$var].'>';
-                    print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                    print '<td align="center" class="nowrap">';
-                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
-                    print '/';
-                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
-                    print '</td>';
-                    print '<td colspan="2">&nbsp;</td>';
-                    print '</tr>';
-                }
-            }
+				// TODO: Use AJAX
+				if ($caneditperms) {
+					print '<tr ' . $bc[$var] . '>';
+					print '<td class="nowrap">' . img_object('', $picto) . ' ' . $objMod->getName();
+					print '<a name="' . $oldmod . '">&nbsp;</a></td>';
+					print '<td align="center" class="nowrap">';
+					print '<a title="' . $langs->trans("All") . '" href="perms.php?id=' . $fgroup->id . '&amp;action=addrights&amp;module=' . $obj->module . '#' . $oldmod . '">' . $langs->trans("All") . "</a>";
+					print '/';
+					print '<a title="' . $langs->trans("None") . '" href="perms.php?id=' . $fgroup->id . '&amp;action=delrights&amp;module=' . $obj->module . '#' . $oldmod . '">' . $langs->trans("None") . "</a>";
+					print '</td>';
+					print '<td>&nbsp;</td>';
+					print '</tr>';
+				}
+			}
 
             print '<tr '. $bc[$var].'>';
 
-            // Module
-            print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
+			// Module
+			print '<td class="nowrap">' . img_object('', $picto) . ' ' . $objMod->getName() . '</td>';
 
-            if (in_array($obj->id, $permsgroup))
-            {
-                // Own permission by group
-                if ($caneditperms)
-                {
-                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
-                }
-                print '<td align="center">';
-                print img_picto($langs->trans("Active"),'tick');
-                print '</td>';
-            }
-            else
-            {
-                // Do not own permission
-                if ($caneditperms)
-                {
-                    print '<td align="center"><a href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
-                }
-                print '<td>&nbsp</td>';
-            }
+			print '<td align="center">';
 
-            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
-            print '<td>'.$perm_libelle. '</td>';
+			$checked = ((in_array($obj->id, $permsgroup)) ? ' checked' : '');
+			print '<input type="hidden" id="permcache_' . $obj->id . '" name="permissions_cache[' . $obj->id . ']" value="' . $checked . '">';
+			// Own permission by group
+			$disabled = (($caneditperms) ? '' : ' disabled');
+			print '<input type="checkbox" id="perm_' . $obj->id . '" name="permissions[' . $obj->id . ']"' . $checked . $disabled . '>';
 
-            print '</tr>';
+			print '</td>';
 
-            $i++;
-        }
-    }
-    print '</table>';
+			$perm_label = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced" . $obj->id) != ("PermissionAdvanced" . $obj->id)) ? $langs->trans("PermissionAdvanced" . $obj->id) : (($langs->trans("Permission" . $obj->id) != ("Permission" . $obj->id)) ? $langs->trans("Permission" . $obj->id) : $obj->libelle));
+
+			print '<td>';
+			print '<label for="perm_' . $obj->id . '">';
+			print $perm_label;
+			print '</label>';
+			print '</td>';
+
+
+			$i++;
+		}
+		printSubmit($oldmod);
+	}
+	print '</table>';
+	print '</form>';
 }
+
+dol_fiche_end();
 
 $db->close();
 
 llxFooter();
+
+
+// View functions
+
+/**
+ * Reusable submit button
+ *
+ * @param string $value Button value
+ */
+function printSubmit($value = 'submit')
+{
+	global $langs;
+
+	print '<tr>';
+	print '<td colspan="3" align="right">';
+	print '<button name="submit" type="submit" value="' . $value . '" class="button">';
+	print $langs->trans('Save');
+	print '</button>';
+	print '</td>';
+	print '</tr>';
+}
