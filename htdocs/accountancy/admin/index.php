@@ -56,10 +56,16 @@ $list = array (
 		'ACCOUNTING_ACCOUNT_SUPPLIER',
 		'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
 		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRACOM',
+		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXTRACOM',
 		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
 		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
+		'ACCOUNTING_SERVICE_SOLD_ACCOUNT_INTRACOM',
+		'ACCOUNTING_SERVICE_SOLD_ACCOUNT_EXTRACOM',
 		'ACCOUNTING_VAT_BUY_ACCOUNT',
 		'ACCOUNTING_VAT_SOLD_ACCOUNT',
+		'ACCOUNTING_ACCOUNT_INVOICE_DEPOSIT',         // invoice are deposit temporary account
+		'ACCOUNTING_ACCOUNT_INVOICE_SITUATION',       // invoice interim account
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
 		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
 );
@@ -70,8 +76,8 @@ $list = array (
  
 $accounting_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES';
 
-if ($action == 'update')
-{
+if ($action == 'update') {
+  if ($_POST["button"] == $langs->trans('Modify')) {
     $error = 0;
 
     $accounting_modes = array(
@@ -141,6 +147,51 @@ if ($action == 'setlistsortdone') {
 		setEventMessage($langs->trans("SetupSaved"), 'mesgs');
 	} else {
 		setEventMessage($langs->trans("Error"), 'mesgs');
+	}
+}
+		foreach ($list as $key) {
+			if ($_POST['Fill_'.$key] == $langs->trans('FillEmptyValue')) {
+				switch($key) {
+					case 'ACCOUNTING_PRODUCT_BUY_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_buy ='" . $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT ."'";
+						$sql1 .= " WHERE p.fk_product_type = 0";
+						$sql1 .= " AND (p.accountancy_code_buy is NULL OR p.accountancy_code_buy ='')";
+						break;
+					case 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_sell = '" . GETPOST('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', 'alpha')."'";
+						$sql1 .= " WHERE p.fk_product_type = 0";
+						$sql1 .= " AND (p.accountancy_code_sell is NULL OR p.accountancy_code_sell ='')";
+						break;
+					case 'ACCOUNTING_SERVICE_BUY_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_buy = '" . GETPOST('ACCOUNTING_SERVICE_BUY_ACCOUNT', 'alpha')."'" ;
+						$sql1 .= " WHERE p.fk_product_type = 1";
+						$sql1 .= " AND (p.accountancy_code_buy is NULL OR p.accountancy_code_buy ='')";
+						break;
+					case 'ACCOUNTING_SERVICE_SOLD_ACCOUNT':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "product as p" ;
+						$sql1 .= " SET p.accountancy_code_sell = '" . GETPOST('ACCOUNTING_SERVICE_SOLD_ACCOUNT', 'alpha')."'" ;
+						$sql1 .= " WHERE p.fk_product_type = 1";
+						$sql1 .= " AND (p.accountancy_code_sell is NULL OR p.accountancy_code_sell ='')";
+						break;
+					case 'ACCOUNTING_ACCOUNT_CUSTOMER':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "societe as s" ;
+						$sql1 .= " SET p.code_compta = '" . substr(GETPOST('ACCOUNTING_ACCOUNT_CUSTOMER', 'alpha'),0,-4)."' & lpad(rowid, 4, '0') ";
+						$sql1 .= " WHERE (p.code_compta is NULL OR p.code_compta = '')";
+						break;
+					case 'ACCOUNTING_ACCOUNT_SUPPLIER':
+						$sql1 = "UPDATE " . MAIN_DB_PREFIX . "societe as s" ;
+						$sql1 .= " SET p.code_compta_fournisseur  = '" . substr(GETPOST('ACCOUNTING_ACCOUNT_SUPPLIER', 'alpha'),0,-4)."' & lpad(rowid, 4, '0') ";
+						$sql1 .= " WHERE (p.code_compta_fournisseur is NULL OR p.code_compta_fournisseur  = '')";
+						break;
+				}
+				dol_syslog('accountancy/admin/index.php:: $sql=' . $sql1);
+				//$result = $db->query($sql1);
+				print_r($sql1);
+				setEventMessage($langs->trans("DefaultUpdateMade")." ".$key);
+			}
 	}
 }
 
@@ -258,6 +309,14 @@ foreach ($list as $key)
 	// Value
 	print '<td>';
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '</td><td>';
+     if (in_array($key, array ( 	'ACCOUNTING_ACCOUNT_CUSTOMER',
+							'ACCOUNTING_ACCOUNT_SUPPLIER',
+							'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
+							'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+							'ACCOUNTING_SERVICE_BUY_ACCOUNT',
+							'ACCOUNTING_SERVICE_SOLD_ACCOUNT') ) ) {
+		print '<input type="submit" class=button id="Fill_'.$key.'" name="Fill_'.$key.'" value="'.$langs->trans('FillEmptyValue').'">'; }
 	print '</td></tr>';
 }
 

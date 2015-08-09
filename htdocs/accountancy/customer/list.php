@@ -58,22 +58,29 @@ $search_vat     = GETPOST('search_vat','alpha');
 //Getpost Order and column and limit page
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page');
+$page = GETPOST('page','int');
 if ($page < 0) $page = 0;
 
-if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) 
+{
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
-} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
+}
+else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) 
+{
 	$limit = $conf->liste_limit;
-} else {
+}
+else 
+{
 	$limit = $conf->liste_limit;
 }
 $offset = $limit * $page;
 
 if (! $sortfield) $sortfield="f.datef, f.facnumber, l.rowid";
-
-if (! $sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+//if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) 
+{
+	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) 
+	{
 		$sortorder = " DESC ";
 	}
 }
@@ -86,12 +93,16 @@ if (! $user->rights->accounting->ventilation->dispatch)
 
 $formventilation = new FormVentilation($db);
 
+//Defaut AccountingAccount RowId Product / Service
+//at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
+//so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
+//TODO: we should need to check if result is a really exist accountaccount rowid.....
 $aarowid_s = $accounting->fetch('', ACCOUNTING_SERVICE_SOLD_ACCOUNT);
 $aarowid_p = $accounting->fetch('', ACCOUNTING_PRODUCT_SOLD_ACCOUNT);
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) 
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_ref='';
     $search_invoice='';
@@ -128,13 +139,16 @@ print  '<script type="text/javascript">
  * Action
  */
 
-if ($action == 'ventil') {
+if ($action == $langs->trans("Ventilate"))
+{
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
-	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
+	if (! empty($codeventil) && ! empty($mesCasesCochees)) 
+    {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
-		foreach ( $mesCasesCochees as $maLigneCochee ) {
+		foreach ( $mesCasesCochees as $maLigneCochee ) 
+		{
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monNumLigne = $maLigneCourante[1];
@@ -145,7 +159,8 @@ if ($action == 'ventil') {
 			$sql .= " WHERE rowid = " . $monId;
 
 			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
-			if ($db->query($sql)) {
+			if ($db->query($sql)) 
+			{
 				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
 			} else {
 				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
@@ -167,6 +182,7 @@ if ($action == 'ventil') {
 $sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype, l.fk_product, l.description, l.total_ht, l.rowid, l.fk_code_ventilation,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod";
 $sql .= " , aa.rowid as aarowid";
+// we need to use llx_facturedet l.product_type as used at the time on invoice. if llx_product fk_product_type is changed later it could not change the sell already made !
 $sql .= " , l.product_type as type_l, l.tva_tx as tva_tx_line";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
@@ -174,6 +190,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON p.accountancy_code_sell = aa.account_number";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
 $sql .= " WHERE f.fk_statut > 0 AND fk_code_ventilation <= 0";
+$sql .= " AND l.product_type IN (0,1)";
 $sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='')";
 
 // Add search filter like
@@ -181,13 +198,16 @@ if (strlen(trim($search_invoice)))
 {
 	$sql .= " AND (f.facnumber like '%" . $search_invoice . "%')";
 }
-if (strlen(trim($search_ref))) {
-	$sql .= " AND (p.ref like '%" . $search_ref . "%')";
+if (strlen(trim($search_ref))) 
+{
+	$sql .= " AND (p.ref like '" . $search_ref . "%')";
 }
-if (strlen(trim($search_label))) {
+if (strlen(trim($search_label))) 
+{
 	$sql .= " AND (p.label like '%" . $search_label . "%')";
 }
-if (strlen(trim($search_desc))) {
+if (strlen(trim($search_desc))) 
+{
 	$sql .= " AND (l.description like '%" . $search_desc . "%')";
 }
 if (strlen(trim($search_amount))) 
@@ -203,7 +223,8 @@ if (strlen(trim($search_vat)))
 	$sql .= " AND (l.tva_tx like '" . $search_vat . "%')";
 }
 
-if (! empty($conf->multicompany->enabled)) {
+if (! empty($conf->multicompany->enabled)) 
+{
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
 
@@ -213,31 +234,35 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
-if ($result) {
+if ($result) 
+{
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
-	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
+	print '<td align="left"><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></td>&nbsp;';
 	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"],"f.datef","",$param,'',$sortfield,$sortorder);
 	print '&nbsp;&nbsp;';
 	print_liste_field_titre($langs->trans("RowId"), $_SERVER["PHP_SELF"],"l.rowid","",$param,'',$sortfield,$sortorder);	
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
-	print '<input type="hidden" name="action" value="ventil">';
+//	print '<input type="hidden" name="action" value="ventil">';
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"],"f.facnumber","",$param,'',$sortfield,$sortorder);
+//	print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"],"f.datef","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"],"p.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"],"p.label","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"],"l.description","",$param,'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Amount"),'','','','','align="right"');
+//	do we need to reorder by amount / account.... ????
+	print_liste_field_titre($langs->trans("Amount"), $_SERVER["PHP_SELF"],"l.total_ht","",$param,'align="center"',$sortfield,$sortorder);
+//	print '<td align="right">' . $langs->trans("Amount") . '</td>';
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"],"l.tva_tx","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AccountAccounting"),'','','','','align="center"');
-	print_liste_field_titre($langs->trans("IntoAccount"),'','','','','align="center"');
+	print '<td align="right">' . $langs->trans("AccountAccounting") . '</td>';
+	print '<td align="center">' . $langs->trans("IntoAccount") . '</td>';
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>','','','','','align="center"');
+	print '<td align="center" colspan="2">' . $langs->trans("Ventilate") . '<br><label id="select-all">'.$langs->trans('All').'</label>/<label id="unselect-all">'.$langs->trans('None').'</label>'.'</td>';
 	print '</tr>';
 
 //	We add search filter
@@ -263,36 +288,53 @@ if ($result) {
 	$form = new Form($db);
 
 	$var = true;
-	while ( $i < min($num_lines, $limit) ) {
+	while ( $i < min($num_lines, $limit) ) 
+	{
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
 
+		// elarifr define account numbercode comptable si pas defini dans la fiche produit a partir des lignes de facturation
+		// product_type: 1 = service ? 0 = product
+		// because some modules like subtotal module l.product_type can be other than 0 or 1   ! and we don't put in account lines with product_type=9
+		// first we check product.fk_product_type as type and l.product_type as type_l
+		// if product does not exist we use the value of l.product_type provided in facturedet to define if this is a product or service
+		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB ! so we report both and user make choice of accounting account.
 		$objp->code_sell_l = '';
 		$objp->code_sell_p = '';
 		$objp->aarowid_suggest = '';
 		$code_sell_p_l_differ = '';
 
+		//check if code_sell defined in product or set default value according p.fk_product_type do not care lines when product_type value not 0 || 1
+		//and we set suggested accounting account rowid as $objp->aarowid_s
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
-		if ( ! empty($objp->code_sell)) {
+		if ( ! empty($objp->code_sell)) 
+		{
 			$objp->code_sell_p = $objp->code_sell;
-		} else {
+		}
+		else
+		{
 			$code_sell_p_notset = 'color:red';
-			if ($objp->type == 1) {
+			if ($objp->type == 1) 
+			{
 				$objp->code_sell_p = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
-			elseif ($objp->type == 0) {
+			elseif ($objp->type == 0) 
+			{
 				$objp->code_sell_p = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
 		}
-			if ($objp->type_l == 1) {
+			if ($objp->type_l == 1) 
+			{
 				$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 				if ($objp->aarowid == '') $objp->aarowid_suggest = $aarowid_s;
 			}
-			elseif ($objp->type_l == 0) {
+			elseif ($objp->type_l == 0) 
+			{
 				$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 				if ($objp->aarowid == '') $objp->aarowid_suggest = $aarowid_p;
 			}
+		//if not same code for product fk_product_type and facturedet.product_type, product has been change after sale and must report
 		if ($objp->code_sell_l <> $objp->code_sell_p) $code_sell_p_l_differ = 'color:red';
 
 		print "<tr $bc[$var]>";
@@ -318,27 +360,44 @@ if ($result) {
 		print '<td align="right">';
 		print price($objp->total_ht);
 		print '</td>';
+        //TODO PRINT Alert Message when vat rate is not same as default soc tax rate for this product
+        //Change default account by 
+        //ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRACOM',
+        //ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXTRACOM',
+		//if not same vat rate for product and facturedet
+		if ($objp->vat_tx_l <> $objp->vat_tx_p) $code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		print '<td style="' . $code_vat_differ . '" align="center">';
+		print price($objp->tva_tx_line);
+		print '</td>';
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
-		if ($objp->code_sell_l == $objp->code_sell_p) {
+		//if not same kind of product_type stored in product & facturedt we display both account and let user choose
+		if ($objp->code_sell_l == $objp->code_sell_p) 
+		{
 			print $objp->code_sell_l;
-		} else {
+		}
+		else
+		{
 			print 'lines='.$objp->code_sell_l . '<br />product=' . $objp->code_sell_p;
 		}
 		print '</td>';
 
+		// Colonne choix du compte
 		print '<td align="center">';
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil[]', 1);
 		print '</td>';
 		print '<td align="center">' . $objp->rowid . '</td>';
 		print '<td align="center">';
-		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		//TODO checked only if account exist in product, if only suggested do not check, user must validate
+		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid_suggest ? "checked" : "") . '/>';
 		print '</td>';
+//Debug elarifr
+//print '</tr><tr><td colspan=6>Product: p.type='. $objp->type .' - p.code_sell='. $objp->code_sell .'  --- Check code_sell_product=' . $objp->code_sell_p .'  ---Check facturedet l.type_l='. $objp->type_l .' - code_sell_lines=' . $objp->code_sell_l . '  -- aarowid_suggest=' . $objp->aarowid_suggest.'</td>';
 		print '</tr>';
 		$i ++;
 	}
 
 	print '</table>';
-	print '<br><div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '"></div>';
+	print '<br><div align="center"><input type="submit" class="butAction" name="action" value="' . $langs->trans("Ventilate") . '"></div>';
 	print '</form>';
 } else {
 	print $db->error();

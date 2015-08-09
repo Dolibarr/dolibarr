@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,6 +146,12 @@ if ($result) {
 	
 	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 	print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
+	print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProducAccount") . '</a>';
+	// Should have more user rights to edit
+	//if ($user->admin)
+	//{
+	print '<a class="butAction" href="./index.php">' . $langs->trans("Configuration") . '</a>';
+	//}
 	print '<br/><br/>';
 	
 	print '<table class="noborder" width="100%">';
