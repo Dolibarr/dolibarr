@@ -2845,10 +2845,12 @@ class PropaleLigne  extends CommonObject
             $this->date_end         = $this->db->jdate($objp->date_end);
 
 			$this->db->free($result);
+
+            return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 

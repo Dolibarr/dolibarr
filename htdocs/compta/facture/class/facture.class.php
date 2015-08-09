@@ -3471,10 +3471,12 @@ class FactureLigne  extends CommonInvoiceLine
 			$this->product_desc			= $objp->product_desc;
 
 			$this->db->free($result);
+
+			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
