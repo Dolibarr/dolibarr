@@ -236,6 +236,7 @@ FIX [ bug 1925 ] "Link to order" option in supplier invoices is not working prop
 FIX [ bug #3198 ] Trigger LINECONTRACT_INSERT passes Contrat as $object instead of ContratLigne
 FIX: Not showing delivery date on rouget pdf
 FIX: Not showing task extrafields when creating from left menu
+FIX [ bug #3288 ] Tasks box is not properly drawn
 
 NEW: Created new ContratLigne::insert function
 
