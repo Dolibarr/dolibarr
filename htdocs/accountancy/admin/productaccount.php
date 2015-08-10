@@ -1,7 +1,7 @@
 <?PHP
 /*
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)	<github@accedinfo.com>
@@ -102,6 +102,7 @@ if ($action == 'update') {
 }
 
 if ($action == $langs->trans("Change_Account"))
+//todo check sql
 {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if (! empty($codeventil) && ! empty($mesCasesCochees)) 
@@ -120,7 +121,7 @@ if ($action == $langs->trans("Change_Account"))
         {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
-			$monNumLigne = $maLigneCourante[2];
+			$monNumLigne = $maLigneCourante[1];
 			$monCompte = $mesCodesVentilChoisis[$monNumLigne];
 
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "product";
@@ -212,15 +213,25 @@ print  '<script type="text/javascript">
 $sql  = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell, p.accountancy_code_buy, p.tms, p.fk_product_type as product_type";
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 $sql .= " WHERE (";
-$sql .= " p.accountancy_code_sell ='' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
-
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
-$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN
-	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid = " . $pcgver . "))";
+
+IF ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') {
+$sql .= " p.accountancy_code_buy ='' OR p.accountancy_code_buy IS NULL";
 $sql .= " OR (p.accountancy_code_buy  IS NOT NULL AND p.accountancy_code_buy  != '' AND p.accountancy_code_buy  NOT IN
 	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid = " . $pcgver . "))";
+	}
+	ELSE  {
+$sql .= " p.accountancy_code_sell ='' OR p.accountancy_code_sell IS NULL ";
+$sql .= " OR (p.accountancy_code_sell IS NOT NULL AND p.accountancy_code_sell != '' AND p.accountancy_code_sell NOT IN
+	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accountingaccount as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid = " . $pcgver . "))";
+	}
+
 $sql .= ")";
+
+
+
+
 //Add search filter like
 if (strlen(trim($search_ref))) {
 	$sql .= " AND (p.ref like '" . $search_ref . "%')";
@@ -352,7 +363,7 @@ print "<br>\n";
 		else
 			print '-&nbsp;';
 		print '</td>';
-		print '<td align="left">' . $obj->label . '</td>';
+		print '<td align="left">'. dol_trunc($obj->label, 24) .  '</td>';
 //TODO ADJUST DESCRIPTION SIZE
 //		print '<td align="left">' . $obj->description . '</td>';
 		//TODO: we shoul set a user defined value to adjust user square / wide screen size
