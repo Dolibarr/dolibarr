@@ -810,8 +810,6 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 		$out.="</script>";
 	}
 
-	$out.="</div>\n";
-
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
 	$parameters=array();
