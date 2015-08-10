@@ -575,7 +575,7 @@ if (! defined('NOLOGIN'))
             exit;
         }
         else
-       {
+		{
 	       // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 	       $hookmanager->initHooks(array('main'));
 
@@ -660,7 +660,7 @@ if (! defined('NOLOGIN'))
             $cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
 
             $entityCookie = new DolCookie($cryptkey);
-            $entityCookie->_setCookie($entityCookieName, $entity, $ttl);
+            $entityCookie->setCookie($entityCookieName, $entity, $ttl);
         }
 
         // Hooks on successfull login

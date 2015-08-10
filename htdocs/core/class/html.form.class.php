@@ -939,7 +939,7 @@ class Form
                         $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
                     }
 
-                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->name, 'label'=>$obj->name));
+                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->rowid, 'label'=>$label));
 
                     $i++;
                     if (($i % 10) == 0) $out.="\n";
@@ -2271,7 +2271,9 @@ class Form
     function load_cache_availability()
     {
         global $langs;
-
+		
+		$langs->load('propal');
+		
         if (count($this->cache_availability)) return 0;    // Cache deja charge
 
         $sql = "SELECT rowid, code, label";
