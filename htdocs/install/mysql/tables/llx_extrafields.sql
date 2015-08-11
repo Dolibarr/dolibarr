@@ -33,5 +33,6 @@ create table llx_extrafields
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,
 	param			text,
-	list			integer DEFAULT 0
+	list			integer DEFAULT 0,
+	ishidden		integer DEFAULT 0
 )ENGINE=innodb;
