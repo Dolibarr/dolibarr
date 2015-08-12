@@ -2845,10 +2845,12 @@ class PropaleLigne  extends CommonObject
             $this->date_end         = $this->db->jdate($objp->date_end);
 
 			$this->db->free($result);
+
+            return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -2876,11 +2878,12 @@ class PropaleLigne  extends CommonObject
         if (empty($this->total_localtax2)) $this->total_localtax2=0;
         if (empty($this->rang)) $this->rang=0;
         if (empty($this->remise)) $this->remise=0;
-        if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->remise_percent) || ! is_numeric($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
+		if (! is_numeric($this->qty)) $this->qty = 0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
