@@ -48,6 +48,7 @@ NewAccount=Novi računovodski račun
 Update=Update
 List=Seznam
 Create=Ustvari
+CreateMvts=Create movement
 UpdateAccount=Sprememba obračunskega računa
 UpdateMvts=Sprememba pretoka
 WriteBookKeeping=Evidenčnih računov v glavno knjigo
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začni sortiranje strani za pregled "Pregl
 
 AccountLength=Dolžina računovodstva računov prikazan v Dolibarrju
 AccountLengthDesc=Funkcija omogoča, da Predstavljati dolžino obračunskega računa z zamenjavo prostorov z ničelno sliki. Ta funkcija se dotakne le zaslon, ne spreminja računovodskih račune registrirane v Dolibarrju. Za izvoz, to funkcijo je potrebno, da so združljivi z določeno programsko opremo.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Dolžina glavne knjige
 ACCOUNTING_LENGTH_AACCOUNT=Dolžina računih tretjih oseb
 

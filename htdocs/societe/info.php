@@ -40,6 +40,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('infothirdparty'));
 
+$object = new Societe($db);
 
 
 /*
@@ -56,28 +57,38 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
  *	View
  */
 
-$object = new Societe($db);
-$object->fetch($socid);
-$object->info($socid);
-
 $title=$langs->trans("ThirdParty");
 if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Info");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
+if ($socid > 0)
+{
+	$result = $object->fetch($socid);
+	if (! $result)
+	{
+		$langs->load("errors");
+		print $langs->trans("ErrorRecordNotFound");
 
-$head = societe_prepare_head($object);
+		llxFooter();
+		$db->close();
 
-dol_fiche_head($head, 'info', $langs->trans("ThirdParty"),0,'company');
+		exit;
+	}
+
+	$object->info($socid);
+
+	$head = societe_prepare_head($object);
+
+	dol_fiche_head($head, 'info', $langs->trans("ThirdParty"), 0, 'company');
 
 
+	print '<table width="100%"><tr><td>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($object);
-print '</td></tr></table>';
-
-
-dol_fiche_end();
+	dol_fiche_end();
+}
 
 
 llxFooter();

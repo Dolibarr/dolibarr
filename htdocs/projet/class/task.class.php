@@ -823,7 +823,8 @@ class Task extends CommonObject
         {
             $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
             $ret = $tasktime_id;
-
+			$this->timespent_id = $ret;
+			
             if (! $notrigger)
             {
                 // Call trigger
@@ -1045,7 +1046,7 @@ class Task extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
         $sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
         $sql.= " task_datehour = '".$this->db->idate($this->timespent_datehour)."',";
-        $sql.= " task_date_withhour = ".(empty($this->timespent_withhour)?0:1);
+        $sql.= " task_date_withhour = ".(empty($this->timespent_withhour)?0:1).",";
         $sql.= " task_duration = ".$this->timespent_duration.",";
         $sql.= " fk_user = ".$this->timespent_fk_user.",";
         $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");

@@ -43,4 +43,4 @@ ListOfSupplierOrders=Lijst van leverancier bestellingen
 MenuOrdersSupplierToBill=Leverancier bestellingen te factureren
 NbDaysToDelivery=Levering vertraging in de dagen
 DescNbDaysToDelivery=The biggest deliver delay of the products from this order
-UseDoubleApproval=Gebruik dubbele goedkeuring (de tweede goedkeuring kan worden gedaan door elke gebruiker met de speciale toestemming)
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

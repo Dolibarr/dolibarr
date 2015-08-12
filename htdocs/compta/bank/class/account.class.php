@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1263,7 +1263,7 @@ class AccountLine extends CommonObject
         if ($this->rappro)
         {
             // Protection to avoid any delete of consolidated lines
-            $this->error="DeleteNotPossibleLineIsConsolidated";
+            $this->error="ErrorDeleteNotPossibleLineIsConsolidated";
             return -1;
         }
 

@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Hvis database findes allerede, gå tilbage 
 WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsætte ...
-PleaseBePatient=Vær tålmodig ...
 License=Bruger licens
 ConfigurationFile=Opsætningsfil
 WebPagesDirectory=Mappe, hvor websider er gemt

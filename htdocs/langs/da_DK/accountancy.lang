@@ -48,6 +48,7 @@ NewAccount=By regnskabskonto
 Update=Opdater
 List=Liste
 Create=Opret
+CreateMvts=Create movement
 UpdateAccount=Ændring af en regnskabsmæssig konto
 UpdateMvts=Ændring af en bevægelse
 WriteBookKeeping=Optage konti i kontoplanen
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=Længde af regnskabssystemet konti i Dolibarr
 AccountLengthDesc=Funktion gør det muligt at foregive en længde på regnskabsmæssig konto ved at erstatte mellemrum med tallet nul. Da denne funktion kun vises på skærmen ændrer det ikke ved de bogføring registreret i Dolibarr konti. For eksport, er det nødvendigt denne funktion til at være kompatibel med bestemt software.
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Længde af det almindelige regnskab
 ACCOUNTING_LENGTH_AACCOUNT=Længde af de tredjeparts-konti
 

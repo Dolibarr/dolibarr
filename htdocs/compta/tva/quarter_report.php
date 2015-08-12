@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2007, 2015 Yannick Warnier      <ywarnier@beeznest.org>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2001-2003        Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004             Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2013        Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007, 2015  Yannick Warnier      <ywarnier@beeznest.org>
+ * Copyright (C) 2014	          Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ $vatsup=$langs->trans("VATPaid");
 
 // VAT Received and paid
 
-echo '<table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 
 $y = $year_current;
 $total = 0;
@@ -538,8 +538,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	// Blank line
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
-	//print table headers for this quadri - expenses now
-	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
+	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$langs->trans("Date").'</td>';
@@ -680,7 +679,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		print '</tr>';
 	}
 
-	if (count($x_paye) == 0) {  // Show a total ine if nothing shown
+	if (count($x_paye) == 0) {  // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td colspan="'.$span.'"></td>';
 		print '<td align="right">'.$langs->trans("Total").':</td>';
@@ -706,7 +705,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 	$i++;
 }
-echo '</table>';
+print '</table>';
 
 $db->close();
 

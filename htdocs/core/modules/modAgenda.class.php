@@ -5,8 +5,8 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
- * Copyright (C) 2015       Bahfir Abbes        <bafbes@gmail.com>
+ * Copyright (C) 2013      Cedric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ class modAgenda extends DolibarrModules
 
 		// Config pages
 		//-------------
-		$this->config_page_url = array("agenda.php");
+		$this->config_page_url = array("agenda_other.php");
 
 		// Dependancies
 		//-------------
@@ -227,7 +227,7 @@ class modAgenda extends DolibarrModules
 		// Calendar
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 													'type'=>'left',
-													'titre'=>'Calendar',
+													'titre'=>'Agenda',
 													'mainmenu'=>'agenda',
 													'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 													'langs'=>'agenda',

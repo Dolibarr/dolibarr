@@ -1095,11 +1095,11 @@ function getProductsForCategory($authentication,$id,$lang='')
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 							//Get extrafield values
-							$product->fetch_optionals($obj->id,$extralabels);
+							$obj->fetch_optionals($obj->id,$extralabels);
 
 							foreach($extrafields->attribute_label as $key=>$label)
 							{
-								$products[$iProduct]=array_merge($products[$iProduct],array('options_'.$key => $product->array_options['options_'.$key]));
+								$products[$iProduct]=array_merge($products[$iProduct],array('options_'.$key => $obj->array_options['options_'.$key]));
 							}
 
 							$iProduct++;

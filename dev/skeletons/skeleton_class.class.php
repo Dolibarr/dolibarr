@@ -222,10 +222,11 @@ class Skeleton_Class extends CommonObject
 	 * @param int    $limit     offset limit
 	 * @param int    $offset    offset limit
 	 * @param array  $filter    filter array
+	 * @param string $filtermode filter mode (AND or OR)
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, array $filter = array())
+	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -234,20 +235,25 @@ class Skeleton_Class extends CommonObject
 		$sql .= ' t.field1,';
 		$sql .= ' t.field2';
 		//...
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'mytable as t';
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = ' AND ' . $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' AND ', $sqlwhere);
+			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder . ' ' . $this->db->plimit($limit + 1, $offset);
-
+		
+		if (!empty($sortfield)) {
+			$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder;
+		}
+		if (!empty($limit)) {
+		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		}
 		$this->lines = array();
 
 		$resql = $this->db->query($sql);
@@ -303,16 +309,8 @@ class Skeleton_Class extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		if (isset($this->field1)) {
-			$sql .= ' field1=\'' . $this->db->escape($this->field1) . '\',';
-		} else {
-			$sql .= ' field1=null' . ',';
-		}
-		if (isset($this->field2)) {
-			$sql .= ' field2=\'' . $this->db->escape($this->field2) . '\'';
-		} else {
-			$sql .= ' field2=null';
-		}
+		$sql .= " field1=".(isset($this->field1)?"'".$this->db->escape($this->field1)."'":"null").",";
+        $sql .= " field2=".(isset($this->field2)?"'".$this->db->escape($this->field2)."'":"null")."";
 		//...
 		$sql .= ' WHERE rowid=' . $this->id;
 

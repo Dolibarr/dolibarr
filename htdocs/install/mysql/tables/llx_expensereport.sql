@@ -42,9 +42,9 @@ CREATE TABLE llx_expensereport (
   fk_user_approve   integer DEFAULT NULL,
   fk_user_refuse 	integer DEFAULT NULL,
   fk_user_cancel 	integer DEFAULT NULL,
-  fk_statut			integer NOT NULL,		-- 1=brouillon, 2=validé (attente approb), 4=annulé, 5=approuvé, 6=payed, 99=refusé
-  fk_c_paiement 	integer DEFAULT NULL,
-  paid              smallint default 0 NOT NULL,
+  fk_statut			integer NOT NULL,						-- 1=brouillon, 2=validated (waiting approval), 4=canceled, 5=approved, 6=payed, 99=refused
+  fk_c_paiement 	integer DEFAULT NULL,					-- deprecated
+  paid              smallint default 0 NOT NULL,			-- deprecated
   note_public		text,
   note_private 		text,
   detail_refuse 	varchar(255) DEFAULT NULL,

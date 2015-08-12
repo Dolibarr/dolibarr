@@ -103,7 +103,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid');
+		print $form->select_company($socid, 'socid', '', 1);
 		print '</td></tr>';
 	}
 

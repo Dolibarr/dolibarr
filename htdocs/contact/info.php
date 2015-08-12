@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,36 +30,40 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 $langs->load("companies");
 
+
 // Security check
 $contactid = GETPOST("id",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
+
+$contact = new Contact($db);
 
 
 
 /*
  * 	View
  */
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
+if ($contactid > 0)
+{
+	$result = $contact->fetch($contactid, $user);
 
-$contact = new Contact($db);
-$contact->fetch($contactid, $user);
-$contact->info($contactid);
-
-
-$head = contact_prepare_head($contact);
-
-dol_fiche_head($head, 'info', $langs->trans("ContactsAddresses"), 0, 'contact');
+	$contact->info($contactid);
 
 
-print '<table width="100%"><tr><td>';
-print '</td></tr></table>';
+	$head = contact_prepare_head($contact);
 
-dol_print_object_info($contact);
+	dol_fiche_head($head, 'info', $title, 0, 'contact');
 
-print "</div>";
+	// TODO Put here ref of card
+
+	dol_print_object_info($contact);
+
+	dol_fiche_end();
+}
 
 llxFooter();
 

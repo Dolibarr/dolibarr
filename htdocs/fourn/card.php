@@ -421,6 +421,7 @@ if ($object->id > 0)
     			print '</td></tr>';
 			}
 
+			$var = True;
 			while ($i < $num && $i <= $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
@@ -494,6 +495,7 @@ if ($object->id > 0)
     			print '</tr></table>';
     			print '</td></tr>';
 			}
+			$var=True;
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);

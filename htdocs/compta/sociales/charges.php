@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/compta/sociales/charges.php
  *		\ingroup    tax
- *		\brief      Social contribution car page
+ *		\brief      Social contribution card page
  */
 
 require '../../main.inc.php';
@@ -387,7 +387,7 @@ if ($id > 0)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
-			echo '<table class="nobordernopadding" width="100%">';
+			print '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -488,7 +488,7 @@ if ($id > 0)
 
 
 		/*
-		*   Boutons actions
+		*   Actions buttons
 		*/
 		if ($action != 'edit')
 		{
@@ -500,7 +500,7 @@ if ($id > 0)
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
 
-			// Emettre paiement
+			// Emit payment
 			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";

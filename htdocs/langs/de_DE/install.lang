@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, geh
 WarningBrowserTooOld=Sie verwenden eine zu alte Version des Browsers. Installieren Sie die aktuelle Version  Ihres Browser (Empfehlung: Firefox, Chrome oder Opera).
 PHPVersion=PHP-Version
 YouCanContinue=Sie können mit der Installation fortfahren
-PleaseBePatient=Bitte haben Sie ein wenig Geduld ...
 License=Lizenzverwendung
 ConfigurationFile=Konfigurationsdatei
 WebPagesDirectory=Verzeichnis für die Speicherung von Websites

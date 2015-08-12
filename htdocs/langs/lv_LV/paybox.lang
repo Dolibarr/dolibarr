@@ -12,7 +12,6 @@ Creditor=Kreditors
 PaymentCode=Maksājuma kods
 PayBoxDoPayment=Iet uz maksājumu
 YouWillBeRedirectedOnPayBox=Jums tiks novirzīts uz drošu Paybox lapā, lai ievadi kredītkartes informāciju
-PleaseBePatient=Lūdzu, esiet pacietīgi
 Continue=Nākamais
 ToOfferALinkForOnlinePayment=URL %s maksājumu
 ToOfferALinkForOnlinePaymentOnOrder=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klienta pasūtījuma

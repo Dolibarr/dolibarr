@@ -250,7 +250,7 @@ if (empty($reshook))
 	    	if ($result < 0)
 	    	{
 	    		$error++;
-	    		setEventMessage($object->errors,'errors');
+		        setEventMessages($object->error, $object->errors,'errors');
 	    	}
 	    }
 
@@ -373,7 +373,7 @@ if (empty($reshook))
 	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date);
 	    if ($result <= 0)
 	    {
-		    setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	    else
 	    {

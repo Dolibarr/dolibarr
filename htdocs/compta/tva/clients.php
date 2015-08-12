@@ -90,9 +90,8 @@ if (empty($min)) {
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_REQUEST["modetax"])) {
-	$modetax=$_REQUEST["modetax"];
-}
+if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid','int');

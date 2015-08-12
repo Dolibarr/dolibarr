@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("members");
 
-$rowid		= GETPOST('rowid','int');
-$action		= GETPOST('action','alpha');
+$rowid  = GETPOST('rowid','int');
+$action = GETPOST('action','alpha');
+$cancel = GETPOST('cancel','alpha');
 
 $search_lastname	= GETPOST('search_lastname','alpha');
 $search_login		= GETPOST('search_login','alpha');
@@ -85,7 +86,7 @@ $hookmanager->initHooks(array('membertypecard','globalcard'));
  */
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
-	if ($_POST["button"] != $langs->trans("Cancel"))
+	if (! $cancel)
 	{
 		$object = new AdherentType($db);
 
@@ -123,7 +124,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 
 if ($action == 'update' && $user->rights->adherent->configurer)
 {
-	if ($_POST["button"] != $langs->trans("Cancel"))
+	if (! $cancel)
 	{
 		$object = new AdherentType($db);
 		$object->id          = $rowid;
@@ -151,14 +152,6 @@ if ($action == 'delete' && $user->rights->adherent->configurer)
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
-
-if ($action == 'commentaire' && $user->rights->adherent->configurer)
-{
-	$don = new Don($db);
-	$don->fetch($rowid);
-	$don->update_note(dol_html_entity_decode(GETPOST('commentaire'), ENT_QUOTES));
-}
-
 
 /*
  * View
@@ -291,7 +284,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
 	print '</div>';
 
 	print "</form>\n";

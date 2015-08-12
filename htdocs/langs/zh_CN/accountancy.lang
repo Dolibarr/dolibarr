@@ -48,6 +48,7 @@ NewAccount=”新建“会计账户
 Update=更新
 List=名单
 Create=创建
+CreateMvts=Create movement
 UpdateAccount=修改”会计帐户“
 UpdateMvts=对一个”活动“进行修改
 WriteBookKeeping=在”总账“中的”账户记录“
@@ -83,6 +84,8 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 AccountLength=会计长度账户显示在的Dolibarr
 AccountLengthDesc=功能允许由零的数字代替空格假装会计账户的长度。这个函数只接触了显示屏，它不修改的Dolibarr登记的会计科目。为出口，这个功能是必要的，以与特定的软件兼容。
+ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
 

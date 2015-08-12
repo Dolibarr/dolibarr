@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -475,7 +475,7 @@ foreach ($listofreferent as $key => $value)
 }
 // and the final balance
 print '<tr class="liste_total">';
-print '<td align="right" colspan=2 >'.$langs->trans("Total").'</td>';
+print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
 print '<td align="right" >'.price($balance_ht).'</td>';
 print '<td align="right" >'.price($balance_ttc).'</td>';
 print '</tr>';

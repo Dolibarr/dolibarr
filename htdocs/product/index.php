@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C)      2014	Charles-Fr BENKE		<charles.fr@benke.fr>
- * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,6 +330,7 @@ if ($result)
 		$db->free($result);
 
 		print "</table>";
+		print '<br>';
 	}
 }
 else
@@ -395,7 +396,6 @@ function activitytrim($product_type)
 
 		if ($num > 0 )
 		{
-			print '<br>';
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)

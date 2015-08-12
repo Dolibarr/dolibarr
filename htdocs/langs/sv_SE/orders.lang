@@ -125,6 +125,7 @@ CloneOrder=Klon för
 ConfirmCloneOrder=Är du säker på att du vill klona denna beställning <b>%s?</b>
 DispatchSupplierOrder=Ta emot leverantör för %s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representanten följa upp kundorder
 TypeContact_commande_internal_SHIPPING=Representanten uppföljning sjöfart

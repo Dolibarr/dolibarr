@@ -1,11 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
 CommercialArea=Área Comercial
-DeleteAction=Eliminar um evento/tarefa
-NewAction=Novo evento/tarefa
-AddAction=Criar evento/tarefa
-AddAnAction=Criar um evento/tarefa
 AddActionRendezVous=Criar evento tipo Rendez-vous
-ConfirmDeleteAction=Você tem certeza que deseja excluir este evento/tarefa?
 CardAction=Ficha de evento
 PercentDone=Percentual completo
 ActionOnCompany=Tarefa relativa à empresa

@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Ak databáza už existuje, vráťte sa spä
 WarningBrowserTooOld=Príliš stará verzia prehliadača. Aktualizácia prehliadača na poslednú verziu Firefoxu, Chrome alebo Opery je vysoko odporúčaná.
 PHPVersion=Verzia PHP
 YouCanContinue=Môžete pokračovať ...
-PleaseBePatient=Prosím o chvíľku strpenia ...
 License=Používa sa licencia
 ConfigurationFile=Konfiguračný súbor
 WebPagesDirectory=Adresár, kde sú uložené webové stránky

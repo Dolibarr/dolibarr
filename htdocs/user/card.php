@@ -8,8 +8,9 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,7 +264,7 @@ if ($action == 'add' && $canadduser)
             $langs->load("errors");
             $db->rollback();
             if (is_array($object->errors) && count($object->errors)) setEventMessage($object->errors,'errors');
-            else setEventMessage($object->error);
+            else setEventMessage($object->error, 'errors');
             $action="create";       // Go back to create page
         }
 
@@ -328,7 +329,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 				$result=$tmpuser->fetch(0, GETPOST("login"));
 				if ($result > 0)
 				{
-					setEventMessage($langs->trans("ErrorLoginAlreadyExists"), 'errors');
+					setEventMessage($langs->trans("ErrorLoginAlreadyExists", GETPOST('login')), 'errors');
 					$action="edit";       // Go back to create page
 					$error++;
 				}
@@ -346,7 +347,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->login		= GETPOST("login",'alpha');
             $object->gender		= GETPOST("gender",'alpha');
             $object->pass		= GETPOST("password");
-            $object->api_key    = GETPOST("api_key");
+            $object->api_key    = (GETPOST("api_key", 'alpha'))?GETPOST("api_key", 'alpha'):$object->api_key;
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone",'alpha');
             $object->office_fax	= GETPOST("office_fax",'alpha');
@@ -407,7 +408,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	                }
 	                else
 	              {
-		              setEventMessage($object->error, 'errors');
+		            	setEventMessages($object->error, $object->errors, 'errors');
 	                }
 	            }
             }
@@ -825,7 +826,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    if(! empty($conf->api->enabled)) {
+    if(! empty($conf->api->enabled))
+    {
         // API key
         $generated_api_key = '';
         require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -836,50 +838,56 @@ if (($action == 'create') || ($action == 'adduserldap'))
         if (! empty($conf->use_javascript_ajax))
             print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
         print '</td></tr>';
+    }
+    else
+    {
+        // PARTIAL WORKAROUND
+        $generated_fake_api_key=getRandomPassword(false);
+        print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
+    }
 
-        // Administrator
-        if (! empty($user->admin))
+    // Administrator
+    if (! empty($user->admin))
+    {
+        print '<tr><td>'.$langs->trans("Administrator").'</td>';
+        print '<td>';
+        print $form->selectyesno('admin',GETPOST('admin'),1);
+
+        if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
-            print '<tr><td>'.$langs->trans("Administrator").'</td>';
-            print '<td>';
-            print $form->selectyesno('admin',GETPOST('admin'),1);
-
-            if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
+            if (! empty($conf->use_javascript_ajax))
             {
-                if (! empty($conf->use_javascript_ajax))
-                {
-                    print '<script type="text/javascript">
-                                $(function() {
-                                    $("select[name=admin]").change(function() {
-                                         if ( $(this).val() == 0 ) {
-                                            $("input[name=superadmin]")
-                                                .prop("disabled", true)
-                                                .prop("checked", false);
-                                            $("select[name=entity]")
-                                                .prop("disabled", false);
-                                         } else {
-                                            $("input[name=superadmin]")
-                                                .prop("disabled", false);
-                                         }
-                                    });
-                                    $("input[name=superadmin]").change(function() {
-                                        if ( $(this).is(":checked") ) {
-                                            $("select[name=entity]")
-                                                .prop("disabled", true);
-                                        } else {
-                                            $("select[name=entity]")
-                                                .prop("disabled", false);
-                                        }
-                                    });
+                print '<script type="text/javascript">
+                            $(function() {
+                                $("select[name=admin]").change(function() {
+                                     if ( $(this).val() == 0 ) {
+                                        $("input[name=superadmin]")
+                                            .prop("disabled", true)
+                                            .prop("checked", false);
+                                        $("select[name=entity]")
+                                            .prop("disabled", false);
+                                     } else {
+                                        $("input[name=superadmin]")
+                                            .prop("disabled", false);
+                                     }
                                 });
-                        </script>';
-                }
-                $checked=($_POST["superadmin"]?' checked':'');
-                $disabled=($_POST["superadmin"]?'':' disabled');
-                print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+                                $("input[name=superadmin]").change(function() {
+                                    if ( $(this).is(":checked") ) {
+                                        $("select[name=entity]")
+                                            .prop("disabled", true);
+                                    } else {
+                                        $("select[name=entity]")
+                                            .prop("disabled", false);
+                                    }
+                                });
+                            });
+                    </script>';
             }
-            print "</td></tr>\n";
+            $checked=($_POST["superadmin"]?' checked':'');
+            $disabled=($_POST["superadmin"]?'':' disabled');
+            print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
         }
+        print "</td></tr>\n";
     }
 
     // Type
@@ -2085,14 +2093,20 @@ else
             	$langs->load("salaries");
 
             	// THM
-			    print '<tr><td>'.$langs->trans("THM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("THM");
+			    print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
 			    print '</td>';
 			    print "</tr>\n";
 
 			    // TJM
-			    print '<tr><td>'.$langs->trans("TJM").'</td>';
+			    print '<tr><td>';
+			    $text=$langs->trans("TJM");
+			    print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
+			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
 			    print '</td>';
@@ -2195,7 +2209,8 @@ else
             }
 
             // Multicompany
-            if (! empty($conf->multicompany->enabled))
+            // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
+            if (! empty($conf->multicompany->enabled) && is_object($mc))
             {
             	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             	{

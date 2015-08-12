@@ -26,6 +26,7 @@ php-iban               1.4.6         LGPL-3+                     Yes            
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
 Restler                3.0           LGPL-3+                     Yes             Library to develop REST Web services
 TCPDF                  6.2.6         LGPL-3+                     Yes             PDF generation
+EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 
 JS libraries:
 jQuery                 1.11.3        MIT License                 Yes             JS library
@@ -42,13 +43,13 @@ jQuery jNotify         1.1.00        Apache Software License 2.0 Yes            
 jQuery jPicker         1.1.6         GPL and MIT License         Yes             JS library for color picker with not defined list of colors
 jQuery jqueryFileTree  1.0.1         GPL and MIT License         Yes             JS library for color picker with not defined list of colors
 jQuery jquerytreeview  1.4.1         MIT License                 Yes             JS library for color picker with not defined list of colors
-jQuery Layout          1.3.0rc30.74  GPL and MIT License         Yes             JS library plugin Layout (RC-29.15)
+jQuery Layout          1.4.3         GPL and MIT License         Yes             JS library plugin Layout
 jQuery Mobile          1.3.0         GPL and MIT License         Yes             JS library for smartphone (not used)
 jQuery TableDnD        0.6           GPL and MIT License         Yes             JS library plugin TableDnD (to reorder table rows)
 jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
 jQuery Tiptip          1.3           GPL and MIT License         Yes             JS library for tooltips
 jsGantt                1.2           BSD License                 Yes             JS library (to build Gantt reports)
-JsTimezoneDetect      1.0.4     MIT Licence                 Yes             JS library to detect user timezone
+JsTimezoneDetect       1.0.4         MIT Licence                 Yes             JS library to detect user timezone
 
 For licenses compatibility informations:
 http://www.fsf.org/licensing/licenses/index_html
@@ -60,8 +61,9 @@ Copyright
 Copyright (C) 2015
 - Laurent Destailleur <eldy@users.sourceforge.net>
 - Marcos García <marcosgdf@gmail.com>
-- Alexandre Spangaro <alexandre.spangaro@gmail.com>
+- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
 - Frederic France <frederic.france@free.fr>
+- Regis Houssin <regis.houssin@capnetworks.com>
 
 Copyright (C) 2014
 - Laurent Destailleur <eldy@users.sourceforge.net>
@@ -73,7 +75,7 @@ Copyright (C) 2014
 - Regis Houssin <regis.houssin@capnetworks.com>
 - Maxime Kohlhaas <mko@atm-consulting.fr>
 - Juanjo Menent <jmenent@2byte.es>
-- Alexandre Spangaro <alexandre.spangaro@gmail.com>
+- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
 - Frederic France <frederic.france@free.fr>
 
 Copyright (C) 2013
@@ -87,7 +89,7 @@ Copyright (C) 2013
 - Maxime Kohlhaas <mko@atm-consulting.fr>
 - Juanjo Menent <jmenent@2byte.es>
 - Adolfo Segura <adolfo.segura@gmail.com>
-- Alexandre Spangaro <alexandre.spangaro@gmail.com>
+- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
 
 Copyright (C) 2012
 - Christophe Battarel <christophe.battarel@altairis.fr>
@@ -101,7 +103,7 @@ Copyright (C) 2012
 - Maxime Kohlhaas <mko@atm-consulting.fr>
 - Juanjo Menent <jmenent@2byte.es>
 - Nicolas Péré <nicolas@amarok2.net>
-- Alexandre Spangaro <alexandre.spangaro@gmail.com>
+- Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
 
 Copyright (C) 2011
 - Laurent Destailleur <eldy@users.sourceforge.net>

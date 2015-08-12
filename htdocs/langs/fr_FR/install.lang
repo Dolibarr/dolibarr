@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Si la base existe déjà, revenez en arriè
 WarningBrowserTooOld=Version du navigateur trop ancienne. Nous vous recommandons de mettre à jour vers une version récente de Firefox, Chrome ou Opera.
 PHPVersion=Version de PHP
 YouCanContinue=Vous pouvez continuer…
-PleaseBePatient=Merci de patienter…
 License=Licence d'utilisation
 ConfigurationFile=Fichier de configuration
 WebPagesDirectory=Répertoire contenant les pages web

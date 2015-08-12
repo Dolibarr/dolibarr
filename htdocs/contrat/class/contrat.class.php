@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
@@ -905,8 +905,7 @@ class Contrat extends CommonObject
 				$modCodeContract = new $module();
 			}
 
-			//Commerce Efficace - Debut : Modification r�f�rence Contrat
-			/*if (!empty($modCodeContract->code_auto)) {
+			if (!empty($modCodeContract->code_auto)) {
 				// Mise a jour ref
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 				if ($this->db->query($sql))
@@ -916,8 +915,7 @@ class Contrat extends CommonObject
 						$this->ref="(PROV".$this->id.")";
 					}
 				}
-			}*/
-			//Commerce Efficace - Fin : Modification r�f�rence Contrat
+			}
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
@@ -1149,7 +1147,7 @@ class Contrat extends CommonObject
 		if (isset($this->note_private)) $this->note_private=trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
-		if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
+		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
 
 
@@ -1176,8 +1174,8 @@ class Contrat extends CommonObject
 		$sql.= " fk_user_cloture=".(isset($this->fk_user_cloture)?$this->fk_user_cloture:"null").",";
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null").",";
-		$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
+		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
+		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
 
 
 		$sql.= " WHERE rowid=".$this->id;
@@ -1344,8 +1342,6 @@ class Contrat extends CommonObject
 			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
 			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
 			$sql.= ")";
-
-			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -2629,4 +2625,74 @@ class ContratLigne extends CommonObjectLine
 		}
 	}
 
+
+	/**
+	 * Inserts a contrat line into database
+	 *
+	 * @param int $notrigger Set to 1 if you don't want triggers to be fired
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function insert($notrigger = 0)
+	{
+		global $user;
+
+		// Insertion dans la base
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
+		$sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
+		$sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
+		$sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
+		$sql.= " info_bits,";
+		$sql.= " price_ht, remise, fk_product_fournisseur_price, buy_price_ht";
+		if ($this->date_ouverture_prevue > 0) { $sql.= ",date_ouverture_prevue"; }
+		if ($this->date_fin_validite > 0)   { $sql.= ",date_fin_validite"; }
+		$sql.= ") VALUES ($this->fk_contrat, '', '" . $this->db->escape($this->description) . "',";
+		$sql.= ($this->fk_product>0 ? $this->fk_product : "null").",";
+		$sql.= " '".$this->qty."',";
+		$sql.= " '".$this->tva_tx."',";
+		$sql.= " '".$this->localtax1_tx."',";
+		$sql.= " '".$this->localtax2_tx."',";
+		$sql.= " '".$this->localtax1_type."',";
+		$sql.= " '".$this->localtax2_type."',";
+		$sql.= " ".price2num($this->remise_percent).",".price2num($this->subprice).",";
+		$sql.= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
+		$sql.= " '".$this->info_bits."',";
+		$sql.= " ".price2num($this->price_ht).",".price2num($this->remise).",";
+		if ($this->fk_fournprice > 0) $sql.= ' '.$this->fk_fournprice.',';
+		else $sql.= ' null,';
+		if ($this->pa_ht > 0) $sql.= ' '.price2num($this->pa_ht);
+		else $sql.= ' null';
+		if ($this->date_ouverture_prevue > 0) { $sql.= ",'".$this->db->idate($this->date_ouverture_prevue)."'"; }
+		if ($this->date_fin_validite > 0) { $sql.= ",'".$this->db->idate($this->date_fin_validite)."'"; }
+		$sql.= ")";
+
+		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
+
+			// FIXME Missing insert of extrafields
+
+			if (!$notrigger)
+			{
+				// Call trigger
+				$result = $this->call_trigger('LINECONTRACT_CREATE', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->error()." sql=".$sql;
+			return -1;
+		}
+	}
 }

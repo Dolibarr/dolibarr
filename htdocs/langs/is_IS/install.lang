@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Ef skráð er þegar til, farðu til baka o
 WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Þú getur haldið áfram ...
-PleaseBePatient=Vinsamlegast sýnið þolinmæði ...
 License=Using leyfi
 ConfigurationFile=Stillingar skrá
 WebPagesDirectory=Listinn þar vefsíðum eru geymd

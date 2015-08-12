@@ -125,6 +125,7 @@ CloneOrder=Клон порядка
 ConfirmCloneOrder=Вы уверены, что хотите клон этого <b>приказа %s?</b>
 DispatchSupplierOrder=Прием %s поставщиком для
 FirstApprovalAlreadyDone=Первое утверждение уже сделано
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Представитель следующие меры для клиентов
 TypeContact_commande_internal_SHIPPING=Представитель следующие меры судоходства

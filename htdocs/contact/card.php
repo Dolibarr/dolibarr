@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -809,7 +809,7 @@ else
             print '</tr>';
 
             // Jabberid
-            print '<tr><td><label for="jabberid">'.$langs->trans("Jabberid").'</label></td>';
+            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
 	        print '<td><input name="jabberid" id="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
@@ -1151,7 +1151,7 @@ else
 
         print '<tr><td>';
         print $langs->trans("ExportCardToFormat").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
+		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
 		print img_picto($langs->trans("VCard"),'vcard.png').' ';
 		print $langs->trans("VCard");
 		print '</a>';

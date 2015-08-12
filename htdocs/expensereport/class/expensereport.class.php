@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Alexandre Spangaro  <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2015 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ class ExpenseReport extends CommonObject
     var $user_author_infos;
     var $user_validator_infos;
 
-    var $modepayment;
-    var $modepaymentid;
+    var $fk_typepayment;
+	var $num_payment;
     var $code_paiement;
     var $code_statut;
 
@@ -736,7 +736,7 @@ class ExpenseReport extends CommonObject
         $this->lines=array();
 
         $sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date,';
-        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.tva_tx as vatrate,';
+        $sql.= ' de.'.$this->fk_element.', de.fk_c_type_fees, de.fk_projet, de.tva_tx,';
         $sql.= ' de.total_ht, de.total_tva, de.total_ttc,';
         $sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
         $sql.= ' p.ref as ref_projet, p.title as title_projet';
@@ -773,7 +773,8 @@ class ExpenseReport extends CommonObject
 
                 $deplig->type_fees_code     = $objp->code_type_fees;
                 $deplig->type_fees_libelle  = $objp->libelle_type_fees;
-                $deplig->vatrate            = $objp->vatrate;
+				$deplig->tva_tx			    = $objp->tva_tx;
+                $deplig->vatrate            = $objp->tva_tx;
                 $deplig->projet_ref         = $objp->ref_projet;
                 $deplig->projet_title       = $objp->title_projet;
 

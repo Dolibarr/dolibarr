@@ -1351,8 +1351,7 @@ function dol_print_reduction($reduction,$langs)
 
 /**
  * 	Return OS version.
- *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not
- *  necessarly OS PHP runs on.
+ *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
  *
  * 	@return		string			OS version
  */
@@ -1366,6 +1365,7 @@ function version_os()
  * 	Return PHP version
  *
  * 	@return		string			PHP version
+ *  @see		versionphparray
  */
 function version_php()
 {
@@ -1376,6 +1376,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
+ *  @see		versiondolibarrarray
  */
 function version_dolibarr()
 {

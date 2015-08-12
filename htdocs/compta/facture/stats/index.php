@@ -218,6 +218,13 @@ complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
+$tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
+//Array passed as an argument to Form::selectarray to build a proper select input
+$companies = array();
+
+foreach ($tmp_companies as $value) {
+	$companies[$value['value']] = $value['label'];
+}
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -233,7 +240,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 100%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
@@ -256,8 +263,11 @@ print '<table class="border" width="100%">';
 print '<tr height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
 print '<td align="center">'.$langs->trans("NumberOfBills").'</td>';
+print '<td align="center">%</td>';
 print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="center">%</td>';
 print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="center">%</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -277,8 +287,11 @@ foreach ($data as $val)
 	print '<tr height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '<td align="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

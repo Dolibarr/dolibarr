@@ -12,7 +12,6 @@ Creditor=เจ้าหนี้
 PaymentCode=รหัสการชำระเงิน
 PayBoxDoPayment=ไปในการชำระเงิน
 YouWillBeRedirectedOnPayBox=คุณจะถูกเปลี่ยนเส้นทางในหน้า Paybox การรักษาความปลอดภัยในการป้อนข้อมูลบัตรเครดิต
-PleaseBePatient=กรุณาเป็นผู้ป่วย
 Continue=ถัดไป
 ToOfferALinkForOnlinePayment=สำหรับการชำระเงิน URL% s
 ToOfferALinkForOnlinePaymentOnOrder=URL ที่จะนำเสนอส่วนติดต่อผู้ใช้การชำระเงินออนไลน์ s% สำหรับการสั่งซื้อของลูกค้า

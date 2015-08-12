@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014       Alexandre Spangaro      <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -984,7 +984,7 @@ class Form
                         $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
                     }
 
-                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->name, 'label'=>$obj->name));
+                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->rowid, 'label'=>$label));
 
                     $i++;
                     if (($i % 10) == 0) $out.="\n";
@@ -2072,10 +2072,12 @@ class Form
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
                 $opt.=$objp->ref;
-                if (! empty($objp->idprodfournprice)) $opt.=' ('.$objp->ref_fourn.')';
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                	$opt.=' ('.$objp->ref_fourn.')';
                 $opt.=' - ';
                 $outval.=$objRef;
-                if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                	$outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
                 $opt.=dol_trunc($label, 72).' - ';
                 $outval.=dol_trunc($label, 72).' - ';
@@ -2110,7 +2112,7 @@ class Form
                         $outval.= ' '.$langs->transnoentities("Units");
                     }
 
-                    if ($objp->quantity >= 1)
+                    if ($objp->quantity > 1)
                     {
                         $opt.=" (".price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
                         $outval.=" (".price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
@@ -2383,6 +2385,8 @@ class Form
         if ($num > 0) return 0;    // Cache already loaded
 
         dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$langs->load('propal');
 
         $sql = "SELECT rowid, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
@@ -4898,20 +4902,20 @@ class Form
 				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
 				print '<td align="left">' . $langs->trans("Company") . '</td>';
 				print '</tr>';
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$objp = $this->db->fetch_object($resqlorderlist);
-					if ($objp->socid == $societe->id) {
-						$var = ! $var;
-						print '<tr ' . $bc [$var] . '>';
-						print '<td aling="left">';
-						print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-						print '<td align="center">' . $objp->ref . '</td>';
-						print '<td>' . $objp->ref_supplier . '</td>';
-						print '<td>' . price($objp->total_ht) . '</td>';
-						print '<td>' . $objp->name . '</td>';
-						print '</td>';
-						print '</tr>';
-					}
+
+					$var = ! $var;
+					print '<tr ' . $bc [$var] . '>';
+					print '<td aling="left">';
+					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '<td align="center">' . $objp->ref . '</td>';
+					print '<td>' . $objp->ref_supplier . '</td>';
+					print '<td>' . price($objp->total_ht) . '</td>';
+					print '<td>' . $objp->name . '</td>';
+					print '</td>';
+					print '</tr>';
 
 					$i ++;
 				}

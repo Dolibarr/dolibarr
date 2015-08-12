@@ -130,7 +130,6 @@ nbJours=Počet dní
 TitleAdminCP=Konfigurace dovolené
 NoticePeriod=Notice period
 #Messages
-Hello=Ahoj
 HolidaysToValidate=Ověření žádosti o dovolenou
 HolidaysToValidateBody=Níže je požadavek na ověření dovolené
 HolidaysToValidateDelay=Tento požadavek dovolené proběhne ve lhůtě kratší než %s dní.
