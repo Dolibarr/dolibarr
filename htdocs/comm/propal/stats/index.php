@@ -283,8 +283,11 @@ foreach ($data as $val)
         print '<tr height="24">';
         print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
         print '<td align="right">0</td>';
+        print '<td align="right"></td>';
         print '<td align="right">0</td>';
+        print '<td align="right"></td>';
         print '<td align="right">0</td>';
+        print '<td align="right"></td>';
         print '</tr>';
     }
     print '<tr height="24">';
