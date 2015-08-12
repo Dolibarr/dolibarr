@@ -3,6 +3,8 @@ languages:
   Ruby: false
   JavaScript: true
   PHP: true
+engines:
+  phpcodesniffer: true  
 exclude_paths:
   - 'build/*'
   - 'dev/*'
