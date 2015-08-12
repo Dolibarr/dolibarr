@@ -235,6 +235,8 @@ FIX [ bug 1634 ] Error deleting a project when it had many linked objects
 FIX [ bug 1925 ] "Link to order" option in supplier invoices is not working properly
 FIX [ bug #3198 ] Trigger LINECONTRACT_INSERT passes Contrat as $object instead of ContratLigne
 FIX: Not showing delivery date on rouget pdf
+FIX: Not showing task extrafields when creating from left menu
+FIX [ bug #3288 ] Tasks box is not properly drawn
 
 NEW: Created new ContratLigne::insert function
 
@@ -494,6 +496,10 @@ Dolibarr better:
 - Fix: Bad permission assignments for stock movements actions
 - Fix: [ bug #2891 ] Category hooks do not work
 - Fix: [ bug #2696 ] Adding complementary attribute fails if code is numerics
+- Fix: [ bug #3074 ] Accruals accounting use payment date instead of commitment date in turnover reports for salaries
+- Fix: Not showing product supplier reference when page break
+- Fix: [ bug #3341 ] Missing translation in /compta/paiement_charge.php
+- Fix: [ bug #3342 ] Taxes dictionary page does not accept localized decimals for localtax2 rate
 
 ***** ChangeLog for 3.6.2 compared to 3.6.1 *****
 - Fix: fix ErrorBadValueForParamNotAString error message in price customer multiprice.
@@ -677,6 +683,7 @@ Fix: [ bug #2715 ] Statistics page has broken layout with long thirdparty names
 Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
 Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
 Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
+Fix: [ bug #1791 ] Margin menu not available if any Finance module is not enabled
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

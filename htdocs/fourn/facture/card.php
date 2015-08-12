@@ -2103,188 +2103,6 @@ else
 
 		$num=count($object->lines);
 
-		/*
-		$var=1;
-        for ($i = 0; $i < $num; $i++)
-        {
-            if ($i == 0)
-            {
-                print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-                print '<td align="right">'.$langs->trans('VAT').'</td>';
-                print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-                print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-                print '<td align="right">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-                print '<td align="right">'.$langs->trans('TotalHTShort').'</td>';
-                print '<td align="right">'.$langs->trans('TotalTTCShort').'</td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '</tr>';
-            }
-
-            // Show product and description
-            $type=(! empty($object->lines[$i]->product_type)?$object->lines[$i]->product_type:(! empty($object->lines[$i]->fk_product_type)?$object->lines[$i]->fk_product_type:0));
-            // Try to enhance type detection using date_start and date_end for free lines where type was not saved.
-            $date_start='';
-            $date_end='';
-            if (! empty($object->lines[$i]->date_start))
-            {
-            	$date_start=$object->lines[$i]->date_start;
-            	$type=1;
-            }
-            if (! empty($object->lines[$i]->date_end))
-            {
-            	$date_end=$object->lines[$i]->date_end;
-            	$type=1;
-            }
-
-            $var=!$var;
-
-            // Edit line
-            if ($object->statut == 0 && $action == 'editline' && $_GET['lineid'] == $object->lines[$i]->rowid)
-            {
-                print '<tr '.$bc[$var].'>';
-
-                // Show product and description
-                print '<td>';
-
-                print '<input type="hidden" name="lineid" value="'.$object->lines[$i]->rowid.'">';
-
-                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product > 0)
-                {
-                    print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
-                    $product_static=new ProductFournisseur($db);
-                    $product_static->fetch($object->lines[$i]->fk_product);
-                    $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$product_static->libelle;
-                    print $text;
-                    print '<br>';
-                }
-                else
-				{
-                    $forceall=1;	// For suppliers, we always show all types
-                    print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1,0,$forceall);
-                    if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-                    || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
-                }
-
-                if (is_object($hookmanager))
-                {
-                    $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
-                    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
-                }
-
-                $nbrows=ROWS_2;
-                if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                $doleditor=new DolEditor('desc',$object->lines[$i]->description,'',128,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-                $doleditor->Create();
-                print '</td>';
-
-                // VAT
-                print '<td align="right">';
-                print $form->load_tva('tauxtva',$object->lines[$i]->tva_tx,$societe,$mysoc);
-                print '</td>';
-
-                // Unit price
-                print '<td align="right" class="nowrap"><input size="4" name="puht" type="text" value="'.price($object->lines[$i]->pu_ht).'"></td>';
-
-                print '<td align="right" class="nowrap"><input size="4" name="puttc" type="text" value=""></td>';
-
-                print '<td align="right"><input size="1" name="qty" type="text" value="'.$object->lines[$i]->qty.'"></td>';
-
-                print '<td align="right" class="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
-
-                print '<td align="right" class="nowrap">&nbsp;</td>';
-
-                print '<td align="right" class="nowrap">&nbsp;</td>';
-
-                print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-                print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-
-                print '</tr>';
-            }
-            else // Affichage simple de la ligne
-            {
-                print '<tr id="row-'.$object->lines[$i]->rowid.'" '.$bc[$var].'>';
-
-                // Show product and description
-                print '<td>';
-                if ($object->lines[$i]->fk_product)
-                {
-                    print '<a name="'.$object->lines[$i]->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-                    $product_static=new ProductFournisseur($db);
-                    $product_static->fetch($object->lines[$i]->fk_product);
-                    $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$product_static->libelle;
-                    $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($object->lines[$i]->description));
-                    print $form->textwithtooltip($text,$description,3,'','',$i);
-
-                    // Show range
-                    print_date_range($date_start,$date_end);
-
-                    // Add description in form
-                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
-                }
-
-                // Description - Editor wysiwyg
-                if (! $object->lines[$i]->fk_product)
-                {
-                    if ($type==1) $text = img_object($langs->trans('Service'),'service');
-                    else $text = img_object($langs->trans('Product'),'product');
-                    print $text.' '.nl2br($object->lines[$i]->description);
-
-                    // Show range
-                    print_date_range($date_start,$date_end);
-                }
-
-                if (is_object($hookmanager))
-                {
-                	$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
-                	$reshook=$hookmanager->executeHooks('formViewProductSupplierOptions',$parameters,$object,$action);
-                }
-                print '</td>';
-
-                // VAT
-                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'</td>';
-
-                // Unit price
-                print '<td align="right" class="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
-
-                print '<td align="right" class="nowrap">'.($object->lines[$i]->pu_ttc?price($object->lines[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
-
-                print '<td align="right">'.$object->lines[$i]->qty.'</td>';
-
-                print '<td align="right">'.(($object->lines[$i]->remise_percent > 0)?$object->lines[$i]->remise_percent.'%':'').'</td>';
-
-                print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
-
-                print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
-
-				if (is_object($hookmanager))
-				{
-					$parameters=array('line'=>$object->lines[$i],'num'=>$num,'i'=>$i);
-					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$object,$action);
-				}
-
-                print '<td align="center" width="16">';
-                if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
-                else print '&nbsp;';
-                print '</td>';
-
-                print '<td align="center" width="16">';
-                if ($object->statut == 0)
-                {
-                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_delete_line&amp;lineid='.$object->lines[$i]->rowid.'">'.img_delete().'</a>';
-                }
-                else print '&nbsp;';
-                print '</td>';
-
-                print '</tr>';
-            }
-
-        }
-*/
 		// Form to add new line
         if ($object->statut == FactureFournisseur::STATUS_DRAFT && $user->rights->fournisseur->facture->creer)
 		{
@@ -2316,135 +2134,137 @@ else
 
             print '<div class="tabsAction">';
 
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		                                                                                          // modified by hook
-		if (empty($reshook)) {
-
-		    // Modify a validated invoice with no payments
-			if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+			                                                                                          // modified by hook
+			if (empty($reshook)) 
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+	
+			    // Modify a validated invoice with no payments
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+				}
+	
+	 	 		// Reopen a standard paid invoice
+	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+	            {
+	                if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
+	                {
+	                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+	                }
+	                else
+	                {
+	                    print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+	                }
+	            }
+	
+	            // Send by mail
+	            if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
+	            {
+	                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
+	                {
+	                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+	                }
+	                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+	            }
+	
+	
+	            // Make payments
+	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            {
+	                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create &amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
+	            }
+	
+	            // Classify paid
+	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            {
+	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
+	                print '>'.$langs->trans('ClassifyPaid').'</a>';
+	
+	                //print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
+	            }
+	
+	            // Validate
+	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
+	            {
+	                if (count($object->lines))
+	                {
+				        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
+				       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+	                    {
+	                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
+	                        print '>'.$langs->trans('Validate').'</a>';
+	                    }
+	                    else
+	                    {
+	                        print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
+	                        print '>'.$langs->trans('Validate').'</a>';
+	                    }
+	                }
+	            }
+	
+	            // Clone
+	            if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
+	            {
+	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=clone&amp;socid='.$object->socid.'">'.$langs->trans('ToClone').'</a>';
+	            }
+	
+	            // Delete
+	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
+	            {
+	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	            }
+	            print '</div>';
+	            print '<br>';
+	
+	            if ($action != 'edit')
+	            {
+					print '<div class="fichecenter"><div class="fichehalfleft">';
+	            	//print '<table width="100%"><tr><td width="50%" valign="top">';
+	                //print '<a name="builddoc"></a>'; // ancre
+	
+	                /*
+	                 * Documents generes
+	                */
+	
+	                $ref=dol_sanitizeFileName($object->ref);
+	                $subdir = get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
+	                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
+	                $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
+	                $genallowed=$user->rights->fournisseur->facture->creer;
+	                $delallowed=$user->rights->fournisseur->facture->supprimer;
+	                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+	
+	                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
+	                $somethingshown=$formfile->numoffiles;
+	
+					// Linked object block
+					$somethingshown = $form->showLinkedObjectBlock($object);
+	
+					// Show links to link elements
+					$linktoelem = $form->showLinkToObjectBlock($object,array('supplier_order'));
+					if ($linktoelem) print '<br>'.$linktoelem;
+	
+	
+					print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	                //print '</td><td valign="top" width="50%">';
+	                //print '<br>';
+	
+	                // List of actions on element
+	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	                $formactions=new FormActions($db);
+	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
+	
+					print '</div></div></div>';
+	                //print '</td></tr></table>';
+	            }
 			}
-
- 	 		// Reopen a standard paid invoice
-            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
-            {
-                if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
-                {
-                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
-                }
-                else
-                {
-                    print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
-                }
-            }
-
-            // Send by mail
-            if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
-            {
-                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->fournisseur->supplier_invoice_advance->send)
-                {
-                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                }
-                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
-            }
-
-
-            // Make payments
-            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
-            {
-                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create &amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
-            }
-
-            // Classify paid
-            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
-            {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
-                print '>'.$langs->trans('ClassifyPaid').'</a>';
-
-                //print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
-            }
-
-            // Validate
-            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
-            {
-                if (count($object->lines))
-                {
-			        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-			       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
-                    {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid"';
-                        print '>'.$langs->trans('Validate').'</a>';
-                    }
-                    else
-                    {
-                        print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"';
-                        print '>'.$langs->trans('Validate').'</a>';
-                    }
-                }
-            }
-
-            // Clone
-            if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
-            {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=clone&amp;socid='.$object->socid.'">'.$langs->trans('ToClone').'</a>';
-            }
-
-            // Delete
-            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
-            {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-            }
-            print '</div>';
-            print '<br>';
-
-            if ($action != 'edit')
-            {
-				print '<div class="fichecenter"><div class="fichehalfleft">';
-            	//print '<table width="100%"><tr><td width="50%" valign="top">';
-                //print '<a name="builddoc"></a>'; // ancre
-
-                /*
-                 * Documents generes
-                */
-
-                $ref=dol_sanitizeFileName($object->ref);
-                $subdir = get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
-                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
-                $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
-                $genallowed=$user->rights->fournisseur->facture->creer;
-                $delallowed=$user->rights->fournisseur->facture->supprimer;
-                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
-
-                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
-                $somethingshown=$formfile->numoffiles;
-
-				// Linked object block
-				$somethingshown = $form->showLinkedObjectBlock($object);
-
-				// Show links to link elements
-				$linktoelem = $form->showLinkToObjectBlock($object,array('supplier_order'));
-				if ($linktoelem) print '<br>'.$linktoelem;
-
-
-				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-                //print '</td><td valign="top" width="50%">';
-                //print '<br>';
-
-                // List of actions on element
-                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-                $formactions=new FormActions($db);
-                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
-
-				print '</div></div></div>';
-                //print '</td></tr></table>';
-            }
-		}
         }
+
         /*
          * Show mail form
-        */
+         */
         if (GETPOST('modelselected')) {
         	$action = 'presend';
         }
