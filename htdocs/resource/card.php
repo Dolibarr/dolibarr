@@ -44,6 +44,7 @@ $id						= GETPOST('id','int');
 $action					= GETPOST('action','alpha');
 $ref					= GETPOST('ref');
 $description			= GETPOST('description');
+$confirm				= GETPOST('confirm');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
 
 // Protection if external user
@@ -109,6 +110,29 @@ if (empty($reshook))
 		else
 		{
 			$action='edit';
+		}
+	}
+
+	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes')
+	{
+		$res = $object->fetch($id);
+		if($res > 0)
+		{
+			$result = $object->delete($id);
+
+			if ($result >= 0)
+			{
+				setEventMessage($langs->trans('RessourceSuccessfullyDeleted'));
+				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
+				exit;
+			}
+			else {
+				setEventMessage($object->error,'errors');
+			}
+		}
+		else
+		{
+			setEventMessage($object->error,'errors');
 		}
 	}
 }
