@@ -221,6 +221,9 @@ Fix: [ bug #2570 ] [Contacts] Page should not process if ID is invalid
 Fix: [ bug #3268 ] SQL error when accessing thirdparty log page without a socid parameter
 Fix: [ bug #3180 ] formObjectOptions hook when editing thirdparty card does not print result
 Fix: [ bug #1791 ] Margin menu not available if any Finance module is not enabled
+Fix: [ bug #3310 ] OrderLine::fetch, FactureLigne::fetch and PropaleLigne::fetch do not return anything
+Fix: [ bug #3206 ] PropaleLigne, OrderLine and FactureLigne given to triggers through update function does not contain all the information
+Fix: [ bug #3313 ] Error enabling module with PostgreSQL database
 
 ***** ChangeLog for 3.5.6 compared to 3.5.5 *****
 Fix: Avoid missing class error for fetch_thirdparty method #1973

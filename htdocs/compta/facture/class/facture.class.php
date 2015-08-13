@@ -2173,13 +2173,24 @@ class Facture extends CommonInvoice
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
-			// Update line into database
-			$this->line=new FactureLigne($this->db);
+			// Old properties: $price, $remise (deprecated)
+			$price = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
+			$price    = price2num($price);
 
-			// Stock previous line records
-			$staticline=new FactureLigne($this->db);
-			$staticline->fetch($rowid);
-			$this->line->oldline = $staticline;
+			//Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new FactureLigne($this->db);
+			$line->fetch($rowid);
+
+			$staticline = clone $line;
+
+			$line->oldline = $staticline;
+			$this->line = $line;
 
 			// Reorder if fk_parent_line change
 			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -3436,10 +3447,12 @@ class FactureLigne  extends CommonInvoiceLine
 			$this->product_desc			= $objp->product_desc;
 
 			$this->db->free($result);
+
+			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -3497,7 +3510,7 @@ class FactureLigne  extends CommonInvoiceLine
 				return -1;
 			}
 		}
-		
+
 		// POS or by external module, take lowest buying price
 		if (!empty($this->fk_product) && empty($this->fk_fournprice) && empty($this->pa_ht)) {
 		    include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
