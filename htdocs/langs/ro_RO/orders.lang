@@ -125,6 +125,7 @@ CloneOrder=Clonează comanda
 ConfirmCloneOrder=Sigur doriţi să clonaţi acestă comandă <b>%s</b> ?
 DispatchSupplierOrder=Recepţia comenzii furnizorul ui%s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsabil urmărire comandă client
 TypeContact_commande_internal_SHIPPING=Responsabil urmărire expediere comandă client

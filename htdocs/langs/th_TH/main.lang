@@ -127,6 +127,7 @@ Disable=ปิดการใช้งาน
 Disabled=พิการ
 Add=เพิ่ม
 AddLink=เพิ่มการเชื่อมโยง
+RemoveLink=Remove link
 Update=ปรับปรุง
 AddActionToDo=เพิ่มเหตุการณ์ที่จะทำ
 AddActionDone=เพิ่มเหตุการณ์ทำ
@@ -712,6 +713,8 @@ Genderman=คน
 Genderwoman=หญิง
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=วันจันทร์
 Tuesday=วันอังคาร

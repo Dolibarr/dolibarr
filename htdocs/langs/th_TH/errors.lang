@@ -171,7 +171,7 @@ ErrorGlobalVariableUpdater5=ไม่มีตัวแปรทั่วโล�
 ErrorFieldMustBeANumeric=<b>s สนาม%</b> จะต้องเป็นค่าตัวเลข
 ErrorFieldMustBeAnInteger=<b>s สนาม%</b> ต้องเป็นจำนวนเต็ม
 ErrorMandatoryParametersNotProvided=พารามิเตอร์บังคับ (s) ไม่ได้ให้
-ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=พารามิเตอร์การตั้งค่าบังคับไม่ได้กำหนดไว้ยัง

@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Bitte Wert für Checkbox-Liste eingeben
 ErrorNoValueForRadioType=Bitte Wert für Radiobutton-Liste eingeben
 ErrorBadFormatValueList=Die Liste darf nicht mehr als ein <u>%s</u> enthalten, muss aber mindestens eines aus "llave,valores" beinhalten
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen, Großbuchstaben und Zahlen enthalten.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
 ErrorExportDuplicateProfil=Dieser Profilname existiert bereits für dieses Exportprofil.
 ErrorLDAPSetupNotComplete=Der LDAP-Abgleich für dieses System ist nicht vollständig eingerichtet.
@@ -171,7 +171,7 @@ ErrorGlobalVariableUpdater5=Keine globale Variable ausgewählt
 ErrorFieldMustBeANumeric=Feld <b>%s</b> muss ein numerischer Wert sein
 ErrorFieldMustBeAnInteger=Feld <b>%s</b> muss eine ganze Zahl sein
 ErrorMandatoryParametersNotProvided=Erforderliche(r) Parameter wird nicht angeboten
-ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert

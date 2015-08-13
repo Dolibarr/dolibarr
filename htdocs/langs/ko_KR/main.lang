@@ -127,6 +127,7 @@ Disable=Disable
 Disabled=Disabled
 Add=Add
 AddLink=Add link
+RemoveLink=Remove link
 Update=Update
 AddActionToDo=Add event to do
 AddActionDone=Add event done
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=월요일
 Tuesday=화요일

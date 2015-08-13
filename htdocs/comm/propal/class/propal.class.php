@@ -643,15 +643,15 @@ class Propal extends CommonObject
                 $price = $pu - $remise;
             }
 
-            // Update line
-            $this->line=new PropaleLigne($this->db);
+            //Fetch current line from the database and then clone the object and set it in $oldline property
+            $line = new PropaleLigne($this->db);
+            $line->fetch($rowid);
 
+            $staticline = clone $line;
+
+            $line->oldline = $staticline;
+            $this->line = $line;
             $this->line->context = $this->context;
-
-            // Stock previous line records
-            $staticline=new PropaleLigne($this->db);
-            $staticline->fetch($rowid);
-            $this->line->oldline = $staticline;
 
             // Reorder if fk_parent_line change
             if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
@@ -1062,9 +1062,9 @@ class Propal extends CommonObject
     function createFromClone($socid=0)
     {
         global $db, $user,$langs,$conf,$hookmanager;
-		
+
 		dol_include_once('/projet/class.project.class.php');
-				
+
         $this->context['createfromclone']='createfromclone';
 
         $error=0;
@@ -1089,16 +1089,16 @@ class Propal extends CommonObject
                 $this->socid 				= $objsoc->id;
                 $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
                 $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				
+
 				$project = new Project($db);
-				
+
 				if($objFrom->fk_project > 0 && $project->fetch($objFrom->fk_project)) {
 					if($project->socid <= 0) $this->fk_project = $objFrom->fk_project;
 					else $this->fk_project = '';
 				} else {
 					$this->fk_project = '';
 				}
-                
+
                 $this->fk_delivery_address	= '';
             }
 
@@ -3107,10 +3107,12 @@ class PropaleLigne  extends CommonObjectLine
             $this->date_end         = $this->db->jdate($objp->date_end);
 
 			$this->db->free($result);
+
+            return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			return -1;
 		}
 	}
 

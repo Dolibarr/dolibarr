@@ -12,7 +12,6 @@ Creditor=Kreditor
 PaymentCode=Betaling kode
 PayBoxDoPayment=Go om betaling
 YouWillBeRedirectedOnPayBox=Du bliver omdirigeret om sikret Paybox siden til input du kreditkort informationer
-PleaseBePatient=Vær tålmodig
 Continue=Næste
 ToOfferALinkForOnlinePayment=URL til %s betaling
 ToOfferALinkForOnlinePaymentOnOrder=URL til at tilbyde en %s online betaling brugergrænseflade til en ordre

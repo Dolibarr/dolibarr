@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=如果数据库已经存在，请返回并�
 WarningBrowserTooOld=浏览器的版本太旧，您的浏览器需升级到最新版本，建议使用Firefox，Chrome或Opera浏览器。
 PHPVersion=PHP版本
 YouCanContinue=您可以继续...
-PleaseBePatient=请耐心等待...
 License=使用许可
 ConfigurationFile=配置文件
 WebPagesDirectory=目录下的网页存储

@@ -12,7 +12,6 @@ Creditor=Borgenär
 PaymentCode=Betalning kod
 PayBoxDoPayment=Gå mot betalning
 YouWillBeRedirectedOnPayBox=Du kommer att omdirigeras på säkrade Paybox sida för att mata dig kreditkortsinformation
-PleaseBePatient=Snälla, ha tålamod
 Continue=Nästa
 ToOfferALinkForOnlinePayment=URL för %s betalning
 ToOfferALinkForOnlinePaymentOnOrder=URL för att erbjuda en %s online gränssnitt betalning användare för en ordning

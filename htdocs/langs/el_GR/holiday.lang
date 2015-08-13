@@ -130,7 +130,6 @@ nbJours=Αριθμός ημερών
 TitleAdminCP=Διαμόρφωση των αδειών
 NoticePeriod=Notice period
 #Messages
-Hello=Γεια σας
 HolidaysToValidate=Επικύρωση των αιτήσεων για τις άδειες
 HolidaysToValidateBody=Παρακάτω είναι ένα αίτημα άδειας για την επικύρωση
 HolidaysToValidateDelay=Αυτή η αίτηση αδείας θα πραγματοποιηθεί εντός προθεσμίας μικρότερης των %s ημερών.

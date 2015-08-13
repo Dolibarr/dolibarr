@@ -125,6 +125,7 @@ CloneOrder=Klóna röð
 ConfirmCloneOrder=Ertu viss um að þú viljir klón þessari <b>röð %s ?</b>
 DispatchSupplierOrder=Móttaka birgir röð %s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp viðskiptavina röð
 TypeContact_commande_internal_SHIPPING=Fulltrúi eftirfarandi upp siglinga

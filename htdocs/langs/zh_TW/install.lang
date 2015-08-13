@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=如果數據庫已經存在，請返回並�
 WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP版本
 YouCanContinue=您可以繼續...
-PleaseBePatient=請耐心等待...
 License=使用許可
 ConfigurationFile=配置文件
 WebPagesDirectory=目錄下的網頁存儲

@@ -127,6 +127,7 @@ Disable=Tắt
 Disabled=Đã tắt
 Add=Thêm
 AddLink=Thêm liên kết
+RemoveLink=Remove link
 Update=Cập nhật
 AddActionToDo=Thêm sự kiện cần làm
 AddActionDone=Thêm sự kiện đã hoàn thành
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Thứ Hai
 Tuesday=Thứ Ba

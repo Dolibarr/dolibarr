@@ -43,4 +43,4 @@ ListOfSupplierOrders=Liste over leverandørordre
 MenuOrdersSupplierToBill=Leverandørordre til faktura
 NbDaysToDelivery=Leveringsforsinkelse i dager
 DescNbDaysToDelivery=Største leveringsforsinkelse av varer fra denne ordren
-UseDoubleApproval=Bruk dobbel godkjenning (den andre godkjennelsen kan gjøres av alle brukere med riktig adgang)
+UseDoubleApproval=Use double approval when amount (without tax) is higher than (The second approval can be done by any user with the dedicated permission. Set to 0 for no double approval)

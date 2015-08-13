@@ -127,6 +127,7 @@ Disable=Выключить
 Disabled=Выключено
 Add=Добавить
 AddLink=Добавить ссылку
+RemoveLink=Remove link
 Update=Обновить
 AddActionToDo=Добавить действие для выполнения
 AddActionDone=Добавить завершенное действий
@@ -712,6 +713,8 @@ Genderman=Мужчина
 Genderwoman=Женщина
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Понедельник
 Tuesday=Вторник

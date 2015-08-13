@@ -12,7 +12,6 @@ Creditor=Zahlungsempfänger
 PaymentCode=Zahlungscode
 PayBoxDoPayment=Jetzt bezahlen
 YouWillBeRedirectedOnPayBox=Zur Eingabe Ihrer Kreditkartendaten werden Sie an eine sichere Bezahlseite weitergeleitet.
-PleaseBePatient=Bitte haben Sie ein wenig Geduld...
 Continue=Fortfahren
 ToOfferALinkForOnlinePayment=URL für %s Zahlung
 ToOfferALinkForOnlinePaymentOnOrder=URL um Ihren Kunden eine %s Online-Bezahlseite für Bestellungen anzubieten

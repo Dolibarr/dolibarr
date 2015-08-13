@@ -130,7 +130,6 @@ nbJours=Anzahl der Tage
 TitleAdminCP=Konfiguration der Urlaube
 NoticePeriod=Kündigungsfrist
 #Messages
-Hello=Hallo
 HolidaysToValidate=Genehmige Urlaubsanträge
 HolidaysToValidateBody=Es folgt ein Urlaubsantrag zur Freigabe
 HolidaysToValidateDelay=Dieser Urlaub wird in weniger als %s Tagen stattfinden.

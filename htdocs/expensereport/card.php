@@ -1546,7 +1546,7 @@ else
 				else
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("Approbator").'</td>';
+					print '<td>'.$langs->trans("ApprovedBy").'</td>';
 					print '<td>';
 					if ($object->fk_user_approve > 0)
 					{
@@ -1580,6 +1580,7 @@ else
 
 				if($object->fk_statut==6)
 				{
+					/* TODO this fields are not yet filled
 					print '<tr>';
 					print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
 					print '<td>';
@@ -1591,6 +1592,7 @@ else
 					print '<td>'.$langs->trans("DATE_PAIEMENT").'</td>';
 					print '<td>'.$object->date_paiement.'</td></tr>';
 					print '</tr>';
+					*/
 				}
 
 				print '</table>';

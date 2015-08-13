@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Ha az adatbázis már létezik, menjen viss
 WarningBrowserTooOld=A böngésző verziója túl alacsony. A legfrissebb verziójú Firefox, Chrome vagy Opera használata erősen ajánlott. 
 PHPVersion=PHP Verzió
 YouCanContinue=Folytathatja...
-PleaseBePatient=Kerjük legyen türelemmel...
 License=Használatban lévõ licensz
 ConfigurationFile=Konfigurációs fájl
 WebPagesDirectory=A könyvtár ahol a weblapok tárolva vannak

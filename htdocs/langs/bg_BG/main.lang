@@ -127,6 +127,7 @@ Disable=Забрани
 Disabled=Забранен
 Add=Добавяне
 AddLink=Добавяне на връзка
+RemoveLink=Remove link
 Update=Актуализация
 AddActionToDo=Добави събитие
 AddActionDone=Събитието е добавено
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Понеделник
 Tuesday=Вторник

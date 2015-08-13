@@ -12,7 +12,6 @@ Creditor=Πιστωτής
 PaymentCode=Κωδικός Πληρωμής
 PayBoxDoPayment=Μετάβαση στην πληρωμή
 YouWillBeRedirectedOnPayBox=Θα μεταφερθείτε σε προστατευμένη σελίδα Paybox να εισάγετε τα στοιχεία της πιστωτικής σας κάρτας
-PleaseBePatient=Παρακαλώ, να είστε υπομονετικοί
 Continue=Επόμενη
 ToOfferALinkForOnlinePayment=URL για %s πληρωμής
 ToOfferALinkForOnlinePaymentOnOrder=URL για να προσφέρει μια %s online διεπαφή χρήστη πληρωμή για την παραγγελία

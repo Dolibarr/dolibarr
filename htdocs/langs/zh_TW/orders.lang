@@ -125,6 +125,7 @@ CloneOrder=複製訂單
 ConfirmCloneOrder=你確定要複製這個 <b>%s</b> 訂單嗎?
 DispatchSupplierOrder=接收供應商的訂單%s
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=代替客戶下單
 TypeContact_commande_internal_SHIPPING=代替客戶寄送

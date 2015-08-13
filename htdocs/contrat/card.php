@@ -762,7 +762,6 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		setEventMessage($object->error,'errors');
 	}
 } elseif ($action=='setref_supplier') {
-
 	$cancelbutton = GETPOST('cancel');
 
 	if (!$cancelbutton) {
@@ -771,9 +770,8 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		if ($result < 0) {
 			setEventMessage($object->errors, 'errors');
 		}
-		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 
-		$result = $object->update($user);
+        $result = $object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
 		if ($result < 0) {
 			setEventMessage($object->errors, 'errors');
 			$action = 'editref_supplier';
@@ -794,9 +792,8 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
         if ($result < 0) {
             setEventMessage($object->errors, 'errors');
         }
-        $object->ref = GETPOST('ref', 'alpha');
 
-        $result = $object->update($user);
+        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));;
         if ($result < 0) {
             setEventMessage($object->errors, 'errors');
             $action = 'editref';

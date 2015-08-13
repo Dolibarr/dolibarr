@@ -12,7 +12,6 @@ Creditor=债权人
 PaymentCode=付款代码
 PayBoxDoPayment=前往付款
 YouWillBeRedirectedOnPayBox=您将被重定向担保Paybox页，输入您的信用卡信息
-PleaseBePatient=请耐心等待
 Continue=未来
 ToOfferALinkForOnlinePayment=网址为%s支付
 ToOfferALinkForOnlinePaymentOnOrder=网址提供一个命令%s网上支付的用户界面

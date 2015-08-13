@@ -850,8 +850,8 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string $type        Type of categories ('customer', 'supplier', 'contact', 'product', 'member'). Old
-	 *                              mode (0, 1, 2, ...) is deprecated.
+	 * @param   string $type        Type of categories ('customer', 'supplier', 'contact', 'product', 'member').
+	 *                              Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   int    $markafterid Removed all categories including the leaf $markafterid in category tree.
 	 *
 	 * @return  array               Array of categories. this->cats and this->motherof are set.
@@ -861,12 +861,12 @@ class Categorie extends CommonObject
 	    global $conf, $langs;
 
 		// For backward compatibility
-		if (is_numeric( $type )) {
+		if (is_numeric($type))
+		{
 			// We want to reverse lookup
-			$map_type = array_flip( $this->MAP_ID );
+			$map_type = array_flip($this->MAP_ID);
 			$type = $map_type[$type];
-			dol_syslog( get_class( $this ) . "::get_full_arbo(): numeric types are deprecated, please use string instead",
-				LOG_WARNING );
+			dol_syslog( get_class( $this ) . "::get_full_arbo(): numeric types are deprecated, please use string instead", LOG_WARNING);
 		}
 
 		$this->cats = array();

@@ -9,6 +9,7 @@ HideAnyVATInformationOnPDF=Cacher toutes les informations en rapport avec la TVA
 OldVATRates=Ancien taux de TVA (TPS)
 NewVATRates=Nouveau taux de TVA (TPS)
 LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>2 : taxe locale sur les produits et services avant tva (TPS) (la taxe locale est appliquée sur le montant + tva (TPS))<br>3 : taxe locale uniquement sur les produits hors tva (TPS) (la taxe locale est calculée sur le montant hors taxe)<br>4 : taxe locale uniquement sur les produits avant tva(TPS) (la taxe locale est calculée sur le montant + tva)<br>5 : taxe locale uniquement sur les services hors tva (la taxe locale est calculée sur le montant hors taxe)<br>6 : taxe locale uniquement sur les service avant tva (la taxe locale est calculée sur le montant + tva)
+Module75Name=Notes de frais et déplacements
 Module500Name=Dépenses spéciales (taxes, charges, dividendes)
 Module500Desc=Gestion des dépenses spéciales comme les taxes, charges sociales et dividendes
 Module770Name=Note de frais

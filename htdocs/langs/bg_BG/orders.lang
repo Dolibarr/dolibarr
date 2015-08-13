@@ -125,6 +125,7 @@ CloneOrder=Clone за
 ConfirmCloneOrder=Сигурен ли сте, че искате да клонирате за този <b>%s?</b>
 DispatchSupplierOrder=Получаване %s доставчика ред
 FirstApprovalAlreadyDone=First approval already done
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Представител проследяване поръчка на клиента
 TypeContact_commande_internal_SHIPPING=Представител проследяване доставка

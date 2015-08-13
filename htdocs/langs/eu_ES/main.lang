@@ -127,6 +127,7 @@ Disable=Disable
 Disabled=Disabled
 Add=Gehitu
 AddLink=Esteka gehitu
+RemoveLink=Remove link
 Update=Berritu
 AddActionToDo=Add event to do
 AddActionDone=Add event done
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Monday
 Tuesday=Tuesday

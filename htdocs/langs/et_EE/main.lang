@@ -127,6 +127,7 @@ Disable=Keela
 Disabled=Keelatud
 Add=Lisa
 AddLink=Lisa link
+RemoveLink=Remove link
 Update=Uuenda
 AddActionToDo=Lisa tegevus täitmiseks
 AddActionDone=Lisa tehtud tegevus
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Esmaspäev
 Tuesday=Teisipäev

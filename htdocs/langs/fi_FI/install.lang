@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Jos tietokanta on jo olemassa, mene takaisi
 WarningBrowserTooOld=Selaimesi versio on liian vanha. Selaimen päivitys tuoreimpaan versioon on suositeltavaa. Suosittelemme selaimeksi Firefoxia, Chromea tai Operaa.
 PHPVersion=PHP Version
 YouCanContinue=Voit jatkaa ...
-PleaseBePatient=Ole kärsivällinen ...
 License=Käyttämällä lisenssi
 ConfigurationFile=Configuration file
 WebPagesDirectory=Directory jossa www-sivut on tallennettu

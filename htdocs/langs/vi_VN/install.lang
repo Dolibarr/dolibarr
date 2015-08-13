@@ -35,7 +35,6 @@ IfDatabaseExistsGoBackAndCheckCreate=Nếu cơ sở dữ liệu đã tồn tại
 WarningBrowserTooOld=Quá phiên bản cũ của trình duyệt. Nâng cấp trình duyệt của bạn đến một phiên bản mới của trình duyệt Firefox, Chrome hay Opera là rất recommanded.
 PHPVersion=Phiên bản PHP
 YouCanContinue=Bạn có thể tiếp tục ...
-PleaseBePatient=Xin hãy kiên nhẫn ...
 License=Sử dụng giấy phép
 ConfigurationFile=Tập tin cấu hình
 WebPagesDirectory=Thư mục các trang web được lưu trữ

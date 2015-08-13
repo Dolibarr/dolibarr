@@ -127,6 +127,7 @@ Disable=Uitschakelen
 Disabled=Uitgeschakeld
 Add=Toevoegen
 AddLink=Link toevoegen
+RemoveLink=Remove link
 Update=Update
 AddActionToDo=Voeg de actie nog doen toe
 AddActionDone=Toevoegen actie gedaan
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=Maandag
 Tuesday=Dinsdag

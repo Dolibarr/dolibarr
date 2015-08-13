@@ -127,6 +127,7 @@ Disable=無効にする
 Disabled=無効にする
 Add=加える
 AddLink=リンクを追加
+RemoveLink=Remove link
 Update=更新
 AddActionToDo=行うためにイベントを追加
 AddActionDone=追加イベントが行わ
@@ -712,6 +713,8 @@ Genderman=Man
 Genderwoman=Woman
 ViewList=List view
 Mandatory=Mandatory
+Hello=Hello
+Sincerely=Sincerely
 # Week day
 Monday=月曜日
 Tuesday=火曜日

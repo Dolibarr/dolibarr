@@ -87,13 +87,16 @@ if (file_exists($xmlfile))
         print '</tr>'."\n";
         $var = true;
         $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
-        foreach ($tmpfilelist as $file)
+        if (is_array($tmpfilelist))
         {
-            $var = !$var;
-            print '<tr ' . $bc[$var] . '>';
-            print '<td>'.$file['filename'].'</td>' . "\n";
-            print '<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-            print "</tr>\n";
+	        foreach ($tmpfilelist as $file)
+	        {
+	            $var = !$var;
+	            print '<tr ' . $bc[$var] . '>';
+	            print '<td>'.$file['filename'].'</td>' . "\n";
+	            print '<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
+	            print "</tr>\n";
+	        }
         }
         print '</table>';
 
@@ -109,16 +112,19 @@ if (file_exists($xmlfile))
         print '</tr>'."\n";
         $var = true;
         $tmpfilelist = dol_sort_array($file_list['updated'], 'filename');
-        foreach ($tmpfilelist as $file)
+        if (is_array($tmpfilelist))
         {
-            $var = !$var;
-            print '<tr ' . $bc[$var] . '>';
-            print '<td>'.$file['filename'].'</td>' . "\n";
-            print '<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
-            print '<td align="center">'.$file['md5'].'</td>' . "\n";
-            print '<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename'])).'</td>' . "\n";
-            print '<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
-            print "</tr>\n";
+	        foreach ($tmpfilelist as $file)
+	        {
+	            $var = !$var;
+	            print '<tr ' . $bc[$var] . '>';
+	            print '<td>'.$file['filename'].'</td>' . "\n";
+	            print '<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
+	            print '<td align="center">'.$file['md5'].'</td>' . "\n";
+	            print '<td align="right">'.dol_print_size(dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename'])).'</td>' . "\n";
+	            print '<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+	            print "</tr>\n";
+	        }
         }
         print '</table>';
     }

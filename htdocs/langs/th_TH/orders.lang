@@ -125,6 +125,7 @@ CloneOrder=เพื่อโคลน
 ConfirmCloneOrder=<b>คุณแน่ใจหรือว่าต้องการโคลน% s</b> สั่งซื้อนี้?
 DispatchSupplierOrder=ผู้จัดจำหน่ายที่ได้รับการสั่งซื้อ% s
 FirstApprovalAlreadyDone=ได้รับการอนุมัติครั้งแรกที่ทำมาแล้ว
+SecondApprovalAlreadyDone=Second approval already done
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=ต่อไปนี้แทนขึ้นสั่งซื้อของลูกค้า
 TypeContact_commande_internal_SHIPPING=แทนการจัดส่งสินค้าต่อไปนี้ขึ้น

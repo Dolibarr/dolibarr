@@ -130,7 +130,6 @@ nbJours=Gün sayısı
 TitleAdminCP=İzinlerin Yapılandırılması
 NoticePeriod=Bildirim dönemi
 #Messages
-Hello=Merhaba
 HolidaysToValidate=İzin isteği doğrula
 HolidaysToValidateBody=Doğrulanacak izin isteği aşağıdadır
 HolidaysToValidateDelay=Bu izin isteği %s günden kısa bir sürede gerçekleşecektir.

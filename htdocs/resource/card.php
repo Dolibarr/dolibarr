@@ -232,7 +232,7 @@ if ( $object->fetch($id) > 0 )
 			if($user->rights->resource->write)
 			{
 				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Edit').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}

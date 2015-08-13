@@ -65,7 +65,7 @@ ErrorNoValueForCheckBoxType=Sett inn verdi for å velge avkrysningsboks-liste
 ErrorNoValueForRadioType=Sett i verdi for radioknapp-liste
 ErrorBadFormatValueList=Listeverdien kan ikke føres opp mer enn en gang: <u>%s</u>, men kreves minst en gang
 ErrorFieldCanNotContainSpecialCharacters=Feltet <b>%s</b> kan ikke inneholde spesialtegn.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Feltet <b>%s</b> må ikke inneholde spesialkarakterer, ikke store bokstaver og ikke bare tall
 ErrorNoAccountancyModuleLoaded=Ingen regnskapsmodul aktivert
 ErrorExportDuplicateProfil=Profilnavnet til dette eksport-oppsettet finnes allerede
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP oppsett er ikke komplett.
@@ -171,7 +171,7 @@ ErrorGlobalVariableUpdater5=Ingen global variabel valgt
 ErrorFieldMustBeANumeric=Feltet <b>%s</b> må være en numerisk verdi
 ErrorFieldMustBeAnInteger=Feltet <b>%s</b> må være et heltall
 ErrorMandatoryParametersNotProvided=Obligatorisk(e) parametre ikke angitt
-ErrorOppStatusRequiredIfAmount=Vous avez renseigné un montant estimé de l'opportunité. Dans ce cas, il faut aussi renseigner le statut d'opportunité
+ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 
 # Warnings
 WarningMandatorySetupNotComplete=Obligatoriske parametre er enda ikke satt opp
