@@ -111,7 +111,7 @@ if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
 $sql .= " ORDER BY f.datef";
 
-dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
+dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$tabfac = array ();
