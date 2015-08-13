@@ -102,10 +102,12 @@ if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity IN (" . getEntity("facture", 1) . ")";
 }
 $sql .= " AND f.fk_statut > 0";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
-	$sql .= " AND f.type IN (0,1,2,5)";
-else
-	$sql .= " AND f.type IN (0,1,2,3,5)";
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
+}
+else {
+	$sql.= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_STANDARD.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
+}
 $sql .= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
@@ -143,15 +145,14 @@ if ($result) {
 		$line = new FactureLigne($db);
 		$line->fetch($obj->rowid);
 		$prev_progress = $line->get_prev_progress();
-		if ($obj->type==5) {
+		if ($obj->type==Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
 				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 			}
-		}
-		else {
+		} else {
 			$situation_ratio = 1;
 		}
 
