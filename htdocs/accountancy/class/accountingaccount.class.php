@@ -61,14 +61,15 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Load record in memory
 	 *
-	 * @param	int		$rowid				Id
-	 * @param	string	$account_number		Account number
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @param	int		$rowid					Id
+	 * @param	string	$account_number			Account number
+	 * @param	int		$limittocurentchart		1=Do not load record if it is into another accounting system
+	 * @return 	int								<0 if KO, >0 if OK
 	 */
 	function fetch($rowid = null, $account_number = null, $limittocurentchart=0)
 	{
 		global $conf;
-		
+
 		if ($rowid || $account_number) {
 			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
 			$sql.= " FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE";
