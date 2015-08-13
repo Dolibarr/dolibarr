@@ -120,12 +120,13 @@ class box_task extends ModeleBoxes
 
 
 		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left" colspan="2" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="left"', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
+		$this->info_box_contents[$i][1] = array('td' => '', 'text' => "");
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
 		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
 		$this->info_box_contents[$i][5] = array('td' => '', 'text' => "");
-		
+
 	}
 
 	/**

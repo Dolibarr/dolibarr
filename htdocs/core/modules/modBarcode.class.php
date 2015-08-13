@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +100,7 @@ class modBarcode extends DolibarrModules
 						        'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
 						        'enabled'=>'$conf->barcode->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        				        'perms'=>'1',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        				        'perms'=>'$user->rights->barcode->lire_advance',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -111,7 +112,7 @@ class modBarcode extends DolibarrModules
 								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>300,
 								'enabled'=>'$conf->barcode->enabled && $leftmenu=="modulesadmintools"',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->barcode->creer_advance',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

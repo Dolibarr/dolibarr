@@ -1140,6 +1140,8 @@ class Expedition extends CommonObject
 				$line->details_entrepot[]     = $detail_entrepot;
 
                 $line->line_id          = $obj->line_id;
+                $line->rowid            = $obj->line_id;    // TODO deprecated
+                $line->id               = $obj->line_id;
 				$line->fk_origin_line 	= $obj->fk_origin_line;
 				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
 				$line->fk_product     	= $obj->fk_product;

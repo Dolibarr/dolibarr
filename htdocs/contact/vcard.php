@@ -64,8 +64,8 @@ $v->setPhoneNumber($contact->phone_pro, "PREF;WORK;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "CELL;VOICE");
 $v->setPhoneNumber($contact->fax, "WORK;FAX");
 
-$v->setAddress("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country_id:''), "WORK;POSTAL");
-$v->setLabel("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country_id:''), "WORK");
+$v->setAddress("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country:''), "WORK;POSTAL");
+$v->setLabel("", "", $contact->address, $contact->town, "", $contact->zip, ($contact->country_code?$contact->country:''), "WORK");
 $v->setEmail($contact->email,'internet,pref');
 $v->setNote($contact->note);
 
@@ -77,7 +77,7 @@ if ($company->id)
 	$v->setURL($company->url, "WORK");
 	if (! $contact->phone_pro) $v->setPhoneNumber($company->phone, "WORK;VOICE");
 	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "WORK;FAX");
-	if (! $contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country_code, "WORK;POSTAL");
+	if (! $contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "WORK;POSTAL");
 	if ($company->email != $contact->email) $v->setEmail($company->email,'internet');
 	// Si contact lie a un tiers non de type "particulier"
 	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);

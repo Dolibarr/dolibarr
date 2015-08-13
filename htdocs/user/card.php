@@ -255,7 +255,7 @@ if ($action == 'add' && $canadduser)
             $langs->load("errors");
             $db->rollback();
             if (is_array($object->errors) && count($object->errors)) setEventMessage($object->errors,'errors');
-            else setEventMessage($object->error);
+            else setEventMessage($object->error, 'errors');
             $action="create";       // Go back to create page
         }
 
@@ -320,7 +320,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 				$result=$tmpuser->fetch(0, GETPOST("login"));
 				if ($result > 0)
 				{
-					setEventMessage($langs->trans("ErrorLoginAlreadyExists"), 'errors');
+					setEventMessage($langs->trans("ErrorLoginAlreadyExists", GETPOST('login')), 'errors');
 					$action="edit";       // Go back to create page
 					$error++;
 				}
