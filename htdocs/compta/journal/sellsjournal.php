@@ -163,10 +163,16 @@ if ($result)
 		$line = new FactureLigne($db);
 		$line->fetch($obj->id);
 		$prev_progress = $line->get_prev_progress();
-		if ($obj->situation_percent == 0) { // Avoid divide by 0
-			$situation_ratio = 0;
-		} else {
-			$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+		if ($obj->type==5) {
+			// Avoid divide by 0
+			if ($obj->situation_percent == 0) { 
+				$situation_ratio = 0;
+			} else {
+				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+			}
+		}
+		else {
+			$situation_ratio = 1;
 		}
 
     	//la ligne facture
