@@ -169,11 +169,6 @@ else if ($action == 'usesearchtoselectproduct')
 	$usesearch = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $usesearch,'chaine',0,'',$conf->entity);
 }
-else if ($action == 'useMaskOnClone')
-{
-	$usemask = GETPOST('activate_useMaskOnClone','alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_USE_MASK_ON_CLONE", $usemask,'chaine',0,'',$conf->entity);
-}
 else if ($action == 'set')
 {
 	$const = "PRODUCT_SPECIAL_".strtoupper(GETPOST('spe','alpha'));
@@ -438,21 +433,6 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr>';
-print '</form>';
-
-// Pouvoir utiliser la numérotation configurée dans le masque produit lors du  clonage d'un produit
-$var=!$var;
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="useMaskOnClone">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UseMaskOnClone", $conf->service->enabled ? '/service' : '').'</td>';
-print '<td width="60" align="right">';
-print $form->selectyesno("activate_useMaskOnClone",$conf->global->PRODUIT_USE_MASK_ON_CLONE,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

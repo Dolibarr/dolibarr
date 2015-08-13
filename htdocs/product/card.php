@@ -1614,7 +1614,7 @@ if ($result > 0)
 }
 
 $tmpcode='';
-if (! empty($modCodeProduct->code_auto) && $conf->global->PRODUIT_USE_MASK_ON_CLONE) $tmpcode=$modCodeProduct->getNextValue($object,$object->type);
+if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$object->type);
 
 // Define confirmation messages
 $formquestionclone=array(
