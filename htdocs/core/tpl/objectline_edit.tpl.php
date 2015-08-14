@@ -108,19 +108,7 @@ $coldisplay=-1; // We remove first td
 
 	<?php if ($object->element == 'askpricesupplier') { ?>
 		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="<?php echo $line->ref_fourn; ?>" size="12"></td>
-<<<<<<< HEAD
-	<?php } ?>
-
-	<td align="right"><?php $coldisplay++; ?><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
-
-	<td align="right"><?php $coldisplay++; ?><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
-	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right"><?php $coldisplay++; ?><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
-=======
->>>>>>> fc8a822f1d9fdfbe96dfb28bb484341299b4a032
-	<?php } ?>
-
-	<?php
+	<?php }
 	$coldisplay++;
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
 		print '<td align="right">' . $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type) . '</td>';

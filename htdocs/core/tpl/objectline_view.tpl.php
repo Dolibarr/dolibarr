@@ -125,17 +125,10 @@ if (empty($usemargins)) $usemargins=0;
 	}
 	?>
 	</td>
-<<<<<<< HEAD
-
-	<?php if ($object->element == 'askpricesupplier') { ?>
-		<td align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php } ?>
 	
-=======
 	<?php if ($object->element == 'askpricesupplier') { ?>
 		<td align="right"><?php echo $line->ref_fourn; ?></td>
 	<?php } ?>
->>>>>>> fc8a822f1d9fdfbe96dfb28bb484341299b4a032
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>

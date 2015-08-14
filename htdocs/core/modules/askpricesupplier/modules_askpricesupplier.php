@@ -23,13 +23,8 @@
 /**
  *  \file       htdocs/core/modules/propale/modules_propale.php
  *  \ingroup    propale
-<<<<<<< HEAD
- *  \brief      Fichier contenant la classe mere de generation des demandes de prix en PDF
- *  			et la classe mere de numerotation des demandes de prix
-=======
  *  \brief      Fichier contenant la classe mere de generation des propales en PDF
  *  			et la classe mere de numerotation des propales
->>>>>>> fc8a822f1d9fdfbe96dfb28bb484341299b4a032
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';

@@ -6,12 +6,8 @@
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
-<<<<<<< HEAD
- * Copyright (C) 2011-2013 Juanjo Menent			   <jmenent@2byte.es>
-=======
  * Copyright (C) 2011-2013 Juanjo Menent                <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
->>>>>>> fc8a822f1d9fdfbe96dfb28bb484341299b4a032
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

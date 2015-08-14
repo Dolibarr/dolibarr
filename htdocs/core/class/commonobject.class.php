@@ -2882,11 +2882,6 @@ abstract class CommonObject
 
 		if ($this->element == 'askpricesupplier')
 		{
-			print '<td align="right"><span id="title_fourn_ref">'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
-		}
-
-		if ($this->element == 'askpricesupplier')
-		{
 			print '<td align="right"><span id="title_fourn_ref">'.img_picto($langs->trans('AskpricesupplierDescRefFourn'), 'info', 'class="linkobject"').'&nbsp;'.$langs->trans("AskPriceSupplierRefFourn").'</span></td>';
 		}
 

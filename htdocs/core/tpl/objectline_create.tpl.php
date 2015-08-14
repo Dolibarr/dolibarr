@@ -55,11 +55,7 @@ if (in_array($object->element,array('propal', 'askpricesupplier','facture','invo
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
 	<?php if ($object->element == 'askpricesupplier') { ?>
-<<<<<<< HEAD
-		<td align="right"><span id="title_fourn_ref"><?php echo img_picto($langs->trans('AskpricesupplierDescRefFourn'), 'info', 'class="linkobject"').'&nbsp;'.$langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
-=======
 		<td align="right"><span id="title_fourn_ref"><?php echo $langs->trans('AskPriceSupplierRefFourn'); ?></span></td>
->>>>>>> fc8a822f1d9fdfbe96dfb28bb484341299b4a032
 	<?php } ?>
 	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
@@ -215,10 +211,6 @@ else {
 	$doleditor->Create();
 	?>
 	</td>
-	
-	<?php if ($object->element == 'askpricesupplier') { ?>
-		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
-	<?php } ?>
 
 	<?php if ($object->element == 'askpricesupplier') { ?>
 		<td class="nobottom" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>

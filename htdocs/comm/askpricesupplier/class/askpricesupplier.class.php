@@ -1649,7 +1649,7 @@ class AskPriceSupplier extends CommonObject
 				continue;
 
 			$idProductFourn = $productsupplier->find_min_price_product_fournisseur($product->fk_product, $product->qty);
-			$res = $productsupplier->fetch($idProductFourn);
+			if ($idProductFourn > 0) $productsupplier->fetch($idProductFourn);
 
 			if ($productsupplier->id) {
 				if ($productsupplier->fourn_qty == $product->qty) {
