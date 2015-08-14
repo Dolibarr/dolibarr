@@ -1047,19 +1047,6 @@ function dol_getdate($timestamp,$fast=false)
 	else
 	{
 		$arrayinfo=getdate($timestamp);
-
-		/*$startday=isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1;
-		if($startday==1)
-		{
-			if ($arrayinfo["wday"]==0)
-			{
-				$arrayinfo["wday"]=6;
-			}
-			else
-			{
-				$arrayinfo["wday"]=$arrayinfo["wday"]-1;
-			}
-		}*/
 	}
 
 	return $arrayinfo;
@@ -1136,19 +1123,6 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 	else
 	{
 		dol_print_error('','PHP version must be 5.3+');
-		/*
-		$usealternatemethod=false;
-		if ($year <= 1970) $usealternatemethod=true;		// <= 1970
-		if ($year >= 2038) $usealternatemethod=true;		// >= 2038
-
-		if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
-		{
-			$date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,$gm);
-		}
-		else
-		{
-			$date=mktime($hour,$minute,$second,$month,$day,$year);
-		}*/
 		return '';
 	}
 }
