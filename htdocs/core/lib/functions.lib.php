@@ -748,7 +748,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 		if ($i <= $limittoshow || $isactive )
 		{
-			if ($isactive) $hookmanager->initHooks(array($tabsname."-".$links[$i][2]. '-tabs'));
+			if ($isactive) $hookparameter = $tabsname."-".$links[$i][2]. '-tabs';
 			
 			$out.='<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((! $isactive && ! empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT))?' hideonprint':'').'"><!-- id tab = '.(empty($links[$i][2])?'':$links[$i][2]).' -->';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
@@ -812,7 +812,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 	if (! $notab) $out.="\n".'<div class="tabBar">'."\n";
 
-	$parameters=array();
+	$parameters=array('context'=>$hookparameter);
 	$reshook=$hookmanager->executeHooks('printTabsHead',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	return $out;
