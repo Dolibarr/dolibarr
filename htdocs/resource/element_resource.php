@@ -63,23 +63,23 @@ $id			= GETPOST('id','int');
 $action			= GETPOST('action','alpha');
 $mode			= GETPOST('mode','alpha');
 $lineid			= GETPOST('lineid','int');
-$element 		= GETPOST('element','alpha');
+$element 		= GETPOST('element','alpha');			// element_type
 $element_id		= GETPOST('element_id','int');
 $resource_id 	= GETPOST('fk_resource','int');
 $resource_type	= GETPOST('resource_type','alpha');
 $busy 			= GETPOST('busy','int');
 $mandatory 		= GETPOST('mandatory','int');
 $cancel			= GETPOST('cancel','alpha');
-$confirm                = GETPOST('confirm','alpha');
+$confirm        = GETPOST('confirm','alpha');
 
 
 /*
  * Actions
  */
 
-if($action == 'add_element_resource' && ! $cancel)
+if ($action == 'add_element_resource' && ! $cancel)
 {
-	$objstat = fetchObjectByElement($element_id,$element);
+	$objstat = fetchObjectByElement($element_id, $element);
 	$res = $objstat->add_element_resource($resource_id,$resource_type,$busy,$mandatory);
 	if($res > 0)
 	{
@@ -260,9 +260,6 @@ else
 		foreach($resources as $resource_obj)
 		{
 			$element_prop = getElementProperties($resource_obj);
-
-
-
 
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
 
