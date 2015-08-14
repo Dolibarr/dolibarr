@@ -414,6 +414,10 @@ if ($resql)
     if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
     else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
+
+    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
+
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
@@ -428,9 +432,6 @@ if ($resql)
     print "</tr>\n";
 
     // Lignes des champs de filtre
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
-
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" valign="right">';
     print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
@@ -465,7 +466,6 @@ if ($resql)
     print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     print "</tr>\n";
-    print '</form>';
 
     $arrayofuniqueproduct=array();
 
@@ -526,7 +526,7 @@ if ($resql)
     }
     $db->free($resql);
 
-    print "</table><br>";
+    print "</table></form><br>";
 
     // Add number of product when there is a filter on period
     if (count($arrayofuniqueproduct) == 1 && is_numeric($year))
